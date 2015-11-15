@@ -1,0 +1,30 @@
+.title {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	font-size: 24px;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: 500;
+	line-height: 26.4px;
+}
+
+.image-box {
+  height: 100px;
+  width: 100px;
+  float: left;
+  padding: 4px;
+  transition: all .3s ease-in-out;
+}
+
+.image-box:hover {
+  transform: scale(1.28);
+}
+
+.image-box .source {
+  overflow: hidden;
+  width: auto;
+  height: 100%;
+}
+
+.image-box .source img {
+  width: 100%;
+}
