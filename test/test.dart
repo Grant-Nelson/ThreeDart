@@ -17,12 +17,11 @@ void addTest(html.Element elem, String testName) {
     ..src = "./$testName/test.png";
 
   html.AnchorElement a = new html.AnchorElement()
-    ..className = "source"
     ..href = "./$testName/"
     ..children.add(img);
 
   html.DivElement box = new html.DivElement()
-    ..className = "image-box"
+    ..className = "test-link"
     ..children.add(a);
 
   elem.children.add(box);

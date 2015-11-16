@@ -9,4 +9,4 @@ A [SnowGremlin](www.snowgremlin.com) Project
 2. Open `http://localhost:8081/` in a browser.
     * Recommend Chromium/Dartium for fast tests and better dart debugging.
     * Chrome and Firefox also works well, however it will take a while to load pages while Dart transpiles.
-    * Not tested nor recommended to use other browsers at this time.
+    * Not tested nor recommended for use on other browsers at this time.

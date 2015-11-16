@@ -7,7 +7,7 @@
 	line-height: 26.4px;
 }
 
-.image-box {
+.test-link {
   height: 100px;
   width: 100px;
   float: left;
@@ -15,16 +15,16 @@
   transition: all .3s ease-in-out;
 }
 
-.image-box:hover {
+.test-link:hover {
   transform: scale(1.28);
 }
 
-.image-box .source {
+.test-link a {
   overflow: hidden;
   width: auto;
   height: 100%;
 }
 
-.image-box .source img {
+.test-link a img {
   width: 100%;
 }
