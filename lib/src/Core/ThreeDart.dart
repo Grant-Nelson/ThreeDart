@@ -1,13 +1,29 @@
 part of ThreeDart.Core;
 
+/// [TreeDart] (3Dart) is the a tool for rendering WebGL with Dart.
 class ThreeDart {
 
+  /// The element the canvas was added to or the canvas being drawn to.
   html.Element _elem;
+
+  /// The given or added canvas being drawn to.
   html.CanvasElement _canvas;
+
+  /// The rendering context to draw with.
   WebGL.RenderingContext _gl;
+
+  /// The current scene to draw.
   Scenes.Scene _scene;
+
+  /// The rendering state.
   RenderState _state;
 
+  /// Creates a new 3Dart rendering on an element with the given [id].
+  ///
+  /// [alpha] indicates if the back color target will have an alpha channel or not.
+  /// [depth] indicates if the target will have a back buffer or not.
+  /// [stencil] indicates if the target will have a stencil buffer or not.
+  /// [antialias] indicates if the target is antialised or not.
   factory ThreeDart.fromId(String elementId, {bool alpha: true, bool depth: true, stencil: false, antialias: true}) {
     html.Element elem = html.document.getElementById(elementId);
     if (elem == null) {
@@ -17,6 +33,12 @@ class ThreeDart {
         alpha: alpha, depth: depth, stencil: stencil, antialias: antialias);
   }
 
+  /// Creates a new 3Dart rendering on the given element.
+  ///
+  /// [alpha] indicates if the back color target will have an alpha channel or not.
+  /// [depth] indicates if the target will have a back buffer or not.
+  /// [stencil] indicates if the target will have a stencil buffer or not.
+  /// [antialias] indicates if the target is antialised or not.
   factory ThreeDart.fromElem(html.Element elem, {bool alpha: true, bool depth: true, stencil: false, antialias: true}) {
     if (elem == null) {
       throw new Exception("May not create a manager from a null element.");
@@ -37,6 +59,12 @@ class ThreeDart {
     return td;
   }
 
+  /// Creates a new 3Dart rendering on the given canvas.
+  ///
+  /// [alpha] indicates if the back color target will have an alpha channel or not.
+  /// [depth] indicates if the target will have a back buffer or not.
+  /// [stencil] indicates if the target will have a stencil buffer or not.
+  /// [antialias] indicates if the target is antialised or not.
   ThreeDart.fromCanvas(html.CanvasElement canvas, {bool alpha: true, bool depth: true, stencil: false, antialias: true}) {
     if (canvas == null) {
       throw new Exception("May not create a manager from a null canvas.");
@@ -56,17 +84,22 @@ class ThreeDart {
     this._justifySize();
   }
 
+  /// The width of the canvas in pixels.
   int get width => this._canvas.width;
 
+  /// The height of the canvas in pixels.
   int get height => this._canvas.height;
 
+  /// The scene to render to the canvas.
   Scenes.Scene get scene => this._scene;
-
   set scene(Scenes.Scene scene) {
     this._scene = scene;
     this.render();
   }
 
+  // TODO: Add JSON load methods.
+
+  /// Makes sure the size of the canvas is correctly set.
   void _justifySize() {
     // Lookup the size the browser is displaying the canvas.
     var displayWidth  = this._canvas.clientWidth;
@@ -80,15 +113,32 @@ class ThreeDart {
     }
   }
 
-  void _resize(html.Event event) {
+  /// The event handler for the canvas changing size.
+  void _resize(html.Event _) {
     this._justifySize();
     this.render();
   }
 
+  /// Renders the screne to the canvas.
   void render() {
     if (this._scene != null) {
       this._state.reset();
       this._scene.render(this._state);
     }
+  }
+
+  /// Disposes this instands of 3Dart.
+  void dispose() {
+    if (this._elem == this._canvas) {
+      // TODO: Remove event listensers.
+    } else {
+      this._elem.children.remove(this._canvas);
+    }
+
+    this._elem = null;
+    this._canvas = null;
+    this._gl = null;
+    this._scene = null;
+    this._state = null;
   }
 }

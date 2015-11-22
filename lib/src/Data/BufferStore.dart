@@ -1,6 +1,7 @@
 part of ThreeDart.Data;
 
-class BufferStore extends Core.Bindable {
+/// A storage for a shapes with the components required for a specific technique.
+class BufferStore implements Core.Bindable, Core.Renderable, TechniqueCache {
 
   WebGL.Buffer _vertexBuf;
   List<IndexObject> _indexObjs;
@@ -27,7 +28,7 @@ class BufferStore extends Core.Bindable {
     state.gl.bindBuffer(WebGL.ARRAY_BUFFER, null);
   }
 
-  void draw(Core.RenderState state) {
+  void render(Core.RenderState state) {
     int objCount = this._indexObjs.length;
     for (int i = 0; i < objCount; i++) {
       IndexObject indexObj = this._indexObjs[i];

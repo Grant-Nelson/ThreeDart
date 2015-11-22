@@ -11,6 +11,7 @@ part 'Comparer.dart';
 part 'Matrix2.dart';
 part 'Matrix3.dart';
 part 'Matrix4.dart';
+part 'MatrixStack.dart';
 part 'Point2.dart';
 part 'Point3.dart';
 part 'Point4.dart';

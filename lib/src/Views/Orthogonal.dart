@@ -24,20 +24,19 @@ class Orthogonal implements Camara {
   void bind(Core.RenderState state) {
     double width = state.width.toDouble()*0.5;
     double height = state.height.toDouble()*0.5;
-    state.projectionMatrix = new Math.Matrix4.ortho(-width, width, -height, height, this._near, this._far);
+    state.projection.push(new Math.Matrix4.ortho(-width, width, -height, height, this._near, this._far));
 
     Math.Matrix4 look = new Math.Matrix4.lookTowards(new Math.Point3.zero(),
         new Math.Vector3(0.0, 1.0, 0.0), new Math.Vector3(0.0, 0.0, 1.0));
     if (mover != null) {
       Math.Matrix4 mat = mover.update(state, this);
-      if (mat != null){
-        look = look*mat;
-      }
+      if (mat != null) look = look*mat;
     }
-    state.viewMatrix = look;
+    state.view.push(look);
   }
 
   void unbind(Core.RenderState state) {
-    // Empty
+    state.projection.pop();
+    state.view.pop();
   }
 }

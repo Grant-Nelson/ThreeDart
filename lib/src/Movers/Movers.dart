@@ -5,7 +5,6 @@ library ThreeDart.Movers;
 
 import 'dart:math' as math;
 
-import '../Data/Data.dart' as Data;
 import '../Math/Math.dart' as Math;
 import '../Core/Core.dart' as Core;
 

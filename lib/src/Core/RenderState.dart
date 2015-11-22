@@ -1,102 +1,130 @@
 part of ThreeDart.Core;
 
+/// The state of a render in progress.
 class RenderState {
 
+  /// The rendering context for this render.
   WebGL.RenderingContext _gl;
+
+  /// The canvas being rendered to.
   html.CanvasElement _canvas;
+
+  /// The width of the render viewport in pixels.
   int _width;
+
+    /// The height of the render viewport in pixels.
   int _height;
 
+  /// The number of this frame.
   int _frameNum;
+
+  /// The time that the graphics were created.
   DateTime _startTime;
+
+  /// The time the last render was started at.
   DateTime _lastTime;
+
+  /// The time the current render was started at.
   DateTime _curTime;
+
+  /// The seconds which have passed since the previous render.
   double _dt;
 
-  Math.Matrix4 _projMat;
-  Math.Matrix4 _viewMat;
-  List<Math.Matrix4> _objMat;
+  /// The stack of projection matrices.
+  Math.Matrix4Stack _projStack;
 
+  /// The stack of the view matrices.
+  Math.Matrix4Stack _viewStack;
+
+  /// The stack of object matrices.
+  Math.Matrix4Stack _objStack;
+
+  /// The stack of techniques.
   List<Techniques.Technique> _tech;
 
+  /// Constructs a new render state with the given context and canvas.
   RenderState(this._gl, this._canvas) {
     this._width = 512;
     this._height = 512;
-    this._dt = 0.0;
+    this._frameNum = 0;
     this._startTime = new DateTime.now();
     this._lastTime = this._startTime;
     this._curTime = this._startTime;
-    this._frameNum = 0;
-    this._objMat = new List<Math.Matrix4>();
-    this._objMat.add(new Math.Matrix4.identity());
+    this._dt = 0.0;
+    this._projStack = new Math.Matrix4Stack();
+    this._viewStack = new Math.Matrix4Stack();
+    this._objStack = new Math.Matrix4Stack();
     this._tech = new List<Techniques.Technique>();
     this._tech.add(null);
   }
 
+  /// Resets the state to start another render.
+  ///
+  /// This should only be called by [ThreeDart] before starting a new render.
   void reset() {
     this._frameNum++;
     this._lastTime = this._curTime;
     this._curTime = new DateTime.now();
     int uSec = this._curTime.difference(this._lastTime).inMicroseconds;
     this._dt = uSec*1.0e-6;
-    this._objMat.clear();
-    this._objMat.add(new Math.Matrix4.identity());
+    this._projStack.clear();
+    this._viewStack.clear();
+    this._objStack.clear();
     this._tech.clear();
     this._tech.add(null);
   }
 
+  /// The rendering context for the render.
   WebGL.RenderingContext get gl => this._gl;
 
+  /// The canvas being rendered onto.
   html.CanvasElement get canvas => this._canvas;
 
+  /// The width of the viewport in pixels.
   int get width => this._width;
   set width(int width) => this._width = width;
 
+    /// The height of the viewport in pixels.
   int get height => this._height;
   set height(int height) => this._height = height;
 
+  /// The number of this frame.
   int get frameNumber => this._frameNum;
+
+  /// The time that the graphics were created.
   DateTime get startTime => this._startTime;
+
+  /// The time the last render was started at.
   DateTime get lastTime => this._lastTime;
+
+  /// The time the current render was started at.
   DateTime get currentTime => this._curTime;
+
+  /// The seconds which have passed since the previous render.
   double get dt => this._dt;
 
-  Math.Matrix4 get projectionMatrix => this._projMat;
-  set projectionMatrix(Math.Matrix4 projMat) => this._projMat = projMat;
+  /// The stack of projection matrices.
+  Math.Matrix4Stack get projection => this._projStack;
 
-  Math.Matrix4 get viewMatrix => this._viewMat;
-  set viewMatrix(Math.Matrix4 viewMat) => this._viewMat = viewMat;
+  /// The stack of the view matrices.
+  Math.Matrix4Stack get view => this._viewStack;
 
-  Math.Matrix4 get objectMatrix => this._objMat.last;
+  /// The stack of object matrices.
+  Math.Matrix4Stack get object => this._objStack;
 
+  /// The current technique to render with.
+  ///
+  /// May return null if the technique stack is empty.
   Techniques.Technique get technique => this._tech.last;
 
-  void pushMatrix(Math.Matrix4 mat, [bool multiplyMat = true]) {
-    if (multiplyMat) {
-      if (mat == null) {
-        this._objMat.add(this.objectMatrix);
-      } else {
-        this._objMat.add(this.objectMatrix*mat);
-      }
-    } else {
-      if (mat == null) {
-        this._objMat.add(new Math.Matrix4.identity());
-      } else {
-        this._objMat.add(mat);
-      }
-    }
-  }
-
-  void popMatrix() {
-    if (this._objMat.length > 1) {
-      this._objMat.removeLast();
-    }
-  }
-
+  /// Pushes a new technique onto the stack of techniques.
+  ///
+  /// Pushing null will put the current technique onto the top of the stack.
   void pushTechnique(Techniques.Technique tech) {
     this._tech.add((tech == null)?this.technique:tech);
   }
 
+  /// Pops the current technique off of the top of the stack.
   void popTechnique() {
     if (this._tech.length > 1) {
       this._tech.removeLast();

@@ -2,6 +2,8 @@ part of ThreeDart.Views;
 
 class Perspective implements Camara {
 
+  static Math.Matrix4 _lookMat = null;
+
   Movers.Mover _mover;
 
   double _fov;
@@ -28,22 +30,24 @@ class Perspective implements Camara {
 
   void bind(Core.RenderState state) {
     double aspect = state.gl.drawingBufferWidth / state.gl.drawingBufferHeight;
-    state.projectionMatrix = new Math.Matrix4.perspective(this._fov, aspect, this._near, this._far);
+    state.projection.push(new Math.Matrix4.perspective(this._fov, aspect, this._near, this._far));
 
-    Math.Matrix4 look = new Math.Matrix4.lookAtTarget(
+    if (_lookMat == null) {
+      _lookMat = new Math.Matrix4.lookAtTarget(
         new Math.Point3(0.0, 0.0, 0.0),
         new Math.Vector3(0.0, 1.0, 0.0),
         new Math.Point3(0.0, 0.0, -2.5));
+    }
+    Math.Matrix4 look = _lookMat;
     if (mover != null) {
       Math.Matrix4 mat = mover.update(state, this);
-      if (mat != null){
-        look = look*mat;
-      }
+      if (mat != null) look = look*mat;
     }
-    state.viewMatrix = look;
+    state.view.push(look);
   }
 
   void unbind(Core.RenderState state) {
-    // Empty
+    state.projection.pop();
+    state.view.pop();
   }
 }

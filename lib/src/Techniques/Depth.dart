@@ -32,8 +32,8 @@ class Depth extends Technique {
     if (this._shader == null) {
       this._shader = new Shaders.Depth(state.gl);
     }
-    if (obj.storeNeedsUpdate) {
-      obj.store = obj.shape.build(state.gl, Data.VertexType.Pos);
+    if (obj.cacheNeedsUpdate) {
+      obj.cache = obj.shape.build(state.gl, Data.VertexType.Pos);
     }
 
     this._shader.bind(state);
@@ -41,13 +41,16 @@ class Depth extends Technique {
     this._shader.fogColor = this._fogClr;
     this._shader.fogStart = this._fogStart;
     this._shader.fogStop = this._fogStop;
-    this._shader.projectMatrix = state.projectionMatrix;
-    this._shader.viewMatrix = state.viewMatrix;
-    this._shader.objectMatrix = state.objectMatrix;
+    this._shader.projectMatrix = state.projection.matrix;
+    this._shader.viewMatrix = state.view.matrix;
+    this._shader.objectMatrix = state.object.matrix;
 
-    obj.store.bind(state);
-    obj.store.draw(state);
-    obj.store.unbind(state);
+    if (obj.cache is Data.BufferStore) {
+      Data.BufferStore store = obj.cache as Data.BufferStore;
+      store.bind(state);
+      store.render(state);
+      store.unbind(state);
+    } else obj.clearCache();
 
     this._shader.unbind(state);
   }

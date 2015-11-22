@@ -3,11 +3,8 @@
 
 library ThreeDart.Techniques;
 
-import 'dart:web_gl' as WebGL;
-
 import '../Data/Data.dart' as Data;
 import '../Math/Math.dart' as Math;
-import '../Shapes/Shapes.dart' as Shapes;
 import '../Shaders/Shaders.dart' as Shaders;
 import '../Core/Core.dart' as Core;
 

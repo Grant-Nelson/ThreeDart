@@ -15,6 +15,4 @@ class Compound implements Scene {
       pass.render(state);
     }
   }
-
-  // TODO: Add JSON load methods.
 }
