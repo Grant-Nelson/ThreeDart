@@ -263,7 +263,7 @@ class UniformSampler2D extends Uniform {
       this._gl.uniform1i(this.loc, index);
     }
 
-    void setTexture2D(Data.Texture2D tex2D) => this.setIndex(tex2D.index);
+    void setTexture2D(Textures.Texture2D tex2D) => this.setIndex(tex2D.index);
 }
 
 class UniformSamplerCube extends Uniform {
@@ -274,5 +274,5 @@ class UniformSamplerCube extends Uniform {
       this._gl.uniform1i(this.loc, index);
     }
 
-    void setTextureCube(Data.TextureCube texCube) => this.setIndex(texCube.index);
+    void setTextureCube(Textures.TextureCube texCube) => this.setIndex(texCube.index);
 }

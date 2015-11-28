@@ -7,7 +7,7 @@ import 'dart:web_gl' as WebGL;
 import 'dart:math';
 
 import '../Core/Core.dart' as Core;
-import '../Data/Data.dart' as Data;
+import '../Textures/Textures.dart' as Textures;
 import '../Math/Math.dart' as Math;
 import '../Movers/Movers.dart' as Movers;
 

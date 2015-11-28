@@ -12,7 +12,4 @@ part 'BufferAttr.dart';
 part 'BufferStore.dart';
 part 'IndexObject.dart';
 part 'TechniqueCache.dart';
-part 'Texture.dart';
-part 'Texture2D.dart';
-part 'TextureCube.dart';
 part 'VertexType.dart';

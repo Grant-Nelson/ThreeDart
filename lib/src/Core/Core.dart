@@ -11,6 +11,7 @@ import '../Math/Math.dart' as Math;
 import '../Movers/Movers.dart' as Movers;
 import '../Shapes/Shapes.dart' as Shapes;
 import '../Techniques/Techniques.dart' as Techniques;
+import '../Shaders/Shaders.dart' as Shaders;
 import '../Scenes/Scenes.dart' as Scenes;
 
 part 'Bindable.dart';

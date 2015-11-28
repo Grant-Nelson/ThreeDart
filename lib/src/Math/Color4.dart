@@ -29,6 +29,10 @@ class Color4 {
   factory Color4.black() =>
     new Color4(0.0, 0.0, 0.0, 1.0);
 
+    /// Constructs a new [Color3] instance with full color, white.
+    factory Color4.white() =>
+      new Color4(1.0, 1.0, 1.0, 1.0);
+
   /// Constructs a new transpanent [Color4] instance, transparent black.
   factory Color4.transparent() =>
     new Color4(0.0, 0.0, 0.0, 0.0);

@@ -42,6 +42,9 @@ class RenderState {
   /// The stack of techniques.
   List<Techniques.Technique> _tech;
 
+  /// The cashe of compiled shaders.
+  Map<String, Shaders.Shader> _shaderCache;
+
   /// Constructs a new render state with the given context and canvas.
   RenderState(this._gl, this._canvas) {
     this._width = 512;
@@ -56,6 +59,7 @@ class RenderState {
     this._objStack = new Math.Matrix4Stack();
     this._tech = new List<Techniques.Technique>();
     this._tech.add(null);
+    this._shaderCache = new Map<String, Shaders.Shader>();
   }
 
   /// Resets the state to start another render.
@@ -129,5 +133,20 @@ class RenderState {
     if (this._tech.length > 1) {
       this._tech.removeLast();
     }
+  }
+
+  /// Gets the cached shader by the given [name].
+  Shaders.Shader shader(String name) => this._shaderCache[name];
+
+  /// Adds the given [shader] to the shader cache.
+  void addShader(Shaders.Shader shader) {
+    if (shader == null)
+      throw new Exception("May not cache a null shader.");
+    String name = shader.name;
+    if (name.isEmpty)
+      throw new Exception("May not cache a shader with no name.");
+    if (this._shaderCache.containsKey(name))
+      throw new Exception("Shader cache already contains a shader by the name \"${name}\".");
+    this._shaderCache[name] = shader;
   }
 }

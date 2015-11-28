@@ -1,6 +1,6 @@
 // Copyright (c) 2015, SnowGremlin. All rights reserved. Use of this source code
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
-library ThreeDart;
+library ThreeDart.Scenes;
 
-export 'src/Core/Core.dart';
+export 'src/Scenes/Scenes.dart';

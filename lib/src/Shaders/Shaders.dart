@@ -6,7 +6,7 @@ library ThreeDart.Shaders;
 import 'dart:web_gl' as WebGL;
 import 'dart:typed_data' as Typed;
 
-import '../Data/Data.dart' as Data;
+import '../Textures/Textures.dart' as Textures;
 import '../Math/Math.dart' as Math;
 import '../Core/Core.dart' as Core;
 
@@ -17,3 +17,4 @@ part 'Uniforms.dart';
 
 // Implemented Shaders
 part 'Depth.dart';
+part 'SolidDirectional.dart';

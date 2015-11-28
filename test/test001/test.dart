@@ -5,24 +5,29 @@ library ThreeDart.test.test001;
 
 import 'dart:html';
 
-import 'package:ThreeDart/ThreeDart.dart' as TD;
+import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
+import 'package:ThreeDart/Shapes.dart' as Shapes;
+import 'package:ThreeDart/Movers.dart' as Movers;
+import 'package:ThreeDart/Math.dart' as Math;
+import 'package:ThreeDart/Techniques.dart' as Techniques;
+import 'package:ThreeDart/Scenes.dart' as Scenes;
 
 void main() {
 
-  TD.Object obj = new TD.Object()
-    ..shape = new TD.Shape.cube()
-    ..mover = new TD.Rotater();
+  ThreeDart.Object obj = new ThreeDart.Object()
+    ..shape = new Shapes.Shape.cube()
+    ..mover = new Movers.Rotater();
 
-  TD.Depth tech = new TD.Depth()
+  Techniques.Depth tech = new Techniques.Depth()
     ..fogStart = 3.0
     ..fogStop = 6.0;
 
-  TD.RenderPass pass = new TD.RenderPass()
+  Scenes.RenderPass pass = new Scenes.RenderPass()
     ..tech = tech
     ..children.add(obj)
-    ..camara.mover = new TD.Constant(new TD.Matrix4.translate(0.0, 0.0, 5.0));
+    ..camara.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0));
 
-  TD.ThreeDart td = new TD.ThreeDart.fromId("threeDart")
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart")
     ..scene = pass;
 
   var update;
