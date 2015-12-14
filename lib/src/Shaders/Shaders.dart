@@ -9,6 +9,8 @@ import 'dart:typed_data' as Typed;
 import '../Textures/Textures.dart' as Textures;
 import '../Math/Math.dart' as Math;
 import '../Core/Core.dart' as Core;
+import '../Lights/Lights.dart' as Lights;
+import '../Materials/Materials.dart' as Materials;
 
 // Shader Components
 part 'Attributes.dart';

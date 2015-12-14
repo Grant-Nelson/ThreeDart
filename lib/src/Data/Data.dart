@@ -10,6 +10,7 @@ import '../Core/Core.dart' as Core;
 
 part 'BufferAttr.dart';
 part 'BufferStore.dart';
+part 'BufferStoreList.dart';
 part 'IndexObject.dart';
 part 'TechniqueCache.dart';
 part 'VertexType.dart';

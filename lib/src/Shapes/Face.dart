@@ -81,6 +81,13 @@ class Face {
     return false;
   }
 
+  bool get collapsed {
+    if (this._ver1 != this._ver2) return true;
+    if (this._ver2 != this._ver3) return true;
+    if (this._ver3 != this._ver1) return true;
+    return false;
+  }
+
   bool operator ==(var other) {
     if (identical(this, other)) return true;
     if (other is! Face) return false;

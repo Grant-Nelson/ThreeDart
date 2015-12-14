@@ -4,8 +4,15 @@
 library ThreeDart.test.test000;
 
 import 'dart:html' as html;
+import 'dart:async' as async;
+
+import 'package:ThreeDart/Shapes.dart' as Shapes;
+
+part 'testTools.dart';
+part 'math.dart';
+part 'shape.dart';
 
 void main() {
-  html.Element elem = html.document.getElementById("output");
-  elem.innerHtml = "No unit-tests yet.";
+  TestManager tests = new TestManager.byId("output");
+  tests.add(shapeTest1, "Shape 1");
 }

@@ -17,11 +17,19 @@ class BufferStore implements Core.Bindable, Core.Renderable, TechniqueCache {
     this._indexObjs = new List<IndexObject>();
   }
 
-    /// The list of buffer attributes describing the type of vertices in the buffer.
+  /// The list of buffer attributes describing the type of vertices in the buffer.
   List<BufferAttr> get attributes => this._attrs;
 
   /// The list of indices for the order of vertex rendering and type of resterization.
   List<IndexObject> get indexObjects => this._indexObjs;
+
+  /// Finds the attribute which has the given type.
+  BufferAttr findAttribute(VertexType type) {
+    for (BufferAttr attr in this._attrs) {
+      if (attr._type.has(type)) return attr;
+    }
+    return null;
+  }
 
   /// Binds the buffer to prepare for rendering.
   void bind(Core.RenderState state) {

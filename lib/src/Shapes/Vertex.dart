@@ -26,11 +26,11 @@ class Vertex {
 
   Vertex copy() {
     return new Vertex(
-      loc: this._loc.copy(),
-      norm: this._norm.copy(),
-      binm: this. _binm.copy(),
-      txt: this._txt.copy(),
-      clr: this._clr.copy(),
+      loc: (this._loc == null)? null: this._loc.copy(),
+      norm: (this._norm == null)? null: this._norm.copy(),
+      binm: (this._binm == null)? null: this. _binm.copy(),
+      txt: (this._txt == null)? null: this._txt.copy(),
+      clr: (this._clr == null)? null: this._clr.copy(),
       weight: this._weight
     );
   }
@@ -43,10 +43,10 @@ class Vertex {
   set location(Math.Point3 loc) => this._loc = loc;
 
   Math.Vector3 get normal => this._norm;
-  set normal(Math.Vector3 norm) => this._norm = norm.normal();
+  set normal(Math.Vector3 norm) => this._norm = (norm == null)? null: norm.normal();
 
   Math.Vector3 get binormal => this._binm;
-  set binormal(Math.Vector3 binm) => this._binm = binm.normal();
+  set binormal(Math.Vector3 binm) => this._binm =  (binm == null)? null: binm.normal();
 
   Math.Point2 get texture => this._txt;
   set texture(Math.Point2 txt) => this._txt = txt;

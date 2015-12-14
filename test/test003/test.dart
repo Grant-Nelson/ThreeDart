@@ -1,7 +1,7 @@
 // Copyright (c) 2015, <your name>. All rights reserved. Use of this source code
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
-library ThreeDart.test.test001;
+library ThreeDart.test.test002;
 
 import 'dart:html';
 
@@ -11,15 +11,31 @@ import 'package:ThreeDart/Movers.dart' as Movers;
 import 'package:ThreeDart/Math.dart' as Math;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
+import 'package:ThreeDart/Lights.dart' as Lights;
+import 'package:ThreeDart/Materials.dart' as Materials;
 
 void main() {
 
+  Shapes.Shape shape = new Shapes.Shape.cube()
+    ..joinSeams();
+
   ThreeDart.Object obj = new ThreeDart.Object()
-    ..shape = new Shapes.Shape.cube()
+    ..shape = shape
     ..mover = new Movers.Rotater();
 
+  Techniques.MaterialLight tech = new Techniques.MaterialLight()
+    ..light = new Lights.Directional(
+          direction: new Math.Vector3(1.0, 1.0, -1.0),
+          color: new Math.Color3.white())
+    ..material = new Materials.Solid(
+          emission: new Math.Color3.black(),
+          ambient: new Math.Color3(0.0, 0.0, 1.0),
+          diffuse: new Math.Color3(0.0, 1.0, 0.0),
+          specular: new Math.Color3(1.0, 0.0, 0.0),
+          shininess: 100.0);
+
   Scenes.RenderPass pass = new Scenes.RenderPass()
-    ..tech = new Techniques.Depth(fogStart: 3.0, fogStop: 6.0)
+    ..tech = tech
     ..children.add(obj)
     ..camara.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0));
 

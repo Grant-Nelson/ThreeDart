@@ -26,12 +26,15 @@ class Object implements Movers.Movable, Renderable {
   Movers.Mover _mover;
 
   /// Creates a new object.
-  Object() {
-    this._shape = null;
+  Object({
+      Shapes.Shape shape: null,
+      Techniques.Technique tech: null,
+      Movers.Mover mover: null}) {
+    this._shape = shape;
     this._cache = null;
-    this._tech = null;
+    this._tech = tech;
     this._children = new List<Object>();
-    this._mover = null;
+    this._mover = mover;
   }
 
   /// Indicates if the shape cashe needs to be updated.

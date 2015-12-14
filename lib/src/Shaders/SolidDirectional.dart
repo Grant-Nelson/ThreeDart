@@ -47,7 +47,7 @@ class SolidDirectional extends Shader {
       "                                                           \n"+
       "vec3 specular(vec3 norm)                                   \n"+
       "{                                                          \n"+
-      "   vec3 lightRef = normalize(reflect(-litVec, norm));      \n"+
+      "   vec3 lightRef = normalize(reflect(litVec, norm));       \n"+
       "   float scalar = dot(lightRef, normalize(camPos));        \n"+
       "   if(scalar > 0.0)                                        \n"+
       "      return specularClr*max(pow(scalar, shininess), 0.0); \n"+
@@ -63,7 +63,9 @@ class SolidDirectional extends Shader {
       "   gl_FragColor = vec4(emissionClr + litClr, 1.0);         \n"+
       "}                                                          \n";
 
-  Uniform3f _lightVecr;
+  Attribute _posAttr;
+  Attribute _normAttr;
+  Uniform3f _lightVec;
   Uniform3f _lightClr;
   Uniform3f _emissionClr;
   Uniform3f _ambientClr;
@@ -85,23 +87,34 @@ class SolidDirectional extends Shader {
 
   SolidDirectional(WebGL.RenderingContext gl): super(gl, defaultName) {
     this.initialize(_vertexSource, _fragmentSource);
-    this._lightVecr = this.uniforms["lightVecr"] as Uniform3f;
-    this._lightClr = this.uniforms["lightClr"] as Uniform3f;
+    this._posAttr     = this.attributes["posAttr"];
+    this._normAttr    = this.attributes["normAttr"];
+    this._lightVec    = this.uniforms["lightVec"] as Uniform3f;
+    this._lightClr    = this.uniforms["lightClr"] as Uniform3f;
     this._emissionClr = this.uniforms["emissionClr"] as Uniform3f;
-    this._ambientClr = this.uniforms["ambientClr"] as Uniform3f;
-    this._diffuseClr = this.uniforms["diffuseClr"] as Uniform3f;
+    this._ambientClr  = this.uniforms["ambientClr"] as Uniform3f;
+    this._diffuseClr  = this.uniforms["diffuseClr"] as Uniform3f;
     this._specularClr = this.uniforms["specularClr"] as Uniform3f;
-    this._shininess = this.uniforms["shininess"] as Uniform1f;
-    this._objMat = this.uniforms["objMat"] as UniformMat4;
-    this._viewMat = this.uniforms["viewMat"] as UniformMat4;
-    this._projMat = this.uniforms["projMat"] as UniformMat4;
+    this._shininess   = this.uniforms["shininess"] as Uniform1f;
+    this._objMat      = this.uniforms["objMat"] as UniformMat4;
+    this._viewMat     = this.uniforms["viewMat"] as UniformMat4;
+    this._projMat     = this.uniforms["projMat"] as UniformMat4;
   }
 
-  Math.Vector3 get lightVector => this._lightVecr.getVector3();
-  set lightVector(Math.Vector3 vec) => this._lightVecr.setVector3(vec);
+  Attribute get posAttr => this._posAttr;
+
+  Attribute get normAttr => this._normAttr;
+
+  Math.Vector3 get lightVector => this._lightVec.getVector3();
+  set lightVector(Math.Vector3 vec) => this._lightVec.setVector3(vec);
 
   Math.Color3 get lightColor => this._lightClr.getColor3();
   set lightColor(Math.Color3 clr) => this._lightClr.setColor3(clr);
+
+  void setLight(Lights.Directional light) {
+    this.lightVector = light.direction;
+    this.lightColor = light.color;
+  }
 
   Math.Color3 get emissionColor => this._emissionClr.getColor3();
   set emissionColor(Math.Color3 clr) => this._emissionClr.setColor3(clr);
@@ -117,6 +130,14 @@ class SolidDirectional extends Shader {
 
   double get shininess => this._shininess.getValue();
   set shininess(double value) => this._shininess.setValue(value);
+
+  void setMaterial(Materials.Solid material) {
+    this.emissionColor = material.emission;
+    this.ambientColor = material.ambient;
+    this.diffuseColor = material.diffuse;
+    this.specularColor = material.specular;
+    this.shininess = material.shininess;
+  }
 
   Math.Matrix4 get objectMatrix => this._objMat.getMatrix4();
   set objectMatrix(Math.Matrix4 mat) => this._objMat.setMatrix4(mat);

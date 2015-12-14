@@ -36,6 +36,7 @@ class Depth extends Shader {
       "   gl_FragColor = vec4(mix(fogClr, objClr, factor), 1.0); \n"+
       "}                                                         \n";
 
+  Attribute _posAttr;
   Uniform3f _objClr;
   Uniform3f _fogClr;
   Uniform1f _fogStart;
@@ -54,6 +55,7 @@ class Depth extends Shader {
 
   Depth(WebGL.RenderingContext gl): super(gl, defaultName) {
     this.initialize(_vertexSource, _fragmentSource);
+    this._posAttr    = this.attributes["posAttr"];
     this._objClr     = this.uniforms["objClr"] as Uniform3f;
     this._fogClr     = this.uniforms["fogClr"] as Uniform3f;
     this._fogStart   = this.uniforms["fogStart"] as Uniform1f;
@@ -61,6 +63,8 @@ class Depth extends Shader {
     this._viewObjMat = this.uniforms["viewObjMat"] as UniformMat4;
     this._projMat    = this.uniforms["projMat"] as UniformMat4;
   }
+
+  Attribute get posAttr => this._posAttr;
 
   Math.Color3 get objectColor => this._objClr.getColor3();
   set objectColor(Math.Color3 clr) => this._objClr.setColor3(clr);

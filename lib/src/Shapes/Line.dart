@@ -30,6 +30,8 @@ class Line {
     return false;
   }
 
+  bool get collapsed => this._ver1 == this._ver2;
+
   bool operator ==(var other) {
     if (identical(this, other)) return true;
     if (other is! Line) return false;

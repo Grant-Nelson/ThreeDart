@@ -81,6 +81,7 @@ class Shape {
 
   List<Face> get faces => this._faces;
   List<Line> get lines => this._lines;
+  List<Vertex> get points => this._points;
   List<Vertex> get vertices => this._vertices;
 
   Vertex addVertex([Math.Point3 loc = null, Math.Vector3 norm = null, Math.Vector3 binm = null,
@@ -194,20 +195,24 @@ class Shape {
 
   void merge(Shape other) {
     other.updateIndices();
-    int offset = this.vertices.length;
-    for (Vertex vertex in other.vertices) {
+    int offset = this._vertices.length;
+    for (Vertex vertex in other._vertices) {
       this._vertices.add(vertex.copy());
     }
     this.updateIndices();
-    for (Line line in other.lines) {
-      Vertex ver1 = this.vertices[line.vertex1.index + offset];
-      Vertex ver2 = this.vertices[line.vertex2.index + offset];
+    for (Vertex point in other._points) {
+      Vertex pnt = this._vertices[point.index + offset];
+      this._points.add(pnt);
+    }
+    for (Line line in other._lines) {
+      Vertex ver1 = this._vertices[line.vertex1.index + offset];
+      Vertex ver2 = this._vertices[line.vertex2.index + offset];
       this._lines.add(new Line(ver1, ver2));
     }
-    for (Face face in other.faces) {
-      Vertex ver1 = this.vertices[face.vertex1.index + offset];
-      Vertex ver2 = this.vertices[face.vertex2.index + offset];
-      Vertex ver3 = this.vertices[face.vertex3.index + offset];
+    for (Face face in other._faces) {
+      Vertex ver1 = this._vertices[face.vertex1.index + offset];
+      Vertex ver2 = this._vertices[face.vertex2.index + offset];
+      Vertex ver3 = this._vertices[face.vertex3.index + offset];
       this._faces.add(new Face(ver1, ver2, ver3));
     }
   }
@@ -226,15 +231,14 @@ class Shape {
       vertex.calculateBinormal();
   }
 
-  bool _findMatching(List<Vertex> fullList, VertexMatcher matcher, Vertex ver, int index, List<Vertex> vertices, List<int> indices) {
-    vertices.add(ver);
+  bool _findMatching(VertexMatcher matcher, Vertex ver, int index, List<Vertex> matches, List<int> indices) {
+    matches.add(ver);
     indices.add(index);
     for (int i = index - 1; i >= 0; --i) {
-      Vertex ver2 = fullList[i];
+      Vertex ver2 = this._vertices[i];
       if (ver2 != null) {
         if (matcher.matches(ver, ver2)) {
-          vertices[i] = null;
-          vertices.add(ver2);
+          matches.add(ver2);
           indices.add(i);
         }
       }
@@ -243,32 +247,45 @@ class Shape {
   }
 
   void _replaceVertices(Vertex newVer, List<int> indices) {
-    for (int i = indices.length-1; i >= 0; i--) {
+    indices.sort();
+    for (int i = indices.length-1; i >= 0; --i) {
       int index = indices[i];
       Vertex ver = this.vertices[index];
-      for (Face face in ver.faces) {
-        face.replaceVertex(ver, newVer);
+      for (int j = ver.faces.length - 1; j >= 0; --j)
+        ver.faces[j].replaceVertex(ver, newVer);
+      for (int j = ver.lines.length - 1; j >= 0; --j)
+        ver.lines[j].replaceVertex(ver, newVer);
+      for (int j = this._points.length - 1; j >= 0; --j) {
+        if (this._points[j] == ver) this._points[j] = newVer;
       }
-      this.vertices.removeAt(index);
+      this.vertices[index] = null;
     }
     this.vertices.add(newVer);
   }
 
   void mergeVertices(VertexMatcher matcher, VertexMerger merger) {
-    List<Vertex> fullList = new List<Vertex>.from(this._vertices);
-    for (int i = fullList.length; i >= 0; --i) {
-      Vertex ver = fullList[i];
+    for (int i = this._vertices.length-1; i >= 0; --i) {
+      Vertex ver = this._vertices[i];
       if (ver != null) {
-        List<Vertex> vertices = new List<Vertex>();
+        List<Vertex> matches = new List<Vertex>();
         List<int> indices = new List<int>();
-        if (this._findMatching(fullList, matcher, ver, i, vertices, indices)) {
-          Vertex vec = merger.merge(vertices);
-          if (vec != null) {
-            this._replaceVertices(vec, indices);
-          }
+        if (this._findMatching(matcher, ver, i, matches, indices)) {
+          Vertex vec = merger.merge(matches);
+          if (vec != null) this._replaceVertices(vec, indices);
         }
       }
     }
+    for (int i = this._vertices.length-1; i >= 0; --i) {
+      if (this._vertices[i] == null) this._vertices.removeAt(i);
+    }
+    for (int i = this._lines.length-1; i >= 0; --i) {
+      if (this._lines[i].collapsed) this._lines.removeAt(i);
+    }
+    for (int i = this._faces.length-1; i >= 0; --i) {
+      if (this._faces[i].collapsed) this._faces.removeAt(i);
+    }
+    // TODO: Need to check for repeat points, lines, and faces.
+    this.updateIndices();
   }
 
   void joinSeams([VertexMatcher matcher = null]) {
@@ -316,23 +333,27 @@ class Shape {
   Data.BufferStore build(WebGL.RenderingContext gl, Data.VertexType type) {
     int length = this._vertices.length;
     int count = type.count;
-    int stride = type.size*Typed.Float32List.BYTES_PER_ELEMENT;
+    int stride = type.size;
     int offset = 0;
-    List<double> vertices = new List<double>(length*type.size);
+    List<double> vertices = new List<double>(length*stride);
     List<Data.BufferAttr> attrs = new List<Data.BufferAttr>(count);
-    for (int i = 0, j = 0; i < count; i++) {
+    for (int i = 0; i < count; ++i) {
       Data.VertexType local = type.at(i);
       int size = local.size;
-      Data.BufferAttr attr = new Data.BufferAttr(local, size, offset, stride);
-      offset += size;
+      Data.BufferAttr attr = new Data.BufferAttr(local, size,
+        offset*Typed.Float32List.BYTES_PER_ELEMENT,
+        stride*Typed.Float32List.BYTES_PER_ELEMENT);
       attrs[i] = attr;
-      for (int k = 0; k < length; k++) {
-        Vertex ver = this._vertices[k];
+      for (int j = 0; j < length; ++j) {
+        Vertex ver = this._vertices[j];
         List<double> list = ver.listFor(local);
-        for (int l = 0; l < list.length; l++) {
-          vertices[j++] = list[l];
+        int index = offset + j*stride;
+        for (int k = 0; k < list.length; ++k) {
+          vertices[index] = list[k];
+          index++;
         }
       }
+      offset += size;
     }
 
     WebGL.Buffer buffer = gl.createBuffer();
@@ -344,7 +365,7 @@ class Shape {
     this.updateIndices();
     if (this._points.length > 0) {
       List<int> indices = new List<int>();
-      for (int i = 0; i < this._points.length; i++) {
+      for (int i = 0; i < this._points.length; ++i) {
         indices.add(this._points[i].index);
       }
       store.indexObjects.add(new Data.IndexObject.pack(gl, WebGL.POINTS, indices));
@@ -352,7 +373,7 @@ class Shape {
 
     if (this._lines.length > 0) {
       List<int> indices = new List<int>();
-      for (int i = 0; i < this._lines.length; i++) {
+      for (int i = 0; i < this._lines.length; ++i) {
         indices.add(this._lines[i].vertex1.index);
         indices.add(this._lines[i].vertex2.index);
       }

@@ -8,8 +8,11 @@ class Depth extends Technique {
   double _fogStart;
   double _fogStop;
 
-  Depth({Math.Color3 objClr: null, Math.Color3 fogClr: null,
-      double fogStart: 1.0, double fogStop: 10.0}) {
+  Depth({
+      Math.Color3 objClr: null,
+      Math.Color3 fogClr: null,
+      double fogStart: 1.0,
+      double fogStop: 10.0}) {
     this._shader = null;
     this._objClr = (objClr != null)? objClr: new Math.Color3(1.0, 1.0, 1.0);
     this._fogClr = (fogClr != null)? fogClr: new Math.Color3.black();
@@ -33,22 +36,25 @@ class Depth extends Technique {
     if (this._shader == null)
       this._shader = new Shaders.Depth.cached(state);
 
-    if (obj.cacheNeedsUpdate)
-      obj.cache = obj.shape.build(state.gl, Data.VertexType.Pos);
+    if (obj.cacheNeedsUpdate) {
+      obj.cache = obj.shape.build(state.gl, Data.VertexType.Pos)
+        ..findAttribute(Data.VertexType.Pos).attr = this._shader.posAttr.loc;
+    }
 
-    this._shader.bind(state);
-    this._shader.objectColor = this._objClr;
-    this._shader.fogColor = this._fogClr;
-    this._shader.fogStart = this._fogStart;
-    this._shader.fogStop = this._fogStop;
-    this._shader.projectMatrix = state.projection.matrix;
-    this._shader.viewObjectMatrix = state.object.matrix*state.view.matrix;
+    this._shader
+      ..bind(state)
+      ..objectColor = this._objClr
+      ..fogColor = this._fogClr
+      ..fogStart = this._fogStart
+      ..fogStop = this._fogStop
+      ..projectMatrix = state.projection.matrix
+      ..viewObjectMatrix = state.object.matrix*state.view.matrix;
 
     if (obj.cache is Data.BufferStore) {
-      Data.BufferStore store = obj.cache as Data.BufferStore;
-      store.bind(state);
-      store.render(state);
-      store.unbind(state);
+      (obj.cache as Data.BufferStore)
+        ..bind(state)
+        ..render(state)
+        ..unbind(state);
     } else obj.clearCache();
 
     this._shader.unbind(state);

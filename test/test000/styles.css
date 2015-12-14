@@ -1,0 +1,59 @@
+body {
+    background-color: #E7E7E7;
+}
+
+.queued {
+    color: #336799;
+    background-color: #C7DDF5;
+}
+
+.running {
+    color: #C7DDF5;
+    background-color: #336799;
+}
+
+.passed {
+    color: #FFFFFF;
+    background-color: #118855;
+}
+
+.failed  {
+    color: #FFFFFF;
+    background-color: #AA3311;
+}
+
+.topHeader {
+    margin: 0px;
+    font-size: 2em;
+    width: 100%-5px;
+    font-weight: bold;
+    padding: 5px;
+    border: 1px solid black;
+}
+
+.testHeader {
+    margin: 5px 0px 1px 20px;
+    width: 100%-25px;
+    padding: 5px;
+    border: 1px solid black;
+}
+
+.test_body {
+    border: 1px solid black;
+    margin: 0px 0px 0px 40px;
+    width: 100%-45px;
+    height: 300px;
+    font-family: "Lucida Console";
+    font-size: .75em;
+    overflow: scroll;
+    white-space: nowrap;
+    background-color: #DDDDDD;
+}
+
+.body_shown {
+    display: block;
+}
+
+.body_hidden {
+    display: none;
+}

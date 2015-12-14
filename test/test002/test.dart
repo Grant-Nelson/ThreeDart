@@ -1,7 +1,7 @@
 // Copyright (c) 2015, <your name>. All rights reserved. Use of this source code
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
-library ThreeDart.test.test001;
+library ThreeDart.test.test002;
 
 import 'dart:html';
 
@@ -19,7 +19,7 @@ void main() {
     ..mover = new Movers.Rotater();
 
   Scenes.RenderPass pass = new Scenes.RenderPass()
-    ..tech = new Techniques.Depth(fogStart: 3.0, fogStop: 6.0)
+    ..tech = new Techniques.Inspection()
     ..children.add(obj)
     ..camara.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0));
 

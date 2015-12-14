@@ -9,6 +9,8 @@ void main() {
   html.Element elem = html.document.getElementById("tests");
   addTest(elem, "test000");
   addTest(elem, "test001");
+  addTest(elem, "test002");
+  addTest(elem, "test003");
 }
 
 void addTest(html.Element elem, String testName) {
