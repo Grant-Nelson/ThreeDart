@@ -402,6 +402,12 @@ class Shape {
         parts.add('   '+vertex.toString());
       }
     }
+    if (this.points.length > 0) {
+      parts.add('Points:');
+      for (Line point in this.points) {
+        parts.add('   '+point.toString());
+      }
+    }
     if (this.lines.length > 0) {
       parts.add('Lines:');
       for (Line line in this.lines) {

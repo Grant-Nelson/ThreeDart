@@ -17,8 +17,18 @@ abstract class TestArgs {
   /// Marks this test as failed.
   void fail();
 
-  /// Prints text to the test's output console.
-  void print(String text);
+  /// Prints text to the test's output console as an information.
+  void info(String text);
+
+  /// Prints text to the test's output console as a notice.
+  void notice(String text);
+
+  /// Prints text to the test's output console as a warning.
+  void warning(String text);
+
+  /// Prints text to the test's output console as an error.
+  /// This will also mark this test as a failure.
+  void error(String text);
 }
 
 /// The block for the unit-test output and the test arguments.
@@ -39,7 +49,7 @@ class TestBlock extends TestArgs {
       this._body = new html.DivElement()
         ..className = "test_body body_hidden";
       this._title = new html.DivElement()
-        ..className = "running topHeader"
+        ..className = "running top_header"
         ..onClick.listen(this._titleClicked);
       this._man._elem.children
         ..add(this._title)
@@ -70,19 +80,19 @@ class TestBlock extends TestArgs {
     }
     if (!this._started) {
       this._title
-        ..className = "testHeader queued"
+        ..className = "test_header queued"
         ..text = "Queued: ${this._testName} ${time}";
     } else if (this._failed) {
       this._title
-        ..className = "testHeader failed"
+        ..className = "test_header failed"
         ..text = "Failed: ${this._testName} ${time}";
     } else if (this._finished) {
       this._title
-        ..className = "testHeader passed"
+        ..className = "test_header passed"
         ..text = "Passed: ${this._testName} ${time}";
     } else {
       this._title
-        ..className = "testHeader running"
+        ..className = "test_header running"
         ..text = "Running: ${this._testName} ${time}";
     }
     this._man._update();
@@ -100,8 +110,7 @@ class TestBlock extends TestArgs {
       this._end = new DateTime.now();
     }).catchError((err) {
       this._end = new DateTime.now();
-      this.print("\nException: $err");
-      this.fail();
+      this.error("\nException: $err");
     }).then((_){
       this._finished = true;
       this._man._testDone(this);
@@ -110,10 +119,32 @@ class TestBlock extends TestArgs {
     });
   }
 
-  /// Prints text to the test's output console.
-  void print(String text) {
-    this._body.innerHtml = this._body.innerHtml +
-      text.replaceAll(" ", "&nbsp;").replaceAll("\n", "<br>");
+  void _addLog(String text, String type) {
+    String log = this._man._escape.convert(text).replaceAll(" ", "&nbsp;").
+      replaceAll("\n", "</dir><br class=\"$type\"><dir class=\"$type\">");
+    this._body.innerHtml += "<dir class=\"$type\">$log</dir>";
+  }
+
+  /// Prints text to the test's output console as an information.
+  void info(String text) {
+    this._addLog(text, "info_log");
+  }
+
+  /// Prints text to the test's output console as a notice.
+  void notice(String text) {
+    this._addLog(text, "notice_log");
+  }
+
+  /// Prints text to the test's output console as a warning.
+  void warning(String text) {
+    this._addLog(text, "warning_log");
+  }
+
+  /// Prints text to the test's output console as an error.
+  /// This will also mark this test as a failure.
+  void error(String text) {
+    this._addLog(text, "error_log");
+    this.fail();
   }
 
   /// The title of the unit-test.
@@ -142,6 +173,7 @@ class TestBlock extends TestArgs {
 class TestManager {
     html.Element _elem;
     html.DivElement _header;
+    convert.HtmlEscape _escape;
     DateTime _start;
     List<TestBlock> _tests;
     int _finished;
@@ -155,12 +187,38 @@ class TestManager {
 
     /// Creates new test manager attached to the given element.
     TestManager(this._elem) {
+      this._escape = new convert.HtmlEscape(convert.HtmlEscapeMode.ELEMENT);
       this._header = new html.DivElement();
       this._elem.children.add(this._header);
+      html.DivElement checkBoxes = new html.DivElement()
+        ..className = "log_checkboxes";
+      this._createLogSwitch(checkBoxes, "Information", "info_log");
+      this._createLogSwitch(checkBoxes, "Notice", "notice_log");
+      this._createLogSwitch(checkBoxes, "Warning", "warning_log");
+      this._createLogSwitch(checkBoxes, "Error", "error_log");
+      this._elem.children.add(checkBoxes);
       this._start = new DateTime.now();
       this._tests = new List<TestBlock>();
       this._finished = 0;
       this._failed = 0;
+    }
+
+    /// Creates a check box for changing the visibility of logs with the given [type].
+    void _createLogSwitch(html.DivElement checkBoxes, String text, String type) {
+      html.CheckboxInputElement checkBox = new html.CheckboxInputElement()
+        ..className = "log_checkbox"
+        ..checked = true;
+      checkBox.onChange.listen((_) {
+          html.ElementList<html.Element> myElements = html.document.querySelectorAll(".$type");
+          String display = checkBox.checked? "block": "none";
+          for (int i = 0; i < myElements.length; i++) {
+              myElements[i].style.display = display;
+          }
+        });
+      checkBoxes.children.add(checkBox);
+      html.SpanElement span = new html.SpanElement()
+        ..text = text;
+      checkBoxes.children.add(span);
     }
 
     /// Callback from a test to indicate it is done
@@ -185,11 +243,11 @@ class TestManager {
         if (this._failed > 0) {
           this._header
             ..text = "Failed ${this._failed}s Tests (${time}s)"
-            ..className = "topHeader failed";
+            ..className = "top_header failed";
         } else {
           this._header
             ..text = "Tests Passed (${time}s)"
-            ..className = "topHeader passed";
+            ..className = "top_header passed";
         }
       } else {
         String prec = ((this._finished.toDouble()/testCount)*100.0).toStringAsFixed(2);

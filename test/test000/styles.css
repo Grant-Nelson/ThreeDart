@@ -1,5 +1,5 @@
 body {
-    background-color: #E7E7E7;
+    background-color: #A7A7A7;
 }
 
 .queued {
@@ -22,7 +22,35 @@ body {
     background-color: #AA3311;
 }
 
-.topHeader {
+.info_log {
+    float: left;
+    color: #000000;
+    padding: 0px;
+    margin: 0px;
+}
+
+.notice_log {
+    float: left;
+    color: #0000DD;
+    padding: 0px;
+    margin: 0px;
+}
+
+.warning_log {
+    float: left;
+    color: #DD8800;
+    padding: 0px;
+    margin: 0px;
+}
+
+.error_log {
+    float: left;
+    color: #FF0000;
+    padding: 0px;
+    margin: 0px;
+}
+
+.top_header {
     margin: 0px;
     font-size: 2em;
     width: 100%-5px;
@@ -31,8 +59,13 @@ body {
     border: 1px solid black;
 }
 
-.testHeader {
-    margin: 5px 0px 1px 20px;
+.log_checkboxes {
+    padding: 5px;
+    width: 100%-5px;
+}
+
+.test_header {
+    margin: 5px 0px -2px 20px;
     width: 100%-25px;
     padding: 5px;
     border: 1px solid black;
@@ -40,20 +73,28 @@ body {
 
 .test_body {
     border: 1px solid black;
-    margin: 0px 0px 0px 40px;
-    width: 100%-45px;
-    height: 300px;
+    margin: 0px 0px 0px 20px;
+    width: 100%-25px;
     font-family: "Lucida Console";
     font-size: .75em;
-    overflow: scroll;
     white-space: nowrap;
     background-color: #DDDDDD;
+  	-webkit-transition: max-height 0.5s;
+  	-moz-transition: max-height 0.5s;
+  	transition: max-height 0.5s;
+  	-webkit-transition: padding 0.5s;
+  	-moz-transition: padding 0.5s;
+  	transition: padding 0.5s;
 }
 
 .body_shown {
-    display: block;
+    max-height: 600px;
+    overflow: scroll;
+    padding: 10px;
 }
 
 .body_hidden {
-    display: none;
+    max-height: 0px;
+    overflow: hidden;
+    padding: 0px 10px 0px 10px;
 }

@@ -19,4 +19,5 @@ part 'Uniforms.dart';
 
 // Implemented Shaders
 part 'Depth.dart';
+part 'Inspection.dart';
 part 'SolidDirectional.dart';

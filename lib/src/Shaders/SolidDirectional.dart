@@ -5,25 +5,25 @@ class SolidDirectional extends Shader {
   static const String defaultName = "Solid Directional";
 
   static String _vertexSource =
-      "uniform mat4 objMat;                                       \n"+
-      "uniform mat4 viewMat;                                      \n"+
-      "uniform mat4 projMat;                                      \n"+
-      "uniform vec3 lightVec;                                     \n"+
-      "                                                           \n"+
-      "attribute vec3 posAttr;                                    \n"+
-      "attribute vec3 normAttr;                                   \n"+
-      "                                                           \n"+
-      "varying vec3 normal;                                       \n"+
-      "varying vec3 litVec;                                       \n"+
-      "varying vec3 camPos;                                       \n"+
-      "                                                           \n"+
-      "void main()                                                \n"+
-      "{                                                          \n"+
-      "  camPos = (viewMat*vec4(0.0, 0.0, 0.0, -1.0)).xyz;        \n"+
-      "  normal = normalize(objMat*vec4(normAttr, 0.0)).xyz;      \n"+
-      "  litVec = normalize((viewMat*vec4(lightVec, 0.0)).xyz);   \n"+
-      "  gl_Position = projMat*viewMat*objMat*vec4(posAttr, 1.0); \n"+
-      "}                                                          \n";
+      "uniform mat4 objMat;                                        \n"+
+      "uniform mat4 viewMat;                                       \n"+
+      "uniform mat4 projMat;                                       \n"+
+      "uniform vec3 lightVec;                                      \n"+
+      "                                                            \n"+
+      "attribute vec3 posAttr;                                     \n"+
+      "attribute vec3 normAttr;                                    \n"+
+      "                                                            \n"+
+      "varying vec3 normal;                                        \n"+
+      "varying vec3 litVec;                                        \n"+
+      "varying vec3 camPos;                                        \n"+
+      "                                                            \n"+
+      "void main()                                                 \n"+
+      "{                                                           \n"+
+      "   camPos = (viewMat*vec4(0.0, 0.0, 0.0, -1.0)).xyz;        \n"+
+      "   normal = normalize(objMat*vec4(normAttr, 0.0)).xyz;      \n"+
+      "   litVec = normalize((viewMat*vec4(lightVec, 0.0)).xyz);   \n"+
+      "   gl_Position = projMat*viewMat*objMat*vec4(posAttr, 1.0); \n"+
+      "}                                                           \n";
 
   static String _fragmentSource =
       "precision mediump float;                                   \n"+

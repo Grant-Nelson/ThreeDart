@@ -75,53 +75,103 @@ class VertexType {
   /// The vertex type at the given [index].
   VertexType at(int index) {
     int count = 0;
-    if (count == index) return Pos;
-    if (this.has(Pos)) count++;
-
-    if (count == index) return Norm;
-    if (this.has(Norm)) count++;
-
-    if (count == index) return Binm;
-    if (this.has(Binm)) count++;
-
-    if (count == index) return Txt;
-    if (this.has(Txt)) count++;
-
-    if (count == index) return Clr3;
-    if (this.has(Clr3)) count++;
-
-    if (count == index) return Clr4;
-    if (this.has(Clr4)) count++;
-
-    if (count == index) return Weight;
-    if (this.has(Weight)) count++;
+    if (this.has(Pos)) {
+      if (count == index) return Pos;
+      count++;
+    }
+    if (this.has(Norm)) {
+      if (count == index) return Norm;
+      count++;
+    }
+    if (this.has(Binm)) {
+      if (count == index) return Binm;
+      count++;
+    }
+    if (this.has(Txt)) {
+      if (count == index) return Txt;
+      count++;
+    }
+    if (this.has(Clr3)) {
+      if (count == index) return Clr3;
+      count++;
+    }
+    if (this.has(Clr4)) {
+      if (count == index) return Clr4;
+      count++;
+    }
+    if (this.has(Weight)) {
+      if (count == index) return Weight;
+      count++;
+    }
     return None;
   }
 
   /// The index of the given [type] in this combined type.
+  int indexOf(VertexType type) {
+    int result = 0;
+    if (this.has(Pos)) {
+      if (type == Pos) return result;
+      result++;
+    }
+    if (this.has(Norm)) {
+      if (type == Norm) return result;
+       result++;
+    }
+    if (this.has(Binm)) {
+      if (type == Binm) return result;
+      result++;
+    }
+    if (this.has(Txt)) {
+      if (type == Txt) return result;
+      result++;
+    }
+    if (this.has(Clr3)) {
+      if (type == Clr3) return result;
+      result++;
+    }
+    if (this.has(Clr4)) {
+      if (type == Clr4) return result;
+      result++;
+    }
+    if (this.has(Weight)) {
+      if (type == Weight) return result;
+      //result++;
+    }
+    return -1;
+  }
+
+  /// The number of floats to the given [type] in this combined type.
   int offset(VertexType type) {
     int result = 0;
-    if (type == Pos) return result;
-    if (this.has(Pos)) result += 3;
-
-    if (type == Norm) return result;
-    if (this.has(Norm)) result += 3;
-
-    if (type == Binm) return result;
-    if (this.has(Binm)) result += 3;
-
-    if (type == Txt) return result;
-    if (this.has(Txt)) result += 2;
-
-    if (type == Clr3) return result;
-    if (this.has(Clr3)) result += 3;
-
-    if (type == Clr4) return result;
-    if (this.has(Clr4)) result += 4;
-
-    if (type == Weight) return result;
-    if (this.has(Weight)) result += 1;
-    return result;
+    if (this.has(Pos)) {
+      if (type == Pos) return result;
+      result += 3;
+    }
+    if (this.has(Norm)) {
+      if (type == Norm) return result;
+      result += 3;
+    }
+    if (this.has(Binm)) {
+      if (type == Binm) return result;
+      result += 3;
+    }
+    if (this.has(Txt)) {
+      if (type == Txt) return result;
+      result += 2;
+    }
+    if (this.has(Clr3)) {
+      if (type == Clr3) return result;
+      result += 3;
+    }
+    if (this.has(Clr4)) {
+      if (type == Clr4) return result;
+      result += 4;
+    }
+    if (this.has(Weight)) {
+      if (type == Weight) return result;
+      //result += 1;
+    }
+    return -1;
   }
 
   /// The string for this vertex type.
@@ -134,6 +184,7 @@ class VertexType {
     if (this.has(Clr3)) parts.add("Clr3");
     if (this.has(Clr4)) parts.add("Clr4");
     if (this.has(Weight)) parts.add("Weight");
+    if (parts.length <= 0) return "None";
     return parts.join("|");
   }
 }

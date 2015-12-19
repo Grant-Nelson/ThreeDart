@@ -58,4 +58,11 @@ class BufferStore implements Core.Bindable, Core.Renderable, TechniqueCache {
       state.gl.drawElements(indexObj.type, indexObj.count, WebGL.UNSIGNED_SHORT, 0);
     }
   }
+
+  /// Binds the buffers, renders, then unbinds with the given state.
+  void oneRender(Core.RenderState state) {
+    this.bind(state);
+    this.render(state);
+    this.unbind(state);
+  }
 }
