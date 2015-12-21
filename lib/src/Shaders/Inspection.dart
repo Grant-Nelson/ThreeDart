@@ -21,7 +21,7 @@ class Inspection extends Shader {
       "                                                            \n"+
       "void main()                                                 \n"+
       "{                                                           \n"+
-      "   gl_PointSize = 4.0;                                      \n"+
+      "   gl_PointSize = 6.0;                                      \n"+
       "   color = clrAttr;                                         \n"+
       "   camPos = (viewMat*vec4(0.0, 0.0, 0.0, -1.0)).xyz;        \n"+
       "   normal = normalize(objMat*vec4(normAttr, 0.0)).xyz;      \n"+

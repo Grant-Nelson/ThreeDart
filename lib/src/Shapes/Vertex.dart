@@ -26,11 +26,11 @@ class Vertex {
 
   Vertex copy() {
     return new Vertex(
-      loc: (this._loc == null)? null: this._loc.copy(),
+      loc:  (this._loc  == null)? null: this._loc.copy(),
       norm: (this._norm == null)? null: this._norm.copy(),
-      binm: (this._binm == null)? null: this. _binm.copy(),
-      txt: (this._txt == null)? null: this._txt.copy(),
-      clr: (this._clr == null)? null: this._clr.copy(),
+      binm: (this._binm == null)? null: this._binm.copy(),
+      txt:  (this._txt  == null)? null: this._txt.copy(),
+      clr:  (this._clr  == null)? null: this._clr.copy(),
       weight: this._weight
     );
   }
@@ -62,8 +62,8 @@ class Vertex {
     else if (type == Data.VertexType.Norm) return this._norm.toList();
     else if (type == Data.VertexType.Binm) return this._binm.toList();
     else if (type == Data.VertexType.Txt) return this._txt.toList();
-    else if (type == Data.VertexType.Clr3) return this._clr.toList();
-    else if (type == Data.VertexType.Clr4) return new Math.Color3.fromColor4(this._clr).toList();
+    else if (type == Data.VertexType.Clr3) return new Math.Color3.fromColor4(this._clr).toList();
+    else if (type == Data.VertexType.Clr4) return this._clr.toList();
     else if (type == Data.VertexType.Weight) return new List<double>.from([ this._weight ]);
     else return new List<double>();
   }

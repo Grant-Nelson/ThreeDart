@@ -11,7 +11,9 @@ import '../Data/Data.dart' as Data;
 import '../Math/Math.dart' as Math;
 
 part 'Face.dart';
+part 'FaceMatcher.dart';
 part 'Line.dart';
+part 'LineMatcher.dart';
 part 'Shape.dart';
 part 'Vertex.dart';
 part 'VertexMatcher.dart';

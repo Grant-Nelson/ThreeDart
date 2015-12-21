@@ -189,8 +189,14 @@ class Shape {
   }
 
   void updateIndices() {
-    for(int i = this.vertices.length - 1; i >= 0; --i)
-      this.vertices[i]._index = i;
+    // TODO: Keep a flag to only update indices when they need to be updated.
+    int index = 0;
+    for(int i = this.vertices.length - 1; i >= 0; --i) {
+      if (this.vertices[i] != null) {
+        this.vertices[i]._index = index;
+        ++index;
+      }
+    }
   }
 
   void merge(Shape other) {
@@ -275,6 +281,7 @@ class Shape {
         }
       }
     }
+
     for (int i = this._vertices.length-1; i >= 0; --i) {
       if (this._vertices[i] == null) this._vertices.removeAt(i);
     }
@@ -284,8 +291,64 @@ class Shape {
     for (int i = this._faces.length-1; i >= 0; --i) {
       if (this._faces[i].collapsed) this._faces.removeAt(i);
     }
-    // TODO: Need to check for repeat points, lines, and faces.
+
+    this.removeRepeatPoints();
+    this.removeRepeatLines(new UndirectedLineMatcher());
+    this.removeRepeatFaces(new SimilarFaceMatcher());
+  }
+
+  void removeRepeatPoints() {
     this.updateIndices();
+    for (int i = this._points.length-1; i >= 0; --i) {
+      Vertex point1 = this._points[i];
+      if (point1 != null) {
+        for (int j = i - 1; j >= 0; --j) {
+          Vertex point2 = this._points[j];
+          if (point2 != null) {
+            if (point1.index == point2.index) {
+              this._points.removeAt(i);
+              break;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  void removeRepeatLines(LineMatcher matcher) {
+    this.updateIndices();
+    for (int i = this._lines.length-1; i >= 0; --i) {
+      Line line1 = this._lines[i];
+      if (line1 != null) {
+        for (int j = i - 1; j >= 0; --j) {
+          Line line2 = this._lines[j];
+          if (line2 != null) {
+            if (matcher.matches(line1, line2)) {
+              this._lines.removeAt(i);
+              break;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  void removeRepeatFaces(FaceMatcher matcher) {
+    this.updateIndices();
+    for (int i = this._faces.length-1; i >= 0; --i) {
+      Face face1 = this._faces[i];
+      if (face1 != null) {
+        for (int j = i - 1; j >= 0; --j) {
+          Face face2 = this._faces[j];
+          if (face2 != null) {
+            if (matcher.matches(face1, face2)) {
+              this._faces.removeAt(i);
+              break;
+            }
+          }
+        }
+      }
+    }
   }
 
   void joinSeams([VertexMatcher matcher = null]) {

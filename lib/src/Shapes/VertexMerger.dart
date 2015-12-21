@@ -10,8 +10,12 @@ class VertexJoiner extends VertexMerger {
     Math.Point3 avgLoc = null;
     Math.Vector3 avgNorm = null;
     Math.Vector3 avgBinm = null;
+    int divClr = 0;
+    Math.Vector4 avgClr = null;
     int divTxt = 0;
     Math.Point2 avgTxt = null;
+    int divWeight = 0;
+    double avgWeight = 0.0;
 
     for (Vertex ver in vertices) {
       if (ver.location != null) {
@@ -44,6 +48,16 @@ class VertexJoiner extends VertexMerger {
         }
         divTxt++;
       }
+      if (ver.color != null) {
+        if (avgClr == null) {
+          avgClr = new Math.Vector4.fromList(ver.color.toList());
+        } else {
+          avgClr += new Math.Vector4.fromList(ver.color.toList());
+        }
+        divClr++;
+      }
+      avgWeight += ver.weight;
+      divWeight++;
     }
 
     Vertex argVer = new Vertex();
@@ -66,6 +80,16 @@ class VertexJoiner extends VertexMerger {
       argVer.texture = null;
     } else {
       argVer.texture = avgTxt / divTxt.toDouble();
+    }
+    if ((divClr <= 0) || (avgClr == null)) {
+      argVer.color = null;
+    } else {
+      argVer.color = new Math.Color4.fromList((avgClr / divClr.toDouble()).toList());
+    }
+    if (divWeight <= 0) {
+      argVer.weight = 0.0;
+    } else {
+      argVer.weight = avgWeight / divWeight.toDouble();
     }
     return argVer;
   }

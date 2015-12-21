@@ -21,7 +21,7 @@ class Color4 {
   /// Constructs a new [Color4] instance.
   ///
   /// [red], [green], [blue], and [alpha] are the initial color components between 0.0 and 1.0 inclusively.
-  Color4(double red, double green, double blue, double alpha) {
+  Color4(double red, double green, double blue, [double alpha = 1.0]) {
     this.set(red, green, blue, alpha);
   }
 

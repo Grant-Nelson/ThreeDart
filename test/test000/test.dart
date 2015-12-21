@@ -19,5 +19,6 @@ void main() {
   TestManager tests = new TestManager.byId("output");
   tests.add(vertexTypeTest1, "Vertex Test 1");
   tests.add(vertexTypeTest2, "Vertex Test 2");
+  tests.add(vertexTypeTest3, "Vertex Test 3");
   //tests.add(shapeTest1, "Shape 1");
 }
