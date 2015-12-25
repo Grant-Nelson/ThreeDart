@@ -49,4 +49,9 @@ class BufferAttr extends Core.Bindable {
   void unbind(Core.RenderState state) {
     state.gl.disableVertexAttribArray(this._attr);
   }
+
+  /// Get the string for the buffer attribute.
+  String toString() {
+    return "[${this._type.toString()}, Size: ${this._size}, Offset: ${this._offset}, Stride: ${this._stride}, Attr: ${this._attr}]";
+  }
 }

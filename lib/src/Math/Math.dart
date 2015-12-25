@@ -39,7 +39,7 @@ double clampVal(double v) => (v < 0.0) ? 0.0 : (v > 1.0) ? 1.0 : v;
 /// [v] is the number to get a string for.
 /// [whole] is the padding to put to the left of the decimal point.
 /// [fraction] is the length of the fractional part.
-String formatDouble(double v, [int whole = 1, int fraction = 4]) {
+String formatDouble(double v, [int whole = 1, int fraction = 3]) {
   if (Comparer.currentEquality(v, 0.0)) {
     return (' '+(0.0).toStringAsFixed(fraction)).padLeft(whole+fraction+2);
   } else if (v < 0.0) {

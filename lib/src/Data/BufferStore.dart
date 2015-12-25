@@ -4,7 +4,7 @@ part of ThreeDart.Data;
 class BufferStore implements Core.Bindable, Core.Renderable, TechniqueCache {
 
   /// The buffer storing all the vertex data for the shape.
-  WebGL.Buffer _vertexBuf;
+  Buffer _vertexBuf;
 
   /// The list of indices for the order of vertex rendering and type of resterization.
   List<IndexObject> _indexObjs;
@@ -33,7 +33,7 @@ class BufferStore implements Core.Bindable, Core.Renderable, TechniqueCache {
 
   /// Binds the buffer to prepare for rendering.
   void bind(Core.RenderState state) {
-    state.gl.bindBuffer(WebGL.ARRAY_BUFFER, this._vertexBuf);
+    this._vertexBuf.bind(state);
     for (int i = this._attrs.length - 1; i >= 0; i--) {
       this._attrs[i].bind(state);
     }
@@ -44,7 +44,7 @@ class BufferStore implements Core.Bindable, Core.Renderable, TechniqueCache {
     for (int i = this._attrs.length - 1; i >= 0; i--) {
       this._attrs[i].unbind(state);
     }
-    state.gl.bindBuffer(WebGL.ARRAY_BUFFER, null);
+    this._vertexBuf.unbind(state);
   }
 
   /// Renders the buffer with the current technique.
@@ -54,8 +54,9 @@ class BufferStore implements Core.Bindable, Core.Renderable, TechniqueCache {
     int objCount = this._indexObjs.length;
     for (int i = 0; i < objCount; i++) {
       IndexObject indexObj = this._indexObjs[i];
-      state.gl.bindBuffer(WebGL.ELEMENT_ARRAY_BUFFER, indexObj.buffer);
+      indexObj.buffer.bind(state);
       state.gl.drawElements(indexObj.type, indexObj.count, WebGL.UNSIGNED_SHORT, 0);
+      indexObj.buffer.unbind(state);
     }
   }
 
@@ -64,5 +65,18 @@ class BufferStore implements Core.Bindable, Core.Renderable, TechniqueCache {
     this.bind(state);
     this.render(state);
     this.unbind(state);
+  }
+
+  /// Gets the string for this buffer store.
+  String toString() {
+    List<String> indexStr = new List<String>();
+    for (IndexObject obj in this._indexObjs) {
+      indexStr.add(obj.toString());
+    }
+    List<String> attrStr = new List<String>();
+    for (BufferAttr attr in this._attrs) {
+      attrStr.add(attr.toString());
+    }
+    return "Buffer:  [${this._vertexBuf}]\nIndices: ${indexStr.join(", ")}\nAttrs:   ${attrStr.join(", ")}";
   }
 }

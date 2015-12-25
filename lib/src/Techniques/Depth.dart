@@ -37,7 +37,7 @@ class Depth extends Technique {
       this._shader = new Shaders.Depth.cached(state);
 
     if (obj.cacheNeedsUpdate) {
-      obj.cache = obj.shape.build(state.gl, Data.VertexType.Pos)
+      obj.cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl), Data.VertexType.Pos)
         ..findAttribute(Data.VertexType.Pos).attr = this._shader.posAttr.loc;
     }
 

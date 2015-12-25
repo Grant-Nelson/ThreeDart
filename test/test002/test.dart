@@ -30,9 +30,10 @@ void main() {
 
   _addCheckBox("Filled",         true,  (bool show) { tech.showFilled        = show; });
   _addCheckBox("Wire Frame",     true,  (bool show) { tech.showWireFrame     = show; });
-  _addCheckBox("Vertices",       true,  (bool show) { tech.showVertices      = show; });
+  _addCheckBox("Vertices",       false, (bool show) { tech.showVertices      = show; });
   _addCheckBox("Normals",        false, (bool show) { tech.showNormals       = show; });
   _addCheckBox("Binormals",      false, (bool show) { tech.showBinormals     = show; });
+  _addCheckBox("Face Centers",   false, (bool show) { tech.showFaceCenters   = show; });
   _addCheckBox("Face Normals",   false, (bool show) { tech.showFaceNormals   = show; });
   _addCheckBox("Face Binormals", false, (bool show) { tech.showFaceBinormals = show; });
   _addCheckBox("Colors",         false, (bool show) { tech.showColorFill     = show; });

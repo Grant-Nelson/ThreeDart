@@ -43,17 +43,20 @@ class Face {
 
   void _calculateBinormal(Vertex vA, Vertex vB, Vertex vC) {
     if(this._binm == null) {
-      double du = vB.texture.x - vA.texture.x;
-      if (Math.Comparer.equals(du, 0.0)) return;
-
-      double tu = vB.texture.x - vC.texture.x;
-      double scale = tu/du;
-      Math.Point3 pnt = vA.location.lerp(vB.location, scale);
-      this._binm = new Math.Vector3.fromPoint3(pnt - vC.location);
+      double du = vB.texture.y - vC.texture.y;
+      if (Math.Comparer.equals(du, 0.0)) {
+        this._binm = new Math.Vector3.fromPoint3(vC.location - vB.location).normal();
+        if (vC.texture.x - vB.texture.x < 0.0) this._binm = -this._binm;
+      } else {
+        double r = (vB.texture.y - vA.texture.y) / du;
+        Math.Point3 vD = (vC.location - vB.location) * r + vB.location;
+        this._binm = new Math.Vector3.fromPoint3(vD - vA.location).normal();
+      }
     }
   }
 
   void calculateBinormal() {
+    print("calculateBinormal");
     this._calculateBinormal(this._ver1, this._ver2, this._ver3);
     this._calculateBinormal(this._ver2, this._ver3, this._ver1);
     this._calculateBinormal(this._ver3, this._ver1, this._ver2);

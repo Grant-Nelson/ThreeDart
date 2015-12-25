@@ -18,6 +18,36 @@ class Shape {
       ..merge(other);
   }
 
+  factory Shape.square() {
+    Shape shape = new Shape();
+    Vertex ver1 = shape.addVertex()
+      ..location = new Math.Point3(-1.0, -1.0, 0.0)
+      ..normal = new Math.Vector3(0.0, 0.0, 1.0)
+      ..texture = new Math.Point2(0.0, 0.0)
+      ..color = new Math.Color4(1.0, 0.0, 0.0, 1.0);
+
+    Vertex ver2 = shape.addVertex()
+      ..location = new Math.Point3(-1.0, 1.0, 0.0)
+      ..normal = new Math.Vector3(0.0, 0.0, 1.0)
+      ..texture = new Math.Point2(0.0, 1.0)
+      ..color = new Math.Color4(1.0, 1.0, 0.0, 1.0);
+
+    Vertex ver3 = shape.addVertex()
+      ..location = new Math.Point3(1.0, 1.0, 0.0)
+      ..normal = new Math.Vector3(0.0, 0.0, 1.0)
+      ..texture = new Math.Point2(1.0, 1.0)
+      ..color = new Math.Color4(0.0, 1.0, 0.0, 1.0);
+
+    Vertex ver4 = shape.addVertex()
+      ..location = new Math.Point3(1.0, -1.0, 0.0)
+      ..normal = new Math.Vector3(0.0, 0.0, 1.0)
+      ..texture = new Math.Point2(1.0, 0.0)
+      ..color = new Math.Color4(0.0, 0.0, 1.0, 1.0);
+
+    shape.addFan([ver1, ver2, ver3, ver4]);
+    return shape;
+  }
+
   factory Shape.cube() {
     return new Shape()
       .._addCubeSide( 1.0,  0.0,  0.0)  // x+
@@ -191,7 +221,8 @@ class Shape {
   void updateIndices() {
     // TODO: Keep a flag to only update indices when they need to be updated.
     int index = 0;
-    for(int i = this.vertices.length - 1; i >= 0; --i) {
+    final int count = this.vertices.length;
+    for(int i = 0; i < count; ++i) {
       if (this.vertices[i] != null) {
         this.vertices[i]._index = index;
         ++index;
@@ -393,7 +424,7 @@ class Shape {
     }
   }
 
-  Data.BufferStore build(WebGL.RenderingContext gl, Data.VertexType type) {
+  Data.BufferStore build(Data.BufferBuilder builder, Data.VertexType type) {
     int length = this._vertices.length;
     int count = type.count;
     int stride = type.size;
@@ -403,10 +434,9 @@ class Shape {
     for (int i = 0; i < count; ++i) {
       Data.VertexType local = type.at(i);
       int size = local.size;
-      Data.BufferAttr attr = new Data.BufferAttr(local, size,
+      attrs[i] = new Data.BufferAttr(local, size,
         offset*Typed.Float32List.BYTES_PER_ELEMENT,
         stride*Typed.Float32List.BYTES_PER_ELEMENT);
-      attrs[i] = attr;
       for (int j = 0; j < length; ++j) {
         Vertex ver = this._vertices[j];
         List<double> list = ver.listFor(local);
@@ -419,11 +449,8 @@ class Shape {
       offset += size;
     }
 
-    WebGL.Buffer buffer = gl.createBuffer();
-    gl.bindBuffer(WebGL.ARRAY_BUFFER, buffer);
-    gl.bufferData(WebGL.ARRAY_BUFFER, new Typed.Float32List.fromList(vertices), WebGL.STATIC_DRAW);
-    gl.bindBuffer(WebGL.ARRAY_BUFFER, null);
-    Data.BufferStore store = new Data.BufferStore(buffer, attrs);
+    Data.Buffer vertexBuf = builder.fromDoubleList(WebGL.ARRAY_BUFFER, vertices);
+    Data.BufferStore store = new Data.BufferStore(vertexBuf, attrs);
 
     this.updateIndices();
     if (this._points.length > 0) {
@@ -431,7 +458,8 @@ class Shape {
       for (int i = 0; i < this._points.length; ++i) {
         indices.add(this._points[i].index);
       }
-      store.indexObjects.add(new Data.IndexObject.pack(gl, WebGL.POINTS, indices));
+      Data.Buffer indexBuf = builder.fromIntList(WebGL.ELEMENT_ARRAY_BUFFER, indices);
+      store.indexObjects.add(new Data.IndexObject(WebGL.POINTS, indices.length, indexBuf));
     }
 
     if (this._lines.length > 0) {
@@ -440,7 +468,8 @@ class Shape {
         indices.add(this._lines[i].vertex1.index);
         indices.add(this._lines[i].vertex2.index);
       }
-      store.indexObjects.add(new Data.IndexObject.pack(gl, WebGL.LINES, indices));
+      Data.Buffer indexBuf = builder.fromIntList(WebGL.ELEMENT_ARRAY_BUFFER, indices);
+      store.indexObjects.add(new Data.IndexObject(WebGL.LINES, indices.length, indexBuf));
     }
 
     if (this._faces.length > 0) {
@@ -450,7 +479,8 @@ class Shape {
         indices.add(this._faces[i].vertex2.index);
         indices.add(this._faces[i].vertex3.index);
       }
-      store.indexObjects.add(new Data.IndexObject.pack(gl, WebGL.TRIANGLES, indices));
+      Data.Buffer indexBuf = builder.fromIntList(WebGL.ELEMENT_ARRAY_BUFFER, indices);
+      store.indexObjects.add(new Data.IndexObject(WebGL.TRIANGLES, indices.length, indexBuf));
     }
 
     return store;

@@ -4,13 +4,13 @@ part of ThreeDart.Data;
 class IndexObject {
 
   /// The type of rasterization to use.
-  int _type;
+  final int _type;
 
   /// The number of indices in the buffer.
-  int _count;
+  final int _count;
 
   /// The buffer of indices for a shape.
-  WebGL.Buffer _buffer;
+  final Buffer _buffer;
 
   /// Creates an index object for a shape.
   ///
@@ -19,25 +19,17 @@ class IndexObject {
   /// [_buffer] is the buffer of indices for a shape.
   IndexObject(this._type, this._count, this._buffer);
 
-  /// Creates an index object for a shape from a raw list of indices.
-  ///
-  /// [gl] is the rendering context to create the index object for.
-  /// [type] is the type of rasterization to use.
-  /// [indices] is the list of indices to fill the index buffer with.
-  factory IndexObject.pack(WebGL.RenderingContext gl, int type, List<int> indices) {
-    WebGL.Buffer buffer = gl.createBuffer();
-    gl.bindBuffer(WebGL.ELEMENT_ARRAY_BUFFER, buffer);
-    gl.bufferData(WebGL.ELEMENT_ARRAY_BUFFER, new Typed.Int16List.fromList(indices), WebGL.STATIC_DRAW);
-    gl.bindBuffer(WebGL.ELEMENT_ARRAY_BUFFER, null);
-    return new IndexObject(type, indices.length, buffer);
-  }
-
   /// The type of rasterization to use.
-  int get type => _type;
-  
+  int get type => this._type;
+
   /// The number of indices in the buffer.
-  int get count => _count;
+  int get count => this._count;
 
   /// The buffer of indices for a shape.
-  WebGL.Buffer get buffer => _buffer;
+  Buffer get buffer => this._buffer;
+
+  /// Gets the string for this index object.
+  String toString() {
+    return "Type: ${this._type}, Count: ${this._count}, [${this.buffer.toString()}]";
+  }
 }

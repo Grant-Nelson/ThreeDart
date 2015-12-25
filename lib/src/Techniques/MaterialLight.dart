@@ -49,7 +49,7 @@ class MaterialLight extends Technique {
     Shaders.SolidDirectional shader = this._shader as Shaders.SolidDirectional;
 
     if (obj.cacheNeedsUpdate) {
-      obj.cache = obj.shape.build(state.gl, Data.VertexType.Pos|Data.VertexType.Norm)
+      obj.cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl), Data.VertexType.Pos|Data.VertexType.Norm)
         ..findAttribute(Data.VertexType.Pos).attr = shader.posAttr.loc
         ..findAttribute(Data.VertexType.Norm).attr = shader.normAttr.loc;
     }

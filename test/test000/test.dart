@@ -9,6 +9,7 @@ import 'dart:convert' as convert;
 
 import 'package:ThreeDart/Data.dart' as Data;
 import 'package:ThreeDart/Shapes.dart' as Shapes;
+import 'package:ThreeDart/Math.dart' as Math;
 
 part 'testTools.dart';
 part 'math.dart';
@@ -20,5 +21,5 @@ void main() {
   tests.add(vertexTypeTest1, "Vertex Test 1");
   tests.add(vertexTypeTest2, "Vertex Test 2");
   tests.add(vertexTypeTest3, "Vertex Test 3");
-  //tests.add(shapeTest1, "Shape 1");
+  tests.add(shapeTest1, "Shape Build Test 1");
 }

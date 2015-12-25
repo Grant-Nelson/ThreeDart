@@ -16,6 +16,7 @@ class Inspection extends Technique {
   bool _showVertices;
   bool _showNormals;
   bool _showBinormals;
+  bool _showFaceCenters;
   bool _showFaceNormals;
   bool _showFaceBinormals;
   bool _showColorFill;
@@ -33,9 +34,10 @@ class Inspection extends Technique {
 
     this._showFilled        = true;
     this._showWireFrame     = true;
-    this._showVertices      = true;
+    this._showVertices      = false;
     this._showNormals       = false;
     this._showBinormals     = false;
+    this._showFaceCenters   = false;
     this._showFaceNormals   = false;
     this._showFaceBinormals = false;
     this._showColorFill     = false;
@@ -47,6 +49,7 @@ class Inspection extends Technique {
   set showVertices(bool show)      => this._showVertices      = show;
   set showNormals(bool show)       => this._showNormals       = show;
   set showBinormals(bool show)     => this._showBinormals     = show;
+  set showFaceCenters(bool show)   => this._showFaceCenters   = show;
   set showFaceNormals(bool show)   => this._showFaceNormals   = show;
   set showFaceBinormals(bool show) => this._showFaceBinormals = show;
   set showColorFill(bool show)     => this._showColorFill     = show;
@@ -57,6 +60,7 @@ class Inspection extends Technique {
   bool get showVertices      => this._showVertices;
   bool get showNormals       => this._showNormals;
   bool get showBinormals     => this._showBinormals;
+  bool get showFaceCenters   => this._showFaceCenters;
   bool get showFaceNormals   => this._showFaceNormals;
   bool get showFaceBinormals => this._showFaceBinormals;
   bool get showColorFill     => this._showColorFill;
@@ -74,6 +78,7 @@ class Inspection extends Technique {
       Data.BufferStore vertices      = this._buildShape(state, this._vertices(obj.shape));
       Data.BufferStore normals       = this._buildShape(state, this._normals(obj.shape));
       Data.BufferStore binormals     = this._buildShape(state, this._binormals(obj.shape));
+      Data.BufferStore faceCenters   = this._buildShape(state, this._faceCenters(obj.shape));
       Data.BufferStore faceNormals   = this._buildShape(state, this._faceNormals(obj.shape));
       Data.BufferStore faceBinormals = this._buildShape(state, this._faceBinormals(obj.shape));
       Data.BufferStore colorFill     = this._buildShape(state, this._colorFill(obj.shape));
@@ -85,10 +90,11 @@ class Inspection extends Technique {
         ..list.add(vertices) // 2
         ..list.add(normals) // 3
         ..list.add(binormals) // 4
-        ..list.add(faceNormals) // 5
-        ..list.add(faceBinormals) // 6
-        ..list.add(colorFill) // 7
-        ..list.add(txtColor); // 8i
+        ..list.add(faceCenters) // 5
+        ..list.add(faceNormals) // 6
+        ..list.add(faceBinormals) // 7
+        ..list.add(colorFill) // 8
+        ..list.add(txtColor); // 9
     }
 
     this._shader
@@ -107,6 +113,10 @@ class Inspection extends Technique {
       if (this._showVertices) {
         this._shader.setColors(this._ambient2, this._diffuse2);
         store.list[2].oneRender(state); // vertices
+      }
+      if (this._showFaceCenters) {
+        this._shader.setColors(this._ambient2, this._diffuse2);
+        store.list[5].oneRender(state); // faceCenters
       }
       if (this._showFilled) {
         this._shader.setColors(this._ambient1, this._diffuse1);
@@ -130,19 +140,19 @@ class Inspection extends Technique {
       }
       if (this._showFaceNormals) {
         this._shader.setColors(this._ambient2, this._diffuse2);
-        store.list[5].oneRender(state); // faceNormals
+        store.list[6].oneRender(state); // faceNormals
       }
       if (this._showFaceBinormals) {
         this._shader.setColors(this._ambient3, this._diffuse3);
-        store.list[6].oneRender(state); // faceBinormals
+        store.list[7].oneRender(state); // faceBinormals
       }
       if (this._showColorFill) {
         this._shader.setColors(this._ambient3, this._diffuse3);
-        store.list[7].oneRender(state); // colorFill
+        store.list[8].oneRender(state); // colorFill
       }
       if (this._showTxtColor) {
         this._shader.setColors(this._ambient3, this._diffuse3);
-        store.list[8].oneRender(state); // txtColor
+        store.list[9].oneRender(state); // txtColor
       }
 
       state.gl.enable(WebGL.DEPTH_TEST);
@@ -153,7 +163,7 @@ class Inspection extends Technique {
   }
 
   Data.BufferStore _buildShape(Core.RenderState state, Shapes.Shape shape) {
-    Data.BufferStore store = shape.build(state.gl,
+    Data.BufferStore store = shape.build(new Data.WebGLBufferBuilder(state.gl),
       Data.VertexType.Pos|Data.VertexType.Norm|Data.VertexType.Clr3);
     return store
       ..findAttribute(Data.VertexType.Pos).attr  = this._shader.posAttr.loc
@@ -187,6 +197,7 @@ class Inspection extends Technique {
         ..color = color);
     }
     result.updateIndices();
+
     for (Shapes.Line line in shape.lines) {
       Shapes.Vertex ver1 = result.vertices[line.vertex1.index];
       Shapes.Vertex ver2 = result.vertices[line.vertex2.index];
@@ -215,7 +226,6 @@ class Inspection extends Technique {
       result.points.add(ver);
     }
     result.updateIndices();
-    result.joinSeams();
     return result;
   }
 
@@ -253,6 +263,22 @@ class Inspection extends Technique {
     return result;
   }
 
+  Shapes.Shape _faceCenters(Shapes.Shape shape) {
+    shape.updateIndices();
+    Shapes.Shape result = new Shapes.Shape();
+    Math.Color4 color = new Math.Color4(1.0, 1.0, 0.3);
+    for (Shapes.Face face in shape.faces) {
+      Shapes.Vertex ver = new Shapes.Vertex(
+        loc: (face.vertex1.location + face.vertex2.location + face.vertex3.location)/3.0,
+        norm: face.normal,
+        clr: color);
+      result.vertices.add(ver);
+      result.points.add(ver);
+    }
+    result.updateIndices();
+    return result;
+  }
+
   Shapes.Shape _faceNormals(Shapes.Shape shape) {
     shape.updateIndices();
     Shapes.Shape result = new Shapes.Shape();
@@ -280,11 +306,11 @@ class Inspection extends Technique {
     for (Shapes.Face face in shape.faces) {
       Shapes.Vertex cen1 = new Shapes.Vertex(
         loc: (face.vertex1.location + face.vertex2.location + face.vertex3.location)/3.0,
-        norm: face.binormal,
+        norm: face.normal,
         clr: color);
 
       Shapes.Vertex cen2 = cen1.copy();
-      cen2.location = cen2.location + new Math.Point3.fromVector3(cen2.normal);
+      cen2.location += new Math.Point3.fromVector3(face.binormal);
       result.vertices.add(cen1);
       result.vertices.add(cen2);
       result.lines.add(new Shapes.Line(cen1, cen2));
