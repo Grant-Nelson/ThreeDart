@@ -15,6 +15,7 @@ part 'FaceMatcher.dart';
 part 'Line.dart';
 part 'LineMatcher.dart';
 part 'Shape.dart';
+part 'ShapeBuilders.dart';
 part 'Vertex.dart';
 part 'VertexMatcher.dart';
 part 'VertexMerger.dart';

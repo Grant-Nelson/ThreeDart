@@ -14,100 +14,8 @@ class Shape {
   }
 
   factory Shape.copy(Shape other) {
-    return new Shape()
-      ..merge(other);
+    return new Shape()..merge(other);
   }
-
-  factory Shape.square() {
-    Shape shape = new Shape();
-    Vertex ver1 = shape.addVertex()
-      ..location = new Math.Point3(-1.0, -1.0, 0.0)
-      ..normal = new Math.Vector3(0.0, 0.0, 1.0)
-      ..texture = new Math.Point2(0.0, 0.0)
-      ..color = new Math.Color4(1.0, 0.0, 0.0, 1.0);
-
-    Vertex ver2 = shape.addVertex()
-      ..location = new Math.Point3(-1.0, 1.0, 0.0)
-      ..normal = new Math.Vector3(0.0, 0.0, 1.0)
-      ..texture = new Math.Point2(0.0, 1.0)
-      ..color = new Math.Color4(1.0, 1.0, 0.0, 1.0);
-
-    Vertex ver3 = shape.addVertex()
-      ..location = new Math.Point3(1.0, 1.0, 0.0)
-      ..normal = new Math.Vector3(0.0, 0.0, 1.0)
-      ..texture = new Math.Point2(1.0, 1.0)
-      ..color = new Math.Color4(0.0, 1.0, 0.0, 1.0);
-
-    Vertex ver4 = shape.addVertex()
-      ..location = new Math.Point3(1.0, -1.0, 0.0)
-      ..normal = new Math.Vector3(0.0, 0.0, 1.0)
-      ..texture = new Math.Point2(1.0, 0.0)
-      ..color = new Math.Color4(0.0, 0.0, 1.0, 1.0);
-
-    shape.addFan([ver1, ver2, ver3, ver4]);
-    return shape;
-  }
-
-  factory Shape.cube() {
-    return new Shape()
-      .._addCubeSide( 1.0,  0.0,  0.0)  // x+
-      .._addCubeSide(-1.0,  0.0,  0.0)  // X-
-      .._addCubeSide( 0.0,  1.0,  0.0)  // Y+
-      .._addCubeSide( 0.0, -1.0,  0.0)  // Y-
-      .._addCubeSide( 0.0,  0.0,  1.0)  // Z+
-      .._addCubeSide( 0.0,  0.0, -1.0); // Z-
-  }
-
-  factory Shape.disk([int sides = 8]) {
-    Shape shape = new Shape();
-    double step = 2.0*PI/sides.toDouble();
-    List<Vertex> vers = new List<Vertex>();
-    for (int i = 0; i < sides; i++) {
-      double angle = step*i.toDouble();
-      double x = sin(angle);
-      double z = cos(angle);
-      Vertex ver = shape.addVertex()
-        ..location = new Math.Point3(x, 0.0, z)
-        ..normal = new Math.Vector3(0.0, 1.0, 0.0)
-        ..texture = new Math.Point2(x*0.5+0.5, z*0.5+0.5);
-      vers.add(ver);
-    }
-    shape.addFan(vers);
-    return shape;
-  }
-
-  factory Shape.cylander([double topRadius = 1.0, double bottomRadius = 1.0,
-      int sides = 8, int div = 1, bool capTop = true, bool capBottom = true]) {
-    Shape shape = new Shape();
-
-    // TODO: Implement
-
-    return shape;
-  }
-
-  factory Shape.sphere([int latitudeDiv = 12, int longitudeDiv = 12]) {
-    Shape shape = new Shape();
-
-    // TODO: Implement
-
-    return shape;
-  }
-
-  factory Shape.isosphere([int iterations = 4]) {
-    Shape shape = new Shape();
-
-    // TODO: Implement
-
-    return shape;
-  }
-
-  //factory Shape.grid([int widthDiv = 4, int heightDiv = 4, GridHeightHandle hndl]) {
-  //Shape shape = new Shape();
-
-    // TODO: Implement
-
-  //  return shape;
-  //}
 
   List<Face> get faces => this._faces;
   List<Line> get lines => this._lines;
@@ -218,6 +126,31 @@ class Shape {
     return faces;
   }
 
+  List<Face> addGrid(int rows, int columns, List<Vertex> vertices) {
+    List<Face> faces = new List<Face>();
+    int k0 = 0, k1 = columns;
+    bool flipA = false;
+    for (int i = 1; i < rows; ++i, ++k0, ++k1) {
+      bool flipB = flipA;
+      for (int j = 1; j < columns; ++j, ++k0, ++k1) {
+        Vertex ver0 = vertices[k0];
+        Vertex ver1 = vertices[k0+1];
+        Vertex ver2 = vertices[k1+1];
+        Vertex ver3 = vertices[k1];
+        if (flipB) {
+          faces.add(this.addFace(ver0, ver1, ver2));
+          faces.add(this.addFace(ver0, ver2, ver3));
+        } else {
+          faces.add(this.addFace(ver1, ver2, ver3));
+          faces.add(this.addFace(ver1, ver3, ver0));
+        }
+        flipB = !flipB;
+      }
+      flipA = !flipA;
+    }
+    return faces;
+  }
+
   void updateIndices() {
     // TODO: Keep a flag to only update indices when they need to be updated.
     int index = 0;
@@ -254,18 +187,26 @@ class Shape {
     }
   }
 
-  void calculateNormals() {
-    for (Face face in this._faces)
-      face.calculateNormal();
-    for (Vertex vertex in this._vertices)
-      vertex.calculateNormal();
+  bool calculateNormals() {
+    bool success = true;
+    for (Face face in this._faces) {
+      if (!face.calculateNormal()) success = false;
+    }
+    for (Vertex vertex in this._vertices) {
+      if (!vertex.calculateNormal()) success = false;
+    }
+    return success;
   }
 
-  void calculateBinormals() {
-    for (Face face in this._faces)
-      face.calculateBinormal();
-    for (Vertex vertex in this._vertices)
-      vertex.calculateBinormal();
+  bool calculateBinormals() {
+    bool success = true;
+    for (Face face in this._faces) {
+      if (!face.calculateBinormal()) success = false;
+    }
+    for (Vertex vertex in this._vertices) {
+      if (!vertex.calculateBinormal()) success = false;
+    }
+    return success;
   }
 
   bool _findMatching(VertexMatcher matcher, Vertex ver, int index, List<Vertex> matches, List<int> indices) {
@@ -317,10 +258,10 @@ class Shape {
       if (this._vertices[i] == null) this._vertices.removeAt(i);
     }
     for (int i = this._lines.length-1; i >= 0; --i) {
-      if (this._lines[i].collapsed) this._lines.removeAt(i);
+      if ((this._lines[i] == null) || this._lines[i].collapsed) this._lines.removeAt(i);
     }
     for (int i = this._faces.length-1; i >= 0; --i) {
-      if (this._faces[i].collapsed) this._faces.removeAt(i);
+      if ((this._faces[i] == null) || this._faces[i].collapsed) this._faces.removeAt(i);
     }
 
     this.removeRepeatPoints();
@@ -390,38 +331,6 @@ class Shape {
   void adjustNormals([VertexMatcher matcher = null]) {
     if (matcher == null) matcher = new LocationMatcher();
     this.mergeVertices(matcher, new NormalAdjuster());
-  }
-
-  void _addCubeSide(double nx, double ny, double nz) {
-    Vertex ver1 = this.addVertex()
-      ..location = new Math.Point3(nx+ny+nz, ny+nz+nx, nz+nx+ny)
-      ..normal = new Math.Vector3(nx, ny, nz)
-      ..texture = new Math.Point2(0.0, 0.0)
-      ..color = new Math.Color4(nx+ny+nz, ny+nz+nx, nz+nx+ny, 1.0);
-
-    Vertex ver2 = this.addVertex()
-      ..location = new Math.Point3(nx-ny+nz, ny-nz+nx, nz-nx+ny)
-      ..normal = new Math.Vector3(nx, ny, nz)
-      ..texture = new Math.Point2(0.0, 1.0)
-      ..color = new Math.Color4(nx-ny+nz, ny-nz+nx, nz-nx+ny, 1.0);
-
-    Vertex ver3 = this.addVertex()
-      ..location = new Math.Point3(nx+ny-nz, ny+nz-nx, nz+nx-ny)
-      ..normal = new Math.Vector3(nx, ny, nz)
-      ..texture = new Math.Point2(1.0, 0.0)
-      ..color = new Math.Color4(nx+ny-nz, ny+nz-nx, nz+nx-ny, 1.0);
-
-    Vertex ver4 = this.addVertex()
-      ..location = new Math.Point3(nx-ny-nz, ny-nz-nx, nz-nx-ny)
-      ..normal = new Math.Vector3(nx, ny, nz)
-      ..texture = new Math.Point2(1.0, 1.0)
-      ..color = new Math.Color4(nx-ny-nz, ny-nz-nx, nz-nx-ny, 1.0);
-
-    if (nx+ny+nz > 0.0) {
-      this.addFan([ver1, ver2, ver4, ver3]);
-    } else {
-      this.addFan([ver1, ver3, ver4, ver2]);
-    }
   }
 
   Data.BufferStore build(Data.BufferBuilder builder, Data.VertexType type) {

@@ -13,7 +13,6 @@ Given:
 
 Try to solve for:
 `P4 = <x4, y4, z4, u4, v4>`
-`Bn = |P4 - P3|`
 
 Solving using the two-line intersection equation,
 Where the first line, `A`, is `<u2, v2, u3, v3>`,
@@ -39,4 +38,8 @@ else
 `r = num / det`
 
 Use the Bezier linear factor, `r`, to calculate all values of `P4`:
-`P4 = P2 + r*(P3-P2)`
+`P4' = P2 + r*(P3-P2)`
+
+The point of intersection may have been behind the initial point,
+therefore if `u4 - u1 < 0` then use `Bn = |P3 - P4|`
+else `Bn = |P4 - P3|`.

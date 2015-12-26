@@ -1,6 +1,7 @@
 part of ThreeDart.Shapes;
 
 class Vertex {
+  // TODO: Need to add Shape to check for ownership.
   List<Line> _lines;
   List<Face> _faces;
   int _index;
@@ -68,26 +69,26 @@ class Vertex {
     else return new List<double>();
   }
 
-  void calculateNormal() {
-    if (this._norm == null) {
-      Math.Vector3 normSum = new Math.Vector3.zero();
-      for (Face face in this._faces) {
-        Math.Vector3 norm = (face == null) ? null : face.normal;
-        if (norm != null) normSum += norm;
-      }
-      this._norm = normSum.normal();
+  bool calculateNormal() {
+    if (this._norm != null) return true;
+    Math.Vector3 normSum = new Math.Vector3.zero();
+    for (Face face in this._faces) {
+      Math.Vector3 norm = (face == null) ? null : face.normal;
+      if (norm != null) normSum += norm;
     }
+    this._norm = normSum.normal();
+    return true;
   }
 
-  void calculateBinormal() {
-    if (this._binm == null) {
-      Math.Vector3 binmSum = new Math.Vector3.zero();
-      for (Face face in this._faces) {
-        Math.Vector3 binm = (face == null) ? null : face.binormal;
-        if(binm != null) binmSum += binm;
-      }
-      this._binm = binmSum.normal();
+  bool calculateBinormal() {
+    if (this._binm != null) return true;
+    Math.Vector3 binmSum = new Math.Vector3.zero();
+    for (Face face in this._faces) {
+      Math.Vector3 binm = (face == null) ? null : face.binormal;
+      if(binm != null) binmSum += binm;
     }
+    this._binm = binmSum.normal();
+    return true;
   }
 
   /// @note  Does not compare indices, lines, and faces.

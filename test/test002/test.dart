@@ -15,7 +15,7 @@ import 'package:ThreeDart/Scenes.dart' as Scenes;
 void main() {
 
   ThreeDart.Object obj = new ThreeDart.Object()
-    ..shape = new Shapes.Shape.cube()
+    ..shape = Shapes.knot()
     ..mover = new Movers.Rotater();
 
   Techniques.Inspection tech = new Techniques.Inspection();
@@ -31,7 +31,7 @@ void main() {
   _addCheckBox("Filled",         true,  (bool show) { tech.showFilled        = show; });
   _addCheckBox("Wire Frame",     true,  (bool show) { tech.showWireFrame     = show; });
   _addCheckBox("Vertices",       false, (bool show) { tech.showVertices      = show; });
-  _addCheckBox("Normals",        false, (bool show) { tech.showNormals       = show; });
+  _addCheckBox("Normals",        true,  (bool show) { tech.showNormals       = show; });
   _addCheckBox("Binormals",      false, (bool show) { tech.showBinormals     = show; });
   _addCheckBox("Face Centers",   false, (bool show) { tech.showFaceCenters   = show; });
   _addCheckBox("Face Normals",   false, (bool show) { tech.showFaceNormals   = show; });

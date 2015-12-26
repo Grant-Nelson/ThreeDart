@@ -68,5 +68,4 @@ class FrontTarget extends Target {
   void unbind(Core.RenderState state) {
     // Empty
   }
-
 }

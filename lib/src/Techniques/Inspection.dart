@@ -21,6 +21,7 @@ class Inspection extends Technique {
   bool _showFaceBinormals;
   bool _showColorFill;
   bool _showTxtColor;
+  double _vectorScale;
 
   Inspection() {
     this._shader = null;
@@ -42,6 +43,7 @@ class Inspection extends Technique {
     this._showFaceBinormals = false;
     this._showColorFill     = false;
     this._showTxtColor      = false;
+    this._vectorScale       = 1.0;
   }
 
   set showFilled(bool show)        => this._showFilled        = show;
@@ -54,6 +56,7 @@ class Inspection extends Technique {
   set showFaceBinormals(bool show) => this._showFaceBinormals = show;
   set showColorFill(bool show)     => this._showColorFill     = show;
   set showTxtColor(bool show)      => this._showTxtColor      = show;
+  set vectorScale(double scale)    => this._vectorScale       = scale;
 
   bool get showFilled        => this._showFilled;
   bool get showWireFrame     => this._showWireFrame;
@@ -65,6 +68,7 @@ class Inspection extends Technique {
   bool get showFaceBinormals => this._showFaceBinormals;
   bool get showColorFill     => this._showColorFill;
   bool get showTxtColor      => this._showTxtColor;
+  double get vectorScale     => this._vectorScale;
 
   void render(Core.RenderState state, Core.Object obj) {
     if (this._shader == null)
@@ -107,20 +111,38 @@ class Inspection extends Technique {
     if (obj.cache is Data.BufferStoreList) {
       Data.BufferStoreList store = obj.cache as Data.BufferStoreList;
       state.gl.blendFunc(WebGL.ONE, WebGL.ONE);
-      state.gl.enable(WebGL.DEPTH_TEST);
-      state.gl.disable(WebGL.BLEND);
+      state.gl.disable(WebGL.DEPTH_TEST);
+      state.gl.enable(WebGL.BLEND);
 
       if (this._showVertices) {
         this._shader.setColors(this._ambient2, this._diffuse2);
         store.list[2].oneRender(state); // vertices
+        // TODO: Why does POINTS change culling or something?
+        //state.gl.enable(WebGL.CULL_FACE);
+        //state.gl.cullFace(WebGL.FRONT_FACE);
       }
       if (this._showFaceCenters) {
         this._shader.setColors(this._ambient2, this._diffuse2);
         store.list[5].oneRender(state); // faceCenters
+        // TODO: Why does POINTS change culling or something?
+        //state.gl.enable(WebGL.CULL_FACE);
+        //state.gl.cullFace(WebGL.FRONT_FACE);
       }
+
+      state.gl.enable(WebGL.DEPTH_TEST);
+      state.gl.disable(WebGL.BLEND);
+
       if (this._showFilled) {
         this._shader.setColors(this._ambient1, this._diffuse1);
         store.list[0].oneRender(state); // shapeFill
+      }
+      if (this._showColorFill) {
+        this._shader.setColors(this._ambient3, this._diffuse3);
+        store.list[8].oneRender(state); // colorFill
+      }
+      if (this._showTxtColor) {
+        this._shader.setColors(this._ambient3, this._diffuse3);
+        store.list[9].oneRender(state); // txtColor
       }
 
       state.gl.disable(WebGL.DEPTH_TEST);
@@ -145,14 +167,6 @@ class Inspection extends Technique {
       if (this._showFaceBinormals) {
         this._shader.setColors(this._ambient3, this._diffuse3);
         store.list[7].oneRender(state); // faceBinormals
-      }
-      if (this._showColorFill) {
-        this._shader.setColors(this._ambient3, this._diffuse3);
-        store.list[8].oneRender(state); // colorFill
-      }
-      if (this._showTxtColor) {
-        this._shader.setColors(this._ambient3, this._diffuse3);
-        store.list[9].oneRender(state); // txtColor
       }
 
       state.gl.enable(WebGL.DEPTH_TEST);
@@ -237,7 +251,7 @@ class Inspection extends Technique {
       Shapes.Vertex ver1 = vertex.copy()
         ..color = color;
       Shapes.Vertex ver2 = ver1.copy();
-      ver2.location = ver2.location + new Math.Point3.fromVector3(ver2.normal);
+      ver2.location = ver2.location + new Math.Point3.fromVector3(ver2.normal)*this._vectorScale;
       result.vertices.add(ver1);
       result.vertices.add(ver2);
       result.lines.add(new Shapes.Line(ver1, ver2));
@@ -254,7 +268,7 @@ class Inspection extends Technique {
       Shapes.Vertex ver1 = vertex.copy()
         ..color = color;
       Shapes.Vertex ver2 = ver1.copy();
-      ver2.location = ver2.location + new Math.Point3.fromVector3(ver2.binormal);
+      ver2.location = ver2.location + new Math.Point3.fromVector3(ver2.binormal)*this._vectorScale;
       result.vertices.add(ver1);
       result.vertices.add(ver2);
       result.lines.add(new Shapes.Line(ver1, ver2));
@@ -290,7 +304,7 @@ class Inspection extends Technique {
         clr: color);
 
       Shapes.Vertex cen2 = cen1.copy();
-      cen2.location = cen2.location + new Math.Point3.fromVector3(cen2.normal);
+      cen2.location += new Math.Point3.fromVector3(cen2.normal)*this._vectorScale;
       result.vertices.add(cen1);
       result.vertices.add(cen2);
       result.lines.add(new Shapes.Line(cen1, cen2));
@@ -310,7 +324,7 @@ class Inspection extends Technique {
         clr: color);
 
       Shapes.Vertex cen2 = cen1.copy();
-      cen2.location += new Math.Point3.fromVector3(face.binormal);
+      cen2.location += new Math.Point3.fromVector3(face.binormal)*this._vectorScale;
       result.vertices.add(cen1);
       result.vertices.add(cen2);
       result.lines.add(new Shapes.Line(cen1, cen2));

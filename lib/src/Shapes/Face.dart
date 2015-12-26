@@ -29,37 +29,45 @@ class Face {
   Math.Vector3 get binormal => this._binm;
   set binormal(Math.Vector3 binm) => this._binm = binm.normal();
 
-  void calculateNormal() {
-    if(this._norm == null) {
-      Math.Point3 loc1 = (this._ver1 == null) ? null : this._ver1.location;
-      Math.Point3 loc2 = (this._ver2 == null) ? null : this._ver2.location;
-      Math.Point3 loc3 = (this._ver3 == null) ? null : this._ver3.location;
-      if ((loc1 == null) || (loc2 == null) || (loc3 == null)) return;
-      Math.Vector3 vec1 = new Math.Vector3.fromPoint3(loc2 - loc1).normal();
-      Math.Vector3 vec2 = new Math.Vector3.fromPoint3(loc3 - loc1).normal();
-      this._norm = -vec1.cross(vec2).normal();
-    }
+  bool calculateNormal() {
+    if(this._norm != null) return true;
+
+    Math.Point3 loc1 = (this._ver1 == null) ? null : this._ver1.location;
+    Math.Point3 loc2 = (this._ver2 == null) ? null : this._ver2.location;
+    Math.Point3 loc3 = (this._ver3 == null) ? null : this._ver3.location;
+    if ((loc1 == null) || (loc2 == null) || (loc3 == null)) return false;
+
+    Math.Vector3 vec1 = new Math.Vector3.fromPoint3(loc2 - loc1).normal();
+    Math.Vector3 vec2 = new Math.Vector3.fromPoint3(loc3 - loc1).normal();
+    this._norm = -vec1.cross(vec2).normal();
+    return true;
   }
 
-  void _calculateBinormal(Vertex vA, Vertex vB, Vertex vC) {
-    if(this._binm == null) {
-      double du = vB.texture.y - vC.texture.y;
-      if (Math.Comparer.equals(du, 0.0)) {
-        this._binm = new Math.Vector3.fromPoint3(vC.location - vB.location).normal();
-        if (vC.texture.x - vB.texture.x < 0.0) this._binm = -this._binm;
-      } else {
-        double r = (vB.texture.y - vA.texture.y) / du;
-        Math.Point3 vD = (vC.location - vB.location) * r + vB.location;
-        this._binm = new Math.Vector3.fromPoint3(vD - vA.location).normal();
-      }
-    }
-  }
+  bool calculateBinormal() {
+    if(this._binm != null) return true;
 
-  void calculateBinormal() {
-    print("calculateBinormal");
-    this._calculateBinormal(this._ver1, this._ver2, this._ver3);
-    this._calculateBinormal(this._ver2, this._ver3, this._ver1);
-    this._calculateBinormal(this._ver3, this._ver1, this._ver2);
+    Math.Point3 loc1 = (this._ver1 == null) ? null : this._ver1.location;
+    Math.Point3 loc2 = (this._ver2 == null) ? null : this._ver2.location;
+    Math.Point3 loc3 = (this._ver3 == null) ? null : this._ver3.location;
+    if ((loc1 == null) || (loc2 == null) || (loc3 == null)) return false;
+
+    Math.Point2 txt1 = this._ver1.texture;
+    Math.Point2 txt2 = this._ver2.texture;
+    Math.Point2 txt3 = this._ver3.texture;
+    if ((txt1 == null) || (txt2 == null) || (txt3 == null)) return false;
+
+    double du = txt2.y - txt3.y;
+    if (Math.Comparer.equals(du, 0.0)) {
+      this._binm = new Math.Vector3.fromPoint3(loc3 - loc2).normal();
+      if (txt3.x - txt2.x < 0.0) this._binm = -this._binm;
+    } else {
+      double r = (txt2.y - txt1.y) / du;
+      Math.Point3 vD = (loc3 - loc2) * r + loc2;
+      this._binm = new Math.Vector3.fromPoint3(vD - loc1).normal();
+      double u4 = (txt3.x - txt2.x) * r + txt2.x - txt1.x;
+      if (u4 < 0.0) this._binm = -this._binm;
+    }
+    return true;
   }
 
   bool replaceVertex(Vertex oldVer, Vertex newVer) {
@@ -85,9 +93,9 @@ class Face {
   }
 
   bool get collapsed {
-    if (this._ver1 != this._ver2) return true;
-    if (this._ver2 != this._ver3) return true;
-    if (this._ver3 != this._ver1) return true;
+    if (this._ver1 == this._ver2) return true;
+    if (this._ver2 == this._ver3) return true;
+    if (this._ver3 == this._ver1) return true;
     return false;
   }
 
