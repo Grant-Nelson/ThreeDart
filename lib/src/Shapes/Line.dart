@@ -5,29 +5,83 @@ class Line {
   Vertex _ver2;
 
   Line(Vertex ver1, Vertex ver2) {
-    this._ver1 = ver1;
-    this._ver2 = ver2;
-    this._ver1._lines.add(this);
-    this._ver2._lines.add(this);
+    if (ver1 == null)
+      throw new Exception("May not create a line with a null start vertex.");
+    if (ver2 == null)
+      throw new Exception("May not create a line with a null end vertex.");
+    if (ver1.shape == null)
+      throw new Exception("May not create a line with a start vertex which is not attached to a shape.");
+    if (ver1.shape != ver2.shape)
+      throw new Exception("May not create a line with vertices attached to different shapes.");
+    this._setVertex1(ver1);
+    this._setVertex2(ver2);
   }
 
+  void dispose() {
+    this._removeVertex1();
+    this._removeVertex2();
+  }
+
+  void _setVertex1(Vertex ver1) {
+    this._ver1 = ver1;
+    this._ver1._lines._lines1.add(this);
+    this._ver1._shape._lines._lines1.add(this);
+  }
+
+  void _setVertex2(Vertex ver2) {
+    this._ver2 = ver2;
+    this._ver2._lines._lines2.add(this);
+    this._ver2._shape._lines._lines2.add(this);
+  }
+
+  void _removeVertex1() {
+    if (this._ver1 != null) {
+      if (this._ver1._shape != null)
+        this._ver1._shape._lines._lines1.remove(this);
+      this._ver1._lines._lines1.remove(this);
+      this._ver1 = null;
+    }
+  }
+
+  void _removeVertex2() {
+    if (this._ver2 != null) {
+      if (this._ver2._shape != null)
+        this._ver2._shape._lines._lines2.remove(this);
+      this._ver2._lines._lines2.remove(this);
+      this._ver2 = null;
+    }
+  }
+
+  bool get disposed => (this._ver1 == null) || (this._ver2 == null);
   Vertex get vertex1 => this._ver1;
   Vertex get vertex2 => this._ver2;
 
+  void _checkReplaceVertex(Vertex oldVer, Vertex newVer) {
+    if (newVer == null)
+      throw new Exception("May not replace a line's vertex with a null vertex.");
+    if (newVer.shape == null)
+      throw new Exception("May not replace a line's vertex with a vertex which is not attached to a shape.");
+    if (oldVer.shape != newVer.shape)
+      throw new Exception("May not replace a line's vertex with a vertex attached to a different shape.");
+  }
+
   bool replaceVertex(Vertex oldVer, Vertex newVer) {
+    if (this.disposed)
+      throw new Exception("May not replace a line's vertex when the point has been disposed.");
+    bool result = false;
     if (this._ver1 == oldVer) {
-      this._ver1._lines.remove(this);
-      this._ver1 = newVer;
-      this._ver1._lines.add(this);
-      return true;
+      this._checkReplaceVertex(oldVer, newVer);
+      this._removeVertex1();
+      this._setVertex1(newVer);
+      result = true;
     }
     if (this._ver2 == oldVer) {
-      this._ver2._lines.remove(this);
-      this._ver2 = newVer;
-      this._ver2._lines.add(this);
-      return true;
+      this._checkReplaceVertex(oldVer, newVer);
+      this._removeVertex2();
+      this._setVertex2(newVer);
+      result = true;
     }
-    return false;
+    return result;
   }
 
   bool get collapsed => this._ver1 == this._ver2;
@@ -41,6 +95,7 @@ class Line {
     return true;
   }
 
-  String toString() => Math.formatInt(this._ver1._index)+
-      ', '+Math.formatInt(this._ver2._index);
+  String toString([String indent = ""]) =>
+    indent + Math.formatInt(this._ver1._index) +
+    ", " + Math.formatInt(this._ver2._index);
 }

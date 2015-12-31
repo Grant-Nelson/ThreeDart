@@ -11,11 +11,16 @@ import '../Data/Data.dart' as Data;
 import '../Math/Math.dart' as Math;
 
 part 'Face.dart';
+part 'FaceCollection.dart';
 part 'FaceMatcher.dart';
 part 'Line.dart';
+part 'LineCollection.dart';
 part 'LineMatcher.dart';
+part 'Point.dart';
+part 'PointCollection.dart';
 part 'Shape.dart';
 part 'ShapeBuilders.dart';
 part 'Vertex.dart';
+part 'VertexCollection.dart';
 part 'VertexMatcher.dart';
 part 'VertexMerger.dart';

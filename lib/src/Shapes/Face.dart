@@ -9,16 +9,75 @@ class Face {
   Math.Vector3 _binm;
 
   Face(Vertex ver1, Vertex ver2, Vertex ver3) {
-    this._ver1 = ver1;
-    this._ver2 = ver2;
-    this._ver3 = ver3;
+    if (ver1 == null)
+      throw new Exception("May not create a face with a null first vertex.");
+    if (ver2 == null)
+      throw new Exception("May not create a face with a null second vertex.");
+    if (ver3 == null)
+      throw new Exception("May not create a face with a null third vertex.");
+    if (ver1.shape == null)
+      throw new Exception("May not create a face with a first vertex which is not attached to a shape.");
+    if ((ver1.shape != ver2.shape) || (ver1.shape != ver3.shape))
+      throw new Exception("May not create a face with vertices attached to different shapes.");
     this._norm = null;
     this._binm = null;
-    this._ver1._faces.add(this);
-    this._ver2._faces.add(this);
-    this._ver3._faces.add(this);
+    this._setVertex1(ver1);
+    this._setVertex2(ver2);
+    this._setVertex3(ver3);
   }
 
+  void dispose() {
+    this._removeVertex1();
+    this._removeVertex2();
+    this._removeVertex3();
+  }
+
+  void _setVertex1(Vertex ver1) {
+    this._ver1 = ver1;
+    this._ver1._faces._faces1.add(this);
+    this._ver1._shape._faces._faces1.add(this);
+  }
+
+  void _setVertex2(Vertex ver2) {
+    this._ver2 = ver2;
+    this._ver2._faces._faces2.add(this);
+    this._ver2._shape._faces._faces2.add(this);
+  }
+
+  void _setVertex3(Vertex ver3) {
+    this._ver3 = ver3;
+    this._ver3._faces._faces3.add(this);
+    this._ver3._shape._faces._faces3.add(this);
+  }
+
+  void _removeVertex1() {
+    if (this._ver1 != null) {
+      if (this._ver1._shape != null)
+        this._ver1._shape._faces._faces1.remove(this);
+      this._ver1._faces._faces1.remove(this);
+      this._ver1 = null;
+    }
+  }
+
+  void _removeVertex2() {
+    if (this._ver2 != null) {
+      if (this._ver2._shape != null)
+        this._ver2._shape._faces._faces2.remove(this);
+      this._ver2._faces._faces2.remove(this);
+      this._ver2 = null;
+    }
+  }
+
+  void _removeVertex3() {
+    if (this._ver3 != null) {
+      if (this._ver3._shape != null)
+        this._ver3._shape._faces._faces3.remove(this);
+      this._ver3._faces._faces3.remove(this);
+      this._ver3 = null;
+    }
+  }
+
+  bool get disposed => (this._ver1 == null) || (this._ver2 == null) || (this._ver3 == null);
   Vertex get vertex1 => this._ver1;
   Vertex get vertex2 => this._ver2;
   Vertex get vertex3 => this._ver3;
@@ -70,26 +129,38 @@ class Face {
     return true;
   }
 
+  void _checkReplaceVertex(Vertex oldVer, Vertex newVer) {
+    if (newVer == null)
+      throw new Exception("May not replace a face's vertex with a null vertex.");
+    if (newVer.shape == null)
+      throw new Exception("May not replace a face's vertex with a vertex which is not attached to a shape.");
+    if (oldVer.shape != newVer.shape)
+      throw new Exception("May not replace a face's vertex with a vertex attached to a different shape.");
+  }
+
   bool replaceVertex(Vertex oldVer, Vertex newVer) {
+    if (this.disposed)
+      throw new Exception("May not replace a face's vertex when the point has been disposed.");
+    bool result = false;
     if (this._ver1 == oldVer) {
-      this._ver1._faces.remove(this);
-      this._ver1 = newVer;
-      this._ver1._faces.add(this);
-      return true;
+      this._checkReplaceVertex(oldVer, newVer);
+      this._removeVertex1();
+      this._setVertex1(newVer);
+      result = true;
     }
     if (this._ver2 == oldVer) {
-      this._ver2._faces.remove(this);
-      this._ver2 = newVer;
-      this._ver2._faces.add(this);
-      return true;
+      this._checkReplaceVertex(oldVer, newVer);
+      this._removeVertex2();
+      this._setVertex2(newVer);
+      result = true;
     }
     if (this._ver3 == oldVer) {
-      this._ver3._faces.remove(this);
-      this._ver3 = newVer;
-      this._ver3._faces.add(this);
-      return true;
+      this._checkReplaceVertex(oldVer, newVer);
+      this._removeVertex3();
+      this._setVertex3(newVer);
+      result = true;
     }
-    return false;
+    return result;
   }
 
   bool get collapsed {
@@ -111,8 +182,8 @@ class Face {
     return true;
   }
 
-  String toString() {
-    String result =
+  String toString([String indent = ""]) {
+    String result = indent +
         Math.formatInt(this._ver1._index)+', '+
         Math.formatInt(this._ver2._index)+', '+
         Math.formatInt(this._ver3._index)+' {';

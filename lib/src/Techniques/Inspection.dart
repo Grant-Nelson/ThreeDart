@@ -111,8 +111,8 @@ class Inspection extends Technique {
     if (obj.cache is Data.BufferStoreList) {
       Data.BufferStoreList store = obj.cache as Data.BufferStoreList;
       state.gl.blendFunc(WebGL.ONE, WebGL.ONE);
-      state.gl.disable(WebGL.DEPTH_TEST);
-      state.gl.enable(WebGL.BLEND);
+      state.gl.enable(WebGL.DEPTH_TEST);
+      state.gl.disable(WebGL.BLEND);
 
       if (this._showVertices) {
         this._shader.setColors(this._ambient2, this._diffuse2);
@@ -128,10 +128,6 @@ class Inspection extends Technique {
         //state.gl.enable(WebGL.CULL_FACE);
         //state.gl.cullFace(WebGL.FRONT_FACE);
       }
-
-      state.gl.enable(WebGL.DEPTH_TEST);
-      state.gl.disable(WebGL.BLEND);
-
       if (this._showFilled) {
         this._shader.setColors(this._ambient1, this._diffuse1);
         store.list[0].oneRender(state); // shapeFill
@@ -186,7 +182,6 @@ class Inspection extends Technique {
   }
 
   Shapes.Shape _shapeFill(Shapes.Shape shape) {
-    shape.updateIndices();
     Shapes.Shape result = new Shapes.Shape();
     Math.Color4 color =  new Math.Color4.white();
     for (Shapes.Vertex vertex in shape.vertices) {
@@ -197,40 +192,37 @@ class Inspection extends Technique {
       Shapes.Vertex ver1 = result.vertices[face.vertex1.index];
       Shapes.Vertex ver2 = result.vertices[face.vertex2.index];
       Shapes.Vertex ver3 = result.vertices[face.vertex3.index];
-      result.faces.add(new Shapes.Face(ver1, ver2, ver3));
+      result.faces.add(ver1, ver2, ver3);
     }
     return result;
   }
 
   Shapes.Shape _wireFrame(Shapes.Shape shape) {
-    shape.updateIndices();
     Shapes.Shape result = new Shapes.Shape();
     Math.Color4 color = new Math.Color4(0.0, 0.7, 1.0);
     for (Shapes.Vertex vertex in shape.vertices) {
       result.vertices.add(vertex.copy()
         ..color = color);
     }
-    result.updateIndices();
 
     for (Shapes.Line line in shape.lines) {
       Shapes.Vertex ver1 = result.vertices[line.vertex1.index];
       Shapes.Vertex ver2 = result.vertices[line.vertex2.index];
-      result.lines.add(new Shapes.Line(ver1, ver2));
+      result.lines.add(ver1, ver2);
     }
     for (Shapes.Face face in shape.faces) {
       Shapes.Vertex ver1 = result.vertices[face.vertex1.index];
       Shapes.Vertex ver2 = result.vertices[face.vertex2.index];
       Shapes.Vertex ver3 = result.vertices[face.vertex3.index];
-      result.lines.add(new Shapes.Line(ver1, ver2));
-      result.lines.add(new Shapes.Line(ver2, ver3));
-      result.lines.add(new Shapes.Line(ver3, ver1));
+      result.lines.add(ver1, ver2);
+      result.lines.add(ver2, ver3);
+      result.lines.add(ver3, ver1);
     }
     result.joinSeams();
     return result;
   }
 
   Shapes.Shape _vertices(Shapes.Shape shape) {
-    shape.updateIndices();
     Shapes.Shape result = new Shapes.Shape();
     Math.Color4 color = new Math.Color4.white();
     for (Shapes.Vertex vertex in shape.vertices) {
@@ -239,12 +231,10 @@ class Inspection extends Technique {
       result.vertices.add(ver);
       result.points.add(ver);
     }
-    result.updateIndices();
     return result;
   }
 
   Shapes.Shape _normals(Shapes.Shape shape) {
-    shape.updateIndices();
     Shapes.Shape result = new Shapes.Shape();
     Math.Color4 color = new Math.Color4(1.0, 1.0, 0.3);
     for (Shapes.Vertex vertex in shape.vertices) {
@@ -254,14 +244,12 @@ class Inspection extends Technique {
       ver2.location = ver2.location + new Math.Point3.fromVector3(ver2.normal)*this._vectorScale;
       result.vertices.add(ver1);
       result.vertices.add(ver2);
-      result.lines.add(new Shapes.Line(ver1, ver2));
+      result.lines.add(ver1, ver2);
     }
-    result.updateIndices();
     return result;
   }
 
   Shapes.Shape _binormals(Shapes.Shape shape) {
-    shape.updateIndices();
     Shapes.Shape result = new Shapes.Shape();
     Math.Color4 color = new Math.Color4(1.0, 0.3, 0.3);
     for (Shapes.Vertex vertex in shape.vertices) {
@@ -271,14 +259,12 @@ class Inspection extends Technique {
       ver2.location = ver2.location + new Math.Point3.fromVector3(ver2.binormal)*this._vectorScale;
       result.vertices.add(ver1);
       result.vertices.add(ver2);
-      result.lines.add(new Shapes.Line(ver1, ver2));
+      result.lines.add(ver1, ver2);
     }
-    result.updateIndices();
     return result;
   }
 
   Shapes.Shape _faceCenters(Shapes.Shape shape) {
-    shape.updateIndices();
     Shapes.Shape result = new Shapes.Shape();
     Math.Color4 color = new Math.Color4(1.0, 1.0, 0.3);
     for (Shapes.Face face in shape.faces) {
@@ -289,12 +275,10 @@ class Inspection extends Technique {
       result.vertices.add(ver);
       result.points.add(ver);
     }
-    result.updateIndices();
     return result;
   }
 
   Shapes.Shape _faceNormals(Shapes.Shape shape) {
-    shape.updateIndices();
     Shapes.Shape result = new Shapes.Shape();
     Math.Color4 color = new Math.Color4(1.0, 1.0, 0.3);
     for (Shapes.Face face in shape.faces) {
@@ -307,14 +291,12 @@ class Inspection extends Technique {
       cen2.location += new Math.Point3.fromVector3(cen2.normal)*this._vectorScale;
       result.vertices.add(cen1);
       result.vertices.add(cen2);
-      result.lines.add(new Shapes.Line(cen1, cen2));
+      result.lines.add(cen1, cen2);
     }
-    result.updateIndices();
     return result;
   }
 
   Shapes.Shape _faceBinormals(Shapes.Shape shape) {
-    shape.updateIndices();
     Shapes.Shape result = new Shapes.Shape();
     Math.Color4 color = new Math.Color4(1.0, 0.3, 0.3);
     for (Shapes.Face face in shape.faces) {
@@ -327,14 +309,12 @@ class Inspection extends Technique {
       cen2.location += new Math.Point3.fromVector3(face.binormal)*this._vectorScale;
       result.vertices.add(cen1);
       result.vertices.add(cen2);
-      result.lines.add(new Shapes.Line(cen1, cen2));
+      result.lines.add(cen1, cen2);
     }
-    result.updateIndices();
     return result;
   }
 
   Shapes.Shape _colorFill(Shapes.Shape shape) {
-    shape.updateIndices();
     Shapes.Shape result = new Shapes.Shape();
     for (Shapes.Vertex vertex in shape.vertices) {
       result.vertices.add(vertex.copy());
@@ -343,13 +323,12 @@ class Inspection extends Technique {
       Shapes.Vertex ver1 = result.vertices[face.vertex1.index];
       Shapes.Vertex ver2 = result.vertices[face.vertex2.index];
       Shapes.Vertex ver3 = result.vertices[face.vertex3.index];
-      result.faces.add(new Shapes.Face(ver1, ver2, ver3));
+      result.faces.add(ver1, ver2, ver3);
     }
     return result;
   }
 
   Shapes.Shape _txtColor(Shapes.Shape shape) {
-    shape.updateIndices();
     Shapes.Shape result = new Shapes.Shape();
     for (Shapes.Vertex vertex in shape.vertices) {
       Math.Point2 txt = vertex.texture;
@@ -360,7 +339,7 @@ class Inspection extends Technique {
       Shapes.Vertex ver1 = result.vertices[face.vertex1.index];
       Shapes.Vertex ver2 = result.vertices[face.vertex2.index];
       Shapes.Vertex ver3 = result.vertices[face.vertex3.index];
-      result.faces.add(new Shapes.Face(ver1, ver2, ver3));
+      result.faces.add(ver1, ver2, ver3);
     }
     return result;
   }

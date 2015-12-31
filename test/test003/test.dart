@@ -16,7 +16,7 @@ import 'package:ThreeDart/Materials.dart' as Materials;
 
 void main() {
 
-  Shapes.Shape shape = new Shapes.Shape.cube()
+  Shapes.Shape shape = Shapes.cube()
     ..joinSeams();
 
   ThreeDart.Object obj = new ThreeDart.Object()

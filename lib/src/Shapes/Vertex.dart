@@ -1,9 +1,12 @@
 part of ThreeDart.Shapes;
 
 class Vertex {
-  // TODO: Need to add Shape to check for ownership.
-  List<Line> _lines;
-  List<Face> _faces;
+  Shape _shape;
+
+  VertexPointCollection _points;
+  VertexLineCollection _lines;
+  VertexFaceCollection _faces;
+
   int _index;
   Math.Point3 _loc;
   Math.Vector3 _norm;
@@ -14,8 +17,11 @@ class Vertex {
 
   Vertex({Math.Point3 loc: null, Math.Vector3 norm: null, Math.Vector3 binm: null,
           Math.Point2 txt: null, Math.Color4 clr: null, double weight: 0.0}) {
-    this._lines = new List<Line>();
-    this._faces = new List<Face>();
+    this._shape = null;
+    this._points = new VertexPointCollection._(this);
+    this._lines = new VertexLineCollection._(this);
+    this._faces = new VertexFaceCollection._(this);
+
     this._index = 0;
     this._loc = loc;
     this._norm = norm;
@@ -36,9 +42,22 @@ class Vertex {
     );
   }
 
-  List<Line> get lines => this._lines;
-  List<Face> get faces => this._faces;
-  int get index => this._index;
+  Shape get shape => this._shape;
+  VertexPointCollection get points => this._points;
+  VertexLineCollection get lines => this._lines;
+  VertexFaceCollection get faces => this._faces;
+
+  int get index {
+    this._shape._vertices._updateIndices();
+    return this._index;
+  }
+
+  bool get empty {
+    if (this._points.length > 0) return false;
+    if (this._lines.length > 0) return false;
+    if (this._faces.length > 0) return false;
+    return true;
+  }
 
   Math.Point3 get location => this._loc;
   set location(Math.Point3 loc) => this._loc = loc;
@@ -91,7 +110,7 @@ class Vertex {
     return true;
   }
 
-  /// @note  Does not compare indices, lines, and faces.
+  /// @note  Does not compare the shape, indices, points, lines, or faces.
   bool operator ==(var other) {
     if (identical(this, other)) return true;
     if (other is! Vertex) return false;
@@ -105,34 +124,21 @@ class Vertex {
     return true;
   }
 
-  String toString() {
-    String result = Math.formatInt(this._index)+' {';
-    if (this._loc != null) {
-      result += this._loc.toString()+', ';
-    } else {
-      result += '-, ';
-    }
-    if (this._norm != null) {
-      result += this._norm.toString()+', ';
-    } else {
-      result += '-, ';
-    }
-    if (this._binm != null) {
-      result += this._binm.toString()+', ';
-    } else {
-      result += '-, ';
-    }
-    if (this._txt != null) {
-      result += this._txt.toString()+', ';
-    } else {
-      result += '-, ';
-    }
-    if (this._clr != null) {
-      result += this._clr.toString()+', ';
-    } else {
-      result += '-, ';
-    }
-    result += Math.formatDouble(this._weight)+'}';
-    return result;
+  String toString([String indent = ""]) {
+    List<String> parts = new List<String>(7);
+    parts.add(Math.formatInt(this._index));
+    if (this._loc != null) parts.add(this._loc.toString());
+    else                   parts.add("-");
+    if (this._norm != null) parts.add(this._norm.toString());
+    else                    parts.add("-");
+    if (this._binm != null) parts.add(this._binm.toString());
+    else                    parts.add("-");
+    if (this._txt != null) parts.add(this._txt.toString());
+    else                   parts.add("-");
+    if (this._clr != null) parts.add(this._clr.toString());
+    else                   parts.add("-");
+    parts.add(Math.formatDouble(this._weight));
+    String result = parts.join(", ");
+    return "$indent{$result}";
   }
 }
