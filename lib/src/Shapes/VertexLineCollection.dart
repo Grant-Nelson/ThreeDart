@@ -1,50 +1,14 @@
 part of ThreeDart.Shapes;
 
-class ShapeLineCollection extends LineCollection {
-  Shape _shape;
-
-  ShapeLineCollection._(Shape this._shape): super._();
-
-  Shape get shape => this._shape;
-
-  Line add(Vertex ver1, Vertex ver2) {
-    this._shape._vertices.add(ver1);
-    this._shape._vertices.add(ver2);
-    return new Line(ver1, ver2);
-  }
-
-  List<Line> addStrip(List<Vertex> vertices) {
-    final int count = vertices.length;
-    List<Line> lines = new List<Line>(count-1);
-    for (int i = 1; i < count; i++)
-      lines.add(this.add(vertices[i-1], vertices[i]));
-    return lines;
-  }
-
-  List<Line> addLoop(List<Vertex> vertices) {
-    final int count = vertices.length;
-    List<Line> lines = new List<Line>(count);
-    if (count > 0) {
-      for (int i = 1; i < count; i++)
-        lines.add(this.add(vertices[i-1], vertices[i]));
-      lines.add(this.add(vertices[count-1], vertices[0]));
-    }
-    return lines;
-  }
-
-  List<Line> addLines(List<Vertex> vertices) {
-    final int count = vertices.length;
-    List<Line> lines = new List<Line>((count/2).floor());
-    for (int i = 1; i < count; i += 2)
-      lines.add(this.add(vertices[i-1], vertices[i]));
-    return lines;
-  }
-}
-
-class VertexLineCollection extends LineCollection {
+class VertexLineCollection {
   Vertex _vertex;
+  List<Line> _lines1;
+  List<Line> _lines2;
 
-  VertexLineCollection._(Vertex this._vertex): super._();
+  VertexLineCollection._(Vertex this._vertex) {
+    this._lines1 = new List<Line>();
+    this._lines2 = new List<Line>();
+  }
 
   Shape get shape => this._vertex._shape;
 
@@ -67,20 +31,8 @@ class VertexLineCollection extends LineCollection {
     }
     return lines;
   }
-}
 
-abstract class LineCollection {
-  List<Line> _lines1;
-  List<Line> _lines2;
-
-  LineCollection._() {
-    this._lines1 = new List<Line>();
-    this._lines2 = new List<Line>();
-  }
-
-  Shape get shape;
-
-  bool get empty => this.length <= 0;
+  bool get isEmpty => this._lines1.isEmpty && this._lines2.isEmpty;
   int get length => this._lines1.length + this._lines2.length;
   int get length1 => this._lines1.length;
   int get length2 => this._lines2.length;
@@ -104,6 +56,13 @@ abstract class LineCollection {
 
   int indexOf1(Line line) => this._lines1.indexOf(line);
   int indexOf2(Line line) => this._lines2.indexOf(line);
+
+  void forEach(void funcHndl(Line line)) {
+    this._lines1.forEach(funcHndl);
+    this._lines2.forEach(funcHndl);
+  }
+  void forEach1(void funcHndl(Line line)) => this._lines1.forEach(funcHndl);
+  void forEach2(void funcHndl(Line line)) => this._lines2.forEach(funcHndl);
 
   Line removeAt(int index) {
     Line line = this[index];
@@ -155,7 +114,7 @@ abstract class LineCollection {
   }
 
   String toString([String indent = ""]) {
-    List<String> parts = new List<String>(this.length);
+    List<String> parts = new List<String>();
     for (Line line in this._lines1) {
       parts.add(line.toString(indent));
     }

@@ -1,9 +1,12 @@
 part of ThreeDart.Shapes;
 
-class ShapePointCollection extends PointCollection {
+class ShapePointCollection {
   Shape _shape;
+  List<Point> _points;
 
-  ShapePointCollection._(Shape this._shape): super._();
+  ShapePointCollection._(Shape this._shape){
+    this._points = new List<Point>();
+  }
 
   Shape get shape => this._shape;
 
@@ -13,44 +16,18 @@ class ShapePointCollection extends PointCollection {
   }
 
   List<Point> addList(List<Vertex> vertices) {
+    List<Point> points = new List<Point>();
     final int count = vertices.length;
-    List<Point> points = new List<Point>(count);
     for (int i = 0; i < count; ++i)
       points.add(this.add(vertices[i]));
     return points;
   }
-}
 
-class VertexPointCollection extends PointCollection {
-  Vertex _vertex;
-
-  VertexPointCollection._(Vertex this._vertex): super._();
-
-  Shape get shape => this._vertex._shape;
-
-  Point add() {
-    if (this._vertex.shape == null)
-      throw new Exception("May not add a point to a vertex which has not been added to a shape.");
-    return new Point(this._vertex);
-  }
-}
-
-abstract class PointCollection {
-  List<Point> _points;
-
-  PointCollection._() {
-    this._points = new List<Point>();
-  }
-
-  Shape get shape;
-
-  bool get empty => this._points.length <= 0;
-
+  bool get isEmpty => this._points.isEmpty;
   int get length => this._points.length;
-
   Point operator[](int index) => this._points[index];
-
   int indexOf(Point point) => this._points.indexOf(point);
+  void forEach(void funcHndl(Point point)) => this._points.forEach(funcHndl);
 
   Point removeAt(int index) {
     Point pnt = this._points[index];
@@ -72,7 +49,7 @@ abstract class PointCollection {
   }
 
   String toString([String indent = ""]) {
-    List<String> parts = new List<String>(this._points.length);
+    List<String> parts = new List<String>();
     for (Point pnt in this._points) {
       parts.add(pnt.toString(indent));
     }

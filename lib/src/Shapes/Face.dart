@@ -24,9 +24,12 @@ class Face {
     this._setVertex1(ver1);
     this._setVertex2(ver2);
     this._setVertex3(ver3);
+    this._ver1._shape._faces._faces.add(this);
   }
 
   void dispose() {
+    if (this._ver1._shape != null)
+      this._ver1._shape._faces._faces.remove(this);
     this._removeVertex1();
     this._removeVertex2();
     this._removeVertex3();
@@ -35,25 +38,20 @@ class Face {
   void _setVertex1(Vertex ver1) {
     this._ver1 = ver1;
     this._ver1._faces._faces1.add(this);
-    this._ver1._shape._faces._faces1.add(this);
   }
 
   void _setVertex2(Vertex ver2) {
     this._ver2 = ver2;
     this._ver2._faces._faces2.add(this);
-    this._ver2._shape._faces._faces2.add(this);
   }
 
   void _setVertex3(Vertex ver3) {
     this._ver3 = ver3;
     this._ver3._faces._faces3.add(this);
-    this._ver3._shape._faces._faces3.add(this);
   }
 
   void _removeVertex1() {
     if (this._ver1 != null) {
-      if (this._ver1._shape != null)
-        this._ver1._shape._faces._faces1.remove(this);
       this._ver1._faces._faces1.remove(this);
       this._ver1 = null;
     }
@@ -61,8 +59,6 @@ class Face {
 
   void _removeVertex2() {
     if (this._ver2 != null) {
-      if (this._ver2._shape != null)
-        this._ver2._shape._faces._faces2.remove(this);
       this._ver2._faces._faces2.remove(this);
       this._ver2 = null;
     }
@@ -70,8 +66,6 @@ class Face {
 
   void _removeVertex3() {
     if (this._ver3 != null) {
-      if (this._ver3._shape != null)
-        this._ver3._shape._faces._faces3.remove(this);
       this._ver3._faces._faces3.remove(this);
       this._ver3 = null;
     }

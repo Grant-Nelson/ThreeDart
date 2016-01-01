@@ -1,119 +1,20 @@
 part of ThreeDart.Shapes;
 
-class ShapeFaceCollection extends FaceCollection {
-  Shape _shape;
-
-  ShapeFaceCollection._(Shape this._shape): super._();
-
-  Shape get shape => this._shape;
-
-  Face add(Vertex ver1, Vertex ver2, Vertex ver3) {
-    this._shape._vertices.add(ver1);
-    this._shape._vertices.add(ver2);
-    this._shape._vertices.add(ver3);
-    return new Face(ver1, ver2, ver3);
-  }
-
-  List<Face> addFan(List<Vertex> vertices) {
-    final int count = vertices.length;
-    List<Face> faces = new List<Face>(count-2);
-    if (count > 0) {
-      Vertex ver0 = vertices[0];
-      for (int i = 2; i < count; i++)
-        faces.add(this.add(ver0, vertices[i-1], vertices[i]));
-    }
-    return faces;
-  }
-
-  List<Face> addStrip(List<Vertex> vertices) {
-    final int count = vertices.length;
-    List<Face> faces = new List<Face>(count-2);
-    bool flip = false;
-    for (int i = 2; i < count; i++) {
-      if (flip) {
-        faces.add(this.add(vertices[i-2], vertices[i-1], vertices[i]));
-        flip = false;
-      } else {
-        faces.add(this.add(vertices[i-1], vertices[i-2], vertices[i]));
-        flip = true;
-      }
-    }
-    return faces;
-  }
-
-  List<Face> addLoop(List<Vertex> vertices) {
-    final int count = vertices.length;
-    List<Face> faces = new List<Face>(count);
-    bool flip = false;
-    for (int i = 2; i < count+2; i++) {
-      int j = i % count;
-      if (flip) {
-        faces.add(this.add(vertices[j-2], vertices[j-1], vertices[j]));
-        flip = false;
-      } else {
-        faces.add(this.add(vertices[j-1], vertices[j-2], vertices[j]));
-        flip = true;
-      }
-    }
-    return faces;
-  }
-
-  List<Face> addTriangles(List<Vertex> vertices) {
-    final int count = vertices.length;
-    List<Face> faces = new List<Face>((count/3).floor());
-    for (int i = 2; i < count; i += 3)
-      faces.add(this.add(vertices[i-2], vertices[i-1], vertices[i]));
-    return faces;
-  }
-
-  List<Face> addGrid(int rows, int columns, List<Vertex> vertices) {
-    List<Face> faces = new List<Face>();
-    int k0 = 0, k1 = columns;
-    bool flipA = false;
-    for (int i = 1; i < rows; ++i, ++k0, ++k1) {
-      bool flipB = flipA;
-      for (int j = 1; j < columns; ++j, ++k0, ++k1) {
-        Vertex ver0 = vertices[k0];
-        Vertex ver1 = vertices[k0+1];
-        Vertex ver2 = vertices[k1+1];
-        Vertex ver3 = vertices[k1];
-        if (flipB) {
-          faces.add(this.add(ver0, ver1, ver2));
-          faces.add(this.add(ver0, ver2, ver3));
-        } else {
-          faces.add(this.add(ver1, ver2, ver3));
-          faces.add(this.add(ver1, ver3, ver0));
-        }
-        flipB = !flipB;
-      }
-      flipA = !flipA;
-    }
-    return faces;
-  }
-}
-
-class VertexFaceCollection extends FaceCollection {
+class VertexFaceCollection {
   Vertex _vertex;
-
-  VertexFaceCollection._(Vertex this._vertex): super._();
-
-  Shape get shape => this._vertex._shape;
-}
-
-abstract class FaceCollection {
   List<Face> _faces1;
   List<Face> _faces2;
   List<Face> _faces3;
 
-  FaceCollection._() {
+  VertexFaceCollection._(Vertex this._vertex) {
     this._faces1 = new List<Face>();
     this._faces2 = new List<Face>();
     this._faces3 = new List<Face>();
   }
 
-  Shape get shape;
+  Shape get shape => this._vertex._shape;
 
-  bool get empty => this.length <= 0;
+  bool get isEmpty => this._faces1.isEmpty && this._faces2.isEmpty && this._faces3.isEmpty;
   int get length => this._faces1.length + this._faces2.length + this._faces3.length;
   int get length1 => this._faces1.length;
   int get length2 => this._faces2.length;
@@ -146,6 +47,15 @@ abstract class FaceCollection {
   int indexOf1(Face face) => this._faces1.indexOf(face);
   int indexOf2(Face face) => this._faces2.indexOf(face);
   int indexOf3(Face face) => this._faces3.indexOf(face);
+
+  void forEach(void funcHndl(Face face)) {
+    this._faces1.forEach(funcHndl);
+    this._faces2.forEach(funcHndl);
+    this._faces3.forEach(funcHndl);
+  }
+  void forEach1(void funcHndl(Face face)) => this._faces1.forEach(funcHndl);
+  void forEach2(void funcHndl(Face face)) => this._faces2.forEach(funcHndl);
+  void forEach3(void funcHndl(Face face)) => this._faces3.forEach(funcHndl);
 
   Face removeAt(int index) {
     Face face = this[index];
@@ -207,7 +117,7 @@ abstract class FaceCollection {
     // No need to do [_faces3] because two be collapsed
     // it must have more than one point in the same vertex.
   }
-  
+
   bool calculateNormals() {
     bool success = true;
     for (Face face in this._faces1) {
@@ -237,7 +147,7 @@ abstract class FaceCollection {
   }
 
   String toString([String indent = ""]) {
-    List<String> parts = new List<String>(this.length);
+    List<String> parts = new List<String>();
     for (Face face in this._faces1) {
       parts.add(face.toString(indent));
     }

@@ -1,7 +1,8 @@
 part of ThreeDart.test.test000;
 
 void shapeTest1(TestArgs args) {
-  Shapes.Shape cube = _faceNormals(Shapes.cube());
+  Shapes.Shape cube = Shapes.cube();
+  cube = _faceNormals(cube);
   Data.BufferStore data = cube.build(new Data.TestBufferBuilder(),
     Data.VertexType.Pos|Data.VertexType.Norm|Data.VertexType.Clr3);
   args.info(data.toString());
@@ -10,11 +11,13 @@ void shapeTest1(TestArgs args) {
 }
 
 Shapes.Shape _faceNormals(Shapes.Shape shape) {
+
+
   shape.calculateNormals();
   shape.calculateBinormals();
   Shapes.Shape result = new Shapes.Shape();
   Math.Color4 color = new Math.Color4(1.0, 1.0, 0.3);
-  for (Shapes.Face face in shape.faces) {
+  shape.faces.forEach((Shapes.Face face) {
     Shapes.Vertex ver1 = face.vertex1.copy()..color = new Math.Color4(1.0, 0.0, 0.0);
     Shapes.Vertex ver2 = face.vertex2.copy()..color = new Math.Color4(0.0, 1.0, 0.0);
     Shapes.Vertex ver3 = face.vertex3.copy()..color = new Math.Color4(0.0, 0.0, 1.0);
@@ -37,6 +40,6 @@ Shapes.Shape _faceNormals(Shapes.Shape shape) {
     result.lines.add(cen1, ver1);
     result.lines.add(cen1, ver2);
     result.lines.add(cen1, ver3);
-  }
+  });
   return result;
 }

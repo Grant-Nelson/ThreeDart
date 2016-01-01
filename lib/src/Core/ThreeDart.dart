@@ -121,9 +121,15 @@ class ThreeDart {
 
   /// Renders the screne to the canvas.
   void render() {
-    if (this._scene != null) {
-      this._state.reset();
-      this._scene.render(this._state);
+    try {
+      if (this._scene != null) {
+        this._state.reset();
+        this._scene.render(this._state);
+      }
+    } catch(exception, stackTrace) {
+      print("Error: $exception");
+      print("Stack: $stackTrace");
+      throw exception;
     }
   }
 

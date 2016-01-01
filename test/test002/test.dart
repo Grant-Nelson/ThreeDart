@@ -15,7 +15,7 @@ import 'package:ThreeDart/Scenes.dart' as Scenes;
 void main() {
 
   ThreeDart.Object obj = new ThreeDart.Object()
-    ..shape = Shapes.latLonSphere()
+    ..shape = Shapes.sphere()
     ..mover = new Movers.Rotater();
 
   Techniques.Inspection tech = new Techniques.Inspection();

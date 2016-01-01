@@ -184,40 +184,39 @@ class Inspection extends Technique {
   Shapes.Shape _shapeFill(Shapes.Shape shape) {
     Shapes.Shape result = new Shapes.Shape();
     Math.Color4 color =  new Math.Color4.white();
-    for (Shapes.Vertex vertex in shape.vertices) {
+    shape.vertices.forEach((Shapes.Vertex vertex) {
       result.vertices.add(vertex.copy()
         ..color = color);
-    }
-    for (Shapes.Face face in shape.faces) {
+    });
+    shape.faces.forEach((Shapes.Face face) {
       Shapes.Vertex ver1 = result.vertices[face.vertex1.index];
       Shapes.Vertex ver2 = result.vertices[face.vertex2.index];
       Shapes.Vertex ver3 = result.vertices[face.vertex3.index];
       result.faces.add(ver1, ver2, ver3);
-    }
+    });
     return result;
   }
 
   Shapes.Shape _wireFrame(Shapes.Shape shape) {
     Shapes.Shape result = new Shapes.Shape();
     Math.Color4 color = new Math.Color4(0.0, 0.7, 1.0);
-    for (Shapes.Vertex vertex in shape.vertices) {
+    shape.vertices.forEach((Shapes.Vertex vertex) {
       result.vertices.add(vertex.copy()
         ..color = color);
-    }
-
-    for (Shapes.Line line in shape.lines) {
+    });
+    shape.lines.forEach((Shapes.Line line) {
       Shapes.Vertex ver1 = result.vertices[line.vertex1.index];
       Shapes.Vertex ver2 = result.vertices[line.vertex2.index];
       result.lines.add(ver1, ver2);
-    }
-    for (Shapes.Face face in shape.faces) {
+    });
+    shape.faces.forEach((Shapes.Face face) {
       Shapes.Vertex ver1 = result.vertices[face.vertex1.index];
       Shapes.Vertex ver2 = result.vertices[face.vertex2.index];
       Shapes.Vertex ver3 = result.vertices[face.vertex3.index];
       result.lines.add(ver1, ver2);
       result.lines.add(ver2, ver3);
       result.lines.add(ver3, ver1);
-    }
+    });
     result.joinSeams();
     return result;
   }
@@ -225,19 +224,19 @@ class Inspection extends Technique {
   Shapes.Shape _vertices(Shapes.Shape shape) {
     Shapes.Shape result = new Shapes.Shape();
     Math.Color4 color = new Math.Color4.white();
-    for (Shapes.Vertex vertex in shape.vertices) {
+    shape.vertices.forEach((Shapes.Vertex vertex) {
       Shapes.Vertex ver = vertex.copy()
         ..color = color;
       result.vertices.add(ver);
       result.points.add(ver);
-    }
+    });
     return result;
   }
 
   Shapes.Shape _normals(Shapes.Shape shape) {
     Shapes.Shape result = new Shapes.Shape();
     Math.Color4 color = new Math.Color4(1.0, 1.0, 0.3);
-    for (Shapes.Vertex vertex in shape.vertices) {
+    shape.vertices.forEach((Shapes.Vertex vertex) {
       Shapes.Vertex ver1 = vertex.copy()
         ..color = color;
       Shapes.Vertex ver2 = ver1.copy();
@@ -245,14 +244,14 @@ class Inspection extends Technique {
       result.vertices.add(ver1);
       result.vertices.add(ver2);
       result.lines.add(ver1, ver2);
-    }
+    });
     return result;
   }
 
   Shapes.Shape _binormals(Shapes.Shape shape) {
     Shapes.Shape result = new Shapes.Shape();
     Math.Color4 color = new Math.Color4(1.0, 0.3, 0.3);
-    for (Shapes.Vertex vertex in shape.vertices) {
+    shape.vertices.forEach((Shapes.Vertex vertex) {
       Shapes.Vertex ver1 = vertex.copy()
         ..color = color;
       Shapes.Vertex ver2 = ver1.copy();
@@ -260,28 +259,28 @@ class Inspection extends Technique {
       result.vertices.add(ver1);
       result.vertices.add(ver2);
       result.lines.add(ver1, ver2);
-    }
+    });
     return result;
   }
 
   Shapes.Shape _faceCenters(Shapes.Shape shape) {
     Shapes.Shape result = new Shapes.Shape();
     Math.Color4 color = new Math.Color4(1.0, 1.0, 0.3);
-    for (Shapes.Face face in shape.faces) {
+    shape.faces.forEach((Shapes.Face face) {
       Shapes.Vertex ver = new Shapes.Vertex(
         loc: (face.vertex1.location + face.vertex2.location + face.vertex3.location)/3.0,
         norm: face.normal,
         clr: color);
       result.vertices.add(ver);
       result.points.add(ver);
-    }
+    });
     return result;
   }
 
   Shapes.Shape _faceNormals(Shapes.Shape shape) {
     Shapes.Shape result = new Shapes.Shape();
     Math.Color4 color = new Math.Color4(1.0, 1.0, 0.3);
-    for (Shapes.Face face in shape.faces) {
+    shape.faces.forEach((Shapes.Face face) {
       Shapes.Vertex cen1 = new Shapes.Vertex(
         loc: (face.vertex1.location + face.vertex2.location + face.vertex3.location)/3.0,
         norm: face.normal,
@@ -292,14 +291,14 @@ class Inspection extends Technique {
       result.vertices.add(cen1);
       result.vertices.add(cen2);
       result.lines.add(cen1, cen2);
-    }
+    });
     return result;
   }
 
   Shapes.Shape _faceBinormals(Shapes.Shape shape) {
     Shapes.Shape result = new Shapes.Shape();
     Math.Color4 color = new Math.Color4(1.0, 0.3, 0.3);
-    for (Shapes.Face face in shape.faces) {
+    shape.faces.forEach((Shapes.Face face) {
       Shapes.Vertex cen1 = new Shapes.Vertex(
         loc: (face.vertex1.location + face.vertex2.location + face.vertex3.location)/3.0,
         norm: face.normal,
@@ -310,37 +309,37 @@ class Inspection extends Technique {
       result.vertices.add(cen1);
       result.vertices.add(cen2);
       result.lines.add(cen1, cen2);
-    }
+    });
     return result;
   }
 
   Shapes.Shape _colorFill(Shapes.Shape shape) {
     Shapes.Shape result = new Shapes.Shape();
-    for (Shapes.Vertex vertex in shape.vertices) {
+    shape.vertices.forEach((Shapes.Vertex vertex) {
       result.vertices.add(vertex.copy());
-    }
-    for (Shapes.Face face in shape.faces) {
+    });
+    shape.faces.forEach((Shapes.Face face) {
       Shapes.Vertex ver1 = result.vertices[face.vertex1.index];
       Shapes.Vertex ver2 = result.vertices[face.vertex2.index];
       Shapes.Vertex ver3 = result.vertices[face.vertex3.index];
       result.faces.add(ver1, ver2, ver3);
-    }
+    });
     return result;
   }
 
   Shapes.Shape _txtColor(Shapes.Shape shape) {
     Shapes.Shape result = new Shapes.Shape();
-    for (Shapes.Vertex vertex in shape.vertices) {
+    shape.vertices.forEach((Shapes.Vertex vertex) {
       Math.Point2 txt = vertex.texture;
       result.vertices.add(vertex.copy()
         ..color =  new Math.Color4(txt.x, txt.y, txt.y));
-    }
-    for (Shapes.Face face in shape.faces) {
+    });
+    shape.faces.forEach((Shapes.Face face) {
       Shapes.Vertex ver1 = result.vertices[face.vertex1.index];
       Shapes.Vertex ver2 = result.vertices[face.vertex2.index];
       Shapes.Vertex ver3 = result.vertices[face.vertex3.index];
       result.faces.add(ver1, ver2, ver3);
-    }
+    });
     return result;
   }
 }

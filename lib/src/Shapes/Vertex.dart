@@ -52,12 +52,7 @@ class Vertex {
     return this._index;
   }
 
-  bool get empty {
-    if (this._points.length > 0) return false;
-    if (this._lines.length > 0) return false;
-    if (this._faces.length > 0) return false;
-    return true;
-  }
+  bool get isEmpty => this._points.isEmpty && this._lines.isEmpty && this._faces.isEmpty;
 
   Math.Point3 get location => this._loc;
   set location(Math.Point3 loc) => this._loc = loc;
@@ -91,10 +86,10 @@ class Vertex {
   bool calculateNormal() {
     if (this._norm != null) return true;
     Math.Vector3 normSum = new Math.Vector3.zero();
-    for (Face face in this._faces) {
+    this._faces.forEach((Face face) {
       Math.Vector3 norm = (face == null) ? null : face.normal;
       if (norm != null) normSum += norm;
-    }
+    });
     this._norm = normSum.normal();
     return true;
   }
@@ -102,10 +97,10 @@ class Vertex {
   bool calculateBinormal() {
     if (this._binm != null) return true;
     Math.Vector3 binmSum = new Math.Vector3.zero();
-    for (Face face in this._faces) {
+    this._faces.forEach((Face face) {
       Math.Vector3 binm = (face == null) ? null : face.binormal;
       if(binm != null) binmSum += binm;
-    }
+    });
     this._binm = binmSum.normal();
     return true;
   }
@@ -125,7 +120,7 @@ class Vertex {
   }
 
   String toString([String indent = ""]) {
-    List<String> parts = new List<String>(7);
+    List<String> parts = new List<String>();
     parts.add(Math.formatInt(this._index));
     if (this._loc != null) parts.add(this._loc.toString());
     else                   parts.add("-");

@@ -15,9 +15,12 @@ class Line {
       throw new Exception("May not create a line with vertices attached to different shapes.");
     this._setVertex1(ver1);
     this._setVertex2(ver2);
+    this._ver1._shape._lines._lines.add(this);
   }
 
   void dispose() {
+    if (this._ver1._shape != null)
+      this._ver1._shape._lines._lines.remove(this);
     this._removeVertex1();
     this._removeVertex2();
   }
@@ -25,19 +28,15 @@ class Line {
   void _setVertex1(Vertex ver1) {
     this._ver1 = ver1;
     this._ver1._lines._lines1.add(this);
-    this._ver1._shape._lines._lines1.add(this);
   }
 
   void _setVertex2(Vertex ver2) {
     this._ver2 = ver2;
     this._ver2._lines._lines2.add(this);
-    this._ver2._shape._lines._lines2.add(this);
   }
 
   void _removeVertex1() {
     if (this._ver1 != null) {
-      if (this._ver1._shape != null)
-        this._ver1._shape._lines._lines1.remove(this);
       this._ver1._lines._lines1.remove(this);
       this._ver1 = null;
     }
@@ -45,8 +44,6 @@ class Line {
 
   void _removeVertex2() {
     if (this._ver2 != null) {
-      if (this._ver2._shape != null)
-        this._ver2._shape._lines._lines2.remove(this);
       this._ver2._lines._lines2.remove(this);
       this._ver2 = null;
     }

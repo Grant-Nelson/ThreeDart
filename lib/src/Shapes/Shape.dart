@@ -25,20 +25,20 @@ class Shape {
   void merge(Shape other) {
     other._vertices._updateIndices();
     int offset = this._vertices.length;
-    for (Vertex vertex in other._vertices) {
+    for (Vertex vertex in other._vertices._vertices) {
       this.vertices.add(vertex.copy());
     }
     this._vertices._updateIndices();
-    for (Point point in other._points) {
+    for (Point point in other._points._points) {
       Vertex ver = this._vertices[point.vertex.index + offset];
       this._points.add(ver);
     }
-    for (Line line in other._lines) {
+    for (Line line in other._lines._lines) {
       Vertex ver1 = this._vertices[line.vertex1.index + offset];
       Vertex ver2 = this._vertices[line.vertex2.index + offset];
       this._lines.add(ver1, ver2);
     }
-    for (Face face in other._faces) {
+    for (Face face in other._faces._faces) {
       Vertex ver1 = this._vertices[face.vertex1.index + offset];
       Vertex ver2 = this._vertices[face.vertex2.index + offset];
       Vertex ver3 = this._vertices[face.vertex3.index + offset];
@@ -77,6 +77,7 @@ class Shape {
 
   void _replaceVertices(Vertex newVer, List<int> indices) {
     indices.sort();
+    this.vertices.add(newVer);
     for (int i = indices.length-1; i >= 0; --i) {
       int index = indices[i];
       Vertex ver = this.vertices[index];
@@ -89,7 +90,6 @@ class Shape {
       }
       this.vertices.removeAt(index);
     }
-    this.vertices.add(newVer);
   }
 
   void mergeVertices(VertexMatcher matcher, VertexMerger merger) {
@@ -99,8 +99,9 @@ class Shape {
         List<Vertex> matches = new List<Vertex>();
         List<int> indices = new List<int>();
         if (this._findMatching(matcher, ver, i, matches, indices)) {
-          Vertex vec = merger.merge(matches);
-          if (vec != null) this._replaceVertices(vec, indices);
+          Vertex newVer = merger.merge(matches);
+          if (newVer != null) this._replaceVertices(newVer, indices);
+          i -= indices.length;
         }
       }
     }
@@ -121,6 +122,7 @@ class Shape {
   void adjustNormals([VertexMatcher matcher = null]) {
     if (matcher == null) matcher = new LocationMatcher();
     this.mergeVertices(matcher, new NormalAdjuster());
+    print(this.toString());
   }
 
   Data.BufferStore build(Data.BufferBuilder builder, Data.VertexType type) {
@@ -150,7 +152,7 @@ class Shape {
 
     Data.Buffer vertexBuf = builder.fromDoubleList(WebGL.ARRAY_BUFFER, vertices);
     Data.BufferStore store = new Data.BufferStore(vertexBuf, attrs);
-    if (!this._points.empty) {
+    if (!this._points.isEmpty) {
       List<int> indices = new List<int>();
       for (int i = 0; i < this._points.length; ++i) {
         indices.add(this._points[i].vertex.index);
@@ -159,7 +161,7 @@ class Shape {
       store.indexObjects.add(new Data.IndexObject(WebGL.POINTS, indices.length, indexBuf));
     }
 
-    if (!this._lines.empty) {
+    if (!this._lines.isEmpty) {
       List<int> indices = new List<int>();
       for (int i = 0; i < this._lines.length; ++i) {
         indices.add(this._lines[i].vertex1.index);
@@ -169,7 +171,7 @@ class Shape {
       store.indexObjects.add(new Data.IndexObject(WebGL.LINES, indices.length, indexBuf));
     }
 
-    if (!this._faces.empty) {
+    if (!this._faces.isEmpty) {
       List<int> indices = new List<int>();
       for (int i = 0; i < this._faces.length; i++) {
         indices.add(this._faces[i].vertex1.index);
@@ -185,19 +187,19 @@ class Shape {
 
   String toString([String indent = ""]) {
     List<String> parts = new List<String>();
-    if (!this._vertices.empty) {
+    if (!this._vertices.isEmpty) {
       parts.add("${indent}Vertices:");
       parts.add(this._vertices.toString("${indent}   "));
     }
-    if (!this._points.empty) {
+    if (!this._points.isEmpty) {
       parts.add('${indent}Points:');
       parts.add(this._points.toString("${indent}   "));
     }
-    if (!this._lines.empty) {
+    if (!this._lines.isEmpty) {
       parts.add('${indent}Lines:');
       parts.add(this._lines.toString("${indent}   "));
     }
-    if (!this._faces.empty) {
+    if (!this._faces.isEmpty) {
       parts.add('${indent}Faces:');
       parts.add(this._faces.toString("${indent}   "));
     }

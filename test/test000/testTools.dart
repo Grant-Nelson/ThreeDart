@@ -108,9 +108,10 @@ class TestBlock extends TestArgs {
       this._start = new DateTime.now();
       this._test(this);
       this._end = new DateTime.now();
-    }).catchError((err) {
+    }).catchError((exception, stackTrace) {
       this._end = new DateTime.now();
-      this.error("\nException: $err");
+      this.error("\nException: $exception");
+      this.warning("\nStack: $stackTrace");
     }).then((_){
       this._finished = true;
       this._man._testDone(this);
@@ -241,9 +242,10 @@ class TestManager {
       int testCount = this._tests.length;
       if (testCount <= this._finished) {
         if (this._failed > 0) {
-          this._header
-            ..text = "Failed ${this._failed}s Tests (${time}s)"
-            ..className = "top_header failed";
+          this._header.className = "top_header failed";
+          if (this._failed == 1)
+            this._header.text = "Failed 1 Test (${time}s)";
+          else this._header.text = "Failed ${this._failed} Tests (${time}s)";
         } else {
           this._header
             ..text = "Tests Passed (${time}s)"
