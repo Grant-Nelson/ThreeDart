@@ -106,7 +106,7 @@ class Vertex {
   }
 
   /// @note  Does not compare the shape, indices, points, lines, or faces.
-  bool operator ==(var other) {
+  bool same(var other) {
     if (identical(this, other)) return true;
     if (other is! Vertex) return false;
     Vertex ver = other as Vertex;
@@ -118,6 +118,8 @@ class Vertex {
     if (Math.Comparer.equals(this._weight, ver._weight)) return false;
     return true;
   }
+
+  bool operator ==(var other) => identical(this, other);
 
   String toString([String indent = ""]) {
     List<String> parts = new List<String>();

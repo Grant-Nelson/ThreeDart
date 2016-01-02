@@ -88,8 +88,11 @@ class ShapeLineCollection {
 
   String toString([String indent = ""]) {
     List<String> parts = new List<String>();
-    for (Line line in this._lines) {
-      parts.add(line.toString(indent));
+    final int count = this._lines.length;
+    for (int i = 0; i < count; ++i) {
+      Line line = this._lines[i];
+      if (line == null) parts.add("$indent$i. null");
+      else parts.add(line.toString(indent+"$i. "));
     }
     return parts.join('\n');
   }

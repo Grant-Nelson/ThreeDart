@@ -60,6 +60,49 @@ class Shape {
     return success;
   }
 
+  int findFirstIndex(Vertex ver, [VertexMatcher matcher = null]) {
+    if (matcher == null) matcher = new FullMatcher();
+    final int count = this._vertices.length;
+    for (int i = 0; i < count; ++i) {
+      Vertex ver2 = this._vertices[i];
+      if (ver2 != null) {
+        if (matcher.matches(ver, ver2)) {
+          return i;
+        }
+      }
+    }
+    return -2;
+  }
+
+  Vertex findFirst(Vertex ver, [VertexMatcher matcher = null]) {
+    if (matcher == null) matcher = new FullMatcher();
+    final int count = this._vertices.length;
+    for (int i = 0; i < count; ++i) {
+      Vertex ver2 = this._vertices[i];
+      if (ver2 != null) {
+        if (matcher.matches(ver, ver2)) {
+          return ver2;
+        }
+      }
+    }
+    return null;
+  }
+
+  List<Vertex> findAll(Vertex ver, [VertexMatcher matcher = null]) {
+    if (matcher == null) matcher = new FullMatcher();
+    List<Vertex> results = new List<Vertex>();
+    final int count = this._vertices.length;
+    for (int i = 0; i < count; ++i) {
+      Vertex ver2 = this._vertices[i];
+      if (ver2 != null) {
+        if (matcher.matches(ver, ver2)) {
+          results.add(ver2);
+        }
+      }
+    }
+    return results;
+  }
+
   bool _findMatching(VertexMatcher matcher, Vertex ver, int index, List<Vertex> matches, List<int> indices) {
     matches.add(ver);
     indices.add(index);
@@ -81,13 +124,12 @@ class Shape {
     for (int i = indices.length-1; i >= 0; --i) {
       int index = indices[i];
       Vertex ver = this.vertices[index];
-      for (int j = ver.faces.length - 1; j >= 0; --j)
-        ver.faces[j].replaceVertex(ver, newVer);
-      for (int j = ver.lines.length - 1; j >= 0; --j)
-        ver.lines[j].replaceVertex(ver, newVer);
-      for (int j = ver.points.length - 1; j >= 0; --j) {
-        ver.points[j].replaceVertex(ver, newVer);
-      }
+      while (ver.faces.length > 0)
+        ver.faces[0].replaceVertex(ver, newVer);
+      while (ver.lines.length > 0)
+        ver.lines[0].replaceVertex(ver, newVer);
+      while (ver.points.length > 0)
+        ver.points[0].replaceVertex(ver, newVer);
       this.vertices.removeAt(index);
     }
   }
@@ -100,8 +142,10 @@ class Shape {
         List<int> indices = new List<int>();
         if (this._findMatching(matcher, ver, i, matches, indices)) {
           Vertex newVer = merger.merge(matches);
-          if (newVer != null) this._replaceVertices(newVer, indices);
-          i -= indices.length;
+          if (newVer != null) {
+            this._replaceVertices(newVer, indices);
+            i -= indices.length;
+          }
         }
       }
     }
@@ -122,7 +166,6 @@ class Shape {
   void adjustNormals([VertexMatcher matcher = null]) {
     if (matcher == null) matcher = new LocationMatcher();
     this.mergeVertices(matcher, new NormalAdjuster());
-    print(this.toString());
   }
 
   Data.BufferStore build(Data.BufferBuilder builder, Data.VertexType type) {

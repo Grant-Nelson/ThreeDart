@@ -141,7 +141,7 @@ Shape cylindical({func2Handle radiusHndl: null, int sides: 8, int div: 1, bool c
   return shape;
 }
 
-Shape latLonSphere([int latitudeDiv = 12, int longitudeDiv = 12]) {
+Shape latLonSphere([int latitudeDiv = 12, int longitudeDiv = 24]) {
   Shape shape = surface(latitudeDiv, longitudeDiv, (double u, double v) {
     double r = sin(v*PI);
     Math.Vector3 vec = new Math.Vector3(-cos(u*2.0*PI)*r,
@@ -155,12 +155,91 @@ Shape latLonSphere([int latitudeDiv = 12, int longitudeDiv = 12]) {
   return shape;
 }
 
-Shape isosphere([int iterations = 4]) {
+Shape isosphere([int iterations = 3]) {
   Shape shape = new Shape();
+  // Ceate 12 vertices of a icosahedron.
+  var t = sqrt(5.0)/2.0 + 0.5;
+  Vertex ver0  = _isosphereAdd(shape, new Math.Vector3(-1.0,  t,  0.0));
+  Vertex ver1  = _isosphereAdd(shape, new Math.Vector3( 1.0,  t,  0.0));
+  Vertex ver2  = _isosphereAdd(shape, new Math.Vector3(-1.0, -t,  0.0));
+  Vertex ver3  = _isosphereAdd(shape, new Math.Vector3( 1.0, -t,  0.0));
 
-  // TODO: Implement
+  Vertex ver4  = _isosphereAdd(shape, new Math.Vector3( 0.0, -1.0,  t));
+  Vertex ver5  = _isosphereAdd(shape, new Math.Vector3( 0.0,  1.0,  t));
+  Vertex ver6  = _isosphereAdd(shape, new Math.Vector3( 0.0, -1.0, -t));
+  Vertex ver7  = _isosphereAdd(shape, new Math.Vector3( 0.0,  1.0, -t));
 
+  Vertex ver8  = _isosphereAdd(shape, new Math.Vector3( t,  0.0, -1.0));
+  Vertex ver9  = _isosphereAdd(shape, new Math.Vector3( t,  0.0,  1.0));
+  Vertex ver10 = _isosphereAdd(shape, new Math.Vector3(-t,  0.0, -1.0));
+  Vertex ver11 = _isosphereAdd(shape, new Math.Vector3(-t,  0.0,  1.0));
+
+  _isoSphereDiv(shape, ver0,  ver11, ver5,  iterations);
+  _isoSphereDiv(shape, ver0,  ver5,  ver1,  iterations);
+  _isoSphereDiv(shape, ver0,  ver1,  ver7,  iterations);
+  _isoSphereDiv(shape, ver0,  ver7,  ver10, iterations);
+  _isoSphereDiv(shape, ver0,  ver10, ver11, iterations);
+
+  _isoSphereDiv(shape, ver1,  ver5,  ver9,  iterations);
+  _isoSphereDiv(shape, ver5,  ver11, ver4,  iterations);
+  _isoSphereDiv(shape, ver11, ver10, ver2,  iterations);
+  _isoSphereDiv(shape, ver10, ver7,  ver6,  iterations);
+  _isoSphereDiv(shape, ver7,  ver1,  ver8,  iterations);
+
+  _isoSphereDiv(shape, ver3,  ver9,  ver4,  iterations);
+  _isoSphereDiv(shape, ver3,  ver4,  ver2,  iterations);
+  _isoSphereDiv(shape, ver3,  ver2,  ver6,  iterations);
+  _isoSphereDiv(shape, ver3,  ver6,  ver8,  iterations);
+  _isoSphereDiv(shape, ver3,  ver8,  ver9,  iterations);
+
+  _isoSphereDiv(shape, ver4,  ver9,  ver5,  iterations);
+  _isoSphereDiv(shape, ver2,  ver4,  ver11, iterations);
+  _isoSphereDiv(shape, ver6,  ver2,  ver10, iterations);
+  _isoSphereDiv(shape, ver8,  ver6,  ver7,  iterations);
+  _isoSphereDiv(shape, ver9,  ver8,  ver1,  iterations);
+
+  shape.joinSeams();
   return shape;
+}
+
+Vertex _isosphereAdd(Shape shape, Math.Vector3 norm) {
+  norm = norm.normal();
+  Vertex ver = new Vertex(loc: new Math.Point3.fromVector3(norm), norm: norm);
+  Vertex last = shape.findFirst(ver, new LocationMatcher());
+  if (last != null) return last;
+
+  ver.color = new Math.Color4(norm.dx*0.5 + 0.5, norm.dy*0.5 + 0.5, norm.dz*0.5 + 0.5);
+  double w = sqrt(norm.dx*norm.dx + norm.dy*norm.dy);
+  double tu = atan2(norm.dy, norm.dx)*0.5/PI;
+  if (tu < 0) tu = -tu;
+  double tv = atan2(w, norm.dz)/PI;
+  if (tv < 0) tv = -tv;
+  ver.texture = new Math.Point2(tu, tv);
+  shape.vertices.add(ver);
+  return ver;
+}
+
+void _isoSphereDiv(Shape shape, Vertex ver1, Vertex ver2, Vertex ver3, iteration) {
+  //         2                  2
+  //         .                  .
+  //        / \                / \
+  //       /   \              /B  \
+  //      /     \     =>   4 /_____\ 5
+  //     /       \          /\ C  / \
+  //    /         \        /A \  /D  \
+  //   /___________\      /____\/_____\
+  //  1             3    1      6      3
+  if (iteration <= 0) {
+    shape.faces.add(ver1, ver3, ver2);
+  } else {
+    Vertex ver4 = _isosphereAdd(shape, (ver1.normal + ver2.normal)*0.5);
+    Vertex ver5 = _isosphereAdd(shape, (ver2.normal + ver3.normal)*0.5);
+    Vertex ver6 = _isosphereAdd(shape, (ver3.normal + ver1.normal)*0.5);
+    _isoSphereDiv(shape, ver1, ver4, ver6, iteration-1); // A
+    _isoSphereDiv(shape, ver4, ver2, ver5, iteration-1); // B
+    _isoSphereDiv(shape, ver5, ver6, ver4, iteration-1); // C
+    _isoSphereDiv(shape, ver6, ver5, ver3, iteration-1); // D
+  }
 }
 
 Shape sphere({int widthDiv: 8, int heightDiv: 8, func2Handle heightHndl: _flatGridHeightHandle}) {

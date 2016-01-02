@@ -28,8 +28,7 @@ class Face {
   }
 
   void dispose() {
-    if (this._ver1._shape != null)
-      this._ver1._shape._faces._faces.remove(this);
+    if (!this.disposed) this._ver1._shape._faces._faces.remove(this);
     this._removeVertex1();
     this._removeVertex2();
     this._removeVertex3();
@@ -132,27 +131,27 @@ class Face {
       throw new Exception("May not replace a face's vertex with a vertex attached to a different shape.");
   }
 
-  bool replaceVertex(Vertex oldVer, Vertex newVer) {
+  int replaceVertex(Vertex oldVer, Vertex newVer) {
     if (this.disposed)
       throw new Exception("May not replace a face's vertex when the point has been disposed.");
-    bool result = false;
+    int result = 0;
     if (this._ver1 == oldVer) {
       this._checkReplaceVertex(oldVer, newVer);
       this._removeVertex1();
       this._setVertex1(newVer);
-      result = true;
+      ++result;
     }
     if (this._ver2 == oldVer) {
       this._checkReplaceVertex(oldVer, newVer);
       this._removeVertex2();
       this._setVertex2(newVer);
-      result = true;
+      ++result;
     }
     if (this._ver3 == oldVer) {
       this._checkReplaceVertex(oldVer, newVer);
       this._removeVertex3();
       this._setVertex3(newVer);
-      result = true;
+      ++result;
     }
     return result;
   }
@@ -164,7 +163,7 @@ class Face {
     return false;
   }
 
-  bool operator ==(var other) {
+  bool same(var other) {
     if (identical(this, other)) return true;
     if (other is! Face) return false;
     Face ver = other as Face;
@@ -175,6 +174,8 @@ class Face {
     if (this._binm != ver._binm) return false;
     return true;
   }
+
+  bool operator ==(var other) => identical(this, other);
 
   String toString([String indent = ""]) {
     String result = indent +

@@ -19,8 +19,7 @@ class Line {
   }
 
   void dispose() {
-    if (this._ver1._shape != null)
-      this._ver1._shape._lines._lines.remove(this);
+    if (!this.disposed) this._ver1._shape._lines._lines.remove(this);
     this._removeVertex1();
     this._removeVertex2();
   }
@@ -62,28 +61,28 @@ class Line {
       throw new Exception("May not replace a line's vertex with a vertex attached to a different shape.");
   }
 
-  bool replaceVertex(Vertex oldVer, Vertex newVer) {
+  int replaceVertex(Vertex oldVer, Vertex newVer) {
     if (this.disposed)
       throw new Exception("May not replace a line's vertex when the point has been disposed.");
-    bool result = false;
+    int result = 0;
     if (this._ver1 == oldVer) {
       this._checkReplaceVertex(oldVer, newVer);
       this._removeVertex1();
       this._setVertex1(newVer);
-      result = true;
+      ++result;
     }
     if (this._ver2 == oldVer) {
       this._checkReplaceVertex(oldVer, newVer);
       this._removeVertex2();
       this._setVertex2(newVer);
-      result = true;
+      ++result;
     }
     return result;
   }
 
   bool get collapsed => this._ver1 == this._ver2;
 
-  bool operator ==(var other) {
+  bool same(var other) {
     if (identical(this, other)) return true;
     if (other is! Line) return false;
     Line ver = other as Line;
@@ -92,7 +91,11 @@ class Line {
     return true;
   }
 
-  String toString([String indent = ""]) =>
-    indent + Math.formatInt(this._ver1._index) +
-    ", " + Math.formatInt(this._ver2._index);
+  bool operator ==(var other) => identical(this, other);
+
+  String toString([String indent = ""]) {
+    if (this.disposed) return "${indent}disposed";
+    return indent + Math.formatInt(this._ver1._index) +
+             ", " + Math.formatInt(this._ver2._index);
+  }
 }
