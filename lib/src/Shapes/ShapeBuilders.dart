@@ -111,7 +111,7 @@ double _constantRediusHandle(double a) => 1.0;
 Shape cylinder({double topRadius: 1.0, double bottomRadius: 1.0,
     int sides: 8, int div: 1, bool capTop: true, bool capBottom: true}) {
   return cylindical(sides: sides, div: div, capTop: capTop, capBottom: capBottom,
-    radiusHndl: (double _, double v) => Math.lerpVal(topRadius, bottomRadius, v));
+    radiusHndl: (double _, double v) => Math.lerpVal(bottomRadius, topRadius, v));
 }
 
 Shape cylindical({func2Handle radiusHndl: null, int sides: 8, int div: 1, bool capTop: true, bool capBottom: true}) {
@@ -275,15 +275,15 @@ void _addSphereSide(Shape shape, func2Handle heightHndl, int widthDiv, int heigh
   if (face != null) shape.merge(face);
 }
 
-Shape toroid({double majorRadius: 1.0, double minorRadius: 0.3, int majorCount: 40, int minorCount: 20}) {
-  return cylindicalPath(majorCount, minorCount, majorRadius, minorRadius, (double t) {
+Shape toroid({double minorRadius: 0.5, double majorRadius: 1.0, int minorCount: 15, int majorCount: 30}) {
+  return cylindicalPath(minorCount, majorCount, minorRadius, majorRadius, (double t) {
     return new Math.Point3(cos(t), sin(t), 0.0);
   });
 }
 
-Shape knot({int majorCount: 16, int minorCount: 150, double majorRadius: 1.0, double minorRadius: 0.3,
+Shape knot({int minorCount: 150, int majorCount: 16, double minorRadius: 0.3, double majorRadius: 1.0,
     double minorTurns: 3.0, double majorTurns: 2.0}) {
-  return cylindicalPath(majorCount, minorCount, majorRadius, minorRadius, (double t) {
+  return cylindicalPath(minorCount, majorCount, minorRadius, majorRadius, (double t) {
     double scalar = 2.0 + cos(minorTurns*t);
     return new Math.Point3(scalar*cos(majorTurns*t)/2.0,
                            scalar*sin(majorTurns*t)/2.0,
@@ -291,8 +291,8 @@ Shape knot({int majorCount: 16, int minorCount: 150, double majorRadius: 1.0, do
   });
 }
 
-Shape cylindicalPath(int majorCount, int minorCount, double majorRadius, double minorRadius, func1PntHandle pathHndl) {
-  Shape shape = surface(majorCount, minorCount, (double u, double v) {
+Shape cylindicalPath(int minorCount, int majorCount, double minorRadius, double majorRadius, func1PntHandle pathHndl) {
+  Shape shape = surface(minorCount, majorCount, (double u, double v) {
     double majorAngle = u*2.0*PI;
     Math.Point3 cur = pathHndl(majorAngle)*majorRadius;
     Math.Point3 next = pathHndl(majorAngle + PI/majorCount)*majorRadius;
@@ -318,7 +318,7 @@ Shape cylindicalPath(int majorCount, int minorCount, double majorRadius, double 
 
 Shape grid({int widthDiv: 4, int heightDiv: 4, func2Handle heightHndl: _flatGridHeightHandle}) {
   return surface(widthDiv, heightDiv, (double u, double v) =>
-    new Math.Point3(u*2.0-1.0, heightHndl(u, 0.0), v*2.0-1.0));
+    new Math.Point3(u*2.0-1.0, heightHndl(u, v), v*2.0-1.0));
 }
 
 double _flatGridHeightHandle(double u, double v) => 0.0;

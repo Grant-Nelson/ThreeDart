@@ -15,7 +15,7 @@ import 'package:ThreeDart/Scenes.dart' as Scenes;
 void main() {
 
   ThreeDart.Object obj = new ThreeDart.Object()
-    ..shape = Shapes.cube()
+    ..shape = Shapes.toroid()
     ..mover = new Movers.Rotater();
 
   Scenes.RenderPass pass = new Scenes.RenderPass()

@@ -117,17 +117,15 @@ class Inspection extends Technique {
       if (this._showVertices) {
         this._shader.setColors(this._ambient2, this._diffuse2);
         store.list[2].oneRender(state); // vertices
-        // TODO: Why does POINTS change culling or something?
-        //state.gl.enable(WebGL.CULL_FACE);
-        //state.gl.cullFace(WebGL.FRONT_FACE);
+        // TODO: Why does POINTS not respect depth tests?
+        // Once they do move these two below the DEPTH_TEST disabled.
       }
       if (this._showFaceCenters) {
         this._shader.setColors(this._ambient2, this._diffuse2);
         store.list[5].oneRender(state); // faceCenters
-        // TODO: Why does POINTS change culling or something?
-        //state.gl.enable(WebGL.CULL_FACE);
-        //state.gl.cullFace(WebGL.FRONT_FACE);
+        // TODO: See above TODO.
       }
+
       if (this._showFilled) {
         this._shader.setColors(this._ambient1, this._diffuse1);
         store.list[0].oneRender(state); // shapeFill

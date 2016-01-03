@@ -16,11 +16,8 @@ import 'package:ThreeDart/Materials.dart' as Materials;
 
 void main() {
 
-  Shapes.Shape shape = Shapes.cube()
-    ..joinSeams();
-
   ThreeDart.Object obj = new ThreeDart.Object()
-    ..shape = shape
+    ..shape = Shapes.toroid()
     ..mover = new Movers.Rotater();
 
   Techniques.MaterialLight tech = new Techniques.MaterialLight()

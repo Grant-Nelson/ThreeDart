@@ -4,6 +4,7 @@
 library ThreeDart.test.test002;
 
 import 'dart:html';
+import 'dart:math';
 
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 import 'package:ThreeDart/Shapes.dart' as Shapes;
@@ -15,7 +16,6 @@ import 'package:ThreeDart/Scenes.dart' as Scenes;
 void main() {
 
   ThreeDart.Object obj = new ThreeDart.Object()
-    ..shape = Shapes.isosphere()
     ..mover = new Movers.Rotater();
 
   Techniques.Inspection tech = new Techniques.Inspection();
@@ -31,13 +31,32 @@ void main() {
   _addCheckBox("Filled",         true,  (bool show) { tech.showFilled        = show; });
   _addCheckBox("Wire Frame",     true,  (bool show) { tech.showWireFrame     = show; });
   _addCheckBox("Vertices",       false, (bool show) { tech.showVertices      = show; });
-  _addCheckBox("Normals",        true,  (bool show) { tech.showNormals       = show; });
+  _addCheckBox("Normals",        false, (bool show) { tech.showNormals       = show; });
   _addCheckBox("Binormals",      false, (bool show) { tech.showBinormals     = show; });
   _addCheckBox("Face Centers",   false, (bool show) { tech.showFaceCenters   = show; });
   _addCheckBox("Face Normals",   false, (bool show) { tech.showFaceNormals   = show; });
   _addCheckBox("Face Binormals", false, (bool show) { tech.showFaceBinormals = show; });
   _addCheckBox("Colors",         false, (bool show) { tech.showColorFill     = show; });
   _addCheckBox("Textures",       false, (bool show) { tech.showTxtColor      = show; });
+
+  _addRadioButton("Square",        () { obj.shape = Shapes.square(); }, true);
+  _addRadioButton("Cube",          () { obj.shape = Shapes.cube(); });
+  _addRadioButton("Disk",          () { obj.shape = Shapes.disk(); });
+  _addRadioButton("Disk+",         () { obj.shape = Shapes.disk(sides: 30); });
+  _addRadioButton("Cylinder",      () { obj.shape = Shapes.cylinder(); });
+  _addRadioButton("Cylinder+",     () { obj.shape = Shapes.cylinder(sides: 16, div: 4); });
+  _addRadioButton("Cone",          () { obj.shape = Shapes.cylinder(topRadius: 0.0, sides: 12, capTop: false); });
+  _addRadioButton("LatLonSphere",  () { obj.shape = Shapes.latLonSphere(10, 20); });
+  _addRadioButton("LatLonSphere+", () { obj.shape = Shapes.latLonSphere(20, 40); });
+  _addRadioButton("IsoSphere",     () { obj.shape = Shapes.isosphere(2); });
+  _addRadioButton("IsoSphere+",    () { obj.shape = Shapes.isosphere(3); });
+  _addRadioButton("Sphere",        () { obj.shape = Shapes.sphere(widthDiv: 6, heightDiv: 6); });
+  _addRadioButton("Sphere+",       () { obj.shape = Shapes.sphere(widthDiv: 10, heightDiv: 10); });
+  _addRadioButton("Toroid",        () { obj.shape = Shapes.toroid(); });
+  _addRadioButton("Knot",          () { obj.shape = Shapes.knot(); });
+  _addRadioButton("Grid",          () { obj.shape = Shapes.grid(); });
+  _addRadioButton("Grid+",         () { obj.shape = Shapes.grid(widthDiv: 16, heightDiv: 16,
+                                        heightHndl: (double u, double v) => sin(u*8.0)*cos(v*8.0)*0.3 ); });
 
   var update;
   update = (num t) {
@@ -47,7 +66,9 @@ void main() {
   window.requestAnimationFrame(update);
 }
 
-typedef selectionHndl(bool);
+typedef void selectionHndl(bool);
+
+typedef void setShapeHndl();
 
 void _addCheckBox(String text, bool checked, selectionHndl hndl) {
   hndl(checked);
@@ -56,6 +77,22 @@ void _addCheckBox(String text, bool checked, selectionHndl hndl) {
     ..checked = checked;
   checkBox.onChange.listen((_) {
       hndl(checkBox.checked);
+    });
+  elem.children.add(checkBox);
+  SpanElement span = new SpanElement()
+    ..text = text;
+  elem.children.add(span);
+  elem.children.add(new BRElement());
+}
+
+void _addRadioButton(String text, setShapeHndl hndl, [bool selected = false]) {
+  if (selected) hndl();
+  Element elem = document.getElementById("shapes");
+  RadioButtonInputElement checkBox = new RadioButtonInputElement()
+    ..checked = selected
+    ..name = "shape";
+  checkBox.onChange.listen((_) {
+      if (checkBox.checked) hndl();
     });
   elem.children.add(checkBox);
   SpanElement span = new SpanElement()
