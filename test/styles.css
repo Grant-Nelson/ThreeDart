@@ -7,16 +7,31 @@
 	line-height: 26.4px;
 }
 
-.test-link {
+.body {
+  background-color: #FFFFFF;
+}
+
+.test-box {
+  overflow: hidden;
   height: 100px;
   width: 100px;
   float: left;
   padding: 4px;
-  transition: all .3s ease-in-out;
+}
+
+.test-link {
+  height: 100px;
+  width: 100px;
+  -webkit-transition: all 0.3s ease-out;
+  -moz-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
 }
 
 .test-link:hover {
-  transform: scale(1.15);
+  -webkit-transition: all 5.0s ease-in;
+  -moz-transition: all 5.0s ease-in;
+  transition: all 5.0s ease-in;
+  transform: scale(1.5);
 }
 
 .test-link a {

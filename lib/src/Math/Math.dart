@@ -29,10 +29,21 @@ double lerpVal(double a, double b, double i) => a + i * (b - a);
 
 /// Gets the clamped value.
 ///
-/// If [v] is less than 0.0 then 0.0 is returned.
-/// If [v] is greater than 1.0 then 1.0 is returned.
+/// If [v] is less than the [min] then the [min] is returned.
+/// If [v] is greater than the [max] then the [max] is returned.
 /// Otherwise [v] is returned unchanged.
-double clampVal(double v) => (v < 0.0) ? 0.0 : (v > 1.0) ? 1.0 : v;
+double clampVal(double v, [double min = 0.0, double max = 1.0]) => (v < min) ? min : (v > max) ? max : v;
+
+/// Gets the wrapped value.
+///
+/// If [v] is out of the [min] and [max] range,
+/// [v] will we wrapped until inside the range.
+double wrapVal(double v, [double min = 0.0, double max = 1.0]) {
+  final double w = max - min;
+  v = (v - min) % w;
+  if (v < 0.0) v += w;
+  return v + min;
+}
 
 /// Formats the given double value into a string.
 ///

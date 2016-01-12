@@ -8,13 +8,13 @@ class RenderPass implements Scene {
 
   Techniques.Technique _tech;
 
-  List<Core.Object> _children;
+  List<Core.Entity> _children;
 
   RenderPass() {
     this._camara = new Views.Perspective();
     this._target = new Views.FrontTarget();
     this._tech = null;
-    this._children = new List<Core.Object>();
+    this._children = new List<Core.Entity>();
   }
 
   Views.Camara get camara => this._camara;
@@ -26,14 +26,14 @@ class RenderPass implements Scene {
   Techniques.Technique get tech => this._tech;
   set tech(Techniques.Technique tech) => this._tech = tech;
 
-  List<Core.Object> get children => this._children;
+  List<Core.Entity> get children => this._children;
 
   void render(Core.RenderState state) {
     this._target.bind(state);
     this._camara.bind(state);
     state.pushTechnique(this._tech);
 
-    for (Core.Object child in this._children) {
+    for (Core.Entity child in this._children) {
       child.render(state);
     }
 

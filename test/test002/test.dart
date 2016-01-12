@@ -15,10 +15,11 @@ import 'package:ThreeDart/Scenes.dart' as Scenes;
 
 void main() {
 
-  ThreeDart.Object obj = new ThreeDart.Object()
+  ThreeDart.Entity obj = new ThreeDart.Entity()
     ..mover = new Movers.Rotater();
 
-  Techniques.Inspection tech = new Techniques.Inspection();
+  Techniques.Inspection tech = new Techniques.Inspection()
+    ..vectorScale = 0.4;
 
   Scenes.RenderPass pass = new Scenes.RenderPass()
     ..tech = tech
@@ -46,12 +47,16 @@ void main() {
   _addRadioButton("Cylinder",      () { obj.shape = Shapes.cylinder(); });
   _addRadioButton("Cylinder+",     () { obj.shape = Shapes.cylinder(sides: 16, div: 4); });
   _addRadioButton("Cone",          () { obj.shape = Shapes.cylinder(topRadius: 0.0, sides: 12, capTop: false); });
+  _addRadioButton("Cylindical",    () { obj.shape = Shapes.cylindical(sides: 50, div: 25,
+                                        radiusHndl: (double u, double v) => cos(v*4.0*PI + PI)*0.2 + cos(u*6.0*PI)*0.3 + 0.8); });
   _addRadioButton("LatLonSphere",  () { obj.shape = Shapes.latLonSphere(10, 20); });
   _addRadioButton("LatLonSphere+", () { obj.shape = Shapes.latLonSphere(20, 40); });
   _addRadioButton("IsoSphere",     () { obj.shape = Shapes.isosphere(2); });
   _addRadioButton("IsoSphere+",    () { obj.shape = Shapes.isosphere(3); });
   _addRadioButton("Sphere",        () { obj.shape = Shapes.sphere(widthDiv: 6, heightDiv: 6); });
   _addRadioButton("Sphere+",       () { obj.shape = Shapes.sphere(widthDiv: 10, heightDiv: 10); });
+  _addRadioButton("Spherical",     () { obj.shape = Shapes.sphere(widthDiv: 10, heightDiv: 10,
+                                        heightHndl: (double u, double v) => cos(sqrt((u-0.5)*(u-0.5) + (v-0.5)*(v-0.5))*PI)*0.3); });
   _addRadioButton("Toroid",        () { obj.shape = Shapes.toroid(); });
   _addRadioButton("Knot",          () { obj.shape = Shapes.knot(); });
   _addRadioButton("Grid",          () { obj.shape = Shapes.grid(); });

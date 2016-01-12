@@ -55,22 +55,60 @@ class Vertex {
   bool get isEmpty => this._points.isEmpty && this._lines.isEmpty && this._faces.isEmpty;
 
   Math.Point3 get location => this._loc;
-  set location(Math.Point3 loc) => this._loc = loc;
+  set location(Math.Point3 loc) {
+    if (this._loc != loc) {
+      this._loc = loc;
+      if (this._shape != null)
+        this._shape._onChange(new Core.ChangedEventArgs.modified(this));
+    }
+  }
 
   Math.Vector3 get normal => this._norm;
-  set normal(Math.Vector3 norm) => this._norm = (norm == null)? null: norm.normal();
+  set normal(Math.Vector3 norm) {
+    norm = (norm == null)? null: norm.normal();
+    if (this._norm != norm) {
+      this._norm = norm;
+      if (this._shape != null)
+        this._shape._onChange(new Core.ChangedEventArgs.modified(this));
+    }
+  }
 
   Math.Vector3 get binormal => this._binm;
-  set binormal(Math.Vector3 binm) => this._binm =  (binm == null)? null: binm.normal();
+  set binormal(Math.Vector3 binm) {
+    binm = (binm == null)? null: binm.normal();
+    if (this._binm != binm) {
+      this._binm = binm;
+      if (this._shape != null)
+        this._shape._onChange(new Core.ChangedEventArgs.modified(this));
+    }
+  }
 
   Math.Point2 get texture => this._txt;
-  set texture(Math.Point2 txt) => this._txt = txt;
+  set texture(Math.Point2 txt) {
+    if (this._txt != txt) {
+      this._txt = txt;
+      if (this._shape != null)
+        this._shape._onChange(new Core.ChangedEventArgs.modified(this));
+    }
+  }
 
   Math.Color4 get color => this._clr;
-  set color(Math.Color4 clr) => this._clr = clr;
+  set color(Math.Color4 clr) {
+    if (this._clr != clr) {
+      this._clr = clr;
+      if (this._shape != null)
+        this._shape._onChange(new Core.ChangedEventArgs.modified(this));
+    }
+  }
 
   double get weight => this._weight;
-  set weight(double weight) => this._weight = weight;
+  set weight(double weight) {
+    if (this._weight != weight) {
+      this._weight = weight;
+      if (this._shape != null)
+        this._shape._onChange(new Core.ChangedEventArgs.modified(this));
+    }
+  }
 
   List<double> listFor(Data.VertexType type) {
     if (type == Data.VertexType.Pos) return this._loc.toList();
@@ -85,23 +123,33 @@ class Vertex {
 
   bool calculateNormal() {
     if (this._norm != null) return true;
+    if (this._shape != null) this._shape._changed.suspend();
     Math.Vector3 normSum = new Math.Vector3.zero();
     this._faces.forEach((Face face) {
       Math.Vector3 norm = (face == null) ? null : face.normal;
       if (norm != null) normSum += norm;
     });
     this._norm = normSum.normal();
+    if (this._shape != null) {
+      this._shape._onChange(new Core.ChangedEventArgs.modified(this));
+      this._shape._changed.resume();
+    }
     return true;
   }
 
   bool calculateBinormal() {
     if (this._binm != null) return true;
+    if (this._shape != null) this._shape._changed.suspend();
     Math.Vector3 binmSum = new Math.Vector3.zero();
     this._faces.forEach((Face face) {
       Math.Vector3 binm = (face == null) ? null : face.binormal;
       if(binm != null) binmSum += binm;
     });
     this._binm = binmSum.normal();
+    if (this._shape != null) {
+      this._shape._onChange(new Core.ChangedEventArgs.modified(this));
+      this._shape._changed.resume();
+    }
     return true;
   }
 

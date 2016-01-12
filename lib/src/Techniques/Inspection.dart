@@ -70,7 +70,7 @@ class Inspection extends Technique {
   bool get showTxtColor      => this._showTxtColor;
   double get vectorScale     => this._vectorScale;
 
-  void render(Core.RenderState state, Core.Object obj) {
+  void render(Core.RenderState state, Core.Entity obj) {
     if (this._shader == null)
       this._shader = new Shaders.Inspection.cached(state);
 
@@ -106,7 +106,7 @@ class Inspection extends Technique {
       ..lightVector = this._lightVec
       ..projectMatrix = state.projection.matrix
       ..viewMatrix = state.view.matrix
-      ..objectMatrix = state.object.matrix;
+      ..EntityMatrix = state.Entity.matrix;
 
     if (obj.cache is Data.BufferStoreList) {
       Data.BufferStoreList store = obj.cache as Data.BufferStoreList;

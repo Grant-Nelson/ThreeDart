@@ -5,6 +5,7 @@ library ThreeDart.Core;
 
 import 'dart:web_gl' as WebGL;
 import 'dart:html' as html;
+import 'dart:async' as async;
 
 import '../Data/Data.dart' as Data;
 import '../Math/Math.dart' as Math;
@@ -15,7 +16,10 @@ import '../Shaders/Shaders.dart' as Shaders;
 import '../Scenes/Scenes.dart' as Scenes;
 
 part 'Bindable.dart';
-part 'Object.dart';
+part 'ChangedEventArgs.dart';
+part 'Event.dart';
+part 'Entity.dart';
+part 'EntityCollection.dart';
 part 'Renderable.dart';
 part 'RenderState.dart';
 part 'ThreeDart.dart';

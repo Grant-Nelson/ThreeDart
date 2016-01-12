@@ -28,7 +28,7 @@ class IndexObject {
   /// The buffer of indices for a shape.
   Buffer get buffer => this._buffer;
 
-  /// Gets the string for this index object.
+  /// Gets the string for this index Entity.
   String toString() {
     return "Type: ${this._type}, Count: ${this._count}, [${this.buffer.toString()}]";
   }

@@ -281,7 +281,7 @@ Shape toroid({double minorRadius: 0.5, double majorRadius: 1.0, int minorCount: 
   });
 }
 
-Shape knot({int minorCount: 150, int majorCount: 16, double minorRadius: 0.3, double majorRadius: 1.0,
+Shape knot({int minorCount: 12, int majorCount: 120, double minorRadius: 0.3, double majorRadius: 1.0,
     double minorTurns: 3.0, double majorTurns: 2.0}) {
   return cylindicalPath(minorCount, majorCount, minorRadius, majorRadius, (double t) {
     double scalar = 2.0 + cos(minorTurns*t);

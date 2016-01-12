@@ -16,7 +16,7 @@ import 'package:ThreeDart/Materials.dart' as Materials;
 
 void main() {
 
-  ThreeDart.Object obj = new ThreeDart.Object()
+  ThreeDart.Entity obj = new ThreeDart.Entity()
     ..shape = Shapes.toroid()
     ..mover = new Movers.Rotater();
 

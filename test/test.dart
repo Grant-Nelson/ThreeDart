@@ -22,9 +22,13 @@ void addTest(html.Element elem, String testName) {
     ..href = "./$testName/"
     ..children.add(img);
 
-  html.DivElement box = new html.DivElement()
+  html.DivElement innerBox = new html.DivElement()
     ..className = "test-link"
     ..children.add(a);
 
-  elem.children.add(box);
+  html.DivElement outterBox = new html.DivElement()
+    ..className = "test-box"
+    ..children.add(innerBox);
+
+  elem.children.add(outterBox);
 }

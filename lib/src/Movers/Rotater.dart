@@ -40,7 +40,7 @@ class Rotater extends Mover {
   double get deltaRoll => this._deltaRoll;
   set deltaRoll(double value) => this._deltaRoll = value;
 
-  void _update(Core.RenderState state, Core.Object obj) {
+  void _update(Core.RenderState state, Core.Entity obj) {
     this._frameNum = state.frameNumber;
 
     this._yaw += this.deltaYaw*state.dt;
@@ -57,7 +57,7 @@ class Rotater extends Mover {
                 new Math.Matrix4.rotateZ(this._roll);
   }
 
-  Math.Matrix4 update(Core.RenderState state, Core.Object obj) {
+  Math.Matrix4 update(Core.RenderState state, Core.Entity obj) {
     if (this._frameNum < state.frameNumber) this._update(state, obj);
     return this._mat;
   }

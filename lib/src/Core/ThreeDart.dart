@@ -90,6 +90,9 @@ class ThreeDart {
   /// The height of the canvas in pixels.
   int get height => this._canvas.height;
 
+  /// The canvas being written to.
+  html.CanvasElement get canvas => this._canvas;
+
   /// The scene to render to the canvas.
   Scenes.Scene get scene => this._scene;
   set scene(Scenes.Scene scene) {

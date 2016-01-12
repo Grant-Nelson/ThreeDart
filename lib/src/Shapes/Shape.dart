@@ -5,12 +5,14 @@ class Shape {
   ShapePointCollection _points;
   ShapeLineCollection _lines;
   ShapeFaceCollection _faces;
+  Core.Event _changed;
 
   Shape() {
     this._vertices = new VertexCollection._(this);
     this._points = new ShapePointCollection._(this);
     this._lines = new ShapeLineCollection._(this);
     this._faces = new ShapeFaceCollection._(this);
+    this._changed = new Core.Event(this);
   }
 
   factory Shape.copy(Shape other) {
@@ -21,8 +23,14 @@ class Shape {
   ShapePointCollection get points => this._points;
   ShapeLineCollection get lines => this._lines;
   ShapeFaceCollection get faces => this._faces;
+  Core.Event get changed => this._changed;
+
+  void _onChange(Core.ChangedEventArgs args) {
+    this._changed.emit(args);
+  }
 
   void merge(Shape other) {
+    this._changed.suspend();
     other._vertices._updateIndices();
     int offset = this._vertices.length;
     for (Vertex vertex in other._vertices._vertices) {
@@ -44,19 +52,24 @@ class Shape {
       Vertex ver3 = this._vertices[face.vertex3.index + offset];
       this._faces.add(ver1, ver2, ver3);
     }
+    this._changed.resume();
   }
 
   bool calculateNormals() {
     bool success = true;
+    this._changed.suspend();
     if (!this._faces.calculateNormals()) success = false;
     if (!this._vertices.calculateNormals()) success = false;
+    this._changed.resume();
     return success;
   }
 
   bool calculateBinormals() {
     bool success = true;
+    this._changed.suspend();
     if (!this._faces.calculateBinormals()) success = false;
     if (!this._vertices.calculateBinormals()) success = false;
+    this._changed.resume();
     return success;
   }
 
@@ -135,6 +148,7 @@ class Shape {
   }
 
   void mergeVertices(VertexMatcher matcher, VertexMerger merger) {
+    this._changed.suspend();
     for (int i = this._vertices.length-1; i >= 0; --i) {
       Vertex ver = this._vertices[i];
       if (ver != null) {
@@ -156,6 +170,7 @@ class Shape {
     this._points.removeRepeats();
     this._lines.removeRepeats(new UndirectedLineMatcher());
     this._faces.removeRepeats(new SimilarFaceMatcher());
+    this._changed.resume();
   }
 
   void joinSeams([VertexMatcher matcher = null]) {
@@ -201,7 +216,7 @@ class Shape {
         indices.add(this._points[i].vertex.index);
       }
       Data.Buffer indexBuf = builder.fromIntList(WebGL.ELEMENT_ARRAY_BUFFER, indices);
-      store.indexObjects.add(new Data.IndexObject(WebGL.POINTS, indices.length, indexBuf));
+      store.indexEntitys.add(new Data.IndexObject(WebGL.POINTS, indices.length, indexBuf));
     }
 
     if (!this._lines.isEmpty) {
@@ -211,7 +226,7 @@ class Shape {
         indices.add(this._lines[i].vertex2.index);
       }
       Data.Buffer indexBuf = builder.fromIntList(WebGL.ELEMENT_ARRAY_BUFFER, indices);
-      store.indexObjects.add(new Data.IndexObject(WebGL.LINES, indices.length, indexBuf));
+      store.indexEntitys.add(new Data.IndexObject(WebGL.LINES, indices.length, indexBuf));
     }
 
     if (!this._faces.isEmpty) {
@@ -222,7 +237,7 @@ class Shape {
         indices.add(this._faces[i].vertex3.index);
       }
       Data.Buffer indexBuf = builder.fromIntList(WebGL.ELEMENT_ARRAY_BUFFER, indices);
-      store.indexObjects.add(new Data.IndexObject(WebGL.TRIANGLES, indices.length, indexBuf));
+      store.indexEntitys.add(new Data.IndexObject(WebGL.TRIANGLES, indices.length, indexBuf));
     }
 
     return store;

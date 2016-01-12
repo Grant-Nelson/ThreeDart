@@ -1,14 +1,14 @@
 part of ThreeDart.Core;
 
-/// A renderable object in a tree of objects for a scene.
+/// A renderable Entity in a tree of Entitys for a scene.
 ///
-/// An [Object] is a [Shape], [Technique], and a [Mover]
+/// An [Entity] is a [Shape], [Technique], and a [Mover]
 /// to create an output when rendered.
-class Object implements Movers.Movable, Renderable {
+class Entity implements Movers.Movable, Renderable {
 
   /// The shape to render.
-  /// May be null to not render this object which is useful
-  /// when grouping other objects.
+  /// May be null to not render this Entity which is useful
+  /// when grouping other Entitys.
   Shapes.Shape _shape;
 
   /// The cache of the shape transformed into the buffers required
@@ -18,22 +18,27 @@ class Object implements Movers.Movable, Renderable {
   /// The technique to render with or null to inherit from it's parent.
   Techniques.Technique _tech;
 
-  /// The list of children objects to this object.
-  List<Object> _children;
+  /// The list of children Entitys to this Entity.
+  EntityCollection _children;
 
-  /// The mover to position, rotate, and scale this object and children.
-  /// May be null to not move the object.
+  /// The mover to position, rotate, and scale this Entity and children.
+  /// May be null to not move the Entity.
   Movers.Mover _mover;
 
-  /// Creates a new object.
-  Object({
+  //Event _shape;
+  //Event _tech;
+  //Event _children;
+  //Event _mover;
+
+  /// Creates a new Entity.
+  Entity({
       Shapes.Shape shape: null,
       Techniques.Technique tech: null,
       Movers.Mover mover: null}) {
     this._shape = shape;
     this._cache = null;
     this._tech = tech;
-    this._children = new List<Object>();
+    this._children = new EntityCollection._(this);
     this._mover = mover;
   }
 
@@ -55,7 +60,7 @@ class Object implements Movers.Movable, Renderable {
   /// currently use this technique.
   void _cacheUpdateForTech() {
     this.clearCache();
-    for(Object child in this._children) {
+    for(Entity child in this._children) {
       if (child._tech == null) {
         child._cacheUpdateForTech();
       }
@@ -66,35 +71,37 @@ class Object implements Movers.Movable, Renderable {
   set cache(Data.TechniqueCache cache) => _cache = cache;
   Data.TechniqueCache get cache => this._cache;
 
-  /// The children objects of this object.
-  List<Object> get children => _children;
+  /// The children Entitys of this Entity.
+  EntityCollection get children => _children;
 
-  /// The mover which moves this object.
+  /// The mover which moves this Entity.
   ///
-  /// May be null to not move the object.
+  /// May be null to not move the Entity.
   Movers.Mover get mover => this._mover;
-  set mover(Movers.Mover mover) => this._mover = mover;
+  void set mover(Movers.Mover mover) {
+    this._mover = mover;
+  }
 
-  /// The shape to draw at this object.
+  /// The shape to draw at this Entity.
   ///
-  /// May be null to not draw anything, usefull if this object
-  /// is just a container for child objects.
+  /// May be null to not draw anything, usefull if this Entity
+  /// is just a container for child Entitys.
   Shapes.Shape get shape => this._shape;
   set shape(Shapes.Shape shape) {
     this._shape = shape;
     this.clearCache();
   }
 
-  /// The techinque to render this object and/or it's children with.
+  /// The techinque to render this Entity and/or it's children with.
   ///
-  /// May be null to inherit the technique from this objects parent.
+  /// May be null to inherit the technique from this Entitys parent.
   Techniques.Technique get technique => this._tech;
   set technique(Techniques.Technique technique) {
     this._tech = technique;
     this._cacheUpdateForTech();
   }
 
-  /// Renders the object with the given [RenderState].
+  /// Renders the Entity with the given [RenderState].
   void render(RenderState state) {
     Math.Matrix4 mat = null;
     if (this._mover != null) {
@@ -102,22 +109,22 @@ class Object implements Movers.Movable, Renderable {
     }
 
     // Push state onto the renderer.
-    state.object.pushMul(mat);
+    state.Entity.pushMul(mat);
     state.pushTechnique(this._tech);
 
-    // Render this object.
+    // Render this Entity.
     Techniques.Technique tech = state.technique;
     if ((tech != null) && (this._shape != null)) {
       tech.render(state, this);
     }
 
     // Render all children.
-    for (Object child in this._children) {
+    for (Entity child in this._children) {
       child.render(state);
     }
 
     // Pop state from renderer.
     state.popTechnique();
-    state.object.pop();
+    state.Entity.pop();
   }
 }

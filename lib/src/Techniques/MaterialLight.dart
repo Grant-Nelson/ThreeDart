@@ -26,7 +26,7 @@ class MaterialLight extends Technique {
     this._shader = null;
   }
 
-  void render(Core.RenderState state, Core.Object obj) {
+  void render(Core.RenderState state, Core.Entity obj) {
     if (this._light is Lights.Directional) {
       if (this._material is Materials.Solid) {
         this._solidDirectional(state, obj);
@@ -43,7 +43,7 @@ class MaterialLight extends Technique {
     this._shader.unbind(state);
   }
 
-  void _solidDirectional(Core.RenderState state, Core.Object obj) {
+  void _solidDirectional(Core.RenderState state, Core.Entity obj) {
     if (this._shader == null)
       this._shader = new Shaders.SolidDirectional.cached(state);
     Shaders.SolidDirectional shader = this._shader as Shaders.SolidDirectional;
@@ -60,6 +60,6 @@ class MaterialLight extends Technique {
       ..setMaterial(this._material as Materials.Solid)
       ..projectMatrix = state.projection.matrix
       ..viewMatrix = state.view.matrix
-      ..objectMatrix = state.object.matrix;
+      ..EntityMatrix = state.Entity.matrix;
   }
 }
