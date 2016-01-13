@@ -66,8 +66,8 @@ class Depth extends Shader {
 
   Attribute get posAttr => this._posAttr;
 
-  Math.Color3 get EntityColor => this._objClr.getColor3();
-  set EntityColor(Math.Color3 clr) => this._objClr.setColor3(clr);
+  Math.Color3 get objectColor => this._objClr.getColor3();
+  set objectColor(Math.Color3 clr) => this._objClr.setColor3(clr);
 
   Math.Color3 get fogColor => this._fogClr.getColor3();
   set fogColor(Math.Color3 clr) => this._fogClr.setColor3(clr);
@@ -78,8 +78,8 @@ class Depth extends Shader {
   double get fogStop => this._fogStop.getValue();
   set fogStop(double value) => this._fogStop.setValue(value);
 
-  Math.Matrix4 get viewEntityMatrix => this._viewObjMat.getMatrix4();
-  set viewEntityMatrix(Math.Matrix4 mat) => this._viewObjMat.setMatrix4(mat);
+  Math.Matrix4 get viewObjectMatrix => this._viewObjMat.getMatrix4();
+  set viewObjectMatrix(Math.Matrix4 mat) => this._viewObjMat.setMatrix4(mat);
 
   Math.Matrix4 get projectMatrix => this._projMat.getMatrix4();
   set projectMatrix(Math.Matrix4 mat) => this._projMat.setMatrix4(mat);

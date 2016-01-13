@@ -9,10 +9,11 @@ class EntityCollection {
     this._children = new List<Entity>();
   }
 
-  Entity get Entity => this._obj;
+  Entity get entity => this._obj;
 
   void add(Entity obj) {
     this._children.add(obj);
+    this._obj._childrenChanged.emit(new ChangedEventArgs.added(obj));
   }
 
   bool get isEmpty => this._children.isEmpty;
@@ -22,10 +23,17 @@ class EntityCollection {
   void forEach(void funcHndl(Entity obj)) => this._children.forEach(funcHndl);
 
   Entity removeAt(int index) {
-    return this._children.removeAt(index);
+    Entity obj = this._children.removeAt(index);
+    if (obj != null)
+      this._obj._childrenChanged.emit(new ChangedEventArgs.removed(obj));
+    return obj;
   }
 
   bool remove(Entity obj) {
-    return this._children.remove(obj);
+    if (this._children.remove(obj)) {
+      this._obj._childrenChanged.emit(new ChangedEventArgs.removed(obj));
+      return true;
+    }
+    return false;
   }
 }

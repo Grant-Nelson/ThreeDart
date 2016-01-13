@@ -7,21 +7,21 @@ class BufferStore implements Core.Bindable, Core.Renderable, TechniqueCache {
   Buffer _vertexBuf;
 
   /// The list of indices for the order of vertex rendering and type of resterization.
-  List<IndexEntity> _indexObjs;
+  List<IndexObject> _indexObjs;
 
   /// The list of buffer attributes describing the type of vertices in the buffer.
   List<BufferAttr> _attrs;
 
   /// Creates a new buffer store.
   BufferStore(this._vertexBuf, this._attrs) {
-    this._indexObjs = new List<IndexEntity>();
+    this._indexObjs = new List<IndexObject>();
   }
 
   /// The list of buffer attributes describing the type of vertices in the buffer.
   List<BufferAttr> get attributes => this._attrs;
 
   /// The list of indices for the order of vertex rendering and type of resterization.
-  List<IndexEntity> get indexEntitys => this._indexObjs;
+  List<IndexObject> get indexObjects => this._indexObjs;
 
   /// Finds the attribute which has the given type.
   BufferAttr findAttribute(VertexType type) {
@@ -53,7 +53,7 @@ class BufferStore implements Core.Bindable, Core.Renderable, TechniqueCache {
   void render(Core.RenderState state) {
     int objCount = this._indexObjs.length;
     for (int i = 0; i < objCount; i++) {
-      IndexEntity indexObj = this._indexObjs[i];
+      IndexObject indexObj = this._indexObjs[i];
       indexObj.buffer.bind(state);
       state.gl.drawElements(indexObj.type, indexObj.count, WebGL.UNSIGNED_SHORT, 0);
       indexObj.buffer.unbind(state);
@@ -70,7 +70,7 @@ class BufferStore implements Core.Bindable, Core.Renderable, TechniqueCache {
   /// Gets the string for this buffer store.
   String toString() {
     List<String> indexStr = new List<String>();
-    for (IndexEntity obj in this._indexObjs) {
+    for (IndexObject obj in this._indexObjs) {
       indexStr.add(obj.toString());
     }
     List<String> attrStr = new List<String>();

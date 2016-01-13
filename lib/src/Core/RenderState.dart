@@ -113,8 +113,8 @@ class RenderState {
   /// The stack of the view matrices.
   Math.Matrix4Stack get view => this._viewStack;
 
-  /// The stack of Entity matrices.
-  Math.Matrix4Stack get Entity => this._objStack;
+  /// The stack of object matrices.
+  Math.Matrix4Stack get object => this._objStack;
 
   /// The current technique to render with.
   ///

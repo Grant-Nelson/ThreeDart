@@ -60,6 +60,6 @@ class MaterialLight extends Technique {
       ..setMaterial(this._material as Materials.Solid)
       ..projectMatrix = state.projection.matrix
       ..viewMatrix = state.view.matrix
-      ..EntityMatrix = state.Entity.matrix;
+      ..objectMatrix = state.object.matrix;
   }
 }

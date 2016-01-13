@@ -139,8 +139,8 @@ class SolidDirectional extends Shader {
     this.shininess = material.shininess;
   }
 
-  Math.Matrix4 get EntityMatrix => this._objMat.getMatrix4();
-  set EntityMatrix(Math.Matrix4 mat) => this._objMat.setMatrix4(mat);
+  Math.Matrix4 get objectMatrix => this._objMat.getMatrix4();
+  set objectMatrix(Math.Matrix4 mat) => this._objMat.setMatrix4(mat);
 
   Math.Matrix4 get viewMatrix => this._viewMat.getMatrix4();
   set viewMatrix(Math.Matrix4 mat) => this._viewMat.setMatrix4(mat);

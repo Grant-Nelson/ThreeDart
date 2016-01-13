@@ -216,7 +216,7 @@ class Shape {
         indices.add(this._points[i].vertex.index);
       }
       Data.Buffer indexBuf = builder.fromIntList(WebGL.ELEMENT_ARRAY_BUFFER, indices);
-      store.indexEntitys.add(new Data.IndexObject(WebGL.POINTS, indices.length, indexBuf));
+      store.indexObjects.add(new Data.IndexObject(WebGL.POINTS, indices.length, indexBuf));
     }
 
     if (!this._lines.isEmpty) {
@@ -226,7 +226,7 @@ class Shape {
         indices.add(this._lines[i].vertex2.index);
       }
       Data.Buffer indexBuf = builder.fromIntList(WebGL.ELEMENT_ARRAY_BUFFER, indices);
-      store.indexEntitys.add(new Data.IndexObject(WebGL.LINES, indices.length, indexBuf));
+      store.indexObjects.add(new Data.IndexObject(WebGL.LINES, indices.length, indexBuf));
     }
 
     if (!this._faces.isEmpty) {
@@ -237,7 +237,7 @@ class Shape {
         indices.add(this._faces[i].vertex3.index);
       }
       Data.Buffer indexBuf = builder.fromIntList(WebGL.ELEMENT_ARRAY_BUFFER, indices);
-      store.indexEntitys.add(new Data.IndexObject(WebGL.TRIANGLES, indices.length, indexBuf));
+      store.indexObjects.add(new Data.IndexObject(WebGL.TRIANGLES, indices.length, indexBuf));
     }
 
     return store;

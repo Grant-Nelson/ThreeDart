@@ -20,8 +20,8 @@ class Depth extends Technique {
     this._fogStop = fogStop;
   }
 
-  Math.Color3 get EntityColor => this._objClr;
-  set EntityColor(Math.Color3 clr) => this._objClr = clr;
+  Math.Color3 get objectColor => this._objClr;
+  set objectColor(Math.Color3 clr) => this._objClr = clr;
 
   Math.Color3 get fogColor => this._fogClr;
   set fogColor(Math.Color3 clr) => this._fogClr = clr;
@@ -43,12 +43,12 @@ class Depth extends Technique {
 
     this._shader
       ..bind(state)
-      ..EntityColor = this._objClr
+      ..objectColor = this._objClr
       ..fogColor = this._fogClr
       ..fogStart = this._fogStart
       ..fogStop = this._fogStop
       ..projectMatrix = state.projection.matrix
-      ..viewEntityMatrix = state.Entity.matrix*state.view.matrix;
+      ..viewObjectMatrix = state.object.matrix*state.view.matrix;
 
     if (obj.cache is Data.BufferStore) {
       (obj.cache as Data.BufferStore)

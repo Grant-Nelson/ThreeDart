@@ -106,7 +106,7 @@ class Inspection extends Technique {
       ..lightVector = this._lightVec
       ..projectMatrix = state.projection.matrix
       ..viewMatrix = state.view.matrix
-      ..EntityMatrix = state.Entity.matrix;
+      ..objectMatrix = state.object.matrix;
 
     if (obj.cache is Data.BufferStoreList) {
       Data.BufferStoreList store = obj.cache as Data.BufferStoreList;

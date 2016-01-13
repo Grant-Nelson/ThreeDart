@@ -2,9 +2,9 @@ part of ThreeDart.Core;
 
 typedef void EventHandler(Object sender, EventArgs args);
 
-abstract class EventArgs {
+class EventArgs {
   EventArgs();
-  void merge(EventArgs args);
+  void merge(EventArgs args) { }
 }
 
 class Event {
@@ -14,7 +14,7 @@ class Event {
   EventArgs _pendingArgs;
   int _suspended;
 
-  Event(this._sender) {
+  Event(Object this._sender) {
     this._hndls = new List<EventHandler>();
     this._pendingArgs = null;
     this._suspended = 0;

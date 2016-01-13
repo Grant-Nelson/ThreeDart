@@ -1,6 +1,6 @@
 part of ThreeDart.Core;
 
-/// A renderable Entity in a tree of Entitys for a scene.
+/// A renderable dntity in a tree of dntities for a scene.
 ///
 /// An [Entity] is a [Shape], [Technique], and a [Mover]
 /// to create an output when rendered.
@@ -25,10 +25,12 @@ class Entity implements Movers.Movable, Renderable {
   /// May be null to not move the Entity.
   Movers.Mover _mover;
 
-  //Event _shape;
-  //Event _tech;
-  //Event _children;
-  //Event _mover;
+  // TODO: Connect and expose these events.
+
+  Event _shapeChanged;
+  Event _techChanged;
+  Event _childrenChanged;
+  Event _moverChanged;
 
   /// Creates a new Entity.
   Entity({
@@ -40,6 +42,10 @@ class Entity implements Movers.Movable, Renderable {
     this._tech = tech;
     this._children = new EntityCollection._(this);
     this._mover = mover;
+    this._shapeChanged = new Event(this);
+    this._techChanged = new Event(this);
+    this._childrenChanged = new Event(this);
+    this._moverChanged = new Event(this);
   }
 
   /// Indicates if the shape cashe needs to be updated.
@@ -60,7 +66,7 @@ class Entity implements Movers.Movable, Renderable {
   /// currently use this technique.
   void _cacheUpdateForTech() {
     this.clearCache();
-    for(Entity child in this._children) {
+    for(Entity child in this._children._children) {
       if (child._tech == null) {
         child._cacheUpdateForTech();
       }
@@ -109,7 +115,7 @@ class Entity implements Movers.Movable, Renderable {
     }
 
     // Push state onto the renderer.
-    state.Entity.pushMul(mat);
+    state.object.pushMul(mat);
     state.pushTechnique(this._tech);
 
     // Render this Entity.
@@ -119,12 +125,12 @@ class Entity implements Movers.Movable, Renderable {
     }
 
     // Render all children.
-    for (Entity child in this._children) {
+    for (Entity child in this._children._children) {
       child.render(state);
     }
 
     // Pop state from renderer.
     state.popTechnique();
-    state.Entity.pop();
+    state.object.pop();
   }
 }
