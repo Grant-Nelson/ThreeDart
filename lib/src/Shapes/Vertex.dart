@@ -59,7 +59,7 @@ class Vertex {
     if (this._loc != loc) {
       this._loc = loc;
       if (this._shape != null)
-        this._shape._onChange(new Core.ChangedEventArgs.modified(this));
+        this._shape.onVertexModified(this);
     }
   }
 
@@ -69,7 +69,7 @@ class Vertex {
     if (this._norm != norm) {
       this._norm = norm;
       if (this._shape != null)
-        this._shape._onChange(new Core.ChangedEventArgs.modified(this));
+        this._shape.onVertexModified(this);
     }
   }
 
@@ -79,7 +79,7 @@ class Vertex {
     if (this._binm != binm) {
       this._binm = binm;
       if (this._shape != null)
-        this._shape._onChange(new Core.ChangedEventArgs.modified(this));
+        this._shape.onVertexModified(this);
     }
   }
 
@@ -88,7 +88,7 @@ class Vertex {
     if (this._txt != txt) {
       this._txt = txt;
       if (this._shape != null)
-        this._shape._onChange(new Core.ChangedEventArgs.modified(this));
+        this._shape.onVertexModified(this);
     }
   }
 
@@ -97,7 +97,7 @@ class Vertex {
     if (this._clr != clr) {
       this._clr = clr;
       if (this._shape != null)
-        this._shape._onChange(new Core.ChangedEventArgs.modified(this));
+        this._shape.onVertexModified(this);
     }
   }
 
@@ -106,7 +106,7 @@ class Vertex {
     if (this._weight != weight) {
       this._weight = weight;
       if (this._shape != null)
-        this._shape._onChange(new Core.ChangedEventArgs.modified(this));
+        this._shape.onVertexModified(this);
     }
   }
 
@@ -131,7 +131,7 @@ class Vertex {
     });
     this._norm = normSum.normal();
     if (this._shape != null) {
-      this._shape._onChange(new Core.ChangedEventArgs.modified(this));
+      this._shape.onVertexModified(this);
       this._shape._changed.resume();
     }
     return true;
@@ -147,7 +147,7 @@ class Vertex {
     });
     this._binm = binmSum.normal();
     if (this._shape != null) {
-      this._shape._onChange(new Core.ChangedEventArgs.modified(this));
+      this._shape.onVertexModified(this);
       this._shape._changed.resume();
     }
     return true;

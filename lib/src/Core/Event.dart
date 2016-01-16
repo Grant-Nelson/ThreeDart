@@ -4,7 +4,6 @@ typedef void EventHandler(Object sender, EventArgs args);
 
 class EventArgs {
   EventArgs();
-  void merge(EventArgs args) { }
 }
 
 class Event {
@@ -38,8 +37,7 @@ class Event {
   void emit([EventArgs args = null]) {
     if (args == null) args = new EventArgs();
     if (this.suspended) {
-      if (this.pending) this._pendingArgs.merge(args);
-      else this._pendingArgs = args;
+      if (!this.pending) this._pendingArgs = args;
     } else {
       this.emitNow(args);
     }

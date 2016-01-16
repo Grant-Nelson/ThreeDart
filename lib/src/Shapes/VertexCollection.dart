@@ -36,7 +36,7 @@ class VertexCollection {
     vertex._index = this._vertices.length;
     vertex._shape = this._shape;
     this._vertices.add(vertex);
-    this._shape._onChange(new Core.ChangedEventArgs.added(this));
+    this._shape.onVertexAdded(vertex);
     return true;
   }
 
@@ -67,7 +67,7 @@ class VertexCollection {
       vertex._shape = null;
     }
     this._vertices.removeAt(index);
-    this._shape._onChange(new Core.ChangedEventArgs.removed(this));
+    this._shape.onVertexRemoved(vertex);
     this._indicesNeedUpdate = true;
     return vertex;
   }
@@ -79,7 +79,7 @@ class VertexCollection {
       throw new Exception("May not remove a vertex without first making it empty.");
     vertex._shape = null;
     this._vertices.remove(vertex);
-    this._shape._onChange(new Core.ChangedEventArgs.removed(this));
+    this._shape.onVertexRemoved(vertex);
     this._indicesNeedUpdate = true;
     return true;
   }

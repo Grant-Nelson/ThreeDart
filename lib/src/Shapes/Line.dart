@@ -16,13 +16,13 @@ class Line {
     this._setVertex1(ver1);
     this._setVertex2(ver2);
     this._ver1._shape._lines._lines.add(this);
-    this._ver1._shape._onChange(new Core.ChangedEventArgs.added(this));
+    this._ver1._shape.onLineAdded(this);
   }
 
   void dispose() {
     if (!this.disposed) {
       this._ver1._shape._lines._lines.remove(this);
-      this._ver1._shape._onChange(new Core.ChangedEventArgs.removed(this));
+      this._ver1._shape.onLineRemoved(this);
     }
     this._removeVertex1();
     this._removeVertex2();
@@ -82,7 +82,7 @@ class Line {
       ++result;
     }
     if (result > 0)
-      this._ver1._shape._onChange(new Core.ChangedEventArgs.modified(this));
+      this._ver1._shape.onLineModified(this);
     return result;
   }
 

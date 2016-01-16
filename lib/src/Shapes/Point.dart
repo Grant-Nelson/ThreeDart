@@ -10,13 +10,13 @@ class Point {
       throw new Exception("May not create a point with a vertex which is not attached to a shape.");
     this._setVertex(ver);
     this._ver._shape._points._points.add(this);
-    this._ver._shape._onChange(new Core.ChangedEventArgs.added(this));
+    this._ver._shape.onPointAdded(this);
   }
 
   void dispose() {
     if (!this.disposed) {
       this._ver._shape._points._points.remove(this);
-      this._ver._shape._onChange(new Core.ChangedEventArgs.removed(this));
+      this._ver._shape.onPointRemoved(this);
     }
     this._removeVertex();
   }
@@ -51,7 +51,7 @@ class Point {
       ++result;
     }
     if (result > 0)
-      this._ver._shape._onChange(new Core.ChangedEventArgs.modified(this));
+      this._ver._shape.onPointModified(this);
     return result;
   }
 

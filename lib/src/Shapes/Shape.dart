@@ -25,10 +25,6 @@ class Shape {
   ShapeFaceCollection get faces => this._faces;
   Core.Event get changed => this._changed;
 
-  void _onChange(Core.ChangedEventArgs args) {
-    this._changed.emit(args);
-  }
-
   void merge(Shape other) {
     this._changed.suspend();
     other._vertices._updateIndices();
@@ -262,5 +258,57 @@ class Shape {
       parts.add(this._faces.toString("${indent}   "));
     }
     return parts.join('\n');
+  }
+
+  void onChanged() {
+    this._changed.emit(new Core.EventArgs());
+  }
+
+  void onVertexAdded(Vertex vertex) {
+    this.onChanged();
+  }
+
+  void onVertexModified(Vertex vertex) {
+    this.onChanged();
+  }
+
+  void onVertexRemoved(Vertex vertex) {
+    this.onChanged();
+  }
+
+  void onFaceAdded(Face face) {
+    this.onChanged();
+  }
+
+  void onFaceModified(Face face) {
+    this.onChanged();
+  }
+
+  void onFaceRemoved(Face face) {
+    this.onChanged();
+  }
+
+  void onLineAdded(Line line) {
+    this.onChanged();
+  }
+
+  void onLineModified(Line line) {
+    this.onChanged();
+  }
+
+  void onLineRemoved(Line line) {
+    this.onChanged();
+  }
+
+  void onPointAdded(Point point) {
+    this.onChanged();
+  }
+
+  void onPointModified(Point point) {
+    this.onChanged();
+  }
+
+  void onPointRemoved(Point point) {
+    this.onChanged();
   }
 }

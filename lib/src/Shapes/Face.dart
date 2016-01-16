@@ -25,13 +25,13 @@ class Face {
     this._setVertex2(ver2);
     this._setVertex3(ver3);
     this._ver1._shape._faces._faces.add(this);
-    this._ver1._shape._onChange(new Core.ChangedEventArgs.added(this));
+    this._ver1._shape.onFaceAdded(this);
   }
 
   void dispose() {
     if (!this.disposed) {
       this._ver1._shape._faces._faces.remove(this);
-      this._ver1._shape._onChange(new Core.ChangedEventArgs.removed(this));
+      this._ver1._shape.onFaceRemoved(this);
     }
     this._removeVertex1();
     this._removeVertex2();
@@ -96,7 +96,7 @@ class Face {
     Math.Vector3 vec1 = new Math.Vector3.fromPoint3(loc2 - loc1).normal();
     Math.Vector3 vec2 = new Math.Vector3.fromPoint3(loc3 - loc1).normal();
     this._norm = -vec1.cross(vec2).normal();
-    this._ver1._shape._onChange(new Core.ChangedEventArgs.modified(this));
+    this._ver1._shape.onFaceModified(this);
     return true;
   }
 
@@ -124,7 +124,7 @@ class Face {
       double u4 = (txt3.x - txt2.x) * r + txt2.x - txt1.x;
       if (u4 < 0.0) this._binm = -this._binm;
     }
-    this._ver1._shape._onChange(new Core.ChangedEventArgs.modified(this));
+    this._ver1._shape.onFaceModified(this);
     return true;
   }
 
@@ -160,7 +160,7 @@ class Face {
       ++result;
     }
     if (result > 0)
-      this._ver1._shape._onChange(new Core.ChangedEventArgs.modified(this));
+      this._ver1._shape.onFaceModified(this);
     return result;
   }
 

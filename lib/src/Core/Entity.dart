@@ -25,26 +25,28 @@ class Entity implements Movers.Movable, Renderable {
   /// May be null to not move the Entity.
   Movers.Mover _mover;
 
-  // TODO: Connect and expose these events.
-
+  Event _changed;
   Event _shapeChanged;
   Event _techChanged;
-  Event _childrenChanged;
+  Event _childAdded;
+  Event _childRemoved;
   Event _moverChanged;
 
   /// Creates a new Entity.
-  Entity({
-      Shapes.Shape shape: null,
-      Techniques.Technique tech: null,
-      Movers.Mover mover: null}) {
+  /// May provide an initial [shape], [tech], or [mover].
+  Entity({Shapes.Shape shape: null,
+          Techniques.Technique tech: null,
+          Movers.Mover mover: null}) {
     this._shape = shape;
     this._cache = null;
     this._tech = tech;
     this._children = new EntityCollection._(this);
     this._mover = mover;
+    this._changed = new Event(this);
     this._shapeChanged = new Event(this);
     this._techChanged = new Event(this);
-    this._childrenChanged = new Event(this);
+    this._childAdded = new Event(this);
+    this._childRemoved = new Event(this);
     this._moverChanged = new Event(this);
   }
 
@@ -57,6 +59,13 @@ class Entity implements Movers.Movable, Renderable {
   /// of the technique has changed without being removed then calling this will update the cache.
   /// Typically this should not have to be called.
   void clearCache() => this._cache = null;
+
+  Event get changed => this._changed;
+  Event get shapeChanged => this._shapeChanged;
+  Event get techChanged => this._techChanged;
+  Event get childAdded => this._childAdded;
+  Event get childRemoved => this._childRemoved;
+  Event get moverChanged => this._moverChanged;
 
   /// Requests that this and child shape caches are updated.
   ///
@@ -85,7 +94,11 @@ class Entity implements Movers.Movable, Renderable {
   /// May be null to not move the Entity.
   Movers.Mover get mover => this._mover;
   void set mover(Movers.Mover mover) {
-    this._mover = mover;
+    if (this._mover != mover) {
+      Movers.Mover oldMover = this._mover;
+      this._mover = mover;
+      this.onMoverChanged(oldMover, this._mover);
+    }
   }
 
   /// The shape to draw at this Entity.
@@ -94,8 +107,14 @@ class Entity implements Movers.Movable, Renderable {
   /// is just a container for child Entitys.
   Shapes.Shape get shape => this._shape;
   set shape(Shapes.Shape shape) {
-    this._shape = shape;
-    this.clearCache();
+    if (this._shape != shape) {
+      Shapes.Shape oldShape = this._shape;
+      this._shape = shape;
+      this.clearCache();
+      if (oldShape != null) oldShape.changed.remove(this.onShapeModified);
+      if (this._shape != null) this._shape.changed.add(this.onShapeModified);
+      this.onShapeChanged(oldShape, this._shape);
+    }
   }
 
   /// The techinque to render this Entity and/or it's children with.
@@ -103,8 +122,12 @@ class Entity implements Movers.Movable, Renderable {
   /// May be null to inherit the technique from this Entitys parent.
   Techniques.Technique get technique => this._tech;
   set technique(Techniques.Technique technique) {
-    this._tech = technique;
-    this._cacheUpdateForTech();
+    if (this._tech != technique) {
+      Techniques.Technique oldTech = this._tech;
+      this._tech = technique;
+      this._cacheUpdateForTech();
+      this.onTechChanged(oldTech, this._tech);
+    }
   }
 
   /// Renders the Entity with the given [RenderState].
@@ -132,5 +155,38 @@ class Entity implements Movers.Movable, Renderable {
     // Pop state from renderer.
     state.popTechnique();
     state.object.pop();
+  }
+
+  void onChanged() {
+    this._changed.emit();
+  }
+
+  void onShapeModified(Object sender, EventArgs args) {
+    this.clearCache();
+  }
+
+  void onShapeChanged(Shapes.Shape oldShape, Shapes.Shape newShape) {
+    this._shapeChanged.emit();
+    this.onChanged();
+  }
+
+  void onTechChanged(Techniques.Technique oldTech, Techniques.Technique newTech) {
+    this._techChanged.emit();
+    this.onChanged();
+  }
+
+  void onChildAdded(Entity entity) {
+    this._childAdded.emit();
+    this.onChanged();
+  }
+
+  void onChildRemoved(Entity entity) {
+    this._childRemoved.emit();
+    this.onChanged();
+  }
+
+  void onMoverChanged(Movers.Mover oldMover, Movers.Mover newMover) {
+    this._moverChanged.emit();
+    this.onChanged();
   }
 }

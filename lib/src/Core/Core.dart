@@ -16,7 +16,6 @@ import '../Shaders/Shaders.dart' as Shaders;
 import '../Scenes/Scenes.dart' as Scenes;
 
 part 'Bindable.dart';
-part 'ChangedEventArgs.dart';
 part 'Event.dart';
 part 'Entity.dart';
 part 'EntityCollection.dart';
