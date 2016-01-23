@@ -5,18 +5,18 @@ class Group extends Mover {
   List<Mover> _movers;
 
   Group() {
-    _movers = new List<Mover>();
+    this._movers = new List<Mover>();
   }
 
-  List<Mover> get list => _movers;
+  List<Mover> get list => this._movers;
 
   void add(Mover mover) {
-    _movers.add(mover);
+    this._movers.add(mover);
   }
 
   Math.Matrix4 update(Core.RenderState state, Movable obj) {
     Math.Matrix4 mat = null;
-    for (Mover mover in _movers) {
+    for (Mover mover in this._movers) {
       if (mover != null) {
         Math.Matrix4 next = mover.update(state, obj);
         if (next != null) {
@@ -28,7 +28,7 @@ class Group extends Mover {
         }
       }
     }
-    if (mat == null){
+    if (mat == null) {
       mat = new Math.Matrix4.identity();
     }
     return mat;

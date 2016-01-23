@@ -15,8 +15,13 @@ import 'package:ThreeDart/Scenes.dart' as Scenes;
 
 void main() {
 
+  Movers.UserRotater rotater = new Movers.UserRotater();
+  Movers.UserZoom zoom = new Movers.UserZoom();
+
   ThreeDart.Entity obj = new ThreeDart.Entity()
-    ..mover = new Movers.Rotater();
+    ..mover = (new Movers.Group()
+      ..add(rotater)
+      ..add(zoom));
 
   Techniques.Inspection tech = new Techniques.Inspection()
     ..vectorScale = 0.4;
@@ -28,6 +33,9 @@ void main() {
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart")
     ..scene = pass;
+
+  rotater.attach(td.userInput);
+  zoom.attach(td.userInput);
 
   _addCheckBox("Filled",         true,  (bool show) { tech.showFilled        = show; });
   _addCheckBox("Wire Frame",     true,  (bool show) { tech.showWireFrame     = show; });

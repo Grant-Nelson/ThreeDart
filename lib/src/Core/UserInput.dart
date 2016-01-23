@@ -86,7 +86,7 @@ class UserInput {
   }
 
   void _onDocMouseUp(html.MouseEvent msEvent) {
-    if (this._mousePressed) {
+    if (this._mousePressed && !this._elem.client.containsPoint(msEvent.client)) {
       this._mousePressed = false;
       this._mouseUp.emit(this._getMouseArgs(msEvent, true));
     }
@@ -98,8 +98,8 @@ class UserInput {
   }
 
   void _onDocMouseMove(html.MouseEvent msEvent) {
-    if (this._mousePressed) {
-      this._mouseUp.emit(this._getMouseArgs(msEvent, false));
+    if (this._mousePressed && !this._elem.client.containsPoint(msEvent.client)) {
+      this._mouseMove.emit(this._getMouseArgs(msEvent, false));
     }
   }
 
@@ -111,7 +111,8 @@ class UserInput {
     this._ctrlPressed = msEvent.ctrlKey||msEvent.metaKey;
     this._altPressed = msEvent.altKey;
     this._shiftPressed = msEvent.shiftKey;
-    this._mouseDown.emit(new MouseWheelEventArgs(size, pnt, curTime, wheel));
+    this._mouseWheel.emit(new MouseWheelEventArgs(size, pnt, curTime, wheel));
+    msEvent.preventDefault();
   }
 
   void _onKeyUp(html.KeyboardEvent msEvent) {
