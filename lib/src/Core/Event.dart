@@ -2,10 +2,6 @@ part of ThreeDart.Core;
 
 typedef void EventHandler(Object sender, EventArgs args);
 
-class EventArgs {
-  EventArgs();
-}
-
 class Event {
 
   Object _sender;

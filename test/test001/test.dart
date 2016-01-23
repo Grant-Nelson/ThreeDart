@@ -14,9 +14,11 @@ import 'package:ThreeDart/Scenes.dart' as Scenes;
 
 void main() {
 
+  Movers.UserRotater mover = new Movers.UserRotater();
+
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..shape = Shapes.toroid()
-    ..mover = new Movers.Rotater();
+    ..mover = mover;
 
   Scenes.RenderPass pass = new Scenes.RenderPass()
     ..tech = new Techniques.Depth(fogStart: 3.0, fogStop: 6.0)
@@ -25,6 +27,8 @@ void main() {
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart")
     ..scene = pass;
+
+  mover.attach(td.userInput);
 
   var update;
   update = (num t) {

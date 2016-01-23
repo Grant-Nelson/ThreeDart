@@ -1,169 +1,138 @@
 part of ThreeDart.Movers;
 
-/*
-class UserRotater extends UserMover {
+class UserRotater implements Mover, Core.UserInteractable {
 
-  /// The maximum allowed pitch rotation in radians.
-  double _maxPitch;
+  Core.UserInput _input;
 
-  /// The minimum allowed pitch rotation in radians.
-  double _minPitch;
+  ComponentShift _pitch;
+  ComponentShift _yaw;
 
-  /// The maximum allowed zoom scalar.
-  double _maxZoomScalar;
-
-  /// The minimum allowed zoom scalar.
-  double _minZoomScalar;
-
-  /// The scalar to apply to the mouse movements in the x axis.
-  double _mouseXScalar;
-
-  /// The scalar to apply to the mouse movements in the y axis.
-  double _mouseYScalar;
-
-  /// The scalar to apply to the mouse wheel in the y axis.
-  double _wheelScalar;
-
-  /// The yaw rotation in radians.
-  double _yaw;
-
-  /// The pitch rotation in radians.
-  double _pitch;
-
-  /// The zoom scalar for zooming the view.
-  double _zoomScalar;
-
-  /// Indicates a mouse button is pressed.
-  bool _mouseDown;
-
-  /// The mouse x location when the button was pressed.
-  int _lastMouseX;
-
-  /// The mouse y location when the button was pressed.
-  int _lastMouseY;
+  bool _cumulative;
+  double _pitchScalar;
+  double _yawScalar;
+  double _deadBand;
+  double _deadBand2;
+  bool _inDeadBand;
 
   /// The yaw rotation in radians when the button was pressed.
   double _lastYaw;
 
   /// The pitch rotation in radians when the button was pressed.
   double _lastPitch;
+    Math.Vector2 _prevDelta;
 
+  int _frameNum;
   /// The matrix describing the mover's position.
   Math.Matrix4 _mat;
 
   UserRotater() {
-    this._maxPitch = math.PI * 0.5;
-    this._minPitch = -math.PI * 0.5;
-    this._maxZoomScalar = 10.0;
-    this._minZoomScalar = 0.1;
-    this._mouseXScalar = 0.005;
-    this._mouseYScalar = 0.005;
-    this._wheelScalar = 0.005;
-    this._yaw = 0.0;
-    this._pitch = 0.0;
-    this._zoomScalar = 1.0;
-    this._mouseDown = false;
-    this._lastMouseX = 0;
-    this._lastMouseY = 0;
+    this._input = null;
+    this._pitch = new ComponentShift()
+      ..wrap = true
+      ..maximumLocation = math.PI * 2.0
+      ..minimumLocation = 0.0
+      ..location = 0.0
+      ..maximumVelocity = 100.0
+      ..velocity = 0.0
+      ..dampening = 0.2;
+    this._yaw = new ComponentShift()
+      ..wrap = true
+      ..maximumLocation = math.PI * 2.0
+      ..minimumLocation = 0.0
+      ..location = 0.0
+      ..maximumVelocity = 100.0
+      ..velocity = 0.0
+      ..dampening = 0.2;
+    this._cumulative = false;
+    this._pitchScalar = 2.5;
+    this._yawScalar = 2.5;
+    this._deadBand = 2.0;
+    this._deadBand2 = 4.0;
+    this._inDeadBand = false;
     this._lastYaw = 0.0;
     this._lastPitch = 0.0;
+    this._prevDelta = null;
+    this._frameNum = 0;
     this._mat = null;
   }
 
-  bool initialize(Core.ThreeDart td) {
-    gl.canvas.onmousedown = function(event) {
-        self._handleMouseDown(event);
-    };
-    document.onmouseup = function(event) {
-        self._handleMouseUp(event);
-    };
-    document.onmousemove = function(event) {
-        self._handleMouseMove(event);
-    };
-    document.onwheel = function(event) {
-        self._handleMouseWheel(event);
-    };
+  bool attach(Core.UserInput input) {
+    this._input = input;
+    this._input.mouseDown.add(this._mouseDownHandle);
+    this._input.mouseMove.add(this._mouseMoveHandle);
+    this._input.mouseUp.add(this._mouseUpHandle);
     return true;
   }
 
-  void dispose() {
-
+  void detach() {
+    this._input.mouseDown.remove(this._mouseDownHandle);
+    this._input.mouseMove.remove(this._mouseMoveHandle);
+    this._input.mouseUp.remove(this._mouseUpHandle);
+    this._input = null;
   }
 
-  double get yaw => this._yaw;
-  set yaw(double value) => this._yaw = Math.wrapVal(value, 0.0, 2.0*math.PI);
-
-  double get pitch => this._pitch;
-  set pitch(double value) => this._pitch = Math.clampVal(value, this._minPitch, this._maxPitch);
-
-  /// The zoom scalar for zooming the view.
-  double get zoomScalar => this._zoomScalar;
-  set zoomScalar(double value) => this._zoomScalar = Math.clampVal(value, this._minZoomScalar, this._maxZoomScalar);
-
-  /// The maximum allowed pitch rotation in radians.
-  double get maxPitch => this._maxPitch;
-  set maxPitch(double value) {
-    this._maxPitch = value;
-    if (this._minPitch > value) this._minPitch = value;
+  void _mouseDownHandle(Object sender, Core.MouseEventArgs args) {
+    this._inDeadBand = true;
+    this._lastYaw = this._yaw.location;
+    this._lastPitch = this._pitch.location;
   }
 
-  /// The minimum allowed pitch rotation in radians.
-  double get minPitch => this._minPitch;
-  set minPitch(double value) {
-    this._minPitch = value;
-    if (this._maxPitch < value) this._maxPitch = value;
+  void _mouseMoveHandle(Object sender, Core.MouseEventArgs args) {
+    if (!args.pressed) return;
+    if (this._inDeadBand) {
+      if (args.rawOffset.length2() < this._deadBand2) return;
+      this._inDeadBand = false;
+    }
+    if (this._cumulative) {
+      this._prevDelta = args.adjustedOffset;
+      this._pitch.velocity = -this._prevDelta.dx*10.0*this._pitchScalar;
+      this._yaw.velocity = this._prevDelta.dy*10.0*this._yawScalar;
+    } else {
+      Math.Vector2 off = args.adjustedOffset;
+      this._pitch.location = off.dx*this._pitchScalar + this._lastPitch;
+      this._yaw.location = -off.dy*this._yawScalar + this._lastYaw;
+      this._pitch.velocity = 0.0;
+      this._yaw.velocity = 0.0;
+      this._prevDelta = args.adjustedDelta;
+    }
   }
 
-  /// The maximum allowed zoom scalar.
-  double get maxZoomScalar => this._maxZoomScalar;
-  set maxZoomScalar(double value) {
-    this._maxZoomScalar = value;
-    if (this._minZoomScalar < value) this._minZoomScalar = value;
+  void _mouseUpHandle(Object sender, Core.MouseEventArgs args) {
+    if (this._inDeadBand) return;
+    this._pitch.velocity = -this._prevDelta.dx*10.0*this._pitchScalar;
+    this._yaw.velocity = this._prevDelta.dy*10.0*this._yawScalar;
   }
 
-  /// The minimum allowed zoom scalar.
-  double get minZoomScalar => this._minZoomScalar;
-  set minZoomScalar(double value) {
-    this._minZoomScalar = value;
-    if (this._maxZoomScalar < value) this._maxZoomScalar = value;
+  ComponentShift get pitch => this._pitch;
+  ComponentShift get yaw => this._yaw;
+
+  bool get cumulative => this._cumulative;
+  void set cumulative(bool enable) { this._cumulative = enable; }
+
+  /// The scalar to apply to the mouse movements pitch.
+  double get pitchScalar => this._pitchScalar;
+  void set pitchScalar(double value) { this._pitchScalar = value; }
+
+  /// The scalar to apply to the mouse movements yaw.
+  double get yawScalar => this._yawScalar;
+  void set yawScalar(double value) { this._yawScalar = value; }
+
+  /// The dead-band, in pixels, before anymovement is made.
+  double get deadBand => this._deadBand;
+  void set deadBand(double value) {
+    this._deadBand = value;
+    this._deadBand2 = this._deadBand * this._deadBand;
   }
 
-  /// The scalar to apply to the mouse movements in the x axis.
-  double get mouseXScalar => this._mouseXScalar;
-  set mouseXScalar(double value) => this._mouseXScalar = value;
-
-  /// The scalar to apply to the mouse movements in the y axis.
-  double get mouseYScalar => this._mouseYScalar;
-  set mouseYScalar(double value) => this._mouseYScalar = value;
-
-  /// The scalar to apply to the mouse wheel in the y axis.
-  double get wheelScalar => this._wheelScalar;
-  set wheelScalar(double value) => this._wheelScalar = value;
-
-
-
-
-
-  void _update(Core.RenderState state, Core.Entity obj) {
-    this._frameNum = state.frameNumber;
-
-
-
-
-    this._yaw += this.deltaYaw*state.dt;
-    this._pitch += this._deltaPitch*state.dt;
-
-    double pi2 = math.PI*2.0;
-    if ((this._yaw > pi2) || (this._yaw < 0.0)) this._yaw %= pi2;
-    if ((this._pitch > pi2) || (this._pitch < 0.0)) this._pitch %= pi2;
-
-    this._mat = new Math.Matrix4.rotateX(this._yaw)*
-                new Math.Matrix4.rotateY(this._pitch);
+  void _update(double dt) {
+    this._yaw.update(dt);
+    this._pitch.update(dt);
+    this._mat = new Math.Matrix4.rotateX(this._yaw.location)*
+                new Math.Matrix4.rotateY(this._pitch.location);
   }
 
   Math.Matrix4 update(Core.RenderState state, Core.Entity obj) {
-    if (this._frameNum < state.frameNumber) this._update(state, obj);
+    if (this._frameNum < state.frameNumber) this._update(state.dt);
     return this._mat;
   }
 }
-*/

@@ -18,6 +18,9 @@ class ThreeDart {
   /// The rendering state.
   RenderState _state;
 
+  /// The user input listener.
+  UserInput _input;
+
   /// Creates a new 3Dart rendering on an element with the given [id].
   ///
   /// [alpha] indicates if the back color target will have an alpha channel or not.
@@ -79,6 +82,7 @@ class ThreeDart {
     this._gl = gl;
     this._scene = null;
     this._state = new RenderState(this._gl, this._canvas);
+    this._input = new UserInput(this._canvas);
 
     this._canvas.onResize.listen(this._resize);
     this._justifySize();
@@ -92,6 +96,9 @@ class ThreeDart {
 
   /// The canvas being written to.
   html.CanvasElement get canvas => this._canvas;
+
+  /// The user input listener.
+  UserInput get userInput => this._input;
 
   /// The scene to render to the canvas.
   Scenes.Scene get scene => this._scene;
