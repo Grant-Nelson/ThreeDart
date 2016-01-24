@@ -65,6 +65,8 @@ class UserRotater implements Mover, Core.UserInteractable {
   }
 
   bool attach(Core.UserInput input) {
+    if (input == null) return false;
+    if (this._input != null) return false;
     this._input = input;
     this._input.mouseDown.add(this._mouseDownHandle);
     this._input.mouseMove.add(this._mouseMoveHandle);
@@ -73,13 +75,15 @@ class UserRotater implements Mover, Core.UserInteractable {
   }
 
   void detach() {
-    this._input.mouseDown.remove(this._mouseDownHandle);
-    this._input.mouseMove.remove(this._mouseMoveHandle);
-    this._input.mouseUp.remove(this._mouseUpHandle);
-    this._input = null;
+    if (this._input != null) {
+      this._input.mouseDown.remove(this._mouseDownHandle);
+      this._input.mouseMove.remove(this._mouseMoveHandle);
+      this._input.mouseUp.remove(this._mouseUpHandle);
+      this._input = null;
+    }
   }
 
-  void _mouseDownHandle(Object sender, Core.MouseEventArgs args) {
+  void _mouseDownHandle(Core.MouseEventArgs args) {
     if (this._ctrlPressed != this._input.ctrlPressed) return;
     if (this._altPressed != this._input.altPressed) return;
     if (this._shiftPressed != this._input.shiftPressed) return;
@@ -89,7 +93,7 @@ class UserRotater implements Mover, Core.UserInteractable {
     this._lastPitch = this._pitch.location;
   }
 
-  void _mouseMoveHandle(Object sender, Core.MouseEventArgs args) {
+  void _mouseMoveHandle(Core.MouseEventArgs args) {
     if (!this._pressed) return;
     if (this._inDeadBand) {
       if (args.rawOffset.length2() < this._deadBand2) return;
@@ -109,7 +113,7 @@ class UserRotater implements Mover, Core.UserInteractable {
     }
   }
 
-  void _mouseUpHandle(Object sender, Core.MouseEventArgs args) {
+  void _mouseUpHandle(Core.MouseEventArgs args) {
     this._pressed = false;
     if (this._inDeadBand) return;
     if (this._prevDelta.length2() > 0.0001) {

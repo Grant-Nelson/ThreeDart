@@ -25,9 +25,9 @@ class Color3 {
   factory Color3.black() =>
     new Color3(0.0, 0.0, 0.0);
 
-    /// Constructs a new [Color3] instance with full color, white.
-    factory Color3.white() =>
-      new Color3(1.0, 1.0, 1.0);
+  /// Constructs a new [Color3] instance with full color, white.
+  factory Color3.white() =>
+    new Color3(1.0, 1.0, 1.0);
 
   /// Constructs a new [Color3] instance from a [Color4] instance.
   ///

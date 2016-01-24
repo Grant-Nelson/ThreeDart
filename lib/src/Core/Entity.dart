@@ -25,11 +25,22 @@ class Entity implements Movers.Movable, Renderable {
   /// May be null to not move the Entity.
   Movers.Mover _mover;
 
+  /// The event emitted when any part of the entity is changed.
   Event _changed;
+
+  /// The event emitted when the shape has been changed.
   Event _shapeChanged;
+
+  /// The event emitted when the technique has been changed.
   Event _techChanged;
+
+  /// The event emitted when a child is added.
   Event _childAdded;
+
+  /// The event emitted when a child is removed.
   Event _childRemoved;
+
+  /// The event emitted when the mover has been changed.
   Event _moverChanged;
 
   /// Creates a new Entity.
@@ -42,12 +53,12 @@ class Entity implements Movers.Movable, Renderable {
     this._tech = tech;
     this._children = new EntityCollection._(this);
     this._mover = mover;
-    this._changed = new Event(this);
-    this._shapeChanged = new Event(this);
-    this._techChanged = new Event(this);
-    this._childAdded = new Event(this);
-    this._childRemoved = new Event(this);
-    this._moverChanged = new Event(this);
+    this._changed = new Event();
+    this._shapeChanged = new Event();
+    this._techChanged = new Event();
+    this._childAdded = new Event();
+    this._childRemoved = new Event();
+    this._moverChanged = new Event();
   }
 
   /// Indicates if the shape cashe needs to be updated.
@@ -60,11 +71,22 @@ class Entity implements Movers.Movable, Renderable {
   /// Typically this should not have to be called.
   void clearCache() => this._cache = null;
 
+  /// The event emitted when any part of the entity is changed.
   Event get changed => this._changed;
+
+  /// The event emitted when the shape has been changed.
   Event get shapeChanged => this._shapeChanged;
+
+  /// The event emitted when the technique has been changed.
   Event get techChanged => this._techChanged;
+
+  /// The event emitted when a child is added.
   Event get childAdded => this._childAdded;
+
+  /// The event emitted when a child is removed.
   Event get childRemoved => this._childRemoved;
+
+  /// The event emitted when the mover has been changed.
   Event get moverChanged => this._moverChanged;
 
   /// Requests that this and child shape caches are updated.
@@ -157,34 +179,81 @@ class Entity implements Movers.Movable, Renderable {
     state.object.pop();
   }
 
+  /// Called when any change has occurred.
+  /// This emits the [changed] event.
+  /// This isn't meant to be called from outside the entity, in other languages this would
+  /// be a protected method. This method is exposed to that the entity is extended and
+  /// these methods can be overwritten. If overwritten call this super method to still emit events.
   void onChanged() {
     this._changed.emit();
   }
 
-  void onShapeModified(Object sender, EventArgs args) {
+  /// Called when the shape is modified.
+  ///
+  /// This will clear the shape cache.
+  /// The [args] are the arguments of the change.
+  /// This isn't meant to be called from outside the entity, in other languages this would
+  /// be a protected method. This method is exposed to that the entity is extended and
+  /// these methods can be overwritten. If overwritten call this super method to still emit events.
+  void onShapeModified(EventArgs args) {
     this.clearCache();
   }
 
+  /// Called when the shape is added or removed.
+  ///
+  /// This emits the [shapeChanged] event and calls [onChanged].
+  /// The [oldShape] that was removed (may be null), and the [newShape] that was added (may be null).
+  /// This isn't meant to be called from outside the entity, in other languages this would
+  /// be a protected method. This method is exposed to that the entity is extended and
+  /// these methods can be overwritten. If overwritten call this super method to still emit events.
   void onShapeChanged(Shapes.Shape oldShape, Shapes.Shape newShape) {
     this._shapeChanged.emit();
     this.onChanged();
   }
 
+  /// Called when the technique is added or removed.
+  ///
+  /// This emits the [techChanged] event and calls [onChanged].
+  /// The [oldTech] that was removed (may be null), and the [newTech] that was added (may be null).
+  /// This isn't meant to be called from outside the entity, in other languages this would
+  /// be a protected method. This method is exposed to that the entity is extended and
+  /// these methods can be overwritten. If overwritten call this super method to still emit events.
   void onTechChanged(Techniques.Technique oldTech, Techniques.Technique newTech) {
     this._techChanged.emit();
     this.onChanged();
   }
 
+  /// Called when a child is added.
+  ///
+  /// This emits the [childAdded] event and calls [onChanged].
+  /// The [entity] is the newly added child.
+  /// This isn't meant to be called from outside the entity, in other languages this would
+  /// be a protected method. This method is exposed to that the entity is extended and
+  /// these methods can be overwritten. If overwritten call this super method to still emit events.
   void onChildAdded(Entity entity) {
     this._childAdded.emit();
     this.onChanged();
   }
 
+  /// Called when a child is removed.
+  ///
+  /// This emits the [childRemoved] event and calls [onChanged].
+  /// The [entity] is the child which was removed.
+  /// This isn't meant to be called from outside the entity, in other languages this would
+  /// be a protected method. This method is exposed to that the entity is extended and
+  /// these methods can be overwritten. If overwritten call this super method to still emit events.
   void onChildRemoved(Entity entity) {
     this._childRemoved.emit();
     this.onChanged();
   }
 
+  /// Called when the mover is added or removed is removed.
+  ///
+  /// This emits the [moverChanged] event and calls [onChanged].
+  /// The [oldMover] that was removed (may be null), and the [newMover] that was added (may be null).
+  /// This isn't meant to be called from outside the entity, in other languages this would
+  /// be a protected method. This method is exposed to that the entity is extended and
+  /// these methods can be overwritten. If overwritten call this super method to still emit events.
   void onMoverChanged(Movers.Mover oldMover, Movers.Mover newMover) {
     this._moverChanged.emit();
     this.onChanged();

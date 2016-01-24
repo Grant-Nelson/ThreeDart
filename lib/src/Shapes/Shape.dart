@@ -12,7 +12,7 @@ class Shape {
     this._points = new ShapePointCollection._(this);
     this._lines = new ShapeLineCollection._(this);
     this._faces = new ShapeFaceCollection._(this);
-    this._changed = new Core.Event(this);
+    this._changed = new Core.Event();
   }
 
   factory Shape.copy(Shape other) {
@@ -261,7 +261,7 @@ class Shape {
   }
 
   void onChanged() {
-    this._changed.emit(new Core.EventArgs());
+    this._changed.emit(new Core.EventArgs(this));
   }
 
   void onVertexAdded(Vertex vertex) {

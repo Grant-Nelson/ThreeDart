@@ -16,6 +16,8 @@ part 'Point2.dart';
 part 'Point3.dart';
 part 'Point4.dart';
 part 'Quaternion.dart';
+part 'Size2.dart';
+part 'Size3.dart';
 part 'Vector2.dart';
 part 'Vector3.dart';
 part 'Vector4.dart';

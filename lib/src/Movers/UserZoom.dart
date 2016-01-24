@@ -25,17 +25,21 @@ class UserZoom implements Mover, Core.UserInteractable {
   }
 
   bool attach(Core.UserInput input) {
+    if (input == null) return false;
+    if (this._input != null) return false;
     this._input = input;
     this._input.mouseWheel.add(this._mouseWheelHandle);
     return true;
   }
 
   void detach() {
-    this._input.mouseWheel.remove(this._mouseWheelHandle);
-    this._input = null;
+    if (this._input != null) {
+      this._input.mouseWheel.remove(this._mouseWheelHandle);
+      this._input = null;
+    }
   }
 
-  void _mouseWheelHandle(Object sender, Core.MouseWheelEventArgs args) {
+  void _mouseWheelHandle(Core.MouseWheelEventArgs args) {
     if (this._ctrlPressed != this._input.ctrlPressed) return;
     if (this._altPressed != this._input.altPressed) return;
     if (this._shiftPressed != this._input.shiftPressed) return;

@@ -145,12 +145,10 @@ class ThreeDart {
 
   /// Disposes this instands of 3Dart.
   void dispose() {
-    if (this._elem == this._canvas) {
-      // TODO: Remove event listensers.
-    } else {
+    if (this._elem != this._canvas) {
       this._elem.children.remove(this._canvas);
     }
-
+    this._input.dispose();
     this._elem = null;
     this._canvas = null;
     this._gl = null;

@@ -1,17 +1,25 @@
 part of ThreeDart.Data;
 
+/// A buffer is a special type of bindable designed to
+/// store cached shape information for rendering.
 abstract class Buffer extends Core.Bindable {
   // Empty
 }
 
+/// Storage for WebGL cached shape information.
 class WebGLBuffer implements Buffer {
 
+  /// Indicates the type of buffer, typically ARRAY_BUFFER or ELEMENT_ARRAY_BUFFER.
   int _bufType;
 
+  /// The WebGL packed buffer data.
   WebGL.Buffer _buf;
 
+  /// Creates a new WebGL buffer.
   WebGLBuffer(this._bufType, this._buf);
 
+  /// Creates a new WebGL buffer from a double list of data.
+  /// Typically used for creating a vertex buffer, ARRAY_BUFFER.
   factory WebGLBuffer.fromDoubleList(WebGL.RenderingContext gl, int bufType, List<double> data) {
     WebGL.Buffer buffer = gl.createBuffer();
     gl.bindBuffer(bufType, buffer);
@@ -20,6 +28,8 @@ class WebGLBuffer implements Buffer {
     return new WebGLBuffer(bufType, buffer);
   }
 
+  /// Creates a new WebGL buffer from a integer list of data.
+  /// Typically used for creating an index buffer, ELEMENT_ARRAY_BUFFER.
   factory WebGLBuffer.fromIntList(WebGL.RenderingContext gl, int bufType, List<int> data) {
     WebGL.Buffer buffer = gl.createBuffer();
     gl.bindBuffer(bufType, buffer);
@@ -39,12 +49,16 @@ class WebGLBuffer implements Buffer {
   }
 }
 
+/// Test double buffer used for testing shape creation.
 class TestDoubleBuffer implements Buffer {
 
+  /// Indicates the type of buffer, typically ARRAY_BUFFER.
   int _bufType;
 
+  /// The data stored by this buffer.
   List<double> _buf;
 
+  /// Creates a new test double buffer.
   TestDoubleBuffer(this._bufType, this._buf);
 
   /// Throws an error because test buffers may not be binded.
@@ -57,6 +71,7 @@ class TestDoubleBuffer implements Buffer {
     // Do Nothing
   }
 
+  /// Gets the string for this buffer.
   String toString() {
     List<String> parts = new List<String>();
     for (int i = 0; i < this._buf.length; ++i) {
@@ -66,12 +81,16 @@ class TestDoubleBuffer implements Buffer {
   }
 }
 
+/// Test integer buffer used for testing shape creation.
 class TestIntBuffer implements Buffer {
 
+  /// Indicates the type of buffer, typically ELEMENT_ARRAY_BUFFER.
   int _bufType;
 
+  /// The data stored by this buffer.
   List<int> _buf;
 
+  /// Creates a new test integer buffer.
   TestIntBuffer(this._bufType, this._buf);
 
   /// Throws an error because test buffers may not be binded.
@@ -84,6 +103,7 @@ class TestIntBuffer implements Buffer {
     // Do Nothing
   }
 
+  /// Gets the string for this buffer.
   String toString() {
     List<String> parts = new List<String>();
     for (int i = 0; i < this._buf.length; ++i) {

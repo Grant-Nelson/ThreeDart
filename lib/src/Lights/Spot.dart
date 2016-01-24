@@ -19,7 +19,7 @@ class Spot implements Light {
     this.fallOff = fallOff;
   }
 
-    /// The location the light.
+  /// The location the light.
   Math.Point3 get position => this._position;
   set position(Math.Point3 position) =>
     this._position = (position == null)? new Math.Point3.zero(): position;
@@ -38,21 +38,21 @@ class Spot implements Light {
     this._color = (color == null)? new Math.Color3.white(): color;
   Math.Color3 _color;
 
-    /// The penumbra of the light.
+  /// The penumbra of the light.
   double get penumbra => this._penumbra;
   set penumbra(double penumbra) =>
     this._penumbra = (penumbra == null)? math.PI:
     (penumbra < 0.0)? 0.0: (penumbra > math.PI)? math.PI: penumbra;
   double _penumbra;
 
-    /// The umbra of the light.
+  /// The umbra of the light.
   double get umbra => this._umbra;
   set umbra(double umbra) =>
     this._umbra = (umbra == null)? math.PI:
     (umbra < 0.0)? 0.0: (umbra > math.PI)? math.PI: umbra;
   double _umbra;
 
-    /// The fall off of the light.
+  /// The fall off of the light.
   double get fallOff => this._fallOff;
   set fallOff(double fallOff) =>
     this._fallOff = (fallOff == null)? 1.0:
