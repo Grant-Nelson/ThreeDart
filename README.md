@@ -1,4 +1,4 @@
-#![ThreeDart](/resources/ThreeDart.png)
+#![ThreeDart](resources/ThreeDart.png)
 A [SnowGremlin](www.snowgremlin.com) Project
 
 ### Work in Progress
@@ -20,5 +20,5 @@ A [SnowGremlin](www.snowgremlin.com) Project
 - [Views](lib/src/Views)
 
 ### Built With
-[![atom.io](https://atom.io/assets/logo-29311b97dc1dec1c4262d1e75a94c9db.png)](https://atom.io/)
-[![www.dartlang.org](https://raw.githubusercontent.com/dart-lang/logos/master/logos_and_wordmarks/dart-logo-wordmark.png)](https://www.dartlang.org/)
+[![atom.io](resources/Atom.png)](https://atom.io/)
+[![www.dartlang.org](resources/Dart.png)](https://www.dartlang.org/)
