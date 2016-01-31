@@ -153,6 +153,10 @@ class ShapeFaceCollection {
     return success;
   }
 
+  void flip() {
+    for (Face face in this._faces) face.flip();
+  }
+
   String toString([String indent = ""]) {
     List<String> parts = new List<String>();
     for (Face face in this._faces) {

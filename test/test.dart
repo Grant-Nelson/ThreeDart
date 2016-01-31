@@ -11,6 +11,7 @@ void main() {
   addTest(elem, "test001");
   addTest(elem, "test002");
   addTest(elem, "test003");
+  addTest(elem, "test004");
 }
 
 void addTest(html.Element elem, String testName) {

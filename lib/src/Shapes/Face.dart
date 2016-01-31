@@ -164,6 +164,15 @@ class Face {
     return result;
   }
 
+  void flip() {
+    Vertex ver = this._ver2;
+    this._ver2 = this._ver3;
+    this._ver3 = ver;
+    if (this._norm != null) this._norm = -this._norm;
+    if (this._binm != null) this._binm = -this._binm;
+    this._ver1._shape.onFaceModified(this);
+  }
+
   bool get collapsed {
     if (this._ver1 == this._ver2) return true;
     if (this._ver2 == this._ver3) return true;

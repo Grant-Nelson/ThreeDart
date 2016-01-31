@@ -179,6 +179,12 @@ class Shape {
     this.mergeVertices(matcher, new NormalAdjuster());
   }
 
+  void flip() {
+    this._changed.suspend();
+    this._faces.flip();
+    this._changed.resume();
+  }
+
   Data.BufferStore build(Data.BufferBuilder builder, Data.VertexType type) {
     int length = this._vertices.length;
     int count = type.count;

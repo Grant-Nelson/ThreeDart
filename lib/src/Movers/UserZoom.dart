@@ -1,18 +1,33 @@
 part of ThreeDart.Movers;
 
+/// A zoom mover which zooms on an object in response to user input.
 class UserZoom implements Mover, Core.UserInteractable {
 
+  /// The user input this zoomer is attached to.
   Core.UserInput _input;
+
+  /// Indicates if the control/meta key must be pressed or released.
   bool _ctrlPressed;
+
+  /// Indicates if the alt key must be pressed or released.
   bool _altPressed;
+
+  /// Indicates if the shift key must be pressed or released.
   bool _shiftPressed;
+
+  /// The scalar to change how fast the zoom occures.
   double _zoomScalar;
+
+  /// The current zoom value.
   double _zoom;
 
+  /// The last frame the mover was updated for.
   int _frameNum;
-  /// The matrix describing the mover's position.
+
+  /// The matrix describing the zoom.
   Math.Matrix4 _mat;
 
+  /// Creates an instance of [UserZoom].
   UserZoom() {
     this._input = null;
     this._ctrlPressed = false;
@@ -24,6 +39,7 @@ class UserZoom implements Mover, Core.UserInteractable {
     this._mat = null;
   }
 
+  /// Attaches this mover to the user input.
   bool attach(Core.UserInput input) {
     if (input == null) return false;
     if (this._input != null) return false;
@@ -32,6 +48,7 @@ class UserZoom implements Mover, Core.UserInteractable {
     return true;
   }
 
+  /// Detaches this mover from the user input.
   void detach() {
     if (this._input != null) {
       this._input.mouseWheel.remove(this._mouseWheelHandle);
@@ -39,6 +56,7 @@ class UserZoom implements Mover, Core.UserInteractable {
     }
   }
 
+  /// Handles the mouse wheel changing.
   void _mouseWheelHandle(Core.MouseWheelEventArgs args) {
     if (this._ctrlPressed != this._input.ctrlPressed) return;
     if (this._altPressed != this._input.altPressed) return;
@@ -46,24 +64,35 @@ class UserZoom implements Mover, Core.UserInteractable {
     this._zoom += args.wheel.dy*this._zoomScalar;
   }
 
+  /// Indicates if the control/meta key must be pressed or released.
   bool get ctrlPressed => this._ctrlPressed;
   void set ctrlPressed(bool enable) { this._ctrlPressed = enable; }
+
+  /// Indicates if the alt key must be pressed or released.
   bool get altPressed => this._altPressed;
   void set altPressed(bool enable) { this._altPressed = enable; }
+
+  /// Indicates if the shift key must be pressed or released.
   bool get shiftPressed => this._shiftPressed;
   void set shiftPressed(bool enable) { this._shiftPressed = enable; }
 
+  /// The scalar to change how fast the zoom occures.
   double get zoomScalar => this._zoomScalar;
   void set zoomScalar(double value) { this._zoomScalar = value; }
+
+  /// The current zoom value, the exponent on the scalar.
   double get zoom => this._zoom;
   void set zoom(double value) { this._zoom = value; }
 
+  /// Updates the matrix for this mover.
+  /// This is only called once per frame.
   void _update(Core.RenderState state) {
     this._frameNum = state.frameNumber;
     double pow = math.pow(10.0, this._zoom);
     this._mat = new Math.Matrix4.scale(pow, pow, pow);
   }
 
+  /// Updates this mover and returns the matrix for the given object.
   Math.Matrix4 update(Core.RenderState state, Core.Entity obj) {
     if (this._frameNum < state.frameNumber) this._update(state);
     return this._mat;
