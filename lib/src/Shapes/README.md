@@ -66,10 +66,3 @@ P4' = P2 + r*(P3-P2)
 The point of intersection may have been behind the initial point,
 therefore if `u4 - u1 < 0` then use `Bn = |P3 - P4|`
 else `Bn = |P4 - P3|`.
-
-### Future Work
-
-Currently the vertices and elements are stored in lists.
-At some point the lists will be replaced by oct-trees.
-This will provide faster shape creation, faster collision detection,
-and new functionality, like shape union, intersection, and clipping.

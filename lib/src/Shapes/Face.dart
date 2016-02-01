@@ -1,5 +1,6 @@
 part of ThreeDart.Shapes;
 
+/// A face is a filled triangle defined by three vertices.
 class Face {
   Vertex _ver1;
   Vertex _ver2;
@@ -8,6 +9,7 @@ class Face {
   Math.Vector3 _norm;
   Math.Vector3 _binm;
 
+  /// Creates a new face with the given vertices.
   Face(Vertex ver1, Vertex ver2, Vertex ver3) {
     if (ver1 == null)
       throw new Exception("May not create a face with a null first vertex.");
@@ -28,6 +30,7 @@ class Face {
     this._ver1._shape.onFaceAdded(this);
   }
 
+  /// Disposes this face.
   void dispose() {
     if (!this.disposed) {
       this._ver1._shape._faces._faces.remove(this);
@@ -38,16 +41,19 @@ class Face {
     this._removeVertex3();
   }
 
+  /// Sets the first vertex to the given value.
   void _setVertex1(Vertex ver1) {
     this._ver1 = ver1;
     this._ver1._faces._faces1.add(this);
   }
 
+  /// Sets the second vertex to the given value.
   void _setVertex2(Vertex ver2) {
     this._ver2 = ver2;
     this._ver2._faces._faces2.add(this);
   }
 
+  /// Sets the third vertex to the given value.
   void _setVertex3(Vertex ver3) {
     this._ver3 = ver3;
     this._ver3._faces._faces3.add(this);
