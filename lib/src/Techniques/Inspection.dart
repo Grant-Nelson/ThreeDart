@@ -21,6 +21,7 @@ class Inspection extends Technique {
   bool _showFaceBinormals;
   bool _showColorFill;
   bool _showTxtColor;
+  bool _showAABB;
   double _vectorScale;
 
   Inspection() {
@@ -43,32 +44,45 @@ class Inspection extends Technique {
     this._showFaceBinormals = false;
     this._showColorFill     = false;
     this._showTxtColor      = false;
+    this._showAABB          = false;
     this._vectorScale       = 1.0;
   }
 
-  set showFilled(bool show)        => this._showFilled        = show;
-  set showWireFrame(bool show)     => this._showWireFrame     = show;
-  set showVertices(bool show)      => this._showVertices      = show;
-  set showNormals(bool show)       => this._showNormals       = show;
-  set showBinormals(bool show)     => this._showBinormals     = show;
-  set showFaceCenters(bool show)   => this._showFaceCenters   = show;
-  set showFaceNormals(bool show)   => this._showFaceNormals   = show;
-  set showFaceBinormals(bool show) => this._showFaceBinormals = show;
-  set showColorFill(bool show)     => this._showColorFill     = show;
-  set showTxtColor(bool show)      => this._showTxtColor      = show;
-  set vectorScale(double scale)    => this._vectorScale       = scale;
+  set showFilled(bool show) => this._showFilled = show;
+  bool get showFilled => this._showFilled;
 
-  bool get showFilled        => this._showFilled;
-  bool get showWireFrame     => this._showWireFrame;
-  bool get showVertices      => this._showVertices;
-  bool get showNormals       => this._showNormals;
-  bool get showBinormals     => this._showBinormals;
-  bool get showFaceCenters   => this._showFaceCenters;
-  bool get showFaceNormals   => this._showFaceNormals;
+  set showWireFrame(bool show) => this._showWireFrame = show;
+  bool get showWireFrame => this._showWireFrame;
+
+  set showVertices(bool show) => this._showVertices = show;
+  bool get showVertices => this._showVertices;
+
+  set showNormals(bool show) => this._showNormals = show;
+  bool get showNormals => this._showNormals;
+
+  set showBinormals(bool show) => this._showBinormals = show;
+  bool get showBinormals => this._showBinormals;
+
+  set showFaceCenters(bool show) => this._showFaceCenters = show;
+  bool get showFaceCenters => this._showFaceCenters;
+
+  set showFaceNormals(bool show) => this._showFaceNormals = show;
+  bool get showFaceNormals => this._showFaceNormals;
+
+  set showFaceBinormals(bool show) => this._showFaceBinormals = show;
   bool get showFaceBinormals => this._showFaceBinormals;
-  bool get showColorFill     => this._showColorFill;
-  bool get showTxtColor      => this._showTxtColor;
-  double get vectorScale     => this._vectorScale;
+
+  set showColorFill(bool show) => this._showColorFill = show;
+  bool get showColorFill => this._showColorFill;
+
+  set showTxtColor(bool show) => this._showTxtColor = show;
+  bool get showTxtColor => this._showTxtColor;
+
+  set showAABB(bool show) => this._showAABB = show;
+  bool get showAABB => this._showAABB;
+
+  set vectorScale(double scale) => this._vectorScale = scale;
+  double get vectorScale => this._vectorScale;
 
   void render(Core.RenderState state, Core.Entity obj) {
     if (this._shader == null)
@@ -87,6 +101,7 @@ class Inspection extends Technique {
       Data.BufferStore faceBinormals = this._buildShape(state, this._faceBinormals(obj.shape));
       Data.BufferStore colorFill     = this._buildShape(state, this._colorFill(obj.shape));
       Data.BufferStore txtColor      = this._buildShape(state, this._txtColor(obj.shape));
+      Data.BufferStore aabb          = this._buildShape(state, this._aabb(obj.shape));
 
       obj.cache =  new Data.BufferStoreList()
         ..list.add(shapeFill) // 0
@@ -98,7 +113,8 @@ class Inspection extends Technique {
         ..list.add(faceNormals) // 6
         ..list.add(faceBinormals) // 7
         ..list.add(colorFill) // 8
-        ..list.add(txtColor); // 9
+        ..list.add(txtColor) // 9
+        ..list.add(aabb); // 10
     }
 
     this._shader
@@ -161,6 +177,10 @@ class Inspection extends Technique {
       if (this._showFaceBinormals) {
         this._shader.setColors(this._ambient3, this._diffuse3);
         store.list[7].oneRender(state); // faceBinormals
+      }
+      if (this._showAABB) {
+        this._shader.setColors(this._ambient2, this._diffuse2);
+        store.list[10].oneRender(state); // AABB
       }
 
       state.gl.enable(WebGL.DEPTH_TEST);
@@ -338,6 +358,33 @@ class Inspection extends Technique {
       Shapes.Vertex ver3 = result.vertices[face.vertex3.index];
       result.faces.add(ver1, ver2, ver3);
     });
+    return result;
+  }
+
+  Shapes.Shape _aabb(Shapes.Shape shape) {
+    Math.Region3 aabb = shape.calculateAABB();
+    Shapes.Shape result = new Shapes.Shape();
+    Shapes.Vertex ver1 = result.vertices.addPoint(aabb.x,         aabb.y,         aabb.z);
+    Shapes.Vertex ver2 = result.vertices.addPoint(aabb.x+aabb.dx, aabb.y,         aabb.z);
+    Shapes.Vertex ver3 = result.vertices.addPoint(aabb.x+aabb.dx, aabb.y+aabb.dy, aabb.z);
+    Shapes.Vertex ver4 = result.vertices.addPoint(aabb.x,         aabb.y+aabb.dy, aabb.z);
+    Shapes.Vertex ver5 = result.vertices.addPoint(aabb.x,         aabb.y,         aabb.z+aabb.dz);
+    Shapes.Vertex ver6 = result.vertices.addPoint(aabb.x+aabb.dx, aabb.y,         aabb.z+aabb.dz);
+    Shapes.Vertex ver7 = result.vertices.addPoint(aabb.x+aabb.dx, aabb.y+aabb.dy, aabb.z+aabb.dz);
+    Shapes.Vertex ver8 = result.vertices.addPoint(aabb.x,         aabb.y+aabb.dy, aabb.z+aabb.dz);
+    result.lines.add(ver1, ver2);
+    result.lines.add(ver2, ver3);
+    result.lines.add(ver3, ver4);
+    result.lines.add(ver4, ver1);
+    result.lines.add(ver5, ver6);
+    result.lines.add(ver6, ver7);
+    result.lines.add(ver7, ver8);
+    result.lines.add(ver8, ver5);
+    result.lines.add(ver1, ver5);
+    result.lines.add(ver2, ver6);
+    result.lines.add(ver3, ver7);
+    result.lines.add(ver4, ver8);
+    result.calculateNormals();
     return result;
   }
 }

@@ -111,13 +111,26 @@ class Vertex {
   }
 
   List<double> listFor(Data.VertexType type) {
-    if (type == Data.VertexType.Pos) return this._loc.toList();
-    else if (type == Data.VertexType.Norm) return this._norm.toList();
-    else if (type == Data.VertexType.Binm) return this._binm.toList();
-    else if (type == Data.VertexType.Txt) return this._txt.toList();
-    else if (type == Data.VertexType.Clr3) return new Math.Color3.fromColor4(this._clr).toList();
-    else if (type == Data.VertexType.Clr4) return this._clr.toList();
-    else if (type == Data.VertexType.Weight) return new List<double>.from([ this._weight ]);
+    if (type == Data.VertexType.Pos) {
+      if (this._loc == null) return [0.0, 0.0, 0.0];
+      else return this._loc.toList();
+    } else if (type == Data.VertexType.Norm) {
+      if (this._norm == null) return [0.0, 1.0, 0.0];
+      else return this._norm.toList();
+    } else if (type == Data.VertexType.Binm) {
+      if (this._binm == null) return [0.0, 0.0, 1.0];
+      else return this._binm.toList();
+    } else if (type == Data.VertexType.Txt) {
+      if (this._txt == null) return [0.0, 0.0];
+      else return this._txt.toList();
+    } else if (type == Data.VertexType.Clr3) {
+      if (this._clr == null) return [1.0, 1.0, 1.0];
+      else return new Math.Color3.fromColor4(this._clr).toList();
+    } else if (type == Data.VertexType.Clr4) {
+      if (this._clr == null) return [1.0, 1.0, 1.0, 1.0];
+      else return this._clr.toList();
+    } else if (type == Data.VertexType.Weight)
+      return new List<double>.from([ this._weight ]);
     else return new List<double>();
   }
 

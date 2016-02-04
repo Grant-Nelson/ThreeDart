@@ -99,7 +99,7 @@ class UserInput {
   MouseEventArgs _getMouseArgs(html.MouseEvent msEvent, bool setStart) {
     final Math.Point2 pnt = new Math.Point2(msEvent.offset.x, msEvent.offset.y);
     final DateTime curTime = new DateTime.now();
-    final Math.Size2 size = new Math.Size2(0.0, 0.0, this._elem.client.width, this._elem.client.height);
+    final Math.Region2 size = new Math.Region2(0.0, 0.0, this._elem.client.width, this._elem.client.height);
     this._ctrlPressed = msEvent.ctrlKey||msEvent.metaKey;
     this._altPressed = msEvent.altKey;
     this._shiftPressed = msEvent.shiftKey;
@@ -155,7 +155,7 @@ class UserInput {
   void _onMouseWheel(html.WheelEvent msEvent) {
     final Math.Point2 pnt = new Math.Point2(msEvent.offset.x, msEvent.offset.y);
     final DateTime curTime = new DateTime.now();
-    final Math.Size2 size = new Math.Size2(0.0, 0.0, this._elem.client.width, this._elem.client.height);
+    final Math.Region2 size = new Math.Region2(0.0, 0.0, this._elem.client.width, this._elem.client.height);
     final Math.Vector2 wheel = new Math.Vector2(msEvent.deltaX, msEvent.deltaY)/180.0;
     this._ctrlPressed = msEvent.ctrlKey||msEvent.metaKey;
     this._altPressed = msEvent.altKey;

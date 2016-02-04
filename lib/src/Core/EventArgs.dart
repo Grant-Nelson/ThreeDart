@@ -15,7 +15,7 @@ class PointEventArgs extends EventArgs {
 
   /// The size of the canvas or region.
   /// This is used to adjust the raw points into the region's normalized space.
-  final Math.Size2 size;
+  final Math.Region2 size;
 
   /// The raw point, in pixels, on the region.
   final Math.Point2 rawPoint;
@@ -50,7 +50,7 @@ class MouseEventArgs extends PointEventArgs {
   final DateTime previousTime;
 
   /// Creates a mouse event argument.
-  MouseEventArgs(Object sender, this.pressed, Math.Size2 size,
+  MouseEventArgs(Object sender, this.pressed, Math.Region2 size,
     this.startRawPoint, this.previousRawPoint, Math.Point2 rawPoint,
     this.startTime, this.previousTime, DateTime currentTime):
     super(sender, size, rawPoint, currentTime);
@@ -87,7 +87,7 @@ class MouseWheelEventArgs extends PointEventArgs {
   final Math.Vector2 wheel;
 
   /// Creates a mouse wheel event argument.
-  MouseWheelEventArgs(Object sender, Math.Size2 size,
+  MouseWheelEventArgs(Object sender, Math.Region2 size,
     Math.Point2 rawPoint, DateTime currentTime, this.wheel):
     super(sender, size, rawPoint, currentTime);
 }

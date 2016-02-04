@@ -47,6 +47,7 @@ void main() {
   _addCheckBox("Face Binormals", false, (bool show) { tech.showFaceBinormals = show; });
   _addCheckBox("Colors",         false, (bool show) { tech.showColorFill     = show; });
   _addCheckBox("Textures",       false, (bool show) { tech.showTxtColor      = show; });
+  _addCheckBox("AABB",           false, (bool show) { tech.showAABB          = show; });
 
   _addRadioButton("Square",        () { obj.shape = Shapes.square(); }, true);
   _addRadioButton("Cube",          () { obj.shape = Shapes.cube(); });

@@ -1,7 +1,7 @@
 part of ThreeDart.Math;
 
-/// A math structure for storing a 3D size, like a rectangular cube
-class Size3 {
+/// A math structure for storing a 3D region, like a rectangular cube
+class Region3 {
 
   double _x;
   double _y;
@@ -10,40 +10,44 @@ class Size3 {
   double _dy;
   double _dz;
 
-  /// Constructs a new [Size3] instance.
-  Size3(double x, double y, double z, double dx, double dy, double dz) {
+  /// Constructs a new [Region3] instance.
+  Region3(double x, double y, double z, double dx, double dy, double dz) {
     this.set(x, y, z, dx, dy, dz);
   }
 
-  /// Constructs a new [Size3] at the origin.
-  factory Size3.zero() =>
-      new Size3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+  /// Constructs a new [Region3] at the origin.
+  factory Region3.zero() =>
+      new Region3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
-  /// Constructs a new [Size3] from two opposite corners.
-  factory Size3.fromCorners(Point3 a, Point3 b) =>
-      new Size3(a.x, a.y, a.z, b.x-a.x, b.y-a.y, b.z-a.z);
+  /// Constructs a new [Region3] at the given point, [pnt].
+  factory Region3.fromPoint(Point3 pnt) =>
+      new Region3(pnt.x, pnt.y, pnt.z, 0.0, 0.0, 0.0);
 
-  /// Constructs a new [Size3] instance given a list of 6 doubles.
+  /// Constructs a new [Region3] from two opposite corners.
+  factory Region3.fromCorners(Point3 a, Point3 b) =>
+      new Region3(a.x, a.y, a.z, b.x-a.x, b.y-a.y, b.z-a.z);
+
+  /// Constructs a new [Region3] instance given a list of 6 doubles.
   ///
   /// [values] is a list of doubles are in the order x, y, z, dx, dy, then dz.
-  factory Size3.fromList(List<double> values) {
+  factory Region3.fromList(List<double> values) {
     assert(values.length == 6);
-    return new Size3(values[0], values[1], values[2], values[3], values[4], values[5]);
+    return new Region3(values[0], values[1], values[2], values[3], values[4], values[5]);
   }
 
-  /// The left edge component of the size.
+  /// The left edge component of the region.
   double get x => this._x;
   set x(double x) => this._x = x;
 
-  /// The top edge component of the size.
+  /// The top edge component of the region.
   double get y => this._y;
   set y(double y) => this._y = y;
 
-  /// The front edge component of the size.
+  /// The front edge component of the region.
   double get z => this._z;
   set z(double z) => this._z = z;
 
-  /// The width component of the size.
+  /// The width component of the region.
   double get dx => this._dx;
   set dx(double dx) {
     if (dx < 0.0) {
@@ -52,7 +56,7 @@ class Size3 {
     } else this._dx = dx;
   }
 
-  /// The height component of the size.
+  /// The height component of the region.
   double get dy => this._dy;
   set dy(double dy) {
     if (dy < 0.0) {
@@ -61,7 +65,7 @@ class Size3 {
     } else this._dy = dy;
   }
 
-  /// The depth component of the size.
+  /// The depth component of the region.
   double get dz => this._dz;
   set dz(double dz) {
     if (dz < 0.0) {
@@ -70,7 +74,31 @@ class Size3 {
     } else this._dz = dz;
   }
 
-  /// Sets the size of this instance.
+  /// Expands the region to include the given point, [pnt].
+  void expand(Point3 pnt) {
+    if (pnt._x < this._x) {
+      this._dx += (this._x - pnt._x);
+      this._x = pnt._x;
+    } else if (pnt.x > this._x + this._dx) {
+      this._dx = pnt._x - this._x;
+    }
+
+    if (pnt._y < this._y) {
+      this._dy += (this._y - pnt._y);
+      this._y = pnt._y;
+    } else if (pnt.y > this._y + this._dy) {
+      this._dy = pnt._y - this._y;
+    }
+
+    if (pnt._z < this._z) {
+      this._dz += (this._z - pnt._z);
+      this._z = pnt._z;
+    } else if (pnt.z > this._z + this._dz) {
+      this._dz = pnt._z - this._z;
+    }
+  }
+
+  /// Sets the region of this instance.
   void set(double x, double y, double z, double dx, double dy, double dz) {
     if (dx < 0.0) {
       this._x = x + dx;
@@ -99,11 +127,11 @@ class Size3 {
   List<double> toList() =>
       [this._x, this._y, this._z, this._dx, this._dy, this._dz];
 
-  /// Creates a copy of the size.
-  Size3 copy() =>
-      new Size3(this._x, this._y, this._z, this._dx, this._dy, this._dz);
+  /// Creates a copy of the region.
+  Region3 copy() =>
+      new Region3(this._x, this._y, this._z, this._dx, this._dy, this._dz);
 
-  /// The minimum side of the size.
+  /// The minimum side of the region.
   double get minSide {
     double side = this._dx;
     if (side > this._dy) side = this._dy;
@@ -111,7 +139,7 @@ class Size3 {
     return side;
   }
 
-  /// The maximum side of the size.
+  /// The maximum side of the region.
   double get maxSide {
     double side = this._dx;
     if (side < this._dy) side = this._dy;
@@ -137,13 +165,13 @@ class Size3 {
     return raw*2.0/this.minSide;
   }
 
-  /// Determines if the given [other] variable is a [Size3] equal to this point.
+  /// Determines if the given [other] variable is a [Region3] equal to this point.
   ///
   /// The equality of the doubles is tested with the current [Comparer] method.
   bool operator ==(var other) {
     if (identical(this, other)) return true;
-    if (other is! Size3) return false;
-    Size3 size = other as Size3;
+    if (other is! Region3) return false;
+    Region3 size = other as Region3;
     if (!Comparer.equals(size._x, this._x)) return false;
     if (!Comparer.equals(size._y, this._y)) return false;
     if (!Comparer.equals(size._z, this._z)) return false;
@@ -153,7 +181,7 @@ class Size3 {
     return true;
   }
 
-  /// Gets the string for this size.
+  /// Gets the string for this region.
   String toString() => '['+formatDouble(this._x)+
                       ', '+formatDouble(this._y)+
                       ', '+formatDouble(this._z)+

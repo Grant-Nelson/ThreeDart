@@ -59,6 +59,7 @@ class Face {
     this._ver3._faces._faces3.add(this);
   }
 
+  /// Removes the first vertex.
   void _removeVertex1() {
     if (this._ver1 != null) {
       this._ver1._faces._faces1.remove(this);
@@ -66,6 +67,7 @@ class Face {
     }
   }
 
+  /// Removes the second vertex.
   void _removeVertex2() {
     if (this._ver2 != null) {
       this._ver2._faces._faces2.remove(this);
@@ -73,6 +75,7 @@ class Face {
     }
   }
 
+  /// Removes the third vertex.
   void _removeVertex3() {
     if (this._ver3 != null) {
       this._ver3._faces._faces3.remove(this);
@@ -80,17 +83,29 @@ class Face {
     }
   }
 
+  /// Indicates if the face is disposed or not.
   bool get disposed => (this._ver1 == null) || (this._ver2 == null) || (this._ver3 == null);
+
+  /// The first vertex of the face.
   Vertex get vertex1 => this._ver1;
+
+  /// The second vertex of the face.
   Vertex get vertex2 => this._ver2;
+
+  /// The third vertex of the face.
   Vertex get vertex3 => this._ver3;
 
+  /// The normal for this face or null if not specified yet.
   Math.Vector3 get normal => this._norm;
   set normal(Math.Vector3 norm) => this._norm = norm.normal();
 
+  /// The binormal for this face or null if not specified yet.
   Math.Vector3 get binormal => this._binm;
   set binormal(Math.Vector3 binm) => this._binm = binm.normal();
 
+  /// Calculates the normal vector if not already set.
+  /// This uses the locations of the vertices to determine the normal
+  /// of the plane this face lays on.
   bool calculateNormal() {
     if(this._norm != null) return true;
 
@@ -106,6 +121,9 @@ class Face {
     return true;
   }
 
+  /// Calculates the binormal vector if not already set.
+  /// This requires the normal and texture location.
+  /// See Shapes/README.md for more information.
   bool calculateBinormal() {
     if(this._binm != null) return true;
 
@@ -119,21 +137,32 @@ class Face {
     Math.Point2 txt3 = this._ver3.texture;
     if ((txt1 == null) || (txt2 == null) || (txt3 == null)) return false;
 
+    Math.Vector3 binm;
     double du = txt2.y - txt3.y;
     if (Math.Comparer.equals(du, 0.0)) {
-      this._binm = new Math.Vector3.fromPoint3(loc3 - loc2).normal();
-      if (txt3.x - txt2.x < 0.0) this._binm = -this._binm;
+      binm = new Math.Vector3.fromPoint3(loc3 - loc2).normal();
+      if (txt3.x - txt2.x < 0.0) binm = -binm;
     } else {
       double r = (txt2.y - txt1.y) / du;
       Math.Point3 vD = (loc3 - loc2) * r + loc2;
-      this._binm = new Math.Vector3.fromPoint3(vD - loc1).normal();
+      binm = new Math.Vector3.fromPoint3(vD - loc1).normal();
       double u4 = (txt3.x - txt2.x) * r + txt2.x - txt1.x;
-      if (u4 < 0.0) this._binm = -this._binm;
+      if (u4 < 0.0) binm = -binm;
     }
+
+    if (this._norm != null) {
+      Math.Vector3 norm = this._norm.normal();
+      Math.Vector3 trnm = norm.cross(binm).normal();
+      binm = trnm.cross(norm).normal();
+    }
+
+    this._binm = binm;
     this._ver1._shape.onFaceModified(this);
     return true;
   }
 
+  /// Checks if the given vertex can be replaced by the new given vertex.
+  /// If there is any reason it can't and exception is thrown.
   void _checkReplaceVertex(Vertex oldVer, Vertex newVer) {
     if (newVer == null)
       throw new Exception("May not replace a face's vertex with a null vertex.");
@@ -143,6 +172,8 @@ class Face {
       throw new Exception("May not replace a face's vertex with a vertex attached to a different shape.");
   }
 
+  /// Replaces the given old vertex with the given new vertex if this face contains
+  /// the given old vertex. It returns the number of vertices which were replaced.
   int replaceVertex(Vertex oldVer, Vertex newVer) {
     if (this.disposed)
       throw new Exception("May not replace a face's vertex when the point has been disposed.");
@@ -170,6 +201,8 @@ class Face {
     return result;
   }
 
+  /// Swaps the second and third vertices so the face is wraps the other direction.
+  /// Both the normal and binormal vectors are negated if the exist.
   void flip() {
     Vertex ver = this._ver2;
     this._ver2 = this._ver3;
@@ -179,6 +212,8 @@ class Face {
     this._ver1._shape.onFaceModified(this);
   }
 
+  /// Indicates if the face is collapsed meaning two or
+  /// more of its vertices are the same.
   bool get collapsed {
     if (this._ver1 == this._ver2) return true;
     if (this._ver2 == this._ver3) return true;
@@ -186,6 +221,8 @@ class Face {
     return false;
   }
 
+  /// Determines if the given [other] is a face with the
+  /// same vertices and vectors as this face.
   bool same(var other) {
     if (identical(this, other)) return true;
     if (other is! Face) return false;
@@ -198,9 +235,13 @@ class Face {
     return true;
   }
 
+  /// Determines if this face is the same face as the given [other].
   bool operator ==(var other) => identical(this, other);
 
+  /// Gets the string for this face.
+  /// The [indent] is added to the front when provided.
   String toString([String indent = ""]) {
+    if (this.disposed) return "${indent}disposed";
     String result = indent +
         Math.formatInt(this._ver1._index)+', '+
         Math.formatInt(this._ver2._index)+', '+

@@ -1,13 +1,18 @@
 part of ThreeDart.Shapes;
 
+/// A function handler for processing a single value for a new value.
 typedef double func1Handle(double a);
 
+/// A function handler for processing two values for a new value.
 typedef double func2Handle(double a, double b);
 
+/// A function handler for processing a single value for a new 3D point.
 typedef Math.Point3 func1PntHandle(double a);
 
+/// A function handler for processing two values for a new 3D point.
 typedef Math.Point3 func2PntHandle(double a, double b);
 
+/// Creates a square shape.
 Shape square() {
   Shape shape = new Shape();
   Vertex ver1 = shape.vertices.addNew(
@@ -38,6 +43,7 @@ Shape square() {
   return shape;
 }
 
+/// Creates a cube shape.
 Shape cube() {
   Shape shape = new Shape();
   _addCubeSide(shape,  1.0,  0.0,  0.0); // x+
@@ -49,6 +55,8 @@ Shape cube() {
   return shape;
 }
 
+/// Adds a side of the cube to the given shape.
+/// The [nx], [ny], and [nz] the normal of the plane for the cube side to add.
 void _addCubeSide(Shape shape, double nx, double ny, double nz) {
   Vertex ver1 = shape.vertices.addNew(
     loc:  new Math.Point3(nx+ny+nz, ny+nz+nx, nz+nx+ny),
@@ -81,7 +89,10 @@ void _addCubeSide(Shape shape, double nx, double ny, double nz) {
   }
 }
 
-Shape disk({int sides: 8, double height: 0.0, bool flip: true, func1Handle radiusHndl: _constantRediusHandle}) {
+/// Creates a disk shape.
+/// [sides] is the number of division on the side, and [height] is the y offset of the disk.
+/// [flip] will flip the disk over, and [radiusHndl] is a handle for custom variant radius.
+Shape disk({int sides: 8, double height: 0.0, bool flip: false, func1Handle radiusHndl: _constantRediusHandle}) {
   if (sides < 3) return null;
   Shape shape = new Shape();
   double sign = flip? -1.0: 1.0;
@@ -89,16 +100,16 @@ Shape disk({int sides: 8, double height: 0.0, bool flip: true, func1Handle radiu
   List<Vertex> vers = new List<Vertex>();
   vers.add(shape.vertices.addNew(
     loc:  new Math.Point3(0.0, height, 0.0),
-    norm: new Math.Vector3(0.0, -sign, 0.0),
+    norm: new Math.Vector3(0.0, sign, 0.0),
     txt:  new Math.Point2(0.5, 0.5),
     clr:  new Math.Color4(1.0, 1.0, 1.0)));
   for (int i = 0; i <= sides; i++) {
     double angle = step*i.toDouble();
-    double x = sign*sin(angle), z = cos(angle);
+    double x = -sign*sin(angle), z = cos(angle);
     double radius = radiusHndl(i.toDouble()/sides.toDouble());
     vers.add(shape.vertices.addNew(
       loc:  new Math.Point3(x*radius, height, z*radius),
-      norm: new Math.Vector3(0.0, -sign, 0.0),
+      norm: new Math.Vector3(0.0, sign, 0.0),
       txt:  new Math.Point2(x*0.5+0.5, z*0.5+0.5),
       clr:  new Math.Color4(x, z, z)));
   }
@@ -106,14 +117,25 @@ Shape disk({int sides: 8, double height: 0.0, bool flip: true, func1Handle radiu
   return shape;
 }
 
+/// A radius handle which only returns 1.0.
 double _constantRediusHandle(double a) => 1.0;
 
+/// Creates a cylinder shape.
+/// [sides] is the number of division on the side, [div] is the number of
+/// divisions to cut the cylinder. [capTop] and [capBottom] indicated if a
+/// top or bottom respectively should be covered with a disk. The [topRadius]
+/// and [bottomRadius] are the top and bottom radii respectively.
 Shape cylinder({double topRadius: 1.0, double bottomRadius: 1.0,
     int sides: 8, int div: 1, bool capTop: true, bool capBottom: true}) {
   return cylindical(sides: sides, div: div, capTop: capTop, capBottom: capBottom,
     radiusHndl: (double _, double v) => Math.lerpVal(bottomRadius, topRadius, v));
 }
 
+/// Creates a cylindical shape.
+/// [sides] is the number of division on the side, [div] is the number of
+/// divisions to cut the cylinder. [capTop] and [capBottom] indicated if a
+/// top or bottom respectively should be covered with a disk.
+/// [radiusHndl] is the handle to specify the custom radius of the cylindical shape.
 Shape cylindical({func2Handle radiusHndl: null, int sides: 8, int div: 1, bool capTop: true, bool capBottom: true}) {
   if (radiusHndl == null)  return null;
   if (sides < 3) return null;

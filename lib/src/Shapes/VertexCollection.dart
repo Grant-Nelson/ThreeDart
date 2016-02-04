@@ -47,6 +47,12 @@ class VertexCollection {
     return ver;
   }
 
+  Vertex addPoint(double locX, double locY, double locZ) {
+    Vertex ver = new Vertex(loc: new Math.Point3(locX, locY, locZ));
+    this.add(ver);
+    return ver;
+  }
+
   void addList(List<Vertex> verList) {
     for (Vertex ver in verList) {
       this.add(ver);

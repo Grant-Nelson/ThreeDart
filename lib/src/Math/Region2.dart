@@ -1,43 +1,47 @@
 part of ThreeDart.Math;
 
-/// A math structure for storing a 2D size, like a rectangle.
-class Size2 {
+/// A math structure for storing a 2D region, like a rectangle.
+class Region2 {
 
   double _x;
   double _y;
   double _dx;
   double _dy;
 
-  /// Constructs a new [Size2] instance.
-  Size2(double x, double y, double dx, double dy) {
+  /// Constructs a new [Region2] instance.
+  Region2(double x, double y, double dx, double dy) {
     this.set(x, y, dx, dy);
   }
 
-  /// Constructs a new [Size2] at the origin.
-  factory Size2.zero() =>
-      new Size2(0.0, 0.0, 0.0, 0.0);
+  /// Constructs a new [Region2] at the origin.
+  factory Region2.zero() =>
+      new Region2(0.0, 0.0, 0.0, 0.0);
 
-  /// Constructs a new [Size2] from two opposite corners.
-  factory Size2.fromCorners(Point2 a, Point2 b) =>
-      new Size2(a.x, a.y, b.x-a.x, b.y-a.y);
+  /// Constructs a new [Region2] at the given point, [pnt].
+  factory Region2.fromPoint(Point2 pnt) =>
+      new Region2(pnt.x, pnt.y, 0.0, 0.0);
 
-  /// Constructs a new [Size2] instance given a list of 4 doubles.
+  /// Constructs a new [Region2] from two opposite corners.
+  factory Region2.fromCorners(Point2 a, Point2 b) =>
+      new Region2(a.x, a.y, b.x-a.x, b.y-a.y);
+
+  /// Constructs a new [Region2] instance given a list of 4 doubles.
   ///
   /// [values] is a list of doubles are in the order x, y, dx, then dy.
-  factory Size2.fromList(List<double> values) {
+  factory Region2.fromList(List<double> values) {
     assert(values.length == 4);
-    return new Size2(values[0], values[1], values[2], values[3]);
+    return new Region2(values[0], values[1], values[2], values[3]);
   }
 
-  /// The left edge component of the size.
+  /// The left edge component of the region.
   double get x => this._x;
   set x(double x) => this._x = x;
 
-  /// The top edge component of the size.
+  /// The top edge component of the region.
   double get y => this._y;
   set y(double y) => this._y = y;
 
-  /// The width component of the size.
+  /// The width component of the region.
   double get dx => this._dx;
   set dx(double dx) {
     if (dx < 0.0) {
@@ -46,7 +50,7 @@ class Size2 {
     } else this._dx = dx;
   }
 
-  /// The height component of the size.
+  /// The height component of the region.
   double get dy => this._dy;
   set dy(double dy) {
     if (dy < 0.0) {
@@ -55,7 +59,24 @@ class Size2 {
     } else this._dy = dy;
   }
 
-  /// Sets the size of this instance.
+  /// Expands the region to include the given point, [pnt].
+  void expand(Point2 pnt) {
+    if (pnt._x < this._x) {
+      this._dx += (this._x - pnt._x);
+      this._x = pnt._x;
+    } else if (pnt.x > this._x + this._dx) {
+      this._dx = pnt._x - this._x;
+    }
+
+    if (pnt._y < this._y) {
+      this._dy += (this._y - pnt._y);
+      this._y = pnt._y;
+    } else if (pnt.y > this._y + this._dy) {
+      this._dy = pnt._y - this._y;
+    }
+  }
+
+  /// Sets the region of this instance.
   void set(double x, double y, double dx, double dy) {
     if (dx < 0.0) {
       this._x = x + dx;
@@ -77,17 +98,17 @@ class Size2 {
   List<double> toList() =>
       [this._x, this._y, this._dx, this._dy];
 
-  /// Creates a copy of the size.
-  Size2 copy() =>
-      new Size2(this._x, this._y, this._dx, this._dy);
+  /// Creates a copy of the region.
+  Region2 copy() =>
+      new Region2(this._x, this._y, this._dx, this._dy);
 
-  /// The minimum side of the size.
+  /// The minimum side of the region.
   double get minSide {
     if (this._dx > this._dy) return this._dy;
     else return this._dx;
   }
 
-  /// The maximum side of the size.
+  /// The maximum side of the region.
   double get maxSide {
     if (this._dx > this._dy) return this._dx;
     else return this._dy;
@@ -109,13 +130,13 @@ class Size2 {
     return raw*2.0/this.minSide;
   }
 
-  /// Determines if the given [other] variable is a [Size2] equal to this point.
+  /// Determines if the given [other] variable is a [Region2] equal to this point.
   ///
   /// The equality of the doubles is tested with the current [Comparer] method.
   bool operator ==(var other) {
     if (identical(this, other)) return true;
-    if (other is! Size2) return false;
-    Size2 size = other as Size2;
+    if (other is! Region2) return false;
+    Region2 size = other as Region2;
     if (!Comparer.equals(size._x, this._x)) return false;
     if (!Comparer.equals(size._y, this._y)) return false;
     if (!Comparer.equals(size._dx, this._dx)) return false;
@@ -123,7 +144,7 @@ class Size2 {
     return true;
   }
 
-  /// Gets the string for this size.
+  /// Gets the string for this region.
   String toString() => '['+formatDouble(this._x)+
                       ', '+formatDouble(this._y)+
                       ', '+formatDouble(this._dx)+

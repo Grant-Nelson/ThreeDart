@@ -1,5 +1,6 @@
 part of ThreeDart.Shapes;
 
+/// A shape defining the renderable shape and collision detection.
 class Shape {
   VertexCollection _vertices;
   ShapePointCollection _points;
@@ -7,6 +8,7 @@ class Shape {
   ShapeFaceCollection _faces;
   Core.Event _changed;
 
+  /// Creates a new shape.
   Shape() {
     this._vertices = new VertexCollection._(this);
     this._points = new ShapePointCollection._(this);
@@ -15,16 +17,29 @@ class Shape {
     this._changed = new Core.Event();
   }
 
+  /// Creates a copy of the given [other] shape.
   factory Shape.copy(Shape other) {
     return new Shape()..merge(other);
   }
 
+  /// The collection of vertices for the shape.
   VertexCollection get vertices => this._vertices;
+
+  /// The collection of renderable points for the shape.
   ShapePointCollection get points => this._points;
+
+  /// The collection of renderable lines for the shape.
   ShapeLineCollection get lines => this._lines;
+
+  /// The collection of renderable faces for the shape.
   ShapeFaceCollection get faces => this._faces;
+
+  /// The changed event to signal when ever the shape is modified.
   Core.Event get changed => this._changed;
 
+  /// Merges the given shape into this shape.
+  /// No vertices nor seams are joined, this is a simple copy
+  /// of all the given shape's information into this shape.
   void merge(Shape other) {
     this._changed.suspend();
     other._vertices._updateIndices();
@@ -51,6 +66,8 @@ class Shape {
     this._changed.resume();
   }
 
+  /// Calculates the normals for the vertices and favces.
+  /// True if successful, false on error.
   bool calculateNormals() {
     bool success = true;
     this._changed.suspend();
@@ -60,6 +77,9 @@ class Shape {
     return success;
   }
 
+  /// Calculates the binormals for the vertices and favces.
+  /// Typically the normals should be calculated first.
+  /// True if successful, false on error.
   bool calculateBinormals() {
     bool success = true;
     this._changed.suspend();
@@ -69,10 +89,22 @@ class Shape {
     return success;
   }
 
-  int findFirstIndex(Vertex ver, [VertexMatcher matcher = null]) {
+  /// Calculates the axial alligned bounding box of the shape.
+  Math.Region3 calculateAABB() {
+    final int count = this._vertices.length;
+    if (count <= 0) return new Math.Region3.zero();
+    Math.Region3 result = new Math.Region3.fromPoint(this._vertices[0].location);
+    for (int i = count-1; i >= 1; i--)
+      result.expand(this._vertices[i].location);
+    return result;
+  }
+
+  /// Finds the first index of the vertex which matches the given vertex.
+  /// If no match is found then -1 is returned.
+  int findFirstIndex(Vertex ver, [VertexMatcher matcher = null, int startIndex = 0]) {
     if (matcher == null) matcher = new FullMatcher();
     final int count = this._vertices.length;
-    for (int i = 0; i < count; ++i) {
+    for (int i = startIndex; i < count; ++i) {
       Vertex ver2 = this._vertices[i];
       if (ver2 != null) {
         if (matcher.matches(ver, ver2)) {
@@ -80,13 +112,15 @@ class Shape {
         }
       }
     }
-    return -2;
+    return -1;
   }
 
-  Vertex findFirst(Vertex ver, [VertexMatcher matcher = null]) {
+  /// Gets the first vertex in this shape which matches the given vertex.
+  /// If no match is found then null is returned.
+  Vertex findFirst(Vertex ver, [VertexMatcher matcher = null, int startIndex = 0]) {
     if (matcher == null) matcher = new FullMatcher();
     final int count = this._vertices.length;
-    for (int i = 0; i < count; ++i) {
+    for (int i = startIndex; i < count; ++i) {
       Vertex ver2 = this._vertices[i];
       if (ver2 != null) {
         if (matcher.matches(ver, ver2)) {
@@ -97,11 +131,12 @@ class Shape {
     return null;
   }
 
-  List<Vertex> findAll(Vertex ver, [VertexMatcher matcher = null]) {
+  /// Finds all vertices in this shape which matches the given vertex.
+  List<Vertex> findAll(Vertex ver, [VertexMatcher matcher = null, int startIndex = 0]) {
     if (matcher == null) matcher = new FullMatcher();
     List<Vertex> results = new List<Vertex>();
     final int count = this._vertices.length;
-    for (int i = 0; i < count; ++i) {
+    for (int i = startIndex; i < count; ++i) {
       Vertex ver2 = this._vertices[i];
       if (ver2 != null) {
         if (matcher.matches(ver, ver2)) {
@@ -112,6 +147,8 @@ class Shape {
     return results;
   }
 
+  /// Finds the matching vertex below the given index and puts the result
+  /// matches and indices into the given lists.
   bool _findMatching(VertexMatcher matcher, Vertex ver, int index, List<Vertex> matches, List<int> indices) {
     matches.add(ver);
     indices.add(index);
@@ -127,6 +164,7 @@ class Shape {
     return vertices.length > 1;
   }
 
+  /// Replaces the vertices at the given indices with the given new vertex.
   void _replaceVertices(Vertex newVer, List<int> indices) {
     indices.sort();
     this.vertices.add(newVer);
@@ -143,6 +181,11 @@ class Shape {
     }
   }
 
+  /// Merges with the given merger all the vertices which match with the given matcher.
+  /// This may also be used to process vertices without replacing them if the
+  /// merger returns null for a merge.
+  /// After merger collapsed lines and faces are removed and
+  /// repeat points, lines, and faces are removed.
   void mergeVertices(VertexMatcher matcher, VertexMerger merger) {
     this._changed.suspend();
     for (int i = this._vertices.length-1; i >= 0; --i) {
@@ -169,22 +212,34 @@ class Shape {
     this._changed.resume();
   }
 
+  /// Joins seams in the shape by joining vertices.
+  /// By joining vertices the edges will be smoothed hiding seams.
+  /// This is useful if you wrap a flat grid into a cylinder and want
+  /// to smooth where the opposite edges touch.
   void joinSeams([VertexMatcher matcher = null]) {
     if (matcher == null) matcher = new LocationMatcher();
     this.mergeVertices(matcher, new VertexJoiner());
   }
 
+  /// adjust normals by summing all the normals for matching vertices.
+  /// This is similar to joinging seams because it will smooth out edges
+  /// however the edges will still have seperate vertices meaning the surface
+  /// can have texturing without a texture seam.
   void adjustNormals([VertexMatcher matcher = null]) {
     if (matcher == null) matcher = new LocationMatcher();
     this.mergeVertices(matcher, new NormalAdjuster());
   }
 
+  /// Flips the shape insize out.
   void flip() {
     this._changed.suspend();
     this._faces.flip();
     this._changed.resume();
   }
 
+  /// Builds a buffer store for caching the shape for rendering.
+  /// This requires the buffer [builder] for WebGL or testing,
+  /// and the vertex [type] required for technique.
   Data.BufferStore build(Data.BufferBuilder builder, Data.VertexType type) {
     int length = this._vertices.length;
     int count = type.count;
@@ -245,6 +300,7 @@ class Shape {
     return store;
   }
 
+  /// Gets the string for the shape with and optional [indent].
   String toString([String indent = ""]) {
     List<String> parts = new List<String>();
     if (!this._vertices.isEmpty) {
@@ -266,54 +322,119 @@ class Shape {
     return parts.join('\n');
   }
 
+  /// Called when any change has occurred.
+  /// This emits the [changed] event.
+  /// This isn't meant to be called from outside the entity, in other languages this would
+  /// be a protected method. This method is exposed to that the shape is extended and
+  /// these methods can be overwritten. If overwritten call this super method to still emit events.
   void onChanged() {
     this._changed.emit(new Core.EventArgs(this));
   }
 
+  /// Called when the given [vertex] has been added.
+  /// This calls the [onChanged] method.
+  /// This isn't meant to be called from outside the entity, in other languages this would
+  /// be a protected method. This method is exposed to that the shape is extended and
+  /// these methods can be overwritten. If overwritten call this super method to still emit events.
   void onVertexAdded(Vertex vertex) {
     this.onChanged();
   }
 
+  /// Called when the given [vertex] has been modified.
+  /// This calls the [onChanged] method.
+  /// This isn't meant to be called from outside the entity, in other languages this would
+  /// be a protected method. This method is exposed to that the shape is extended and
+  /// these methods can be overwritten. If overwritten call this super method to still emit events.
   void onVertexModified(Vertex vertex) {
     this.onChanged();
   }
 
+  /// Called when the given [vertex] has been removed.
+  /// This calls the [onChanged] method.
+  /// This isn't meant to be called from outside the entity, in other languages this would
+  /// be a protected method. This method is exposed to that the shape is extended and
+  /// these methods can be overwritten. If overwritten call this super method to still emit events.
   void onVertexRemoved(Vertex vertex) {
     this.onChanged();
   }
 
+  /// Called when the given [face] has been added.
+  /// This calls the [onChanged] method.
+  /// This isn't meant to be called from outside the entity, in other languages this would
+  /// be a protected method. This method is exposed to that the shape is extended and
+  /// these methods can be overwritten. If overwritten call this super method to still emit events.
   void onFaceAdded(Face face) {
     this.onChanged();
   }
 
+  /// Called when the given [face] has been modified.
+  /// This calls the [onChanged] method.
+  /// This isn't meant to be called from outside the entity, in other languages this would
+  /// be a protected method. This method is exposed to that the shape is extended and
+  /// these methods can be overwritten. If overwritten call this super method to still emit events.
   void onFaceModified(Face face) {
     this.onChanged();
   }
 
+  /// Called when the given [face] has been removed.
+  /// This calls the [onChanged] method.
+  /// This isn't meant to be called from outside the entity, in other languages this would
+  /// be a protected method. This method is exposed to that the shape is extended and
+  /// these methods can be overwritten. If overwritten call this super method to still emit events.
   void onFaceRemoved(Face face) {
     this.onChanged();
   }
 
+  /// Called when the given [line] has been added.
+  /// This calls the [onChanged] method.
+  /// This isn't meant to be called from outside the entity, in other languages this would
+  /// be a protected method. This method is exposed to that the shape is extended and
+  /// these methods can be overwritten. If overwritten call this super method to still emit events.
   void onLineAdded(Line line) {
     this.onChanged();
   }
 
+  /// Called when the given [line] has been modified.
+  /// This calls the [onChanged] method.
+  /// This isn't meant to be called from outside the entity, in other languages this would
+  /// be a protected method. This method is exposed to that the shape is extended and
+  /// these methods can be overwritten. If overwritten call this super method to still emit events.
   void onLineModified(Line line) {
     this.onChanged();
   }
 
+  /// Called when the given [line] has been removed.
+  /// This calls the [onChanged] method.
+  /// This isn't meant to be called from outside the entity, in other languages this would
+  /// be a protected method. This method is exposed to that the shape is extended and
+  /// these methods can be overwritten. If overwritten call this super method to still emit events.
   void onLineRemoved(Line line) {
     this.onChanged();
   }
 
+  /// Called when the given [point] has been added.
+  /// This calls the [onChanged] method.
+  /// This isn't meant to be called from outside the entity, in other languages this would
+  /// be a protected method. This method is exposed to that the shape is extended and
+  /// these methods can be overwritten. If overwritten call this super method to still emit events.
   void onPointAdded(Point point) {
     this.onChanged();
   }
 
+  /// Called when the given [point] has been modified.
+  /// This calls the [onChanged] method.
+  /// This isn't meant to be called from outside the entity, in other languages this would
+  /// be a protected method. This method is exposed to that the shape is extended and
+  /// these methods can be overwritten. If overwritten call this super method to still emit events.
   void onPointModified(Point point) {
     this.onChanged();
   }
 
+  /// Called when the given [point] has been removed.
+  /// This calls the [onChanged] method.
+  /// This isn't meant to be called from outside the entity, in other languages this would
+  /// be a protected method. This method is exposed to that the shape is extended and
+  /// these methods can be overwritten. If overwritten call this super method to still emit events.
   void onPointRemoved(Point point) {
     this.onChanged();
   }
