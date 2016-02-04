@@ -1,5 +1,5 @@
 #[![ThreeDart](resources/ThreeDart.png)](https://github.com/Grant-Nelson/ThreeDart/blob/master/)
-A [SnowGremlin](https://www.snowgremlin.com) Project
+A [SnowGremlin](http://www.snowgremlin.com) Project
 
 ### Work in Progress
 :seedling: ThreeDart is currently a work in progress.
