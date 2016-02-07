@@ -7,7 +7,7 @@ class BufferStoreSet implements TechniqueCache {
   Map<String, BufferStore> _map;
 
   /// Creates a new buffer store map.
-  BufferStoreList() {
+  BufferStoreSet() {
     this._map = new Map<String, BufferStore>();
   }
 
