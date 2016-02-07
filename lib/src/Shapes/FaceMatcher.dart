@@ -23,6 +23,8 @@ class SimilarFaceMatcher extends FaceMatcher {
   /// Returns true if the faces share the same vertices and
   /// face the same direction, false otherwise.
   bool matches(Face f1, Face f2) {
+    if (f1 == null) return false;
+    if (f2 == null) return false;
     if (f1.vertex1.index == f2.vertex1.index) {
       return (f1.vertex2.index == f2.vertex2.index) &&
              (f1.vertex3.index == f2.vertex3.index);
@@ -42,6 +44,8 @@ class UnculledFaceMatcher extends FaceMatcher {
 
   /// Returns true if the faces share the same vertices, false otherwise.
   bool matches(Face f1, Face f2) {
+    if (f1 == null) return false;
+    if (f2 == null) return false;
     if (f1.vertex1.index == f2.vertex1.index) {
       if (f1.vertex2.index == f2.vertex2.index)
         return f1.vertex3.index == f2.vertex3.index;

@@ -56,7 +56,7 @@ void main() {
   _addRadioButton("Cylinder",      () { obj.shape = Shapes.cylinder(); });
   _addRadioButton("Cylinder+",     () { obj.shape = Shapes.cylinder(sides: 16, div: 4); });
   _addRadioButton("Cone",          () { obj.shape = Shapes.cylinder(topRadius: 0.0, sides: 12, capTop: false); });
-  _addRadioButton("Cylindical",    () { obj.shape = Shapes.cylindical(sides: 50, div: 25,
+  _addRadioButton("Cylindrical",   () { obj.shape = Shapes.cylindrical(sides: 50, div: 25,
                                         radiusHndl: (double u, double v) => cos(v*4.0*PI + PI)*0.2 + cos(u*6.0*PI)*0.3 + 0.8); });
   _addRadioButton("LatLonSphere",  () { obj.shape = Shapes.latLonSphere(10, 20); });
   _addRadioButton("LatLonSphere+", () { obj.shape = Shapes.latLonSphere(20, 40); });

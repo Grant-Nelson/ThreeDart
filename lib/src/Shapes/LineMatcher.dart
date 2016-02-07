@@ -22,6 +22,8 @@ class UndirectedLineMatcher extends LineMatcher {
   /// Returns true if [f1] and [f2] have the same two vertices
   /// in either order, false otherwise.
   bool matches(Line line1, Line line2) {
+    if (line1 == null) return false;
+    if (line2 == null) return false;
     if (line1.vertex1.index == line2.vertex1.index) {
       return line1.vertex2.index == line2.vertex2.index;
     } else if (line1.vertex1.index == line2.vertex2.index) {

@@ -1,10 +1,18 @@
 part of ThreeDart.Shapes;
 
+/// A merger for joining or manipulating vertices.
 abstract class VertexMerger {
+
+  /// Merges the given vertices into one vertex and returns it.
+  /// Or null can be returned and the list of vertices can have thier values updated.
   Vertex merge(List<Vertex> vertices);
 }
 
+/// Vertex joiner constructs a single vertex which is the average
+/// of the values in all the given vertices.
 class VertexJoiner extends VertexMerger {
+
+  /// Merges all the given vertices into an average vertices.
   Vertex merge(List<Vertex> vertices) {
     int divLoc = 0;
     Math.Point3 avgLoc = null;
@@ -95,7 +103,11 @@ class VertexJoiner extends VertexMerger {
   }
 }
 
+/// Adjustes all the vertices so they have the same averaged normal.
 class NormalAdjuster extends VertexMerger {
+
+  /// Returns null and updates the normal of all
+  /// the [vertices] to the average of all the normals.
   Vertex merge(List<Vertex> vertices) {
     Math.Vector3 avgNorm = new Math.Vector3.zero();
     for (Vertex ver in vertices) {
@@ -106,6 +118,26 @@ class NormalAdjuster extends VertexMerger {
     avgNorm = avgNorm.normal();
     for (Vertex ver in vertices) {
       ver.normal = avgNorm;
+    }
+    return null;
+  }
+}
+
+/// Adjustes all the vertices so they have the same averaged binormal.
+class BinormalAdjuster extends VertexMerger {
+
+  /// Returns null and updates the binormal of all
+  /// the [vertices] to the average of all the binormals.
+  Vertex merge(List<Vertex> vertices) {
+    Math.Vector3 avgBinorm = new Math.Vector3.zero();
+    for (Vertex ver in vertices) {
+      if (ver.binormal != null) {
+        avgBinorm += ver.binormal;
+      }
+    }
+    avgBinorm = avgBinorm.normal();
+    for (Vertex ver in vertices) {
+      ver.binormal = avgBinorm;
     }
     return null;
   }

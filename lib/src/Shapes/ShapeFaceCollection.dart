@@ -1,15 +1,19 @@
 part of ThreeDart.Shapes;
 
+/// A collection of faces for a shape.
 class ShapeFaceCollection {
   Shape _shape;
   List<Face> _faces;
 
+  /// Creates a new shape's face collection for the given shape.
   ShapeFaceCollection._(Shape this._shape) {
     this._faces = new List<Face>();
   }
 
+  /// The shape which owns this collection.
   Shape get shape => this._shape;
 
+  /// Adds a single new face with the given vertices to the shape.
   Face add(Vertex ver1, Vertex ver2, Vertex ver3) {
     this._shape._vertices.add(ver1);
     this._shape._vertices.add(ver2);
@@ -17,6 +21,7 @@ class ShapeFaceCollection {
     return new Face(ver1, ver2, ver3);
   }
 
+  /// Adds a fan of faces with the given vertices to the shape.
   List<Face> addFan(List<Vertex> vertices) {
     List<Face> faces = new List<Face>();
     final int count = vertices.length;
@@ -28,6 +33,7 @@ class ShapeFaceCollection {
     return faces;
   }
 
+  /// Adds a strip of faces with the given vertices to the shape.
   List<Face> addStrip(List<Vertex> vertices) {
     List<Face> faces = new List<Face>();
     final int count = vertices.length;
@@ -44,6 +50,7 @@ class ShapeFaceCollection {
     return faces;
   }
 
+  /// Adds a looped strip of faces with the given vertices to the shape.
   List<Face> addLoop(List<Vertex> vertices) {
     List<Face> faces = new List<Face>();
     final int count = vertices.length;
@@ -61,6 +68,7 @@ class ShapeFaceCollection {
     return faces;
   }
 
+  /// Adds a set of seperate faces with the given vertices to the shape.
   List<Face> addTriangles(List<Vertex> vertices) {
     List<Face> faces = new List<Face>();
     final int count = vertices.length;
@@ -69,6 +77,7 @@ class ShapeFaceCollection {
     return faces;
   }
 
+  /// Adds a grid to the of faces with the given rows and columns of vertices to the shape.
   List<Face> addGrid(int rows, int columns, List<Vertex> vertices) {
     List<Face> faces = new List<Face>();
     int k0 = 0, k1 = columns;
@@ -94,18 +103,31 @@ class ShapeFaceCollection {
     return faces;
   }
 
+  /// Determines if the shape contains any faces or not.
   bool get isEmpty => this._faces.isEmpty;
+
+  /// The number of faces in the shape.
   int get length => this._faces.length;
+
+  /// Gets the face at the at given [index].
   Face operator[](int index) => this._faces[index];
+
+  /// Gets the index of the given [face] or -1 if not found.
   int indexOf(Face face) => this._faces.indexOf(face);
+
+  /// Runs the given function handler for every face in the shape.
   void forEach(void funcHndl(Face face)) => this._faces.forEach(funcHndl);
 
+  /// Removes the face with at the given index.
+  /// The removed face is disposed and returned or null if none removed.
   Face removeAt(int index) {
     Face face = this[index];
     if (face != null) face.dispose();
     return face;
   }
 
+  /// Removes the given [face].
+  /// Returns true if face was removed, false otherwise.
   bool remove(Face face) {
     if (face == null) return false;
     if (face._ver1._shape != this.shape) return false;
@@ -113,7 +135,9 @@ class ShapeFaceCollection {
     return true;
   }
 
-  void removeRepeats(FaceMatcher matcher) {
+  /// Removes all faces which match eachother based on the given matcher.
+  void removeRepeats([FaceMatcher matcher = null]) {
+    if (matcher == null) matcher = new ExactFaceMatcher();
     for (int i = this._faces.length-1; i >= 0; --i) {
       Face faceA = this._faces[i];
       if (faceA != null) {
@@ -130,6 +154,7 @@ class ShapeFaceCollection {
     }
   }
 
+  /// Removes all the collapsed faces.
   void removeCollapsed() {
     for (int i = this._faces.length-1; i >= 0; --i) {
       Face face = this._faces[i];
@@ -137,6 +162,8 @@ class ShapeFaceCollection {
     }
   }
 
+  /// Calculates the normals for all the faces in the shape.
+  /// Returns true if faces' normals are calculated, false on error.
   bool calculateNormals() {
     bool success = true;
     for (Face face in this._faces) {
@@ -145,6 +172,8 @@ class ShapeFaceCollection {
     return success;
   }
 
+  /// Calculates the binormals for all the faces in the shape.
+  /// Returns true if faces' binormals are calculated, false on error.
   bool calculateBinormals() {
     bool success = true;
     for (Face face in this._faces) {
@@ -153,10 +182,12 @@ class ShapeFaceCollection {
     return success;
   }
 
+  /// Flips all the faces in the shape.
   void flip() {
     for (Face face in this._faces) face.flip();
   }
 
+  /// Gets to string for all the faces.
   String toString([String indent = ""]) {
     List<String> parts = new List<String>();
     for (Face face in this._faces) {

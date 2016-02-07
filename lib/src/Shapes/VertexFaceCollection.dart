@@ -1,25 +1,41 @@
 part of ThreeDart.Shapes;
 
+/// A collection of faces for a vertex.
 class VertexFaceCollection {
   Vertex _vertex;
   List<Face> _faces1;
   List<Face> _faces2;
   List<Face> _faces3;
 
+  /// Creates a new vertex's face collection for the given vertex.
   VertexFaceCollection._(Vertex this._vertex) {
     this._faces1 = new List<Face>();
     this._faces2 = new List<Face>();
     this._faces3 = new List<Face>();
   }
 
+  /// The vertex which owns this collection.
+  Vertex get vertex => this._vertex;
+
+  /// The shape which owns the vertex which owns this collection.
   Shape get shape => this._vertex._shape;
 
+  /// Determines if the vertex contains any faces or not.
   bool get isEmpty => this._faces1.isEmpty && this._faces2.isEmpty && this._faces3.isEmpty;
+
+  /// The number of faces in the vertex.
   int get length => this._faces1.length + this._faces2.length + this._faces3.length;
+
+  /// The number of faces which use this vertex as the faces' first vertex.
   int get length1 => this._faces1.length;
+
+    /// The number of faces which use this vertex as the faces' second vertex.
   int get length2 => this._faces2.length;
+
+    /// The number of faces which use this vertex as the faces' third vertex.
   int get length3 => this._faces3.length;
 
+  /// Gets the face at the given [index].
   Face operator[](int index) {
     final int len1 = this._faces1.length;
     if (index < len1) return this._faces1[index];
@@ -30,10 +46,19 @@ class VertexFaceCollection {
     return this._faces3[index];
   }
 
+  /// Gets face with the given [index] from list
+  /// of the faces with this vertex as thier first vertex.
   Face at1(int index) => this._faces1[index];
+
+  /// Gets face with the given [index] from list
+  /// of the faces with this vertex as thier second vertex.
   Face at2(int index) => this._faces2[index];
+
+  /// Gets face with the given [index] from list
+  /// of the faces with this vertex as thier third vertex.
   Face at3(int index) => this._faces3[index];
 
+  /// Gets the index of the given [face].
   int indexOf(Face face) {
     int index = this._faces1.indexOf(face);
     if (index >= 0) return index;
@@ -44,43 +69,81 @@ class VertexFaceCollection {
     return -1;
   }
 
+  /// Gets the index of the given [face] in the list
+  /// of the faces with this vertex as thier first vertex.
+  /// -1 is returned if the face isn't found.
   int indexOf1(Face face) => this._faces1.indexOf(face);
+
+  /// Gets the index of the given [face] in the list
+  /// of the faces with this vertex as thier second vertex.
+  /// -1 is returned if the face isn't found.
   int indexOf2(Face face) => this._faces2.indexOf(face);
+
+  /// Gets the index of the given [face] in the list
+  /// of the faces with this vertex as thier third vertex.
+  /// -1 is returned if the face isn't found.
   int indexOf3(Face face) => this._faces3.indexOf(face);
 
+  /// Runs the given function handler for every face in the vertex.
   void forEach(void funcHndl(Face face)) {
     this._faces1.forEach(funcHndl);
-    this._faces2.forEach(funcHndl);
-    this._faces3.forEach(funcHndl);
+    this._faces2.forEach((Face face) {
+      if (face.vertex1 != this) funcHndl(face);
+    });
+    this._faces3.forEach((Face face) {
+      if ((face.vertex1 != this) && (face.vertex2 != this)) funcHndl(face);
+    });
   }
+
+  /// Runs the given function handler for every face in the vertex
+  /// which has this vertex as thier first vertex.
   void forEach1(void funcHndl(Face face)) => this._faces1.forEach(funcHndl);
+
+  /// Runs the given function handler for every face in the vertex
+  /// which has this vertex as thier second vertex.
   void forEach2(void funcHndl(Face face)) => this._faces2.forEach(funcHndl);
+
+  /// Runs the given function handler for every face in the vertex
+  /// which has this vertex as thier third vertex.
   void forEach3(void funcHndl(Face face)) => this._faces3.forEach(funcHndl);
 
+  /// Removes the face with at the given index.
+  /// The removed face is disposed and returned or null if none removed.
   Face removeAt(int index) {
     Face face = this[index];
     if (face != null) face.dispose();
     return face;
   }
 
+  /// Removes the face with at the given index of the face from
+  /// the list of the faces with this vertex as thier first vertex.
+  /// The removed face is disposed and returned or null if none removed.
   Face removeAt1(int index) {
     Face face = this._faces1[index];
     if (face != null) face.dispose();
     return face;
   }
 
+  /// Removes the face with at the given index of the face from
+  /// the list of the faces with this vertex as thier second vertex.
+  /// The removed face is disposed and returned or null if none removed.
   Face removeAt2(int index) {
     Face face = this._faces2[index];
     if (face != null) face.dispose();
     return face;
   }
 
+  /// Removes the face with at the given index of the face from
+  /// the list of the faces with this vertex as thier third vertex.
+  /// The removed face is disposed and returned or null if none removed.
   Face removeAt3(int index) {
     Face face = this._faces3[index];
     if (face != null) face.dispose();
     return face;
   }
 
+  /// Removes the given [face].
+  /// Returns true if face was removed, false otherwise.
   bool remove(Face face) {
     if (face == null) return false;
     if (face._ver1._shape != this.shape) return false;
@@ -88,6 +151,7 @@ class VertexFaceCollection {
     return true;
   }
 
+  /// Removes all faces which match eachother based on the given matcher.
   void removeRepeats(FaceMatcher matcher) {
     for (int i = this._faces1.length-1; i >= 0; --i) {
       Face faceA = this._faces1[i];
@@ -105,6 +169,7 @@ class VertexFaceCollection {
     }
   }
 
+  /// Removes all the collapsed faces.
   void removeCollapsed() {
     for (int i = this._faces1.length-1; i >= 0; --i) {
       Face face = this._faces1[i];
@@ -118,6 +183,8 @@ class VertexFaceCollection {
     // it must have more than one point in the same vertex.
   }
 
+  /// Calculates the normals for all the faces in the vertex.
+  /// Returns true if faces' normals are calculated, false on error.
   bool calculateNormals() {
     bool success = true;
     for (Face face in this._faces1) {
@@ -132,6 +199,8 @@ class VertexFaceCollection {
     return success;
   }
 
+  /// Calculates the binormals for all the faces in the vertex.
+  /// Returns true if faces' binormals are calculated, false on error.
   bool calculateBinormals() {
     bool success = true;
     for (Face face in this._faces1) {
@@ -146,6 +215,14 @@ class VertexFaceCollection {
     return success;
   }
 
+  /// Flips all the faces in the vertex.
+  void flip() {
+    this.forEach((Face face) {
+      face.flip();
+    });
+  }
+
+  /// Gets to string for all the faces.
   String toString([String indent = ""]) {
     List<String> parts = new List<String>();
     for (Face face in this._faces1) {

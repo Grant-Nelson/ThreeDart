@@ -364,14 +364,14 @@ class Inspection extends Technique {
   Shapes.Shape _aabb(Shapes.Shape shape) {
     Math.Region3 aabb = shape.calculateAABB();
     Shapes.Shape result = new Shapes.Shape();
-    Shapes.Vertex ver1 = result.vertices.addPoint(aabb.x,         aabb.y,         aabb.z);
-    Shapes.Vertex ver2 = result.vertices.addPoint(aabb.x+aabb.dx, aabb.y,         aabb.z);
-    Shapes.Vertex ver3 = result.vertices.addPoint(aabb.x+aabb.dx, aabb.y+aabb.dy, aabb.z);
-    Shapes.Vertex ver4 = result.vertices.addPoint(aabb.x,         aabb.y+aabb.dy, aabb.z);
-    Shapes.Vertex ver5 = result.vertices.addPoint(aabb.x,         aabb.y,         aabb.z+aabb.dz);
-    Shapes.Vertex ver6 = result.vertices.addPoint(aabb.x+aabb.dx, aabb.y,         aabb.z+aabb.dz);
-    Shapes.Vertex ver7 = result.vertices.addPoint(aabb.x+aabb.dx, aabb.y+aabb.dy, aabb.z+aabb.dz);
-    Shapes.Vertex ver8 = result.vertices.addPoint(aabb.x,         aabb.y+aabb.dy, aabb.z+aabb.dz);
+    Shapes.Vertex ver1 = result.vertices.addNewLoc(aabb.x,         aabb.y,         aabb.z);
+    Shapes.Vertex ver2 = result.vertices.addNewLoc(aabb.x+aabb.dx, aabb.y,         aabb.z);
+    Shapes.Vertex ver3 = result.vertices.addNewLoc(aabb.x+aabb.dx, aabb.y+aabb.dy, aabb.z);
+    Shapes.Vertex ver4 = result.vertices.addNewLoc(aabb.x,         aabb.y+aabb.dy, aabb.z);
+    Shapes.Vertex ver5 = result.vertices.addNewLoc(aabb.x,         aabb.y,         aabb.z+aabb.dz);
+    Shapes.Vertex ver6 = result.vertices.addNewLoc(aabb.x+aabb.dx, aabb.y,         aabb.z+aabb.dz);
+    Shapes.Vertex ver7 = result.vertices.addNewLoc(aabb.x+aabb.dx, aabb.y+aabb.dy, aabb.z+aabb.dz);
+    Shapes.Vertex ver8 = result.vertices.addNewLoc(aabb.x,         aabb.y+aabb.dy, aabb.z+aabb.dz);
     result.lines.add(ver1, ver2);
     result.lines.add(ver2, ver3);
     result.lines.add(ver3, ver4);

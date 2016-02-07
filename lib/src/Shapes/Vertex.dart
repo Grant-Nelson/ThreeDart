@@ -1,5 +1,6 @@
 part of ThreeDart.Shapes;
 
+/// A vertex of a shape with all of the renderable elements it is used.
 class Vertex {
   Shape _shape;
 
@@ -15,6 +16,7 @@ class Vertex {
   Math.Color4 _clr;
   double _weight;
 
+  /// Creates a new vertex with the default values.
   Vertex({Math.Point3 loc: null, Math.Vector3 norm: null, Math.Vector3 binm: null,
           Math.Point2 txt: null, Math.Color4 clr: null, double weight: 0.0}) {
     this._shape = null;
@@ -31,6 +33,7 @@ class Vertex {
     this._weight = weight;
   }
 
+  /// Creates a copy of the vertex values.
   Vertex copy() {
     return new Vertex(
       loc:  (this._loc  == null)? null: this._loc.copy(),
@@ -42,18 +45,28 @@ class Vertex {
     );
   }
 
+  /// The shape the vertex belongs to.
   Shape get shape => this._shape;
+
+  /// The points which use this vertex.
   VertexPointCollection get points => this._points;
+
+  /// The lines which use this vertex.
   VertexLineCollection get lines => this._lines;
+
+  /// The faces which use this vertex.
   VertexFaceCollection get faces => this._faces;
 
+  /// The index of this vertex in the shape.
   int get index {
     this._shape._vertices._updateIndices();
     return this._index;
   }
 
+  /// Indicates if this vertex has any attached renderable elements, true if not.
   bool get isEmpty => this._points.isEmpty && this._lines.isEmpty && this._faces.isEmpty;
 
+  /// The 3D location of the vertex.
   Math.Point3 get location => this._loc;
   set location(Math.Point3 loc) {
     if (this._loc != loc) {
@@ -63,6 +76,7 @@ class Vertex {
     }
   }
 
+  /// The 3D normal vector of the vertex.
   Math.Vector3 get normal => this._norm;
   set normal(Math.Vector3 norm) {
     norm = (norm == null)? null: norm.normal();
@@ -73,6 +87,7 @@ class Vertex {
     }
   }
 
+  /// The 3D binormal vector of the vertex.
   Math.Vector3 get binormal => this._binm;
   set binormal(Math.Vector3 binm) {
     binm = (binm == null)? null: binm.normal();
@@ -83,6 +98,7 @@ class Vertex {
     }
   }
 
+  /// The 2D texture coordinate of the vertex.
   Math.Point2 get texture => this._txt;
   set texture(Math.Point2 txt) {
     if (this._txt != txt) {
@@ -92,6 +108,7 @@ class Vertex {
     }
   }
 
+  /// The RGBA color of the vertex.
   Math.Color4 get color => this._clr;
   set color(Math.Color4 clr) {
     if (this._clr != clr) {
@@ -101,6 +118,7 @@ class Vertex {
     }
   }
 
+  /// The weight value of the vertex.
   double get weight => this._weight;
   set weight(double weight) {
     if (this._weight != weight) {
@@ -110,6 +128,7 @@ class Vertex {
     }
   }
 
+  /// Gets the list of doubles for the vertex component for the given [type].
   List<double> listFor(Data.VertexType type) {
     if (type == Data.VertexType.Pos) {
       if (this._loc == null) return [0.0, 0.0, 0.0];
@@ -130,10 +149,13 @@ class Vertex {
       if (this._clr == null) return [1.0, 1.0, 1.0, 1.0];
       else return this._clr.toList();
     } else if (type == Data.VertexType.Weight)
-      return new List<double>.from([ this._weight ]);
-    else return new List<double>();
+      return [ this._weight ];
+    else return [];
   }
 
+  /// Calculates the normal vector for this vertex based off of the
+  /// faces attached to this vertex. If the normal has already been
+  /// set then this will have no effect.
   bool calculateNormal() {
     if (this._norm != null) return true;
     if (this._shape != null) this._shape._changed.suspend();
@@ -150,6 +172,9 @@ class Vertex {
     return true;
   }
 
+  /// Calculates the binormal vector for this vertex based off of the
+  /// faces attached to this vertex. If the binormal has already been
+  /// set then this will have no effect.
   bool calculateBinormal() {
     if (this._binm != null) return true;
     if (this._shape != null) this._shape._changed.suspend();
@@ -166,7 +191,9 @@ class Vertex {
     return true;
   }
 
-  /// @note  Does not compare the shape, indices, points, lines, or faces.
+  /// Determines if the given [other] value is a vertex with the
+  /// same values as this vertex.
+  /// Does not compare the shape, indices, points, lines, or faces.
   bool same(var other) {
     if (identical(this, other)) return true;
     if (other is! Vertex) return false;
@@ -180,8 +207,10 @@ class Vertex {
     return true;
   }
 
+  /// Determines if the given [other] value is identical to thie vertex.
   bool operator ==(var other) => identical(this, other);
 
+  /// Gets the string for this vertex.
   String toString([String indent = ""]) {
     List<String> parts = new List<String>();
     parts.add(Math.formatInt(this._index));

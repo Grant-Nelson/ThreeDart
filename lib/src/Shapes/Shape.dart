@@ -102,7 +102,7 @@ class Shape {
   /// Finds the first index of the vertex which matches the given vertex.
   /// If no match is found then -1 is returned.
   int findFirstIndex(Vertex ver, [VertexMatcher matcher = null, int startIndex = 0]) {
-    if (matcher == null) matcher = new FullMatcher();
+    if (matcher == null) matcher = new FullVertexMatcher();
     final int count = this._vertices.length;
     for (int i = startIndex; i < count; ++i) {
       Vertex ver2 = this._vertices[i];
@@ -118,7 +118,7 @@ class Shape {
   /// Gets the first vertex in this shape which matches the given vertex.
   /// If no match is found then null is returned.
   Vertex findFirst(Vertex ver, [VertexMatcher matcher = null, int startIndex = 0]) {
-    if (matcher == null) matcher = new FullMatcher();
+    if (matcher == null) matcher = new FullVertexMatcher();
     final int count = this._vertices.length;
     for (int i = startIndex; i < count; ++i) {
       Vertex ver2 = this._vertices[i];
@@ -133,7 +133,7 @@ class Shape {
 
   /// Finds all vertices in this shape which matches the given vertex.
   List<Vertex> findAll(Vertex ver, [VertexMatcher matcher = null, int startIndex = 0]) {
-    if (matcher == null) matcher = new FullMatcher();
+    if (matcher == null) matcher = new FullVertexMatcher();
     List<Vertex> results = new List<Vertex>();
     final int count = this._vertices.length;
     for (int i = startIndex; i < count; ++i) {
@@ -217,17 +217,26 @@ class Shape {
   /// This is useful if you wrap a flat grid into a cylinder and want
   /// to smooth where the opposite edges touch.
   void joinSeams([VertexMatcher matcher = null]) {
-    if (matcher == null) matcher = new LocationMatcher();
+    if (matcher == null) matcher = new VertexLocationMatcher();
     this.mergeVertices(matcher, new VertexJoiner());
   }
 
-  /// adjust normals by summing all the normals for matching vertices.
+  /// Adjust normals by summing all the normals for matching vertices.
   /// This is similar to joinging seams because it will smooth out edges
   /// however the edges will still have seperate vertices meaning the surface
   /// can have texturing without a texture seam.
   void adjustNormals([VertexMatcher matcher = null]) {
-    if (matcher == null) matcher = new LocationMatcher();
+    if (matcher == null) matcher = new VertexLocationMatcher();
     this.mergeVertices(matcher, new NormalAdjuster());
+  }
+
+  /// Adjust binormals by summing all the binormals for matching vertices.
+  /// This is similar to joinging seams because it will smooth out edges
+  /// however the edges will still have seperate vertices meaning the surface
+  /// can have texturing without a texture seam.
+  void adjustBinormals([VertexMatcher matcher = null]) {
+    if (matcher == null) matcher = new VertexLocationMatcher();
+    this.mergeVertices(matcher, new BinormalAdjuster());
   }
 
   /// Flips the shape insize out.

@@ -92,7 +92,8 @@ void _addCubeSide(Shape shape, double nx, double ny, double nz) {
 /// Creates a disk shape.
 /// [sides] is the number of division on the side, and [height] is the y offset of the disk.
 /// [flip] will flip the disk over, and [radiusHndl] is a handle for custom variant radius.
-Shape disk({int sides: 8, double height: 0.0, bool flip: false, func1Handle radiusHndl: _constantRediusHandle}) {
+Shape disk({int sides: 8, double height: 0.0, bool flip: false, func1Handle radiusHndl: null}) {
+  if (radiusHndl == null) radiusHndl = (double a) => 1.0;
   if (sides < 3) return null;
   Shape shape = new Shape();
   double sign = flip? -1.0: 1.0;
@@ -117,9 +118,6 @@ Shape disk({int sides: 8, double height: 0.0, bool flip: false, func1Handle radi
   return shape;
 }
 
-/// A radius handle which only returns 1.0.
-double _constantRediusHandle(double a) => 1.0;
-
 /// Creates a cylinder shape.
 /// [sides] is the number of division on the side, [div] is the number of
 /// divisions to cut the cylinder. [capTop] and [capBottom] indicated if a
@@ -127,16 +125,16 @@ double _constantRediusHandle(double a) => 1.0;
 /// and [bottomRadius] are the top and bottom radii respectively.
 Shape cylinder({double topRadius: 1.0, double bottomRadius: 1.0,
     int sides: 8, int div: 1, bool capTop: true, bool capBottom: true}) {
-  return cylindical(sides: sides, div: div, capTop: capTop, capBottom: capBottom,
+  return cylindrical(sides: sides, div: div, capTop: capTop, capBottom: capBottom,
     radiusHndl: (double _, double v) => Math.lerpVal(bottomRadius, topRadius, v));
 }
 
-/// Creates a cylindical shape.
+/// Creates a cylindrical shape.
 /// [sides] is the number of division on the side, [div] is the number of
 /// divisions to cut the cylinder. [capTop] and [capBottom] indicated if a
 /// top or bottom respectively should be covered with a disk.
 /// [radiusHndl] is the handle to specify the custom radius of the cylindical shape.
-Shape cylindical({func2Handle radiusHndl: null, int sides: 8, int div: 1, bool capTop: true, bool capBottom: true}) {
+Shape cylindrical({func2Handle radiusHndl: null, int sides: 8, int div: 1, bool capTop: true, bool capBottom: true}) {
   if (radiusHndl == null)  return null;
   if (sides < 3) return null;
   if (div < 1) return null;
@@ -163,6 +161,9 @@ Shape cylindical({func2Handle radiusHndl: null, int sides: 8, int div: 1, bool c
   return shape;
 }
 
+/// Creates a sphere shape constructed as from a latitude and longitude grid.
+/// The [latitudeDiv] is the number of latitude divisions and
+/// the [longitudeDiv] is the number of longitude divitions.
 Shape latLonSphere([int latitudeDiv = 12, int longitudeDiv = 24]) {
   Shape shape = surface(latitudeDiv, longitudeDiv, (double u, double v) {
     double r = sin(v*PI);
@@ -177,9 +178,10 @@ Shape latLonSphere([int latitudeDiv = 12, int longitudeDiv = 24]) {
   return shape;
 }
 
+/// Creates a sphere shape fractally with the given number of [iterations].
 Shape isosphere([int iterations = 3]) {
   Shape shape = new Shape();
-  // Ceate 12 vertices of a icosahedron.
+  // Create 12 vertices of a icosahedron.
   var t = sqrt(5.0)/2.0 + 0.5;
   Vertex ver0  = _isosphereAdd(shape, new Math.Vector3(-1.0,  t,  0.0));
   Vertex ver1  = _isosphereAdd(shape, new Math.Vector3( 1.0,  t,  0.0));
@@ -224,10 +226,11 @@ Shape isosphere([int iterations = 3]) {
   return shape;
 }
 
+/// Adds a vertex to the isophere [shape] with the normal towards the point.
 Vertex _isosphereAdd(Shape shape, Math.Vector3 norm) {
   norm = norm.normal();
   Vertex ver = new Vertex(loc: new Math.Point3.fromVector3(norm), norm: norm);
-  Vertex last = shape.findFirst(ver, new LocationMatcher());
+  Vertex last = shape.findFirst(ver, new VertexLocationMatcher());
   if (last != null) return last;
 
   ver.color = new Math.Color4(norm.dx*0.5 + 0.5, norm.dy*0.5 + 0.5, norm.dz*0.5 + 0.5);
@@ -241,7 +244,8 @@ Vertex _isosphereAdd(Shape shape, Math.Vector3 norm) {
   return ver;
 }
 
-void _isoSphereDiv(Shape shape, Vertex ver1, Vertex ver2, Vertex ver3, iteration) {
+/// Iterates an isosphere side by fractally dividing the triangle.
+void _isoSphereDiv(Shape shape, Vertex ver1, Vertex ver2, Vertex ver3, int iteration) {
   //         2                  2
   //         .                  .
   //        / \                / \
@@ -264,7 +268,11 @@ void _isoSphereDiv(Shape shape, Vertex ver1, Vertex ver2, Vertex ver3, iteration
   }
 }
 
-Shape sphere({int widthDiv: 8, int heightDiv: 8, func2Handle heightHndl: _flatGridHeightHandle}) {
+/// Creates a sphere shape designed for smooth cube texturing using six grids.
+/// The [widthDiv] and [heightDiv] define the divisions of the grids used.
+/// The [heightHndl] added addition height to the curved grid.
+Shape sphere({int widthDiv: 8, int heightDiv: 8, func2Handle heightHndl: null}) {
+  if (heightHndl == null) heightHndl = (double a, double b) => 0.0;
   Shape shape = new Shape();
   _addSphereSide(shape, heightHndl, widthDiv, heightDiv,  1.0,  0.0,  0.0);
   _addSphereSide(shape, heightHndl, widthDiv, heightDiv,  0.0,  1.0,  0.0);
@@ -277,6 +285,7 @@ Shape sphere({int widthDiv: 8, int heightDiv: 8, func2Handle heightHndl: _flatGr
   return shape;
 }
 
+/// Adds a spherical side to a sphere [shape] given the normal direciton of the side's plain.
 void _addSphereSide(Shape shape, func2Handle heightHndl, int widthDiv, int heightDiv, double nx, double ny, double nz) {
   Math.Vector3 vec1 = new Math.Vector3(nx+ny+nz, ny+nz+nx, nz+nx+ny);
   Math.Vector3 vec2 = new Math.Vector3(nx-ny+nz, ny-nz+nx, nz-nx+ny);
@@ -297,15 +306,20 @@ void _addSphereSide(Shape shape, func2Handle heightHndl, int widthDiv, int heigh
   if (face != null) shape.merge(face);
 }
 
+/// Creates a toroid shape.
+/// The major values are the divisions and radius from the center of the shape.
+/// The minor values are the divisions and radius of the outer ring.
 Shape toroid({double minorRadius: 0.5, double majorRadius: 1.0, int minorCount: 15, int majorCount: 30}) {
-  return cylindicalPath(minorCount, majorCount, minorRadius, majorRadius, (double t) {
+  return cylindricalPath(minorCount, majorCount, minorRadius, majorRadius, (double t) {
     return new Math.Point3(cos(t), sin(t), 0.0);
   });
 }
 
+/// Creates a toroidal knot shape. This is similar to a toroid except
+/// the number of full rotations in the major and minor angles may be modified.
 Shape knot({int minorCount: 12, int majorCount: 120, double minorRadius: 0.3, double majorRadius: 1.0,
     double minorTurns: 3.0, double majorTurns: 2.0}) {
-  return cylindicalPath(minorCount, majorCount, minorRadius, majorRadius, (double t) {
+  return cylindricalPath(minorCount, majorCount, minorRadius, majorRadius, (double t) {
     double scalar = 2.0 + cos(minorTurns*t);
     return new Math.Point3(scalar*cos(majorTurns*t)/2.0,
                            scalar*sin(majorTurns*t)/2.0,
@@ -313,7 +327,8 @@ Shape knot({int minorCount: 12, int majorCount: 120, double minorRadius: 0.3, do
   });
 }
 
-Shape cylindicalPath(int minorCount, int majorCount, double minorRadius, double majorRadius, func1PntHandle pathHndl) {
+/// Creates a cylindrical path is a bend cylinder with no cap.
+Shape cylindricalPath(int minorCount, int majorCount, double minorRadius, double majorRadius, func1PntHandle pathHndl) {
   Shape shape = surface(minorCount, majorCount, (double u, double v) {
     double majorAngle = u*2.0*PI;
     Math.Point3 cur = pathHndl(majorAngle)*majorRadius;
@@ -338,13 +353,14 @@ Shape cylindicalPath(int minorCount, int majorCount, double minorRadius, double 
   return shape;
 }
 
-Shape grid({int widthDiv: 4, int heightDiv: 4, func2Handle heightHndl: _flatGridHeightHandle}) {
+/// Creates a flat grid shape with an option caustom [heightHndl].
+Shape grid({int widthDiv: 4, int heightDiv: 4, func2Handle heightHndl: null}) {
+  if (heightHndl == null) heightHndl = (double u, double v) => 0.0;
   return surface(widthDiv, heightDiv, (double u, double v) =>
     new Math.Point3(u*2.0-1.0, heightHndl(u, v), v*2.0-1.0));
 }
 
-double _flatGridHeightHandle(double u, double v) => 0.0;
-
+/// Creates a grid surface which can be bent and twisted with the given [locHndl].
 Shape surface(int widthDiv, int heightDiv, func2PntHandle locHndl) {
   if (widthDiv < 1) return null;
   if (heightDiv < 1) return null;
