@@ -91,30 +91,7 @@ class Inspection extends Technique {
     if (obj.cacheNeedsUpdate) {
       obj.shape.calculateNormals();
       obj.shape.calculateBinormals();
-      Data.BufferStore shapeFill     = this._buildShape(state, this._shapeFill(obj.shape));
-      Data.BufferStore wireFrame     = this._buildShape(state, this._wireFrame(obj.shape));
-      Data.BufferStore vertices      = this._buildShape(state, this._vertices(obj.shape));
-      Data.BufferStore normals       = this._buildShape(state, this._normals(obj.shape));
-      Data.BufferStore binormals     = this._buildShape(state, this._binormals(obj.shape));
-      Data.BufferStore faceCenters   = this._buildShape(state, this._faceCenters(obj.shape));
-      Data.BufferStore faceNormals   = this._buildShape(state, this._faceNormals(obj.shape));
-      Data.BufferStore faceBinormals = this._buildShape(state, this._faceBinormals(obj.shape));
-      Data.BufferStore colorFill     = this._buildShape(state, this._colorFill(obj.shape));
-      Data.BufferStore txtColor      = this._buildShape(state, this._txtColor(obj.shape));
-      Data.BufferStore aabb          = this._buildShape(state, this._aabb(obj.shape));
-
-      obj.cache =  new Data.BufferStoreList()
-        ..list.add(shapeFill) // 0
-        ..list.add(wireFrame) // 1
-        ..list.add(vertices) // 2
-        ..list.add(normals) // 3
-        ..list.add(binormals) // 4
-        ..list.add(faceCenters) // 5
-        ..list.add(faceNormals) // 6
-        ..list.add(faceBinormals) // 7
-        ..list.add(colorFill) // 8
-        ..list.add(txtColor) // 9
-        ..list.add(aabb); // 10
+      obj.cache = new Data.BufferStoreSet();
     }
 
     this._shader
@@ -124,70 +101,58 @@ class Inspection extends Technique {
       ..viewMatrix = state.view.matrix
       ..objectMatrix = state.object.matrix;
 
-    if (obj.cache is Data.BufferStoreList) {
-      Data.BufferStoreList store = obj.cache as Data.BufferStoreList;
+    if (obj.cache is Data.BufferStoreSet) {
+      Data.BufferStoreSet store = obj.cache as Data.BufferStoreSet;
       state.gl.blendFunc(WebGL.ONE, WebGL.ONE);
       state.gl.enable(WebGL.DEPTH_TEST);
       state.gl.disable(WebGL.BLEND);
 
-      if (this._showVertices) {
-        this._shader.setColors(this._ambient2, this._diffuse2);
-        store.list[2].oneRender(state); // vertices
-        // TODO: Why does POINTS not respect depth tests?
-        // Once they do move these two below the DEPTH_TEST disabled.
-      }
-      if (this._showFaceCenters) {
-        this._shader.setColors(this._ambient2, this._diffuse2);
-        store.list[5].oneRender(state); // faceCenters
-        // TODO: See above TODO.
-      }
+      // TODO: Why does POINTS not respect depth tests?
+      // Once they do move these two below the DEPTH_TEST disabled.
+      if (this._showVertices)
+        this._render(state, store, obj.shape, 'vertices', this._vertices, this._ambient2, this._diffuse2);
+      if (this._showFaceCenters)
+        this._render(state, store, obj.shape, 'faceCenters', this._faceCenters, this._ambient2, this._diffuse2);
 
-      if (this._showFilled) {
-        this._shader.setColors(this._ambient1, this._diffuse1);
-        store.list[0].oneRender(state); // shapeFill
-      }
-      if (this._showColorFill) {
-        this._shader.setColors(this._ambient3, this._diffuse3);
-        store.list[8].oneRender(state); // colorFill
-      }
-      if (this._showTxtColor) {
-        this._shader.setColors(this._ambient3, this._diffuse3);
-        store.list[9].oneRender(state); // txtColor
-      }
+      if (this._showFilled)
+        this._render(state, store, obj.shape, 'shapeFill', this._shapeFill, this._ambient1, this._diffuse1);
+      if (this._showColorFill)
+        this._render(state, store, obj.shape, 'colorFill', this._colorFill, this._ambient3, this._diffuse3);
+      if (this._showTxtColor)
+        this._render(state, store, obj.shape, 'txtColor', this._txtColor, this._ambient3, this._diffuse3);
 
       state.gl.disable(WebGL.DEPTH_TEST);
       state.gl.enable(WebGL.BLEND);
 
-      if (this._showWireFrame) {
-        this._shader.setColors(this._ambient2, this._diffuse2);
-        store.list[1].oneRender(state); // wireFrame
-      }
-      if (this._showNormals) {
-        this._shader.setColors(this._ambient2, this._diffuse2);
-        store.list[3].oneRender(state); // normals
-      }
-      if (this._showBinormals) {
-        this._shader.setColors(this._ambient2, this._diffuse2);
-        store.list[4].oneRender(state); // binormals
-      }
-      if (this._showFaceNormals) {
-        this._shader.setColors(this._ambient2, this._diffuse2);
-        store.list[6].oneRender(state); // faceNormals
-      }
-      if (this._showFaceBinormals) {
-        this._shader.setColors(this._ambient3, this._diffuse3);
-        store.list[7].oneRender(state); // faceBinormals
-      }
-      if (this._showAABB) {
-        this._shader.setColors(this._ambient2, this._diffuse2);
-        store.list[10].oneRender(state); // AABB
-      }
+      if (this._showWireFrame)
+        this._render(state, store, obj.shape, 'wireFrame', this._wireFrame, this._ambient2, this._diffuse2);
+      if (this._showNormals)
+        this._render(state, store, obj.shape, 'normals', this._normals, this._ambient2, this._diffuse2);
+      if (this._showBinormals)
+        this._render(state, store, obj.shape, 'binormals', this._binormals, this._ambient2, this._diffuse2);
+      if (this._showFaceNormals)
+        this._render(state, store, obj.shape, 'faceNormals', this._faceNormals, this._ambient2, this._diffuse2);
+      if (this._showFaceBinormals)
+        this._render(state, store, obj.shape, 'faceBinormals', this._faceBinormals, this._ambient3, this._diffuse3);
+      if (this._showAABB)
+        this._render(state, store, obj.shape, 'AABB', this._aabb, this._ambient2, this._diffuse2);
 
       state.gl.enable(WebGL.DEPTH_TEST);
       state.gl.disable(WebGL.BLEND);
     } else obj.clearCache();
 
     this._shader.unbind(state);
+  }
+
+  void _render(Core.RenderState state, Data.BufferStoreSet storeSet, Shapes.Shape shape,
+      String name, Shapes.Shape shapeModHndl(Shapes.Shape shape), Math.Color3 ambient, Math.Color3 diffuse) {
+    Data.BufferStore store = storeSet.map[name];
+    if (store == null) {
+      store = this._buildShape(state, shapeModHndl(shape));
+      storeSet.map[name] = store;
+    }
+    this._shader.setColors(ambient, diffuse);
+    store.oneRender(state);
   }
 
   Data.BufferStore _buildShape(Core.RenderState state, Shapes.Shape shape) {
