@@ -1,13 +1,11 @@
 part of ThreeDart.Views;
 
+/// The front target to write the result of a render to the HTML canvas.
 class FrontTarget extends Target {
-
   Math.Color4 _color;
   bool _clearColor;
-
   double _depth;
   bool _clearDepth;
-
   int _stencil;
   bool _clearStencil;
 
@@ -20,24 +18,32 @@ class FrontTarget extends Target {
     this._clearStencil = false;
   }
 
+  /// The clear color to clear the target to before rendering.
   Math.Color4 get color => this._color;
   set color(Math.Color4 color) => this._color = color;
 
+  /// Indicates if the color target should be cleared with the clear color.
   bool get clearColor => this._clearColor;
   set clearColor(bool clearColor) => this._clearColor = clearColor;
 
+  /// The clear depth to clear the target to before rendering.
   double get depth => this._depth;
   set depth(double depth) => this._depth = depth;
 
+  /// Indicates if the depth target should be cleared with the clear depth.
   bool get clearDepth => this._clearDepth;
   set clearDepth(bool clearDepth) => this._clearDepth = clearDepth;
 
+  /// The clear stencil value to clear the stencil target to before rendering.
   int get stencil => this._stencil;
   set stencil(int stencil) => this._stencil = stencil;
 
+  /// Indicates if the stencil target should be cleared with the clear stencil.
   bool get clearStencil => this._clearStencil;
   set clearStencil(bool clearStencil) => this._clearStencil = clearStencil;
 
+  /// Binds this target to the given state so that the following render
+  /// will target the front target.
   void bind(Core.RenderState state) {
     state.gl.bindFramebuffer(WebGL.FRAMEBUFFER, null);
 
@@ -65,6 +71,8 @@ class FrontTarget extends Target {
     }
   }
 
+  /// Unbinds the front target.
+  /// Actually has no effect because the front target is the default target.
   void unbind(Core.RenderState state) {
     // Empty
   }

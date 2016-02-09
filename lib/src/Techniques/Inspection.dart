@@ -1,7 +1,7 @@
 part of ThreeDart.Techniques;
 
+/// The inspection rendering technique for checking shape components.
 class Inspection extends Technique {
-
   Shaders.Inspection _shader;
   Math.Vector3 _lightVec;
   Math.Color3 _diffuse1;
@@ -24,6 +24,7 @@ class Inspection extends Technique {
   bool _showAABB;
   double _vectorScale;
 
+  /// Creates a new inspection techinque.
   Inspection() {
     this._shader = null;
     this._lightVec = new Math.Vector3(0.0, 0.0, -1.0);
@@ -48,42 +49,56 @@ class Inspection extends Technique {
     this._vectorScale       = 1.0;
   }
 
+  /// Indicates if the filled shape should be showed.
   set showFilled(bool show) => this._showFilled = show;
   bool get showFilled => this._showFilled;
 
+  /// Indicates if the wire frame of the shape should be showed.
   set showWireFrame(bool show) => this._showWireFrame = show;
   bool get showWireFrame => this._showWireFrame;
 
+  /// Indicates if the vertices of the shape should be showed.
   set showVertices(bool show) => this._showVertices = show;
   bool get showVertices => this._showVertices;
 
+  /// Indicates if the normals of the shape should be showed.
   set showNormals(bool show) => this._showNormals = show;
   bool get showNormals => this._showNormals;
 
+  /// Indicates if the binormals of the shape should be showed.
   set showBinormals(bool show) => this._showBinormals = show;
   bool get showBinormals => this._showBinormals;
 
+  /// Indicates if the face center points of the shape should be showed.
   set showFaceCenters(bool show) => this._showFaceCenters = show;
   bool get showFaceCenters => this._showFaceCenters;
 
+  /// Indicates if the face normals of the shape should be showed.
   set showFaceNormals(bool show) => this._showFaceNormals = show;
   bool get showFaceNormals => this._showFaceNormals;
 
+  /// Indicates if the face binormals of the shape should be showed.
   set showFaceBinormals(bool show) => this._showFaceBinormals = show;
   bool get showFaceBinormals => this._showFaceBinormals;
 
+  /// Indicates if the colors of the shape should be showed.
   set showColorFill(bool show) => this._showColorFill = show;
   bool get showColorFill => this._showColorFill;
 
+  /// Indicates if the texture colors of the shape should be showed.
   set showTxtColor(bool show) => this._showTxtColor = show;
   bool get showTxtColor => this._showTxtColor;
 
+  /// Indicates if the axlal alligned bounding box of the shape should be showed.
   set showAABB(bool show) => this._showAABB = show;
   bool get showAABB => this._showAABB;
 
+  /// The scalar to apply to vectors lengths.
+  /// To make the vectors change length the cache also has to be cleared.
   set vectorScale(double scale) => this._vectorScale = scale;
   double get vectorScale => this._vectorScale;
 
+  /// Renders the current [obj] with the current [state].
   void render(Core.RenderState state, Core.Entity obj) {
     if (this._shader == null)
       this._shader = new Shaders.Inspection.cached(state);
@@ -104,11 +119,11 @@ class Inspection extends Technique {
     if (obj.cache is Data.BufferStoreSet) {
       Data.BufferStoreSet store = obj.cache as Data.BufferStoreSet;
       state.gl.blendFunc(WebGL.ONE, WebGL.ONE);
-      state.gl.enable(WebGL.DEPTH_TEST);
-      state.gl.disable(WebGL.BLEND);
+            state.gl.enable(WebGL.DEPTH_TEST);
+            state.gl.disable(WebGL.BLEND);
 
       // TODO: Why does POINTS not respect depth tests?
-      // Once they do move these two below the DEPTH_TEST disabled.
+      // Once they do move these two below with the other DEPTH_TEST disabled.
       if (this._showVertices)
         this._render(state, store, obj.shape, 'vertices', this._vertices, this._ambient2, this._diffuse2);
       if (this._showFaceCenters)
@@ -144,6 +159,8 @@ class Inspection extends Technique {
     this._shader.unbind(state);
   }
 
+  /// Renderes one of the shape components to inspect.
+  /// If the component of the shape isn't cached it will be created and cached.
   void _render(Core.RenderState state, Data.BufferStoreSet storeSet, Shapes.Shape shape,
       String name, Shapes.Shape shapeModHndl(Shapes.Shape shape), Math.Color3 ambient, Math.Color3 diffuse) {
     Data.BufferStore store = storeSet.map[name];
@@ -155,6 +172,7 @@ class Inspection extends Technique {
     store.oneRender(state);
   }
 
+  /// Builds and sets up the shape for a component.
   Data.BufferStore _buildShape(Core.RenderState state, Shapes.Shape shape) {
     Data.BufferStore store = shape.build(new Data.WebGLBufferBuilder(state.gl),
       Data.VertexType.Pos|Data.VertexType.Norm|Data.VertexType.Clr3);
@@ -164,6 +182,7 @@ class Inspection extends Technique {
       ..findAttribute(Data.VertexType.Clr3).attr = this._shader.clrAttr.loc;
   }
 
+  /// Convertes the given [shape] into the filled shape.
   Shapes.Shape _shapeFill(Shapes.Shape shape) {
     Shapes.Shape result = new Shapes.Shape();
     Math.Color4 color =  new Math.Color4.white();
@@ -180,6 +199,7 @@ class Inspection extends Technique {
     return result;
   }
 
+  /// Convertes the given [shape] into the wire frame shape.
   Shapes.Shape _wireFrame(Shapes.Shape shape) {
     Shapes.Shape result = new Shapes.Shape();
     Math.Color4 color = new Math.Color4(0.0, 0.7, 1.0);
@@ -204,6 +224,7 @@ class Inspection extends Technique {
     return result;
   }
 
+  /// Convertes the given [shape] into the vertices shape.
   Shapes.Shape _vertices(Shapes.Shape shape) {
     Shapes.Shape result = new Shapes.Shape();
     Math.Color4 color = new Math.Color4.white();
@@ -216,6 +237,7 @@ class Inspection extends Technique {
     return result;
   }
 
+  /// Convertes the given [shape] into the normals shape.
   Shapes.Shape _normals(Shapes.Shape shape) {
     Shapes.Shape result = new Shapes.Shape();
     Math.Color4 color = new Math.Color4(1.0, 1.0, 0.3);
@@ -231,6 +253,7 @@ class Inspection extends Technique {
     return result;
   }
 
+  /// Convertes the given [shape] into the binormals shape.
   Shapes.Shape _binormals(Shapes.Shape shape) {
     Shapes.Shape result = new Shapes.Shape();
     Math.Color4 color = new Math.Color4(1.0, 0.3, 0.3);
@@ -246,6 +269,7 @@ class Inspection extends Technique {
     return result;
   }
 
+  /// Convertes the given [shape] into the face center point shape.
   Shapes.Shape _faceCenters(Shapes.Shape shape) {
     Shapes.Shape result = new Shapes.Shape();
     Math.Color4 color = new Math.Color4(1.0, 1.0, 0.3);
@@ -260,6 +284,7 @@ class Inspection extends Technique {
     return result;
   }
 
+  /// Convertes the given [shape] into the face normal shape.
   Shapes.Shape _faceNormals(Shapes.Shape shape) {
     Shapes.Shape result = new Shapes.Shape();
     Math.Color4 color = new Math.Color4(1.0, 1.0, 0.3);
@@ -278,6 +303,7 @@ class Inspection extends Technique {
     return result;
   }
 
+  /// Convertes the given [shape] into the face binormal shape.
   Shapes.Shape _faceBinormals(Shapes.Shape shape) {
     Shapes.Shape result = new Shapes.Shape();
     Math.Color4 color = new Math.Color4(1.0, 0.3, 0.3);
@@ -296,6 +322,7 @@ class Inspection extends Technique {
     return result;
   }
 
+  /// Convertes the given [shape] into the color shape.
   Shapes.Shape _colorFill(Shapes.Shape shape) {
     Shapes.Shape result = new Shapes.Shape();
     shape.vertices.forEach((Shapes.Vertex vertex) {
@@ -310,6 +337,7 @@ class Inspection extends Technique {
     return result;
   }
 
+  /// Convertes the given [shape] into the texture color shape.
   Shapes.Shape _txtColor(Shapes.Shape shape) {
     Shapes.Shape result = new Shapes.Shape();
     shape.vertices.forEach((Shapes.Vertex vertex) {
@@ -326,6 +354,7 @@ class Inspection extends Technique {
     return result;
   }
 
+  /// Convertes the given [shape] into the axial alligned bounding box shape.
   Shapes.Shape _aabb(Shapes.Shape shape) {
     Math.Region3 aabb = shape.calculateAABB();
     Shapes.Shape result = new Shapes.Shape();
