@@ -18,6 +18,9 @@ class ThreeDart {
   /// The rendering state.
   RenderState _state;
 
+  /// The loader for creating textures.
+  Textures.TextureLoader _txtLoader;
+
   /// The user input listener.
   UserInput _input;
 
@@ -82,6 +85,7 @@ class ThreeDart {
     this._gl = gl;
     this._scene = null;
     this._state = new RenderState(this._gl, this._canvas);
+    this._txtLoader = new Textures.TextureLoader(this._gl);
     this._input = new UserInput(this._canvas);
 
     this._canvas.onResize.listen(this._resize);
@@ -99,6 +103,9 @@ class ThreeDart {
 
   /// The user input listener.
   UserInput get userInput => this._input;
+
+  /// The loader to create textures with.
+  Textures.TextureLoader get textureLoader => this._txtLoader;
 
   /// The scene to render to the canvas.
   Scenes.Scene get scene => this._scene;

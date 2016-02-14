@@ -1,7 +1,7 @@
 part of ThreeDart.Textures;
 
 /// The base for all texture and surface types.
-abstract class Texture {
+abstract class Texture extends Core.Bindable {
 
   /// The index of the texture.
   int _index;

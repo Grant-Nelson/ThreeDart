@@ -21,3 +21,4 @@ part 'Uniforms.dart';
 part 'Depth.dart';
 part 'Inspection.dart';
 part 'SolidDirectional.dart';
+part 'Texture2DDirectional.dart';

@@ -43,8 +43,18 @@ class Solid implements Material {
 
   /// The phong shininess value of the matrial.
   double get shininess => this._shininess;
-  set shininess(double shininess) =>
-    this._shininess = (shininess == null)? 1.0:
-    (shininess < 1.0e-6)? 1.0e-6: shininess;
+  set shininess(double shininess) {
+    this._shininess = (shininess == null)? 1.0: (shininess < 1.0e-6)? 1.0e-6: shininess;
+  }
   double _shininess;
+
+  /// Binds this material to the given [state].
+  void bind(Core.RenderState state) {
+    // Do Nothing
+  }
+
+  /// Unbinds this material from the given [state].
+  void unbind(Core.RenderState state) {
+    // Do Nothing
+  }
 }

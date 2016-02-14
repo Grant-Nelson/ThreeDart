@@ -82,3 +82,7 @@ String formatInt(int v, [int whole = 3]) {
     return (' '+v.toString()).padLeft(whole);
   }
 }
+
+/// Gets the nearest (lower) power of the [radix] to the given [value].
+int nearestPower(int value, [int radix = 2]) =>
+  math.pow(radix, (math.log(value)/math.log(radix)).floor()).toInt();

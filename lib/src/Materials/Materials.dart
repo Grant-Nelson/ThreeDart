@@ -3,6 +3,7 @@
 
 library ThreeDart.Materials;
 
+import '../Core/Core.dart' as Core;
 import '../Math/Math.dart' as Math;
 import '../Textures/Textures.dart' as Textures;
 
