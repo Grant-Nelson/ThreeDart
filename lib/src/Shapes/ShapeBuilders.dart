@@ -149,12 +149,12 @@ Shape cylindrical({func2Handle radiusHndl: null, int sides: 8, int div: 1, bool 
   shape.calculateNormals();
   shape.adjustNormals();
   if (capTop) {
-    Shape top = disk(sides: sides, height: 1.0, flip: true,
+    Shape top = disk(sides: sides, height: 1.0, flip: false,
       radiusHndl: (double u) => radiusHndl(u, 1.0));
     shape.merge(top);
   }
   if (capBottom) {
-    Shape bottom = disk(sides: sides, height: -1.0, flip: false,
+    Shape bottom = disk(sides: sides, height: -1.0, flip: true,
       radiusHndl: (double u) => radiusHndl(1.0-u, 0.0));
     shape.merge(bottom);
   }
@@ -370,7 +370,7 @@ Shape surface(int widthDiv, int heightDiv, func2PntHandle locHndl) {
     double u = i.toDouble()/heightDiv.toDouble();
     vers.add(shape.vertices.addNew(
       loc: locHndl(u, 0.0),
-      txt: new Math.Point2(u, 0.0),
+      txt: new Math.Point2(u, 1.0),
       clr: new Math.Color4(u, 0.0, 0.0)));
   }
   for (int i = 1; i <= widthDiv; i++) {
@@ -379,7 +379,7 @@ Shape surface(int widthDiv, int heightDiv, func2PntHandle locHndl) {
       double u = j.toDouble()/heightDiv.toDouble();
       vers.add(shape.vertices.addNew(
         loc: locHndl(u, v),
-        txt: new Math.Point2(u, v),
+        txt: new Math.Point2(u, 1.0-v),
         clr: new Math.Color4(u, v, v)));
     }
   }

@@ -37,17 +37,20 @@ void main() {
   rotater.attach(td.userInput);
   zoom.attach(td.userInput);
 
-  _addCheckBox("Filled",         true,  (bool show) { tech.showFilled        = show; });
-  _addCheckBox("Wire Frame",     true,  (bool show) { tech.showWireFrame     = show; });
-  _addCheckBox("Vertices",       false, (bool show) { tech.showVertices      = show; });
-  _addCheckBox("Normals",        false, (bool show) { tech.showNormals       = show; });
-  _addCheckBox("Binormals",      false, (bool show) { tech.showBinormals     = show; });
-  _addCheckBox("Face Centers",   false, (bool show) { tech.showFaceCenters   = show; });
-  _addCheckBox("Face Normals",   false, (bool show) { tech.showFaceNormals   = show; });
-  _addCheckBox("Face Binormals", false, (bool show) { tech.showFaceBinormals = show; });
-  _addCheckBox("Colors",         false, (bool show) { tech.showColorFill     = show; });
-  _addCheckBox("Textures",       false, (bool show) { tech.showTxtColor      = show; });
-  _addCheckBox("AABB",           false, (bool show) { tech.showAABB          = show; });
+  _addCheckBox("Filled",          true,  (bool show) { tech.showFilled         = show; });
+  _addCheckBox("Wire Frame",      true,  (bool show) { tech.showWireFrame      = show; });
+  _addCheckBox("Vertices",        false, (bool show) { tech.showVertices       = show; });
+  _addCheckBox("Normals",         false, (bool show) { tech.showNormals        = show; });
+  _addCheckBox("Binormals",       false, (bool show) { tech.showBinormals      = show; });
+  _addCheckBox("Tangentals",      false, (bool show) { tech.showTangentals     = show; });
+  _addCheckBox("Face Centers",    false, (bool show) { tech.showFaceCenters    = show; });
+  _addCheckBox("Face Normals",    false, (bool show) { tech.showFaceNormals    = show; });
+  _addCheckBox("Face Binormals",  false, (bool show) { tech.showFaceBinormals  = show; });
+  _addCheckBox("Face Tangentals", false, (bool show) { tech.showFaceTangentals = show; });
+  _addCheckBox("Colors",          false, (bool show) { tech.showColorFill      = show; });
+  _addCheckBox("Textures",        false, (bool show) { tech.showTxtColor       = show; });
+  _addCheckBox("Axis",            true,  (bool show) { tech.showAxis           = show; });
+  _addCheckBox("AABB",            false, (bool show) { tech.showAABB           = show; });
 
   _addRadioButton("Square",        () { obj.shape = Shapes.square(); }, true);
   _addRadioButton("Cube",          () { obj.shape = Shapes.cube(); });

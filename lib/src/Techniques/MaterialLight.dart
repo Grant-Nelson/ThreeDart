@@ -32,6 +32,7 @@ class MaterialLight extends Technique {
     if ((this._light == null) || (this._material == null)) return;
     else if (this._light is Lights.Directional) {
       if (this._material is Materials.Solid) this._solidDirectional(state, obj);
+      else if (this._material is Materials.BumpyTexture2D) this._bumpyTxt2DDirectional(state, obj);
       else if (this._material is Materials.Texture2D) this._txt2DDirectional(state, obj);
       else throw new Exception("Unsupported light and material combination. $_material, $_light");
     } else throw new Exception("Unsupported light and material combination. $_material, $_light");
@@ -69,6 +70,36 @@ class MaterialLight extends Technique {
       ..objectMatrix = state.object.matrix;
   }
 
+  /// Renders and sets up the shaper for bumpy texture 2D directional light.
+  void _bumpyTxt2DDirectional(Core.RenderState state, Core.Entity obj) {
+    if (this._shader == null)
+      this._shader = new Shaders.BumpyTexture2DDirectional.cached(state);
+    Shaders.BumpyTexture2DDirectional shader = this._shader as Shaders.BumpyTexture2DDirectional;
+
+    if (obj.cacheNeedsUpdate) {
+      obj.cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl),
+        Data.VertexType.Pos|Data.VertexType.Norm|Data.VertexType.Binm|Data.VertexType.Txt)
+        ..findAttribute(Data.VertexType.Pos).attr = shader.posAttr.loc
+        ..findAttribute(Data.VertexType.Norm).attr = shader.normAttr.loc
+        ..findAttribute(Data.VertexType.Binm).attr = shader.binmAttr.loc
+        ..findAttribute(Data.VertexType.Txt).attr = shader.txtAttr.loc;
+    }
+
+    Materials.BumpyTexture2D mat = this._material as Materials.BumpyTexture2D
+      ..emission.index = 0
+      ..color.index = 1
+      ..specular.index = 2
+      ..bumpMap.index = 3;
+
+    shader
+      ..bind(state)
+      ..setLight(this._light as Lights.Directional)
+      ..setMaterial(mat)
+      ..projectMatrix = state.projection.matrix
+      ..viewMatrix = state.view.matrix
+      ..objectMatrix = state.object.matrix;
+  }
+
   /// Renders and sets up the shaper for texture 2D directional light.
   void _txt2DDirectional(Core.RenderState state, Core.Entity obj) {
     if (this._shader == null)
@@ -84,10 +115,9 @@ class MaterialLight extends Technique {
     }
 
     Materials.Texture2D mat = this._material as Materials.Texture2D
-      ..emission.index = 1
-      ..ambient.index = 2
-      ..diffuse.index = 3
-      ..specular.index = 4;
+      ..emission.index = 0
+      ..color.index = 1
+      ..specular.index = 2;
 
     shader
       ..bind(state)

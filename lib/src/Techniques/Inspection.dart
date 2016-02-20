@@ -16,11 +16,14 @@ class Inspection extends Technique {
   bool _showVertices;
   bool _showNormals;
   bool _showBinormals;
+  bool _showTangentals;
   bool _showFaceCenters;
   bool _showFaceNormals;
   bool _showFaceBinormals;
+  bool _showFaceTangentals;
   bool _showColorFill;
   bool _showTxtColor;
+  bool _showAxis;
   bool _showAABB;
   double _vectorScale;
 
@@ -35,18 +38,21 @@ class Inspection extends Technique {
     this._diffuse3 = new Math.Color3(0.3, 0.3, 0.3);
     this._ambient3 = new Math.Color3(0.7, 0.7, 0.7);
 
-    this._showFilled        = true;
-    this._showWireFrame     = true;
-    this._showVertices      = false;
-    this._showNormals       = false;
-    this._showBinormals     = false;
-    this._showFaceCenters   = false;
-    this._showFaceNormals   = false;
-    this._showFaceBinormals = false;
-    this._showColorFill     = false;
-    this._showTxtColor      = false;
-    this._showAABB          = false;
-    this._vectorScale       = 1.0;
+    this._showFilled         = true;
+    this._showWireFrame      = true;
+    this._showVertices       = false;
+    this._showNormals        = false;
+    this._showBinormals      = false;
+    this._showTangentals     = false;
+    this._showFaceCenters    = false;
+    this._showFaceNormals    = false;
+    this._showFaceBinormals  = false;
+    this._showFaceTangentals = false;
+    this._showColorFill      = false;
+    this._showTxtColor       = false;
+    this._showAxis           = false;
+    this._showAABB           = false;
+    this._vectorScale        = 1.0;
   }
 
   /// Indicates if the filled shape should be showed.
@@ -69,6 +75,10 @@ class Inspection extends Technique {
   set showBinormals(bool show) => this._showBinormals = show;
   bool get showBinormals => this._showBinormals;
 
+  /// Indicates if the tangentals of the shape should be showed.
+  set showTangentals(bool show) => this._showTangentals = show;
+  bool get showTangentals => this._showTangentals;
+
   /// Indicates if the face center points of the shape should be showed.
   set showFaceCenters(bool show) => this._showFaceCenters = show;
   bool get showFaceCenters => this._showFaceCenters;
@@ -81,6 +91,10 @@ class Inspection extends Technique {
   set showFaceBinormals(bool show) => this._showFaceBinormals = show;
   bool get showFaceBinormals => this._showFaceBinormals;
 
+  /// Indicates if the face tangentals of the shape should be showed.
+  set showFaceTangentals(bool show) => this._showFaceTangentals = show;
+  bool get showFaceTangentals => this._showFaceTangentals;
+
   /// Indicates if the colors of the shape should be showed.
   set showColorFill(bool show) => this._showColorFill = show;
   bool get showColorFill => this._showColorFill;
@@ -88,6 +102,10 @@ class Inspection extends Technique {
   /// Indicates if the texture colors of the shape should be showed.
   set showTxtColor(bool show) => this._showTxtColor = show;
   bool get showTxtColor => this._showTxtColor;
+
+  /// Indicates if the axis should be showed.
+  set showAxis(bool show) => this._showAxis = show;
+  bool get showAxis => this._showAxis;
 
   /// Indicates if the axlal alligned bounding box of the shape should be showed.
   set showAABB(bool show) => this._showAABB = show;
@@ -145,10 +163,16 @@ class Inspection extends Technique {
         this._render(state, store, obj.shape, 'normals', this._normals, this._ambient2, this._diffuse2);
       if (this._showBinormals)
         this._render(state, store, obj.shape, 'binormals', this._binormals, this._ambient2, this._diffuse2);
+      if (this._showTangentals)
+        this._render(state, store, obj.shape, 'tangentals', this._tangentals, this._ambient2, this._diffuse2);
       if (this._showFaceNormals)
         this._render(state, store, obj.shape, 'faceNormals', this._faceNormals, this._ambient2, this._diffuse2);
       if (this._showFaceBinormals)
         this._render(state, store, obj.shape, 'faceBinormals', this._faceBinormals, this._ambient3, this._diffuse3);
+      if (this._showFaceTangentals)
+        this._render(state, store, obj.shape, 'faceTangentals', this._faceTangentals, this._ambient3, this._diffuse3);
+      if (this._showAxis)
+        this._render(state, store, obj.shape, 'Axis', this._axis, this._ambient3, this._diffuse3);
       if (this._showAABB)
         this._render(state, store, obj.shape, 'AABB', this._aabb, this._ambient2, this._diffuse2);
 
@@ -269,6 +293,23 @@ class Inspection extends Technique {
     return result;
   }
 
+  /// Convertes the given [shape] into the tangentals shape.
+  Shapes.Shape _tangentals(Shapes.Shape shape) {
+    Shapes.Shape result = new Shapes.Shape();
+    Math.Color4 color = new Math.Color4(1.0, 0.3, 1.0);
+    shape.vertices.forEach((Shapes.Vertex vertex) {
+      Shapes.Vertex ver1 = vertex.copy()
+        ..color = color;
+      Shapes.Vertex ver2 = ver1.copy();
+      Math.Vector3 tangental = -ver2.binormal.cross(ver2.normal);
+      ver2.location = ver2.location + new Math.Point3.fromVector3(tangental)*this._vectorScale;
+      result.vertices.add(ver1);
+      result.vertices.add(ver2);
+      result.lines.add(ver1, ver2);
+    });
+    return result;
+  }
+
   /// Convertes the given [shape] into the face center point shape.
   Shapes.Shape _faceCenters(Shapes.Shape shape) {
     Shapes.Shape result = new Shapes.Shape();
@@ -322,6 +363,26 @@ class Inspection extends Technique {
     return result;
   }
 
+  /// Convertes the given [shape] into the face tangental shape.
+  Shapes.Shape _faceTangentals(Shapes.Shape shape) {
+    Shapes.Shape result = new Shapes.Shape();
+    Math.Color4 color = new Math.Color4(1.0, 0.3, 1.0);
+    shape.faces.forEach((Shapes.Face face) {
+      Shapes.Vertex cen1 = new Shapes.Vertex(
+        loc: (face.vertex1.location + face.vertex2.location + face.vertex3.location)/3.0,
+        norm: face.normal,
+        clr: color);
+
+      Shapes.Vertex cen2 = cen1.copy();
+      Math.Vector3 tangental = -face.binormal.cross(face.normal);
+      cen2.location += new Math.Point3.fromVector3(tangental)*this._vectorScale;
+      result.vertices.add(cen1);
+      result.vertices.add(cen2);
+      result.lines.add(cen1, cen2);
+    });
+    return result;
+  }
+
   /// Convertes the given [shape] into the color shape.
   Shapes.Shape _colorFill(Shapes.Shape shape) {
     Shapes.Shape result = new Shapes.Shape();
@@ -354,6 +415,21 @@ class Inspection extends Technique {
     return result;
   }
 
+  /// Creates the axii shape.
+  Shapes.Shape _axis(Shapes.Shape shape) {
+    Shapes.Shape result = new Shapes.Shape();
+    Shapes.Vertex verX1 = result.vertices.addNewLoc(0.0, 0.0, 0.0)..color = new Math.Color4(1.0, 0.0, 0.0);
+    Shapes.Vertex verX2 = result.vertices.addNewLoc(1.0, 0.0, 0.0)..color = new Math.Color4(1.0, 0.0, 0.0);
+    Shapes.Vertex verY1 = result.vertices.addNewLoc(0.0, 0.0, 0.0)..color = new Math.Color4(0.0, 1.0, 0.0);
+    Shapes.Vertex verY2 = result.vertices.addNewLoc(0.0, 1.0, 0.0)..color = new Math.Color4(0.0, 1.0, 0.0);
+    Shapes.Vertex verZ1 = result.vertices.addNewLoc(0.0, 0.0, 0.0)..color = new Math.Color4(0.0, 0.0, 1.0);
+    Shapes.Vertex verZ2 = result.vertices.addNewLoc(0.0, 0.0, 1.0)..color = new Math.Color4(0.0, 0.0, 1.0);
+    result.lines.add(verX1, verX2);
+    result.lines.add(verY1, verY2);
+    result.lines.add(verZ1, verZ2);
+    return result;
+  }
+
   /// Convertes the given [shape] into the axial alligned bounding box shape.
   Shapes.Shape _aabb(Shapes.Shape shape) {
     Math.Region3 aabb = shape.calculateAABB();
@@ -378,7 +454,6 @@ class Inspection extends Technique {
     result.lines.add(ver2, ver6);
     result.lines.add(ver3, ver7);
     result.lines.add(ver4, ver8);
-    result.calculateNormals();
     return result;
   }
 }

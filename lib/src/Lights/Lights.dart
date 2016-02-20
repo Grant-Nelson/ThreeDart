@@ -5,7 +5,9 @@ library ThreeDart.Lights;
 
 import 'dart:math' as math;
 
+import '../Core/Core.dart' as Core;
 import '../Math/Math.dart' as Math;
+import '../Movers/Movers.dart' as Movers;
 
 part 'Directional.dart';
 part 'Light.dart';

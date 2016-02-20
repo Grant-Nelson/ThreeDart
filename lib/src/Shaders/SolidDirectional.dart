@@ -1,6 +1,6 @@
 part of ThreeDart.Shaders;
 
-/// A shader for renderin solid color directional light.
+/// A shader for rendering solid color directional light.
 class SolidDirectional extends Shader {
 
   /// The name for this shader.
@@ -51,12 +51,13 @@ class SolidDirectional extends Shader {
       "                                                           \n"+
       "vec3 specular(vec3 norm)                                   \n"+
       "{                                                          \n"+
-      "   vec3 lightRef = normalize(reflect(litVec, norm));       \n"+
-      "   float scalar = dot(lightRef, normalize(camPos));        \n"+
-      "   if(scalar > 0.0)                                        \n"+
-      "      return specularClr*max(pow(scalar, shininess), 0.0); \n"+
-      "   else                                                    \n"+
-      "      return vec3(0.0, 0.0, 0.0);                          \n"+
+      "   if(dot(norm, litVec) > 0.0)                             \n"+
+      "   {                                                       \n"+
+      "      vec3 lightRef = normalize(reflect(-litVec, norm));   \n"+
+      "      float scalar = dot(lightRef, normalize(camPos));     \n"+
+      "      return specularClr*pow(max(scalar, 0.0), shininess); \n"+
+      "   }                                                       \n"+
+      "   return vec3(0.0, 0.0, 0.0);                             \n"+
       "}                                                          \n"+
       "                                                           \n"+
       "void main()                                                \n"+

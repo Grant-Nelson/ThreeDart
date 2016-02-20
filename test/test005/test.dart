@@ -35,10 +35,11 @@ void main() {
 
   tech.material = new Materials.Texture2D(
     emission: td.textureLoader.load2DFromFile("./Emission.png"),
-    ambient: td.textureLoader.load2DFromFile("./Ambient.png"),
-    diffuse: td.textureLoader.load2DFromFile("./Diffuse.png"),
+    ambient: new Math.Color3(0.2, 0.2, 0.2),
+    diffuse: new Math.Color3(0.8, 0.8, 0.8),
+    color: td.textureLoader.load2DFromFile("./Color.png"),
     specular: td.textureLoader.load2DFromFile("./Specular.png"),
-    shininess: 100.0);
+    shininess: 10.0);
 
   var update;
   update = (num t) {
