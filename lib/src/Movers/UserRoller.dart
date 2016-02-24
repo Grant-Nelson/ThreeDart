@@ -1,16 +1,13 @@
 part of ThreeDart.Movers;
 
-/// A rotater which rotates an object in response to user input.
-class UserRotater implements Mover, Core.UserInteractable {
+/// A roller which rotates an object in response to user input.
+class UserRoller implements Mover, Core.UserInteractable {
 
-  /// The user input this rotater is attached to.
+  /// The user input this roller is attached to.
   Core.UserInput _input;
 
-  /// The pitch component for this rotater.
-  ComponentShift _pitch;
-
-  /// The yaw component for this rotater.
-  ComponentShift _yaw;
+  /// The roll component for this roller.
+  ComponentShift _roll;
 
   /// Indicates if the control/meta key must be pressed or released.
   bool _ctrlPressed;
@@ -24,11 +21,8 @@ class UserRotater implements Mover, Core.UserInteractable {
   /// Indicates if the rotations should be continuous or not.
   bool _cumulative;
 
-  /// The value to scale the pitch by.
-  double _pitchScalar;
-
-  /// The value to scale the yaw by.
-  double _yawScalar;
+  /// The value to scale the roll by.
+  double _rollScalar;
 
   /// The range, in pixels, of the dead band.
   double _deadBand;
@@ -42,11 +36,8 @@ class UserRotater implements Mover, Core.UserInteractable {
   /// True indicating the mouse is pressed, false for released.
   bool _pressed;
 
-  /// The yaw rotation in radians when the button was pressed.
-  double _lastYaw;
-
-  /// The pitch rotation in radians when the button was pressed.
-  double _lastPitch;
+  /// The roll rotation in radians when the button was pressed.
+  double _lastRoll;
 
   /// The previous change of the mouse, the offset or delta.
   Math.Vector2 _prevVal;
@@ -58,17 +49,9 @@ class UserRotater implements Mover, Core.UserInteractable {
   Math.Matrix4 _mat;
 
   /// Creates a new user rotater instance.
-  UserRotater() {
+  UserRoller() {
     this._input = null;
-    this._pitch = new ComponentShift()
-      ..wrap = true
-      ..maximumLocation = math.PI * 2.0
-      ..minimumLocation = 0.0
-      ..location = 0.0
-      ..maximumVelocity = 100.0
-      ..velocity = 0.0
-      ..dampening = 0.2;
-    this._yaw = new ComponentShift()
+    this._roll = new ComponentShift()
       ..wrap = true
       ..maximumLocation = math.PI * 2.0
       ..minimumLocation = 0.0
@@ -80,14 +63,12 @@ class UserRotater implements Mover, Core.UserInteractable {
     this._altPressed = false;
     this._shiftPressed = false;
     this._cumulative = false;
-    this._pitchScalar = 2.5;
-    this._yawScalar = 2.5;
+    this._rollScalar = 2.5;
     this._deadBand = 2.0;
     this._deadBand2 = 4.0;
     this._pressed = false;
     this._inDeadBand = false;
-    this._lastYaw = 0.0;
-    this._lastPitch = 0.0;
+    this._lastRoll = 0.0;
     this._prevVal = null;
     this._frameNum = 0;
     this._mat = null;
@@ -121,8 +102,7 @@ class UserRotater implements Mover, Core.UserInteractable {
     if (this._shiftPressed != this._input.shiftPressed) return;
     this._pressed = true;
     this._inDeadBand = true;
-    this._lastYaw = this._yaw.location;
-    this._lastPitch = this._pitch.location;
+    this._lastRoll = this._roll.location;
   }
 
   /// Handles the mouse move event.
@@ -134,14 +114,11 @@ class UserRotater implements Mover, Core.UserInteractable {
     }
     if (this._cumulative) {
       this._prevVal = args.adjustedOffset;
-      this._pitch.velocity = this._prevVal.dx*10.0*this._pitchScalar;
-      this._yaw.velocity = this._prevVal.dy*10.0*this._yawScalar;
+      this._roll.velocity = this._prevVal.dx*10.0*this._rollScalar;
     } else {
       Math.Vector2 off = args.adjustedOffset;
-      this._pitch.location = -off.dx*this._pitchScalar + this._lastPitch;
-      this._yaw.location = -off.dy*this._yawScalar + this._lastYaw;
-      this._pitch.velocity = 0.0;
-      this._yaw.velocity = 0.0;
+      this._roll.location = -off.dx*this._rollScalar + this._lastRoll;
+      this._roll.velocity = 0.0;
       this._prevVal = args.adjustedDelta;
     }
   }
@@ -152,16 +129,12 @@ class UserRotater implements Mover, Core.UserInteractable {
     this._pressed = false;
     if (this._inDeadBand) return;
     if (this._prevVal.length2() > 0.0001) {
-      this._pitch.velocity = this._prevVal.dx*10.0*this._pitchScalar;
-      this._yaw.velocity = this._prevVal.dy*10.0*this._yawScalar;
+      this._roll.velocity = this._prevVal.dx*10.0*this._rollScalar;
     }
   }
 
-  /// The pitch component for this rotater.
-  ComponentShift get pitch => this._pitch;
-
-  /// The yaw component for this rotater.
-  ComponentShift get yaw => this._yaw;
+  /// The roll component for this rotater.
+  ComponentShift get roll => this._roll;
 
   /// Indicates if the control/meta key must be pressed or released.
   bool get ctrlPressed => this._ctrlPressed;
@@ -179,13 +152,9 @@ class UserRotater implements Mover, Core.UserInteractable {
   bool get cumulative => this._cumulative;
   void set cumulative(bool enable) { this._cumulative = enable; }
 
-  /// The scalar to apply to the mouse movements pitch.
-  double get pitchScalar => this._pitchScalar;
-  void set pitchScalar(double value) { this._pitchScalar = value; }
-
-  /// The scalar to apply to the mouse movements yaw.
-  double get yawScalar => this._yawScalar;
-  void set yawScalar(double value) { this._yawScalar = value; }
+  /// The scalar to apply to the mouse movements roll.
+  double get rollScalar => this._rollScalar;
+  void set rollScalar(double value) { this._rollScalar = value; }
 
   /// The dead-band, in pixels, before anymovement is made.
   double get deadBand => this._deadBand;
@@ -199,10 +168,8 @@ class UserRotater implements Mover, Core.UserInteractable {
   void _update(Core.RenderState state) {
     this._frameNum = state.frameNumber;
     final double dt = state.dt;
-    this._yaw.update(dt);
-    this._pitch.update(dt);
-    this._mat = new Math.Matrix4.rotateX(this._yaw.location)*
-                new Math.Matrix4.rotateY(this._pitch.location);
+    this._roll.update(dt);
+    this._mat = new Math.Matrix4.rotateZ(this._roll.location);
   }
 
   /// Updates this mover and returns the matrix for the given object.

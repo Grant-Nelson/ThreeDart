@@ -17,29 +17,26 @@ Shape square() {
   Shape shape = new Shape();
   Vertex ver1 = shape.vertices.addNew(
     loc:  new Math.Point3(-1.0, -1.0, 0.0),
-    norm: new Math.Vector3(0.0, 0.0, 1.0),
-    txt:  new Math.Point2(0.0, 0.0),
+    txt:  new Math.Point2(0.0, 1.0),
     clr:  new Math.Color4(1.0, 0.0, 0.0, 1.0));
 
   Vertex ver2 = shape.vertices.addNew(
-    loc:  new Math.Point3(-1.0, 1.0, 0.0),
-    norm: new Math.Vector3(0.0, 0.0, 1.0),
-    txt:  new Math.Point2(0.0, 1.0),
-    clr:  new Math.Color4(1.0, 1.0, 0.0, 1.0));
+    loc:  new Math.Point3(1.0, -1.0, 0.0),
+    txt:  new Math.Point2(1.0, 1.0),
+    clr:  new Math.Color4(0.0, 0.0, 1.0, 1.0));
 
   Vertex ver3 = shape.vertices.addNew(
     loc:  new Math.Point3(1.0, 1.0, 0.0),
-    norm: new Math.Vector3(0.0, 0.0, 1.0),
-    txt:  new Math.Point2(1.0, 1.0),
+    txt:  new Math.Point2(1.0, 0.0),
     clr:  new Math.Color4(0.0, 1.0, 0.0, 1.0));
 
   Vertex ver4 = shape.vertices.addNew(
-    loc:  new Math.Point3(1.0, -1.0, 0.0),
-    norm: new Math.Vector3(0.0, 0.0, 1.0),
-    txt:  new Math.Point2(1.0, 0.0),
-    clr:  new Math.Color4(0.0, 0.0, 1.0, 1.0));
+    loc:  new Math.Point3(-1.0, 1.0, 0.0),
+    txt:  new Math.Point2(0.0, 0.0),
+    clr:  new Math.Color4(1.0, 1.0, 0.0, 1.0));
 
   shape.faces.addFan([ver1, ver2, ver3, ver4]);
+  shape.calculateNormals();
   return shape;
 }
 
@@ -52,37 +49,26 @@ Shape cube() {
   _addCubeSide(shape,  0.0, -1.0,  0.0); // Y-
   _addCubeSide(shape,  0.0,  0.0,  1.0); // Z+
   _addCubeSide(shape,  0.0,  0.0, -1.0); // Z-
+  shape.calculateNormals();
   return shape;
 }
 
 /// Adds a side of the cube to the given shape.
 /// The [nx], [ny], and [nz] the normal of the plane for the cube side to add.
 void _addCubeSide(Shape shape, double nx, double ny, double nz) {
-  Vertex ver1 = shape.vertices.addNew(
-    loc:  new Math.Point3(nx+ny+nz, ny+nz+nx, nz+nx+ny),
-    norm: new Math.Vector3(nx, ny, nz),
-    txt:  new Math.Point2(0.0, 0.0),
-    clr:  new Math.Color4(nx+ny+nz, ny+nz+nx, nz+nx+ny, 1.0));
+  Vertex addVertex(double px, double py, double pz, double tu, double tv) {
+    return shape.vertices.addNew(
+      loc:  new Math.Point3(px, py, pz),
+      txt:  new Math.Point2(0.0, 0.0),
+      clr:  new Math.Color4(px, py, pz, 1.0));
+  };
 
-  Vertex ver2 = shape.vertices.addNew(
-    loc:  new Math.Point3(nx-ny+nz, ny-nz+nx, nz-nx+ny),
-    norm: new Math.Vector3(nx, ny, nz),
-    txt:  new Math.Point2(0.0, 1.0),
-    clr:  new Math.Color4(nx-ny+nz, ny-nz+nx, nz-nx+ny, 1.0));
+  Vertex ver1 = addVertex(nx+ny+nz, ny+nz+nx, nz+nx+ny, 0.0, 0.0);
+  Vertex ver2 = addVertex(nx-ny+nz, ny-nz+nx, nz-nx+ny, 0.0, 1.0);
+  Vertex ver3 = addVertex(nx+ny-nz, ny+nz-nx, nz+nx-ny, 1.0, 0.0);
+  Vertex ver4 = addVertex(nx-ny-nz, ny-nz-nx, nz-nx-ny, 1.0, 1.0);
 
-  Vertex ver3 = shape.vertices.addNew(
-    loc:  new Math.Point3(nx+ny-nz, ny+nz-nx, nz+nx-ny),
-    norm: new Math.Vector3(nx, ny, nz),
-    txt:  new Math.Point2(1.0, 0.0),
-    clr:  new Math.Color4(nx+ny-nz, ny+nz-nx, nz+nx-ny, 1.0));
-
-  Vertex ver4 = shape.vertices.addNew(
-    loc:  new Math.Point3(nx-ny-nz, ny-nz-nx, nz-nx-ny),
-    norm: new Math.Vector3(nx, ny, nz),
-    txt:  new Math.Point2(1.0, 1.0),
-    clr:  new Math.Color4(nx-ny-nz, ny-nz-nx, nz-nx-ny, 1.0));
-
-  if (nx+ny+nz > 0.0) {
+  if (nx+ny+nz < 0.0) {
     shape.faces.addFan([ver1, ver2, ver4, ver3]);
   } else {
     shape.faces.addFan([ver1, ver3, ver4, ver2]);
@@ -97,22 +83,22 @@ Shape disk({int sides: 8, double height: 0.0, bool flip: false, func1Handle radi
   if (sides < 3) return null;
   Shape shape = new Shape();
   double sign = flip? -1.0: 1.0;
-  double step = 2.0*PI/sides.toDouble();
+  double step = -2.0*PI/sides.toDouble();
   List<Vertex> vers = new List<Vertex>();
   vers.add(shape.vertices.addNew(
-    loc:  new Math.Point3(0.0, height, 0.0),
-    norm: new Math.Vector3(0.0, sign, 0.0),
+    loc:  new Math.Point3(0.0, 0.0, height),
+    norm: new Math.Vector3(0.0, 0.0, sign),
     txt:  new Math.Point2(0.5, 0.5),
     clr:  new Math.Color4(1.0, 1.0, 1.0)));
   for (int i = 0; i <= sides; i++) {
     double angle = step*i.toDouble();
-    double x = -sign*sin(angle), z = cos(angle);
+    double x = sign*sin(angle), y = cos(angle);
     double radius = radiusHndl(i.toDouble()/sides.toDouble());
     vers.add(shape.vertices.addNew(
-      loc:  new Math.Point3(x*radius, height, z*radius),
-      norm: new Math.Vector3(0.0, sign, 0.0),
-      txt:  new Math.Point2(x*0.5+0.5, z*0.5+0.5),
-      clr:  new Math.Color4(x, z, z)));
+      loc:  new Math.Point3(x*radius, y*radius, height),
+      norm: new Math.Vector3(0.0, 0.0, sign),
+      txt:  new Math.Point2(x*0.5+0.5, y*0.5+0.5),
+      clr:  new Math.Color4(x, y, y)));
   }
   shape.faces.addFan(vers);
   return shape;
@@ -140,10 +126,10 @@ Shape cylindrical({func2Handle radiusHndl: null, int sides: 8, int div: 1, bool 
   if (div < 1) return null;
   Shape shape = surface(div, sides, (double u, double v) {
     double angle = 2.0*PI*u;
-    double x = -sin(angle), z = cos(angle);
-    double y = Math.lerpVal(-1.0, 1.0, v);
+    double x = -sin(angle), y = cos(angle);
+    double z = Math.lerpVal(-1.0, 1.0, v);
     double radius = radiusHndl(u, v);
-    return new Math.Point3(x*radius, y, z*radius);
+    return new Math.Point3(x*radius, y*radius, z);
   });
   if (shape == null) return null;
   shape.calculateNormals();
@@ -167,7 +153,7 @@ Shape cylindrical({func2Handle radiusHndl: null, int sides: 8, int div: 1, bool 
 Shape latLonSphere([int latitudeDiv = 12, int longitudeDiv = 24]) {
   Shape shape = surface(latitudeDiv, longitudeDiv, (double u, double v) {
     double r = sin(v*PI);
-    Math.Vector3 vec = new Math.Vector3(-cos(u*2.0*PI)*r,
+    Math.Vector3 vec = new Math.Vector3(cos(u*2.0*PI)*r,
                                         cos(v*PI),
                                         sin(u*2.0*PI)*r);
     return new Math.Point3.fromVector3(vec.normal());
@@ -188,15 +174,15 @@ Shape isosphere([int iterations = 3]) {
   Vertex ver2  = _isosphereAdd(shape, new Math.Vector3(-1.0, -t,  0.0));
   Vertex ver3  = _isosphereAdd(shape, new Math.Vector3( 1.0, -t,  0.0));
 
-  Vertex ver4  = _isosphereAdd(shape, new Math.Vector3( 0.0, -1.0,  t));
-  Vertex ver5  = _isosphereAdd(shape, new Math.Vector3( 0.0,  1.0,  t));
-  Vertex ver6  = _isosphereAdd(shape, new Math.Vector3( 0.0, -1.0, -t));
-  Vertex ver7  = _isosphereAdd(shape, new Math.Vector3( 0.0,  1.0, -t));
+  Vertex ver4  = _isosphereAdd(shape, new Math.Vector3( 0.0, -1.0, -t));
+  Vertex ver5  = _isosphereAdd(shape, new Math.Vector3( 0.0,  1.0, -t));
+  Vertex ver6  = _isosphereAdd(shape, new Math.Vector3( 0.0, -1.0,  t));
+  Vertex ver7  = _isosphereAdd(shape, new Math.Vector3( 0.0,  1.0,  t));
 
-  Vertex ver8  = _isosphereAdd(shape, new Math.Vector3( t,  0.0, -1.0));
-  Vertex ver9  = _isosphereAdd(shape, new Math.Vector3( t,  0.0,  1.0));
-  Vertex ver10 = _isosphereAdd(shape, new Math.Vector3(-t,  0.0, -1.0));
-  Vertex ver11 = _isosphereAdd(shape, new Math.Vector3(-t,  0.0,  1.0));
+  Vertex ver8  = _isosphereAdd(shape, new Math.Vector3( t,  0.0,  1.0));
+  Vertex ver9  = _isosphereAdd(shape, new Math.Vector3( t,  0.0, -1.0));
+  Vertex ver10 = _isosphereAdd(shape, new Math.Vector3(-t,  0.0,  1.0));
+  Vertex ver11 = _isosphereAdd(shape, new Math.Vector3(-t,  0.0, -1.0));
 
   _isoSphereDiv(shape, ver0,  ver11, ver5,  iterations);
   _isoSphereDiv(shape, ver0,  ver5,  ver1,  iterations);
@@ -291,7 +277,7 @@ void _addSphereSide(Shape shape, func2Handle heightHndl, int widthDiv, int heigh
   Math.Vector3 vec2 = new Math.Vector3(nx-ny+nz, ny-nz+nx, nz-nx+ny);
   Math.Vector3 vec3 = new Math.Vector3(nx-ny-nz, ny-nz-nx, nz-nx-ny);
   Math.Vector3 vec4 = new Math.Vector3(nx+ny-nz, ny+nz-nx, nz+nx-ny);
-  if (nx+ny+nz <= 0.0) {
+  if (nx+ny+nz > 0.0) {
     Math.Vector3 t = vec4;
     vec4 = vec2;
     vec2 = t;
@@ -345,7 +331,7 @@ Shape cylindricalPath(int minorCount, int majorCount, double minorRadius, double
     var minorAngle = v*2.0*PI;
     var minorCos = cos(minorAngle)*minorRadius;
     var minorSin = sin(minorAngle)*minorRadius;
-    return cur + new Math.Point3.fromVector3(other*minorCos + cross*minorSin);
+    return cur + new Math.Point3.fromVector3(other*minorCos - cross*minorSin);
   });
   if (shape == null) return null;
   shape.calculateNormals();
@@ -357,7 +343,7 @@ Shape cylindricalPath(int minorCount, int majorCount, double minorRadius, double
 Shape grid({int widthDiv: 4, int heightDiv: 4, func2Handle heightHndl: null}) {
   if (heightHndl == null) heightHndl = (double u, double v) => 0.0;
   return surface(widthDiv, heightDiv, (double u, double v) =>
-    new Math.Point3(u*2.0-1.0, heightHndl(u, v), v*2.0-1.0));
+    new Math.Point3(u*2.0-1.0, v*2.0-1.0, heightHndl(u, v)));
 }
 
 /// Creates a grid surface which can be bent and twisted with the given [locHndl].

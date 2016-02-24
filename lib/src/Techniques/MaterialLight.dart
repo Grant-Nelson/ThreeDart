@@ -31,7 +31,8 @@ class MaterialLight extends Technique {
   void render(Core.RenderState state, Core.Entity obj) {
     if ((this._light == null) || (this._material == null)) return;
     else if (this._light is Lights.Directional) {
-      if (this._material is Materials.Solid) this._solidDirectional(state, obj);
+      if (this._material is Materials.BumpySolid) this._bumpySolidDirectional(state, obj);
+      else if (this._material is Materials.Solid) this._solidDirectional(state, obj);
       else if (this._material is Materials.BumpyTexture2D) this._bumpyTxt2DDirectional(state, obj);
       else if (this._material is Materials.Texture2D) this._txt2DDirectional(state, obj);
       else throw new Exception("Unsupported light and material combination. $_material, $_light");
@@ -49,6 +50,33 @@ class MaterialLight extends Technique {
     this._material.unbind(state);
   }
 
+  /// Renders and sets up the shaper for bumpy solid color directional light.
+  void _bumpySolidDirectional(Core.RenderState state, Core.Entity obj) {
+    if (this._shader == null)
+      this._shader = new Shaders.BumpySolidDirectional.cached(state);
+    Shaders.BumpySolidDirectional shader = this._shader as Shaders.BumpySolidDirectional;
+
+    if (obj.cacheNeedsUpdate) {
+      obj.cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl),
+        Data.VertexType.Pos|Data.VertexType.Norm|Data.VertexType.Binm|Data.VertexType.Txt)
+        ..findAttribute(Data.VertexType.Pos).attr = shader.posAttr.loc
+        ..findAttribute(Data.VertexType.Norm).attr = shader.normAttr.loc
+        ..findAttribute(Data.VertexType.Binm).attr = shader.binmAttr.loc
+        ..findAttribute(Data.VertexType.Txt).attr = shader.txtAttr.loc;
+    }
+
+    Materials.BumpySolid mat = this._material as Materials.BumpySolid
+      ..bumpMap.index = 0;
+
+    shader
+      ..bind(state)
+      ..setLight(this._light as Lights.Directional)
+      ..setMaterial(mat)
+      ..projectMatrix = state.projection.matrix
+      ..viewMatrix = state.view.matrix
+      ..objectMatrix = state.object.matrix;
+  }
+
   /// Renders and sets up the shaper for solid color directional light.
   void _solidDirectional(Core.RenderState state, Core.Entity obj) {
     if (this._shader == null)
@@ -56,7 +84,8 @@ class MaterialLight extends Technique {
     Shaders.SolidDirectional shader = this._shader as Shaders.SolidDirectional;
 
     if (obj.cacheNeedsUpdate) {
-      obj.cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl), Data.VertexType.Pos|Data.VertexType.Norm)
+      obj.cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl),
+        Data.VertexType.Pos|Data.VertexType.Norm)
         ..findAttribute(Data.VertexType.Pos).attr = shader.posAttr.loc
         ..findAttribute(Data.VertexType.Norm).attr = shader.normAttr.loc;
     }

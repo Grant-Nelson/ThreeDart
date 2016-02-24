@@ -43,7 +43,7 @@ class Perspective implements Camara {
       _lookMat = new Math.Matrix4.lookTowards(
         new Math.Point3(0.0, 0.0, 0.0),
         new Math.Vector3(0.0, 1.0, 0.0),
-        new Math.Vector3(0.0, 0.0, 1.0));
+        new Math.Vector3(0.0, 0.0, -1.0));
     }
     Math.Matrix4 look = _lookMat;
     if (mover != null) {

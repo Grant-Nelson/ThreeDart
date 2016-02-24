@@ -16,36 +16,51 @@ import 'package:ThreeDart/Materials.dart' as Materials;
 
 void main() {
 
+  Shapes.Shape shape = (Shapes.square()..adjustNormals());
+
+  Techniques.MaterialLight tech = new Techniques.MaterialLight()
+    ..light = new Lights.Directional(
+        direction: new Math.Vector3(1.0, 1.0, -2.0),
+        color: new Math.Color3.white());
+
+  ThreeDart.Entity objTech = new ThreeDart.Entity()
+    ..shape = shape
+    ..technique = tech;
+
+  ThreeDart.Entity objInspecTech = new ThreeDart.Entity()
+    ..shape = shape
+    ..technique = (new Techniques.Inspection()
+        ..vectorScale = 0.4
+        ..showWireFrame = true
+        ..showAxis = true
+        ..showNormals = true
+        ..showBinormals = true);
+
   Movers.UserRotater rotater = new Movers.UserRotater();
   Movers.UserZoom zoom = new Movers.UserZoom();
 
-  ThreeDart.Entity obj = new ThreeDart.Entity()
-    ..shape = (Shapes.square()..adjustNormals())
+
+  ThreeDart.Entity group = new ThreeDart.Entity()
+    ..children.add(objInspecTech)
+    ..children.add(objTech)
     ..mover = (new Movers.Group()
       ..add(rotater)
       ..add(zoom));
 
-  Techniques.MaterialLight tech = new Techniques.MaterialLight()
-    ..light = new Lights.Directional(
-          direction: new Math.Vector3(1.0, 1.0, -2.0),
-          color: new Math.Color3.white());
-
   Scenes.RenderPass pass = new Scenes.RenderPass()
-    ..tech = tech
-    ..children.add(obj)
+    ..children.add(group)
     ..camara.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0));
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart")
     ..scene = pass;
 
-  tech.material = new Materials.BumpyTexture2D(
-    emission: td.textureLoader.load2DFromFile("./Emission.png"),
-    ambient: new Math.Color3(0.2, 0.2, 0.2),
-    diffuse: new Math.Color3(0.8, 0.8, 0.8),
-    color: td.textureLoader.load2DFromFile("./Color.png"),
+  tech.material = new Materials.BumpySolid(
+    emission: new Math.Color3.black(),
+    ambient: new Math.Color3(0.0, 0.0, 1.0),
+    diffuse: new Math.Color3(0.0, 1.0, 0.0),
+    specular: new Math.Color3(1.0, 0.0, 0.0),
     bumpMap: td.textureLoader.load2DFromFile("./BumpMap.png"),
-    specular: td.textureLoader.load2DFromFile("./Specular.png"),
-    shininess: 100.0);
+    shininess: 10.0);
 
   rotater.attach(td.userInput);
   zoom.attach(td.userInput);

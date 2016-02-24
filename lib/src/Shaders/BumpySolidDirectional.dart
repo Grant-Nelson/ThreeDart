@@ -1,10 +1,10 @@
 part of ThreeDart.Shaders;
 
-/// A shader for rendering bumpy texture 2D directional light.
-class BumpyTexture2DDirectional extends Shader {
+/// A shader for rendering bumpy solid color directional light.
+class BumpySolidDirectional extends Shader {
 
   /// The name for this shader.
-  static const String defaultName = "Bumpy Texture2D Directional";
+  static const String defaultName = "Bumpy Solid Directional";
 
   /// The vertex shader source code in glsl.
   static String _vertexSource =
@@ -19,7 +19,7 @@ class BumpyTexture2DDirectional extends Shader {
       "attribute vec2 txtAttr;                                     \n"+
       "                                                            \n"+
       "varying vec3 normal;                                        \n"+
-      "varying vec3 binormal;                                      \n"+
+      "varying vec3 binormal;                                     \n"+
       "varying vec3 litVec;                                        \n"+
       "varying vec3 camPos;                                        \n"+
       "varying vec2 txt2D;                                         \n"+
@@ -39,17 +39,13 @@ class BumpyTexture2DDirectional extends Shader {
       "precision mediump float;                                   \n"+
       "                                                           \n"+
       "uniform vec3 lightClr;                                     \n"+
-      "uniform sampler2D emissionTxt;                             \n"+
+      "uniform vec3 emissionClr;                                  \n"+
       "uniform vec3 ambientClr;                                   \n"+
       "uniform vec3 diffuseClr;                                   \n"+
-      "uniform sampler2D colorTxt;                                \n"+
-      "uniform sampler2D specularTxt;                             \n"+
-      "uniform sampler2D bumpTxt;                                 \n"+
-      "uniform int hasEmission;                                   \n"+
-      "uniform int hasColor;                                      \n"+
-      "uniform int hasSpecular;                                   \n"+
-      "uniform int hasBump;                                       \n"+
+      "uniform vec3 specularClr;                                  \n"+
       "uniform float shininess;                                   \n"+
+      "uniform sampler2D bumpTxt;                                 \n"+
+      "uniform int hasBump;                                       \n"+
       "                                                           \n"+
       "varying vec3 normal;                                       \n"+
       "varying vec3 binormal;                                     \n"+
@@ -57,33 +53,21 @@ class BumpyTexture2DDirectional extends Shader {
       "varying vec3 camPos;                                       \n"+
       "varying vec2 txt2D;                                        \n"+
       "                                                           \n"+
-      "vec4 emission()                                            \n"+
+      "vec3 diffuse(vec3 norm)                                    \n"+
       "{                                                          \n"+
-      "   if (hasEmission == 0) return vec4(0.0, 0.0, 0.0, 0.0);  \n"+
-      "   return texture2D(emissionTxt, txt2D);                   \n"+
-      "}                                                          \n"+
-      "                                                           \n"+
-      "vec4 color(vec3 norm)                                      \n"+
-      "{                                                          \n"+
-      "   vec4 clr;                                               \n"+
-      "   if (hasColor == 0) clr = vec4(1.0, 1.0, 1.0, 1.0);      \n"+
-      "   else clr = texture2D(colorTxt, txt2D);                  \n"+
       "   float scalar = dot(norm, litVec);                       \n"+
-      "   return clr*vec4(ambientClr +                            \n"+
-      "          diffuseClr*max(scalar, 0.0), 1.0);               \n"+
+      "   return diffuseClr*max(scalar, 0.0);                     \n"+
       "}                                                          \n"+
       "                                                           \n"+
-      "vec4 specular(vec3 norm)                                   \n"+
+      "vec3 specular(vec3 norm)                                   \n"+
       "{                                                          \n"+
-      "   if (hasSpecular == 0) return vec4(0.0, 0.0, 0.0, 0.0);  \n"+
-      "   vec3 lightRef = normalize(reflect(litVec, norm));       \n"+
-      "   float scalar = dot(lightRef, normalize(camPos));        \n"+
-      "   if(scalar > 0.0)                                        \n"+
+      "   if(dot(norm, litVec) > 0.0)                             \n"+
       "   {                                                       \n"+
-      "      vec4 specularClr = texture2D(specularTxt, txt2D);    \n"+
-      "      return specularClr*max(pow(scalar, shininess), 0.0); \n"+
+      "      vec3 lightRef = normalize(reflect(-litVec, norm));   \n"+
+      "      float scalar = dot(lightRef, normalize(camPos));     \n"+
+      "      return specularClr*pow(max(scalar, 0.0), shininess); \n"+
       "   }                                                       \n"+
-      "   else return vec4(0.0, 0.0, 0.0, 0.0);                   \n"+
+      "   return vec3(0.0, 0.0, 0.0);                             \n"+
       "}                                                          \n"+
       "                                                           \n"+
       "vec3 bumpyNormal()                                         \n"+
@@ -104,9 +88,9 @@ class BumpyTexture2DDirectional extends Shader {
       "void main()                                                \n"+
       "{                                                          \n"+
       "   vec3 norm = bumpyNormal();                              \n"+
-      "   vec4 matClr = color(norm) + specular(norm);             \n"+
-      "   vec4 h = emission() + vec4(lightClr, 1.0)*matClr;       \n"+
-      "   gl_FragColor = vec4(norm, 1.0) + 0.0000001*h;           \n"+
+      "   vec3 litClr = lightClr*(ambientClr +                    \n"+
+      "                 diffuse(norm) + specular(norm));          \n"+
+      "   gl_FragColor = vec4(emissionClr + litClr, 1.0);         \n"+
       "}                                                          \n";
 
   Attribute _posAttr;
@@ -115,17 +99,13 @@ class BumpyTexture2DDirectional extends Shader {
   Attribute _txtAttr;
   Uniform3f _lightVec;
   Uniform3f _lightClr;
-  UniformSampler2D _emissionTxt;
+  Uniform3f _emissionClr;
   Uniform3f _ambientClr;
   Uniform3f _diffuseClr;
-  UniformSampler2D _colorTxt;
-  UniformSampler2D _specularTxt;
-  UniformSampler2D _bumpTxt;
-  Uniform1i _hasEmission;
-  Uniform1i _hasColor;
-  Uniform1i _hasSpecular;
-  Uniform1i _hasBump;
+  Uniform3f _specularClr;
   Uniform1f _shininess;
+  UniformSampler2D _bumpTxt;
+  Uniform1i _hasBump;
   UniformMat4 _objMat;
   UniformMat4 _viewMat;
   UniformMat4 _projMat;
@@ -133,17 +113,17 @@ class BumpyTexture2DDirectional extends Shader {
   /// Checks for the shader in the shader cache in the given [state],
   /// if it is not found then this shader is compiled and added
   /// to the shader cache before being returned.
-  factory BumpyTexture2DDirectional.cached(Core.RenderState state) {
-    BumpyTexture2DDirectional shader = state.shader(defaultName);
+  factory BumpySolidDirectional.cached(Core.RenderState state) {
+    BumpySolidDirectional shader = state.shader(defaultName);
     if (shader == null) {
-      shader = new BumpyTexture2DDirectional(state.gl);
+      shader = new BumpySolidDirectional(state.gl);
       state.addShader(shader);
     }
     return shader;
   }
 
   /// Compiles this shader for the given rendering context.
-  BumpyTexture2DDirectional(WebGL.RenderingContext gl): super(gl, defaultName) {
+  BumpySolidDirectional(WebGL.RenderingContext gl): super(gl, defaultName) {
     this.initialize(_vertexSource, _fragmentSource);
     this._posAttr     = this.attributes["posAttr"];
     this._normAttr    = this.attributes["normAttr"];
@@ -151,17 +131,13 @@ class BumpyTexture2DDirectional extends Shader {
     this._txtAttr     = this.attributes["txtAttr"];
     this._lightVec    = this.uniforms["lightVec"] as Uniform3f;
     this._lightClr    = this.uniforms["lightClr"] as Uniform3f;
-    this._emissionTxt = this.uniforms["emissionTxt"] as UniformSampler2D;
+    this._emissionClr = this.uniforms["emissionClr"] as Uniform3f;
     this._ambientClr  = this.uniforms["ambientClr"] as Uniform3f;
     this._diffuseClr  = this.uniforms["diffuseClr"] as Uniform3f;
-    this._colorTxt    = this.uniforms["colorTxt"] as UniformSampler2D;
-    this._specularTxt = this.uniforms["specularTxt"] as UniformSampler2D;
-    this._bumpTxt     = this.uniforms["bumpTxt"] as UniformSampler2D;
-    this._hasEmission = this.uniforms["hasEmission"] as Uniform1i;
-    this._hasColor    = this.uniforms["hasColor"] as Uniform1i;
-    this._hasSpecular = this.uniforms["hasSpecular"] as Uniform1i;
-    this._hasBump     = this.uniforms["hasBump"] as Uniform1i;
+    this._specularClr = this.uniforms["specularClr"] as Uniform3f;
     this._shininess   = this.uniforms["shininess"] as Uniform1f;
+    this._bumpTxt     = this.uniforms["bumpTxt"] as UniformSampler2D;
+    this._hasBump     = this.uniforms["hasBump"] as Uniform1i;
     this._objMat      = this.uniforms["objMat"] as UniformMat4;
     this._viewMat     = this.uniforms["viewMat"] as UniformMat4;
     this._projMat     = this.uniforms["projMat"] as UniformMat4;
@@ -204,41 +180,36 @@ class BumpyTexture2DDirectional extends Shader {
     }
   }
 
-  /// The emission texture of the object.
-  set emissionTexture(Textures.Texture2D txt) =>
-    this._setTex(txt, this._emissionTxt, this._hasEmission);
+  /// The emission color of the object.
+  Math.Color3 get emissionColor => this._emissionClr.getColor3();
+  set emissionColor(Math.Color3 clr) => this._emissionClr.setColor3(clr);
 
-  /// The ambient color scalar of the object.
+  /// The ambient color of the object.
   Math.Color3 get ambientColor => this._ambientClr.getColor3();
   set ambientColor(Math.Color3 clr) => this._ambientClr.setColor3(clr);
 
-  /// The diffuse color scalar of the object.
+  /// The diffuse color of the object.
   Math.Color3 get diffuseColor => this._diffuseClr.getColor3();
   set diffuseColor(Math.Color3 clr) => this._diffuseClr.setColor3(clr);
 
-  /// The ambient and diffuse texture of the object.
-  set colorTexture(Textures.Texture2D txt) =>
-    this._setTex(txt, this._colorTxt, this._hasColor);
-
-  /// The specular texture of the object.
-  set specularTexture(Textures.Texture2D txt) =>
-    this._setTex(txt, this._specularTxt, this._hasSpecular);
-
-  /// The normal distortion texture of the object.
-  set bumpTexture(Textures.Texture2D txt) =>
-    this._setTex(txt, this._bumpTxt, this._hasBump);
+  /// The specular color of the object.
+  Math.Color3 get specularColor => this._specularClr.getColor3();
+  set specularColor(Math.Color3 clr) => this._specularClr.setColor3(clr);
 
   /// The shininess value of the specualr.
   double get shininess => this._shininess.getValue();
   set shininess(double value) => this._shininess.setValue(value);
 
+  /// The normal distortion texture of the object.
+  set bumpTexture(Textures.Texture2D txt) =>
+    this._setTex(txt, this._bumpTxt, this._hasBump);
+
   /// Sets the material's colors.
-  void setMaterial(Materials.BumpyTexture2D material) {
-    this.emissionTexture = material.emission;
+  void setMaterial(Materials.BumpySolid material) {
+    this.emissionColor = material.emission;
     this.ambientColor = material.ambient;
     this.diffuseColor = material.diffuse;
-    this.colorTexture = material.color;
-    this.specularTexture = material.specular;
+    this.specularColor = material.specular;
     this.bumpTexture = material.bumpMap;
     this.shininess = material.shininess;
   }

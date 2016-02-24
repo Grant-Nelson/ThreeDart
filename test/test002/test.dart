@@ -17,10 +17,13 @@ void main() {
 
   Movers.UserRotater rotater = new Movers.UserRotater();
   Movers.UserZoom zoom = new Movers.UserZoom();
+  Movers.UserRoller roller = new Movers.UserRoller()
+    ..ctrlPressed = true;
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..mover = (new Movers.Group()
       ..add(rotater)
+      ..add(roller)
       ..add(zoom));
 
   Techniques.Inspection tech = new Techniques.Inspection()
@@ -36,6 +39,7 @@ void main() {
 
   rotater.attach(td.userInput);
   zoom.attach(td.userInput);
+  roller.attach(td.userInput);
 
   _addCheckBox("Filled",          true,  (bool show) { tech.showFilled         = show; });
   _addCheckBox("Wire Frame",      true,  (bool show) { tech.showWireFrame      = show; });

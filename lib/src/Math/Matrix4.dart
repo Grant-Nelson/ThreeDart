@@ -101,12 +101,13 @@ class Matrix4 {
 
   /// Constructs a new perspective projection matrix.
   ///
+  /// Constructs a projectection for a right hand coordinate system.
   /// The given [angle] is in radians of the field of view.
   /// The given [ratio] is the width over the height of the view.
   /// The [near] and [far] depth of the view.
   factory Matrix4.perspective(double angle, double ratio, double near, double far) {
     double yy = 1.0 / math.tan(angle * 0.5);
-    double xx = yy / ratio;
+    double xx = -yy / ratio;
     double zz = far / (far - near);
     double zw = -far * near / (far - near);
     return new Matrix4(xx,  0.0, 0.0, 0.0,

@@ -116,7 +116,7 @@ class Face {
 
     Math.Vector3 vec1 = new Math.Vector3.fromPoint3(loc2 - loc1).normal();
     Math.Vector3 vec2 = new Math.Vector3.fromPoint3(loc3 - loc1).normal();
-    this._norm = -vec1.cross(vec2).normal();
+    this._norm = vec1.cross(vec2).normal();
     this._ver1._shape.onFaceModified(this);
     return true;
   }

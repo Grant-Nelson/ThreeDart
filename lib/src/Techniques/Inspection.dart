@@ -38,8 +38,8 @@ class Inspection extends Technique {
     this._diffuse3 = new Math.Color3(0.3, 0.3, 0.3);
     this._ambient3 = new Math.Color3(0.7, 0.7, 0.7);
 
-    this._showFilled         = true;
-    this._showWireFrame      = true;
+    this._showFilled         = false;
+    this._showWireFrame      = false;
     this._showVertices       = false;
     this._showNormals        = false;
     this._showBinormals      = false;
