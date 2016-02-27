@@ -265,7 +265,7 @@ class TestManager {
     }
 
     /// Adds a new test to be run.
-    void add(TestHandler test, [String testName = ""]) {
+    void add(String testName, TestHandler test) {
       if (testName.length <= 0) testName = "$test";
       this._tests.add(new TestBlock(this, test, testName));
       this._update();

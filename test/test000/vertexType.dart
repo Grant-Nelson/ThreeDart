@@ -1,44 +1,45 @@
 part of ThreeDart.test.test000;
 
-// Test of vertex types and group methods.
-void vertexTypeTest1(TestArgs args) {
-  _checkVertexType(args, Data.VertexType.None,   "None",    0, 0, 0);
-  _checkVertexType(args, Data.VertexType.Pos,    "Pos",     1, 1, 3);
-  _checkVertexType(args, Data.VertexType.Norm,   "Norm",    2, 1, 3);
-  _checkVertexType(args, Data.VertexType.Binm,   "Binm",    4, 1, 3);
-  _checkVertexType(args, Data.VertexType.Txt,    "Txt",     8, 1, 2);
-  _checkVertexType(args, Data.VertexType.Clr3,   "Clr3",   16, 1, 3);
-  _checkVertexType(args, Data.VertexType.Clr4,   "Clr4",   32, 1, 4);
-  _checkVertexType(args, Data.VertexType.Weight, "Weight", 64, 1, 1);
-  _checkVertexType(args, Data.VertexType.Pos|Data.VertexType.Norm, "Pos|Norm", 3, 2, 6);
-  _checkVertexType(args, Data.VertexType.Pos|Data.VertexType.Txt,  "Pos|Txt",  9, 2, 5);
-  _checkVertexType(args, Data.VertexType.Pos|Data.VertexType.Norm|
-    Data.VertexType.Binm|Data.VertexType.Txt|Data.VertexType.Clr3, "Pos|Norm|Binm|Txt|Clr3", 31, 5, 14);
-  _checkVertexType(args, Data.VertexType.Txt|Data.VertexType.Weight, "Txt|Weight", 72, 2, 3);
-}
+void vertexTypeTests(TestManager tests) {
 
-// Test of getting vertex types from vertex type groups.
-void vertexTypeTest2(TestArgs args) {
-  Data.VertexType group = Data.VertexType.Pos|Data.VertexType.Norm|Data.VertexType.Binm|Data.VertexType.Txt|Data.VertexType.Clr3;
-  _checkSubVertexType(args, group, Data.VertexType.Pos,    true,   0,  0);
-  _checkSubVertexType(args, group, Data.VertexType.Norm,   true,   1,  3);
-  _checkSubVertexType(args, group, Data.VertexType.Binm,   true,   2,  6);
-  _checkSubVertexType(args, group, Data.VertexType.Txt,    true,   3,  9);
-  _checkSubVertexType(args, group, Data.VertexType.Clr3,   true,   4, 11);
-  _checkSubVertexType(args, group, Data.VertexType.Clr4,   false, -1, -1);
-  _checkSubVertexType(args, group, Data.VertexType.Weight, false, -1, -1);
-}
+  tests.add("VertexTypes and Groups", (TestArgs args) {
+    _checkVertexType(args, Data.VertexType.None,   "None",    0, 0, 0);
+    _checkVertexType(args, Data.VertexType.Pos,    "Pos",     1, 1, 3);
+    _checkVertexType(args, Data.VertexType.Norm,   "Norm",    2, 1, 3);
+    _checkVertexType(args, Data.VertexType.Binm,   "Binm",    4, 1, 3);
+    _checkVertexType(args, Data.VertexType.Txt,    "Txt",     8, 1, 2);
+    _checkVertexType(args, Data.VertexType.Clr3,   "Clr3",   16, 1, 3);
+    _checkVertexType(args, Data.VertexType.Clr4,   "Clr4",   32, 1, 4);
+    _checkVertexType(args, Data.VertexType.Weight, "Weight", 64, 1, 1);
+    _checkVertexType(args, Data.VertexType.Pos|Data.VertexType.Norm, "Pos|Norm", 3, 2, 6);
+    _checkVertexType(args, Data.VertexType.Pos|Data.VertexType.Txt,  "Pos|Txt",  9, 2, 5);
+    _checkVertexType(args, Data.VertexType.Pos|Data.VertexType.Norm|
+      Data.VertexType.Binm|Data.VertexType.Txt|Data.VertexType.Clr3, "Pos|Norm|Binm|Txt|Clr3", 31, 5, 14);
+    _checkVertexType(args, Data.VertexType.Txt|Data.VertexType.Weight, "Txt|Weight", 72, 2, 3);
+  });
 
-// Another test of getting vertex types from vertex type groups.
-void vertexTypeTest3(TestArgs args) {
-  Data.VertexType group = Data.VertexType.Pos|Data.VertexType.Binm|Data.VertexType.Clr4|Data.VertexType.Weight;
-  _checkSubVertexType(args, group, Data.VertexType.Pos,    true,   0,  0);
-  _checkSubVertexType(args, group, Data.VertexType.Norm,   false, -1, -1);
-  _checkSubVertexType(args, group, Data.VertexType.Binm,   true,   1,  3);
-  _checkSubVertexType(args, group, Data.VertexType.Txt,    false, -1, -1);
-  _checkSubVertexType(args, group, Data.VertexType.Clr3,   false, -1, -1);
-  _checkSubVertexType(args, group, Data.VertexType.Clr4,   true,   2,  6);
-  _checkSubVertexType(args, group, Data.VertexType.Weight, true,   3, 10);
+  tests.add("VertexTypes from Type Groups 1", (TestArgs args) {
+    Data.VertexType group = Data.VertexType.Pos|Data.VertexType.Norm|Data.VertexType.Binm|Data.VertexType.Txt|Data.VertexType.Clr3;
+    _checkSubVertexType(args, group, Data.VertexType.Pos,    true,   0,  0);
+    _checkSubVertexType(args, group, Data.VertexType.Norm,   true,   1,  3);
+    _checkSubVertexType(args, group, Data.VertexType.Binm,   true,   2,  6);
+    _checkSubVertexType(args, group, Data.VertexType.Txt,    true,   3,  9);
+    _checkSubVertexType(args, group, Data.VertexType.Clr3,   true,   4, 11);
+    _checkSubVertexType(args, group, Data.VertexType.Clr4,   false, -1, -1);
+    _checkSubVertexType(args, group, Data.VertexType.Weight, false, -1, -1);
+  });
+
+  // Another test of getting vertex types from vertex type groups.
+  tests.add("VertexType from Type Groups 2", (TestArgs args) {
+    Data.VertexType group = Data.VertexType.Pos|Data.VertexType.Binm|Data.VertexType.Clr4|Data.VertexType.Weight;
+    _checkSubVertexType(args, group, Data.VertexType.Pos,    true,   0,  0);
+    _checkSubVertexType(args, group, Data.VertexType.Norm,   false, -1, -1);
+    _checkSubVertexType(args, group, Data.VertexType.Binm,   true,   1,  3);
+    _checkSubVertexType(args, group, Data.VertexType.Txt,    false, -1, -1);
+    _checkSubVertexType(args, group, Data.VertexType.Clr3,   false, -1, -1);
+    _checkSubVertexType(args, group, Data.VertexType.Clr4,   true,   2,  6);
+    _checkSubVertexType(args, group, Data.VertexType.Weight, true,   3, 10);
+  });
 }
 
 // Checks a vertex types and group for expected values.

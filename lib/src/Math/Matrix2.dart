@@ -28,12 +28,12 @@ class Matrix2 {
   /// Constructs a 2x2 rotation matrix.
   ///
   /// The given [angle] is in radians.
-  /// This matrix rotates around a virtual Z axis.
+  /// This matrix rotates counter-clockwise around a virtual Z axis.
   factory Matrix2.rotate(double angle) {
     double c = math.cos(angle);
     double s = math.sin(angle);
-    return new Matrix2(c,   -s,
-                       s,    c);
+    return new Matrix2(c, -s,
+                       s,  c);
   }
 
   /// Constructs a 2x2 matrix from a trimmed 3x3 matrix.
