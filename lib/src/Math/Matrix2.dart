@@ -141,6 +141,7 @@ class Matrix2 {
   }
 
   /// Gets the string for this matrix.
-  String toString() => '['+formatDouble(this._m11)+', '+formatDouble(this._m21)+',\n' +
-                       ' '+formatDouble(this._m12)+', '+formatDouble(this._m22)+']';
+  String toString([String indent = ""]) =>
+    '['+formatDouble(this._m11)+', '+formatDouble(this._m21)+',\n' + indent +
+    ' '+formatDouble(this._m12)+', '+formatDouble(this._m22)+']';
 }

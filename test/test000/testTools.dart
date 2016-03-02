@@ -100,7 +100,7 @@ class TestBlock extends TestArgs {
 
   /// Runs this test asynchronously in the event loop.
   void run() {
-    new async.Future(() {
+    new asy.Future(() {
       this._started = true;
       this._update();
       html.window.requestAnimationFrame((_) { });
@@ -229,7 +229,7 @@ class TestManager {
       if (block.failed) this._failed++;
       this._update();
       if (this._finished < this._tests.length) {
-        new async.Future(() {
+        new asy.Future(() {
           html.window.requestAnimationFrame((_) { });
           this._tests[this._finished].run();
         });
@@ -272,7 +272,7 @@ class TestManager {
 
       // If currently none are running, start this one.
       if (this._finished + 1 == this._tests.length) {
-        new async.Future(() {
+        new asy.Future(() {
           html.window.requestAnimationFrame((_) { });
           this._tests[this._finished].run();
         });

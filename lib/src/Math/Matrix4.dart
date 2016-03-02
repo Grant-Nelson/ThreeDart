@@ -407,9 +407,9 @@ class Matrix4 {
   }
 
   /// Gets the string for this matrix.
-  String toString() =>
-      '['+formatDouble(this._m11)+', '+formatDouble(this._m21)+', '+formatDouble(this._m31)+', '+formatDouble(this._m41)+',\n' +
-      ' '+formatDouble(this._m12)+', '+formatDouble(this._m22)+', '+formatDouble(this._m32)+', '+formatDouble(this._m42)+',\n' +
-      ' '+formatDouble(this._m13)+', '+formatDouble(this._m23)+', '+formatDouble(this._m33)+', '+formatDouble(this._m43)+',\n' +
+  String toString([String indent = ""]) =>
+      '['+formatDouble(this._m11)+', '+formatDouble(this._m21)+', '+formatDouble(this._m31)+', '+formatDouble(this._m41)+',\n' + indent +
+      ' '+formatDouble(this._m12)+', '+formatDouble(this._m22)+', '+formatDouble(this._m32)+', '+formatDouble(this._m42)+',\n' + indent +
+      ' '+formatDouble(this._m13)+', '+formatDouble(this._m23)+', '+formatDouble(this._m33)+', '+formatDouble(this._m43)+',\n' + indent +
       ' '+formatDouble(this._m14)+', '+formatDouble(this._m24)+', '+formatDouble(this._m34)+', '+formatDouble(this._m44)+']';
 }

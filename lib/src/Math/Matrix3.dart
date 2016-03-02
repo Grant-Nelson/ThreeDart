@@ -29,10 +29,10 @@ class Matrix3 {
                 tx,  ty,  1.0);
 
   /// Constructs a 3x3 scalar matrix.
-  factory Matrix3.scale(double sx, double sy) =>
+  factory Matrix3.scale(double sx, double sy, [double sz = 1.0]) =>
     new Matrix3(sx,  0.0, 0.0,
                 0.0, sy,  0.0,
-                0.0, 0.0, 1.0);
+                0.0, 0.0, sz);
 
   /// Constructs a 3x3 X asix rotation matrix.
   ///
@@ -51,9 +51,9 @@ class Matrix3 {
   factory Matrix3.rotateY(double angle) {
     double c = math.cos(angle);
     double s = math.sin(angle);
-    return new Matrix3(c,   0.0, s,
+    return new Matrix3( c,  0.0, -s,
                        0.0, 1.0, 0.0,
-                       -s,  0.0, c);
+                        s,  0.0,  c);
   }
 
   /// Constructs a 3x3 Z asix rotation matrix.
@@ -62,8 +62,8 @@ class Matrix3 {
   factory Matrix3.rotateZ(double angle) {
     double c = math.cos(angle);
     double s = math.sin(angle);
-    return new Matrix3(c,   -s,  0.0,
-                       s,    c,  0.0,
+    return new Matrix3( c,  -s,  0.0,
+                        s,   c,  0.0,
                        0.0, 0.0, 1.0);
   }
 
@@ -248,8 +248,8 @@ class Matrix3 {
   }
 
   /// Gets the string for this matrix.
-  String toString() =>
-      '['+formatDouble(this._m11)+', '+formatDouble(this._m21)+', '+formatDouble(this._m31)+',\n' +
-      ' '+formatDouble(this._m12)+', '+formatDouble(this._m22)+', '+formatDouble(this._m32)+',\n' +
+  String toString([String indent = ""]) =>
+      '['+formatDouble(this._m11)+', '+formatDouble(this._m21)+', '+formatDouble(this._m31)+',\n' + indent +
+      ' '+formatDouble(this._m12)+', '+formatDouble(this._m22)+', '+formatDouble(this._m32)+',\n' + indent +
       ' '+formatDouble(this._m13)+', '+formatDouble(this._m23)+', '+formatDouble(this._m33)+']';
 }
