@@ -146,7 +146,8 @@ class Vector3 {
   }
 
   /// Gets the string for this vector.
-  String toString() => '['+formatDouble(this._dx)+
-                      ', '+formatDouble(this._dy)+
-                      ', '+formatDouble(this._dz)+']';
+  String toString([int fraction = 3]) =>
+    '['+formatDouble(this._dx, fraction)+
+    ', '+formatDouble(this._dy, fraction)+
+    ', '+formatDouble(this._dz, fraction)+']';
 }

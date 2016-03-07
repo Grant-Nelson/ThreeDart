@@ -141,7 +141,10 @@ class Matrix2 {
   }
 
   /// Gets the string for this matrix.
-  String toString([String indent = ""]) =>
-    '['+formatDouble(this._m11)+', '+formatDouble(this._m21)+',\n' + indent +
-    ' '+formatDouble(this._m12)+', '+formatDouble(this._m22)+']';
+  String toString([String indent = "", int fraction = 3]) {
+    List<String> col1 = formatColumn([this._m11, this._m12], fraction);
+    List<String> col2 = formatColumn([this._m21, this._m22], fraction);
+    return '[${col1[0]}, ${col2[0]},\n' +
+      '$indent ${col1[1]}, ${col2[1]}]';
+  }
 }

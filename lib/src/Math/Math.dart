@@ -59,28 +59,38 @@ double diffInSecs(DateTime a, DateTime b) {
 /// Formats the given double value into a string.
 ///
 /// [v] is the number to get a string for.
-/// [whole] is the padding to put to the left of the decimal point.
 /// [fraction] is the length of the fractional part.
-String formatDouble(double v, [int whole = 1, int fraction = 3]) {
-  if (Comparer.currentEquality(v, 0.0)) {
-    return (' '+(0.0).toStringAsFixed(fraction)).padLeft(whole+fraction+2);
-  } else if (v < 0.0) {
-    return (v.toStringAsFixed(fraction)).padLeft(whole+fraction+2);
-  } else {
-    return (' '+v.toStringAsFixed(fraction)).padLeft(whole+fraction+2);
+/// [whole] is the padding to put to the left of the number.
+String formatDouble(double v, [int fraction = 3, int whole = 0]) {
+  if (Comparer.currentEquality(v, 0.0)) v = 0.0;
+  return v.toStringAsFixed(fraction).padLeft(whole);
+}
+
+/// Formats the given double values into strings for a column.
+///
+/// [vals] is the numbers to get the strings for.
+/// [fraction] is the length of the fractional part.
+/// [whole] is the padding to put to the left of the number.
+List<String> formatColumn(List<double> vals, [int fraction = 3, int whole = 0]) {
+  int maxWidth = 0;
+  List<String> results = new List<String>();
+  for(double v in vals) {
+    String str = formatDouble(v, fraction, whole);
+    maxWidth = math.max(maxWidth, str.length);
+    results.add(str);
   }
+  for(int i = results.length-1; i >= 0; i--) {
+    results[i] = results[i].padLeft(maxWidth);
+  }
+  return results;
 }
 
 /// Formats the given integer into a string.
 ///
 /// [v] is the number to get a string for.
 /// [whole] is the padding to put to the left of the number.
-String formatInt(int v, [int whole = 3]) {
-  if (v < 0.0) {
-    return v.toString().padLeft(whole);
-  } else {
-    return (' '+v.toString()).padLeft(whole);
-  }
+String formatInt(int v, [int whole = 0]) {
+  return v.toString().padLeft(whole);
 }
 
 /// Gets the nearest (lower) power of the [radix] to the given [value].

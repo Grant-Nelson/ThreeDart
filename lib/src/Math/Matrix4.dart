@@ -28,17 +28,17 @@ class Matrix4 {
 
   /// Constructs a 4x4 translation matrix.
   factory Matrix4.translate(double tx, double ty, double tz) =>
-    new Matrix4(1.0, 0.0, 0.0, 0.0,
-                0.0, 1.0, 0.0, 0.0,
-                0.0, 0.0, 1.0, 0.0,
-                tx,  ty,  tz,  1.0);
+    new Matrix4(1.0, 0.0, 0.0, tx,
+                0.0, 1.0, 0.0, ty,
+                0.0, 0.0, 1.0, tz,
+                0.0, 0.0, 0.0, 1.0);
 
   /// Constructs a 4x4 scalar matrix.
-  factory Matrix4.scale(double sx, double sy, double sz) =>
+  factory Matrix4.scale(double sx, double sy, double sz, [double sw = 1.0]) =>
     new Matrix4(sx,  0.0, 0.0, 0.0,
                 0.0, sy,  0.0, 0.0,
                 0.0, 0.0, sz,  0.0,
-                0.0, 0.0, 0.0, 1.0);
+                0.0, 0.0, 0.0, sw);
 
   /// Constructs a 4x4 rotation matrix.
   ///
@@ -70,8 +70,8 @@ class Matrix4 {
     double c = math.cos(angle);
     double s = math.sin(angle);
     return new Matrix4(1.0, 0.0, 0.0, 0.0,
-                       0.0, c,   -s,  0.0,
-                       0.0, s,    c,  0.0,
+                       0.0,  c,  -s,  0.0,
+                       0.0,  s,   c,  0.0,
                        0.0, 0.0, 0.0, 1.0);
   }
 
@@ -81,9 +81,9 @@ class Matrix4 {
   factory Matrix4.rotateY(double angle) {
     double c = math.cos(angle);
     double s = math.sin(angle);
-    return new Matrix4(c,   0.0, s,   0.0,
+    return new Matrix4( c,  0.0, -s,  0.0,
                        0.0, 1.0, 0.0, 0.0,
-                       -s,  0.0, c,   0.0,
+                        s,  0.0,  c,  0.0,
                        0.0, 0.0, 0.0, 1.0);
   }
 
@@ -93,8 +93,8 @@ class Matrix4 {
   factory Matrix4.rotateZ(double angle) {
     double c = math.cos(angle);
     double s = math.sin(angle);
-    return new Matrix4(c,   -s,  0.0, 0.0,
-                       s,    c,  0.0, 0.0,
+    return new Matrix4( c,  -s,  0.0, 0.0,
+                        s,   c,  0.0, 0.0,
                        0.0, 0.0, 1.0, 0.0,
                        0.0, 0.0, 0.0, 1.0);
   }
@@ -112,8 +112,8 @@ class Matrix4 {
     double zw = -far * near / (far - near);
     return new Matrix4(xx,  0.0, 0.0, 0.0,
                        0.0, yy,  0.0, 0.0,
-                       0.0, 0.0, zz,  1.0,
-                       0.0, 0.0, zw,  0.0);
+                       0.0, 0.0, zz,  zw,
+                       0.0, 0.0, 1.0, 0.0);
   }
 
   /// Constructs a new orthographic projection matrix.
@@ -147,10 +147,10 @@ class Matrix4 {
     double tx = (-xaxis).dot(toPos);
     double ty = (-yaxis).dot(toPos);
     double tz = (-zaxis).dot(toPos);
-    return new Matrix4(xaxis.dx, yaxis.dx, zaxis.dx, 0.0,
-                       xaxis.dy, yaxis.dy, zaxis.dy, 0.0,
-                       xaxis.dz, yaxis.dz, zaxis.dz, 0.0,
-                          tx,       ty,       tz,    1.0);
+    return new Matrix4(xaxis.dx, yaxis.dx, zaxis.dx, tx,
+                       xaxis.dy, yaxis.dy, zaxis.dy, ty,
+                       xaxis.dz, yaxis.dz, zaxis.dz, tz,
+                         0.0,      0.0,      0.0,    1.0);
   }
 
   /// Constructs a camara matrix.
@@ -348,6 +348,24 @@ class Matrix4 {
       this._m14 * other._m31 + this._m24 * other._m32 + this._m34 * other._m33 + this._m44 * other._m34,
       this._m14 * other._m41 + this._m24 * other._m42 + this._m34 * other._m43 + this._m44 * other._m44);
 
+
+  /// Transposes the given [vec] with this matrix.
+  ///
+  /// The Z component of the point is treated a 0.0,
+  /// meaning the 4th (W) row and column of the matrix are not used.
+  Vector2 transVec2(Vector2 vec) => new Vector2(
+      this._m11 * vec.dx + this._m21 * vec.dy,
+      this._m12 * vec.dx + this._m22 * vec.dy);
+
+  /// Transposes the given [pnt] with this matrix.
+  ///
+  /// The W component of the point is treated a 1.0,
+  /// meaning the 4th (W) column of the matrix can be used for translation.
+  Point2 transPnt2(Point2 pnt) => new Point2(
+      this._m11 * pnt.x + this._m21 * pnt.y + this._m41,
+      this._m12 * pnt.x + this._m22 * pnt.y + this._m42);
+
+
   /// Transposes the given [vec] with this matrix.
   ///
   /// The Z component of the point is treated a 0.0,
@@ -407,9 +425,14 @@ class Matrix4 {
   }
 
   /// Gets the string for this matrix.
-  String toString([String indent = ""]) =>
-      '['+formatDouble(this._m11)+', '+formatDouble(this._m21)+', '+formatDouble(this._m31)+', '+formatDouble(this._m41)+',\n' + indent +
-      ' '+formatDouble(this._m12)+', '+formatDouble(this._m22)+', '+formatDouble(this._m32)+', '+formatDouble(this._m42)+',\n' + indent +
-      ' '+formatDouble(this._m13)+', '+formatDouble(this._m23)+', '+formatDouble(this._m33)+', '+formatDouble(this._m43)+',\n' + indent +
-      ' '+formatDouble(this._m14)+', '+formatDouble(this._m24)+', '+formatDouble(this._m34)+', '+formatDouble(this._m44)+']';
+  String toString([String indent = "", int fraction = 3]) {
+    List<String> col1 = formatColumn([this._m11, this._m12, this._m13, this._m14], fraction);
+    List<String> col2 = formatColumn([this._m21, this._m22, this._m23, this._m24], fraction);
+    List<String> col3 = formatColumn([this._m31, this._m32, this._m33, this._m34], fraction);
+    List<String> col4 = formatColumn([this._m41, this._m42, this._m43, this._m44], fraction);
+    return '[${col1[0]}, ${col2[0]}, ${col3[0]}, ${col4[0]},\n' +
+      '$indent ${col1[1]}, ${col2[1]}, ${col3[1]}, ${col4[1]},\n' +
+      '$indent ${col1[2]}, ${col2[2]}, ${col3[2]}, ${col4[2]},\n' +
+      '$indent ${col1[3]}, ${col2[3]}, ${col3[3]}, ${col4[3]}]';
+  }
 }

@@ -142,8 +142,9 @@ class Quaternion {
   }
 
   /// Gets the string for this quaternion.
-  String toString() => '['+formatDouble(this._a)+
-                    'i + '+formatDouble(this._b)+
-                    'j + '+formatDouble(this._c)+
-                    'k + '+formatDouble(this._t)+']';
+  String toString([int fraction = 3]) =>
+    '['+formatDouble(this._a, fraction)+
+    'i + '+formatDouble(this._b, fraction)+
+    'j + '+formatDouble(this._c, fraction)+
+    'k + '+formatDouble(this._t, fraction)+']';
 }

@@ -24,9 +24,9 @@ class Matrix3 {
 
   /// Constructs a 3x3 translation matrix.
   factory Matrix3.translate(double tx, double ty) =>
-    new Matrix3(1.0, 0.0, 0.0,
-                0.0, 1.0, 0.0,
-                tx,  ty,  1.0);
+    new Matrix3(1.0, 0.0, tx,
+                0.0, 1.0, ty,
+                0.0, 0.0, 1.0);
 
   /// Constructs a 3x3 scalar matrix.
   factory Matrix3.scale(double sx, double sy, [double sz = 1.0]) =>
@@ -248,8 +248,12 @@ class Matrix3 {
   }
 
   /// Gets the string for this matrix.
-  String toString([String indent = ""]) =>
-      '['+formatDouble(this._m11)+', '+formatDouble(this._m21)+', '+formatDouble(this._m31)+',\n' + indent +
-      ' '+formatDouble(this._m12)+', '+formatDouble(this._m22)+', '+formatDouble(this._m32)+',\n' + indent +
-      ' '+formatDouble(this._m13)+', '+formatDouble(this._m23)+', '+formatDouble(this._m33)+']';
+  String toString([String indent = "", int fraction = 3]) {
+    List<String> col1 = formatColumn([this._m11, this._m12, this._m13], fraction);
+    List<String> col2 = formatColumn([this._m21, this._m22, this._m23], fraction);
+    List<String> col3 = formatColumn([this._m31, this._m32, this._m33], fraction);
+    return '[${col1[0]}, ${col2[0]}, ${col3[0]},\n' +
+      '$indent ${col1[1]}, ${col2[1]}, ${col3[1]},\n' +
+      '$indent ${col1[2]}, ${col2[2]}, ${col3[2]}]';
+  }
 }

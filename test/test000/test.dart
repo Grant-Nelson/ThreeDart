@@ -14,6 +14,7 @@ import 'package:ThreeDart/Math.dart' as Math;
 part 'testTools.dart';
 part 'matrix2.dart';
 part 'matrix3.dart';
+part 'matrix4.dart';
 part 'vertexType.dart';
 
 void main() {
@@ -21,4 +22,5 @@ void main() {
   vertexTypeTests(tests);
   addMatrix2Tests(tests);
   addMatrix3Tests(tests);
+  addMatrix4Tests(tests);
 }
