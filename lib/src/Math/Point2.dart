@@ -131,7 +131,7 @@ class Point2 {
   }
 
   /// Gets the string for this point.
-  String toString([int fraction = 3]) =>
-    '['+formatDouble(this._x, fraction)+
-    ', '+formatDouble(this._y, fraction)+']';
+  String toString([int fraction = 3, int whole = 0]) =>
+    '['+formatDouble(this._x, fraction, whole)+
+    ', '+formatDouble(this._y, fraction, whole)+']';
 }

@@ -126,8 +126,8 @@ class Color3 {
   }
 
   /// Gets the string for this color.
-  String toString([int fraction = 3]) => '['+
-      formatDouble(this._red, fraction)+', '+
-      formatDouble(this._green, fraction)+', '+
-      formatDouble(this._blue, fraction)+']';
+  String toString([int fraction = 3, int whole = 0]) => '['+
+      formatDouble(this._red, fraction, whole)+', '+
+      formatDouble(this._green, fraction, whole)+', '+
+      formatDouble(this._blue, fraction, whole)+']';
 }

@@ -45,9 +45,9 @@ class Matrix4 {
   /// The given [angle] is in radians.
   /// The given [vec] is the vector to rotate around.
   factory Matrix4.rotate(double angle, Vector3 vec) {
-    double c = math.cos(angle);
-    double n = 1.0 - c;
-    double s = math.sin(angle);
+    final double c = math.cos(angle);
+    final double n = 1.0 - c;
+    final double s = math.sin(angle);
     double m11 = vec.dx * vec.dx * n + c,
            m21 = vec.dx * vec.dy * n - vec.dz * s,
            m31 = vec.dx * vec.dz * n + vec.dy * s,
@@ -67,8 +67,8 @@ class Matrix4 {
   ///
   /// The given [angle] is in radians.
   factory Matrix4.rotateX(double angle) {
-    double c = math.cos(angle);
-    double s = math.sin(angle);
+    final double c = math.cos(angle);
+    final double s = math.sin(angle);
     return new Matrix4(1.0, 0.0, 0.0, 0.0,
                        0.0,  c,  -s,  0.0,
                        0.0,  s,   c,  0.0,
@@ -79,8 +79,8 @@ class Matrix4 {
   ///
   /// The given [angle] is in radians.
   factory Matrix4.rotateY(double angle) {
-    double c = math.cos(angle);
-    double s = math.sin(angle);
+    final double c = math.cos(angle);
+    final double s = math.sin(angle);
     return new Matrix4( c,  0.0, -s,  0.0,
                        0.0, 1.0, 0.0, 0.0,
                         s,  0.0,  c,  0.0,
@@ -91,8 +91,8 @@ class Matrix4 {
   ///
   /// The given [angle] is in radians.
   factory Matrix4.rotateZ(double angle) {
-    double c = math.cos(angle);
-    double s = math.sin(angle);
+    final double c = math.cos(angle);
+    final double s = math.sin(angle);
     return new Matrix4( c,  -s,  0.0, 0.0,
                         s,   c,  0.0, 0.0,
                        0.0, 0.0, 1.0, 0.0,
@@ -106,10 +106,11 @@ class Matrix4 {
   /// The given [ratio] is the width over the height of the view.
   /// The [near] and [far] depth of the view.
   factory Matrix4.perspective(double angle, double ratio, double near, double far) {
-    double yy = 1.0 / math.tan(angle * 0.5);
-    double xx = -yy / ratio;
-    double zz = far / (far - near);
-    double zw = -far * near / (far - near);
+    final double depth = (far - near);
+    final double yy = 1.0 / math.tan(angle * 0.5);
+    final double xx = -yy / ratio;
+    final double zz = far / depth;
+    final double zw = -far * near / depth;
     return new Matrix4(xx,  0.0, 0.0, 0.0,
                        0.0, yy,  0.0, 0.0,
                        0.0, 0.0, zz,  zw,
@@ -122,12 +123,12 @@ class Matrix4 {
   /// [top] and [bottom] are the vertical visible range.
   /// The [near] and [far] depth of the view.
   factory Matrix4.ortho(double left, double right, double top, double bottom, double near, double far) {
-    double xx = 2.0 / (right - left);
-    double yy = 2.0 / (top - bottom);
-    double zz = 2.0 / (far - near);
-    double wx = -(left + right) / (right - left);
-    double wy = -(top + bottom) / (top - bottom);
-    double wz = (far + near) / (far - near);
+    final double xx = 2.0 / (right - left);
+    final double yy = 2.0 / (top - bottom);
+    final double zz = 2.0 / (far - near);
+    final double wx = -(left + right) / (right - left);
+    final double wy = -(top + bottom) / (top - bottom);
+    final double wz = (far + near) / (far - near);
     return new Matrix4(xx,  0.0, 0.0, wx,
                        0.0, yy,  0.0, wy,
                        0.0, 0.0, zz,  wz,
@@ -144,9 +145,9 @@ class Matrix4 {
     Vector3 xaxis = up.cross(zaxis).normal();
     Vector3 yaxis = zaxis.cross(xaxis);
     Vector3 toPos = new Vector3.fromPoint3(pos);
-    double tx = (-xaxis).dot(toPos);
-    double ty = (-yaxis).dot(toPos);
-    double tz = (-zaxis).dot(toPos);
+    final double tx = (-xaxis).dot(toPos);
+    final double ty = (-yaxis).dot(toPos);
+    final double tz = (-zaxis).dot(toPos);
     return new Matrix4(xaxis.dx, yaxis.dx, zaxis.dx, tx,
                        xaxis.dy, yaxis.dy, zaxis.dy, ty,
                        xaxis.dz, yaxis.dz, zaxis.dz, tz,
@@ -167,8 +168,8 @@ class Matrix4 {
   ///
   /// [mat] is padded with zeros except in ZZ and WW which is set to 1.0.
   factory Matrix4.fromMatrix2(Matrix2 mat) =>
-    new Matrix4(mat._m11, mat._m12, 0.0, 0.0,
-                mat._m21, mat._m22, 0.0, 0.0,
+    new Matrix4(mat._m11, mat._m21, 0.0, 0.0,
+                mat._m12, mat._m22, 0.0, 0.0,
                 0.0,      0.0,      1.0, 0.0,
                 0.0,      0.0,      0.0, 1.0);
 
@@ -176,18 +177,26 @@ class Matrix4 {
   ///
   /// [mat] is padded with zeros except in WW which is set to 1.0.
   factory Matrix4.fromMatrix3(Matrix3 mat) =>
-    new Matrix4(mat._m11, mat._m12, mat._m13, 0.0,
-                mat._m21, mat._m22, mat._m23, 0.0,
-                mat._m31, mat._m32, mat._m33, 0.0,
+    new Matrix4(mat._m11, mat._m21, mat._m31, 0.0,
+                mat._m12, mat._m22, mat._m32, 0.0,
+                mat._m13, mat._m23, mat._m33, 0.0,
                 0.0,      0.0,      0.0,      1.0);
 
   /// Constructs a new [Matrix4] instance given a list of 16 doubles.
-  factory Matrix4.fromList(List<double> values) {
+  /// By default the list is in row major order.
+  factory Matrix4.fromList(List<double> values, [bool columnMajor = false]) {
     assert(values.length == 16);
-    return new Matrix4(values[ 0], values[ 1], values[ 2], values[ 3],
-                       values[ 4], values[ 5], values[ 6], values[ 7],
-                       values[ 8], values[ 9], values[10], values[11],
-                       values[12], values[13], values[14], values[15]);
+    if (columnMajor) {
+      return new Matrix4(values[ 0], values[ 4], values[ 8], values[12],
+                         values[ 1], values[ 5], values[ 9], values[13],
+                         values[ 2], values[ 6], values[10], values[14],
+                         values[ 3], values[ 7], values[11], values[15]);
+    } else {
+      return new Matrix4(values[ 0], values[ 1], values[ 2], values[ 3],
+                         values[ 4], values[ 5], values[ 6], values[ 7],
+                         values[ 8], values[ 9], values[10], values[11],
+                         values[12], values[13], values[14], values[15]);
+    }
   }
 
   /// Sets the [Matrix4] with the given values.
@@ -202,12 +211,20 @@ class Matrix4 {
   }
 
   /// Gets the list of 16 doubles for the matrix.
-  List<double> toList() => [
-    this._m11, this._m21, this._m31, this._m41,
-    this._m12, this._m22, this._m32, this._m42,
-    this._m13, this._m23, this._m33, this._m43,
-    this._m14, this._m24, this._m34, this._m44
-  ];
+  /// By default the list is in row major order.
+  List<double> toList([bool columnMajor = false]) {
+    if (columnMajor) {
+      return [this._m11, this._m12, this._m13, this._m14,
+              this._m21, this._m22, this._m23, this._m24,
+              this._m31, this._m32, this._m33, this._m34,
+              this._m41, this._m42, this._m43, this._m44];
+    } else {
+      return [this._m11, this._m21, this._m31, this._m41,
+              this._m12, this._m22, this._m32, this._m42,
+              this._m13, this._m23, this._m33, this._m43,
+              this._m14, this._m24, this._m34, this._m44];
+    }
+  }
 
   /// The 1st row and 1st column of the matrix, XX.
   double get m11 => this._m11;
@@ -315,9 +332,9 @@ class Matrix4 {
            m = this._m23 * this._m34 - this._m33 * this._m24,
            n = this._m23 * this._m44 - this._m43 * this._m24,
            o = this._m33 * this._m44 - this._m43 * this._m34;
-    double det = (a * o - b * n + c * m + e * l - g * j + h * i);
+    final double det = (a * o - b * n + c * m + e * l - g * j + h * i);
     if (Comparer.equals(det, 0.0)) return new Matrix4.identity();
-    double q = 1.0 / det;
+    final double q = 1.0 / det;
     return new Matrix4(
         ( this._m22 * o - this._m32 * n + this._m42 * m) * q, (-this._m21 * o + this._m31 * n - this._m41 * m) * q,
         ( this._m24 * h - this._m34 * g + this._m44 * e) * q, (-this._m23 * h + this._m33 * g - this._m43 * e) * q,
@@ -425,11 +442,11 @@ class Matrix4 {
   }
 
   /// Gets the string for this matrix.
-  String toString([String indent = "", int fraction = 3]) {
-    List<String> col1 = formatColumn([this._m11, this._m12, this._m13, this._m14], fraction);
-    List<String> col2 = formatColumn([this._m21, this._m22, this._m23, this._m24], fraction);
-    List<String> col3 = formatColumn([this._m31, this._m32, this._m33, this._m34], fraction);
-    List<String> col4 = formatColumn([this._m41, this._m42, this._m43, this._m44], fraction);
+  String toString([String indent = "", int fraction = 3, int whole = 0]) {
+    List<String> col1 = formatColumn([this._m11, this._m12, this._m13, this._m14], fraction, whole);
+    List<String> col2 = formatColumn([this._m21, this._m22, this._m23, this._m24], fraction, whole);
+    List<String> col3 = formatColumn([this._m31, this._m32, this._m33, this._m34], fraction, whole);
+    List<String> col4 = formatColumn([this._m41, this._m42, this._m43, this._m44], fraction, whole);
     return '[${col1[0]}, ${col2[0]}, ${col3[0]}, ${col4[0]},\n' +
       '$indent ${col1[1]}, ${col2[1]}, ${col3[1]}, ${col4[1]},\n' +
       '$indent ${col1[2]}, ${col2[2]}, ${col3[2]}, ${col4[2]},\n' +

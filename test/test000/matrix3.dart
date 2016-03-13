@@ -234,6 +234,20 @@ void addMatrix3Tests(TestManager tests) {
       "[1.000, 0.000, 1.200,",
       " 0.000, 1.000, 3.400,",
       " 0.000, 0.000, 1.000]");
+    _matrix3String(args, new Math.Matrix3.fromMatrix2(
+      new Math.Matrix2(1.0, 2.0,
+                       3.0, 4.0)),
+      "[1.000, 2.000, 0.000,",
+      " 3.000, 4.000, 0.000,",
+      " 0.000, 0.000, 1.000]");
+    _matrix3String(args, new Math.Matrix3.fromMatrix4(
+      new Math.Matrix4( 1.0,  2.0,  3.0,  4.0,
+                        5.0,  6.0,  7.0,  8.0,
+                        9.0, 10.0, 11.0, 12.0,
+                       13.0, 14.0, 15.0, 16.0)),
+      "[1.000,  2.000,  3.000,",
+      " 5.000,  6.000,  7.000,",
+      " 9.000, 10.000, 11.000]");
   });
 
   tests.add("Matrix3 Inverse Test", (TestArgs args) {
@@ -317,7 +331,7 @@ void addMatrix3Tests(TestManager tests) {
     _transVec2Matrix3(args, mat,   1.0,  1.0,    3.0,  9.0);
   });
 
-  // TODO: Conversion tests and quaternion test.
+// TODO: Quaternion/matrix3 tests.
 
 }
 

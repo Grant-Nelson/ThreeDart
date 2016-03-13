@@ -116,6 +116,19 @@ void addMatrix2Tests(TestManager tests) {
     _doubleCheck(args, mat.m21, 21.0, "m21");
     _doubleCheck(args, mat.m12, 12.0, "m12");
     _doubleCheck(args, mat.m22, 22.0, "m22");
+    _matrix2String(args, new Math.Matrix2.fromMatrix3(
+      new Math.Matrix3(1.0, 2.0, 3.0,
+                       4.0, 5.0, 6.0,
+                       7.0, 8.0, 9.0)),
+      "[1.000, 2.000,",
+      " 4.000, 5.000]");
+    _matrix2String(args, new Math.Matrix2.fromMatrix4(
+      new Math.Matrix4( 1.0,  2.0,  3.0,  4.0,
+                        5.0,  6.0,  7.0,  8.0,
+                        9.0, 10.0, 11.0, 12.0,
+                       13.0, 14.0, 15.0, 16.0)),
+      "[1.000, 2.000,",
+      " 5.000, 6.000]");
   });
 
   tests.add("Matrix2 Inverse Test", (TestArgs args) {
@@ -154,17 +167,15 @@ void addMatrix2Tests(TestManager tests) {
       "[23.000, 34.000,",
       " 31.000, 46.000]");
   });
-
-  // TODO: Conversion tests.
 }
 
 void _doubleCheck(TestArgs args, double value, double exp, String name) {
   if (value != exp) {
     args.error("Unexpected result from $name: "+
       "\n   Expected: $exp"+
-      "\n   Gotten:   $value\n");
+      "\n   Gotten:   $value\n\n");
     args.fail();
-  } else args.info("Checked $name is $value\n");
+  } else args.info("Checked $name is $value\n\n");
 }
 
 void _matrix2String(TestArgs args, Math.Matrix2 mat, String exp1, String exp2) {

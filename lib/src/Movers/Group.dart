@@ -31,7 +31,7 @@ class Group extends Mover {
           if (mat == null) {
             mat = next;
           } else {
-            mat = mat*next;
+            mat = next*mat;
           }
         }
       }

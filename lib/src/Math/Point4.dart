@@ -19,15 +19,15 @@ class Point4 {
 
   /// Constructs a new [Point4] from a [Vector2].
   ///
-  /// The Z and W component is initialized to 0.0.
-  factory Point4.fromVector2(Vector2 vec) =>
-      new Point4(vec.dx, vec.dy, 0.0, 0.0);
+  /// The Z and W components are defaulted to 0.0.
+  factory Point4.fromVector2(Vector2 vec, [double z = 0.0, double w = 0.0]) =>
+      new Point4(vec.dx, vec.dy, z, w);
 
   /// Constructs a new [Point4] from a [Vector3].
   ///
-  /// The W component is initialized to 0.0.
-  factory Point4.fromVector3(Vector3 vec) =>
-      new Point4(vec.dx, vec.dy, vec.dz, 0.0);
+  /// The W component is defaulted to 0.0.
+  factory Point4.fromVector3(Vector3 vec, [double w = 0.0]) =>
+      new Point4(vec.dx, vec.dy, vec.dz, w);
 
   /// Constructs a new [Point4] from a [Vector4].
   factory Point4.fromVector4(Vector4 vec) =>
@@ -35,15 +35,15 @@ class Point4 {
 
   /// Constructs a new [Point4] from a [Point2].
   ///
-  /// The Z and W component is initialized to 0.0.
-  factory Point4.fromPoint2(Point2 pnt) =>
-      new Point4(pnt.x, pnt.y, 0.0, 0.0);
+  /// The Z and W components are defaulted to 0.0.
+  factory Point4.fromPoint2(Point2 pnt, [double z = 0.0, double w = 0.0]) =>
+      new Point4(pnt.x, pnt.y, z, w);
 
   /// Constructs a new [Point4] from a [Point3].
   ///
-  /// The W component is initialized to 0.0.
-  factory Point4.fromPoint3(Point3 pnt) =>
-      new Point4(pnt.x, pnt.y, pnt.z, 0.0);
+  /// The W component is defaulted to 0.0.
+  factory Point4.fromPoint3(Point3 pnt, [double w = 0.0]) =>
+      new Point4(pnt.x, pnt.y, pnt.z, w);
 
   /// Constructs a new [Point3] instance given a list of 3 doubles.
   ///
@@ -149,9 +149,9 @@ class Point4 {
   }
 
   /// Gets the string for this point.
-  String toString([int fraction = 3]) =>
-    '['+formatDouble(this._x, fraction)+
-    ', '+formatDouble(this._y, fraction)+
-    ', '+formatDouble(this._z, fraction)+
-    ', '+formatDouble(this._w, fraction)+']';
+  String toString([int fraction = 3, int whole = 0]) =>
+    '['+formatDouble(this._x, fraction, whole)+
+    ', '+formatDouble(this._y, fraction, whole)+
+    ', '+formatDouble(this._z, fraction, whole)+
+    ', '+formatDouble(this._w, fraction, whole)+']';
 }

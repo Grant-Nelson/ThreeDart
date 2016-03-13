@@ -10,11 +10,17 @@ import 'dart:convert' as convert;
 
 import 'package:ThreeDart/Data.dart' as Data;
 import 'package:ThreeDart/Math.dart' as Math;
+import 'package:ThreeDart/Movers.dart' as Movers;
+import 'package:ThreeDart/Scenes.dart' as Scenes;
+import 'package:ThreeDart/Shapes.dart' as Shapes;
+import 'package:ThreeDart/Techniques.dart' as Techniques;
+import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 
 part 'testTools.dart';
 part 'matrix2.dart';
 part 'matrix3.dart';
 part 'matrix4.dart';
+part 'technique.dart';
 part 'vertexType.dart';
 
 void main() {
@@ -23,4 +29,5 @@ void main() {
   addMatrix2Tests(tests);
   addMatrix3Tests(tests);
   addMatrix4Tests(tests);
+  addTechniqueTests(tests);
 }

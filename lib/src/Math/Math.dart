@@ -63,7 +63,7 @@ double diffInSecs(DateTime a, DateTime b) {
 /// [whole] is the padding to put to the left of the number.
 String formatDouble(double v, [int fraction = 3, int whole = 0]) {
   if (Comparer.currentEquality(v, 0.0)) v = 0.0;
-  return v.toStringAsFixed(fraction).padLeft(whole);
+  return v.toStringAsFixed(fraction).padLeft(whole + fraction + 1);
 }
 
 /// Formats the given double values into strings for a column.

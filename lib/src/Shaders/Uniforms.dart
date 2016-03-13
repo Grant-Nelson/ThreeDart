@@ -320,10 +320,10 @@ class UniformMat2 extends Uniform {
   }
 
   /// Gets the 2x2 matrix with the value of this uniform.
-  Math.Matrix2 getMatrix2() => new Math.Matrix2.fromList(this.getList());
+  Math.Matrix2 getMatrix2() => new Math.Matrix2.fromList(this.getList(), true);
 
   /// Sets the uniform with the given 2x2 matrix.
-  void setMatrix2(Math.Matrix2 mat) => this.setList(mat.toList());
+  void setMatrix2(Math.Matrix2 mat) => this.setList(mat.toList(true));
 }
 
 /// The uniform variable for a 3x3 matrix.
@@ -353,10 +353,10 @@ class UniformMat3 extends Uniform {
   }
 
   /// Gets the 3x3 matrix with the value of this uniform.
-  Math.Matrix3 getMatrix3() => new Math.Matrix3.fromList(this.getList());
+  Math.Matrix3 getMatrix3() => new Math.Matrix3.fromList(this.getList(), true);
 
   /// Sets the uniform with the given 3x3 matrix.
-  void setMatrix3(Math.Matrix3 mat) => this.setList(mat.toList());
+  void setMatrix3(Math.Matrix3 mat) => this.setList(mat.toList(true));
 }
 
 /// The uniform variable for a 4x4 matrix.
@@ -388,10 +388,10 @@ class UniformMat4 extends Uniform {
   }
 
   /// Gets the 4x4 matrix with the value of this uniform.
-  Math.Matrix4 getMatrix4() => new Math.Matrix4.fromList(this.getList());
+  Math.Matrix4 getMatrix4() => new Math.Matrix4.fromList(this.getList(), true);
 
   /// Sets the uniform with the given 4x4 matrix.
-  void setMatrix4(Math.Matrix4 mat) => this.setList(mat.toList());
+  void setMatrix4(Math.Matrix4 mat) => this.setList(mat.toList(true));
 }
 
 //=======================================================================

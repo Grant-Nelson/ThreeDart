@@ -71,17 +71,17 @@ class Matrix3 {
   ///
   /// [mat] is padded with zeros except in ZZ which is set to 1.0.
   factory Matrix3.fromMatrix2(Matrix2 mat) =>
-    new Matrix3(mat._m11, mat._m12, 0.0,
-                mat._m21, mat._m22, 0.0,
+    new Matrix3(mat._m11, mat._m21, 0.0,
+                mat._m12, mat._m22, 0.0,
                 0.0,      0.0,      1.0);
 
   /// Constructs a 3x3 matrix from a trimmed 4x4 matrix.
   ///
   /// The 4rd row and column are ignored from [mat].
   factory Matrix3.fromMatrix4(Matrix4 mat) =>
-    new Matrix3(mat._m11, mat._m12, mat._m13,
-                mat._m21, mat._m22, mat._m23,
-                mat._m31, mat._m32, mat._m33);
+    new Matrix3(mat._m11, mat._m21, mat._m31,
+                mat._m12, mat._m22, mat._m32,
+                mat._m13, mat._m23, mat._m33);
 
   /// Constructs a 3x3 matrix from the given quaternion.
   factory Matrix3.fromQuaternion(Quaternion a) {
@@ -95,11 +95,18 @@ class Matrix3 {
   }
 
   /// Constructs a new [Matrix3] instance given a list of 9 doubles.
-  factory Matrix3.fromList(List<double> values) {
+  /// By default the list is in row major order.
+  factory Matrix3.fromList(List<double> values, [bool columnMajor = false]) {
     assert(values.length == 9);
-    return new Matrix3(values[0], values[1], values[2],
-                       values[3], values[4], values[5],
-                       values[6], values[7], values[8]);
+    if (columnMajor) {
+      return new Matrix3(values[0], values[3], values[6],
+                         values[1], values[4], values[7],
+                         values[2], values[5], values[8]);
+    } else {
+      return new Matrix3(values[0], values[1], values[2],
+                         values[3], values[4], values[5],
+                         values[6], values[7], values[8]);
+    }
   }
 
   /// Sets the [Matrix3] with the given values.
@@ -112,11 +119,18 @@ class Matrix3 {
   }
 
   /// Gets the list of 9 doubles for the matrix.
-  List<double> toList() => [
-    this._m11, this._m21, this._m31,
-    this._m12, this._m22, this._m32,
-    this._m13, this._m23, this._m33
-  ];
+  /// By default the list is in row major order.
+  List<double> toList([bool columnMajor = false]) {
+    if (columnMajor) {
+      return [this._m11, this._m12, this._m13,
+              this._m21, this._m22, this._m23,
+              this._m31, this._m32, this._m33];
+    } else {
+      return [this._m11, this._m21, this._m31,
+              this._m12, this._m22, this._m32,
+              this._m13, this._m23, this._m33];
+    }
+  }
 
   /// The 1st row and 1st column of the matrix, XX.
   double get m11 => this._m11;
@@ -248,10 +262,10 @@ class Matrix3 {
   }
 
   /// Gets the string for this matrix.
-  String toString([String indent = "", int fraction = 3]) {
-    List<String> col1 = formatColumn([this._m11, this._m12, this._m13], fraction);
-    List<String> col2 = formatColumn([this._m21, this._m22, this._m23], fraction);
-    List<String> col3 = formatColumn([this._m31, this._m32, this._m33], fraction);
+  String toString([String indent = "", int fraction = 3, int whole = 0]) {
+    List<String> col1 = formatColumn([this._m11, this._m12, this._m13], fraction, whole);
+    List<String> col2 = formatColumn([this._m21, this._m22, this._m23], fraction, whole);
+    List<String> col3 = formatColumn([this._m31, this._m32, this._m33], fraction, whole);
     return '[${col1[0]}, ${col2[0]}, ${col3[0]},\n' +
       '$indent ${col1[1]}, ${col2[1]}, ${col3[1]},\n' +
       '$indent ${col1[2]}, ${col2[2]}, ${col3[2]}]';

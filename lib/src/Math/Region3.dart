@@ -182,11 +182,11 @@ class Region3 {
   }
 
   /// Gets the string for this region.
-  String toString([int fraction = 3]) =>
-    '['+formatDouble(this._x, fraction)+
-    ', '+formatDouble(this._y, fraction)+
-    ', '+formatDouble(this._z, fraction)+
-    ', '+formatDouble(this._dx, fraction)+
-    ', '+formatDouble(this._dy, fraction)+
-    ', '+formatDouble(this._dz, fraction)+']';
+  String toString([int fraction = 3, int whole = 0]) =>
+    '['+formatDouble(this._x, fraction, whole)+
+    ', '+formatDouble(this._y, fraction, whole)+
+    ', '+formatDouble(this._z, fraction, whole)+
+    ', '+formatDouble(this._dx, fraction, whole)+
+    ', '+formatDouble(this._dy, fraction, whole)+
+    ', '+formatDouble(this._dz, fraction, whole)+']';
 }

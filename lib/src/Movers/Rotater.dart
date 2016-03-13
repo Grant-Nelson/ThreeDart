@@ -77,9 +77,9 @@ class Rotater extends Mover {
     if ((this._pitch > pi2) || (this._pitch < 0.0)) this._pitch %= pi2;
     if ((this._roll > pi2) || (this._roll < 0.0)) this._roll %= pi2;
 
-    this._mat = new Math.Matrix4.rotateX(this._yaw)*
+    this._mat = new Math.Matrix4.rotateZ(this._roll)*
                 new Math.Matrix4.rotateY(this._pitch)*
-                new Math.Matrix4.rotateZ(this._roll);
+                new Math.Matrix4.rotateX(this._yaw);
   }
 
   /// Updates the rotation mover.

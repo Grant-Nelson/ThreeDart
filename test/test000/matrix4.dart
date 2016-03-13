@@ -300,6 +300,21 @@ void addMatrix4Tests(TestManager tests) {
       " 0.000, 1.000, 0.000, 3.400,",
       " 0.000, 0.000, 1.000, 5.600,",
       " 0.000, 0.000, 0.000, 1.000]");
+    _matrix4String(args, new Math.Matrix4.fromMatrix2(
+      new Math.Matrix2(1.0, 2.0,
+                       3.0, 4.0)),
+      "[1.000, 2.000, 0.000, 0.000,",
+      " 3.000, 4.000, 0.000, 0.000,",
+      " 0.000, 0.000, 1.000, 0.000,",
+      " 0.000, 0.000, 0.000, 1.000]");
+    _matrix4String(args, new Math.Matrix4.fromMatrix3(
+      new Math.Matrix3( 1.0, 2.0, 3.0,
+                        4.0, 5.0, 6.0,
+                        7.0, 8.0, 9.0)),
+      "[1.000, 2.000, 3.000, 0.000,",
+      " 4.000, 5.000, 6.000, 0.000,",
+      " 7.000, 8.000, 9.000, 0.000,",
+      " 0.000, 0.000, 0.000, 1.000]");
   });
 
   tests.add("Matrix4 Inverse Test", (TestArgs args) {
@@ -437,8 +452,6 @@ void addMatrix4Tests(TestManager tests) {
 
   // TODO: Check custom rotation on vector.
   // TODO: Perspective, ortho, lookTowards, and lookAtTarget.
-  // TODO: Conversion tests
-  // TODO: Quaternion/matrix4 tests.
 
 }
 

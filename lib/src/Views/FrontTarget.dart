@@ -52,6 +52,7 @@ class FrontTarget extends Target {
     state.gl.viewport(0, 0, state.width, state.height);
     state.gl.enable(WebGL.CULL_FACE);
     state.gl.enable(WebGL.DEPTH_TEST);
+    state.gl.depthFunc(WebGL.LESS);
 
     int clearMask = 0;
     if (this._clearStencil) {

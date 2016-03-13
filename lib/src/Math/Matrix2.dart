@@ -40,21 +40,27 @@ class Matrix2 {
   ///
   /// The 3rd row and column are ignored from [mat].
   factory Matrix2.fromMatrix3(Matrix3 mat) =>
-    new Matrix2(mat._m11, mat._m12,
-                mat._m21, mat._m22);
+    new Matrix2(mat._m11, mat._m21,
+                mat._m12, mat._m22);
 
   /// Constructs a 2x2 matrix from a trimmed 4x4 matrix.
   ///
   /// The 3rd and 4th row and column are ignored from [mat].
   factory Matrix2.fromMatrix4(Matrix4 mat) =>
-    new Matrix2(mat._m11, mat._m12,
-                mat._m21, mat._m22);
+    new Matrix2(mat._m11, mat._m21,
+                mat._m12, mat._m22);
 
   /// Constructs a new [Matrix2] instance given a list of 4 doubles.
-  factory Matrix2.fromList(List<double> values) {
+  /// By default the list is in row major order.
+  factory Matrix2.fromList(List<double> values, [bool columnMajor = false]) {
     assert(values.length == 4);
-    return new Matrix2(values[0], values[1],
-                       values[2], values[3]);
+    if (columnMajor) {
+      return new Matrix2(values[0], values[2],
+                         values[1], values[3]);
+    } else {
+      return new Matrix2(values[0], values[1],
+                         values[2], values[3]);
+    }
   }
 
   /// Sets the [Matrix2] with the given values.
@@ -65,10 +71,16 @@ class Matrix2 {
   }
 
   /// Gets the list of 4 doubles for the matrix.
-  List<double> toList() => [
-    this._m11, this._m21,
-    this._m12, this._m22,
-  ];
+  /// By default the list is in row major order.
+  List<double> toList([bool columnMajor = false]) {
+    if (columnMajor) {
+      return [this._m11, this._m12,
+              this._m21, this._m22];
+    } else {
+      return [this._m11, this._m21,
+              this._m12, this._m22];
+    }
+  }
 
   /// The 1st row and 1st column of the matrix, XX.
   double get m11 => this._m11;
@@ -141,9 +153,9 @@ class Matrix2 {
   }
 
   /// Gets the string for this matrix.
-  String toString([String indent = "", int fraction = 3]) {
-    List<String> col1 = formatColumn([this._m11, this._m12], fraction);
-    List<String> col2 = formatColumn([this._m21, this._m22], fraction);
+  String toString([String indent = "", int fraction = 3, int whole = 0]) {
+    List<String> col1 = formatColumn([this._m11, this._m12], fraction, whole);
+    List<String> col2 = formatColumn([this._m21, this._m22], fraction, whole);
     return '[${col1[0]}, ${col2[0]},\n' +
       '$indent ${col1[1]}, ${col2[1]}]';
   }

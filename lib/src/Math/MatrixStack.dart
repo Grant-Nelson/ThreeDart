@@ -46,7 +46,7 @@ class Matrix4Stack {
     if (mat == null) {
       this._mat.add(this.matrix);
     } else {
-      this._mat.add(this.matrix*mat);
+      this._mat.add(mat * this.matrix);
     }
   }
 

@@ -18,9 +18,9 @@ class Point3 {
 
   /// Constructs a new [Point3] from a [Vector2].
   ///
-  /// The Z component is initialized to 0.0.
-  factory Point3.fromVector2(Vector2 vec) =>
-      new Point3(vec.dx, vec.dy, 0.0);
+  /// The Z component is defaulted to 0.0.
+  factory Point3.fromVector2(Vector2 vec, [double z = 0.0]) =>
+      new Point3(vec.dx, vec.dy, z);
 
   /// Constructs a new [Point3] from a [Vector3].
   factory Point3.fromVector3(Vector3 vec) =>
@@ -34,9 +34,9 @@ class Point3 {
 
   /// Constructs a new [Point3] from a [Point2].
   ///
-  /// The Z component is initialized to 0.0.
-  factory Point3.fromPoint2(Point2 pnt) =>
-      new Point3(pnt.x, pnt.y, 0.0);
+  /// The Z component is defaulted to 0.0.
+  factory Point3.fromPoint2(Point2 pnt, [double z = 0.0]) =>
+      new Point3(pnt.x, pnt.y, z);
 
   /// Constructs a new [Point3] from a [Point4].
   ///
@@ -140,8 +140,8 @@ class Point3 {
   }
 
   /// Gets the string for this point.
-  String toString([int fraction = 3]) =>
-    '['+formatDouble(this._x, fraction)+
-    ', '+formatDouble(this._y, fraction)+
-    ', '+formatDouble(this._z, fraction)+']';
+  String toString([int fraction = 3, int whole = 0]) =>
+    '['+formatDouble(this._x, fraction, whole)+
+    ', '+formatDouble(this._y, fraction, whole)+
+    ', '+formatDouble(this._z, fraction, whole)+']';
 }

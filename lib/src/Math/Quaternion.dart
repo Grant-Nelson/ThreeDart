@@ -24,6 +24,40 @@ class Quaternion {
   factory Quaternion.scale(Quaternion quat, double scalar) =>
     new Quaternion(quat._a*scalar, quat._b*scalar, quat._c*scalar, quat._t*scalar);
 
+  /// Constructs a quaternion from the given 3x3 matrix.
+  factory Quaternion.fromMatrix3(Matrix3 mat) {
+    double tr = mat.m11 + mat.m22 + mat.m33;
+    if (tr > 0) {
+      double scalar = math.sqrt(tr + 1.0) * 2.0; // 4*q.t
+      return new Quaternion(
+        (mat.m32 - mat.m23) / scalar,
+        (mat.m13 - mat.m31) / scalar,
+        (mat.m21 - mat.m12) / scalar,
+        0.25 * scalar);
+    } else if ((mat.m11 > mat.m22) && (mat.m11 > mat.m33)) {
+      double scalar = math.sqrt(1.0 + mat.m11 - mat.m22 - mat.m33) * 2.0; // 4*q.a
+      return new Quaternion(
+        0.25 * scalar,
+        (mat.m12 + mat.m21) / scalar,
+        (mat.m13 + mat.m31) / scalar,
+        (mat.m32 - mat.m23) / scalar);
+    } else if (mat.m22 > mat.m33) {
+      double scalar = math.sqrt(1.0 + mat.m22 - mat.m11 - mat.m33) * 2.0; // 4*q.b
+      return new Quaternion(
+        (mat.m12 + mat.m21) / scalar,
+        0.25 * scalar,
+        (mat.m23 + mat.m32) / scalar,
+        (mat.m13 - mat.m31) / scalar);
+    } else {
+      double scalar = math.sqrt(1.0 + mat.m33 - mat.m11 - mat.m22) * 2.0; // 4*q.c
+      return new Quaternion(
+        (mat.m13 + mat.m31) / scalar,
+        (mat.m23 + mat.m32) / scalar,
+        0.25 * scalar,
+        (mat.m21 - mat.m12) / scalar);
+    }
+  }
+
   /// Constructs a new [Quaternion] instance given a list of 4 doubles.
   ///
   /// [values] is a list of doubles are in the order a, b, c, then t.
@@ -142,9 +176,9 @@ class Quaternion {
   }
 
   /// Gets the string for this quaternion.
-  String toString([int fraction = 3]) =>
-    '['+formatDouble(this._a, fraction)+
-    'i + '+formatDouble(this._b, fraction)+
-    'j + '+formatDouble(this._c, fraction)+
-    'k + '+formatDouble(this._t, fraction)+']';
+  String toString([int fraction = 3, int whole = 0]) =>
+    '['+formatDouble(this._a, fraction, whole)+
+    'i + '+formatDouble(this._b, fraction, whole)+
+    'j + '+formatDouble(this._c, fraction, whole)+
+    'k + '+formatDouble(this._t, fraction, whole)+']';
 }

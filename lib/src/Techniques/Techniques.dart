@@ -13,6 +13,7 @@ import '../Materials/Materials.dart' as Materials;
 import '../Shaders/Shaders.dart' as Shaders;
 import '../Core/Core.dart' as Core;
 
+part 'Debugger.dart';
 part 'Depth.dart';
 part 'Inspection.dart';
 part 'MaterialLight.dart';
