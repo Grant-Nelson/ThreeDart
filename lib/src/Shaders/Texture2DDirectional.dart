@@ -72,7 +72,7 @@ class Texture2DDirectional extends Shader {
       "   if (hasSpecular == 0) return vec4(0.0, 0.0, 0.0, 0.0);  \n"+
       "   if(dot(norm, litVec) > 0.0)                             \n"+
       "   {                                                       \n"+
-      "      vec3 lightRef = normalize(reflect(-litVec, norm));   \n"+
+      "      vec3 lightRef = normalize(reflect(litVec, norm));    \n"+
       "      float scalar = dot(lightRef, normalize(camPos));     \n"+
       "      if(scalar > 0.0)                                     \n"+
       "      {                                                    \n"+

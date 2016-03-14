@@ -59,7 +59,7 @@ void _addCubeSide(Shape shape, double nx, double ny, double nz) {
   Vertex addVertex(double px, double py, double pz, double tu, double tv) {
     return shape.vertices.addNew(
       loc:  new Math.Point3(px, py, pz),
-      txt:  new Math.Point2(0.0, 0.0),
+      txt:  new Math.Point2(tu, tv),
       clr:  new Math.Color4(px, py, pz, 1.0));
   };
 

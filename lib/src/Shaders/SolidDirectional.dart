@@ -53,7 +53,7 @@ class SolidDirectional extends Shader {
       "{                                                          \n"+
       "   if(dot(norm, litVec) > 0.0)                             \n"+
       "   {                                                       \n"+
-      "      vec3 lightRef = normalize(reflect(-litVec, norm));   \n"+
+      "      vec3 lightRef = normalize(reflect(litVec, norm));    \n"+
       "      float scalar = dot(lightRef, normalize(camPos));     \n"+
       "      return specularClr*pow(max(scalar, 0.0), shininess); \n"+
       "   }                                                       \n"+
