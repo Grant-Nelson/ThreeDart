@@ -22,7 +22,7 @@ void main() {
 
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
     ..light = new Lights.Directional(
-          direction: new Math.Vector3(0.0, 0.0, -1.0),
+          direction: new Math.Vector3(1.0, 1.0, -3.0),
           color: new Math.Color3.white())
     ..material = new Materials.Solid(
           emission: new Math.Color3.black(),

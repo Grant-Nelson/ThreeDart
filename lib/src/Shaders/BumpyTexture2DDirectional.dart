@@ -93,10 +93,9 @@ class BumpyTexture2DDirectional extends Shader {
       "   vec3 b = normalize(binormal);                           \n"+
       "   vec3 c = cross(b, n);                                   \n"+
       "   b = cross(n, c);                                        \n"+
-      "                                                           \n"+
-      "   mat3 mat = mat3(c.x, b.x, n.x,                          \n"+
-      "                   c.y, b.y, n.y,                          \n"+
-      "                   c.z, b.z, n.z);                         \n"+
+      "   mat3 mat = mat3( b.x,  b.y,  b.z,                       \n"+
+      "                   -c.x, -c.y, -c.z,                       \n"+
+      "                    n.x,  n.y,  n.z);                      \n"+
       "   vec3 bump = texture2D(bumpTxt, txt2D).rgb;              \n"+
       "   return mat * normalize(2.0*bump - 1.0);                 \n"+
       "}                                                          \n"+
@@ -105,8 +104,7 @@ class BumpyTexture2DDirectional extends Shader {
       "{                                                          \n"+
       "   vec3 norm = bumpyNormal();                              \n"+
       "   vec4 matClr = color(norm) + specular(norm);             \n"+
-      "   vec4 h = emission() + vec4(lightClr, 1.0)*matClr;       \n"+
-      "   gl_FragColor = vec4(norm, 1.0) + 0.0000001*h;           \n"+
+      "   gl_FragColor = emission() + vec4(lightClr, 1.0)*matClr; \n"+
       "}                                                          \n";
 
   Attribute _posAttr;

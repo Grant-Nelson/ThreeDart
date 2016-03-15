@@ -27,7 +27,7 @@ void main() {
 
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
     ..light = new Lights.Directional(
-          direction: new Math.Vector3(1.0, 1.0, -2.0),
+          direction: new Math.Vector3(0.0, 0.0, -1.0),
           color: new Math.Color3.white());
 
   Scenes.RenderPass pass = new Scenes.RenderPass()

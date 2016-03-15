@@ -27,7 +27,7 @@ class MaterialLight extends Technique {
     this._shader = null;
   }
 
-  /// Renderes the given [obj] with the currrent light and material for the given [state].
+  /// Renderes the given [obj] with the current light and material for the given [state].
   void render(Core.RenderState state, Core.Entity obj) {
     if ((this._light == null) || (this._material == null)) return;
     else if (this._light is Lights.Directional) {

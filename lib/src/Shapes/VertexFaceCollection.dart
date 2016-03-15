@@ -183,6 +183,25 @@ class VertexFaceCollection {
     // it must have more than one point in the same vertex.
   }
 
+  /// Removes all faces using this vertex.
+  void removeAll() {
+    for (int i = this._faces1.length-1; i >= 0; --i) {
+      Face face = this._faces1[i];
+      if (face == null) face.dispose();
+    }
+    this._faces1.clear();
+    for (int i = this._faces2.length-1; i >= 0; --i) {
+      Face face = this._faces2[i];
+      if (face == null) face.dispose();
+    }
+    this._faces2.clear();
+    for (int i = this._faces3.length-1; i >= 0; --i) {
+      Face face = this._faces3[i];
+      if (face == null) face.dispose();
+    }
+    this._faces3.clear();
+  }
+
   /// Calculates the normals for all the faces in the vertex.
   /// Returns true if faces' normals are calculated, false on error.
   bool calculateNormals() {

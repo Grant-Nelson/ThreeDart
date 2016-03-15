@@ -19,7 +19,7 @@ class BumpySolidDirectional extends Shader {
       "attribute vec2 txtAttr;                                     \n"+
       "                                                            \n"+
       "varying vec3 normal;                                        \n"+
-      "varying vec3 binormal;                                     \n"+
+      "varying vec3 binormal;                                      \n"+
       "varying vec3 litVec;                                        \n"+
       "varying vec3 camPos;                                        \n"+
       "varying vec2 txt2D;                                         \n"+
@@ -77,10 +77,9 @@ class BumpySolidDirectional extends Shader {
       "   vec3 b = normalize(binormal);                           \n"+
       "   vec3 c = cross(b, n);                                   \n"+
       "   b = cross(n, c);                                        \n"+
-      "                                                           \n"+
-      "   mat3 mat = mat3(c.x, b.x, n.x,                          \n"+
-      "                   c.y, b.y, n.y,                          \n"+
-      "                   c.z, b.z, n.z);                         \n"+
+      "   mat3 mat = mat3( b.x,  b.y,  b.z,                       \n"+
+      "                   -c.x, -c.y, -c.z,                       \n"+
+      "                    n.x,  n.y,  n.z);                      \n"+
       "   vec3 bump = texture2D(bumpTxt, txt2D).rgb;              \n"+
       "   return mat * normalize(2.0*bump - 1.0);                 \n"+
       "}                                                          \n"+

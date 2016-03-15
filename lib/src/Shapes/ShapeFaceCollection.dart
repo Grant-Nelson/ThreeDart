@@ -162,6 +162,15 @@ class ShapeFaceCollection {
     }
   }
 
+  /// Removes all faces.
+  void removeAll() {
+    for (int i = this._faces.length-1; i >= 0; --i) {
+      Face face = this._faces[i];
+      if (face == null) face.dispose();
+    }
+    this._faces.clear();
+  }
+
   /// Calculates the normals for all the faces in the shape.
   /// Returns true if faces' normals are calculated, false on error.
   bool calculateNormals() {
