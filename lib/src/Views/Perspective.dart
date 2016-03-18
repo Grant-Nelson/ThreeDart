@@ -14,8 +14,8 @@ class Perspective implements Camara {
   Perspective() {
     this._mover = null;
     this._fov = PI/3.0;
-    this._near = 1.0;
-    this._far = -1.0;
+    this._near = 0.1;
+    this._far = 2000.0;
   }
 
   /// Feild of view vertically in radians of the camara.

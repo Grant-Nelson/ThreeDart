@@ -12,7 +12,7 @@ class FrontTarget extends Target {
   FrontTarget() {
     this._color = new Math.Color4.black();
     this._clearColor = true;
-    this._depth = 1.0;
+    this._depth = 2000.0;
     this._clearDepth = true;
     this._stencil = 0;
     this._clearStencil = false;

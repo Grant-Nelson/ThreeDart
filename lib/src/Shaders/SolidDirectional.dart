@@ -8,65 +8,67 @@ class SolidDirectional extends Shader {
 
   /// The vertex shader source code in glsl.
   static String _vertexSource =
-      "uniform mat4 objMat;                                        \n"+
-      "uniform mat4 viewMat;                                       \n"+
-      "uniform mat4 projMat;                                       \n"+
-      "uniform vec3 lightVec;                                      \n"+
-      "                                                            \n"+
-      "attribute vec3 posAttr;                                     \n"+
-      "attribute vec3 normAttr;                                    \n"+
-      "                                                            \n"+
-      "varying vec3 normal;                                        \n"+
-      "varying vec3 litVec;                                        \n"+
-      "varying vec3 camPos;                                        \n"+
-      "                                                            \n"+
-      "void main()                                                 \n"+
-      "{                                                           \n"+
-      "   camPos = (viewMat*vec4(0.0, 0.0, 0.0, -1.0)).xyz;        \n"+
-      "   normal = normalize(objMat*vec4(normAttr, 0.0)).xyz;      \n"+
-      "   litVec = normalize((viewMat*vec4(lightVec, 0.0)).xyz);   \n"+
-      "   gl_Position = projMat*viewMat*objMat*vec4(posAttr, 1.0); \n"+
-      "}                                                           \n";
-
-  /// The fragment shader source code in glsl.
-  static String _fragmentSource =
-      "precision mediump float;                                   \n"+
+      "uniform mat4 viewObjMat;                                   \n"+
+      "uniform mat4 viewMat;                                      \n"+
+      "uniform mat4 projViewObjMat;                               \n"+
+      "uniform vec3 lightVec;                                     \n"+
       "                                                           \n"+
-      "uniform vec3 lightClr;                                     \n"+
-      "uniform vec3 emissionClr;                                  \n"+
-      "uniform vec3 ambientClr;                                   \n"+
-      "uniform vec3 diffuseClr;                                   \n"+
-      "uniform vec3 specularClr;                                  \n"+
-      "uniform float shininess;                                   \n"+
+      "attribute vec3 posAttr;                                    \n"+
+      "attribute vec3 normAttr;                                   \n"+
       "                                                           \n"+
       "varying vec3 normal;                                       \n"+
       "varying vec3 litVec;                                       \n"+
       "varying vec3 camPos;                                       \n"+
       "                                                           \n"+
-      "vec3 diffuse(vec3 norm)                                    \n"+
-      "{                                                          \n"+
-      "   float scalar = dot(norm, litVec);                       \n"+
-      "   return diffuseClr*max(scalar, 0.0);                     \n"+
-      "}                                                          \n"+
-      "                                                           \n"+
-      "vec3 specular(vec3 norm)                                   \n"+
-      "{                                                          \n"+
-      "   if(dot(norm, litVec) > 0.0)                             \n"+
-      "   {                                                       \n"+
-      "      vec3 lightRef = normalize(reflect(litVec, norm));    \n"+
-      "      float scalar = dot(lightRef, normalize(camPos));     \n"+
-      "      return specularClr*pow(max(scalar, 0.0), shininess); \n"+
-      "   }                                                       \n"+
-      "   return vec3(0.0, 0.0, 0.0);                             \n"+
-      "}                                                          \n"+
-      "                                                           \n"+
       "void main()                                                \n"+
       "{                                                          \n"+
-      "   vec3 norm = normalize(normal);                          \n"+
-      "   vec3 litClr = lightClr*(ambientClr +                    \n"+
-      "                 diffuse(norm) + specular(norm));          \n"+
-      "   gl_FragColor = vec4(emissionClr + litClr, 1.0);         \n"+
+      "   camPos = (viewMat*vec4(0.0, 0.0, 0.0, -1.0)).xyz;       \n"+
+      "   normal = normalize(viewObjMat*vec4(normAttr, 0.0)).xyz; \n"+
+      "   litVec = normalize((viewMat*vec4(lightVec, 0.0)).xyz);  \n"+
+      "   gl_Position = projViewObjMat*vec4(posAttr, 1.0);        \n"+
       "}                                                          \n";
+
+  /// The fragment shader source code in glsl.
+  static String _fragmentSource =
+      "precision mediump float;                                      \n"+
+      "                                                              \n"+
+      "uniform vec3 lightClr;                                        \n"+
+      "uniform vec3 emissionClr;                                     \n"+
+      "uniform vec3 ambientClr;                                      \n"+
+      "uniform vec3 diffuseClr;                                      \n"+
+      "uniform vec3 specularClr;                                     \n"+
+      "uniform float shininess;                                      \n"+
+      "                                                              \n"+
+      "varying vec3 normal;                                          \n"+
+      "varying vec3 litVec;                                          \n"+
+      "varying vec3 camPos;                                          \n"+
+      "                                                              \n"+
+      "vec3 diffuse(vec3 norm)                                       \n"+
+      "{                                                             \n"+
+      "   float scalar = dot(norm, -litVec);                         \n"+
+      "   return diffuseClr*max(scalar, 0.0);                        \n"+
+      "}                                                             \n"+
+      "                                                              \n"+
+      "vec3 specular(vec3 norm)                                      \n"+
+      "{                                                             \n"+
+      "   if(dot(norm, -litVec) > 0.0)                               \n"+
+      "   {                                                          \n"+
+      "      vec3 lightRef = normalize(reflect(litVec, norm));       \n"+
+      "      float scalar = dot(lightRef, normalize(camPos));        \n"+
+      "      if(scalar > 0.0)                                        \n"+
+      "         return specularClr*max(pow(scalar, shininess), 0.0); \n"+
+      "      return vec3(0.0, 0.0, 0.0);                             \n"+
+      "   }                                                          \n"+
+      "   return vec3(0.0, 0.0, 0.0);                                \n"+
+      "}                                                             \n"+
+      "                                                              \n"+
+      "void main()                                                   \n"+
+      "{                                                             \n"+
+      "   vec3 norm = normalize(normal);                             \n"+
+      "   vec3 litClr = lightClr*(ambientClr +                       \n"+
+      "                 diffuse(norm) + specular(norm));             \n"+
+      "   gl_FragColor = vec4(emissionClr + litClr, 1.0);            \n"+
+      "}                                                             \n";
 
   Attribute _posAttr;
   Attribute _normAttr;
@@ -77,9 +79,9 @@ class SolidDirectional extends Shader {
   Uniform3f _diffuseClr;
   Uniform3f _specularClr;
   Uniform1f _shininess;
-  UniformMat4 _objMat;
+  UniformMat4 _viewObjMat;
   UniformMat4 _viewMat;
-  UniformMat4 _projMat;
+  UniformMat4 _projViewObjMat;
 
   /// Checks for the shader in the shader cache in the given [state],
   /// if it is not found then this shader is compiled and added
@@ -96,18 +98,18 @@ class SolidDirectional extends Shader {
   /// Compiles this shader for the given rendering context.
   SolidDirectional(WebGL.RenderingContext gl): super(gl, defaultName) {
     this.initialize(_vertexSource, _fragmentSource);
-    this._posAttr     = this.attributes["posAttr"];
-    this._normAttr    = this.attributes["normAttr"];
-    this._lightVec    = this.uniforms["lightVec"] as Uniform3f;
-    this._lightClr    = this.uniforms["lightClr"] as Uniform3f;
-    this._emissionClr = this.uniforms["emissionClr"] as Uniform3f;
-    this._ambientClr  = this.uniforms["ambientClr"] as Uniform3f;
-    this._diffuseClr  = this.uniforms["diffuseClr"] as Uniform3f;
-    this._specularClr = this.uniforms["specularClr"] as Uniform3f;
-    this._shininess   = this.uniforms["shininess"] as Uniform1f;
-    this._objMat      = this.uniforms["objMat"] as UniformMat4;
-    this._viewMat     = this.uniforms["viewMat"] as UniformMat4;
-    this._projMat     = this.uniforms["projMat"] as UniformMat4;
+    this._posAttr        = this.attributes["posAttr"];
+    this._normAttr       = this.attributes["normAttr"];
+    this._lightVec       = this.uniforms["lightVec"] as Uniform3f;
+    this._lightClr       = this.uniforms["lightClr"] as Uniform3f;
+    this._emissionClr    = this.uniforms["emissionClr"] as Uniform3f;
+    this._ambientClr     = this.uniforms["ambientClr"] as Uniform3f;
+    this._diffuseClr     = this.uniforms["diffuseClr"] as Uniform3f;
+    this._specularClr    = this.uniforms["specularClr"] as Uniform3f;
+    this._shininess      = this.uniforms["shininess"] as Uniform1f;
+    this._viewObjMat     = this.uniforms["viewObjMat"] as UniformMat4;
+    this._viewMat        = this.uniforms["viewMat"] as UniformMat4;
+    this._projViewObjMat = this.uniforms["projViewObjMat"] as UniformMat4;
   }
 
   /// The position vertex shader attribute.
@@ -159,15 +161,15 @@ class SolidDirectional extends Shader {
     this.shininess = material.shininess;
   }
 
-  /// The object matrix.
-  Math.Matrix4 get objectMatrix => this._objMat.getMatrix4();
-  set objectMatrix(Math.Matrix4 mat) => this._objMat.setMatrix4(mat);
+  /// The view matrix multiplied by the object matrix.
+  Math.Matrix4 get viewObjectMatrix => this._viewObjMat.getMatrix4();
+  set viewObjectMatrix(Math.Matrix4 mat) => this._viewObjMat.setMatrix4(mat);
 
   /// The view matrix.
   Math.Matrix4 get viewMatrix => this._viewMat.getMatrix4();
   set viewMatrix(Math.Matrix4 mat) => this._viewMat.setMatrix4(mat);
 
-  /// The projection matrix.
-  Math.Matrix4 get projectMatrix => this._projMat.getMatrix4();
-  set projectMatrix(Math.Matrix4 mat) => this._projMat.setMatrix4(mat);
+  /// The product of the projection matrix, view matrix, and object matrix.
+  Math.Matrix4 get projectViewObjectMatrix => this._projViewObjMat.getMatrix4();
+  set projectViewObjectMatrix(Math.Matrix4 mat) => this._projViewObjMat.setMatrix4(mat);
 }

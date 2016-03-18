@@ -90,13 +90,14 @@ class MaterialLight extends Technique {
         ..findAttribute(Data.VertexType.Norm).attr = shader.normAttr.loc;
     }
 
+    Math.Matrix4 viewObjMat = state.view.matrix*state.object.matrix;
     shader
       ..bind(state)
       ..setLight(this._light as Lights.Directional)
       ..setMaterial(this._material as Materials.Solid)
-      ..projectMatrix = state.projection.matrix
+      ..projectViewObjectMatrix = state.projection.matrix*viewObjMat
       ..viewMatrix = state.view.matrix
-      ..objectMatrix = state.object.matrix;
+      ..viewObjectMatrix = viewObjMat;
   }
 
   /// Renders and sets up the shaper for bumpy texture 2D directional light.
