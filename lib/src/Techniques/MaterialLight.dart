@@ -50,33 +50,6 @@ class MaterialLight extends Technique {
     this._material.unbind(state);
   }
 
-  /// Renders and sets up the shaper for bumpy solid color directional light.
-  void _bumpySolidDirectional(Core.RenderState state, Core.Entity obj) {
-    if (this._shader == null)
-      this._shader = new Shaders.BumpySolidDirectional.cached(state);
-    Shaders.BumpySolidDirectional shader = this._shader as Shaders.BumpySolidDirectional;
-
-    if (obj.cacheNeedsUpdate) {
-      obj.cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl),
-        Data.VertexType.Pos|Data.VertexType.Norm|Data.VertexType.Binm|Data.VertexType.Txt)
-        ..findAttribute(Data.VertexType.Pos).attr = shader.posAttr.loc
-        ..findAttribute(Data.VertexType.Norm).attr = shader.normAttr.loc
-        ..findAttribute(Data.VertexType.Binm).attr = shader.binmAttr.loc
-        ..findAttribute(Data.VertexType.Txt).attr = shader.txtAttr.loc;
-    }
-
-    Materials.BumpySolid mat = this._material as Materials.BumpySolid
-      ..bumpMap.index = 0;
-
-    shader
-      ..bind(state)
-      ..setLight(this._light as Lights.Directional)
-      ..setMaterial(mat)
-      ..projectMatrix = state.projection.matrix
-      ..viewMatrix = state.view.matrix
-      ..objectMatrix = state.object.matrix;
-  }
-
   /// Renders and sets up the shaper for solid color directional light.
   void _solidDirectional(Core.RenderState state, Core.Entity obj) {
     if (this._shader == null)
@@ -100,6 +73,64 @@ class MaterialLight extends Technique {
       ..viewObjectMatrix = viewObjMat;
   }
 
+  /// Renders and sets up the shaper for texture 2D directional light.
+  void _txt2DDirectional(Core.RenderState state, Core.Entity obj) {
+    if (this._shader == null)
+      this._shader = new Shaders.Texture2DDirectional.cached(state);
+    Shaders.Texture2DDirectional shader = this._shader as Shaders.Texture2DDirectional;
+
+    if (obj.cacheNeedsUpdate) {
+      obj.cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl),
+        Data.VertexType.Pos|Data.VertexType.Norm|Data.VertexType.Txt)
+        ..findAttribute(Data.VertexType.Pos).attr = shader.posAttr.loc
+        ..findAttribute(Data.VertexType.Norm).attr = shader.normAttr.loc
+        ..findAttribute(Data.VertexType.Txt).attr = shader.txtAttr.loc;
+    }
+
+    Materials.Texture2D mat = this._material as Materials.Texture2D
+      ..emissionTexture.index = 0
+      ..ambientTexture.index = 1
+      ..diffuseTexture.index = 2
+      ..specularTexture.index = 3;
+
+    Math.Matrix4 viewObjMat = state.view.matrix*state.object.matrix;
+    shader
+      ..bind(state)
+      ..setLight(this._light as Lights.Directional)
+      ..setMaterial(mat)
+      ..projectViewObjectMatrix = state.projection.matrix*viewObjMat
+      ..viewMatrix = state.view.matrix
+      ..viewObjectMatrix = viewObjMat;
+  }
+
+  /// Renders and sets up the shaper for bumpy solid color directional light.
+  void _bumpySolidDirectional(Core.RenderState state, Core.Entity obj) {
+    if (this._shader == null)
+      this._shader = new Shaders.BumpySolidDirectional.cached(state);
+    Shaders.BumpySolidDirectional shader = this._shader as Shaders.BumpySolidDirectional;
+
+    if (obj.cacheNeedsUpdate) {
+      obj.cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl),
+        Data.VertexType.Pos|Data.VertexType.Norm|Data.VertexType.Binm|Data.VertexType.Txt)
+        ..findAttribute(Data.VertexType.Pos).attr = shader.posAttr.loc
+        ..findAttribute(Data.VertexType.Norm).attr = shader.normAttr.loc
+        ..findAttribute(Data.VertexType.Binm).attr = shader.binmAttr.loc
+        ..findAttribute(Data.VertexType.Txt).attr = shader.txtAttr.loc;
+    }
+
+    Materials.BumpySolid mat = this._material as Materials.BumpySolid
+      ..bumpMap.index = 0;
+
+    Math.Matrix4 viewObjMat = state.view.matrix*state.object.matrix;
+    shader
+      ..bind(state)
+      ..setLight(this._light as Lights.Directional)
+      ..setMaterial(mat)
+      ..projectViewObjectMatrix = state.projection.matrix*viewObjMat
+      ..viewMatrix = state.view.matrix
+      ..viewObjectMatrix = viewObjMat;
+  }
+
   /// Renders and sets up the shaper for bumpy texture 2D directional light.
   void _bumpyTxt2DDirectional(Core.RenderState state, Core.Entity obj) {
     if (this._shader == null)
@@ -116,38 +147,11 @@ class MaterialLight extends Technique {
     }
 
     Materials.BumpyTexture2D mat = this._material as Materials.BumpyTexture2D
-      ..emission.index = 0
-      ..color.index = 1
-      ..specular.index = 2
-      ..bumpMap.index = 3;
-
-    shader
-      ..bind(state)
-      ..setLight(this._light as Lights.Directional)
-      ..setMaterial(mat)
-      ..projectMatrix = state.projection.matrix
-      ..viewMatrix = state.view.matrix
-      ..objectMatrix = state.object.matrix;
-  }
-
-  /// Renders and sets up the shaper for texture 2D directional light.
-  void _txt2DDirectional(Core.RenderState state, Core.Entity obj) {
-    if (this._shader == null)
-      this._shader = new Shaders.Texture2DDirectional.cached(state);
-    Shaders.Texture2DDirectional shader = this._shader as Shaders.Texture2DDirectional;
-
-    if (obj.cacheNeedsUpdate) {
-      obj.cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl),
-        Data.VertexType.Pos|Data.VertexType.Norm|Data.VertexType.Txt)
-        ..findAttribute(Data.VertexType.Pos).attr = shader.posAttr.loc
-        ..findAttribute(Data.VertexType.Norm).attr = shader.normAttr.loc
-        ..findAttribute(Data.VertexType.Txt).attr = shader.txtAttr.loc;
-    }
-
-    Materials.Texture2D mat = this._material as Materials.Texture2D
-      ..emission.index = 0
-      ..color.index = 1
-      ..specular.index = 2;
+      ..emissionTexture.index = 0
+      ..ambientTexture.index = 1
+      ..diffuseTexture.index = 2
+      ..specularTexture.index = 3
+      ..bumpMap.index = 4;
 
     shader
       ..bind(state)

@@ -12,6 +12,7 @@ import 'package:ThreeDart/Math.dart' as Math;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
+import 'package:ThreeDart/Textures.dart' as Textures;
 import 'package:ThreeDart/Materials.dart' as Materials;
 
 void main() {
@@ -22,8 +23,8 @@ void main() {
 
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
     ..light = new Lights.Directional(
-          direction: new Math.Vector3(1.0, 1.0, -2.0),
-          color: new Math.Color3.white());
+          direction: new Math.Vector3(1.0, -1.0, -3.0),
+          color: new Math.Color4.white());
 
   Scenes.RenderPass pass = new Scenes.RenderPass()
     ..tech = tech
@@ -33,12 +34,14 @@ void main() {
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart")
     ..scene = pass;
 
+  Textures.Texture2D color = td.textureLoader.load2DFromFile("./Color.png");
   tech.material = new Materials.Texture2D(
-    emission: td.textureLoader.load2DFromFile("./Emission.png"),
-    ambient: new Math.Color3(0.2, 0.2, 0.2),
-    diffuse: new Math.Color3(0.8, 0.8, 0.8),
-    color: td.textureLoader.load2DFromFile("./Color.png"),
-    specular: td.textureLoader.load2DFromFile("./Specular.png"),
+    emissionTexture: td.textureLoader.load2DFromFile("./Emission.png"),
+    ambientColor: new Math.Color4(0.2, 0.2, 0.2),
+    diffuseColor: new Math.Color4(0.8, 0.8, 0.8),
+    ambientTexture: color,
+    diffuseTexture: color,
+    specularTexture: td.textureLoader.load2DFromFile("./Specular.png"),
     shininess: 10.0);
 
   var update;

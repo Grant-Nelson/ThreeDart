@@ -21,7 +21,7 @@ void main() {
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
     ..light = new Lights.Directional(
         direction: new Math.Vector3(0.0, 0.0, -1.0),
-        color: new Math.Color3.white());
+        color: new Math.Color4.white());
 
   ThreeDart.Entity objTech = new ThreeDart.Entity()
     ..shape = shape
@@ -54,10 +54,10 @@ void main() {
     ..scene = pass;
 
   tech.material = new Materials.BumpySolid(
-    emission: new Math.Color3.black(),
-    ambient: new Math.Color3(0.0, 0.0, 1.0),
-    diffuse: new Math.Color3(0.0, 1.0, 0.0),
-    specular: new Math.Color3(1.0, 0.0, 0.0),
+    emission: new Math.Color4.transparent(),
+    ambient: new Math.Color4(0.0, 0.0, 1.0),
+    diffuse: new Math.Color4(0.0, 1.0, 0.0),
+    specular: new Math.Color4(1.0, 0.0, 0.0),
     bumpMap: td.textureLoader.load2DFromFile("./BumpMap.png"),
     shininess: 10.0);
 

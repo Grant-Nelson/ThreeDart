@@ -5,15 +5,21 @@ class BumpyTexture2D extends Texture2D {
 
   /// Creates a new bumpy texture 2D material data.
   BumpyTexture2D({
-      Textures.Texture2D emission: null,
-      Math.Color3 ambient: null,
-      Math.Color3 diffuse: null,
-      Textures.Texture2D color: null,
-      Textures.Texture2D specular: null,
+      Textures.Texture2D emissionTexture: null,
+      Textures.Texture2D ambientTexture: null,
+      Textures.Texture2D diffuseTexture: null,
+      Textures.Texture2D specularTexture: null,
+      Math.Color4 emissionColor: null,
+      Math.Color4 ambientColor: null,
+      Math.Color4 diffuseColor: null,
+      Math.Color4 specularColor: null,
       Textures.Texture2D bumpMap: null,
       double shininess: null}) :
-    super(emission: emission, ambient: ambient, diffuse: diffuse,
-          color: color, specular: specular, shininess: shininess) {
+    super(emissionTexture: emissionTexture, ambientTexture: ambientTexture,
+          diffuseTexture: diffuseTexture, specularTexture: specularTexture,
+          emissionColor: emissionColor, ambientColor: ambientColor,
+          diffuseColor: diffuseColor, specularColor: specularColor,
+          shininess: shininess) {
     this.bumpMap = bumpMap;
   }
 

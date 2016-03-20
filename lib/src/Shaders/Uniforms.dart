@@ -411,7 +411,10 @@ class UniformSampler2D extends Uniform {
   }
 
   /// Sets the uniform with the given texture 2D.
-  void setTexture2D(Textures.Texture2D tex2D) => this.setIndex(tex2D.index);
+  void setTexture2D(Textures.Texture2D tex2D) {
+    if (tex2D == null) this.setIndex(0);
+    else this.setIndex(tex2D.index);
+  }
 }
 
 /// The uniform variable for a cube texture sampler.
@@ -429,5 +432,8 @@ class UniformSamplerCube extends Uniform {
   }
 
   /// Sets the uniform with the given texture cube.
-  void setTextureCube(Textures.TextureCube texCube) => this.setIndex(texCube.index);
+  void setTextureCube(Textures.TextureCube texCube)  {
+    if (texCube == null) this.setIndex(0);
+    else this.setIndex(texCube.index);
+  }
 }

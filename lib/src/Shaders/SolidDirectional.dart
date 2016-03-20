@@ -32,52 +32,54 @@ class SolidDirectional extends Shader {
   static String _fragmentSource =
       "precision mediump float;                                      \n"+
       "                                                              \n"+
-      "uniform vec3 lightClr;                                        \n"+
-      "uniform vec3 emissionClr;                                     \n"+
-      "uniform vec3 ambientClr;                                      \n"+
-      "uniform vec3 diffuseClr;                                      \n"+
-      "uniform vec3 specularClr;                                     \n"+
+      "uniform vec4 lightClr;                                        \n"+
+      "uniform vec4 emissionClr;                                     \n"+
+      "uniform vec4 ambientClr;                                      \n"+
+      "uniform vec4 diffuseClr;                                      \n"+
+      "uniform vec4 specularClr;                                     \n"+
       "uniform float shininess;                                      \n"+
       "                                                              \n"+
       "varying vec3 normal;                                          \n"+
       "varying vec3 litVec;                                          \n"+
       "varying vec3 camPos;                                          \n"+
       "                                                              \n"+
-      "vec3 diffuse(vec3 norm)                                       \n"+
+      "vec4 diffuse(vec3 norm)                                       \n"+
       "{                                                             \n"+
+      "   if (diffuseClr.w <= 0.0) return vec4(0.0, 0.0, 0.0, 0.0);  \n"+
       "   float scalar = dot(norm, -litVec);                         \n"+
       "   return diffuseClr*max(scalar, 0.0);                        \n"+
       "}                                                             \n"+
       "                                                              \n"+
-      "vec3 specular(vec3 norm)                                      \n"+
+      "vec4 specular(vec3 norm)                                      \n"+
       "{                                                             \n"+
+      "   if (specularClr.w <= 0.0) return vec4(0.0, 0.0, 0.0, 0.0); \n"+
       "   if(dot(norm, -litVec) > 0.0)                               \n"+
       "   {                                                          \n"+
       "      vec3 lightRef = normalize(reflect(litVec, norm));       \n"+
       "      float scalar = dot(lightRef, normalize(camPos));        \n"+
       "      if(scalar > 0.0)                                        \n"+
-      "         return specularClr*max(pow(scalar, shininess), 0.0); \n"+
-      "      return vec3(0.0, 0.0, 0.0);                             \n"+
+      "      {                                                       \n"+
+      "         return specularClr*pow(scalar, shininess);           \n"+
+      "      }                                                       \n"+
       "   }                                                          \n"+
-      "   return vec3(0.0, 0.0, 0.0);                                \n"+
+      "   return vec4(0.0, 0.0, 0.0, 0.0);                           \n"+
       "}                                                             \n"+
       "                                                              \n"+
       "void main()                                                   \n"+
       "{                                                             \n"+
       "   vec3 norm = normalize(normal);                             \n"+
-      "   vec3 litClr = lightClr*(ambientClr +                       \n"+
-      "                 diffuse(norm) + specular(norm));             \n"+
-      "   gl_FragColor = vec4(emissionClr + litClr, 1.0);            \n"+
+      "   vec4 clr = ambientClr + diffuse(norm) + specular(norm);    \n"+
+      "   gl_FragColor = emissionClr + lightClr*clr;                 \n"+
       "}                                                             \n";
 
   Attribute _posAttr;
   Attribute _normAttr;
   Uniform3f _lightVec;
-  Uniform3f _lightClr;
-  Uniform3f _emissionClr;
-  Uniform3f _ambientClr;
-  Uniform3f _diffuseClr;
-  Uniform3f _specularClr;
+  Uniform4f _lightClr;
+  Uniform4f _emissionClr;
+  Uniform4f _ambientClr;
+  Uniform4f _diffuseClr;
+  Uniform4f _specularClr;
   Uniform1f _shininess;
   UniformMat4 _viewObjMat;
   UniformMat4 _viewMat;
@@ -101,11 +103,11 @@ class SolidDirectional extends Shader {
     this._posAttr        = this.attributes["posAttr"];
     this._normAttr       = this.attributes["normAttr"];
     this._lightVec       = this.uniforms["lightVec"] as Uniform3f;
-    this._lightClr       = this.uniforms["lightClr"] as Uniform3f;
-    this._emissionClr    = this.uniforms["emissionClr"] as Uniform3f;
-    this._ambientClr     = this.uniforms["ambientClr"] as Uniform3f;
-    this._diffuseClr     = this.uniforms["diffuseClr"] as Uniform3f;
-    this._specularClr    = this.uniforms["specularClr"] as Uniform3f;
+    this._lightClr       = this.uniforms["lightClr"] as Uniform4f;
+    this._emissionClr    = this.uniforms["emissionClr"] as Uniform4f;
+    this._ambientClr     = this.uniforms["ambientClr"] as Uniform4f;
+    this._diffuseClr     = this.uniforms["diffuseClr"] as Uniform4f;
+    this._specularClr    = this.uniforms["specularClr"] as Uniform4f;
     this._shininess      = this.uniforms["shininess"] as Uniform1f;
     this._viewObjMat     = this.uniforms["viewObjMat"] as UniformMat4;
     this._viewMat        = this.uniforms["viewMat"] as UniformMat4;
@@ -123,8 +125,8 @@ class SolidDirectional extends Shader {
   set lightVector(Math.Vector3 vec) => this._lightVec.setVector3(vec);
 
   /// The color of the light.
-  Math.Color3 get lightColor => this._lightClr.getColor3();
-  set lightColor(Math.Color3 clr) => this._lightClr.setColor3(clr);
+  Math.Color4 get lightColor => this._lightClr.getColor4();
+  set lightColor(Math.Color4 clr) => this._lightClr.setColor4(clr);
 
   /// Sets the directional light's vector and color.
   void setLight(Lights.Directional light) {
@@ -133,20 +135,20 @@ class SolidDirectional extends Shader {
   }
 
   /// The emission color of the object.
-  Math.Color3 get emissionColor => this._emissionClr.getColor3();
-  set emissionColor(Math.Color3 clr) => this._emissionClr.setColor3(clr);
+  Math.Color4 get emissionColor => this._emissionClr.getColor4();
+  set emissionColor(Math.Color4 clr) => this._emissionClr.setColor4(clr);
 
   /// The ambient color of the object.
-  Math.Color3 get ambientColor => this._ambientClr.getColor3();
-  set ambientColor(Math.Color3 clr) => this._ambientClr.setColor3(clr);
+  Math.Color4 get ambientColor => this._ambientClr.getColor4();
+  set ambientColor(Math.Color4 clr) => this._ambientClr.setColor4(clr);
 
   /// The diffuse color of the object.
-  Math.Color3 get diffuseColor => this._diffuseClr.getColor3();
-  set diffuseColor(Math.Color3 clr) => this._diffuseClr.setColor3(clr);
+  Math.Color4 get diffuseColor => this._diffuseClr.getColor4();
+  set diffuseColor(Math.Color4 clr) => this._diffuseClr.setColor4(clr);
 
   /// The specular color of the object.
-  Math.Color3 get specularColor => this._specularClr.getColor3();
-  set specularColor(Math.Color3 clr) => this._specularClr.setColor3(clr);
+  Math.Color4 get specularColor => this._specularClr.getColor4();
+  set specularColor(Math.Color4 clr) => this._specularClr.setColor4(clr);
 
   /// The shininess value of the specualr.
   double get shininess => this._shininess.getValue();

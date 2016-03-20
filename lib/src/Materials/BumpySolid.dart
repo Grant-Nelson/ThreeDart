@@ -5,10 +5,10 @@ class BumpySolid extends Solid {
 
   /// Creates a new solid color material data.
   BumpySolid({
-      Math.Color3 emission: null,
-      Math.Color3 ambient: null,
-      Math.Color3 diffuse: null,
-      Math.Color3 specular: null,
+      Math.Color4 emission: null,
+      Math.Color4 ambient: null,
+      Math.Color4 diffuse: null,
+      Math.Color4 specular: null,
       Textures.Texture2D bumpMap: null,
       double shininess: null}):
     super(emission: emission, ambient: ambient, diffuse: diffuse,

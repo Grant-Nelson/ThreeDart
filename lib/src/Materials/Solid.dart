@@ -5,10 +5,10 @@ class Solid implements Material {
 
   /// Creates a new solid color material data.
   Solid({
-      Math.Color3 emission: null,
-      Math.Color3 ambient: null,
-      Math.Color3 diffuse: null,
-      Math.Color3 specular: null,
+      Math.Color4 emission: null,
+      Math.Color4 ambient: null,
+      Math.Color4 diffuse: null,
+      Math.Color4 specular: null,
       double shininess: null}) {
     this.emission = emission;
     this.ambient = ambient;
@@ -18,28 +18,28 @@ class Solid implements Material {
   }
 
   /// The emission color of the material.
-  Math.Color3 get emission => this._emission;
-  set emission(Math.Color3 color) =>
-    this._emission = (color == null)? new Math.Color3.black(): color;
-  Math.Color3 _emission;
+  Math.Color4 get emission => this._emission;
+  set emission(Math.Color4 color) =>
+    this._emission = (color == null)? new Math.Color4.transparent(): color;
+  Math.Color4 _emission;
 
   /// The ambient color of the material.
-  Math.Color3 get ambient => this._ambient;
-  set ambient(Math.Color3 color) =>
-    this._ambient = (color == null)? new Math.Color3.black(): color;
-  Math.Color3 _ambient;
+  Math.Color4 get ambient => this._ambient;
+  set ambient(Math.Color4 color) =>
+    this._ambient = (color == null)? new Math.Color4.transparent(): color;
+  Math.Color4 _ambient;
 
   /// The diffuse color of the material.
-  Math.Color3 get diffuse => this._diffuse;
-  set diffuse(Math.Color3 color) =>
-    this._diffuse = (color == null)? new Math.Color3.white(): color;
-  Math.Color3 _diffuse;
+  Math.Color4 get diffuse => this._diffuse;
+  set diffuse(Math.Color4 color) =>
+    this._diffuse = (color == null)? new Math.Color4.transparent(): color;
+  Math.Color4 _diffuse;
 
   /// The specular color of the material.
-  Math.Color3 get specular => this._specular;
-  set specular(Math.Color3 color) =>
-    this._specular = (color == null)? new Math.Color3.black(): color;
-  Math.Color3 _specular;
+  Math.Color4 get specular => this._specular;
+  set specular(Math.Color4 color) =>
+    this._specular = (color == null)? new Math.Color4.transparent(): color;
+  Math.Color4 _specular;
 
   /// The phong shininess value of the matrial.
   double get shininess => this._shininess;

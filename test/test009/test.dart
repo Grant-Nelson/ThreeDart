@@ -28,12 +28,12 @@ void main() {
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
     ..light = new Lights.Directional(
           direction: new Math.Vector3(-1.0, -1.0, -1.0),
-          color: new Math.Color3.white())
+          color: new Math.Color4.white())
     ..material = new Materials.Solid(
-          emission: new Math.Color3.black(),
-          ambient: new Math.Color3(0.0, 0.0, 1.0),
-          diffuse: new Math.Color3(0.0, 1.0, 0.0),
-          specular: new Math.Color3(1.0, 0.0, 0.0),
+          emission: new Math.Color4.black(),
+          ambient: new Math.Color4(0.0, 0.0, 1.0),
+          diffuse: new Math.Color4(0.0, 1.0, 0.0),
+          specular: new Math.Color4(1.0, 0.0, 0.0),
           shininess: 10.0);
 
   Scenes.RenderPass pass = new Scenes.RenderPass()

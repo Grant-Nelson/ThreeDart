@@ -153,7 +153,7 @@ class UserRotater implements Mover, Core.UserInteractable {
     if (this._inDeadBand) return;
     if (this._prevVal.length2() > 0.0001) {
       this._pitch.velocity = this._prevVal.dx*10.0*this._pitchScalar;
-      this._yaw.velocity = this._prevVal.dy*10.0*this._yawScalar;
+      this._yaw.velocity = -this._prevVal.dy*10.0*this._yawScalar;
     }
   }
 
