@@ -62,10 +62,16 @@ class TextureLoader {
 
   /// Loads files from the given path.
   /// The images will load asynchronously.
-  /// The files must be named: 'posx.jpg', 'negx.jpg', 'posy.jpg', etc.
-  TextureCube loadCubeFromPath(String path, {bool flipY: false}) {
-    return this.loadCubeFromFiles(path+'/posx.jpg', path+'/posy.jpg', path+'/posz.jpg',
-      path+'/negx.jpg', path+'/negy.jpg', path+'/negz.jpg', flipY: flipY);
+  /// The files must be named: 'posx.png', 'negx.png', 'posy.png', etc.
+  TextureCube loadCubeFromPath(String path, {pre: '', ext: '.png', bool flipY: false}) {
+    return this.loadCubeFromFiles(
+      '$path/${pre}posx${ext}',
+      '$path/${pre}posy${ext}',
+      '$path/${pre}posz${ext}',
+      '$path/${pre}negx${ext}',
+      '$path/${pre}negy${ext}',
+      '$path/${pre}negz${ext}',
+      flipY: flipY);
   }
 
   /// Loads files from the given paths.

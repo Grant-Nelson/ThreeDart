@@ -5,44 +5,69 @@ class TextureCube implements Material {
 
   /// Creates a new texture cube material data.
   TextureCube({
-      Textures.TextureCube emission: null,
-      Textures.TextureCube ambient: null,
-      Textures.TextureCube diffuse: null,
-      Textures.TextureCube specular: null,
-      Textures.TextureCube bumpMap: null,
+      Textures.TextureCube emissionTexture: null,
+      Textures.TextureCube ambientTexture: null,
+      Textures.TextureCube diffuseTexture: null,
+      Textures.TextureCube specularTexture: null,
+      Math.Color4 emissionColor: null,
+      Math.Color4 ambientColor: null,
+      Math.Color4 diffuseColor: null,
+      Math.Color4 specularColor: null,
       double shininess: null}) {
-    this.emission = emission;
-    this.ambient = ambient;
-    this.diffuse = diffuse;
-    this.specular = specular;
+    this.emissionTexture = emissionTexture;
+    this.ambientTexture = ambientTexture;
+    this.diffuseTexture = diffuseTexture;
+    this.specularTexture = specularTexture;
+    this.emissionColor = emissionColor;
+    this.ambientColor = ambientColor;
+    this.diffuseColor = diffuseColor;
+    this.specularColor = specularColor;
     this.shininess = shininess;
-    this.bumpMap = bumpMap;
   }
 
   /// The emission texture of the material.
-  Textures.TextureCube get emission => this._emission;
-  set emission(Textures.TextureCube emission) => this._emission = emission;
-  Textures.TextureCube _emission;
+  Textures.TextureCube get emissionTexture => this._emissionTxt;
+  set emissionTexture(Textures.TextureCube emission) => this._emissionTxt = emission;
+  Textures.TextureCube _emissionTxt;
 
   /// The ambient texture of the material.
-  Textures.TextureCube get ambient => this._ambient;
-  set ambient(Textures.TextureCube ambient) => this._ambient = ambient;
-  Textures.TextureCube _ambient;
+  Textures.TextureCube get ambientTexture => this._ambientTxt;
+  set ambientTexture(Textures.TextureCube ambient) => this._ambientTxt = ambient;
+  Textures.TextureCube _ambientTxt;
 
   /// The diffuse texture of the material.
-  Textures.TextureCube get diffuse => this._diffuse;
-  set diffuse(Textures.TextureCube diffuse) => this._diffuse = diffuse;
-  Textures.TextureCube _diffuse;
+  Textures.TextureCube get diffuseTexture => this._diffuseTxt;
+  set diffuseTexture(Textures.TextureCube diffuse) => this._diffuseTxt = diffuse;
+  Textures.TextureCube _diffuseTxt;
 
   /// The specular texture of the material.
-  Textures.TextureCube get specular => this._specular;
-  set specular(Textures.TextureCube specular) => this._specular = specular;
-  Textures.TextureCube _specular;
+  Textures.TextureCube get specularTexture => this._specularTxt;
+  set specularTexture(Textures.TextureCube specular) => this._specularTxt = specular;
+  Textures.TextureCube _specularTxt;
 
-  /// The bumpmap texture of the material.
-  Textures.TextureCube get bumpMap => this._bumpMap;
-  set bumpMap(Textures.TextureCube bumpMap) => this._bumpMap = bumpMap;
-  Textures.TextureCube _bumpMap;
+  /// The emission color scalar of the material.
+  Math.Color4 get emissionColor => this._emissionClr;
+  set emissionColor(Math.Color4 color) =>
+    this._emissionClr = (color == null)? new Math.Color4.white(): color;
+  Math.Color4 _emissionClr;
+
+  /// The ambient color scalar of the material.
+  Math.Color4 get ambientColor => this._ambientClr;
+  set ambientColor(Math.Color4 color) =>
+    this._ambientClr = (color == null)? new Math.Color4.white(): color;
+  Math.Color4 _ambientClr;
+
+  /// The diffuse color scalar of the material.
+  Math.Color4 get diffuseColor => this._diffuseClr;
+  set diffuseColor(Math.Color4 color) =>
+    this._diffuseClr = (color == null)? new Math.Color4.white(): color;
+  Math.Color4 _diffuseClr;
+
+  /// The specular color scalar of the material.
+  Math.Color4 get specularColor => this._specularClr;
+  set specularColor(Math.Color4 color) =>
+    this._specularClr = (color == null)? new Math.Color4.white(): color;
+  Math.Color4 _specularClr;
 
   /// The phong shininess value of the matrial.
   double get shininess => this._shininess;
@@ -53,19 +78,17 @@ class TextureCube implements Material {
 
   /// Binds this material to the given [state].
   void bind(Core.RenderState state) {
-    if (this._emission != null) this._emission.bind(state);
-    if (this._ambient != null) this._ambient.bind(state);
-    if (this._diffuse != null) this._diffuse.bind(state);
-    if (this._specular != null) this._specular.bind(state);
-    if (this._bumpMap != null) this._bumpMap.bind(state);
+    if (this._emissionTxt != null) this._emissionTxt.bind(state);
+    if (this._ambientTxt != null) this._ambientTxt.bind(state);
+    if (this._diffuseTxt != null) this._diffuseTxt.bind(state);
+    if (this._specularTxt != null) this._specularTxt.bind(state);
   }
 
   /// Unbinds this material from the given [state].
   void unbind(Core.RenderState state) {
-    if (this._emission != null) this._emission.unbind(state);
-    if (this._ambient != null) this._ambient.unbind(state);
-    if (this._diffuse != null) this._diffuse.unbind(state);
-    if (this._specular != null) this._specular.unbind(state);
-    if (this._bumpMap != null) this._bumpMap.unbind(state);
+    if (this._emissionTxt != null) this._emissionTxt.unbind(state);
+    if (this._ambientTxt != null) this._ambientTxt.unbind(state);
+    if (this._diffuseTxt != null) this._diffuseTxt.unbind(state);
+    if (this._specularTxt != null) this._specularTxt.unbind(state);
   }
 }

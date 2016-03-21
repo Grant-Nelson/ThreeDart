@@ -8,6 +8,7 @@ import '../Math/Math.dart' as Math;
 import '../Textures/Textures.dart' as Textures;
 
 part 'BumpySolid.dart';
+part 'BumpyCubeSolid.dart';
 part 'BumpyTexture2D.dart';
 part 'Solid.dart';
 part 'Material.dart';

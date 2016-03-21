@@ -18,9 +18,11 @@ part 'Shader.dart';
 part 'Uniforms.dart';
 
 // Implemented Shaders
-part 'BumpySolidDirectional.dart';
-part 'BumpyTexture2DDirectional.dart';
+part 'BumpySolid.dart';
+part 'BumpyCubeSolid.dart';
+part 'BumpyTexture2D.dart';
 part 'Depth.dart';
 part 'Inspection.dart';
-part 'SolidDirectional.dart';
-part 'Texture2DDirectional.dart';
+part 'Solid.dart';
+part 'Texture2D.dart';
+part 'TextureCube.dart';

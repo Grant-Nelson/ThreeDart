@@ -14,7 +14,7 @@ class Texture2D extends Texture {
 
   /// Binds some data to the given [state].
   void bind(Core.RenderState state) {
-    if ((!this._bound) && (this._texture != null)) {
+    if (!this._bound) {
       this._bound = true;
       state.gl.activeTexture(WebGL.TEXTURE0+this.index);
       state.gl.bindTexture(WebGL.TEXTURE_2D, this._texture);

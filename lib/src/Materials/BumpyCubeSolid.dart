@@ -1,15 +1,15 @@
 part of ThreeDart.Materials;
 
-/// Storage for bumpy 2D map solid color material data.
-class BumpySolid extends Solid {
+/// Storage for bumpy cube map solid color material data.
+class BumpyCubeSolid extends Solid {
 
-  /// Creates a new bumpy 2D map solid color material data.
-  BumpySolid({
+  /// Creates a new bumpy cube map solid color material data.
+  BumpyCubeSolid({
       Math.Color4 emission: null,
       Math.Color4 ambient: null,
       Math.Color4 diffuse: null,
       Math.Color4 specular: null,
-      Textures.Texture2D bumpMap: null,
+      Textures.TextureCube bumpMap: null,
       double shininess: null}):
     super(emission: emission, ambient: ambient, diffuse: diffuse,
           specular: specular, shininess: shininess) {
@@ -17,9 +17,9 @@ class BumpySolid extends Solid {
   }
 
   /// The bumpmap texture of the material.
-  Textures.Texture2D get bumpMap => this._bumpMap;
-  set bumpMap(Textures.Texture2D bumpMap) => this._bumpMap = bumpMap;
-  Textures.Texture2D _bumpMap;
+  Textures.TextureCube get bumpMap => this._bumpMap;
+  set bumpMap(Textures.TextureCube bumpMap) => this._bumpMap = bumpMap;
+  Textures.TextureCube _bumpMap;
 
   /// Binds this material to the given [state].
   void bind(Core.RenderState state) {
