@@ -57,6 +57,7 @@ class MaterialLight extends Technique {
     Shaders.SolidDirectional shader = this._shader as Shaders.SolidDirectional;
 
     if (obj.cacheNeedsUpdate) {
+      obj.shape.calculateNormals();
       obj.cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl),
         Data.VertexType.Pos|Data.VertexType.Norm)
         ..findAttribute(Data.VertexType.Pos).attr = shader.posAttr.loc
@@ -80,6 +81,7 @@ class MaterialLight extends Technique {
     Shaders.Texture2DDirectional shader = this._shader as Shaders.Texture2DDirectional;
 
     if (obj.cacheNeedsUpdate) {
+      obj.shape.calculateNormals();
       obj.cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl),
         Data.VertexType.Pos|Data.VertexType.Norm|Data.VertexType.Txt)
         ..findAttribute(Data.VertexType.Pos).attr = shader.posAttr.loc
@@ -87,11 +89,11 @@ class MaterialLight extends Technique {
         ..findAttribute(Data.VertexType.Txt).attr = shader.txtAttr.loc;
     }
 
-    Materials.Texture2D mat = this._material as Materials.Texture2D
-      ..emissionTexture.index = 0
-      ..ambientTexture.index = 1
-      ..diffuseTexture.index = 2
-      ..specularTexture.index = 3;
+    Materials.Texture2D mat = this._material as Materials.Texture2D;
+    if (mat.emissionTexture != null) mat.emissionTexture.index = 0;
+    if (mat.ambientTexture != null) mat.ambientTexture.index = 1;
+    if (mat.diffuseTexture != null) mat.diffuseTexture.index = 2;
+    if (mat.specularTexture != null) mat.specularTexture.index = 3;
 
     Math.Matrix4 viewObjMat = state.view.matrix*state.object.matrix;
     shader
@@ -110,6 +112,9 @@ class MaterialLight extends Technique {
     Shaders.BumpySolidDirectional shader = this._shader as Shaders.BumpySolidDirectional;
 
     if (obj.cacheNeedsUpdate) {
+      obj.shape
+        ..calculateNormals()
+        ..calculateBinormals();
       obj.cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl),
         Data.VertexType.Pos|Data.VertexType.Norm|Data.VertexType.Binm|Data.VertexType.Txt)
         ..findAttribute(Data.VertexType.Pos).attr = shader.posAttr.loc
@@ -118,8 +123,8 @@ class MaterialLight extends Technique {
         ..findAttribute(Data.VertexType.Txt).attr = shader.txtAttr.loc;
     }
 
-    Materials.BumpySolid mat = this._material as Materials.BumpySolid
-      ..bumpMap.index = 0;
+    Materials.BumpySolid mat = this._material as Materials.BumpySolid;
+    if (mat.bumpMap != null) mat.bumpMap.index = 0;
 
     Math.Matrix4 viewObjMat = state.view.matrix*state.object.matrix;
     shader
@@ -138,6 +143,9 @@ class MaterialLight extends Technique {
     Shaders.BumpyTexture2DDirectional shader = this._shader as Shaders.BumpyTexture2DDirectional;
 
     if (obj.cacheNeedsUpdate) {
+      obj.shape
+        ..calculateNormals()
+        ..calculateBinormals();
       obj.cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl),
         Data.VertexType.Pos|Data.VertexType.Norm|Data.VertexType.Binm|Data.VertexType.Txt)
         ..findAttribute(Data.VertexType.Pos).attr = shader.posAttr.loc
@@ -146,19 +154,20 @@ class MaterialLight extends Technique {
         ..findAttribute(Data.VertexType.Txt).attr = shader.txtAttr.loc;
     }
 
-    Materials.BumpyTexture2D mat = this._material as Materials.BumpyTexture2D
-      ..emissionTexture.index = 0
-      ..ambientTexture.index = 1
-      ..diffuseTexture.index = 2
-      ..specularTexture.index = 3
-      ..bumpMap.index = 4;
+    Materials.BumpyTexture2D mat = this._material as Materials.BumpyTexture2D;
+    if (mat.emissionTexture != null) mat.emissionTexture.index = 0;
+    if (mat.ambientTexture != null) mat.ambientTexture.index = 1;
+    if (mat.diffuseTexture != null) mat.diffuseTexture.index = 2;
+    if (mat.specularTexture != null) mat.specularTexture.index = 3;
+    if (mat.bumpMap != null) mat.bumpMap.index = 4;
 
+    Math.Matrix4 viewObjMat = state.view.matrix*state.object.matrix;
     shader
       ..bind(state)
       ..setLight(this._light as Lights.Directional)
       ..setMaterial(mat)
-      ..projectMatrix = state.projection.matrix
+      ..projectViewObjectMatrix = state.projection.matrix*viewObjMat
       ..viewMatrix = state.view.matrix
-      ..objectMatrix = state.object.matrix;
+      ..viewObjectMatrix = viewObjMat;
   }
 }

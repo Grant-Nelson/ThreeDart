@@ -58,6 +58,9 @@ void main() {
 
   _addRadioButton("Square",        () { obj.shape = Shapes.square(); }, true);
   _addRadioButton("Cube",          () { obj.shape = Shapes.cube(); });
+  _addRadioButton("Cuboid",        () { obj.shape = Shapes.cuboid(); });
+  _addRadioButton("Cuboid+",       () { obj.shape = Shapes.cuboid(widthDiv: 15, heightDiv: 15,
+                                        heightHndl: (double u, double v) => cos(v*4.0*PI+PI)*0.1 + cos(u*4.0*PI+PI)*0.1); });
   _addRadioButton("Disk",          () { obj.shape = Shapes.disk(); });
   _addRadioButton("Disk+",         () { obj.shape = Shapes.disk(sides: 30); });
   _addRadioButton("Cylinder",      () { obj.shape = Shapes.cylinder(); });

@@ -16,7 +16,7 @@ import 'package:ThreeDart/Materials.dart' as Materials;
 
 void main() {
 
-  Shapes.Shape shape = (Shapes.square()..adjustNormals());
+  Shapes.Shape shape = Shapes.cube();
 
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
     ..light = new Lights.Directional(
@@ -38,12 +38,15 @@ void main() {
 
   Movers.UserRotater rotater = new Movers.UserRotater();
   Movers.UserZoom zoom = new Movers.UserZoom();
+  Movers.UserRoller roller = new Movers.UserRoller()
+    ..ctrlPressed = true;
 
   ThreeDart.Entity group = new ThreeDart.Entity()
     ..children.add(objInspecTech)
     ..children.add(objTech)
     ..mover = (new Movers.Group()
       ..add(rotater)
+      ..add(roller)
       ..add(zoom));
 
   Scenes.RenderPass pass = new Scenes.RenderPass()
@@ -53,16 +56,26 @@ void main() {
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart")
     ..scene = pass;
 
-  tech.material = new Materials.BumpySolid(
+  Materials.BumpySolid material = new Materials.BumpySolid(
     emission: new Math.Color4.transparent(),
     ambient: new Math.Color4(0.0, 0.0, 1.0),
     diffuse: new Math.Color4(0.0, 1.0, 0.0),
     specular: new Math.Color4(1.0, 0.0, 0.0),
-    bumpMap: td.textureLoader.load2DFromFile("./BumpMap.png"),
+    bumpMap: null,
     shininess: 10.0);
+  tech.material = material;
 
   rotater.attach(td.userInput);
   zoom.attach(td.userInput);
+  roller.attach(td.userInput);
+
+  _addBumpMap("./BumpMap1.png", td, material, true);
+  _addBumpMap("./BumpMap2.png", td, material);
+  _addBumpMap("./BumpMap3.png", td, material);
+  _addBumpMap("./BumpMap4.png", td, material);
+  _addBumpMap("./BumpMap5.png", td, material);
+  _addBumpMap("./BumpMap6.png", td, material);
+  _addBumpMap("./BumpMap7.png", td, material);
 
   var update;
   update = (num t) {
@@ -70,4 +83,26 @@ void main() {
     window.requestAnimationFrame(update);
   };
   window.requestAnimationFrame(update);
+}
+
+void _addBumpMap(String fileName, ThreeDart.ThreeDart td,
+                 Materials.BumpySolid material, [bool checked = false]) {
+  Element elem = document.getElementById("bumpMaps");
+  ImageElement imgElem = new ImageElement()
+    ..src = fileName
+    ..width = 64
+    ..height = 64
+    ..style.border = "solid 2px white";
+  imgElem.onClick.listen((_) {
+      elem.children.forEach((Element elem) {
+        if (elem is ImageElement) {
+          elem.style.border = "solid 2px white";
+        }
+      });
+      imgElem.style.border = "solid 2px black";
+      material.bumpMap = td.textureLoader.load2DFromFile(fileName);
+    });
+  elem.children.add(imgElem);
+  elem.children.add(new BRElement());
+  if (checked) imgElem.click();
 }

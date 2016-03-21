@@ -21,7 +21,7 @@ void main() {
   Movers.UserZoom zoom = new Movers.UserZoom();
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
-    ..shape = (Shapes.square()..adjustNormals())
+    ..shape = Shapes.cube()
     ..mover = (new Movers.Group()
       ..add(rotater)
       ..add(zoom));
@@ -41,12 +41,13 @@ void main() {
 
   Textures.Texture2D color = td.textureLoader.load2DFromFile("./Color.png");
   tech.material = new Materials.BumpyTexture2D(
-    emissionTexture: td.textureLoader.load2DFromFile("./Emission.png"),
+    emissionColor: new Math.Color4.transparent(),
     ambientColor: new Math.Color4(0.2, 0.2, 0.2),
     diffuseColor: new Math.Color4(0.8, 0.8, 0.8),
     ambientTexture: color,
     diffuseTexture: color,
     bumpMap: td.textureLoader.load2DFromFile("./BumpMap.png"),
+    specularColor: new Math.Color4.white(),
     specularTexture: td.textureLoader.load2DFromFile("./Specular.png"),
     shininess: 10.0);
 

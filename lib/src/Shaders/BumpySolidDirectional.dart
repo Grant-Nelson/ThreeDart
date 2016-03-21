@@ -27,9 +27,9 @@ class BumpySolidDirectional extends Shader {
       "void main()                                                   \n"+
       "{                                                             \n"+
       "   camPos = (viewMat*vec4(0.0, 0.0, 0.0, -1.0)).xyz;          \n"+
+      "   litVec = normalize((viewMat*vec4(lightVec, 0.0)).xyz);     \n"+
       "   normal = normalize(viewObjMat*vec4(normAttr, 0.0)).xyz;    \n"+
       "   binormal = normalize(viewObjMat*vec4(binmAttr, 0.0)).xyz;  \n"+
-      "   litVec = normalize((viewMat*vec4(lightVec, 0.0)).xyz);     \n"+
       "   txt2D = txtAttr;                                           \n"+
       "   gl_Position = projViewObjMat*vec4(posAttr, 1.0);           \n"+
       "}                                                             \n";
@@ -45,7 +45,6 @@ class BumpySolidDirectional extends Shader {
       "uniform vec4 specularClr;                                     \n"+
       "uniform float shininess;                                      \n"+
       "uniform sampler2D bumpTxt;                                    \n"+
-      "uniform int hasBump;                                          \n"+
       "                                                              \n"+
       "varying vec3 normal;                                          \n"+
       "varying vec3 binormal;                                        \n"+
@@ -80,7 +79,7 @@ class BumpySolidDirectional extends Shader {
       "   vec3 color = texture2D(bumpTxt, txt2D).rgb;                \n"+
       "   vec3 n = normalize(normal);                                \n"+
       "   vec3 b = normalize(binormal);                              \n"+
-      "   vec3 c = cross(b, n);                                      \n"+
+      "   vec3 c = normalize(cross(b, n));                           \n"+
       "   b = cross(n, c);                                           \n"+
       "   mat3 mat = mat3( b.x,  b.y,  b.z,                          \n"+
       "                   -c.x, -c.y, -c.z,                          \n"+

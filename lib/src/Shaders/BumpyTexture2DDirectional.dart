@@ -47,6 +47,7 @@ class BumpyTexture2DDirectional extends Shader {
       "uniform vec4 ambientClr;                                       \n"+
       "uniform vec4 diffuseClr;                                       \n"+
       "uniform vec4 specularClr;                                      \n"+
+      "uniform sampler2D bumpTxt;                                     \n"+
       "uniform float shininess;                                       \n"+
       "                                                               \n"+
       "varying vec3 normal;                                           \n"+
@@ -63,7 +64,7 @@ class BumpyTexture2DDirectional extends Shader {
       "                                                               \n"+
       "vec4 ambient()                                                 \n"+
       "{                                                              \n"+
-      "   if (ambientClr.w <= 0) return vec4(0.0, 0.0, 0.0, 0.0);     \n"+
+      "   if (ambientClr.w <= 0.0) return vec4(0.0, 0.0, 0.0, 0.0);   \n"+
       "   return ambientClr*texture2D(ambientTxt, txt2D);             \n"+
       "}                                                              \n"+
       "                                                               \n"+
@@ -93,7 +94,7 @@ class BumpyTexture2DDirectional extends Shader {
       "                                                               \n"+
       "vec3 bumpyNormal()                                             \n"+
       "{                                                              \n"+
-      "   color = texture2D(bumpTxt, txt2D).rgb;                      \n"+
+      "   vec3 color = texture2D(bumpTxt, txt2D).rgb;                 \n"+
       "   vec3 n = normalize(normal);                                 \n"+
       "   vec3 b = normalize(binormal);                               \n"+
       "   vec3 c = cross(b, n);                                       \n"+
@@ -127,9 +128,9 @@ class BumpyTexture2DDirectional extends Shader {
   Uniform4f _specularClr;
   Uniform1f _shininess;
   UniformSampler2D _bumpTxt;
-  UniformMat4 _objMat;
+  UniformMat4 _viewObjMat;
   UniformMat4 _viewMat;
-  UniformMat4 _projMat;
+  UniformMat4 _projViewObjMat;
 
   /// Checks for the shader in the shader cache in the given [state],
   /// if it is not found then this shader is compiled and added
@@ -146,24 +147,25 @@ class BumpyTexture2DDirectional extends Shader {
   /// Compiles this shader for the given rendering context.
   BumpyTexture2DDirectional(WebGL.RenderingContext gl): super(gl, defaultName) {
     this.initialize(_vertexSource, _fragmentSource);
-    this._posAttr     = this.attributes["posAttr"];
-    this._normAttr    = this.attributes["normAttr"];
-    this._binmAttr    = this.attributes["binmAttr"];
-    this._txtAttr     = this.attributes["txtAttr"];
-    this._lightVec    = this.uniforms["lightVec"] as Uniform3f;
-    this._lightClr    = this.uniforms["lightClr"] as Uniform4f;
-    this._emissionTxt = this.uniforms["emissionTxt"] as UniformSampler2D;
-    this._emissionClr = this.uniforms["emissionClr"] as Uniform4f;
-    this._ambientTxt  = this.uniforms["ambientTxt"] as UniformSampler2D;
-    this._ambientClr  = this.uniforms["ambientClr"] as Uniform4f;
-    this._diffuseTxt  = this.uniforms["diffuseTxt"] as UniformSampler2D;
-    this._diffuseClr  = this.uniforms["diffuseClr"] as Uniform4f;
-    this._specularTxt = this.uniforms["specularTxt"] as UniformSampler2D;
-    this._specularClr = this.uniforms["specularClr"] as Uniform4f;
-    this._shininess   = this.uniforms["shininess"] as Uniform1f;
-    this._objMat      = this.uniforms["objMat"] as UniformMat4;
-    this._viewMat     = this.uniforms["viewMat"] as UniformMat4;
-    this._projMat     = this.uniforms["projMat"] as UniformMat4;
+    this._posAttr        = this.attributes["posAttr"];
+    this._normAttr       = this.attributes["normAttr"];
+    this._binmAttr       = this.attributes["binmAttr"];
+    this._txtAttr        = this.attributes["txtAttr"];
+    this._lightVec       = this.uniforms["lightVec"] as Uniform3f;
+    this._lightClr       = this.uniforms["lightClr"] as Uniform4f;
+    this._emissionTxt    = this.uniforms["emissionTxt"] as UniformSampler2D;
+    this._emissionClr    = this.uniforms["emissionClr"] as Uniform4f;
+    this._ambientTxt     = this.uniforms["ambientTxt"] as UniformSampler2D;
+    this._ambientClr     = this.uniforms["ambientClr"] as Uniform4f;
+    this._diffuseTxt     = this.uniforms["diffuseTxt"] as UniformSampler2D;
+    this._diffuseClr     = this.uniforms["diffuseClr"] as Uniform4f;
+    this._specularTxt    = this.uniforms["specularTxt"] as UniformSampler2D;
+    this._specularClr    = this.uniforms["specularClr"] as Uniform4f;
+    this._shininess      = this.uniforms["shininess"] as Uniform1f;
+    this._bumpTxt        = this.uniforms["bumpTxt"] as UniformSampler2D;
+    this._viewObjMat     = this.uniforms["viewObjMat"] as UniformMat4;
+    this._viewMat        = this.uniforms["viewMat"] as UniformMat4;
+    this._projViewObjMat = this.uniforms["projViewObjMat"] as UniformMat4;
   }
 
   /// The position vertex shader attribute.
@@ -246,15 +248,15 @@ class BumpyTexture2DDirectional extends Shader {
     this.shininess = material.shininess;
   }
 
-  /// The object matrix.
-  Math.Matrix4 get objectMatrix => this._objMat.getMatrix4();
-  set objectMatrix(Math.Matrix4 mat) => this._objMat.setMatrix4(mat);
+  /// The view matrix multiplied by the object matrix.
+  Math.Matrix4 get viewObjectMatrix => this._viewObjMat.getMatrix4();
+  set viewObjectMatrix(Math.Matrix4 mat) => this._viewObjMat.setMatrix4(mat);
 
   /// The view matrix.
   Math.Matrix4 get viewMatrix => this._viewMat.getMatrix4();
   set viewMatrix(Math.Matrix4 mat) => this._viewMat.setMatrix4(mat);
 
-  /// The projection matrix.
-  Math.Matrix4 get projectMatrix => this._projMat.getMatrix4();
-  set projectMatrix(Math.Matrix4 mat) => this._projMat.setMatrix4(mat);
+  /// The product of the projection matrix, view matrix, and object matrix.
+  Math.Matrix4 get projectViewObjectMatrix => this._projViewObjMat.getMatrix4();
+  set projectViewObjectMatrix(Math.Matrix4 mat) => this._projViewObjMat.setMatrix4(mat);
 }

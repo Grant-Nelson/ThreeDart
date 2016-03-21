@@ -42,37 +42,51 @@ Shape square() {
 
 /// Creates a cube shape.
 Shape cube() {
+  return cuboid(widthDiv: 1, heightDiv: 1);
+}
+
+/// Creates a cuboid shape designed for cube texturing using six grids.
+/// The [widthDiv] and [heightDiv] define the divisions of the grids used.
+/// The [heightHndl] added addition height to the sides.
+Shape cuboid({int widthDiv: 8, int heightDiv: 8, func2Handle heightHndl: null}) {
+  if (heightHndl == null) heightHndl = (double a, double b) => 0.0;
   Shape shape = new Shape();
-  _addCubeSide(shape,  1.0,  0.0,  0.0); // x+
-  _addCubeSide(shape, -1.0,  0.0,  0.0); // X-
-  _addCubeSide(shape,  0.0,  1.0,  0.0); // Y+
-  _addCubeSide(shape,  0.0, -1.0,  0.0); // Y-
-  _addCubeSide(shape,  0.0,  0.0,  1.0); // Z+
-  _addCubeSide(shape,  0.0,  0.0, -1.0); // Z-
+  _addCuboidSide(shape, heightHndl, widthDiv, heightDiv,  1.0,  0.0,  0.0, 1);
+  _addCuboidSide(shape, heightHndl, widthDiv, heightDiv,  0.0,  1.0,  0.0, 3);
+  _addCuboidSide(shape, heightHndl, widthDiv, heightDiv,  0.0,  0.0,  1.0, 2);
+  _addCuboidSide(shape, heightHndl, widthDiv, heightDiv, -1.0,  0.0,  0.0, 0);
+  _addCuboidSide(shape, heightHndl, widthDiv, heightDiv,  0.0, -1.0,  0.0, 0);
+  _addCuboidSide(shape, heightHndl, widthDiv, heightDiv,  0.0,  0.0, -1.0, 3);
   shape.calculateNormals();
   return shape;
 }
 
-/// Adds a side of the cube to the given shape.
-/// The [nx], [ny], and [nz] the normal of the plane for the cube side to add.
-void _addCubeSide(Shape shape, double nx, double ny, double nz) {
-  Vertex addVertex(double px, double py, double pz, double tu, double tv) {
-    return shape.vertices.addNew(
-      loc:  new Math.Point3(px, py, pz),
-      txt:  new Math.Point2(tu, tv),
-      clr:  new Math.Color4(px, py, pz, 1.0));
-  };
-
-  Vertex ver1 = addVertex(nx+ny+nz, ny+nz+nx, nz+nx+ny, 0.0, 0.0);
-  Vertex ver2 = addVertex(nx-ny+nz, ny-nz+nx, nz-nx+ny, 0.0, 1.0);
-  Vertex ver3 = addVertex(nx+ny-nz, ny+nz-nx, nz+nx-ny, 1.0, 0.0);
-  Vertex ver4 = addVertex(nx-ny-nz, ny-nz-nx, nz-nx-ny, 1.0, 1.0);
-
-  if (nx+ny+nz < 0.0) {
-    shape.faces.addFan([ver1, ver2, ver4, ver3]);
-  } else {
-    shape.faces.addFan([ver1, ver3, ver4, ver2]);
+/// Adds a cuboid side to a cube [shape] given the normal direciton of the side's plain.
+void _addCuboidSide(Shape shape, func2Handle heightHndl, int widthDiv, int heightDiv,
+                    double nx, double ny, double nz, int rotate) {
+  Math.Vector3 vec1 = new Math.Vector3(nx+ny+nz, ny+nz+nx, nz+nx+ny);
+  Math.Vector3 vec2 = new Math.Vector3(nx-ny+nz, ny-nz+nx, nz-nx+ny);
+  Math.Vector3 vec3 = new Math.Vector3(nx-ny-nz, ny-nz-nx, nz-nx-ny);
+  Math.Vector3 vec4 = new Math.Vector3(nx+ny-nz, ny+nz-nx, nz+nx-ny);
+  if (nx+ny+nz > 0.0) {
+    Math.Vector3 t = vec4;
+    vec4 = vec2;
+    vec2 = t;
   }
+  for (int i = 0; i < rotate; i++) {
+    Math.Vector3 t = vec1;
+    vec1 = vec2;
+    vec2 = vec3;
+    vec3 = vec4;
+    vec4 = t;
+  }
+  Shape face = surface(widthDiv, heightDiv, (double u, double v) {
+    Math.Vector3 vec5 = vec1.lerp(vec2, u);
+    Math.Vector3 vec6 = vec4.lerp(vec3, u);
+    Math.Vector3 vec7 = vec5.lerp(vec6, v);
+    return new Math.Point3.fromVector3(vec7 + vec7.normal()*heightHndl(u, v));
+  });
+  if (face != null) shape.merge(face);
 }
 
 /// Creates a disk shape.
@@ -260,19 +274,20 @@ void _isoSphereDiv(Shape shape, Vertex ver1, Vertex ver2, Vertex ver3, int itera
 Shape sphere({int widthDiv: 8, int heightDiv: 8, func2Handle heightHndl: null}) {
   if (heightHndl == null) heightHndl = (double a, double b) => 0.0;
   Shape shape = new Shape();
-  _addSphereSide(shape, heightHndl, widthDiv, heightDiv,  1.0,  0.0,  0.0);
-  _addSphereSide(shape, heightHndl, widthDiv, heightDiv,  0.0,  1.0,  0.0);
-  _addSphereSide(shape, heightHndl, widthDiv, heightDiv,  0.0,  0.0,  1.0);
-  _addSphereSide(shape, heightHndl, widthDiv, heightDiv, -1.0,  0.0,  0.0);
-  _addSphereSide(shape, heightHndl, widthDiv, heightDiv,  0.0, -1.0,  0.0);
-  _addSphereSide(shape, heightHndl, widthDiv, heightDiv,  0.0,  0.0, -1.0);
+  _addSphereSide(shape, heightHndl, widthDiv, heightDiv,  1.0,  0.0,  0.0, 1);
+  _addSphereSide(shape, heightHndl, widthDiv, heightDiv,  0.0,  1.0,  0.0, 3);
+  _addSphereSide(shape, heightHndl, widthDiv, heightDiv,  0.0,  0.0,  1.0, 2);
+  _addSphereSide(shape, heightHndl, widthDiv, heightDiv, -1.0,  0.0,  0.0, 0);
+  _addSphereSide(shape, heightHndl, widthDiv, heightDiv,  0.0, -1.0,  0.0, 0);
+  _addSphereSide(shape, heightHndl, widthDiv, heightDiv,  0.0,  0.0, -1.0, 3);
   shape.calculateNormals();
   shape.adjustNormals();
   return shape;
 }
 
 /// Adds a spherical side to a sphere [shape] given the normal direciton of the side's plain.
-void _addSphereSide(Shape shape, func2Handle heightHndl, int widthDiv, int heightDiv, double nx, double ny, double nz) {
+void _addSphereSide(Shape shape, func2Handle heightHndl, int widthDiv, int heightDiv,
+                    double nx, double ny, double nz, int rotate) {
   Math.Vector3 vec1 = new Math.Vector3(nx+ny+nz, ny+nz+nx, nz+nx+ny);
   Math.Vector3 vec2 = new Math.Vector3(nx-ny+nz, ny-nz+nx, nz-nx+ny);
   Math.Vector3 vec3 = new Math.Vector3(nx-ny-nz, ny-nz-nx, nz-nx-ny);
@@ -281,6 +296,13 @@ void _addSphereSide(Shape shape, func2Handle heightHndl, int widthDiv, int heigh
     Math.Vector3 t = vec4;
     vec4 = vec2;
     vec2 = t;
+  }
+  for (int i = 0; i < rotate; i++) {
+    Math.Vector3 t = vec1;
+    vec1 = vec2;
+    vec2 = vec3;
+    vec3 = vec4;
+    vec4 = t;
   }
   Shape face = surface(widthDiv, heightDiv, (double u, double v) {
     Math.Vector3 vec5 = vec1.lerp(vec2, u);

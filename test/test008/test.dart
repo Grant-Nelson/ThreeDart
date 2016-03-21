@@ -21,6 +21,8 @@ part 'BumpyTechnique.dart';
 
 void main() {
   Shapes.Shape shape = Shapes.grid(widthDiv: 50, heightDiv: 50);
+  //Shapes.Shape shape = Shapes.cuboid(widthDiv: 20, heightDiv: 20);
+  //Shapes.Shape shape = Shapes.sphere(widthDiv: 20, heightDiv: 20);
   shape.calculateNormals();
   shape.calculateBinormals();
   shape.faces.removeAll();
@@ -56,9 +58,15 @@ void main() {
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart")
     ..scene = pass;
 
-  tech.bumpyTexture = td.textureLoader.load2DFromFile("./BumpMap.png");
   rotater.attach(td.userInput);
   zoom.attach(td.userInput);
+
+  _addBumpMap("./BumpMap1.png", td, tech, true);
+  _addBumpMap("./BumpMap2.png", td, tech);
+  _addBumpMap("./BumpMap3.png", td, tech);
+  _addBumpMap("./BumpMap4.png", td, tech);
+  _addBumpMap("./BumpMap5.png", td, tech);
+  _addBumpMap("./BumpMap6.png", td, tech);
 
   var update;
   update = (num t) {
@@ -66,4 +74,26 @@ void main() {
     window.requestAnimationFrame(update);
   };
   window.requestAnimationFrame(update);
+}
+
+void _addBumpMap(String fileName, ThreeDart.ThreeDart td,
+                 BumpyTechnique tech, [bool checked = false]) {
+  Element elem = document.getElementById("bumpMaps");
+  ImageElement imgElem = new ImageElement()
+    ..src = fileName
+    ..width = 64
+    ..height = 64
+    ..style.border = "solid 2px white";
+  imgElem.onClick.listen((_) {
+      elem.children.forEach((Element elem) {
+        if (elem is ImageElement) {
+          elem.style.border = "solid 2px white";
+        }
+      });
+      imgElem.style.border = "solid 2px black";
+      tech.bumpyTexture = td.textureLoader.load2DFromFile(fileName);
+    });
+  elem.children.add(imgElem);
+  elem.children.add(new BRElement());
+  if (checked) imgElem.click();
 }
