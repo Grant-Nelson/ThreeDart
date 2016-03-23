@@ -3,30 +3,33 @@ part of ThreeDart.test.test000;
 void vertexTypeTests(TestManager tests) {
 
   tests.add("VertexTypes and Groups", (TestArgs args) {
-    _checkVertexType(args, Data.VertexType.None,   "None",    0, 0, 0);
-    _checkVertexType(args, Data.VertexType.Pos,    "Pos",     1, 1, 3);
-    _checkVertexType(args, Data.VertexType.Norm,   "Norm",    2, 1, 3);
-    _checkVertexType(args, Data.VertexType.Binm,   "Binm",    4, 1, 3);
-    _checkVertexType(args, Data.VertexType.Txt,    "Txt",     8, 1, 2);
-    _checkVertexType(args, Data.VertexType.Clr3,   "Clr3",   16, 1, 3);
-    _checkVertexType(args, Data.VertexType.Clr4,   "Clr4",   32, 1, 4);
-    _checkVertexType(args, Data.VertexType.Weight, "Weight", 64, 1, 1);
-    _checkVertexType(args, Data.VertexType.Pos|Data.VertexType.Norm, "Pos|Norm", 3, 2, 6);
-    _checkVertexType(args, Data.VertexType.Pos|Data.VertexType.Txt,  "Pos|Txt",  9, 2, 5);
+    _checkVertexType(args, Data.VertexType.None,    "None",    0x00, 0, 0);
+    _checkVertexType(args, Data.VertexType.Pos,     "Pos",     0x01, 1, 3);
+    _checkVertexType(args, Data.VertexType.Norm,    "Norm",    0x02, 1, 3);
+    _checkVertexType(args, Data.VertexType.Binm,    "Binm",    0x04, 1, 3);
+    _checkVertexType(args, Data.VertexType.Txt2D,   "Txt2D",   0x08, 1, 2);
+    _checkVertexType(args, Data.VertexType.TxtCube, "TxtCube", 0x10, 1, 3);
+    _checkVertexType(args, Data.VertexType.Clr3,    "Clr3",    0x20, 1, 3);
+    _checkVertexType(args, Data.VertexType.Clr4,    "Clr4",    0x40, 1, 4);
+    _checkVertexType(args, Data.VertexType.Weight,  "Weight",  0x80, 1, 1);
+    _checkVertexType(args, Data.VertexType.Pos|Data.VertexType.Norm,  "Pos|Norm",  0x03, 2, 6);
+    _checkVertexType(args, Data.VertexType.Pos|Data.VertexType.Txt2D, "Pos|Txt2D", 0x09, 2, 5);
     _checkVertexType(args, Data.VertexType.Pos|Data.VertexType.Norm|
-      Data.VertexType.Binm|Data.VertexType.Txt|Data.VertexType.Clr3, "Pos|Norm|Binm|Txt|Clr3", 31, 5, 14);
-    _checkVertexType(args, Data.VertexType.Txt|Data.VertexType.Weight, "Txt|Weight", 72, 2, 3);
+      Data.VertexType.Binm|Data.VertexType.Txt2D|Data.VertexType.Clr3, "Pos|Norm|Binm|Txt2D|Clr3", 0x2F, 5, 14);
+    _checkVertexType(args, Data.VertexType.Txt2D|Data.VertexType.Weight, "Txt2D|Weight", 0x88, 2, 3);
   });
 
   tests.add("VertexTypes from Type Groups 1", (TestArgs args) {
-    Data.VertexType group = Data.VertexType.Pos|Data.VertexType.Norm|Data.VertexType.Binm|Data.VertexType.Txt|Data.VertexType.Clr3;
-    _checkSubVertexType(args, group, Data.VertexType.Pos,    true,   0,  0);
-    _checkSubVertexType(args, group, Data.VertexType.Norm,   true,   1,  3);
-    _checkSubVertexType(args, group, Data.VertexType.Binm,   true,   2,  6);
-    _checkSubVertexType(args, group, Data.VertexType.Txt,    true,   3,  9);
-    _checkSubVertexType(args, group, Data.VertexType.Clr3,   true,   4, 11);
-    _checkSubVertexType(args, group, Data.VertexType.Clr4,   false, -1, -1);
-    _checkSubVertexType(args, group, Data.VertexType.Weight, false, -1, -1);
+    Data.VertexType group = Data.VertexType.Pos|Data.VertexType.Norm|
+      Data.VertexType.Binm|Data.VertexType.Txt2D|Data.VertexType.TxtCube|Data.VertexType.Clr3;
+    _checkSubVertexType(args, group, Data.VertexType.Pos,     true,   0,  0);
+    _checkSubVertexType(args, group, Data.VertexType.Norm,    true,   1,  3);
+    _checkSubVertexType(args, group, Data.VertexType.Binm,    true,   2,  6);
+    _checkSubVertexType(args, group, Data.VertexType.Txt2D,   true,   3,  9);
+    _checkSubVertexType(args, group, Data.VertexType.TxtCube, true,   4, 11);
+    _checkSubVertexType(args, group, Data.VertexType.Clr3,    true,   5, 14);
+    _checkSubVertexType(args, group, Data.VertexType.Clr4,    false, -1, -1);
+    _checkSubVertexType(args, group, Data.VertexType.Weight,  false, -1, -1);
   });
 
   // Another test of getting vertex types from vertex type groups.
@@ -35,7 +38,7 @@ void vertexTypeTests(TestManager tests) {
     _checkSubVertexType(args, group, Data.VertexType.Pos,    true,   0,  0);
     _checkSubVertexType(args, group, Data.VertexType.Norm,   false, -1, -1);
     _checkSubVertexType(args, group, Data.VertexType.Binm,   true,   1,  3);
-    _checkSubVertexType(args, group, Data.VertexType.Txt,    false, -1, -1);
+    _checkSubVertexType(args, group, Data.VertexType.Txt2D,  false, -1, -1);
     _checkSubVertexType(args, group, Data.VertexType.Clr3,   false, -1, -1);
     _checkSubVertexType(args, group, Data.VertexType.Clr4,   true,   2,  6);
     _checkSubVertexType(args, group, Data.VertexType.Weight, true,   3, 10);

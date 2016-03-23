@@ -12,28 +12,35 @@ typedef Math.Point3 func1PntHandle(double a);
 /// A function handler for processing two values for a new 3D point.
 typedef Math.Point3 func2PntHandle(double a, double b);
 
+/// A function handler for processing two values for a new vertex.
+typedef void ver2Handle(Vertex ver, double a, double b);
+
 /// Creates a square shape.
 Shape square() {
   Shape shape = new Shape();
   Vertex ver1 = shape.vertices.addNew(
-    loc:  new Math.Point3(-1.0, -1.0, 0.0),
-    txt:  new Math.Point2(0.0, 1.0),
-    clr:  new Math.Color4(1.0, 0.0, 0.0, 1.0));
+    loc:     new Math.Point3(-1.0, -1.0, 0.0),
+    txt2D:   new Math.Point2(0.0, 1.0),
+    txtCube: new Math.Vector3(-1.0, -1.0, 1.0).normal(),
+    clr:     new Math.Color4(1.0, 0.0, 0.0, 1.0));
 
   Vertex ver2 = shape.vertices.addNew(
-    loc:  new Math.Point3(1.0, -1.0, 0.0),
-    txt:  new Math.Point2(1.0, 1.0),
-    clr:  new Math.Color4(0.0, 0.0, 1.0, 1.0));
+    loc:     new Math.Point3(1.0, -1.0, 0.0),
+    txt2D:   new Math.Point2(1.0, 1.0),
+    txtCube: new Math.Vector3(1.0, -1.0, 1.0).normal(),
+    clr:     new Math.Color4(0.0, 0.0, 1.0, 1.0));
 
   Vertex ver3 = shape.vertices.addNew(
-    loc:  new Math.Point3(1.0, 1.0, 0.0),
-    txt:  new Math.Point2(1.0, 0.0),
-    clr:  new Math.Color4(0.0, 1.0, 0.0, 1.0));
+    loc:     new Math.Point3(1.0, 1.0, 0.0),
+    txt2D:   new Math.Point2(1.0, 0.0),
+    txtCube: new Math.Vector3(1.0, 1.0, 1.0).normal(),
+    clr:     new Math.Color4(0.0, 1.0, 0.0, 1.0));
 
   Vertex ver4 = shape.vertices.addNew(
-    loc:  new Math.Point3(-1.0, 1.0, 0.0),
-    txt:  new Math.Point2(0.0, 0.0),
-    clr:  new Math.Color4(1.0, 1.0, 0.0, 1.0));
+    loc:     new Math.Point3(-1.0, 1.0, 0.0),
+    txt2D:   new Math.Point2(0.0, 0.0),
+    txtCube: new Math.Vector3(-1.0, 1.0, 1.0).normal(),
+    clr:     new Math.Color4(1.0, 1.0, 0.0, 1.0));
 
   shape.faces.addFan([ver1, ver2, ver3, ver4]);
   shape.calculateNormals();
@@ -48,21 +55,20 @@ Shape cube() {
 /// Creates a cuboid shape designed for cube texturing using six grids.
 /// The [widthDiv] and [heightDiv] define the divisions of the grids used.
 /// The [heightHndl] added addition height to the sides.
-Shape cuboid({int widthDiv: 8, int heightDiv: 8, func2Handle heightHndl: null}) {
-  if (heightHndl == null) heightHndl = (double a, double b) => 0.0;
+Shape cuboid({int widthDiv: 8, int heightDiv: 8, ver2Handle vertexHndl: null}) {
   Shape shape = new Shape();
-  _addCuboidSide(shape, heightHndl, widthDiv, heightDiv,  1.0,  0.0,  0.0, 1);
-  _addCuboidSide(shape, heightHndl, widthDiv, heightDiv,  0.0,  1.0,  0.0, 3);
-  _addCuboidSide(shape, heightHndl, widthDiv, heightDiv,  0.0,  0.0,  1.0, 2);
-  _addCuboidSide(shape, heightHndl, widthDiv, heightDiv, -1.0,  0.0,  0.0, 0);
-  _addCuboidSide(shape, heightHndl, widthDiv, heightDiv,  0.0, -1.0,  0.0, 0);
-  _addCuboidSide(shape, heightHndl, widthDiv, heightDiv,  0.0,  0.0, -1.0, 3);
+  _addCuboidSide(shape, vertexHndl, widthDiv, heightDiv,  1.0,  0.0,  0.0, 1);
+  _addCuboidSide(shape, vertexHndl, widthDiv, heightDiv,  0.0,  1.0,  0.0, 3);
+  _addCuboidSide(shape, vertexHndl, widthDiv, heightDiv,  0.0,  0.0,  1.0, 2);
+  _addCuboidSide(shape, vertexHndl, widthDiv, heightDiv, -1.0,  0.0,  0.0, 0);
+  _addCuboidSide(shape, vertexHndl, widthDiv, heightDiv,  0.0, -1.0,  0.0, 0);
+  _addCuboidSide(shape, vertexHndl, widthDiv, heightDiv,  0.0,  0.0, -1.0, 3);
   shape.calculateNormals();
   return shape;
 }
 
 /// Adds a cuboid side to a cube [shape] given the normal direciton of the side's plain.
-void _addCuboidSide(Shape shape, func2Handle heightHndl, int widthDiv, int heightDiv,
+void _addCuboidSide(Shape shape, ver2Handle vertexHndl, int widthDiv, int heightDiv,
                     double nx, double ny, double nz, int rotate) {
   Math.Vector3 vec1 = new Math.Vector3(nx+ny+nz, ny+nz+nx, nz+nx+ny);
   Math.Vector3 vec2 = new Math.Vector3(nx-ny+nz, ny-nz+nx, nz-nx+ny);
@@ -80,11 +86,13 @@ void _addCuboidSide(Shape shape, func2Handle heightHndl, int widthDiv, int heigh
     vec3 = vec4;
     vec4 = t;
   }
-  Shape face = surface(widthDiv, heightDiv, (double u, double v) {
+  Shape face = surface(widthDiv, heightDiv, (Vertex ver, double u, double v) {
     Math.Vector3 vec5 = vec1.lerp(vec2, u);
     Math.Vector3 vec6 = vec4.lerp(vec3, u);
     Math.Vector3 vec7 = vec5.lerp(vec6, v);
-    return new Math.Point3.fromVector3(vec7 + vec7.normal()*heightHndl(u, v));
+    ver.location = new Math.Point3.fromVector3(vec7);
+    ver.textureCube = vec7.normal();
+    if (vertexHndl != null) vertexHndl(ver, u, v);
   });
   if (face != null) shape.merge(face);
 }
@@ -100,19 +108,21 @@ Shape disk({int sides: 8, double height: 0.0, bool flip: false, func1Handle radi
   double step = -2.0*PI/sides.toDouble();
   List<Vertex> vers = new List<Vertex>();
   vers.add(shape.vertices.addNew(
-    loc:  new Math.Point3(0.0, 0.0, height),
-    norm: new Math.Vector3(0.0, 0.0, sign),
-    txt:  new Math.Point2(0.5, 0.5),
-    clr:  new Math.Color4(1.0, 1.0, 1.0)));
+    loc:     new Math.Point3(0.0, 0.0, height),
+    norm:    new Math.Vector3(0.0, 0.0, sign),
+    txt2D:   new Math.Point2(0.5, 0.5),
+    txtCube: new Math.Vector3(0.0, 0.0, sign).normal(),
+    clr:     new Math.Color4(1.0, 1.0, 1.0)));
   for (int i = 0; i <= sides; i++) {
     double angle = step*i.toDouble();
     double x = sign*sin(angle), y = cos(angle);
     double radius = radiusHndl(i.toDouble()/sides.toDouble());
     vers.add(shape.vertices.addNew(
-      loc:  new Math.Point3(x*radius, y*radius, height),
-      norm: new Math.Vector3(0.0, 0.0, sign),
-      txt:  new Math.Point2(x*0.5+0.5, y*0.5+0.5),
-      clr:  new Math.Color4(x, y, y)));
+      loc:     new Math.Point3(x*radius, y*radius, height),
+      norm:    new Math.Vector3(0.0, 0.0, sign),
+      txt2D:   new Math.Point2(x*0.5+0.5, y*0.5+0.5),
+      txtCube: new Math.Vector3(x, y, sign).normal(),
+      clr:     new Math.Color4(x, y, y)));
   }
   shape.faces.addFan(vers);
   return shape;
@@ -138,12 +148,13 @@ Shape cylindrical({func2Handle radiusHndl: null, int sides: 8, int div: 1, bool 
   if (radiusHndl == null)  return null;
   if (sides < 3) return null;
   if (div < 1) return null;
-  Shape shape = surface(div, sides, (double u, double v) {
+  Shape shape = surface(div, sides, (Vertex ver, double u, double v) {
     double angle = 2.0*PI*u;
     double x = -sin(angle), y = cos(angle);
     double z = Math.lerpVal(-1.0, 1.0, v);
     double radius = radiusHndl(u, v);
-    return new Math.Point3(x*radius, y*radius, z);
+    ver.location = new Math.Point3(x*radius, y*radius, z);
+    ver.textureCube = new Math.Vector3(x*radius, y*radius, z).normal();
   });
   if (shape == null) return null;
   shape.calculateNormals();
@@ -165,12 +176,12 @@ Shape cylindrical({func2Handle radiusHndl: null, int sides: 8, int div: 1, bool 
 /// The [latitudeDiv] is the number of latitude divisions and
 /// the [longitudeDiv] is the number of longitude divitions.
 Shape latLonSphere([int latitudeDiv = 12, int longitudeDiv = 24]) {
-  Shape shape = surface(latitudeDiv, longitudeDiv, (double u, double v) {
+  Shape shape = surface(latitudeDiv, longitudeDiv, (Vertex ver, double u, double v) {
     double r = sin(v*PI);
     Math.Vector3 vec = new Math.Vector3(cos(u*2.0*PI)*r,
                                         cos(v*PI),
                                         sin(u*2.0*PI)*r);
-    return new Math.Point3.fromVector3(vec.normal());
+    ver.location = new Math.Point3.fromVector3(vec.normal());
   });
   shape.faces.removeCollapsed();
   shape.calculateNormals();
@@ -239,7 +250,7 @@ Vertex _isosphereAdd(Shape shape, Math.Vector3 norm) {
   if (tu < 0) tu = -tu;
   double tv = atan2(w, norm.dz)/PI;
   if (tv < 0) tv = -tv;
-  ver.texture = new Math.Point2(tu, tv);
+  ver.texture2D = new Math.Point2(tu, tv);
   shape.vertices.add(ver);
   return ver;
 }
@@ -273,45 +284,14 @@ void _isoSphereDiv(Shape shape, Vertex ver1, Vertex ver2, Vertex ver3, int itera
 /// The [heightHndl] added addition height to the curved grid.
 Shape sphere({int widthDiv: 8, int heightDiv: 8, func2Handle heightHndl: null}) {
   if (heightHndl == null) heightHndl = (double a, double b) => 0.0;
-  Shape shape = new Shape();
-  _addSphereSide(shape, heightHndl, widthDiv, heightDiv,  1.0,  0.0,  0.0, 1);
-  _addSphereSide(shape, heightHndl, widthDiv, heightDiv,  0.0,  1.0,  0.0, 3);
-  _addSphereSide(shape, heightHndl, widthDiv, heightDiv,  0.0,  0.0,  1.0, 2);
-  _addSphereSide(shape, heightHndl, widthDiv, heightDiv, -1.0,  0.0,  0.0, 0);
-  _addSphereSide(shape, heightHndl, widthDiv, heightDiv,  0.0, -1.0,  0.0, 0);
-  _addSphereSide(shape, heightHndl, widthDiv, heightDiv,  0.0,  0.0, -1.0, 3);
-  shape.calculateNormals();
+  Shape shape = cuboid(widthDiv: widthDiv, heightDiv: heightDiv,
+    vertexHndl: (Vertex ver, double u, double v) {
+      double height = 1.0+heightHndl(u, v);
+      Math.Vector3 vec = new Math.Vector3.fromPoint3(ver.location);
+      ver.location = new Math.Point3.fromVector3(vec.normal()*height);
+    });
   shape.adjustNormals();
   return shape;
-}
-
-/// Adds a spherical side to a sphere [shape] given the normal direciton of the side's plain.
-void _addSphereSide(Shape shape, func2Handle heightHndl, int widthDiv, int heightDiv,
-                    double nx, double ny, double nz, int rotate) {
-  Math.Vector3 vec1 = new Math.Vector3(nx+ny+nz, ny+nz+nx, nz+nx+ny);
-  Math.Vector3 vec2 = new Math.Vector3(nx-ny+nz, ny-nz+nx, nz-nx+ny);
-  Math.Vector3 vec3 = new Math.Vector3(nx-ny-nz, ny-nz-nx, nz-nx-ny);
-  Math.Vector3 vec4 = new Math.Vector3(nx+ny-nz, ny+nz-nx, nz+nx-ny);
-  if (nx+ny+nz > 0.0) {
-    Math.Vector3 t = vec4;
-    vec4 = vec2;
-    vec2 = t;
-  }
-  for (int i = 0; i < rotate; i++) {
-    Math.Vector3 t = vec1;
-    vec1 = vec2;
-    vec2 = vec3;
-    vec3 = vec4;
-    vec4 = t;
-  }
-  Shape face = surface(widthDiv, heightDiv, (double u, double v) {
-    Math.Vector3 vec5 = vec1.lerp(vec2, u);
-    Math.Vector3 vec6 = vec4.lerp(vec3, u);
-    Math.Vector3 vec7 = vec5.lerp(vec6, v);
-    double height = 1.0+heightHndl(u, v);
-    return new Math.Point3.fromVector3(vec7.normal()*height);
-  });
-  if (face != null) shape.merge(face);
 }
 
 /// Creates a toroid shape.
@@ -337,7 +317,7 @@ Shape knot({int minorCount: 12, int majorCount: 120, double minorRadius: 0.3, do
 
 /// Creates a cylindrical path is a bend cylinder with no cap.
 Shape cylindricalPath(int minorCount, int majorCount, double minorRadius, double majorRadius, func1PntHandle pathHndl) {
-  Shape shape = surface(minorCount, majorCount, (double u, double v) {
+  Shape shape = surface(minorCount, majorCount, (Vertex ver, double u, double v) {
     double majorAngle = u*2.0*PI;
     Math.Point3 cur = pathHndl(majorAngle)*majorRadius;
     Math.Point3 next = pathHndl(majorAngle + PI/majorCount)*majorRadius;
@@ -353,7 +333,7 @@ Shape cylindricalPath(int minorCount, int majorCount, double minorRadius, double
     var minorAngle = v*2.0*PI;
     var minorCos = cos(minorAngle)*minorRadius;
     var minorSin = sin(minorAngle)*minorRadius;
-    return cur + new Math.Point3.fromVector3(other*minorCos - cross*minorSin);
+    ver.location = cur + new Math.Point3.fromVector3(other*minorCos - cross*minorSin);
   });
   if (shape == null) return null;
   shape.calculateNormals();
@@ -364,31 +344,37 @@ Shape cylindricalPath(int minorCount, int majorCount, double minorRadius, double
 /// Creates a flat grid shape with an option caustom [heightHndl].
 Shape grid({int widthDiv: 4, int heightDiv: 4, func2Handle heightHndl: null}) {
   if (heightHndl == null) heightHndl = (double u, double v) => 0.0;
-  return surface(widthDiv, heightDiv, (double u, double v) =>
-    new Math.Point3(u*2.0-1.0, v*2.0-1.0, heightHndl(u, v)));
+  return surface(widthDiv, heightDiv, (Vertex ver, double u, double v) {
+    double x = u*2.0-1.0;
+    double y = v*2.0-1.0;
+    ver.location = new Math.Point3(x, y, heightHndl(u, v));
+    ver.textureCube = new Math.Vector3(x, y, 1.0).normal();
+  });
 }
 
-/// Creates a grid surface which can be bent and twisted with the given [locHndl].
-Shape surface(int widthDiv, int heightDiv, func2PntHandle locHndl) {
+/// Creates a grid surface which can be bent and twisted with the given [vertexHndl].
+Shape surface(int widthDiv, int heightDiv, ver2Handle vertexHndl) {
   if (widthDiv < 1) return null;
   if (heightDiv < 1) return null;
   Shape shape = new Shape();
   List<Vertex> vers = new List<Vertex>();
   for (int i = 0; i <= heightDiv; i++) {
     double u = i.toDouble()/heightDiv.toDouble();
-    vers.add(shape.vertices.addNew(
-      loc: locHndl(u, 0.0),
-      txt: new Math.Point2(u, 1.0),
-      clr: new Math.Color4(u, 0.0, 0.0)));
+    Vertex ver = shape.vertices.addNew(
+      txt2D: new Math.Point2(u, 1.0),
+      clr:   new Math.Color4(u, 0.0, 0.0));
+    vertexHndl(ver, u, 0.0);
+    vers.add(ver);
   }
   for (int i = 1; i <= widthDiv; i++) {
     double v = i.toDouble()/widthDiv.toDouble();
     for (int j = 0; j <= heightDiv; j++) {
       double u = j.toDouble()/heightDiv.toDouble();
-      vers.add(shape.vertices.addNew(
-        loc: locHndl(u, v),
-        txt: new Math.Point2(u, 1.0-v),
-        clr: new Math.Color4(u, v, v)));
+      Vertex ver = shape.vertices.addNew(
+        txt2D: new Math.Point2(u, 1.0-v),
+        clr:   new Math.Color4(u, v, v));
+      vertexHndl(ver, u, v);
+      vers.add(ver);
     }
   }
   shape.faces.addGrid(widthDiv+1, heightDiv+1, vers);

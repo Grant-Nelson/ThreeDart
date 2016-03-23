@@ -52,7 +52,8 @@ void main() {
   _addCheckBox("Face Binormals",  false, (bool show) { tech.showFaceBinormals  = show; });
   _addCheckBox("Face Tangentals", false, (bool show) { tech.showFaceTangentals = show; });
   _addCheckBox("Colors",          false, (bool show) { tech.showColorFill      = show; });
-  _addCheckBox("Textures",        false, (bool show) { tech.showTxtColor       = show; });
+  _addCheckBox("Textures2D",      false, (bool show) { tech.showTxt2DColor     = show; });
+  _addCheckBox("TexturesCube",    false, (bool show) { tech.showTxtCube        = show; });
   _addCheckBox("Axis",            true,  (bool show) { tech.showAxis           = show; });
   _addCheckBox("AABB",            false, (bool show) { tech.showAABB           = show; });
 
@@ -60,7 +61,11 @@ void main() {
   _addRadioButton("Cube",          () { obj.shape = Shapes.cube(); });
   _addRadioButton("Cuboid",        () { obj.shape = Shapes.cuboid(); });
   _addRadioButton("Cuboid+",       () { obj.shape = Shapes.cuboid(widthDiv: 15, heightDiv: 15,
-                                        heightHndl: (double u, double v) => cos(v*4.0*PI+PI)*0.1 + cos(u*4.0*PI+PI)*0.1); });
+                                        vertexHndl: (Shapes.Vertex ver, double u, double v) {
+                                        double height = cos(v*4.0*PI+PI)*0.1 + cos(u*4.0*PI+PI)*0.1;
+                                        Math.Vector3 vec = new Math.Vector3.fromPoint3(ver.location).normal();
+                                        ver.location += new Math.Point3.fromVector3(vec*height);
+                                      }); });
   _addRadioButton("Disk",          () { obj.shape = Shapes.disk(); });
   _addRadioButton("Disk+",         () { obj.shape = Shapes.disk(sides: 30); });
   _addRadioButton("Cylinder",      () { obj.shape = Shapes.cylinder(); });

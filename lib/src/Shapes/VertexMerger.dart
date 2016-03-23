@@ -20,8 +20,10 @@ class VertexJoiner extends VertexMerger {
     Math.Vector3 avgBinm = null;
     int divClr = 0;
     Math.Vector4 avgClr = null;
-    int divTxt = 0;
-    Math.Point2 avgTxt = null;
+    int divTxt2D = 0;
+    Math.Point2 avgTxt2D = null;
+    int divTxtCube = 0;
+    Math.Vector3 avgTxtCube = null;
     int divWeight = 0;
     double avgWeight = 0.0;
 
@@ -48,13 +50,21 @@ class VertexJoiner extends VertexMerger {
           avgBinm += ver.binormal;
         }
       }
-      if (ver.texture != null) {
-        if (avgTxt == null) {
-          avgTxt = ver.texture;
+      if (ver.texture2D != null) {
+        if (avgTxt2D == null) {
+          avgTxt2D = ver.texture2D;
         } else {
-          avgTxt += ver.texture;
+          avgTxt2D += ver.texture2D;
         }
-        divTxt++;
+        divTxt2D++;
+      }
+      if (ver.textureCube != null) {
+        if (avgTxtCube == null) {
+          avgTxtCube = ver.textureCube;
+        } else {
+          avgTxtCube += ver.textureCube;
+        }
+        divTxtCube++;
       }
       if (ver.color != null) {
         if (avgClr == null) {
@@ -84,10 +94,15 @@ class VertexJoiner extends VertexMerger {
     } else {
       argVer.binormal = avgBinm.normal();
     }
-    if ((divTxt <= 0) || (avgTxt == null)) {
-      argVer.texture = null;
+    if ((divTxt2D <= 0) || (avgTxt2D == null)) {
+      argVer.texture2D = null;
     } else {
-      argVer.texture = avgTxt / divTxt.toDouble();
+      argVer.texture2D = avgTxt2D / divTxt2D.toDouble();
+    }
+    if ((divTxtCube <= 0) || (avgTxtCube == null)) {
+      argVer.textureCube = null;
+    } else {
+      argVer.textureCube = avgTxtCube / divTxtCube.toDouble();
     }
     if ((divClr <= 0) || (avgClr == null)) {
       argVer.color = null;

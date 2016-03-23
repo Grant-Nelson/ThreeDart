@@ -15,6 +15,7 @@ class TextureCube extends Shader {
       "                                                            \n"+
       "attribute vec3 posAttr;                                     \n"+
       "attribute vec3 normAttr;                                    \n"+
+      "attribute vec3 txtCubeAttr;                                 \n"+
       "                                                            \n"+
       "varying vec3 normal;                                        \n"+
       "varying vec3 litVec;                                        \n"+
@@ -26,7 +27,7 @@ class TextureCube extends Shader {
       "   camPos = (viewMat*vec4(0.0, 0.0, 0.0, -1.0)).xyz;        \n"+
       "   normal = normalize(viewObjMat*vec4(normAttr, 0.0)).xyz;  \n"+
       "   litVec = normalize((viewMat*vec4(lightVec, 0.0)).xyz);   \n"+
-      "   txtCube = posAttr;                                       \n"+
+      "   txtCube = txtCubeAttr;                                   \n"+
       "   gl_Position = projViewObjMat*vec4(posAttr, 1.0);         \n"+
       "}                                                           \n";
 
@@ -95,7 +96,7 @@ class TextureCube extends Shader {
 
   Attribute _posAttr;
   Attribute _normAttr;
-  Attribute _txtAttr;
+  Attribute _txtCubeAttr;
   Uniform3f _lightVec;
   Uniform4f _lightClr;
   UniformSamplerCube _emissionTxt;
@@ -128,7 +129,7 @@ class TextureCube extends Shader {
     this.initialize(_vertexSource, _fragmentSource);
     this._posAttr        = this.attributes["posAttr"];
     this._normAttr       = this.attributes["normAttr"];
-    this._txtAttr        = this.attributes["txtAttr"];
+    this._txtCubeAttr    = this.attributes["txtCubeAttr"];
     this._lightVec       = this.uniforms["lightVec"] as Uniform3f;
     this._lightClr       = this.uniforms["lightClr"] as Uniform4f;
     this._emissionTxt    = this.uniforms["emissionTxt"] as UniformSamplerCube;
@@ -151,8 +152,8 @@ class TextureCube extends Shader {
   /// The normal vertex shader attribute.
   Attribute get normAttr => this._normAttr;
 
-  /// The texture vertex shader attribute.
-  Attribute get txtAttr => this._txtAttr;
+  /// The texture cube vertex shader attribute.
+  Attribute get txtCubeAttr => this._txtCubeAttr;
 
   /// The direction the light is pointing.
   Math.Vector3 get lightVector => this._lightVec.getVector3();

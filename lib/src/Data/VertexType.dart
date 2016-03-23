@@ -15,17 +15,20 @@ class VertexType {
   /// [Binm] indicates 3D binormal data.
   static VertexType Binm = new VertexType._(0x04);
 
-  /// [Txt] indicates 2D texture data.
-  static VertexType Txt = new VertexType._(0x08);
+  /// [Txt2D] indicates 2D texture data.
+  static VertexType Txt2D = new VertexType._(0x08);
+
+  /// [TxtCube] indicates cube texture data.
+  static VertexType TxtCube = new VertexType._(0x10);
 
   /// [Clr3] indicates RGB color data.
-  static VertexType Clr3 = new VertexType._(0x10);
+  static VertexType Clr3 = new VertexType._(0x20);
 
   /// [Clr4] indicates RGBA color data.
-  static VertexType Clr4 = new VertexType._(0x20);
+  static VertexType Clr4 = new VertexType._(0x40);
 
   /// [Weight] indicates an additional single float data.
-  static VertexType Weight = new VertexType._(0x40);
+  static VertexType Weight = new VertexType._(0x80);
 
   /// The combined vertex type value.
   final int _value;
@@ -49,26 +52,28 @@ class VertexType {
   /// The number of vertex types combined into this type.
   int get count {
     int result = 0;
-    if (this.has(Pos)) result++;
-    if (this.has(Norm)) result++;
-    if (this.has(Binm)) result++;
-    if (this.has(Txt)) result++;
-    if (this.has(Clr3)) result++;
-    if (this.has(Clr4)) result++;
-    if (this.has(Weight)) result++;
+    if (this.has(Pos))     result++;
+    if (this.has(Norm))    result++;
+    if (this.has(Binm))    result++;
+    if (this.has(Txt2D))   result++;
+    if (this.has(TxtCube)) result++;
+    if (this.has(Clr3))    result++;
+    if (this.has(Clr4))    result++;
+    if (this.has(Weight))  result++;
     return result;
   }
 
   /// The total number of floats in the vertex type.
   int get size {
     int result = 0;
-    if (this.has(Pos)) result += 3;
-    if (this.has(Norm)) result += 3;
-    if (this.has(Binm)) result += 3;
-    if (this.has(Txt)) result += 2;
-    if (this.has(Clr3)) result += 3;
-    if (this.has(Clr4)) result += 4;
-    if (this.has(Weight)) result += 1;
+    if (this.has(Pos))     result += 3;
+    if (this.has(Norm))    result += 3;
+    if (this.has(Binm))    result += 3;
+    if (this.has(Txt2D))   result += 2;
+    if (this.has(TxtCube)) result += 3;
+    if (this.has(Clr3))    result += 3;
+    if (this.has(Clr4))    result += 4;
+    if (this.has(Weight))  result += 1;
     return result;
   }
 
@@ -87,8 +92,12 @@ class VertexType {
       if (count == index) return Binm;
       count++;
     }
-    if (this.has(Txt)) {
-      if (count == index) return Txt;
+    if (this.has(Txt2D)) {
+      if (count == index) return Txt2D;
+      count++;
+    }
+    if (this.has(TxtCube)) {
+      if (count == index) return TxtCube;
       count++;
     }
     if (this.has(Clr3)) {
@@ -121,8 +130,12 @@ class VertexType {
       if (type == Binm) return result;
       result++;
     }
-    if (this.has(Txt)) {
-      if (type == Txt) return result;
+    if (this.has(Txt2D)) {
+      if (type == Txt2D) return result;
+      result++;
+    }
+    if (this.has(TxtCube)) {
+      if (type == TxtCube) return result;
       result++;
     }
     if (this.has(Clr3)) {
@@ -155,9 +168,13 @@ class VertexType {
       if (type == Binm) return result;
       result += 3;
     }
-    if (this.has(Txt)) {
-      if (type == Txt) return result;
+    if (this.has(Txt2D)) {
+      if (type == Txt2D) return result;
       result += 2;
+    }
+    if (this.has(TxtCube)) {
+      if (type == TxtCube) return result;
+      result += 3;
     }
     if (this.has(Clr3)) {
       if (type == Clr3) return result;
@@ -177,13 +194,14 @@ class VertexType {
   /// The string for this vertex type.
   String toString() {
     List<String> parts = new List<String>();
-    if (this.has(Pos)) parts.add("Pos");
-    if (this.has(Norm)) parts.add("Norm");
-    if (this.has(Binm)) parts.add("Binm");
-    if (this.has(Txt)) parts.add("Txt");
-    if (this.has(Clr3)) parts.add("Clr3");
-    if (this.has(Clr4)) parts.add("Clr4");
-    if (this.has(Weight)) parts.add("Weight");
+    if (this.has(Pos))     parts.add("Pos");
+    if (this.has(Norm))    parts.add("Norm");
+    if (this.has(Binm))    parts.add("Binm");
+    if (this.has(Txt2D))   parts.add("Txt2D");
+    if (this.has(TxtCube)) parts.add("TxtCube");
+    if (this.has(Clr3))    parts.add("Clr3");
+    if (this.has(Clr4))    parts.add("Clr4");
+    if (this.has(Weight))  parts.add("Weight");
     if (parts.length <= 0) return "None";
     return parts.join("|");
   }

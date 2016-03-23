@@ -17,12 +17,13 @@ class Inspection extends Technique {
   bool _showNormals;
   bool _showBinormals;
   bool _showTangentals;
+  bool _showTxtCube;
   bool _showFaceCenters;
   bool _showFaceNormals;
   bool _showFaceBinormals;
   bool _showFaceTangentals;
   bool _showColorFill;
-  bool _showTxtColor;
+  bool _showTxt2DColor;
   bool _showAxis;
   bool _showAABB;
   double _vectorScale;
@@ -44,12 +45,13 @@ class Inspection extends Technique {
     this._showNormals        = false;
     this._showBinormals      = false;
     this._showTangentals     = false;
+    this._showTxtCube        = false;
     this._showFaceCenters    = false;
     this._showFaceNormals    = false;
     this._showFaceBinormals  = false;
     this._showFaceTangentals = false;
     this._showColorFill      = false;
-    this._showTxtColor       = false;
+    this._showTxt2DColor     = false;
     this._showAxis           = false;
     this._showAABB           = false;
     this._vectorScale        = 1.0;
@@ -79,6 +81,10 @@ class Inspection extends Technique {
   set showTangentals(bool show) => this._showTangentals = show;
   bool get showTangentals => this._showTangentals;
 
+  /// Indicates if the texture cube vectors of the shape should be showed.
+  set showTxtCube(bool show) => this._showTxtCube = show;
+  bool get showTxtCube => this._showTxtCube;
+
   /// Indicates if the face center points of the shape should be showed.
   set showFaceCenters(bool show) => this._showFaceCenters = show;
   bool get showFaceCenters => this._showFaceCenters;
@@ -99,9 +105,9 @@ class Inspection extends Technique {
   set showColorFill(bool show) => this._showColorFill = show;
   bool get showColorFill => this._showColorFill;
 
-  /// Indicates if the texture colors of the shape should be showed.
-  set showTxtColor(bool show) => this._showTxtColor = show;
-  bool get showTxtColor => this._showTxtColor;
+  /// Indicates if the texture 2D colors of the shape should be showed.
+  set showTxt2DColor(bool show) => this._showTxt2DColor = show;
+  bool get showTxt2DColor => this._showTxt2DColor;
 
   /// Indicates if the axis should be showed.
   set showAxis(bool show) => this._showAxis = show;
@@ -124,6 +130,7 @@ class Inspection extends Technique {
     if (obj.cacheNeedsUpdate) {
       obj.shape.calculateNormals();
       obj.shape.calculateBinormals();
+      obj.shape.calculateCubeTextures();
       obj.cache = new Data.BufferStoreSet();
     }
 
@@ -151,8 +158,8 @@ class Inspection extends Technique {
         this._render(state, store, obj.shape, 'shapeFill', this._shapeFill, this._ambient1, this._diffuse1);
       if (this._showColorFill)
         this._render(state, store, obj.shape, 'colorFill', this._colorFill, this._ambient3, this._diffuse3);
-      if (this._showTxtColor)
-        this._render(state, store, obj.shape, 'txtColor', this._txtColor, this._ambient3, this._diffuse3);
+      if (this._showTxt2DColor)
+        this._render(state, store, obj.shape, 'txt2DColor', this._txt2DColor, this._ambient3, this._diffuse3);
 
       state.gl.disable(WebGL.DEPTH_TEST);
       state.gl.enable(WebGL.BLEND);
@@ -165,6 +172,8 @@ class Inspection extends Technique {
         this._render(state, store, obj.shape, 'binormals', this._binormals, this._ambient2, this._diffuse2);
       if (this._showTangentals)
         this._render(state, store, obj.shape, 'tangentals', this._tangentals, this._ambient2, this._diffuse2);
+      if (this._showTxtCube)
+        this._render(state, store, obj.shape, 'textureCube', this._txtCube, this._ambient2, this._diffuse2);
       if (this._showFaceNormals)
         this._render(state, store, obj.shape, 'faceNormals', this._faceNormals, this._ambient2, this._diffuse2);
       if (this._showFaceBinormals)
@@ -310,6 +319,22 @@ class Inspection extends Technique {
     return result;
   }
 
+  /// Convertes the given [shape] into the texture cube color shape.
+  Shapes.Shape _txtCube(Shapes.Shape shape) {
+    Shapes.Shape result = new Shapes.Shape();
+    Math.Color4 color = new Math.Color4(1.0, 0.3, 0.3);
+    shape.vertices.forEach((Shapes.Vertex vertex) {
+      Shapes.Vertex ver1 = vertex.copy()
+        ..color = color;
+      Shapes.Vertex ver2 = ver1.copy();
+      ver2.location = ver2.location + new Math.Point3.fromVector3(ver2.textureCube)*this._vectorScale;
+      result.vertices.add(ver1);
+      result.vertices.add(ver2);
+      result.lines.add(ver1, ver2);
+    });
+    return result;
+  }
+
   /// Convertes the given [shape] into the face center point shape.
   Shapes.Shape _faceCenters(Shapes.Shape shape) {
     Shapes.Shape result = new Shapes.Shape();
@@ -398,11 +423,11 @@ class Inspection extends Technique {
     return result;
   }
 
-  /// Convertes the given [shape] into the texture color shape.
-  Shapes.Shape _txtColor(Shapes.Shape shape) {
+  /// Convertes the given [shape] into the texture 2D color shape.
+  Shapes.Shape _txt2DColor(Shapes.Shape shape) {
     Shapes.Shape result = new Shapes.Shape();
     shape.vertices.forEach((Shapes.Vertex vertex) {
-      Math.Point2 txt = vertex.texture;
+      Math.Point2 txt = vertex.texture2D;
       result.vertices.add(vertex.copy()
         ..color =  new Math.Color4(txt.x, txt.y, txt.y));
     });

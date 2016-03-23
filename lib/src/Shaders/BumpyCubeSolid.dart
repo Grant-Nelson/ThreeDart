@@ -16,6 +16,7 @@ class BumpyCubeSolid extends Shader {
       "attribute vec3 posAttr;                                       \n"+
       "attribute vec3 normAttr;                                      \n"+
       "attribute vec3 binmAttr;                                      \n"+
+      "attribute vec3 txtCubeAttr;                                   \n"+
       "                                                              \n"+
       "varying vec3 normal;                                          \n"+
       "varying vec3 binormal;                                        \n"+
@@ -29,7 +30,7 @@ class BumpyCubeSolid extends Shader {
       "   litVec = normalize((viewMat*vec4(lightVec, 0.0)).xyz);     \n"+
       "   normal = normalize(viewObjMat*vec4(normAttr, 0.0)).xyz;    \n"+
       "   binormal = normalize(viewObjMat*vec4(binmAttr, 0.0)).xyz;  \n"+
-      "   txtCube = posAttr;                                         \n"+
+      "   txtCube = txtCubeAttr;                                     \n"+
       "   gl_Position = projViewObjMat*vec4(posAttr, 1.0);           \n"+
       "}                                                             \n";
 
@@ -96,7 +97,7 @@ class BumpyCubeSolid extends Shader {
   Attribute _posAttr;
   Attribute _normAttr;
   Attribute _binmAttr;
-  Attribute _txtAttr;
+  Attribute _txtCubeAttr;
   Uniform3f _lightVec;
   Uniform4f _lightClr;
   Uniform4f _emissionClr;
@@ -127,7 +128,7 @@ class BumpyCubeSolid extends Shader {
     this._posAttr        = this.attributes["posAttr"];
     this._normAttr       = this.attributes["normAttr"];
     this._binmAttr       = this.attributes["binmAttr"];
-    this._txtAttr        = this.attributes["txtAttr"];
+    this._txtCubeAttr    = this.attributes["txtCubeAttr"];
     this._lightVec       = this.uniforms["lightVec"] as Uniform3f;
     this._lightClr       = this.uniforms["lightClr"] as Uniform4f;
     this._emissionClr    = this.uniforms["emissionClr"] as Uniform4f;
@@ -150,8 +151,8 @@ class BumpyCubeSolid extends Shader {
   /// The binormal vertex shader attribute.
   Attribute get binmAttr => this._binmAttr;
 
-  /// The texture vertex shader attribute.
-  Attribute get txtAttr => this._txtAttr;
+  /// The texture cube vertex shader attribute.
+  Attribute get txtCubeAttr => this._txtCubeAttr;
 
   /// The direction the light is pointing.
   Math.Vector3 get lightVector => this._lightVec.getVector3();

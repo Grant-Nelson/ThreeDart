@@ -87,11 +87,11 @@ class MaterialLight extends Technique {
         ..calculateNormals()
         ..calculateBinormals();
       obj.cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl),
-        Data.VertexType.Pos|Data.VertexType.Norm|Data.VertexType.Binm|Data.VertexType.Txt)
+        Data.VertexType.Pos|Data.VertexType.Norm|Data.VertexType.Binm|Data.VertexType.Txt2D)
         ..findAttribute(Data.VertexType.Pos).attr = shader.posAttr.loc
         ..findAttribute(Data.VertexType.Norm).attr = shader.normAttr.loc
         ..findAttribute(Data.VertexType.Binm).attr = shader.binmAttr.loc
-        ..findAttribute(Data.VertexType.Txt).attr = shader.txtAttr.loc;
+        ..findAttribute(Data.VertexType.Txt2D).attr = shader.txtAttr.loc;
     }
 
     Materials.BumpySolid mat = this._material as Materials.BumpySolid;
@@ -118,10 +118,11 @@ class MaterialLight extends Technique {
         ..calculateNormals()
         ..calculateBinormals();
       obj.cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl),
-        Data.VertexType.Pos|Data.VertexType.Norm|Data.VertexType.Binm)
+        Data.VertexType.Pos|Data.VertexType.Norm|Data.VertexType.Binm|Data.VertexType.TxtCube)
         ..findAttribute(Data.VertexType.Pos).attr = shader.posAttr.loc
         ..findAttribute(Data.VertexType.Norm).attr = shader.normAttr.loc
-        ..findAttribute(Data.VertexType.Binm).attr = shader.binmAttr.loc;
+        ..findAttribute(Data.VertexType.Binm).attr = shader.binmAttr.loc
+        ..findAttribute(Data.VertexType.TxtCube).attr = shader.txtCubeAttr.loc;
     }
 
     Materials.BumpyCubeSolid mat = this._material as Materials.BumpyCubeSolid;
@@ -146,10 +147,10 @@ class MaterialLight extends Technique {
     if (obj.cacheNeedsUpdate) {
       obj.shape.calculateNormals();
       obj.cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl),
-        Data.VertexType.Pos|Data.VertexType.Norm|Data.VertexType.Txt)
+        Data.VertexType.Pos|Data.VertexType.Norm|Data.VertexType.Txt2D)
         ..findAttribute(Data.VertexType.Pos).attr = shader.posAttr.loc
         ..findAttribute(Data.VertexType.Norm).attr = shader.normAttr.loc
-        ..findAttribute(Data.VertexType.Txt).attr = shader.txtAttr.loc;
+        ..findAttribute(Data.VertexType.Txt2D).attr = shader.txtAttr.loc;
     }
 
     Materials.Texture2D mat = this._material as Materials.Texture2D;
@@ -179,11 +180,11 @@ class MaterialLight extends Technique {
         ..calculateNormals()
         ..calculateBinormals();
       obj.cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl),
-        Data.VertexType.Pos|Data.VertexType.Norm|Data.VertexType.Binm|Data.VertexType.Txt)
+        Data.VertexType.Pos|Data.VertexType.Norm|Data.VertexType.Binm|Data.VertexType.Txt2D)
         ..findAttribute(Data.VertexType.Pos).attr = shader.posAttr.loc
         ..findAttribute(Data.VertexType.Norm).attr = shader.normAttr.loc
         ..findAttribute(Data.VertexType.Binm).attr = shader.binmAttr.loc
-        ..findAttribute(Data.VertexType.Txt).attr = shader.txtAttr.loc;
+        ..findAttribute(Data.VertexType.Txt2D).attr = shader.txtAttr.loc;
     }
 
     Materials.BumpyTexture2D mat = this._material as Materials.BumpyTexture2D;
@@ -212,9 +213,10 @@ class MaterialLight extends Technique {
     if (obj.cacheNeedsUpdate) {
       obj.shape.calculateNormals();
       obj.cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl),
-        Data.VertexType.Pos|Data.VertexType.Norm)
+        Data.VertexType.Pos|Data.VertexType.Norm|Data.VertexType.TxtCube)
         ..findAttribute(Data.VertexType.Pos).attr = shader.posAttr.loc
-        ..findAttribute(Data.VertexType.Norm).attr = shader.normAttr.loc;
+        ..findAttribute(Data.VertexType.Norm).attr = shader.normAttr.loc
+        ..findAttribute(Data.VertexType.TxtCube).attr = shader.txtCubeAttr.loc;
     }
 
     Materials.TextureCube mat = this._material as Materials.TextureCube;

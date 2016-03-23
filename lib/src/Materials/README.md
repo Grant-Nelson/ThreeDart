@@ -12,7 +12,7 @@
 |   2D     |   2D    |   2D    |   2D     |  2D  |   -  |  X   | BumpyTexture2D
 |   2D     |   2D    |   2D    |   2D     |   -  | Cube |      | ReflTexture2D
 |   2D     |   2D    |   2D    |   2D     |  2D  | Cube |      | ReflBumpyTexture2D
-|  Cube    |  Cube   |  Cube   |  Cube    |   -  |   -  |      | TextureCube
-|  Cube    |  Cube   |  Cube   |  Cube    | Cube |   -  |      | BumpyTextureCube
+|  Cube    |  Cube   |  Cube   |  Cube    |   -  |   -  |  X   | TextureCube
+|  Cube    |  Cube   |  Cube   |  Cube    | Cube |   -  |  X   | BumpyTextureCube
 |  Cube    |  Cube   |  Cube   |  Cube    |   -  | Cube |      | ReflTextureCube
 |  Cube    |  Cube   |  Cube   |  Cube    | Cube | Cube |      | ReflBumpyTextureCube

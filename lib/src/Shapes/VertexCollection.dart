@@ -47,8 +47,8 @@ class VertexCollection {
 
   /// Creates and adds a new vertex to this collection with the default values.
   Vertex addNew({Math.Point3 loc: null, Math.Vector3 norm: null, Math.Vector3 binm: null,
-                 Math.Point2 txt: null, Math.Color4 clr: null, double weight: 0.0}) {
-    Vertex ver = new Vertex(loc: loc, norm: norm, binm: binm, txt: txt, clr: clr, weight: weight);
+                 Math.Point2 txt2D: null, Math.Vector3 txtCube: null, Math.Color4 clr: null, double weight: 0.0}) {
+    Vertex ver = new Vertex(loc: loc, norm: norm, binm: binm, txt2D: txt2D, txtCube: txtCube, clr: clr, weight: weight);
     this.add(ver);
     return ver;
   }
@@ -128,6 +128,17 @@ class VertexCollection {
     }
     return success;
   }
+
+  /// Calculates the cube texture coordinate for the vertices and favces.
+  /// True if successful, false on error.
+  bool calculateCubeTextures() {
+    for (Vertex vertex in this._vertices) {
+      if (vertex.textureCube == null) {
+        vertex.textureCube = vertex.normal.normal();
+      }
+    }
+    return true;
+    }
 
   /// Gets to string for all the vertices.
   String toString([String indent = ""]) {

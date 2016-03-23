@@ -89,6 +89,17 @@ class Shape {
     return success;
   }
 
+  /// Calculates the cube texture coordinate for the vertices and favces.
+  /// The normals should be calculated first.
+  /// True if successful, false on error.
+  bool calculateCubeTextures() {
+    bool success = true;
+    this._changed.suspend();
+    if (!this._vertices.calculateCubeTextures()) success = false;
+    this._changed.resume();
+    return success;
+  }
+
   /// Calculates the axial alligned bounding box of the shape.
   Math.Region3 calculateAABB() {
     final int count = this._vertices.length;

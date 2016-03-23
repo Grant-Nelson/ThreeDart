@@ -132,9 +132,9 @@ class Face {
     Math.Point3 loc3 = (this._ver3 == null) ? null : this._ver3.location;
     if ((loc1 == null) || (loc2 == null) || (loc3 == null)) return false;
 
-    Math.Point2 txt1 = this._ver1.texture;
-    Math.Point2 txt2 = this._ver2.texture;
-    Math.Point2 txt3 = this._ver3.texture;
+    Math.Point2 txt1 = this._ver1.texture2D;
+    Math.Point2 txt2 = this._ver2.texture2D;
+    Math.Point2 txt3 = this._ver3.texture2D;
     if ((txt1 == null) || (txt2 == null) || (txt3 == null)) return false;
 
     Math.Vector3 binm;

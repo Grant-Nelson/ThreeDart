@@ -12,13 +12,14 @@ class Vertex {
   Math.Point3 _loc;
   Math.Vector3 _norm;
   Math.Vector3 _binm;
-  Math.Point2 _txt;
+  Math.Point2 _txt2D;
+  Math.Vector3 _txtCube;
   Math.Color4 _clr;
   double _weight;
 
   /// Creates a new vertex with the default values.
   Vertex({Math.Point3 loc: null, Math.Vector3 norm: null, Math.Vector3 binm: null,
-          Math.Point2 txt: null, Math.Color4 clr: null, double weight: 0.0}) {
+          Math.Point2 txt2D: null, Math.Vector3 txtCube: null, Math.Color4 clr: null, double weight: 0.0}) {
     this._shape = null;
     this._points = new VertexPointCollection._(this);
     this._lines = new VertexLineCollection._(this);
@@ -28,7 +29,8 @@ class Vertex {
     this._loc = loc;
     this._norm = norm;
     this._binm = binm;
-    this._txt = txt;
+    this._txt2D = txt2D;
+    this._txtCube = txtCube;
     this._clr = clr;
     this._weight = weight;
   }
@@ -36,12 +38,13 @@ class Vertex {
   /// Creates a copy of the vertex values.
   Vertex copy() {
     return new Vertex(
-      loc:  (this._loc  == null)? null: this._loc.copy(),
-      norm: (this._norm == null)? null: this._norm.copy(),
-      binm: (this._binm == null)? null: this._binm.copy(),
-      txt:  (this._txt  == null)? null: this._txt.copy(),
-      clr:  (this._clr  == null)? null: this._clr.copy(),
-      weight: this._weight
+      loc:     (this._loc     == null)? null: this._loc.copy(),
+      norm:    (this._norm    == null)? null: this._norm.copy(),
+      binm:    (this._binm    == null)? null: this._binm.copy(),
+      txt2D:   (this._txt2D   == null)? null: this._txt2D.copy(),
+      txtCube: (this._txtCube == null)? null: this._txtCube.copy(),
+      clr:     (this._clr     == null)? null: this._clr.copy(),
+      weight:  this._weight
     );
   }
 
@@ -99,10 +102,20 @@ class Vertex {
   }
 
   /// The 2D texture coordinate of the vertex.
-  Math.Point2 get texture => this._txt;
-  set texture(Math.Point2 txt) {
-    if (this._txt != txt) {
-      this._txt = txt;
+  Math.Point2 get texture2D => this._txt2D;
+  set texture2D(Math.Point2 txt2D) {
+    if (this._txt2D != txt2D) {
+      this._txt2D = txt2D;
+      if (this._shape != null)
+        this._shape.onVertexModified(this);
+    }
+  }
+
+  /// The cube texture coordinate of the vertex.
+  Math.Vector3 get textureCube => this._txtCube;
+  set textureCube(Math.Vector3 txtCube) {
+    if (this._txtCube != txtCube) {
+      this._txtCube = txtCube;
       if (this._shape != null)
         this._shape.onVertexModified(this);
     }
@@ -139,9 +152,12 @@ class Vertex {
     } else if (type == Data.VertexType.Binm) {
       if (this._binm == null) return [0.0, 0.0, 1.0];
       else return this._binm.toList();
-    } else if (type == Data.VertexType.Txt) {
-      if (this._txt == null) return [0.0, 0.0];
-      else return this._txt.toList();
+    } else if (type == Data.VertexType.Txt2D) {
+      if (this._txt2D == null) return [0.0, 0.0];
+      else return this._txt2D.toList();
+    } else if (type == Data.VertexType.TxtCube) {
+      if (this._txtCube == null) return [0.0, 0.0, 0.0];
+      else return this._txtCube.toList();
     } else if (type == Data.VertexType.Clr3) {
       if (this._clr == null) return [1.0, 1.0, 1.0];
       else return new Math.Color3.fromColor4(this._clr).toList();
@@ -201,7 +217,8 @@ class Vertex {
     if (this._loc != ver._loc) return false;
     if (this._norm != ver._norm) return false;
     if (this._binm != ver._binm) return false;
-    if (this._txt != ver._txt) return false;
+    if (this._txt2D != ver._txt2D) return false;
+    if (this._txtCube != ver._txtCube) return false;
     if (this._clr != ver._clr) return false;
     if (Math.Comparer.equals(this._weight, ver._weight)) return false;
     return true;
@@ -220,8 +237,10 @@ class Vertex {
     else                    parts.add("-");
     if (this._binm != null) parts.add(this._binm.toString());
     else                    parts.add("-");
-    if (this._txt != null) parts.add(this._txt.toString());
-    else                   parts.add("-");
+    if (this._txt2D != null) parts.add(this._txt2D.toString());
+    else                     parts.add("-");
+    if (this._txtCube != null) parts.add(this._txtCube.toString());
+    else                       parts.add("-");
     if (this._clr != null) parts.add(this._clr.toString());
     else                   parts.add("-");
     parts.add(Math.formatDouble(this._weight));

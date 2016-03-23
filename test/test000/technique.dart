@@ -6,21 +6,21 @@ void addTechniqueTests(TestManager tests) {
     testTechnique(args,
       new Math.Matrix4.identity(),
       new Math.Matrix4.translate(0.0, 0.0, -5.0),
-      [new pointPair( 0.0,  0.0,  0.0,    0.0,  0.0,  0.0),
-       new pointPair( 1.0,  0.0,  0.0,    1.0,  0.0,  0.0),
-       new pointPair(-1.0,  0.0,  0.0,   -1.0,  0.0,  0.0),
-       new pointPair( 0.0,  1.0,  0.0,    0.0,  1.0,  0.0),
-       new pointPair( 0.0, -1.0,  0.0,    0.0, -1.0,  0.0),
-       new pointPair( 0.0,  0.0,  1.0,    0.0,  0.0,  1.0),
-       new pointPair( 0.0,  0.0, -1.0,    0.0,  0.0, -1.0),
-       new pointPair( 1.0,  1.0,  1.0,    1.0,  1.0,  1.0),
-       new pointPair( 1.0, -1.0,  1.0,    1.0, -1.0,  1.0),
-       new pointPair( 1.0,  1.0, -1.0,    1.0,  1.0, -1.0),
-       new pointPair( 1.0, -1.0, -1.0,    1.0, -1.0, -1.0),
-       new pointPair(-1.0,  1.0,  1.0,   -1.0,  1.0,  1.0),
-       new pointPair(-1.0, -1.0,  1.0,   -1.0, -1.0,  1.0),
-       new pointPair(-1.0,  1.0, -1.0,   -1.0,  1.0, -1.0),
-       new pointPair(-1.0, -1.0, -1.0,   -1.0, -1.0, -1.0)]);
+      [new pointPair( 0.0,  0.0,  0.0,    0.0,                 0.0,                1.020051002550127),
+       new pointPair( 1.0,  0.0,  0.0,   -0.3464101615137755,  0.0,                1.020051002550127),
+       new pointPair(-1.0,  0.0,  0.0,    0.3464101615137755,  0.0,                1.020051002550127),
+       new pointPair( 0.0,  1.0,  0.0,    0.0,                -0.3464101615137755, 1.020051002550127),
+       new pointPair( 0.0, -1.0,  0.0,    0.0,                 0.3464101615137755, 1.020051002550127),
+       new pointPair( 0.0,  0.0,  1.0,    0.0,                 0.0,                1.016717502541794),
+       new pointPair( 0.0,  0.0, -1.0,    0.0,                 0.0,                1.025051252562628),
+       new pointPair( 1.0,  1.0,  1.0,   -0.2886751345948129, -0.2886751345948129, 1.016717502541794),
+       new pointPair( 1.0, -1.0,  1.0,   -0.2886751345948129,  0.2886751345948129, 1.016717502541794),
+       new pointPair( 1.0,  1.0, -1.0,   -0.4330127018922194, -0.4330127018922194, 1.025051252562628),
+       new pointPair( 1.0, -1.0, -1.0,   -0.4330127018922194,  0.4330127018922194, 1.025051252562628),
+       new pointPair(-1.0,  1.0,  1.0,    0.2886751345948129, -0.2886751345948129, 1.016717502541794),
+       new pointPair(-1.0, -1.0,  1.0,    0.2886751345948129,  0.2886751345948129, 1.016717502541794),
+       new pointPair(-1.0,  1.0, -1.0,    0.4330127018922194, -0.4330127018922194, 1.025051252562628),
+       new pointPair(-1.0, -1.0, -1.0,    0.4330127018922194,  0.4330127018922194, 1.025051252562628)]);
   });
 }
 
@@ -76,7 +76,7 @@ void testTechnique(TestArgs args, Math.Matrix4 objMat, Math.Matrix4 camMat, List
       if (expPnt != result) {
         args.error("Unexpected result from debugging technique at $i: " +
           "\n   Expected: $expPnt" +
-          "\n   Gotten:   $result\n\n");
+          "\n   Gotten:   ${result.x}, ${result.y}, ${result.z}\n\n");
       }
     }
   }

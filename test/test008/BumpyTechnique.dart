@@ -30,11 +30,11 @@ class BumpyTechnique extends Techniques.Technique {
     if (obj.cacheNeedsUpdate) {
       obj.cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl),
         Data.VertexType.Pos|Data.VertexType.Norm|Data.VertexType.Binm|
-        Data.VertexType.Txt|Data.VertexType.Weight)
+        Data.VertexType.Txt2D|Data.VertexType.Weight)
         ..findAttribute(Data.VertexType.Pos).attr = shader.posAttr.loc
         ..findAttribute(Data.VertexType.Norm).attr = shader.normAttr.loc
         ..findAttribute(Data.VertexType.Binm).attr = shader.binmAttr.loc
-        ..findAttribute(Data.VertexType.Txt).attr = shader.txtAttr.loc
+        ..findAttribute(Data.VertexType.Txt2D).attr = shader.txtAttr.loc
         ..findAttribute(Data.VertexType.Weight).attr = shader.weightAttr.loc;
     }
 
