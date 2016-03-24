@@ -21,6 +21,7 @@ part 'Uniforms.dart';
 part 'BumpySolid.dart';
 part 'BumpyCubeSolid.dart';
 part 'BumpyTexture2D.dart';
+part 'BumpyTextureCube.dart';
 part 'Depth.dart';
 part 'Inspection.dart';
 part 'Solid.dart';

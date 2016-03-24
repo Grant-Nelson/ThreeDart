@@ -36,6 +36,7 @@ class MaterialLight extends Technique {
       else if (this._material is Materials.Solid) this._solid(state, obj);
       else if (this._material is Materials.BumpyTexture2D) this._bumpyTxt2D(state, obj);
       else if (this._material is Materials.Texture2D) this._txt2D(state, obj);
+      else if (this._material is Materials.BumpyTextureCube) this._bumpyTxtCube(state, obj);
       else if (this._material is Materials.TextureCube) this._txtCube(state, obj);
       else throw new Exception("Unsupported light and material combination. $_material, $_light");
     } else throw new Exception("Unsupported light and material combination. $_material, $_light");
@@ -224,6 +225,41 @@ class MaterialLight extends Technique {
     if (mat.ambientTexture != null) mat.ambientTexture.index = 1;
     if (mat.diffuseTexture != null) mat.diffuseTexture.index = 2;
     if (mat.specularTexture != null) mat.specularTexture.index = 3;
+
+    Math.Matrix4 viewObjMat = state.view.matrix*state.object.matrix;
+    shader
+      ..bind(state)
+      ..setLight(this._light as Lights.Directional)
+      ..setMaterial(mat)
+      ..projectViewObjectMatrix = state.projection.matrix*viewObjMat
+      ..viewMatrix = state.view.matrix
+      ..viewObjectMatrix = viewObjMat;
+  }
+
+  /// Renders and sets up the shaper for bumpy texture cube light.
+  void _bumpyTxtCube(Core.RenderState state, Core.Entity obj) {
+    if (this._shader == null)
+      this._shader = new Shaders.BumpyTextureCube.cached(state);
+    Shaders.BumpyTextureCube shader = this._shader as Shaders.BumpyTextureCube;
+
+    if (obj.cacheNeedsUpdate) {
+      obj.shape
+        ..calculateNormals()
+        ..calculateBinormals();
+      obj.cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl),
+        Data.VertexType.Pos|Data.VertexType.Norm|Data.VertexType.Binm|Data.VertexType.TxtCube)
+        ..findAttribute(Data.VertexType.Pos).attr = shader.posAttr.loc
+        ..findAttribute(Data.VertexType.Norm).attr = shader.normAttr.loc
+        ..findAttribute(Data.VertexType.Binm).attr = shader.binmAttr.loc
+        ..findAttribute(Data.VertexType.TxtCube).attr = shader.txtCubeAttr.loc;
+    }
+
+    Materials.BumpyTextureCube mat = this._material as Materials.BumpyTextureCube;
+    if (mat.emissionTexture != null) mat.emissionTexture.index = 0;
+    if (mat.ambientTexture != null) mat.ambientTexture.index = 1;
+    if (mat.diffuseTexture != null) mat.diffuseTexture.index = 2;
+    if (mat.specularTexture != null) mat.specularTexture.index = 3;
+    if (mat.bumpMap != null) mat.bumpMap.index = 4;
 
     Math.Matrix4 viewObjMat = state.view.matrix*state.object.matrix;
     shader

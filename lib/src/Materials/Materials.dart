@@ -10,6 +10,7 @@ import '../Textures/Textures.dart' as Textures;
 part 'BumpySolid.dart';
 part 'BumpyCubeSolid.dart';
 part 'BumpyTexture2D.dart';
+part 'BumpyTextureCube.dart';
 part 'Solid.dart';
 part 'Material.dart';
 part 'Texture2D.dart';
