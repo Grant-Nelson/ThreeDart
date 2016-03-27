@@ -14,8 +14,11 @@ import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
 import 'package:ThreeDart/Textures.dart' as Textures;
 import 'package:ThreeDart/Materials.dart' as Materials;
+import '../common/common.dart' as common;
 
 void main() {
+  common.shellTest("Test 007", [],
+    "A test of the Bumpy Texture 2D Directional Lighting Shader.");
 
   Movers.UserRotater rotater = new Movers.UserRotater();
   Movers.UserZoom zoom = new Movers.UserZoom();
@@ -39,16 +42,16 @@ void main() {
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart")
     ..scene = pass;
 
-  Textures.Texture2D color = td.textureLoader.load2DFromFile("./Color.png");
+  Textures.Texture2D color = td.textureLoader.load2DFromFile("../resources/ScrewColor.png");
   tech.material = new Materials.BumpyTexture2D(
     emissionColor: new Math.Color4.transparent(),
     ambientColor: new Math.Color4(0.2, 0.2, 0.2),
     diffuseColor: new Math.Color4(0.8, 0.8, 0.8),
     ambientTexture: color,
     diffuseTexture: color,
-    bumpMap: td.textureLoader.load2DFromFile("./BumpMap.png"),
+    bumpMap: td.textureLoader.load2DFromFile("../resources/ScrewBumpMap.png"),
     specularColor: new Math.Color4.white(),
-    specularTexture: td.textureLoader.load2DFromFile("./Specular.png"),
+    specularTexture: td.textureLoader.load2DFromFile("../resources/ScrewSpecular.png"),
     shininess: 10.0);
 
   rotater.attach(td.userInput);

@@ -11,8 +11,11 @@ import 'package:ThreeDart/Movers.dart' as Movers;
 import 'package:ThreeDart/Math.dart' as Math;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
+import '../common/common.dart' as common;
 
 void main() {
+  common.shellTest("Test 004", [],
+    "Test of repeat movers and shapes.");
 
   Movers.Rotater rotater = new Movers.Rotater()
     ..deltaYaw = 0.51

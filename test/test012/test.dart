@@ -14,8 +14,11 @@ import 'package:ThreeDart/Textures.dart' as Textures;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
 import 'package:ThreeDart/Materials.dart' as Materials;
+import '../common/common.dart' as common;
 
 void main() {
+  common.shellTest("Test 012", [],
+    "A test of the Cube Texture Color Directional Lighting Shader with a Cube Texture Bump Map.");
 
   Movers.UserRotater rotater = new Movers.UserRotater();
   Movers.UserZoom zoom = new Movers.UserZoom();
@@ -42,7 +45,7 @@ void main() {
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart")
     ..scene = pass;
 
-  Textures.TextureCube color = td.textureLoader.loadCubeFromPath("./color");
+  Textures.TextureCube color = td.textureLoader.loadCubeFromPath("../resources/diceColor");
   tech.material = new Materials.BumpyTextureCube(
     emissionColor: new Math.Color4.transparent(),
     ambientColor: new Math.Color4(0.2, 0.2, 0.2),
@@ -50,9 +53,9 @@ void main() {
     specularColor: new Math.Color4(0.7, 0.7, 0.7),
     ambientTexture: color,
     diffuseTexture: color,
-    specularTexture: td.textureLoader.loadCubeFromPath("./specular"),
+    specularTexture: td.textureLoader.loadCubeFromPath("../resources/diceSpecular"),
     shininess: 10.0,
-    bumpMap: td.textureLoader.loadCubeFromPath("./bumpMap"));
+    bumpMap: td.textureLoader.loadCubeFromPath("../resources/diceBumpMap"));
 
   rotater.attach(td.userInput);
   zoom.attach(td.userInput);

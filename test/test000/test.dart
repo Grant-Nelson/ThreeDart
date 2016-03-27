@@ -15,6 +15,7 @@ import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Shapes.dart' as Shapes;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
+import '../common/common.dart' as common;
 
 part 'testTools.dart';
 part 'matrix2.dart';
@@ -24,10 +25,14 @@ part 'technique.dart';
 part 'vertexType.dart';
 
 void main() {
-  TestManager tests = new TestManager.byId("output");
+  html.DivElement elem = new html.DivElement();
+  TestManager tests = new TestManager(elem);
+
   vertexTypeTests(tests);
   addMatrix2Tests(tests);
   addMatrix3Tests(tests);
   addMatrix4Tests(tests);
   addTechniqueTests(tests);
+
+  common.shellPage("Unit-tests", elem, false, "../resources/SnowTop.png");
 }

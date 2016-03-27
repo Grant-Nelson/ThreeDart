@@ -15,14 +15,16 @@ import 'package:ThreeDart/Data.dart' as Data;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Textures.dart' as Textures;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
+import '../common/common.dart' as common;
 
 part 'BumpyShader.dart';
 part 'BumpyTechnique.dart';
 
 void main() {
+  common.shellTest("Test 008", ["bumpMaps"],
+    "A test of the Bumpy Texture Shader Equation.");
+
   Shapes.Shape shape = Shapes.grid(widthDiv: 50, heightDiv: 50);
-  //Shapes.Shape shape = Shapes.cuboid(widthDiv: 20, heightDiv: 20);
-  //Shapes.Shape shape = Shapes.sphere(widthDiv: 20, heightDiv: 20);
   shape.calculateNormals();
   shape.calculateBinormals();
   shape.faces.removeAll();
@@ -61,12 +63,13 @@ void main() {
   rotater.attach(td.userInput);
   zoom.attach(td.userInput);
 
-  _addBumpMap("./BumpMap1.png", td, tech, true);
-  _addBumpMap("./BumpMap2.png", td, tech);
-  _addBumpMap("./BumpMap3.png", td, tech);
-  _addBumpMap("./BumpMap4.png", td, tech);
-  _addBumpMap("./BumpMap5.png", td, tech);
-  _addBumpMap("./BumpMap6.png", td, tech);
+  _addBumpMap("../resources/BumpMap1.png", td, tech, true);
+  _addBumpMap("../resources/BumpMap2.png", td, tech);
+  _addBumpMap("../resources/BumpMap3.png", td, tech);
+  _addBumpMap("../resources/BumpMap4.png", td, tech);
+  _addBumpMap("../resources/BumpMap5.png", td, tech);
+  _addBumpMap("../resources/ScrewBumpMap.png", td, tech);
+  _addBumpMap("../resources/CtrlPnlBumpMap.png", td, tech);
 
   var update;
   update = (num t) {

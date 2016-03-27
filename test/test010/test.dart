@@ -13,8 +13,11 @@ import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
 import 'package:ThreeDart/Materials.dart' as Materials;
+import '../common/common.dart' as common;
 
 void main() {
+  common.shellTest("Test 010", [],
+    "A test of the Solid Color Directional Lighting Shader with a cube texture bump map.");
 
   Movers.UserRotater rotater = new Movers.UserRotater();
   Movers.UserZoom zoom = new Movers.UserZoom();
@@ -47,7 +50,7 @@ void main() {
     diffuse: new Math.Color4(0.0, 1.0, 0.0),
     specular: new Math.Color4(1.0, 0.0, 0.0),
     shininess: 10.0,
-    bumpMap: td.textureLoader.loadCubeFromPath("./bumpMap"));
+    bumpMap: td.textureLoader.loadCubeFromPath("../resources/diceBumpMap"));
 
   rotater.attach(td.userInput);
   zoom.attach(td.userInput);

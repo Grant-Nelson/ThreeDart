@@ -12,8 +12,13 @@ import 'package:ThreeDart/Movers.dart' as Movers;
 import 'package:ThreeDart/Math.dart' as Math;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
+import '../common/common.dart' as common;
 
 void main() {
+  common.shellTest("Test 002", ["controls", "shapes"],
+    "The inspection test is used to check that shapes are built correctly "+
+    "and for checking the data privided by the shapes. "+
+    "Also it is useful for testing out new shape configurations.");
 
   Movers.UserRotater rotater = new Movers.UserRotater();
   Movers.UserZoom zoom = new Movers.UserZoom();
@@ -102,30 +107,36 @@ typedef void setShapeHndl();
 void _addCheckBox(String text, bool checked, selectionHndl hndl) {
   hndl(checked);
   Element elem = document.getElementById("controls");
+  LabelElement label = new LabelElement()
+    ..style.whiteSpace = "nowrap";
+  elem.children.add(label);
   CheckboxInputElement checkBox = new CheckboxInputElement()
     ..checked = checked;
   checkBox.onChange.listen((_) {
       hndl(checkBox.checked);
     });
-  elem.children.add(checkBox);
+  label.children.add(checkBox);
   SpanElement span = new SpanElement()
     ..text = text;
-  elem.children.add(span);
+  label.children.add(span);
   elem.children.add(new BRElement());
 }
 
 void _addRadioButton(String text, setShapeHndl hndl, [bool selected = false]) {
   if (selected) hndl();
   Element elem = document.getElementById("shapes");
+  LabelElement label = new LabelElement()
+    ..style.whiteSpace = "nowrap";
+  elem.children.add(label);
   RadioButtonInputElement checkBox = new RadioButtonInputElement()
     ..checked = selected
     ..name = "shape";
   checkBox.onChange.listen((_) {
       if (checkBox.checked) hndl();
     });
-  elem.children.add(checkBox);
+  label.children.add(checkBox);
   SpanElement span = new SpanElement()
     ..text = text;
-  elem.children.add(span);
+  label.children.add(span);
   elem.children.add(new BRElement());
 }

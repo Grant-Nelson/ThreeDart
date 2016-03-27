@@ -5,8 +5,11 @@ library ThreeDart.test;
 
 import 'dart:html' as html;
 
+import 'common/common.dart' as common;
+
 void main() {
-  html.Element elem = html.document.getElementById("tests");
+  html.DivElement elem = new html.DivElement();
+
   addTest(elem, "test000");
   addTest(elem, "test001");
   addTest(elem, "test002");
@@ -20,6 +23,8 @@ void main() {
   addTest(elem, "test010");
   addTest(elem, "test011");
   addTest(elem, "test012");
+
+  common.shellPage("3Dart Tests", elem, true, "./resources/SnowTop.png");
 }
 
 void addTest(html.Element elem, String testName) {

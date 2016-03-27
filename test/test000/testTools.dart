@@ -180,12 +180,6 @@ class TestManager {
     int _finished;
     int _failed;
 
-    /// Creates a new test manager attached to the element with the given [id].
-    factory TestManager.byId(id) {
-      html.Element elem = html.document.getElementById(id);
-      return new TestManager(elem);
-    }
-
     /// Creates new test manager attached to the given element.
     TestManager(this._elem) {
       this._escape = new convert.HtmlEscape(convert.HtmlEscapeMode.ELEMENT);

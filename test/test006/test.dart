@@ -13,8 +13,11 @@ import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
 import 'package:ThreeDart/Materials.dart' as Materials;
+import '../common/common.dart' as common;
 
 void main() {
+  common.shellTest("Test 006", ["bumpMaps"],
+    "A test of the Bumpy Texture 2D Directional Lighting Shader.");
 
   Shapes.Shape shape = Shapes.cube();
 
@@ -69,13 +72,13 @@ void main() {
   zoom.attach(td.userInput);
   roller.attach(td.userInput);
 
-  _addBumpMap("./BumpMap1.png", td, material, true);
-  _addBumpMap("./BumpMap2.png", td, material);
-  _addBumpMap("./BumpMap3.png", td, material);
-  _addBumpMap("./BumpMap4.png", td, material);
-  _addBumpMap("./BumpMap5.png", td, material);
-  _addBumpMap("./BumpMap6.png", td, material);
-  _addBumpMap("./BumpMap7.png", td, material);
+  _addBumpMap("../resources/BumpMap1.png", td, material, true);
+  _addBumpMap("../resources/BumpMap2.png", td, material);
+  _addBumpMap("../resources/BumpMap3.png", td, material);
+  _addBumpMap("../resources/BumpMap4.png", td, material);
+  _addBumpMap("../resources/BumpMap5.png", td, material);
+  _addBumpMap("../resources/ScrewBumpMap.png", td, material);
+  _addBumpMap("../resources/CtrlPnlBumpMap.png", td, material);
 
   var update;
   update = (num t) {

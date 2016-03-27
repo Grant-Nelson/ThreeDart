@@ -13,8 +13,13 @@ import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
 import 'package:ThreeDart/Materials.dart' as Materials;
+import '../common/common.dart' as common;
 
 void main() {
+  common.shellTest("Test 009", [],
+    "Another test of the Solid Color Directional Lighting Shader "+
+    "where the light and object don't move but the camara can be "+
+    "moved around the object.");
 
   Movers.UserRotater rotater = new Movers.UserRotater();
   Movers.UserZoom zoom = new Movers.UserZoom();

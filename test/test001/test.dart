@@ -11,8 +11,11 @@ import 'package:ThreeDart/Movers.dart' as Movers;
 import 'package:ThreeDart/Math.dart' as Math;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
+import '../common/common.dart' as common;
 
 void main() {
+  common.shellTest("Test 001", [],
+    "Test of the Depth shader, a basic fog shader with a single auto-rotating shape.");
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..shape = Shapes.toroid()
