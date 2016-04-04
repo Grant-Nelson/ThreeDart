@@ -1,7 +1,7 @@
 part of ThreeDart.Scenes;
 
-/// The render pass renders a single scene.
-class RenderPass implements Scene {
+/// The render pass renders a cover over the whole scene.
+class CoverPass implements Scene {
 
   /// The camera describing the view of the scene.
   Views.Camara _camara;
@@ -12,15 +12,16 @@ class RenderPass implements Scene {
   /// The default technique to render with.
   Techniques.Technique _tech;
 
-  /// The children entities to render.
-  List<Core.Entity> _children;
+  /// The box entity to render.
+  Core.Entity _box;
 
-  /// Creates a new render pass.
-  RenderPass() {
+  /// Creates a new cover render pass.
+  CoverPass() {
     this._camara = new Views.Perspective();
     this._target = new Views.FrontTarget();
     this._tech = null;
-    this._children = new List<Core.Entity>();
+    this._box = new Core.Entity()
+      ..shape = Shapes.square();
   }
 
   /// The camera describing the view of the scene.
@@ -35,18 +36,13 @@ class RenderPass implements Scene {
   Techniques.Technique get tech => this._tech;
   set tech(Techniques.Technique tech) => this._tech = tech;
 
-  /// The children entities to render.
-  List<Core.Entity> get children => this._children;
-
   /// Render the scene with the given [state].
   void render(Core.RenderState state) {
     state.pushTechnique(this._tech);
     this._target.bind(state);
     this._camara.bind(state);
 
-    for (Core.Entity child in this._children) {
-      child.render(state);
-    }
+    this._box.render(state);
 
     this._camara.unbind(state);
     this._target.unbind(state);

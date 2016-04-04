@@ -4,9 +4,11 @@
 library ThreeDart.Scenes;
 
 import '../Core/Core.dart' as Core;
+import '../Shapes/Shapes.dart' as Shapes;
 import '../Techniques/Techniques.dart' as Techniques;
 import '../Views/Views.dart' as Views;
 
 part 'Compound.dart';
+part 'CoverPass.dart';
 part 'RenderPass.dart';
 part 'Scene.dart';

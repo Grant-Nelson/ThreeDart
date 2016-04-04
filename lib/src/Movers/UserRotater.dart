@@ -122,7 +122,7 @@ class UserRotater implements Mover, Core.UserInteractable {
     this._pressed = true;
     this._inDeadBand = true;
     this._lastYaw = this._yaw.location;
-    this._lastPitch = this._pitch.location;
+    this._lastPitch = -this._pitch.location;
   }
 
   /// Handles the mouse move event.
@@ -135,11 +135,11 @@ class UserRotater implements Mover, Core.UserInteractable {
     if (this._cumulative) {
       this._prevVal = args.adjustedOffset;
       this._pitch.velocity = this._prevVal.dx*10.0*this._pitchScalar;
-      this._yaw.velocity = -this._prevVal.dy*10.0*this._yawScalar;
+      this._yaw.velocity = this._prevVal.dy*10.0*this._yawScalar;
     } else {
       Math.Vector2 off = args.adjustedOffset;
       this._pitch.location = -off.dx*this._pitchScalar + this._lastPitch;
-      this._yaw.location = off.dy*this._yawScalar + this._lastYaw;
+      this._yaw.location = -off.dy*this._yawScalar + this._lastYaw;
       this._pitch.velocity = 0.0;
       this._yaw.velocity = 0.0;
       this._prevVal = args.adjustedDelta;
@@ -153,7 +153,7 @@ class UserRotater implements Mover, Core.UserInteractable {
     if (this._inDeadBand) return;
     if (this._prevVal.length2() > 0.0001) {
       this._pitch.velocity = this._prevVal.dx*10.0*this._pitchScalar;
-      this._yaw.velocity = -this._prevVal.dy*10.0*this._yawScalar;
+      this._yaw.velocity = this._prevVal.dy*10.0*this._yawScalar;
     }
   }
 

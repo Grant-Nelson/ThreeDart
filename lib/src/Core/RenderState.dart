@@ -116,12 +116,10 @@ class RenderState {
   Math.Matrix4Stack get object => this._objStack;
 
   /// The current technique to render with.
-  ///
   /// May return null if the technique stack is empty.
   Techniques.Technique get technique => this._tech.last;
 
   /// Pushes a new technique onto the stack of techniques.
-  ///
   /// Pushing null will put the current technique onto the top of the stack.
   void pushTechnique(Techniques.Technique tech) {
     this._tech.add((tech == null)?this.technique:tech);

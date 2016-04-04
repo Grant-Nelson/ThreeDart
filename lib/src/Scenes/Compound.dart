@@ -10,8 +10,9 @@ class Compound implements Scene {
   bool _loopProtection;
 
   /// Creates a new compound scene.
-  Compound() {
+  Compound({List<Scene> passes: null}) {
     this._passes = new List<Scene>();
+    if (passes != null) this._passes.addAll(passes);
     this._loopProtection = false;
   }
 
@@ -22,9 +23,11 @@ class Compound implements Scene {
   void render(Core.RenderState state) {
     if (this._loopProtection) return;
     this._loopProtection = true;
+
     for (Scene pass in this._passes) {
       pass.render(state);
     }
+
     this._loopProtection = false;
   }
 }

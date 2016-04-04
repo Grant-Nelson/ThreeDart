@@ -32,6 +32,7 @@ class MaterialLight extends Technique {
     if ((this._light == null) || (this._material == null)) return;
     else if (this._light is Lights.Directional) {
       if (this._material is Materials.BumpySolid) this._bumpySolid(state, obj);
+      else if (this._material is Materials.ReflSolid) this._reflSolid(state, obj);
       else if (this._material is Materials.BumpyCubeSolid) this._bumpyCubeSolid(state, obj);
       else if (this._material is Materials.Solid) this._solid(state, obj);
       else if (this._material is Materials.BumpyTexture2D) this._bumpyTxt2D(state, obj);
@@ -105,6 +106,36 @@ class MaterialLight extends Technique {
       ..setMaterial(mat)
       ..projectViewObjectMatrix = state.projection.matrix*viewObjMat
       ..viewMatrix = state.view.matrix
+      ..viewObjectMatrix = viewObjMat;
+  }
+
+  /// Renders and sets up the shaper for reflective solid color light.
+  void _reflSolid(Core.RenderState state, Core.Entity obj) {
+    if (this._shader == null)
+      this._shader = new Shaders.ReflSolid.cached(state);
+    Shaders.ReflSolid shader = this._shader as Shaders.ReflSolid;
+
+    if (obj.cacheNeedsUpdate) {
+      obj.shape
+        ..calculateNormals()
+        ..calculateBinormals();
+      obj.cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl),
+        Data.VertexType.Pos|Data.VertexType.Norm)
+        ..findAttribute(Data.VertexType.Pos).attr = shader.posAttr.loc
+        ..findAttribute(Data.VertexType.Norm).attr = shader.normAttr.loc;
+    }
+
+    Materials.ReflSolid mat = this._material as Materials.ReflSolid;
+    if (mat.environment != null) mat.environment.index = 0;
+
+    Math.Matrix4 viewObjMat = state.view.matrix*state.object.matrix;
+    shader
+      ..bind(state)
+      ..setLight(this._light as Lights.Directional)
+      ..setMaterial(mat)
+      ..projectViewObjectMatrix = state.projection.matrix*viewObjMat
+      ..viewMatrix = state.view.matrix
+      ..inverseViewMatrix = state.view.matrix.inverse()
       ..viewObjectMatrix = viewObjMat;
   }
 

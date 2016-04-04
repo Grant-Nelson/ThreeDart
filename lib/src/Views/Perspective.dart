@@ -11,11 +11,14 @@ class Perspective implements Camara {
   double _far;
 
   /// Creates a new perspective camara.
-  Perspective() {
-    this._mover = null;
-    this._fov = PI/3.0;
-    this._near = 0.1;
-    this._far = 2000.0;
+  Perspective({Movers.Mover mover: null,
+               double fov:  PI/3.0,
+               double near: 0.1,
+               double far:  2000.0}) {
+    this._mover = mover;
+    this._fov = fov;
+    this._near = near;
+    this._far = far;
   }
 
   /// Feild of view vertically in radians of the camara.
@@ -49,7 +52,7 @@ class Perspective implements Camara {
     if (mover != null) {
       Math.Matrix4 mat = mover.update(state, this);
       if (mat != null) {
-        look = look * mat.inverse();
+        look = mat * look;
       }
     }
     state.view.push(look);

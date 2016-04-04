@@ -24,6 +24,8 @@ part 'BumpyTexture2D.dart';
 part 'BumpyTextureCube.dart';
 part 'Depth.dart';
 part 'Inspection.dart';
+part 'ReflSolid.dart';
+part 'Skybox.dart';
 part 'Solid.dart';
 part 'Texture2D.dart';
 part 'TextureCube.dart';
