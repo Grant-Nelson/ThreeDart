@@ -50,7 +50,7 @@ class Depth extends Technique {
       ..fogStart = this._fogStart
       ..fogStop = this._fogStop
       ..projectMatrix = state.projection.matrix
-      ..viewObjectMatrix = state.view.matrix*state.object.matrix;
+      ..viewObjectMatrix = state.viewObjectMatrix;
 
     if (obj.cache is Data.BufferStore) {
       (obj.cache as Data.BufferStore)

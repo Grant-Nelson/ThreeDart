@@ -68,14 +68,13 @@ class MaterialLight extends Technique {
         ..findAttribute(Data.VertexType.Norm).attr = shader.normAttr.loc;
     }
 
-    Math.Matrix4 viewObjMat = state.view.matrix*state.object.matrix;
     shader
       ..bind(state)
       ..setLight(this._light as Lights.Directional)
       ..setMaterial(this._material as Materials.Solid)
-      ..projectViewObjectMatrix = state.projection.matrix*viewObjMat
+      ..projectViewObjectMatrix = state.projectionViewObjectMatrix
       ..viewMatrix = state.view.matrix
-      ..viewObjectMatrix = viewObjMat;
+      ..viewObjectMatrix = state.viewObjectMatrix;
   }
 
   /// Renders and sets up the shaper for bumpy solid color light.
@@ -99,14 +98,13 @@ class MaterialLight extends Technique {
     Materials.BumpySolid mat = this._material as Materials.BumpySolid;
     if (mat.bumpMap != null) mat.bumpMap.index = 0;
 
-    Math.Matrix4 viewObjMat = state.view.matrix*state.object.matrix;
     shader
       ..bind(state)
       ..setLight(this._light as Lights.Directional)
       ..setMaterial(mat)
-      ..projectViewObjectMatrix = state.projection.matrix*viewObjMat
+      ..projectViewObjectMatrix = state.projectionViewObjectMatrix
       ..viewMatrix = state.view.matrix
-      ..viewObjectMatrix = viewObjMat;
+      ..viewObjectMatrix = state.viewObjectMatrix;
   }
 
   /// Renders and sets up the shaper for reflective solid color light.
@@ -128,15 +126,14 @@ class MaterialLight extends Technique {
     Materials.ReflSolid mat = this._material as Materials.ReflSolid;
     if (mat.environment != null) mat.environment.index = 0;
 
-    Math.Matrix4 viewObjMat = state.view.matrix*state.object.matrix;
     shader
       ..bind(state)
       ..setLight(this._light as Lights.Directional)
       ..setMaterial(mat)
-      ..projectViewObjectMatrix = state.projection.matrix*viewObjMat
+      ..projectViewObjectMatrix = state.projectionViewObjectMatrix
       ..viewMatrix = state.view.matrix
-      ..inverseViewMatrix = state.view.matrix.inverse()
-      ..viewObjectMatrix = viewObjMat;
+      ..inverseViewMatrix = state.inverseViewMatrix
+      ..viewObjectMatrix = state.viewObjectMatrix;
   }
 
   /// Renders and sets up the shaper for bumpy cube solid color light.
@@ -160,14 +157,13 @@ class MaterialLight extends Technique {
     Materials.BumpyCubeSolid mat = this._material as Materials.BumpyCubeSolid;
     if (mat.bumpMap != null) mat.bumpMap.index = 0;
 
-    Math.Matrix4 viewObjMat = state.view.matrix*state.object.matrix;
     shader
       ..bind(state)
       ..setLight(this._light as Lights.Directional)
       ..setMaterial(mat)
-      ..projectViewObjectMatrix = state.projection.matrix*viewObjMat
+      ..projectViewObjectMatrix = state.projectionViewObjectMatrix
       ..viewMatrix = state.view.matrix
-      ..viewObjectMatrix = viewObjMat;
+      ..viewObjectMatrix = state.viewObjectMatrix;
   }
 
   /// Renders and sets up the shaper for texture 2D light.
@@ -191,14 +187,13 @@ class MaterialLight extends Technique {
     if (mat.diffuseTexture != null) mat.diffuseTexture.index = 2;
     if (mat.specularTexture != null) mat.specularTexture.index = 3;
 
-    Math.Matrix4 viewObjMat = state.view.matrix*state.object.matrix;
     shader
       ..bind(state)
       ..setLight(this._light as Lights.Directional)
       ..setMaterial(mat)
-      ..projectViewObjectMatrix = state.projection.matrix*viewObjMat
+      ..projectViewObjectMatrix = state.projectionViewObjectMatrix
       ..viewMatrix = state.view.matrix
-      ..viewObjectMatrix = viewObjMat;
+      ..viewObjectMatrix = state.viewObjectMatrix;
   }
 
   /// Renders and sets up the shaper for bumpy texture 2D light.
@@ -226,14 +221,13 @@ class MaterialLight extends Technique {
     if (mat.specularTexture != null) mat.specularTexture.index = 3;
     if (mat.bumpMap != null) mat.bumpMap.index = 4;
 
-    Math.Matrix4 viewObjMat = state.view.matrix*state.object.matrix;
     shader
       ..bind(state)
       ..setLight(this._light as Lights.Directional)
       ..setMaterial(mat)
-      ..projectViewObjectMatrix = state.projection.matrix*viewObjMat
+      ..projectViewObjectMatrix = state.projectionViewObjectMatrix
       ..viewMatrix = state.view.matrix
-      ..viewObjectMatrix = viewObjMat;
+      ..viewObjectMatrix = state.viewObjectMatrix;
   }
 
   /// Renders and sets up the shaper for texture cube light.
@@ -257,14 +251,13 @@ class MaterialLight extends Technique {
     if (mat.diffuseTexture != null) mat.diffuseTexture.index = 2;
     if (mat.specularTexture != null) mat.specularTexture.index = 3;
 
-    Math.Matrix4 viewObjMat = state.view.matrix*state.object.matrix;
     shader
       ..bind(state)
       ..setLight(this._light as Lights.Directional)
       ..setMaterial(mat)
-      ..projectViewObjectMatrix = state.projection.matrix*viewObjMat
+      ..projectViewObjectMatrix = state.projectionViewObjectMatrix
       ..viewMatrix = state.view.matrix
-      ..viewObjectMatrix = viewObjMat;
+      ..viewObjectMatrix = state.viewObjectMatrix;
   }
 
   /// Renders and sets up the shaper for bumpy texture cube light.
@@ -292,13 +285,12 @@ class MaterialLight extends Technique {
     if (mat.specularTexture != null) mat.specularTexture.index = 3;
     if (mat.bumpMap != null) mat.bumpMap.index = 4;
 
-    Math.Matrix4 viewObjMat = state.view.matrix*state.object.matrix;
     shader
       ..bind(state)
       ..setLight(this._light as Lights.Directional)
       ..setMaterial(mat)
-      ..projectViewObjectMatrix = state.projection.matrix*viewObjMat
+      ..projectViewObjectMatrix = state.projectionViewObjectMatrix
       ..viewMatrix = state.view.matrix
-      ..viewObjectMatrix = viewObjMat;
+      ..viewObjectMatrix = state.viewObjectMatrix;
   }
 }

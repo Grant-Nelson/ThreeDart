@@ -30,14 +30,34 @@ class RenderState {
   /// The seconds which have passed since the previous render.
   double _dt;
 
+  /// The projection matrix multiplied by the view matrix.
+  /// This is the cache, it is reset to null when either component is changed.
+  /// Null indicated the value must be recalculated.
+  Math.Matrix4 _projViewMat;
+
+  /// The inverse of the view matrix.
+  /// This is the cache, it is reset to null when the view is changed.
+  /// Null indicated the value must be recalculated.
+  Math.Matrix4 _invViewMat;
+
+  /// The product of the projection matrix, the view matrix, and the object matrix.
+  /// This is the cache, it is reset to null when either component is changed.
+  /// Null indicated the value must be recalculated.
+  Math.Matrix4 _projViewObjMat;
+
+  /// The view matrix multiplied by the object matrix.
+  /// This is the cache, it is reset to null when either component is changed.
+  /// Null indicated the value must be recalculated.
+  Math.Matrix4 _viewObjMat;
+
   /// The stack of projection matrices.
-  Math.Matrix4Stack _projStack;
+  Matrix4Stack _projStack;
 
   /// The stack of the view matrices.
-  Math.Matrix4Stack _viewStack;
+  Matrix4Stack _viewStack;
 
   /// The stack of Entity matrices.
-  Math.Matrix4Stack _objStack;
+  Matrix4Stack _objStack;
 
   /// The stack of techniques.
   List<Techniques.Technique> _tech;
@@ -54,9 +74,27 @@ class RenderState {
     this._lastTime = this._startTime;
     this._curTime = this._startTime;
     this._dt = 0.0;
-    this._projStack = new Math.Matrix4Stack();
-    this._viewStack = new Math.Matrix4Stack();
-    this._objStack = new Math.Matrix4Stack();
+    this._projViewMat = null;
+    this._invViewMat = null;
+    this._projViewObjMat = null;
+    this._viewObjMat = null;
+    this._projStack = new Matrix4Stack()
+      ..onChanged.add((EventArgs e) {
+        this._projViewMat = null;
+        this._projViewObjMat = null;
+      });
+    this._viewStack = new Matrix4Stack()
+      ..onChanged.add((EventArgs e) {
+        this._projViewMat = null;
+        this._invViewMat = null;
+        this._projViewObjMat = null;
+        this._viewObjMat = null;
+      });
+    this._objStack = new Matrix4Stack()
+      ..onChanged.add((EventArgs e) {
+        this._projViewObjMat = null;
+        this._viewObjMat = null;
+      });
     this._tech = new List<Techniques.Technique>();
     this._tech.add(null);
     this._shaderCache = new Map<String, Shaders.Shader>();
@@ -106,14 +144,46 @@ class RenderState {
   /// The seconds which have passed since the previous render.
   double get dt => this._dt;
 
+  /// The projection matrix multiplied by the view matrix.
+  Math.Matrix4 get projectionViewMatrix {
+    if (this._projViewMat == null) {
+      this._projViewMat = this.projection.matrix * this.view.matrix;
+    }
+    return this._projViewMat;
+  }
+
+  /// The inverse of the view matrix.
+  Math.Matrix4 get inverseViewMatrix {
+    if (this._invViewMat == null) {
+      this._invViewMat = this.view.matrix.inverse();
+    }
+    return this._invViewMat;
+  }
+
+  /// The product of the projection matrix, the view matrix, and the object matrix.
+  Math.Matrix4 get projectionViewObjectMatrix {
+    if (this._projViewObjMat == null) {
+      this._projViewObjMat = this.projectionViewMatrix * this.object.matrix;
+    }
+    return this._projViewObjMat;
+  }
+
+  /// The view matrix multiplied by the object matrix.
+  Math.Matrix4 get viewObjectMatrix {
+    if (this._viewObjMat == null) {
+      this._viewObjMat = this.view.matrix * this.object.matrix;
+    }
+    return this._viewObjMat;
+  }
+
   /// The stack of projection matrices.
-  Math.Matrix4Stack get projection => this._projStack;
+  Matrix4Stack get projection => this._projStack;
 
   /// The stack of the view matrices.
-  Math.Matrix4Stack get view => this._viewStack;
+  Matrix4Stack get view => this._viewStack;
 
   /// The stack of object matrices.
-  Math.Matrix4Stack get object => this._objStack;
+  Matrix4Stack get object => this._objStack;
 
   /// The current technique to render with.
   /// May return null if the technique stack is empty.

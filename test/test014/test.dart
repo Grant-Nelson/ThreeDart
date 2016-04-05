@@ -4,6 +4,7 @@
 library ThreeDart.test.test014;
 
 import 'dart:html';
+import 'dart:math';
 
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 import 'package:ThreeDart/Shapes.dart' as Shapes;
@@ -17,7 +18,7 @@ import 'package:ThreeDart/Materials.dart' as Materials;
 import '../common/common.dart' as common;
 
 void main() {
-  common.shellTest("Test 014", ["controls"],
+  common.shellTest("Test 014", ["controls", "shapes"],
     "Test of reflection and refraction.");
 
   Movers.UserRotater rotater = new Movers.UserRotater();
@@ -83,47 +84,85 @@ void main() {
 
   new common.RadioGroup("controls")
     ..add("Silver", () {
+      material.ambient       = new Math.Color4(0.1, 0.1, 0.1);
+      material.diffuse       = new Math.Color4(0.2, 0.2, 0.2);
       material.refractScalar = new Math.Color4.transparent();
       material.reflectScalar = new Math.Color4(1.0, 1.0, 1.0);
     }, true)
     ..add("Gold", () {
+      material.ambient       = new Math.Color4(0.11, 0.11, 0.1);
+      material.diffuse       = new Math.Color4(0.21, 0.21, 0.2);
       material.refractScalar = new Math.Color4.transparent();
       material.reflectScalar = new Math.Color4(1.0, 0.9, 0.5);
     })
     ..add("Glass", () {
+      material.ambient       = new Math.Color4(0.1, 0.1, 0.1);
+      material.diffuse       = new Math.Color4(0.1, 0.1, 0.1);
       material.refraction    = 0.4;
       material.refractScalar = new Math.Color4(0.6, 0.6, 0.6);
       material.reflectScalar = new Math.Color4(0.4, 0.4, 0.4);
     })
     ..add("Blue Glass", () {
+      material.ambient       = new Math.Color4(0.1, 0.1, 0.1);
+      material.diffuse       = new Math.Color4(0.1, 0.1, 0.1);
       material.refraction    = 0.4;
       material.refractScalar = new Math.Color4(0.2, 0.3, 1.0);
       material.reflectScalar = new Math.Color4(0.3, 0.3, 0.3);
     })
     ..add("Water Bubble", () {
+      material.ambient       = new Math.Color4(0.1, 0.1, 0.1);
+      material.diffuse       = new Math.Color4(0.1, 0.1, 0.1);
       material.refraction    = 0.6;
       material.refractScalar = new Math.Color4(0.8, 0.8, 0.8);
       material.reflectScalar = new Math.Color4(0.2, 0.2, 0.2);
     })
     ..add("No Reflection", () {
+      material.ambient       = new Math.Color4(0.1, 0.1, 0.1);
+      material.diffuse       = new Math.Color4(0.1, 0.1, 0.1);
       material.refraction    = 0.6;
       material.refractScalar = new Math.Color4(1.0, 1.0, 1.0);
       material.reflectScalar = new Math.Color4.transparent();
     })
     ..add("Pink Distort", () {
+      material.ambient       = new Math.Color4(0.1, 0.1, 0.1);
+      material.diffuse       = new Math.Color4(0.1, 0.1, 0.1);
       material.refraction    = 0.9;
       material.refractScalar = new Math.Color4(1.0, 0.8, 0.8);
       material.reflectScalar = new Math.Color4.transparent();
     })
     ..add("Cloak", () {
-      material.refraction    = 1.0;
-      material.refractScalar = new Math.Color4(1.0, 1.0, 1.0);
+      material.ambient       = new Math.Color4(0.0, 0.0, 0.0);
+      material.diffuse       = new Math.Color4(0.1, 0.1, 0.1);
+      material.refraction    = 0.99;
+      material.refractScalar = new Math.Color4(0.95, 0.95, 0.95);
       material.reflectScalar = new Math.Color4.transparent();
+    })
+    ..add("White and Shiny", () {
+      material.ambient       = new Math.Color4(0.3, 0.3, 0.3);
+      material.diffuse       = new Math.Color4(0.5, 0.5, 0.5);
+      material.refractScalar = new Math.Color4.transparent();
+      material.reflectScalar = new Math.Color4(0.3, 0.3, 0.3);
     });
 
 
-
-
+  new common.RadioGroup("shapes")
+    ..add("Cube",          () { obj.shape = Shapes.cube(); })
+    ..add("Cuboid",        () { obj.shape = Shapes.cuboid(widthDiv: 15, heightDiv: 15,
+                                vertexHndl: (Shapes.Vertex ver, double u, double v) {
+                                  double height = cos(v*4.0*PI+PI)*0.1 + cos(u*4.0*PI+PI)*0.1;
+                                  Math.Vector3 vec = new Math.Vector3.fromPoint3(ver.location).normal();
+                                  ver.location += new Math.Point3.fromVector3(vec*height);
+                                });
+                              })
+    ..add("Cylinder",      () { obj.shape = Shapes.cylinder(sides: 30); })
+    ..add("Cone",          () { obj.shape = Shapes.cylinder(topRadius: 0.0, sides: 30, capTop: false); })
+    ..add("Cylindrical",   () { obj.shape = Shapes.cylindrical(sides: 50, div: 25,
+                                radiusHndl: (double u, double v) => cos(v*4.0*PI + PI)*0.2 + cos(u*6.0*PI)*0.3 + 0.8); })
+    ..add("Sphere",        () { obj.shape = Shapes.sphere(widthDiv: 6, heightDiv: 6); })
+    ..add("Spherical",     () { obj.shape = Shapes.sphere(widthDiv: 10, heightDiv: 10,
+                                heightHndl: (double u, double v) => cos(sqrt((u-0.5)*(u-0.5) + (v-0.5)*(v-0.5))*PI)*0.3); })
+    ..add("Toroid",        () { obj.shape = Shapes.toroid(); }, true)
+    ..add("Knot",          () { obj.shape = Shapes.knot(); });
 
   var update;
   update = (num t) {

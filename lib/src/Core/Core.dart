@@ -15,13 +15,13 @@ import '../Shaders/Shaders.dart' as Shaders;
 import '../Shapes/Shapes.dart' as Shapes;
 import '../Techniques/Techniques.dart' as Techniques;
 import '../Textures/Textures.dart' as Textures;
-import '../Views/Views.dart' as Views;
 
 part 'Bindable.dart';
 part 'Entity.dart';
 part 'EntityCollection.dart';
 part 'Event.dart';
 part 'EventArgs.dart';
+part 'MatrixStack.dart';
 part 'Renderable.dart';
 part 'RenderState.dart';
 part 'ThreeDart.dart';

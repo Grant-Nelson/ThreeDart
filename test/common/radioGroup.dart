@@ -4,10 +4,11 @@ typedef void radioSelectedHndl();
 
 class RadioGroup {
 
+  String _elemId;
   html.Element _elem;
 
-  RadioGroup(String elemId) {
-    this._elem = html.document.getElementById(elemId);
+  RadioGroup(String this._elemId) {
+    this._elem = html.document.getElementById(this._elemId);
   }
 
   void add(String text, radioSelectedHndl hndl, [bool selected = false]) {
@@ -17,7 +18,7 @@ class RadioGroup {
     this._elem.children.add(label);
     html.RadioButtonInputElement checkBox = new html.RadioButtonInputElement()
       ..checked = selected
-      ..name = "shape";
+      ..name = this._elemId;
     checkBox.onChange.listen((_) {
         if (checkBox.checked) hndl();
       });
