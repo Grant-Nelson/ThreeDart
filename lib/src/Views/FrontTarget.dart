@@ -8,7 +8,6 @@ class FrontTarget extends Target {
   bool _clearDepth;
   int _stencil;
   bool _clearStencil;
-  int _lastFrame;
 
   FrontTarget() {
     this._color = new Math.Color4.black();
@@ -17,7 +16,6 @@ class FrontTarget extends Target {
     this._clearDepth = true;
     this._stencil = 0;
     this._clearStencil = false;
-    this._lastFrame = -1;
   }
 
   /// The clear color to clear the target to before rendering.
@@ -52,29 +50,25 @@ class FrontTarget extends Target {
     state.gl.enable(WebGL.DEPTH_TEST);
     state.gl.depthFunc(WebGL.LESS);
 
-    if (this._lastFrame < state.frameNumber) {
-      this._lastFrame = state.frameNumber;
+    state.width = state.gl.drawingBufferWidth;
+    state.height = state.gl.drawingBufferHeight;
+    state.gl.viewport(0, 0, state.width, state.height);
 
-      state.width = state.gl.drawingBufferWidth;
-      state.height = state.gl.drawingBufferHeight;
-      state.gl.viewport(0, 0, state.width, state.height);
-
-      int clearMask = 0;
-      if (this._clearStencil) {
-        state.gl.clearStencil(this._stencil);
-        clearMask |= WebGL.STENCIL_BUFFER_BIT;
-      }
-      if (this._clearDepth) {
-        state.gl.clearDepth(this._depth);
-        clearMask |= WebGL.DEPTH_BUFFER_BIT;
-      }
-      if (this._clearColor) {
-        state.gl.clearColor(this._color.red, this._color.green, this._color.blue, this._color.alpha);
-        clearMask |= WebGL.COLOR_BUFFER_BIT;
-      }
-      if (clearMask > 0) {
-        state.gl.clear(clearMask);
-      }
+    int clearMask = 0;
+    if (this._clearStencil) {
+      state.gl.clearStencil(this._stencil);
+      clearMask |= WebGL.STENCIL_BUFFER_BIT;
+    }
+    if (this._clearDepth) {
+      state.gl.clearDepth(this._depth);
+      clearMask |= WebGL.DEPTH_BUFFER_BIT;
+    }
+    if (this._clearColor) {
+      state.gl.clearColor(this._color.red, this._color.green, this._color.blue, this._color.alpha);
+      clearMask |= WebGL.COLOR_BUFFER_BIT;
+    }
+    if (clearMask > 0) {
+      state.gl.clear(clearMask);
     }
   }
 

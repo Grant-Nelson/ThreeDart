@@ -18,12 +18,15 @@ import '../common/common.dart' as common;
 
 void main() {
   common.shellTest("Test 013", [],
-    "Test of reflection and refraction.");
+    "Test of sky box and cover pass.");
 
   Movers.UserRotater rotater = new Movers.UserRotater();
   Movers.UserZoom zoom = new Movers.UserZoom();
   Movers.UserRoller roller = new Movers.UserRoller()
     ..ctrlPressed = true;
+
+  Views.FrontTarget target = new Views.FrontTarget()
+    ..clearColor = false;
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..shape = Shapes.toroid();
@@ -48,13 +51,14 @@ void main() {
   Views.Perspective camara = new Views.Perspective(mover: mover);
 
   Scenes.CoverPass skybox = new Scenes.CoverPass()
+    ..target = target
     ..camara = camara;
 
   Scenes.RenderPass pass = new Scenes.RenderPass()
     ..camara = camara
     ..tech = tech
+    ..target = target
     ..children.add(obj);
-  (pass.target as Views.FrontTarget).clearColor = false;
 
   Scenes.Compound compound = new Scenes.Compound(passes: [skybox, pass]);
 

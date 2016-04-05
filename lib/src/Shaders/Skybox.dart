@@ -18,7 +18,7 @@ class Skybox extends Shader {
       "                                                  \n"+
       "void main()                                       \n"+
       "{                                                 \n"+
-      "  float t = 0.5 / tan(fov * 0.5);                 \n"+
+      "  float t = 1.0 / (tan(fov * 0.5)*3.0);           \n"+
       "  float x = -t * posAttr.x / ratio;               \n"+
       "  float y = t * posAttr.y;                        \n"+
       "  cubeTxt = (viewMat * vec4(x, y, 1.0, 0.0)).xyz; \n"+

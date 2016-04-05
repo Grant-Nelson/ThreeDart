@@ -122,7 +122,7 @@ class UserRotater implements Mover, Core.UserInteractable {
     this._pressed = true;
     this._inDeadBand = true;
     this._lastYaw = this._yaw.location;
-    this._lastPitch = -this._pitch.location;
+    this._lastPitch = this._pitch.location;
   }
 
   /// Handles the mouse move event.

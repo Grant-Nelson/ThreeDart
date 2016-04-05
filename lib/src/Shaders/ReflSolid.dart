@@ -22,7 +22,7 @@ class ReflSolid extends Shader {
       "                                                           \n"+
       "void main()                                                \n"+
       "{                                                          \n"+
-      "   camPos = (viewMat*vec4(0.0, 0.0, 0.0, -1.0)).xyz;       \n"+
+      "   camPos = -(viewObjMat*vec4(posAttr, 1.0)).xyz;          \n"+
       "   normal = normalize(viewObjMat*vec4(normAttr, 0.0)).xyz; \n"+
       "   litVec = normalize((viewMat*vec4(lightVec, 0.0)).xyz);  \n"+
       "   gl_Position = projViewObjMat*vec4(posAttr, 1.0);        \n"+
@@ -72,14 +72,14 @@ class ReflSolid extends Shader {
       "                                                              \n"+
       "vec4 reflRefr(vec3 norm)                                      \n"+
       "{                                                             \n"+
-      "   vec3 refl = reflect(normalize(camPos), norm);              \n"+
+      "   vec3 refl = reflect(-normalize(camPos), norm);             \n"+
       "   vec4 clr = vec4(0.0, 0.0, 0.0, 1.0);                       \n"+
       "   if (reflectClr.a > 0.0) {                                  \n"+
       "     vec3 invRefl = vec3(invViewMat*vec4(refl, 0.0));         \n"+
       "     clr += textureCube(envSampler, invRefl)*reflectClr;      \n"+
       "   }                                                          \n"+
       "   if (refractClr.a > 0.0) {                                  \n"+
-      "     vec3 refr = mix(-refl, camPos, refraction);              \n"+
+      "     vec3 refr = mix(-refl, -camPos, refraction);             \n"+
       "     vec3 invRefr = vec3(invViewMat*vec4(refr, 0.0));         \n"+
       "     clr += textureCube(envSampler, invRefr)*refractClr;      \n"+
       "   }                                                          \n"+

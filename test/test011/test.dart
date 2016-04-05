@@ -55,15 +55,16 @@ void main() {
     specularTexture: td.textureLoader.loadCubeFromPath("../resources/earthSpecular"),
     shininess: 10.0);
 
-  _addRadioButton("Cube",         obj, () => Shapes.cube());
-  _addRadioButton("Cuboid",       obj, () => Shapes.cuboid());
-  _addRadioButton("Cylinder",     obj, () => Shapes.cylinder(sides: 40));
-  _addRadioButton("Cone",         obj, () => Shapes.cylinder(topRadius: 0.0, sides: 40, capTop: false));
-  _addRadioButton("LatLonSphere", obj, () => Shapes.latLonSphere(10, 20));
-  _addRadioButton("IsoSphere",    obj, () => Shapes.isosphere(2));
-  _addRadioButton("Sphere",       obj, () => Shapes.sphere(widthDiv: 6, heightDiv: 6), true);
-  _addRadioButton("Toroid",       obj, () => Shapes.toroid());
-  _addRadioButton("Knot",         obj, () => Shapes.knot());
+  new common.RadioGroup("shapes")
+    ..add("Cube",         () { obj.shape = Shapes.cube(); })
+    ..add("Cuboid",       () { obj.shape = Shapes.cuboid(); })
+    ..add("Cylinder",     () { obj.shape = Shapes.cylinder(sides: 40); })
+    ..add("Cone",         () { obj.shape = Shapes.cylinder(topRadius: 0.0, sides: 40, capTop: false); })
+    ..add("LatLonSphere", () { obj.shape = Shapes.latLonSphere(10, 20); })
+    ..add("IsoSphere",    () { obj.shape = Shapes.isosphere(2); })
+    ..add("Sphere",       () { obj.shape = Shapes.sphere(widthDiv: 6, heightDiv: 6); }, true )
+    ..add("Toroid",       () { obj.shape = Shapes.toroid(); })
+    ..add("Knot",         () { obj.shape = Shapes.knot(); });
 
   rotater.attach(td.userInput);
   zoom.attach(td.userInput);
@@ -75,29 +76,4 @@ void main() {
     window.requestAnimationFrame(update);
   };
   window.requestAnimationFrame(update);
-}
-
-typedef Shapes.Shape getShapeHndl();
-
-void _addRadioButton(String text, ThreeDart.Entity obj, getShapeHndl hndl, [bool selected = false]) {
-  if (selected) hndl();
-  Element elem = document.getElementById("shapes");
-  LabelElement label = new LabelElement()
-    ..style.whiteSpace = "nowrap";
-  elem.children.add(label);
-  RadioButtonInputElement checkBox = new RadioButtonInputElement()
-    ..checked = selected
-    ..name = "shape";
-  checkBox.onChange.listen((_) {
-      if (checkBox.checked) {
-        Shapes.Shape shape = hndl();
-        shape.calculateCubeTextures();
-        obj.shape = shape;
-      }
-    });
-  label.children.add(checkBox);
-  SpanElement span = new SpanElement()
-    ..text = text;
-  label.children.add(span);
-  elem.children.add(new BRElement());
 }

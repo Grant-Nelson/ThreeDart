@@ -72,13 +72,16 @@ void main() {
   zoom.attach(td.userInput);
   roller.attach(td.userInput);
 
-  _addBumpMap("../resources/BumpMap1.png", td, material, true);
-  _addBumpMap("../resources/BumpMap2.png", td, material);
-  _addBumpMap("../resources/BumpMap3.png", td, material);
-  _addBumpMap("../resources/BumpMap4.png", td, material);
-  _addBumpMap("../resources/BumpMap5.png", td, material);
-  _addBumpMap("../resources/ScrewBumpMap.png", td, material);
-  _addBumpMap("../resources/CtrlPnlBumpMap.png", td, material);
+  new common.Texture2DGroup("bumpMaps", (String fileName) {
+    material.bumpMap = td.textureLoader.load2DFromFile(fileName);
+  })
+    ..add("../resources/BumpMap1.png", true)
+    ..add("../resources/BumpMap2.png")
+    ..add("../resources/BumpMap3.png")
+    ..add("../resources/BumpMap4.png")
+    ..add("../resources/BumpMap5.png")
+    ..add("../resources/ScrewBumpMap.png")
+    ..add("../resources/CtrlPnlBumpMap.png");
 
   var update;
   update = (num t) {
@@ -86,26 +89,4 @@ void main() {
     window.requestAnimationFrame(update);
   };
   window.requestAnimationFrame(update);
-}
-
-void _addBumpMap(String fileName, ThreeDart.ThreeDart td,
-                 Materials.BumpySolid material, [bool checked = false]) {
-  Element elem = document.getElementById("bumpMaps");
-  ImageElement imgElem = new ImageElement()
-    ..src = fileName
-    ..width = 64
-    ..height = 64
-    ..style.border = "solid 2px white";
-  imgElem.onClick.listen((_) {
-      elem.children.forEach((Element elem) {
-        if (elem is ImageElement) {
-          elem.style.border = "solid 2px white";
-        }
-      });
-      imgElem.style.border = "solid 2px black";
-      material.bumpMap = td.textureLoader.load2DFromFile(fileName);
-    });
-  elem.children.add(imgElem);
-  elem.children.add(new BRElement());
-  if (checked) imgElem.click();
 }
