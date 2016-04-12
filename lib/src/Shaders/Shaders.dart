@@ -10,7 +10,6 @@ import '../Textures/Textures.dart' as Textures;
 import '../Math/Math.dart' as Math;
 import '../Core/Core.dart' as Core;
 import '../Lights/Lights.dart' as Lights;
-import '../Materials/Materials.dart' as Materials;
 
 // Shader Components
 part 'Attributes.dart';
@@ -18,14 +17,8 @@ part 'Shader.dart';
 part 'Uniforms.dart';
 
 // Implemented Shaders
-part 'BumpySolid.dart';
-part 'BumpyCubeSolid.dart';
-part 'BumpyTexture2D.dart';
-part 'BumpyTextureCube.dart';
 part 'Depth.dart';
 part 'Inspection.dart';
-part 'ReflSolid.dart';
+part 'MaterialLight.dart';
+part 'MaterialLightConfig.dart';
 part 'Skybox.dart';
-part 'Solid.dart';
-part 'Texture2D.dart';
-part 'TextureCube.dart';
