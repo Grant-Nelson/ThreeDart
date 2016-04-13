@@ -4,7 +4,6 @@ part of ThreeDart.Techniques;
 class MaterialLight extends Technique {
   Shaders.MaterialLight _shader;
   Lights.Light _light;
-  List<Textures.Texture> _textures;
 
   Shaders.MaterialComponentType _emissionType;
   Math.Color4 _emissionClr;
@@ -42,21 +41,13 @@ class MaterialLight extends Technique {
   MaterialLight({Lights.Light light: null}) {
     this._shader = null;
     this._light = light;
-    this._textures = new List<Textures.Texture>();
     this.clearEmission();
     this.clearAmbient();
     this.clearDiffuse();
     this.clearSpecular();
     this.clearBump();
-
-
-
-    this._hasReflection = false;
-    this._hasRefraction = false;
-    this._envSampler = null;
-    this._refraction = 0.5;
-    this._reflectClr = new Math.Color4.transparent();
-    this._refractClr = new Math.Color4.transparent();
+    this.clearReflection();
+    this.clearRefraction();
   }
 
   /// The light to render with.
@@ -358,38 +349,67 @@ class MaterialLight extends Technique {
     this._bumpCube = txt;
   }
 
-
-
-    // TODO: Finish
-    //
-    // this._hasReflection = false;
-    // this._hasRefraction = false;
-    // this._envSampler = null;
-    // this._refraction = 0.5;
-    // this._reflectClr = new Math.Color4.transparent();
-    // this._refractClr = new Math.Color4.transparent();
-    //
-
-
-
-
-
-
-  /// Update the list of textures.
-  void _updateTextureList() {
-    this._textures.clear();
-    if (this._emission2D   != null) this._textures.add(this._emission2D);
-    if (this._emissionCube != null) this._textures.add(this._emissionCube);
-    if (this._ambient2D    != null) this._textures.add(this._ambient2D);
-    if (this._ambientCube  != null) this._textures.add(this._ambientCube);
-    if (this._diffuse2D    != null) this._textures.add(this._diffuse2D);
-    if (this._diffuseCube  != null) this._textures.add(this._diffuseCube);
-    if (this._specularCube != null) this._textures.add(this._specularCube);
-    if (this._bump2D       != null) this._textures.add(this._bump2D);
-    if (this._bumpCube     != null) this._textures.add(this._bumpCube);
-    if (this._envSampler   != null) this._textures.add(this._envSampler);
+  /// The environment cube texture for reflective and refractive materials.
+  Textures.TextureCube get environmentTexture => this._envSampler;
+  set environmentTexture(Textures.TextureCube txt) {
+    this._envSampler = txt;
   }
 
+  /// Clears the refraction of the material.
+  void clearRefraction() {
+    if (this._hasRefraction) {
+        this._hasRefraction = false;
+        this._refraction = 0.5;
+        this._refractClr = new Math.Color4.transparent();
+        this._shader = null;
+    }
+  }
+
+  /// The specular color or scalar on the specular texture for the material.
+  double get refraction => this._refraction;
+  set refraction(double value) {
+    if (value <= 0.0) this.clearRefraction();
+    else if (!this._hasRefraction) {
+      this._hasRefraction = true;
+      this._refractClr = new Math.Color4.white();
+      this._shader = null;
+    }
+    this._refraction = value;
+  }
+
+  /// The refraction color or scalar on the refraction of the evironmental texture for the material.
+  Math.Color4 get refractionColor => this._refractClr;
+  set refractionColor(Math.Color4 clr) {
+    if (clr == null) this.clearRefraction();
+    else if (!this._hasRefraction) {
+      this._hasRefraction = true;
+      this._refraction = 0.5;
+      this._shader = null;
+    }
+    this._refractClr = clr;
+  }
+
+  /// Clears the reflection of the material.
+  void clearReflection() {
+    if (this._hasReflection) {
+        this._hasReflection = false;
+        this._reflectClr = new Math.Color4.transparent();
+        this._shader = null;
+    }
+  }
+
+  /// The reflection color or scalar on the reflection of the evironmental texture for the material.
+  Math.Color4 get reflectionColor => this._reflectClr;
+  set reflectionColor(Math.Color4 clr) {
+    if (clr == null) this.clearReflection();
+    else if (!this._hasReflection) {
+      this._hasReflection = true;
+      this._shader = null;
+    }
+    this._reflectClr = clr;
+  }
+
+  /// Creates the configuration for this shader.
   Shaders.MaterialLightConfig _config() {
     return new Shaders.MaterialLightConfig(this._emissionType, this._ambientType, this._diffuseType,
       this._specularType, this._bumpyType, this._hasReflection, this._hasRefraction);
@@ -403,21 +423,158 @@ class MaterialLight extends Technique {
 
     if (this._shader == null) {
       this._shader = new Shaders.MaterialLight.cached(this._config(), state);
-      this._updateTextureList();
+      obj.clearCache();
+    }
+    Shaders.MaterialLightConfig cfg = this._shader.configuration;
+    if (obj.cacheNeedsUpdate) {
+      Data.VertexType vertexType = Data.VertexType.Pos;
+      if (cfg.norm) {
+        obj.shape.calculateNormals();
+        vertexType |= Data.VertexType.Norm;
+      }
+      if (cfg.binm) {
+        obj.shape.calculateBinormals();
+        vertexType |= Data.VertexType.Binm;
+      }
+      if (cfg.txt2D) {
+        vertexType |= Data.VertexType.Txt2D;
+      }
+      if (cfg.txtCube) {
+        obj.shape.calculateCubeTextures();
+        vertexType |= Data.VertexType.TxtCube;
+      }
 
-
-
+      Data.BufferStore cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl), vertexType);
+      cache.findAttribute(Data.VertexType.Pos).attr = this._shader.posAttr.loc;
+      if (cfg.norm) cache.findAttribute(Data.VertexType.Norm).attr = this._shader.normAttr.loc;
+      if (cfg.binm) cache.findAttribute(Data.VertexType.Binm).attr = this._shader.binmAttr.loc;
+      if (cfg.txt2D) cache.findAttribute(Data.VertexType.Txt2D).attr = this._shader.txt2DAttr.loc;
+      if (cfg.txtCube) cache.findAttribute(Data.VertexType.TxtCube).attr = this._shader.txtCubeAttr.loc;
+      obj.cache = cache;
     }
 
-
-
-
-
+    List<Textures.Texture> textures = new List<Textures.Texture>();
     this._shader.bind(state);
-    for (int i = 0; i < this._textures.length; i++) {
-      Textures.Texture txt = this._textures[i];
-      txt.index = i;
-      txt.bind(state);
+
+    if (cfg.viewObjMat) this._shader.viewObjectMatrix = state.viewObjectMatrix;
+    if (cfg.viewMat)    this._shader.viewMatrix = state.view.matrix;
+    this._shader.projectViewObjectMatrix = state.projectionViewObjectMatrix;
+
+    if (cfg.lights) {
+      this._shader.lightColor = (this._light as Lights.Directional).color;
+      this._shader.lightVector = (this._light as Lights.Directional).direction;
+    }
+
+    switch (cfg.emission) {
+      case Shaders.MaterialComponentType.None: break;
+      case Shaders.MaterialComponentType.Solid:
+        this._shader.emissionColor = this._emissionClr;
+        break;
+      case Shaders.MaterialComponentType.Texture2D:
+        this._emission2D.index = textures.length;
+        textures.add(this._emission2D);
+        this._shader.emissionTexture2D = this._emission2D;
+        this._shader.emissionColor = this._emissionClr;
+        break;
+      case Shaders.MaterialComponentType.TextureCube:
+        this._emissionCube.index = textures.length;
+        textures.add(this._emissionCube);
+        this._shader.emissionTextureCube = this._emissionCube;
+        this._shader.emissionColor = this._emissionClr;
+        break;
+    }
+
+    switch (cfg.ambient) {
+      case Shaders.MaterialComponentType.None: break;
+      case Shaders.MaterialComponentType.Solid:
+        this._shader.ambientColor = this._ambientClr;
+        break;
+      case Shaders.MaterialComponentType.Texture2D:
+        this._ambient2D.index = textures.length;
+        textures.add(this._ambient2D);
+        this._shader.ambientTexture2D = this._ambient2D;
+        this._shader.ambientColor = this._ambientClr;
+        break;
+      case Shaders.MaterialComponentType.TextureCube:
+        this._ambientCube.index = textures.length;
+        textures.add(this._ambientCube);
+        this._shader.ambientTextureCube = this._ambientCube;
+        this._shader.ambientColor = this._ambientClr;
+        break;
+    }
+
+    switch (cfg.diffuse) {
+      case Shaders.MaterialComponentType.None: break;
+      case Shaders.MaterialComponentType.Solid:
+        this._shader.diffuseColor = this._diffuseClr;
+        break;
+      case Shaders.MaterialComponentType.Texture2D:
+        this._diffuse2D.index = textures.length;
+        textures.add(this._diffuse2D);
+        this._shader.diffuseTexture2D = this._diffuse2D;
+        this._shader.diffuseColor = this._diffuseClr;
+        break;
+      case Shaders.MaterialComponentType.TextureCube:
+        this._diffuseCube.index = textures.length;
+        textures.add(this._diffuseCube);
+        this._shader.diffuseTextureCube = this._diffuseCube;
+        this._shader.diffuseColor = this._diffuseClr;
+        break;
+    }
+
+    switch (cfg.specular) {
+      case Shaders.MaterialComponentType.None: break;
+      case Shaders.MaterialComponentType.Solid:
+        this._shader.specularColor = this._specularClr;
+        this._shader.shininess = this._shininess;
+        break;
+      case Shaders.MaterialComponentType.Texture2D:
+        this._specular2D.index = textures.length;
+        textures.add(this._specular2D);
+        this._shader.specularTexture2D = this._specular2D;
+        this._shader.specularColor = this._specularClr;
+        this._shader.shininess = this._shininess;
+        break;
+      case Shaders.MaterialComponentType.TextureCube:
+        this._specularCube.index = textures.length;
+        textures.add(this._specularCube);
+        this._shader.specularTextureCube = this._specularCube;
+        this._shader.specularColor = this._specularClr;
+        this._shader.shininess = this._shininess;
+        break;
+    }
+
+    switch (cfg.bumpy) {
+      case Shaders.MaterialComponentType.None: break;
+      case Shaders.MaterialComponentType.Solid: break;
+      case Shaders.MaterialComponentType.Texture2D:
+        this._bump2D.index = textures.length;
+        textures.add(this._bump2D);
+        this._shader.bumpTexture2D = this._bump2D;
+        break;
+      case Shaders.MaterialComponentType.TextureCube:
+        this._bumpCube.index = textures.length;
+        textures.add(this._bumpCube);
+        this._shader.bumpTextureCube = this._bumpCube;
+        break;
+    }
+
+    if (cfg.enviromental) {
+      this._shader.inverseViewMatrix = state.inverseViewMatrix;
+      this._envSampler.index = textures.length;
+      textures.add(this._envSampler);
+      this._shader.environmentTextureCube = this._envSampler;
+      if (cfg.reflection) {
+        this._shader.reflectionColor = this._reflectClr;
+      }
+      if (cfg.refraction) {
+        this._shader.refractionColor = this._refractClr;
+        this._shader.refraction = this._refraction;
+      }
+    }
+
+    for (int i = 0; i < textures.length; i++) {
+      textures[i].bind(state);
     }
 
     if (obj.cache is Data.BufferStore) {
@@ -427,256 +584,9 @@ class MaterialLight extends Technique {
         ..unbind(state);
     } else obj.clearCache();
 
-    for (int i = 0; i < this._textures.length; i++) {
-      this._textures[i].unbind(state);
+    for (int i = 0; i < textures.length; i++) {
+      textures[i].unbind(state);
     }
     this._shader.unbind(state);
-  }
-
-
-
-
-
-
-
-
-  /// Renders and sets up the shaper for solid color light.
-  void _solid(Core.RenderState state, Core.Entity obj) {
-    if (this._shader == null)
-      this._shader = new Shaders.Solid.cached(state);
-    Shaders.Solid shader = this._shader as Shaders.Solid;
-
-    if (obj.cacheNeedsUpdate) {
-      obj.shape.calculateNormals();
-      obj.cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl),
-        Data.VertexType.Pos|Data.VertexType.Norm)
-        ..findAttribute(Data.VertexType.Pos).attr = shader.posAttr.loc
-        ..findAttribute(Data.VertexType.Norm).attr = shader.normAttr.loc;
-    }
-
-    shader
-      ..bind(state)
-      ..setLight(this._light as Lights.Directional)
-      ..setMaterial(this._material as Materials.Solid)
-      ..projectViewObjectMatrix = state.projectionViewObjectMatrix
-      ..viewMatrix = state.view.matrix
-      ..viewObjectMatrix = state.viewObjectMatrix;
-  }
-
-  /// Renders and sets up the shaper for bumpy solid color light.
-  void _bumpySolid(Core.RenderState state, Core.Entity obj) {
-    if (this._shader == null)
-      this._shader = new Shaders.BumpySolid.cached(state);
-    Shaders.BumpySolid shader = this._shader as Shaders.BumpySolid;
-
-    if (obj.cacheNeedsUpdate) {
-      obj.shape
-        ..calculateNormals()
-        ..calculateBinormals();
-      obj.cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl),
-        Data.VertexType.Pos|Data.VertexType.Norm|Data.VertexType.Binm|Data.VertexType.Txt2D)
-        ..findAttribute(Data.VertexType.Pos).attr = shader.posAttr.loc
-        ..findAttribute(Data.VertexType.Norm).attr = shader.normAttr.loc
-        ..findAttribute(Data.VertexType.Binm).attr = shader.binmAttr.loc
-        ..findAttribute(Data.VertexType.Txt2D).attr = shader.txtAttr.loc;
-    }
-
-    Materials.BumpySolid mat = this._material as Materials.BumpySolid;
-    if (mat.bumpMap != null) mat.bumpMap.index = 0;
-
-    shader
-      ..bind(state)
-      ..setLight(this._light as Lights.Directional)
-      ..setMaterial(mat)
-      ..projectViewObjectMatrix = state.projectionViewObjectMatrix
-      ..viewMatrix = state.view.matrix
-      ..viewObjectMatrix = state.viewObjectMatrix;
-  }
-
-  /// Renders and sets up the shaper for reflective solid color light.
-  void _reflSolid(Core.RenderState state, Core.Entity obj) {
-    if (this._shader == null)
-      this._shader = new Shaders.ReflSolid.cached(state);
-    Shaders.ReflSolid shader = this._shader as Shaders.ReflSolid;
-
-    if (obj.cacheNeedsUpdate) {
-      obj.shape
-        ..calculateNormals()
-        ..calculateBinormals();
-      obj.cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl),
-        Data.VertexType.Pos|Data.VertexType.Norm)
-        ..findAttribute(Data.VertexType.Pos).attr = shader.posAttr.loc
-        ..findAttribute(Data.VertexType.Norm).attr = shader.normAttr.loc;
-    }
-
-    Materials.ReflSolid mat = this._material as Materials.ReflSolid;
-    if (mat.environment != null) mat.environment.index = 0;
-
-    shader
-      ..bind(state)
-      ..setLight(this._light as Lights.Directional)
-      ..setMaterial(mat)
-      ..projectViewObjectMatrix = state.projectionViewObjectMatrix
-      ..viewMatrix = state.view.matrix
-      ..inverseViewMatrix = state.inverseViewMatrix
-      ..viewObjectMatrix = state.viewObjectMatrix;
-  }
-
-  /// Renders and sets up the shaper for bumpy cube solid color light.
-  void _bumpyCubeSolid(Core.RenderState state, Core.Entity obj) {
-    if (this._shader == null)
-      this._shader = new Shaders.BumpyCubeSolid.cached(state);
-    Shaders.BumpyCubeSolid shader = this._shader as Shaders.BumpyCubeSolid;
-
-    if (obj.cacheNeedsUpdate) {
-      obj.shape
-        ..calculateNormals()
-        ..calculateBinormals();
-      obj.cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl),
-        Data.VertexType.Pos|Data.VertexType.Norm|Data.VertexType.Binm|Data.VertexType.TxtCube)
-        ..findAttribute(Data.VertexType.Pos).attr = shader.posAttr.loc
-        ..findAttribute(Data.VertexType.Norm).attr = shader.normAttr.loc
-        ..findAttribute(Data.VertexType.Binm).attr = shader.binmAttr.loc
-        ..findAttribute(Data.VertexType.TxtCube).attr = shader.txtCubeAttr.loc;
-    }
-
-    Materials.BumpyCubeSolid mat = this._material as Materials.BumpyCubeSolid;
-    if (mat.bumpMap != null) mat.bumpMap.index = 0;
-
-    shader
-      ..bind(state)
-      ..setLight(this._light as Lights.Directional)
-      ..setMaterial(mat)
-      ..projectViewObjectMatrix = state.projectionViewObjectMatrix
-      ..viewMatrix = state.view.matrix
-      ..viewObjectMatrix = state.viewObjectMatrix;
-  }
-
-  /// Renders and sets up the shaper for texture 2D light.
-  void _txt2D(Core.RenderState state, Core.Entity obj) {
-    if (this._shader == null)
-      this._shader = new Shaders.Texture2D.cached(state);
-    Shaders.Texture2D shader = this._shader as Shaders.Texture2D;
-
-    if (obj.cacheNeedsUpdate) {
-      obj.shape.calculateNormals();
-      obj.cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl),
-        Data.VertexType.Pos|Data.VertexType.Norm|Data.VertexType.Txt2D)
-        ..findAttribute(Data.VertexType.Pos).attr = shader.posAttr.loc
-        ..findAttribute(Data.VertexType.Norm).attr = shader.normAttr.loc
-        ..findAttribute(Data.VertexType.Txt2D).attr = shader.txtAttr.loc;
-    }
-
-    Materials.Texture2D mat = this._material as Materials.Texture2D;
-    if (mat.emissionTexture != null) mat.emissionTexture.index = 0;
-    if (mat.ambientTexture != null) mat.ambientTexture.index = 1;
-    if (mat.diffuseTexture != null) mat.diffuseTexture.index = 2;
-    if (mat.specularTexture != null) mat.specularTexture.index = 3;
-
-    shader
-      ..bind(state)
-      ..setLight(this._light as Lights.Directional)
-      ..setMaterial(mat)
-      ..projectViewObjectMatrix = state.projectionViewObjectMatrix
-      ..viewMatrix = state.view.matrix
-      ..viewObjectMatrix = state.viewObjectMatrix;
-  }
-
-  /// Renders and sets up the shaper for bumpy texture 2D light.
-  void _bumpyTxt2D(Core.RenderState state, Core.Entity obj) {
-    if (this._shader == null)
-      this._shader = new Shaders.BumpyTexture2D.cached(state);
-    Shaders.BumpyTexture2D shader = this._shader as Shaders.BumpyTexture2D;
-
-    if (obj.cacheNeedsUpdate) {
-      obj.shape
-        ..calculateNormals()
-        ..calculateBinormals();
-      obj.cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl),
-        Data.VertexType.Pos|Data.VertexType.Norm|Data.VertexType.Binm|Data.VertexType.Txt2D)
-        ..findAttribute(Data.VertexType.Pos).attr = shader.posAttr.loc
-        ..findAttribute(Data.VertexType.Norm).attr = shader.normAttr.loc
-        ..findAttribute(Data.VertexType.Binm).attr = shader.binmAttr.loc
-        ..findAttribute(Data.VertexType.Txt2D).attr = shader.txtAttr.loc;
-    }
-
-    Materials.BumpyTexture2D mat = this._material as Materials.BumpyTexture2D;
-    if (mat.emissionTexture != null) mat.emissionTexture.index = 0;
-    if (mat.ambientTexture != null) mat.ambientTexture.index = 1;
-    if (mat.diffuseTexture != null) mat.diffuseTexture.index = 2;
-    if (mat.specularTexture != null) mat.specularTexture.index = 3;
-    if (mat.bumpMap != null) mat.bumpMap.index = 4;
-
-    shader
-      ..bind(state)
-      ..setLight(this._light as Lights.Directional)
-      ..setMaterial(mat)
-      ..projectViewObjectMatrix = state.projectionViewObjectMatrix
-      ..viewMatrix = state.view.matrix
-      ..viewObjectMatrix = state.viewObjectMatrix;
-  }
-
-  /// Renders and sets up the shaper for texture cube light.
-  void _txtCube(Core.RenderState state, Core.Entity obj) {
-    if (this._shader == null)
-      this._shader = new Shaders.TextureCube.cached(state);
-    Shaders.TextureCube shader = this._shader as Shaders.TextureCube;
-
-    if (obj.cacheNeedsUpdate) {
-      obj.shape.calculateNormals();
-      obj.cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl),
-        Data.VertexType.Pos|Data.VertexType.Norm|Data.VertexType.TxtCube)
-        ..findAttribute(Data.VertexType.Pos).attr = shader.posAttr.loc
-        ..findAttribute(Data.VertexType.Norm).attr = shader.normAttr.loc
-        ..findAttribute(Data.VertexType.TxtCube).attr = shader.txtCubeAttr.loc;
-    }
-
-    Materials.TextureCube mat = this._material as Materials.TextureCube;
-    if (mat.emissionTexture != null) mat.emissionTexture.index = 0;
-    if (mat.ambientTexture != null) mat.ambientTexture.index = 1;
-    if (mat.diffuseTexture != null) mat.diffuseTexture.index = 2;
-    if (mat.specularTexture != null) mat.specularTexture.index = 3;
-
-    shader
-      ..bind(state)
-      ..setLight(this._light as Lights.Directional)
-      ..setMaterial(mat)
-      ..projectViewObjectMatrix = state.projectionViewObjectMatrix
-      ..viewMatrix = state.view.matrix
-      ..viewObjectMatrix = state.viewObjectMatrix;
-  }
-
-  /// Renders and sets up the shaper for bumpy texture cube light.
-  void _bumpyTxtCube(Core.RenderState state, Core.Entity obj) {
-    if (this._shader == null)
-      this._shader = new Shaders.BumpyTextureCube.cached(state);
-    Shaders.BumpyTextureCube shader = this._shader as Shaders.BumpyTextureCube;
-
-    if (obj.cacheNeedsUpdate) {
-      obj.shape
-        ..calculateNormals()
-        ..calculateBinormals();
-      obj.cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl),
-        Data.VertexType.Pos|Data.VertexType.Norm|Data.VertexType.Binm|Data.VertexType.TxtCube)
-        ..findAttribute(Data.VertexType.Pos).attr = shader.posAttr.loc
-        ..findAttribute(Data.VertexType.Norm).attr = shader.normAttr.loc
-        ..findAttribute(Data.VertexType.Binm).attr = shader.binmAttr.loc
-        ..findAttribute(Data.VertexType.TxtCube).attr = shader.txtCubeAttr.loc;
-    }
-
-    Materials.BumpyTextureCube mat = this._material as Materials.BumpyTextureCube;
-    if (mat.emissionTexture != null) mat.emissionTexture.index = 0;
-    if (mat.ambientTexture != null) mat.ambientTexture.index = 1;
-    if (mat.diffuseTexture != null) mat.diffuseTexture.index = 2;
-    if (mat.specularTexture != null) mat.specularTexture.index = 3;
-    if (mat.bumpMap != null) mat.bumpMap.index = 4;
-
-    shader
-      ..bind(state)
-      ..setLight(this._light as Lights.Directional)
-      ..setMaterial(mat)
-      ..projectViewObjectMatrix = state.projectionViewObjectMatrix
-      ..viewMatrix = state.view.matrix
-      ..viewObjectMatrix = state.viewObjectMatrix;
   }
 }
