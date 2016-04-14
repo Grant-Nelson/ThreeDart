@@ -13,7 +13,6 @@ import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
 import 'package:ThreeDart/Textures.dart' as Textures;
-import 'package:ThreeDart/Materials.dart' as Materials;
 import '../common/common.dart' as common;
 
 void main() {
@@ -38,14 +37,14 @@ void main() {
     ..scene = pass;
 
   Textures.Texture2D color = td.textureLoader.load2DFromFile("../resources/CtrlPnlColor.png");
-  tech.material = new Materials.Texture2D(
-    emissionTexture: td.textureLoader.load2DFromFile("../resources/CtrlPnlEmission.png"),
-    ambientColor: new Math.Color4(0.2, 0.2, 0.2),
-    diffuseColor: new Math.Color4(0.8, 0.8, 0.8),
-    ambientTexture: color,
-    diffuseTexture: color,
-    specularTexture: td.textureLoader.load2DFromFile("../resources/CtrlPnlSpecular.png"),
-    shininess: 10.0);
+  tech
+    ..emissionTexture2D = td.textureLoader.load2DFromFile("../resources/CtrlPnlEmission.png")
+    ..ambientColor = new Math.Color4(0.2, 0.2, 0.2)
+    ..diffuseColor = new Math.Color4(0.8, 0.8, 0.8)
+    ..ambientTexture2D = color
+    ..diffuseTexture2D = color
+    ..specularTexture2D = td.textureLoader.load2DFromFile("../resources/CtrlPnlSpecular.png")
+    ..shininess = 10.0;
 
   var update;
   update = (num t) {

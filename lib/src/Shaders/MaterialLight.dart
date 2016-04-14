@@ -52,76 +52,83 @@ class MaterialLight extends Shader {
   /// Compiles this shader for the given rendering context.
   MaterialLight(MaterialLightConfig cfg,  WebGL.RenderingContext gl): super(gl, cfg.name) {
     this._cfg = cfg;
-    this.initialize(this._cfg.createVertexSource(), this._cfg.createFragmentSource());
+    String vertexSource = this._cfg.createVertexSource();
+    String fragmentSource = this._cfg.createFragmentSource();
+
+    // print(this._cfg.toString());
+    // print(vertexSource);
+    // print(fragmentSource);
+
+    this.initialize(vertexSource, fragmentSource);
     this._posAttr     = this.attributes["posAttr"];
     this._normAttr    = this.attributes["normAttr"];
     this._binmAttr    = this.attributes["binmAttr"];
     this._txt2DAttr   = this.attributes["txt2DAttr"];
     this._txtCubeAttr = this.attributes["txtCubeAttr"];
 
-    if (cfg._viewObjMat)  this._viewObjMat = this.uniforms["viewObjMat"] as UniformMat4;
-    if (cfg._viewMat)     this._viewMat    = this.uniforms["viewMat"] as UniformMat4;
-    if (cfg.enviromental) this._invViewMat = this.uniforms["invViewMat"] as UniformMat4;
-    this._projViewObjMat = this.uniforms["projViewObjMat"] as UniformMat4;
+    if (cfg._viewObjMat)  this._viewObjMat = this.uniforms.required("viewObjMat") as UniformMat4;
+    if (cfg._viewMat)     this._viewMat    = this.uniforms.required("viewMat") as UniformMat4;
+    if (cfg.enviromental) this._invViewMat = this.uniforms.required("invViewMat") as UniformMat4;
+    this._projViewObjMat = this.uniforms.required("projViewObjMat") as UniformMat4;
 
     if (cfg.lights) {
-      this._lightVec = this.uniforms["lightVec"] as Uniform3f;
-      this._lightClr = this.uniforms["lightClr"] as Uniform4f;
+      this._lightVec = this.uniforms.required("lightVec") as Uniform3f;
+      this._lightClr = this.uniforms.required("lightClr") as Uniform4f;
     }
 
     if (cfg.emission != MaterialComponentType.None) {
-      this._emissionClr = this.uniforms["emissionClr"] as Uniform4f;
+      this._emissionClr = this.uniforms.required("emissionClr") as Uniform4f;
       switch (cfg.emission) {
         case MaterialComponentType.None: break;
         case MaterialComponentType.Solid: break;
         case MaterialComponentType.Texture2D:
-          this._emission2D = this.uniforms["emissionTxt"] as UniformSampler2D;
+          this._emission2D = this.uniforms.required("emissionTxt") as UniformSampler2D;
           break;
         case MaterialComponentType.TextureCube:
-          this._emissionCube = this.uniforms["emissionTxt"] as UniformSamplerCube;
+          this._emissionCube = this.uniforms.required("emissionTxt") as UniformSamplerCube;
           break;
       }
     }
 
     if (cfg.ambient != MaterialComponentType.None) {
-      this._ambientClr = this.uniforms["ambientClr"] as Uniform4f;
+      this._ambientClr = this.uniforms.required("ambientClr") as Uniform4f;
       switch (cfg.ambient) {
         case MaterialComponentType.None: break;
         case MaterialComponentType.Solid: break;
         case MaterialComponentType.Texture2D:
-          this._ambient2D = this.uniforms["ambientTxt"] as UniformSampler2D;
+          this._ambient2D = this.uniforms.required("ambientTxt") as UniformSampler2D;
           break;
         case MaterialComponentType.TextureCube:
-          this._ambientCube = this.uniforms["ambientTxt"] as UniformSamplerCube;
+          this._ambientCube = this.uniforms.required("ambientTxt") as UniformSamplerCube;
           break;
       }
     }
 
     if (cfg.diffuse != MaterialComponentType.None) {
-      this._diffuseClr = this.uniforms["diffusetClr"] as Uniform4f;
+      this._diffuseClr = this.uniforms.required("diffuseClr") as Uniform4f;
       switch (cfg.diffuse) {
         case MaterialComponentType.None: break;
         case MaterialComponentType.Solid: break;
         case MaterialComponentType.Texture2D:
-          this._diffuse2D  = this.uniforms["diffuseTxt"] as UniformSampler2D;
+          this._diffuse2D = this.uniforms.required("diffuseTxt") as UniformSampler2D;
           break;
         case MaterialComponentType.TextureCube:
-          this._diffuseCube = this.uniforms["diffuseTxt"] as UniformSamplerCube;
+          this._diffuseCube = this.uniforms.required("diffuseTxt") as UniformSamplerCube;
           break;
       }
     }
 
     if (cfg.specular != MaterialComponentType.None) {
-        this._shininess    = this.uniforms["shininess"] as Uniform1f;
-        this._specularClr  = this.uniforms["specularClr"] as Uniform4f;
+        this._shininess = this.uniforms.required("shininess") as Uniform1f;
+        this._specularClr = this.uniforms.required("specularClr") as Uniform4f;
       switch (cfg.specular) {
         case MaterialComponentType.None: break;
         case MaterialComponentType.Solid: break;
         case MaterialComponentType.Texture2D:
-        this._specular2D   = this.uniforms["specularTxt"] as UniformSampler2D;
+        this._specular2D = this.uniforms.required("specularTxt") as UniformSampler2D;
           break;
         case MaterialComponentType.TextureCube:
-        this._specularCube = this.uniforms["specularTxt"] as UniformSamplerCube;
+        this._specularCube = this.uniforms.required("specularTxt") as UniformSamplerCube;
           break;
       }
     }
@@ -130,21 +137,21 @@ class MaterialLight extends Shader {
       case MaterialComponentType.None: break;
       case MaterialComponentType.Solid: break;
       case MaterialComponentType.Texture2D:
-        this._bump2D = this.uniforms["bumpTxt"] as UniformSampler2D;
+        this._bump2D = this.uniforms.required("bumpTxt") as UniformSampler2D;
         break;
       case MaterialComponentType.TextureCube:
-        this._bumpCube = this.uniforms["bumpTxt"] as UniformSamplerCube;
+        this._bumpCube = this.uniforms.required("bumpTxt") as UniformSamplerCube;
         break;
     }
 
     if (cfg.enviromental) {
-      this._envSampler = this.uniforms["envSampler"] as UniformSamplerCube;
+      this._envSampler = this.uniforms.required("envSampler") as UniformSamplerCube;
       if (cfg.reflection) {
-          this._reflectClr = this.uniforms["reflectClr"] as Uniform4f;
+          this._reflectClr = this.uniforms.required("reflectClr") as Uniform4f;
       }
       if (cfg.refraction) {
-        this._refraction = this.uniforms["refraction"] as Uniform1f;
-        this._refractClr = this.uniforms["refractClr"] as Uniform4f;
+        this._refraction = this.uniforms.required("refraction") as Uniform1f;
+        this._refractClr = this.uniforms.required("refractClr") as Uniform4f;
       }
     }
   }

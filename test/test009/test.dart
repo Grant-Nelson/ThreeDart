@@ -12,7 +12,6 @@ import 'package:ThreeDart/Math.dart' as Math;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
-import 'package:ThreeDart/Materials.dart' as Materials;
 import '../common/common.dart' as common;
 
 void main() {
@@ -33,12 +32,11 @@ void main() {
     ..light = new Lights.Directional(
           direction: new Math.Vector3(-1.0, -1.0, -1.0),
           color: new Math.Color4.white())
-    ..material = new Materials.Solid(
-          emission: new Math.Color4.black(),
-          ambient: new Math.Color4(0.0, 0.0, 1.0),
-          diffuse: new Math.Color4(0.0, 1.0, 0.0),
-          specular: new Math.Color4(1.0, 0.0, 0.0),
-          shininess: 10.0);
+    ..emissionColor = new Math.Color4.black()
+    ..ambientColor = new Math.Color4(0.0, 0.0, 1.0)
+    ..diffuseColor = new Math.Color4(0.0, 1.0, 0.0)
+    ..specularColor = new Math.Color4(1.0, 0.0, 0.0)
+    ..shininess = 10.0;
 
   Movers.Group camMover = new Movers.Group()
   ..add(rotater)

@@ -62,10 +62,10 @@ class MaterialLight extends Technique {
     if (this._emissionType != Shaders.MaterialComponentType.None) {
       this._shader = null;
       this._emissionType = Shaders.MaterialComponentType.None;
-      this._emissionClr = new Math.Color4.transparent();
-      this._emission2D = null;
-      this._emissionCube = null;
     }
+    this._emissionClr = new Math.Color4.transparent();
+    this._emission2D = null;
+    this._emissionCube = null;
   }
 
   /// The emission color or scalar on the emission texture for the material.
@@ -90,7 +90,7 @@ class MaterialLight extends Technique {
     } else if (this._emissionType != Shaders.MaterialComponentType.Texture2D) {
       if (this._emissionType == Shaders.MaterialComponentType.None)
         this._emissionClr = new Math.Color4.white();
-      this._emissionType == Shaders.MaterialComponentType.Texture2D;
+      this._emissionType = Shaders.MaterialComponentType.Texture2D;
       this._emissionCube = null;
       this._shader = null;
     }
@@ -108,7 +108,7 @@ class MaterialLight extends Technique {
     } else if (this._emissionType != Shaders.MaterialComponentType.TextureCube) {
       if (this._emissionType == Shaders.MaterialComponentType.None)
         this._emissionClr = new Math.Color4.white();
-      this._emissionType == Shaders.MaterialComponentType.TextureCube;
+      this._emissionType = Shaders.MaterialComponentType.TextureCube;
       this._emission2D = null;
       this._shader = null;
     }
@@ -120,10 +120,10 @@ class MaterialLight extends Technique {
     if (this._ambientType != Shaders.MaterialComponentType.None) {
       this._shader = null;
       this._ambientType = Shaders.MaterialComponentType.None;
-      this._ambientClr = new Math.Color4.transparent();
-      this._ambient2D = null;
-      this._ambientCube = null;
     }
+    this._ambientClr = new Math.Color4.transparent();
+    this._ambient2D = null;
+    this._ambientCube = null;
   }
 
   /// The ambient color or scalar on the ambient texture for the material.
@@ -148,7 +148,7 @@ class MaterialLight extends Technique {
     } else if (this._ambientType != Shaders.MaterialComponentType.Texture2D) {
       if (this._ambientType == Shaders.MaterialComponentType.None)
         this._ambientClr = new Math.Color4.white();
-      this._ambientType == Shaders.MaterialComponentType.Texture2D;
+      this._ambientType = Shaders.MaterialComponentType.Texture2D;
       this._ambientCube = null;
       this._shader = null;
     }
@@ -166,7 +166,7 @@ class MaterialLight extends Technique {
     } else if (this._ambientType != Shaders.MaterialComponentType.TextureCube) {
       if (this._ambientType == Shaders.MaterialComponentType.None)
         this._ambientClr = new Math.Color4.white();
-      this._ambientType == Shaders.MaterialComponentType.TextureCube;
+      this._ambientType = Shaders.MaterialComponentType.TextureCube;
       this._ambient2D = null;
       this._shader = null;
     }
@@ -178,10 +178,10 @@ class MaterialLight extends Technique {
     if (this._diffuseType != Shaders.MaterialComponentType.None) {
       this._shader = null;
       this._diffuseType = Shaders.MaterialComponentType.None;
-      this._diffuseClr = new Math.Color4.transparent();
-      this._diffuse2D = null;
-      this._diffuseCube = null;
     }
+    this._diffuseClr = new Math.Color4.transparent();
+    this._diffuse2D = null;
+    this._diffuseCube = null;
   }
 
   /// The diffuse color or scalar on the diffuse texture for the material.
@@ -206,7 +206,7 @@ class MaterialLight extends Technique {
     } else if (this._diffuseType != Shaders.MaterialComponentType.Texture2D) {
       if (this._diffuseType == Shaders.MaterialComponentType.None)
         this._diffuseClr = new Math.Color4.white();
-      this._diffuseType == Shaders.MaterialComponentType.Texture2D;
+      this._diffuseType = Shaders.MaterialComponentType.Texture2D;
       this._diffuseCube = null;
       this._shader = null;
     }
@@ -224,7 +224,7 @@ class MaterialLight extends Technique {
     } else if (this._diffuseType != Shaders.MaterialComponentType.TextureCube) {
       if (this._diffuseType == Shaders.MaterialComponentType.None)
         this._diffuseClr = new Math.Color4.white();
-      this._diffuseType == Shaders.MaterialComponentType.TextureCube;
+      this._diffuseType = Shaders.MaterialComponentType.TextureCube;
       this._diffuse2D = null;
       this._shader = null;
     }
@@ -236,11 +236,11 @@ class MaterialLight extends Technique {
     if (this._specularType != Shaders.MaterialComponentType.None) {
       this._shader = null;
       this._specularType = Shaders.MaterialComponentType.None;
-      this._shininess = 100.0;
-      this._specularClr = new Math.Color4.transparent();
-      this._specular2D = null;
-      this._specularCube = null;
     }
+    this._shininess = 100.0;
+    this._specularClr = new Math.Color4.transparent();
+    this._specular2D = null;
+    this._specularCube = null;
   }
 
   /// The specular color or scalar on the specular texture for the material.
@@ -280,7 +280,7 @@ class MaterialLight extends Technique {
         this._shininess = 100.0;
         this._specularClr = new Math.Color4.white();
       }
-      this._specularType == Shaders.MaterialComponentType.Texture2D;
+      this._specularType = Shaders.MaterialComponentType.Texture2D;
       this._specularCube = null;
       this._shader = null;
     }
@@ -300,7 +300,7 @@ class MaterialLight extends Technique {
         this._shininess = 100.0;
         this._specularClr = new Math.Color4.white();
       }
-      this._specularType == Shaders.MaterialComponentType.TextureCube;
+      this._specularType = Shaders.MaterialComponentType.TextureCube;
       this._specular2D = null;
       this._shader = null;
     }
@@ -312,9 +312,9 @@ class MaterialLight extends Technique {
     if (this._bumpyType != Shaders.MaterialComponentType.None) {
       this._shader = null;
       this._bumpyType = Shaders.MaterialComponentType.None;
-      this._bump2D = null;
-      this._bumpCube = null;
     }
+    this._bump2D = null;
+    this._bumpCube = null;
   }
 
   /// The normal distortion 2D texture for the material.
@@ -326,7 +326,7 @@ class MaterialLight extends Technique {
         this._bumpyType = Shaders.MaterialComponentType.None;
       }
     } else if (this._bumpyType != Shaders.MaterialComponentType.Texture2D) {
-      this._bumpyType == Shaders.MaterialComponentType.Texture2D;
+      this._bumpyType = Shaders.MaterialComponentType.Texture2D;
       this._bumpCube = null;
       this._shader = null;
     }
@@ -342,7 +342,7 @@ class MaterialLight extends Technique {
         this._bumpyType = Shaders.MaterialComponentType.None;
       }
     } else if (this._bumpyType != Shaders.MaterialComponentType.TextureCube) {
-      this._bumpyType == Shaders.MaterialComponentType.TextureCube;
+      this._bumpyType = Shaders.MaterialComponentType.TextureCube;
       this._bump2D = null;
       this._shader = null;
     }
@@ -359,10 +359,10 @@ class MaterialLight extends Technique {
   void clearRefraction() {
     if (this._hasRefraction) {
         this._hasRefraction = false;
-        this._refraction = 0.5;
-        this._refractClr = new Math.Color4.transparent();
         this._shader = null;
     }
+    this._refraction = 0.5;
+    this._refractClr = new Math.Color4.transparent();
   }
 
   /// The specular color or scalar on the specular texture for the material.
@@ -393,9 +393,9 @@ class MaterialLight extends Technique {
   void clearReflection() {
     if (this._hasReflection) {
         this._hasReflection = false;
-        this._reflectClr = new Math.Color4.transparent();
         this._shader = null;
     }
+    this._reflectClr = new Math.Color4.transparent();
   }
 
   /// The reflection color or scalar on the reflection of the evironmental texture for the material.

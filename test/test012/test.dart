@@ -13,7 +13,6 @@ import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Textures.dart' as Textures;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
-import 'package:ThreeDart/Materials.dart' as Materials;
 import '../common/common.dart' as common;
 
 void main() {
@@ -46,16 +45,15 @@ void main() {
     ..scene = pass;
 
   Textures.TextureCube color = td.textureLoader.loadCubeFromPath("../resources/diceColor");
-  tech.material = new Materials.BumpyTextureCube(
-    emissionColor: new Math.Color4.transparent(),
-    ambientColor: new Math.Color4(0.2, 0.2, 0.2),
-    diffuseColor: new Math.Color4(0.8, 0.8, 0.8),
-    specularColor: new Math.Color4(0.7, 0.7, 0.7),
-    ambientTexture: color,
-    diffuseTexture: color,
-    specularTexture: td.textureLoader.loadCubeFromPath("../resources/diceSpecular"),
-    shininess: 10.0,
-    bumpMap: td.textureLoader.loadCubeFromPath("../resources/diceBumpMap"));
+  tech
+    ..ambientColor = new Math.Color4(0.2, 0.2, 0.2)
+    ..diffuseColor = new Math.Color4(0.8, 0.8, 0.8)
+    ..specularColor = new Math.Color4(0.7, 0.7, 0.7)
+    ..ambientTextureCube = color
+    ..diffuseTextureCube = color
+    ..specularTextureCube = td.textureLoader.loadCubeFromPath("../resources/diceSpecular")
+    ..shininess = 10.0
+    ..bumpyTextureCube = td.textureLoader.loadCubeFromPath("../resources/diceBumpMap");
 
   rotater.attach(td.userInput);
   zoom.attach(td.userInput);

@@ -41,16 +41,16 @@ class MaterialLightConfig {
                  (this._specular != MaterialComponentType.None) ||
                  (this._bumpy != MaterialComponentType.None) || this._reflection || this._refraction;
     this._binm = (this._bumpy != MaterialComponentType.None);
-    this._txt2D = (this._emission != MaterialComponentType.Texture2D) ||
-                  (this._ambient != MaterialComponentType.Texture2D) ||
-                  (this._diffuse != MaterialComponentType.Texture2D) ||
-                  (this._specular != MaterialComponentType.Texture2D) ||
-                  (this._bumpy != MaterialComponentType.Texture2D);
-    this._txtCube = (this._emission != MaterialComponentType.TextureCube) ||
-                    (this._ambient != MaterialComponentType.TextureCube) ||
-                    (this._diffuse != MaterialComponentType.TextureCube) ||
-                    (this._specular != MaterialComponentType.TextureCube) ||
-                    (this._bumpy != MaterialComponentType.TextureCube);
+    this._txt2D = (this._emission == MaterialComponentType.Texture2D) ||
+                  (this._ambient == MaterialComponentType.Texture2D) ||
+                  (this._diffuse == MaterialComponentType.Texture2D) ||
+                  (this._specular == MaterialComponentType.Texture2D) ||
+                  (this._bumpy == MaterialComponentType.Texture2D);
+    this._txtCube = (this._emission == MaterialComponentType.TextureCube) ||
+                    (this._ambient == MaterialComponentType.TextureCube) ||
+                    (this._diffuse == MaterialComponentType.TextureCube) ||
+                    (this._specular == MaterialComponentType.TextureCube) ||
+                    (this._bumpy == MaterialComponentType.TextureCube);
     this._viewObjMat = this._norm || this._binm || this._camPos;
     this._viewMat = this._lights;
     this._name = this._createShaderName();
@@ -120,8 +120,8 @@ class MaterialLightConfig {
     if (this._txtCube) buf.writeln("attribute vec3 txtCubeAttr;");
     buf.writeln("");
 
-    if (this._norm)    buf.writeln("varying vec3 normal;");
-    if (this._binm)    buf.writeln("varying vec3 binormal;");
+    if (this._norm)    buf.writeln("varying vec3 normalVec;");
+    if (this._binm)    buf.writeln("varying vec3 binormalVec;");
     if (this._txt2D)   buf.writeln("varying vec2 txt2D;");
     if (this._txtCube) buf.writeln("varying vec3 txtCube;");
     if (this._lights)  buf.writeln("varying vec3 litVec;");
@@ -130,8 +130,8 @@ class MaterialLightConfig {
 
     buf.writeln("void main()");
     buf.writeln("{");
-    if (this._norm)    buf.writeln("   normal = normalize(viewObjMat*vec4(normAttr, 0.0)).xyz;");
-    if (this._binm)    buf.writeln("   binormal = normalize(viewObjMat*vec4(binmAttr, 0.0)).xyz;");
+    if (this._norm)    buf.writeln("   normalVec = normalize(viewObjMat*vec4(normAttr, 0.0)).xyz;");
+    if (this._binm)    buf.writeln("   binormalVec = normalize(viewObjMat*vec4(binmAttr, 0.0)).xyz;");
     if (this._txt2D)   buf.writeln("   txt2D = txt2DAttr;");
     if (this._txtCube) buf.writeln("   txtCube = txtCubeAttr;");
     if (this._lights)  buf.writeln("   litVec = normalize((viewMat*vec4(lightVec, 0.0)).xyz);");
@@ -255,11 +255,11 @@ class MaterialLightConfig {
           buf.writeln("   return emissionClr;");
           break;
         case MaterialComponentType.Texture2D:
-          buf.writeln("   if (emissionClr.a <= 0.0) return vec4(0.0, 0.0, 0.0, 0.0);");
+          buf.writeln("   if(emissionClr.a <= 0.0) return vec4(0.0, 0.0, 0.0, 0.0);");
           buf.writeln("   return emissionClr*texture2D(emissionTxt, txt2D);");
           break;
         case MaterialComponentType.TextureCube:
-          buf.writeln("   if (emissionClr.a <= 0.0) return vec4(0.0, 0.0, 0.0, 0.0);");
+          buf.writeln("   if(emissionClr.a <= 0.0) return vec4(0.0, 0.0, 0.0, 0.0);");
           buf.writeln("   return emissionClr*textureCube(emissionTxt, txtCube);");
           break;
       }
@@ -270,7 +270,7 @@ class MaterialLightConfig {
     if (this._ambient != MaterialComponentType.None) {
       buf.writeln("vec4 ambient()");
       buf.writeln("{");
-      buf.writeln("   if (ambientClr.a <= 0.0) return vec4(0.0, 0.0, 0.0, 0.0);");
+      buf.writeln("   if(ambientClr.a <= 0.0) return vec4(0.0, 0.0, 0.0, 0.0);");
       switch (this._ambient) {
         case MaterialComponentType.None: break;
         case MaterialComponentType.Solid:
@@ -290,7 +290,7 @@ class MaterialLightConfig {
     if (this._diffuse != MaterialComponentType.None) {
       buf.writeln("vec4 diffuse(vec3 norm)");
       buf.writeln("{");
-      buf.writeln("   if (diffuseClr.a <= 0.0) return vec4(0.0, 0.0, 0.0, 0.0);");
+      buf.writeln("   if(diffuseClr.a <= 0.0) return vec4(0.0, 0.0, 0.0, 0.0);");
       buf.writeln("   float scalar = dot(norm, -litVec);");
       buf.writeln("   if(scalar < 0.0) return vec4(0.0, 0.0, 0.0, 0.0);");
       switch (this._diffuse) {
@@ -312,7 +312,7 @@ class MaterialLightConfig {
     if (this._specular != MaterialComponentType.None) {
       buf.writeln("vec4 specular(vec3 norm)");
       buf.writeln("{");
-      buf.writeln("   if (specularClr.a <= 0.0) return vec4(0.0, 0.0, 0.0, 0.0);");
+      buf.writeln("   if(specularClr.a <= 0.0) return vec4(0.0, 0.0, 0.0, 0.0);");
       buf.writeln("   if(dot(norm, -litVec) > 0.0)");
       buf.writeln("   {");
       buf.writeln("      vec3 lightRef = normalize(reflect(litVec, norm));");
@@ -340,7 +340,7 @@ class MaterialLightConfig {
       buf.writeln("");
     }
 
-    if (this._bumpy != MaterialComponentType.None) {
+    if (this.norm) {
       buf.writeln("vec3 normal()");
       buf.writeln("{");
       switch (this._bumpy) {
@@ -380,7 +380,7 @@ class MaterialLightConfig {
     if (this._reflection) {
       buf.writeln("vec4 reflect(vec3 refl)");
       buf.writeln("{");
-      buf.writeln("   if (reflectClr.a > 0.0) {");
+      buf.writeln("   if(reflectClr.a > 0.0) {");
       buf.writeln("     vec3 invRefl = vec3(invViewMat*vec4(refl, 0.0));");
       buf.writeln("     return textureCube(envSampler, invRefl)*reflectClr;");
       buf.writeln("   }");
@@ -392,7 +392,7 @@ class MaterialLightConfig {
     if (this._refraction) {
       buf.writeln("vec4 refract(vec3 refl)");
       buf.writeln("{");
-      buf.writeln("   if (refractClr.a > 0.0) {");
+      buf.writeln("   if(refractClr.a > 0.0) {");
       buf.writeln("     vec3 refr = mix(-refl, -camPos, refraction);");
       buf.writeln("     vec3 invRefr = vec3(invViewMat*vec4(refr, 0.0));");
       buf.writeln("     return textureCube(envSampler, invRefr)*refractClr;");
@@ -416,7 +416,7 @@ class MaterialLightConfig {
       if (this._specular != MaterialComponentType.None) parts.add("specular(norm)");
       fragParts.add("lightClr*(" + parts.join(" + ") + ")");
     }
-    if (this._diffuse != MaterialComponentType.None) fragParts.add("emission()");
+    if (this._emission != MaterialComponentType.None) fragParts.add("emission()");
     if (this._reflection) fragParts.add("reflect(refl)");
     if (this._refraction) fragParts.add("refract(refl)");
     if (fragParts.length <= 0) fragParts.add("vec4(0.0, 0.0, 0.0, 0.0)");
@@ -424,4 +424,7 @@ class MaterialLightConfig {
     buf.writeln("}");
     return buf.toString();
   }
+
+  /// Gets the name for the configuration.
+  String toString() => this.name;
 }

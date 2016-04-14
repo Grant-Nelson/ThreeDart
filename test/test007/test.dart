@@ -13,7 +13,6 @@ import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
 import 'package:ThreeDart/Textures.dart' as Textures;
-import 'package:ThreeDart/Materials.dart' as Materials;
 import '../common/common.dart' as common;
 
 void main() {
@@ -43,16 +42,15 @@ void main() {
     ..scene = pass;
 
   Textures.Texture2D color = td.textureLoader.load2DFromFile("../resources/ScrewColor.png");
-  tech.material = new Materials.BumpyTexture2D(
-    emissionColor: new Math.Color4.transparent(),
-    ambientColor: new Math.Color4(0.2, 0.2, 0.2),
-    diffuseColor: new Math.Color4(0.8, 0.8, 0.8),
-    ambientTexture: color,
-    diffuseTexture: color,
-    bumpMap: td.textureLoader.load2DFromFile("../resources/ScrewBumpMap.png"),
-    specularColor: new Math.Color4.white(),
-    specularTexture: td.textureLoader.load2DFromFile("../resources/ScrewSpecular.png"),
-    shininess: 10.0);
+  tech
+    ..ambientColor = new Math.Color4(0.2, 0.2, 0.2)
+    ..diffuseColor = new Math.Color4(0.8, 0.8, 0.8)
+    ..ambientTexture2D = color
+    ..diffuseTexture2D = color
+    ..bumpyTexture2D = td.textureLoader.load2DFromFile("../resources/ScrewBumpMap.png")
+    ..specularColor = new Math.Color4.white()
+    ..specularTexture2D = td.textureLoader.load2DFromFile("../resources/ScrewSpecular.png")
+    ..shininess = 10.0;
 
   rotater.attach(td.userInput);
   zoom.attach(td.userInput);

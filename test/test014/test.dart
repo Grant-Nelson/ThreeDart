@@ -14,7 +14,6 @@ import 'package:ThreeDart/Views.dart' as Views;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
-import 'package:ThreeDart/Materials.dart' as Materials;
 import '../common/common.dart' as common;
 
 void main() {
@@ -69,79 +68,85 @@ void main() {
     ..boxColor = new Math.Color4.white()
     ..boxTexture = td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg");
 
-  Materials.ReflSolid material = new Materials.ReflSolid(
-    emission: new Math.Color4.black(),
-    ambient: new Math.Color4(0.1, 0.1, 0.1),
-    diffuse: new Math.Color4(0.1, 0.1, 0.1),
-    specular: new Math.Color4(0.0, 0.0, 0.0, 0.0),
-    shininess: 10.0,
-    environment: td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg"),
-    refraction: 0.6,
-    refractScalar: new Math.Color4(0.2, 0.3, 1.0),
-    reflectScalar: new Math.Color4(0.6, 0.6, 0.6)
-  );
-  tech.material = material;
+  tech
+    ..ambientColor = new Math.Color4(0.1, 0.1, 0.1)
+    ..diffuseColor = new Math.Color4(0.1, 0.1, 0.1)
+    ..specularColor = new Math.Color4(0.0, 0.0, 0.0, 0.0)
+    ..shininess = 10.0
+    ..environmentTexture = td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg")
+    ..refraction = 0.6
+    ..refractionColor = new Math.Color4(0.2, 0.3, 1.0)
+    ..reflectionColor = new Math.Color4(0.6, 0.6, 0.6);
 
   new common.RadioGroup("controls")
     ..add("Silver", () {
-      material.ambient       = new Math.Color4(0.1, 0.1, 0.1);
-      material.diffuse       = new Math.Color4(0.2, 0.2, 0.2);
-      material.refractScalar = new Math.Color4.transparent();
-      material.reflectScalar = new Math.Color4(1.0, 1.0, 1.0);
+      tech
+        ..ambientColor    = new Math.Color4(0.1, 0.1, 0.1)
+        ..diffuseColor    = new Math.Color4(0.2, 0.2, 0.2)
+        ..refractionColor = new Math.Color4.transparent()
+        ..reflectionColor = new Math.Color4(1.0, 1.0, 1.0);
     }, true)
     ..add("Gold", () {
-      material.ambient       = new Math.Color4(0.11, 0.11, 0.1);
-      material.diffuse       = new Math.Color4(0.21, 0.21, 0.2);
-      material.refractScalar = new Math.Color4.transparent();
-      material.reflectScalar = new Math.Color4(1.0, 0.9, 0.5);
+      tech
+        ..ambientColor    = new Math.Color4(0.11, 0.11, 0.1)
+        ..diffuseColor    = new Math.Color4(0.21, 0.21, 0.2)
+        ..refractionColor = new Math.Color4.transparent()
+        ..reflectionColor = new Math.Color4(1.0, 0.9, 0.5);
     })
     ..add("Glass", () {
-      material.ambient       = new Math.Color4(0.1, 0.1, 0.1);
-      material.diffuse       = new Math.Color4(0.1, 0.1, 0.1);
-      material.refraction    = 0.4;
-      material.refractScalar = new Math.Color4(0.6, 0.6, 0.6);
-      material.reflectScalar = new Math.Color4(0.4, 0.4, 0.4);
+      tech
+        ..ambientColor    = new Math.Color4(0.1, 0.1, 0.1)
+        ..diffuseColor    = new Math.Color4(0.1, 0.1, 0.1)
+        ..refraction      = 0.4
+        ..refractionColor = new Math.Color4(0.6, 0.6, 0.6)
+        ..reflectionColor = new Math.Color4(0.4, 0.4, 0.4);
     })
     ..add("Blue Glass", () {
-      material.ambient       = new Math.Color4(0.1, 0.1, 0.1);
-      material.diffuse       = new Math.Color4(0.1, 0.1, 0.1);
-      material.refraction    = 0.4;
-      material.refractScalar = new Math.Color4(0.2, 0.3, 1.0);
-      material.reflectScalar = new Math.Color4(0.3, 0.3, 0.3);
+      tech
+        ..ambientColor    = new Math.Color4(0.1, 0.1, 0.1)
+        ..diffuseColor    = new Math.Color4(0.1, 0.1, 0.1)
+        ..refraction      = 0.4
+        ..refractionColor = new Math.Color4(0.2, 0.3, 1.0)
+        ..reflectionColor = new Math.Color4(0.3, 0.3, 0.3);
     })
     ..add("Water Bubble", () {
-      material.ambient       = new Math.Color4(0.1, 0.1, 0.1);
-      material.diffuse       = new Math.Color4(0.1, 0.1, 0.1);
-      material.refraction    = 0.6;
-      material.refractScalar = new Math.Color4(0.8, 0.8, 0.8);
-      material.reflectScalar = new Math.Color4(0.2, 0.2, 0.2);
+      tech
+        ..ambientColor    = new Math.Color4(0.1, 0.1, 0.1)
+        ..diffuseColor    = new Math.Color4(0.1, 0.1, 0.1)
+        ..refraction      = 0.6
+        ..refractionColor = new Math.Color4(0.8, 0.8, 0.8)
+        ..reflectionColor = new Math.Color4(0.2, 0.2, 0.2);
     })
     ..add("No Reflection", () {
-      material.ambient       = new Math.Color4(0.1, 0.1, 0.1);
-      material.diffuse       = new Math.Color4(0.1, 0.1, 0.1);
-      material.refraction    = 0.6;
-      material.refractScalar = new Math.Color4(1.0, 1.0, 1.0);
-      material.reflectScalar = new Math.Color4.transparent();
+      tech
+        ..ambientColor    = new Math.Color4(0.1, 0.1, 0.1)
+        ..diffuseColor    = new Math.Color4(0.1, 0.1, 0.1)
+        ..refraction      = 0.6
+        ..refractionColor = new Math.Color4(1.0, 1.0, 1.0)
+        ..reflectionColor = new Math.Color4.transparent();
     })
     ..add("Pink Distort", () {
-      material.ambient       = new Math.Color4(0.1, 0.1, 0.1);
-      material.diffuse       = new Math.Color4(0.1, 0.1, 0.1);
-      material.refraction    = 0.9;
-      material.refractScalar = new Math.Color4(1.0, 0.8, 0.8);
-      material.reflectScalar = new Math.Color4.transparent();
+      tech
+        ..ambientColor    = new Math.Color4(0.1, 0.1, 0.1)
+        ..diffuseColor    = new Math.Color4(0.1, 0.1, 0.1)
+        ..refraction      = 0.9
+        ..refractionColor = new Math.Color4(1.0, 0.8, 0.8)
+        ..reflectionColor = new Math.Color4.transparent();
     })
     ..add("Cloak", () {
-      material.ambient       = new Math.Color4(0.0, 0.0, 0.0);
-      material.diffuse       = new Math.Color4(0.1, 0.1, 0.1);
-      material.refraction    = 0.99;
-      material.refractScalar = new Math.Color4(0.95, 0.95, 0.95);
-      material.reflectScalar = new Math.Color4.transparent();
+      tech
+        ..ambientColor    = new Math.Color4(0.0, 0.0, 0.0)
+        ..diffuseColor    = new Math.Color4(0.1, 0.1, 0.1)
+        ..refraction      = 0.99
+        ..refractionColor = new Math.Color4(0.95, 0.95, 0.95)
+        ..reflectionColor = new Math.Color4.transparent();
     })
     ..add("White and Shiny", () {
-      material.ambient       = new Math.Color4(0.3, 0.3, 0.3);
-      material.diffuse       = new Math.Color4(0.5, 0.5, 0.5);
-      material.refractScalar = new Math.Color4.transparent();
-      material.reflectScalar = new Math.Color4(0.3, 0.3, 0.3);
+      tech
+        ..ambientColor    = new Math.Color4(0.3, 0.3, 0.3)
+        ..diffuseColor    = new Math.Color4(0.5, 0.5, 0.5)
+        ..refractionColor = new Math.Color4.transparent()
+        ..reflectionColor = new Math.Color4(0.3, 0.3, 0.3);
     });
 
 

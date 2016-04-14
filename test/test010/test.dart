@@ -12,7 +12,6 @@ import 'package:ThreeDart/Math.dart' as Math;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
-import 'package:ThreeDart/Materials.dart' as Materials;
 import '../common/common.dart' as common;
 
 void main() {
@@ -44,13 +43,12 @@ void main() {
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart")
     ..scene = pass;
 
-  tech.material = new Materials.BumpyCubeSolid(
-    emission: new Math.Color4.transparent(),
-    ambient: new Math.Color4(0.0, 0.0, 1.0),
-    diffuse: new Math.Color4(0.0, 1.0, 0.0),
-    specular: new Math.Color4(1.0, 0.0, 0.0),
-    shininess: 10.0,
-    bumpMap: td.textureLoader.loadCubeFromPath("../resources/diceBumpMap"));
+  tech
+    ..ambientColor = new Math.Color4(0.0, 0.0, 1.0)
+    ..diffuseColor = new Math.Color4(0.0, 1.0, 0.0)
+    ..specularColor = new Math.Color4(1.0, 0.0, 0.0)
+    ..shininess = 10.0
+    ..bumpyTextureCube = td.textureLoader.loadCubeFromPath("../resources/diceBumpMap");
 
   rotater.attach(td.userInput);
   zoom.attach(td.userInput);

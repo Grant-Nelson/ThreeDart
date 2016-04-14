@@ -45,6 +45,16 @@ class UniformContainer {
     return null;
   }
 
+  /// Gets the uniform variable by the name.
+  /// If the uniform doesn't exist an exception will be thrown.
+  Uniform required(String name) {
+    Uniform uniform = this[name];
+    if (uniform == null) {
+      throw new Exception("Required uniform value, $name, was not defined or used in shader.");
+    }
+    return uniform;
+  }
+
   /// Gets the index of the uniform variable with the given name.
   int indexOf(String name) {
       for (int i = this._uniforms.length - 1; i >= 0; --i) {

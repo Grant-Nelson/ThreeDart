@@ -13,7 +13,6 @@ import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Textures.dart' as Textures;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
-import 'package:ThreeDart/Materials.dart' as Materials;
 import '../common/common.dart' as common;
 
 void main() {
@@ -46,14 +45,13 @@ void main() {
     ..scene = pass;
 
   Textures.TextureCube color = td.textureLoader.loadCubeFromPath("../resources/earthColor");
-  tech.material = new Materials.TextureCube(
-    emissionColor: new Math.Color4.transparent(),
-    ambientColor: new Math.Color4(0.2, 0.2, 0.2),
-    diffuseColor: new Math.Color4(0.8, 0.8, 0.8),
-    ambientTexture: color,
-    diffuseTexture: color,
-    specularTexture: td.textureLoader.loadCubeFromPath("../resources/earthSpecular"),
-    shininess: 10.0);
+  tech
+    ..ambientColor=  new Math.Color4(0.2, 0.2, 0.2)
+    ..diffuseColor = new Math.Color4(0.8, 0.8, 0.8)
+    ..ambientTextureCube = color
+    ..diffuseTextureCube = color
+    ..specularTextureCube = td.textureLoader.loadCubeFromPath("../resources/earthSpecular")
+    ..shininess = 10.0;
 
   new common.RadioGroup("shapes")
     ..add("Cube",         () { obj.shape = Shapes.cube(); })

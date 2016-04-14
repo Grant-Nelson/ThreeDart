@@ -60,7 +60,7 @@ abstract class Shader extends Core.Bindable {
     if(!this._gl.getShaderParameter(shader, WebGL.RenderingContext.COMPILE_STATUS)) {
       String errorInfo = this._gl.getShaderInfoLog(shader);
       this._gl.deleteShader(shader);
-      throw new Exception("Error compiling shader '" + shader.toString() + "': " + errorInfo);
+      throw new Exception("Error compiling shader '$shader': $errorInfo");
     }
     return shader;
   }
@@ -73,8 +73,11 @@ abstract class Shader extends Core.Bindable {
     this._gl.linkProgram(this._program);
 
     bool linkStatus = this._gl.getProgramParameter(this._program, WebGL.RenderingContext.LINK_STATUS);
-    if(!linkStatus)
-        throw new Exception("Failed to link shader.");
+    if(!linkStatus) {
+      String errorInfo = this._gl.getProgramInfoLog(this._program);
+      this._gl.deleteProgram(this._program);
+      throw new Exception("Failed to link shader: $errorInfo");
+    }
   }
 
   /// Sets up all the attribute list.
