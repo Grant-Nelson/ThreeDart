@@ -13,10 +13,11 @@ import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Textures.dart' as Textures;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
+import 'package:ThreeDart/Views.dart' as Views;
 import '../common/common.dart' as common;
 
 void main() {
-  common.shellTest("Test 011", ["shapes"],
+  common.shellTest("Test 017", ["shapes"],
     "A test of the Solid Color Directional Lighting Shader with a cube texture bump map.");
 
   Movers.UserRotater rotater = new Movers.UserRotater();
@@ -25,32 +26,53 @@ void main() {
     ..ctrlPressed = true;
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
-    ..shape = Shapes.sphere()
-    ..mover = (new Movers.Group()
-      ..add(rotater)
-      ..add(roller)
-      ..add(zoom));
+    ..shape = Shapes.sphere();
+
+  Views.FrontTarget target = new Views.FrontTarget()
+    ..clearColor = false;
 
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
     ..light = new Lights.Directional(
           direction: new Math.Vector3(-1.0, -1.0, -1.0),
           color: new Math.Color3.white());
 
+  Movers.Group mover = new Movers.Group()
+    ..add(rotater)
+    ..add(roller)
+    ..add(zoom)
+    ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
+
+  Views.Perspective camara = new Views.Perspective(mover: mover);
+
+  Scenes.CoverPass skybox = new Scenes.CoverPass()
+    ..target = target
+    ..camara = camara;
+
   Scenes.RenderPass pass = new Scenes.RenderPass()
+    ..camara = camara
     ..tech = tech
-    ..children.add(obj)
-    ..camara.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 3.0));
+    ..target = target
+    ..children.add(obj);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart")
-    ..scene = pass;
+    ..scene = new Scenes.Compound(passes: [skybox, pass]);
 
+  Textures.TextureCube environment =
+    td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg");
+  skybox.tech = new Techniques.Skybox()
+    ..boxTexture = environment;
+
+  Textures.TextureCube specular = td.textureLoader.loadCubeFromPath("../resources/earthSpecular");
   Textures.TextureCube color = td.textureLoader.loadCubeFromPath("../resources/earthColor");
   tech
-    ..ambientColor=  new Math.Color3(0.2, 0.2, 0.2)
-    ..diffuseColor = new Math.Color3(0.8, 0.8, 0.8)
+    ..ambientColor=  new Math.Color3(0.5, 0.5, 0.5)
+    ..diffuseColor = new Math.Color3(0.5, 0.5, 0.5)
     ..ambientTextureCube = color
     ..diffuseTextureCube = color
-    ..specularTextureCube = td.textureLoader.loadCubeFromPath("../resources/earthSpecular")
+    ..specularTextureCube = specular
+    ..environmentTexture = environment
+    ..reflectionTextureCube = specular
+    ..reflectionColor = new Math.Color3(0.5, 0.5, 0.5)
     ..shininess = 10.0;
 
   new common.RadioGroup("shapes")

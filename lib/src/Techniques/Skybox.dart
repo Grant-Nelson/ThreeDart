@@ -5,11 +5,11 @@ class Skybox extends Technique {
   Shaders.Skybox _shader;
   double _fov;
   Textures.TextureCube _boxTxt;
-  Math.Color4 _boxClr;
+  Math.Color3 _boxClr;
 
   /// Creates a new sky box technique with the given initial values.
   Skybox({double fov: math.PI/3.0, Textures.TextureCube boxTexture: null,
-          Math.Color4 boxColor: null}) {
+          Math.Color3 boxColor: null}) {
     this._shader = null;
     this._fov = fov;
     this.boxTexture = boxTexture;
@@ -25,9 +25,9 @@ class Skybox extends Technique {
   set boxTexture(Textures.TextureCube boxTxt) => this._boxTxt = boxTxt;
 
   /// The sky box color scalar.
-  Math.Color4 get boxColor => this._boxClr;
-  set boxColor(Math.Color4 color) =>
-    this._boxClr = (color == null)? new Math.Color4.white(): color;
+  Math.Color3 get boxColor => this._boxClr;
+  set boxColor(Math.Color3 color) =>
+    this._boxClr = (color == null)? new Math.Color3.white(): color;
 
   /// Renders this technique for the given state and entity.
   void render(Core.RenderState state, Core.Entity obj) {

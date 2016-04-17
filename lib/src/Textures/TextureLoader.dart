@@ -49,15 +49,17 @@ class TextureLoader {
 
     this._incLoading();
     html.ImageElement image = new html.ImageElement(src: path);
+    Texture2D result = new Texture2D(texture: texture);
     image.onLoad.listen((_) {
       image = this._resizeImage(image, this._max2DSize);
       this._gl.bindTexture(WebGL.TEXTURE_2D, texture);
       this._gl.pixelStorei(WebGL.UNPACK_FLIP_Y_WEBGL, flipY? 1: 0);
       this._gl.texImage2D(WebGL.TEXTURE_2D, 0, WebGL.RGBA, WebGL.RGBA, WebGL.UNSIGNED_BYTE, image);
       this._gl.bindTexture(WebGL.TEXTURE_2D, null);
+      result._loaded = true;
       this._decLoading();
     });
-    return new Texture2D(texture: texture);
+    return result;
   }
 
   /// Loads files from the given path.
@@ -86,18 +88,19 @@ class TextureLoader {
     this._gl.texParameteri(WebGL.TEXTURE_CUBE_MAP, WebGL.TEXTURE_MAG_FILTER, WebGL.LINEAR);
     this._gl.bindTexture(WebGL.TEXTURE_CUBE_MAP, null);
 
-    this._loadCubeFace(texture, posXPath, WebGL.TEXTURE_CUBE_MAP_POSITIVE_X, flipY);
-    this._loadCubeFace(texture, negXPath, WebGL.TEXTURE_CUBE_MAP_NEGATIVE_X, flipY);
-    this._loadCubeFace(texture, posYPath, WebGL.TEXTURE_CUBE_MAP_POSITIVE_Y, flipY);
-    this._loadCubeFace(texture, negYPath, WebGL.TEXTURE_CUBE_MAP_NEGATIVE_Y, flipY);
-    this._loadCubeFace(texture, posZPath, WebGL.TEXTURE_CUBE_MAP_POSITIVE_Z, flipY);
-    this._loadCubeFace(texture, negZPath, WebGL.TEXTURE_CUBE_MAP_NEGATIVE_Z, flipY);
-    return new TextureCube(texture: texture);
+    TextureCube result = new TextureCube(texture: texture);
+    this._loadCubeFace(result, texture, posXPath, WebGL.TEXTURE_CUBE_MAP_POSITIVE_X, flipY);
+    this._loadCubeFace(result, texture, negXPath, WebGL.TEXTURE_CUBE_MAP_NEGATIVE_X, flipY);
+    this._loadCubeFace(result, texture, posYPath, WebGL.TEXTURE_CUBE_MAP_POSITIVE_Y, flipY);
+    this._loadCubeFace(result, texture, negYPath, WebGL.TEXTURE_CUBE_MAP_NEGATIVE_Y, flipY);
+    this._loadCubeFace(result, texture, posZPath, WebGL.TEXTURE_CUBE_MAP_POSITIVE_Z, flipY);
+    this._loadCubeFace(result, texture, negZPath, WebGL.TEXTURE_CUBE_MAP_NEGATIVE_Z, flipY);
+    return result;
   }
 
   /// Loads a face from the given path.
   /// The image will load asynchronously.
-  void _loadCubeFace(WebGL.Texture texture, String path, int face, bool flipY) {
+  void _loadCubeFace(TextureCube result, WebGL.Texture texture, String path, int face, bool flipY) {
     html.ImageElement image = new html.ImageElement(src: path);
     this._incLoading();
     image.onLoad.listen((_) {
@@ -106,6 +109,7 @@ class TextureLoader {
         this._gl.pixelStorei(WebGL.UNPACK_FLIP_Y_WEBGL, flipY? 1: 0);
         this._gl.texImage2D(face, 0, WebGL.RGBA, WebGL.RGBA, WebGL.UNSIGNED_BYTE, image);
         this._gl.bindTexture(WebGL.TEXTURE_CUBE_MAP, null);
+        result._loaded++;
         this._decLoading();
     });
   }

@@ -1,7 +1,7 @@
 // Copyright (c) 2016, SnowGremlin. All rights reserved. Use of this source code
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
-library ThreeDart.test.test010;
+library ThreeDart.test.test012;
 
 import 'dart:html';
 
@@ -34,7 +34,7 @@ void main() {
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
     ..light = new Lights.Directional(
           direction: new Math.Vector3(1.0, 1.0, -3.0),
-          color: new Math.Color4.white());
+          color: new Math.Color3.white());
 
   Scenes.RenderPass pass = new Scenes.RenderPass()
     ..tech = tech
@@ -46,9 +46,9 @@ void main() {
 
   Textures.TextureCube color = td.textureLoader.loadCubeFromPath("../resources/diceColor");
   tech
-    ..ambientColor = new Math.Color4(0.2, 0.2, 0.2)
-    ..diffuseColor = new Math.Color4(0.8, 0.8, 0.8)
-    ..specularColor = new Math.Color4(0.7, 0.7, 0.7)
+    ..ambientColor = new Math.Color3(0.2, 0.2, 0.2)
+    ..diffuseColor = new Math.Color3(0.8, 0.8, 0.8)
+    ..specularColor = new Math.Color3(0.7, 0.7, 0.7)
     ..ambientTextureCube = color
     ..diffuseTextureCube = color
     ..specularTextureCube = td.textureLoader.loadCubeFromPath("../resources/diceSpecular")

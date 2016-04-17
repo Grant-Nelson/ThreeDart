@@ -27,23 +27,23 @@ class Skybox extends Shader {
 
   /// The fragment shader source code in glsl.
   static String _fragmentSource =
-      "precision mediump float;                               \n"+
-      "                                                       \n"+
-      "uniform samplerCube boxTxt;                            \n"+
-      "uniform vec4 boxClr;                                   \n"+
-      "                                                       \n"+
-      "varying vec3 cubeTxt;                                  \n"+
-      "                                                       \n"+
-      "void main()                                            \n"+
-      "{                                                      \n"+
-      "   vec3 txtCube = normalize(cubeTxt);                  \n"+
-      "   gl_FragColor = boxClr*textureCube(boxTxt, txtCube); \n"+
-      "}                                                      \n";
+      "precision mediump float;                                              \n"+
+      "                                                                      \n"+
+      "uniform samplerCube boxTxt;                                           \n"+
+      "uniform vec3 boxClr;                                                  \n"+
+      "                                                                      \n"+
+      "varying vec3 cubeTxt;                                                 \n"+
+      "                                                                      \n"+
+      "void main()                                                           \n"+
+      "{                                                                     \n"+
+      "   vec3 txtCube = normalize(cubeTxt);                                 \n"+
+      "   gl_FragColor = vec4(boxClr*textureCube(boxTxt, txtCube).xyz, 1.0); \n"+
+      "}                                                                     \n";
 
   Attribute _posAttr;
   Uniform1f _fov;
   Uniform1f _ratio;
-  Uniform4f _boxClr;
+  Uniform3f _boxClr;
   UniformSamplerCube _boxTxt;
   UniformMat4 _viewMat;
 
@@ -65,7 +65,7 @@ class Skybox extends Shader {
     this._posAttr = this.attributes["posAttr"];
     this._fov     = this.uniforms["fov"] as Uniform1f;
     this._ratio   = this.uniforms["ratio"] as Uniform1f;
-    this._boxClr  = this.uniforms["boxClr"] as Uniform4f;
+    this._boxClr  = this.uniforms["boxClr"] as Uniform3f;
     this._boxTxt  = this.uniforms["boxTxt"] as UniformSamplerCube;
     this._viewMat = this.uniforms["viewMat"] as UniformMat4;
   }
@@ -82,8 +82,8 @@ class Skybox extends Shader {
   set ratio(double value) => this._ratio.setValue(value);
 
   /// The color to scale the sky box texture with..
-  Math.Color4 get boxColor => this._boxClr.getColor4();
-  set boxColor(Math.Color4 clr) => this._boxClr.setColor4(clr);
+  Math.Color3 get boxColor => this._boxClr.getColor3();
+  set boxColor(Math.Color3 clr) => this._boxClr.setColor3(clr);
 
   /// The sky box texture to cover with.
   set boxTexture(Textures.TextureCube txt) =>

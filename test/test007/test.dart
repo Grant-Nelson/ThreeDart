@@ -31,7 +31,7 @@ void main() {
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
     ..light = new Lights.Directional(
           direction: new Math.Vector3(0.0, 0.0, -1.0),
-          color: new Math.Color4.white());
+          color: new Math.Color3.white());
 
   Scenes.RenderPass pass = new Scenes.RenderPass()
     ..tech = tech
@@ -43,12 +43,12 @@ void main() {
 
   Textures.Texture2D color = td.textureLoader.load2DFromFile("../resources/ScrewColor.png");
   tech
-    ..ambientColor = new Math.Color4(0.2, 0.2, 0.2)
-    ..diffuseColor = new Math.Color4(0.8, 0.8, 0.8)
+    ..ambientColor = new Math.Color3(0.2, 0.2, 0.2)
+    ..diffuseColor = new Math.Color3(0.8, 0.8, 0.8)
     ..ambientTexture2D = color
     ..diffuseTexture2D = color
     ..bumpyTexture2D = td.textureLoader.load2DFromFile("../resources/ScrewBumpMap.png")
-    ..specularColor = new Math.Color4.white()
+    ..specularColor = new Math.Color3.white()
     ..specularTexture2D = td.textureLoader.load2DFromFile("../resources/ScrewSpecular.png")
     ..shininess = 10.0;
 

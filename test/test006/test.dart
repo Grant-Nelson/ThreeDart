@@ -23,7 +23,7 @@ void main() {
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
     ..light = new Lights.Directional(
         direction: new Math.Vector3(0.0, 0.0, -1.0),
-        color: new Math.Color4.white());
+        color: new Math.Color3.white());
 
   ThreeDart.Entity objTech = new ThreeDart.Entity()
     ..shape = shape
@@ -59,9 +59,9 @@ void main() {
     ..scene = pass;
 
   tech
-    ..ambientColor = new Math.Color4(0.0, 0.0, 1.0)
-    ..diffuseColor = new Math.Color4(0.0, 1.0, 0.0)
-    ..specularColor = new Math.Color4(1.0, 0.0, 0.0)
+    ..ambientColor = new Math.Color3(0.0, 0.0, 1.0)
+    ..diffuseColor = new Math.Color3(0.0, 1.0, 0.0)
+    ..specularColor = new Math.Color3(1.0, 0.0, 0.0)
     ..shininess = 10.0;
 
   rotater.attach(td.userInput);

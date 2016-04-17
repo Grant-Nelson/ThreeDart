@@ -15,27 +15,48 @@ class MaterialLight extends Shader {
   UniformMat4 _viewMat;
   UniformMat4 _projViewObjMat;
   UniformMat4 _invViewMat;
+
   Uniform3f _lightVec;
-  Uniform4f _lightClr;
-  Uniform4f _emissionClr;
+  Uniform3f _lightClr;
+
+  Uniform3f _emissionClr;
   UniformSampler2D _emission2D;
   UniformSamplerCube _emissionCube;
-  Uniform4f _ambientClr;
+  Uniform1i _nullEmissionTxt;
+
+  Uniform3f _ambientClr;
   UniformSampler2D _ambient2D;
   UniformSamplerCube _ambientCube;
-  Uniform4f _diffuseClr;
+  Uniform1i _nullAmbientTxt;
+
+  Uniform3f _diffuseClr;
   UniformSampler2D _diffuse2D;
   UniformSamplerCube _diffuseCube;
-  Uniform4f _specularClr;
+  Uniform1i _nullDiffuseTxt;
+
+  Uniform3f _specularClr;
   UniformSampler2D _specular2D;
   UniformSamplerCube _specularCube;
+  Uniform1i _nullSpecularTxt;
   Uniform1f _shininess;
+
   UniformSampler2D _bump2D;
   UniformSamplerCube _bumpCube;
+  Uniform1i _nullBumpTxt;
+
   UniformSamplerCube _envSampler;
+  Uniform1i _nullEnvTxt;
+
+  Uniform3f _reflectClr;
+  UniformSampler2D _reflect2D;
+  UniformSamplerCube _reflectCube;
+  Uniform1i _nullReflectTxt;
+
   Uniform1f _refraction;
-  Uniform4f _reflectClr;
-  Uniform4f _refractClr;
+  Uniform3f _refractClr;
+  UniformSampler2D _refract2D;
+  UniformSamplerCube _refractCube;
+  Uniform1i _nullRefractTxt;
 
   /// Checks for the shader in the shader cache in the given [state],
   /// if it is not found then this shader is compiled and added
@@ -55,9 +76,9 @@ class MaterialLight extends Shader {
     String vertexSource = this._cfg.createVertexSource();
     String fragmentSource = this._cfg.createFragmentSource();
 
-    // print(this._cfg.toString());
-    // print(vertexSource);
-    // print(fragmentSource);
+    print(this._cfg.toString());
+    print(vertexSource);
+    print(fragmentSource);
 
     this.initialize(vertexSource, fragmentSource);
     this._posAttr     = this.attributes["posAttr"];
@@ -73,62 +94,70 @@ class MaterialLight extends Shader {
 
     if (cfg.lights) {
       this._lightVec = this.uniforms.required("lightVec") as Uniform3f;
-      this._lightClr = this.uniforms.required("lightClr") as Uniform4f;
+      this._lightClr = this.uniforms.required("lightClr") as Uniform3f;
     }
 
     if (cfg.emission != MaterialComponentType.None) {
-      this._emissionClr = this.uniforms.required("emissionClr") as Uniform4f;
+      this._emissionClr = this.uniforms.required("emissionClr") as Uniform3f;
       switch (cfg.emission) {
         case MaterialComponentType.None: break;
         case MaterialComponentType.Solid: break;
         case MaterialComponentType.Texture2D:
           this._emission2D = this.uniforms.required("emissionTxt") as UniformSampler2D;
+          this._nullEmissionTxt = this.uniforms.required("nullEmissionTxt") as Uniform1i;
           break;
         case MaterialComponentType.TextureCube:
           this._emissionCube = this.uniforms.required("emissionTxt") as UniformSamplerCube;
+          this._nullEmissionTxt = this.uniforms.required("nullEmissionTxt") as Uniform1i;
           break;
       }
     }
 
     if (cfg.ambient != MaterialComponentType.None) {
-      this._ambientClr = this.uniforms.required("ambientClr") as Uniform4f;
+      this._ambientClr = this.uniforms.required("ambientClr") as Uniform3f;
       switch (cfg.ambient) {
         case MaterialComponentType.None: break;
         case MaterialComponentType.Solid: break;
         case MaterialComponentType.Texture2D:
           this._ambient2D = this.uniforms.required("ambientTxt") as UniformSampler2D;
+          this._nullAmbientTxt = this.uniforms.required("nullAmbientTxt") as Uniform1i;
           break;
         case MaterialComponentType.TextureCube:
           this._ambientCube = this.uniforms.required("ambientTxt") as UniformSamplerCube;
+          this._nullAmbientTxt = this.uniforms.required("nullAmbientTxt") as Uniform1i;
           break;
       }
     }
 
     if (cfg.diffuse != MaterialComponentType.None) {
-      this._diffuseClr = this.uniforms.required("diffuseClr") as Uniform4f;
+      this._diffuseClr = this.uniforms.required("diffuseClr") as Uniform3f;
       switch (cfg.diffuse) {
         case MaterialComponentType.None: break;
         case MaterialComponentType.Solid: break;
         case MaterialComponentType.Texture2D:
           this._diffuse2D = this.uniforms.required("diffuseTxt") as UniformSampler2D;
+          this._nullDiffuseTxt = this.uniforms.required("nullDiffuseTxt") as Uniform1i;
           break;
         case MaterialComponentType.TextureCube:
           this._diffuseCube = this.uniforms.required("diffuseTxt") as UniformSamplerCube;
+          this._nullDiffuseTxt = this.uniforms.required("nullDiffuseTxt") as Uniform1i;
           break;
       }
     }
 
     if (cfg.specular != MaterialComponentType.None) {
         this._shininess = this.uniforms.required("shininess") as Uniform1f;
-        this._specularClr = this.uniforms.required("specularClr") as Uniform4f;
+        this._specularClr = this.uniforms.required("specularClr") as Uniform3f;
       switch (cfg.specular) {
         case MaterialComponentType.None: break;
         case MaterialComponentType.Solid: break;
         case MaterialComponentType.Texture2D:
-        this._specular2D = this.uniforms.required("specularTxt") as UniformSampler2D;
+          this._specular2D = this.uniforms.required("specularTxt") as UniformSampler2D;
+          this._nullSpecularTxt = this.uniforms.required("nullSpecularTxt") as Uniform1i;
           break;
         case MaterialComponentType.TextureCube:
-        this._specularCube = this.uniforms.required("specularTxt") as UniformSamplerCube;
+          this._specularCube = this.uniforms.required("specularTxt") as UniformSamplerCube;
+          this._nullSpecularTxt = this.uniforms.required("nullSpecularTxt") as Uniform1i;
           break;
       }
     }
@@ -138,21 +167,70 @@ class MaterialLight extends Shader {
       case MaterialComponentType.Solid: break;
       case MaterialComponentType.Texture2D:
         this._bump2D = this.uniforms.required("bumpTxt") as UniformSampler2D;
+        this._nullBumpTxt = this.uniforms.required("nullBumpTxt") as Uniform1i;
         break;
       case MaterialComponentType.TextureCube:
         this._bumpCube = this.uniforms.required("bumpTxt") as UniformSamplerCube;
+        this._nullBumpTxt = this.uniforms.required("nullBumpTxt") as Uniform1i;
         break;
     }
 
     if (cfg.enviromental) {
       this._envSampler = this.uniforms.required("envSampler") as UniformSamplerCube;
-      if (cfg.reflection) {
-          this._reflectClr = this.uniforms.required("reflectClr") as Uniform4f;
+      this._nullEnvTxt = this.uniforms.required("nullEnvTxt") as Uniform1i;
+
+      if (cfg.reflection != MaterialComponentType.None) {
+        this._reflectClr = this.uniforms.required("reflectClr") as Uniform3f;
+        switch (cfg.reflection) {
+          case MaterialComponentType.None: break;
+          case MaterialComponentType.Solid: break;
+          case MaterialComponentType.Texture2D:
+            this._reflect2D = this.uniforms.required("reflectTxt") as UniformSampler2D;
+            this._nullReflectTxt = this.uniforms.required("nullReflectTxt") as Uniform1i;
+            break;
+          case MaterialComponentType.TextureCube:
+            this._reflectCube = this.uniforms.required("reflectTxt") as UniformSamplerCube;
+            this._nullReflectTxt = this.uniforms.required("nullReflectTxt") as Uniform1i;
+            break;
+        }
       }
-      if (cfg.refraction) {
+
+      if (cfg.refraction != MaterialComponentType.None) {
         this._refraction = this.uniforms.required("refraction") as Uniform1f;
-        this._refractClr = this.uniforms.required("refractClr") as Uniform4f;
+        this._refractClr = this.uniforms.required("refractClr") as Uniform3f;
+        switch (cfg.refraction) {
+          case MaterialComponentType.None: break;
+          case MaterialComponentType.Solid: break;
+          case MaterialComponentType.Texture2D:
+            this._refract2D = this.uniforms.required("refractTxt") as UniformSampler2D;
+            this._nullRefractTxt = this.uniforms.required("nullRefractTxt") as Uniform1i;
+            break;
+          case MaterialComponentType.TextureCube:
+            this._refractCube = this.uniforms.required("refractTxt") as UniformSamplerCube;
+            this._nullRefractTxt = this.uniforms.required("nullRefractTxt") as Uniform1i;
+            break;
+        }
       }
+    }
+  }
+
+  /// Sets the tcxture 2D and null texture indicator for the shader.
+  void _setTexture2D(UniformSampler2D txt2D, Uniform1i nullTxt, Textures.Texture2D txt) {
+    if ((txt == null) || !txt.loaded) {
+      nullTxt.setValue(1);
+    } else {
+      txt2D.setTexture2D(txt);
+      nullTxt.setValue(0);
+    }
+  }
+
+  /// Sets the tcxture cube and null texture indicator for the shader.
+  void _setTextureCube(UniformSamplerCube txtCube, Uniform1i nullTxt, Textures.TextureCube txt) {
+    if ((txt == null) || !txt.loaded) {
+      nullTxt.setValue(1);
+    } else {
+      txtCube.setTextureCube(txt);
+      nullTxt.setValue(0);
     }
   }
 
@@ -195,8 +273,8 @@ class MaterialLight extends Shader {
   set lightVector(Math.Vector3 vec) => this._lightVec.setVector3(vec);
 
   /// The color of the light.
-  Math.Color4 get lightColor => this._lightClr.getColor4();
-  set lightColor(Math.Color4 clr) => this._lightClr.setColor4(clr);
+  Math.Color3 get lightColor => this._lightClr.getColor3();
+  set lightColor(Math.Color3 clr) => this._lightClr.setColor3(clr);
 
   /// Sets the directional light's vector and color.
   void setLight(Lights.Directional light) {
@@ -205,52 +283,52 @@ class MaterialLight extends Shader {
   }
 
   /// The emission color scalar of the object.
-  Math.Color4 get emissionColor => this._emissionClr.getColor4();
-  set emissionColor(Math.Color4 clr) => this._emissionClr.setColor4(clr);
+  Math.Color3 get emissionColor => this._emissionClr.getColor3();
+  set emissionColor(Math.Color3 clr) => this._emissionClr.setColor3(clr);
 
   /// The emission texture 2D of the object.
   set emissionTexture2D(Textures.Texture2D txt) =>
-    this._emission2D.setTexture2D(txt);
+    this._setTexture2D(this._emission2D, this._nullEmissionTxt, txt);
 
   /// The emission texture cube of the object.
   set emissionTextureCube(Textures.TextureCube txt) =>
-    this._emissionCube.setTextureCube(txt);
+    this._setTextureCube(this._emissionCube, this._nullEmissionTxt, txt);
 
   /// The ambient color scalar of the object.
-  Math.Color4 get ambientColor => this._ambientClr.getColor4();
-  set ambientColor(Math.Color4 clr) => this._ambientClr.setColor4(clr);
+  Math.Color3 get ambientColor => this._ambientClr.getColor3();
+  set ambientColor(Math.Color3 clr) => this._ambientClr.setColor3(clr);
 
   /// The ambient texture 2D of the object.
   set ambientTexture2D(Textures.Texture2D txt) =>
-    this._ambient2D.setTexture2D(txt);
+    this._setTexture2D(this._ambient2D, this._nullAmbientTxt, txt);
 
   /// The ambient texture cube of the object.
   set ambientTextureCube(Textures.TextureCube txt) =>
-    this._ambientCube.setTextureCube(txt);
+    this._setTextureCube(this._ambientCube, this._nullAmbientTxt, txt);
 
   /// The diffuse color scalar of the object.
-  Math.Color4 get diffuseColor => this._diffuseClr.getColor4();
-  set diffuseColor(Math.Color4 clr) => this._diffuseClr.setColor4(clr);
+  Math.Color3 get diffuseColor => this._diffuseClr.getColor3();
+  set diffuseColor(Math.Color3 clr) => this._diffuseClr.setColor3(clr);
 
   /// The diffuse texture 2D of the object.
   set diffuseTexture2D(Textures.Texture2D txt) =>
-    this._diffuse2D.setTexture2D(txt);
+    this._setTexture2D(this._diffuse2D, this._nullDiffuseTxt, txt);
 
   /// The diffuse texture cube of the object.
   set diffuseTextureCube(Textures.TextureCube txt) =>
-    this._diffuseCube.setTextureCube(txt);
+    this._setTextureCube(this._diffuseCube, this._nullDiffuseTxt, txt);
 
   /// The specular color scalar of the object.
-  Math.Color4 get specularColor => this._specularClr.getColor4();
-  set specularColor(Math.Color4 clr) => this._specularClr.setColor4(clr);
+  Math.Color3 get specularColor => this._specularClr.getColor3();
+  set specularColor(Math.Color3 clr) => this._specularClr.setColor3(clr);
 
   /// The specular texture 2D of the object.
   set specularTexture2D(Textures.Texture2D txt) =>
-    this._specular2D.setTexture2D(txt);
+    this._setTexture2D(this._specular2D, this._nullSpecularTxt, txt);
 
   /// The specular texture cube of the object.
   set specularTextureCube(Textures.TextureCube txt) =>
-    this._specularCube.setTextureCube(txt);
+    this._setTextureCube(this._specularCube, this._nullSpecularTxt, txt);
 
   /// The shininess value of the specualr.
   double get shininess => this._shininess.getValue();
@@ -258,25 +336,41 @@ class MaterialLight extends Shader {
 
   /// The normal distortion texture 2D of the object.
   set bumpTexture2D(Textures.Texture2D txt) =>
-    this._bump2D.setTexture2D(txt);
+    this._setTexture2D(this._bump2D, this._nullBumpTxt, txt);
 
   /// The normal distortion texture cube of the object.
   set bumpTextureCube(Textures.TextureCube txt) =>
-    this._bumpCube.setTextureCube(txt);
+    this._setTextureCube(this._bumpCube, this._nullBumpTxt, txt);
 
   /// The environment texture cube of the object.
   set environmentTextureCube(Textures.TextureCube txt) =>
-    this._envSampler.setTextureCube(txt);
+    this._setTextureCube(this._envSampler, this._nullEnvTxt, txt);
 
   /// The refraction value of the specualr.
   double get refraction => this._refraction.getValue();
   set refraction(double value) => this._refraction.setValue(value);
 
   /// The reflection color scalar of the object.
-  Math.Color4 get reflectionColor => this._reflectClr.getColor4();
-  set reflectionColor(Math.Color4 clr) => this._reflectClr.setColor4(clr);
+  Math.Color3 get reflectionColor => this._reflectClr.getColor3();
+  set reflectionColor(Math.Color3 clr) => this._reflectClr.setColor3(clr);
+
+  /// The reflection texture 2D scalar of the object.
+  set reflectionTexture2D(Textures.Texture2D txt) =>
+    this._setTexture2D(this._reflect2D, this._nullReflectTxt, txt);
+
+  /// The reflection texture cube scalar of the object.
+  set reflectionTextureCube(Textures.TextureCube txt) =>
+    this._setTextureCube(this._reflectCube, this._nullReflectTxt, txt);
 
   /// The refraction color scalar of the object.
-  Math.Color4 get refractionColor => this._refractClr.getColor4();
-  set refractionColor(Math.Color4 clr) => this._refractClr.setColor4(clr);
+  Math.Color3 get refractionColor => this._refractClr.getColor3();
+  set refractionColor(Math.Color3 clr) => this._refractClr.setColor3(clr);
+
+  /// The refraction texture 2D scalar of the object.
+  set refractionTexture2D(Textures.Texture2D txt) =>
+    this._setTexture2D(this._refract2D, this._nullRefractTxt, txt);
+
+  /// The refraction texture cube scalar of the object.
+  set refractionTextureCube(Textures.TextureCube txt) =>
+    this._setTextureCube(this._refractCube, this._nullRefractTxt, txt);
 }

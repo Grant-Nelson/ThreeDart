@@ -1,7 +1,7 @@
 // Copyright (c) 2016, SnowGremlin. All rights reserved. Use of this source code
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
-library ThreeDart.test.test013;
+library ThreeDart.test.test016;
 
 import 'dart:html';
 
@@ -9,15 +9,16 @@ import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 import 'package:ThreeDart/Shapes.dart' as Shapes;
 import 'package:ThreeDart/Movers.dart' as Movers;
 import 'package:ThreeDart/Math.dart' as Math;
-import 'package:ThreeDart/Views.dart' as Views;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
+import 'package:ThreeDart/Textures.dart' as Textures;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
+import 'package:ThreeDart/Views.dart' as Views;
 import '../common/common.dart' as common;
 
 void main() {
-  common.shellTest("Test 013", [],
-    "Test of sky box and cover pass.");
+  common.shellTest("Test 016", [],
+    "A test of the Cube Texture Color Directional Lighting Shader with a Cube Texture Bump Map.");
 
   Movers.UserRotater rotater = new Movers.UserRotater();
   Movers.UserZoom zoom = new Movers.UserZoom();
@@ -28,16 +29,12 @@ void main() {
     ..clearColor = false;
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
-    ..shape = Shapes.toroid();
+    ..shape = Shapes.cube();
 
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
     ..light = new Lights.Directional(
-          direction: new Math.Vector3(0.0, -1.0, -1.0),
-          color: new Math.Color3.white())
-    ..ambientColor = new Math.Color3(0.0, 0.0, 1.0)
-    ..diffuseColor = new Math.Color3(0.0, 1.0, 0.0)
-    ..specularColor = new Math.Color3(1.0, 0.0, 0.0)
-    ..shininess = 10.0;
+          direction: new Math.Vector3(1.0, -1.0, -3.0),
+          color: new Math.Color3.white());
 
   Movers.Group mover = new Movers.Group()
     ..add(rotater)
@@ -56,14 +53,28 @@ void main() {
     ..tech = tech
     ..target = target
     ..children.add(obj);
-
-  Scenes.Compound compound = new Scenes.Compound(passes: [skybox, pass]);
+  (pass.target as Views.FrontTarget).clearColor = false;
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart")
-    ..scene = compound;
+    ..scene = new Scenes.Compound(passes: [skybox, pass]);
 
+  Textures.TextureCube environment =
+    td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg");
   skybox.tech = new Techniques.Skybox()
-    ..boxTexture = td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg");
+    ..boxTexture = environment;
+
+  Textures.TextureCube color = td.textureLoader.loadCubeFromPath("../resources/diceColor");
+  tech
+    ..ambientColor = new Math.Color3(0.2, 0.2, 0.2)
+    ..diffuseColor = new Math.Color3(0.7, 0.7, 0.7)
+    ..specularColor = new Math.Color3(0.7, 0.7, 0.7)
+    ..ambientTextureCube = color
+    ..diffuseTextureCube = color
+    ..specularTextureCube = td.textureLoader.loadCubeFromPath("../resources/diceSpecular")
+    ..shininess = 10.0
+    ..bumpyTextureCube = td.textureLoader.loadCubeFromPath("../resources/diceBumpMap")
+    ..environmentTexture = environment
+    ..reflectionColor = new Math.Color3(0.3, 0.3, 0.3);
 
   rotater.attach(td.userInput);
   zoom.attach(td.userInput);
