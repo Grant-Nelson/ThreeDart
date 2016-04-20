@@ -65,7 +65,7 @@ class Rotater extends Mover {
 
   /// Updates the ratation matrix.
   /// This is only called once per frame.
-  void _update(Core.RenderState state, Core.Entity obj) {
+  void _update(Core.RenderState state) {
     this._frameNum = state.frameNumber;
 
     this._yaw += this.deltaYaw*state.dt;
@@ -85,8 +85,8 @@ class Rotater extends Mover {
   /// Updates the rotation mover.
   ///
   /// This updates with the given [state] and the [obj] this mover is attached to.
-  Math.Matrix4 update(Core.RenderState state, Core.Entity obj) {
-    if (this._frameNum < state.frameNumber) this._update(state, obj);
+  Math.Matrix4 update(Core.RenderState state, Movable obj) {
+    if (this._frameNum < state.frameNumber) this._update(state);
     return this._mat;
   }
 }

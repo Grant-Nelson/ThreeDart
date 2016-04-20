@@ -33,7 +33,7 @@ void main() {
 
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
     ..light = new Lights.Directional(
-          direction: new Math.Vector3(0.0, 0.0, -1.0),
+          direction: new Math.Vector3(1.0, -2.0, -3.0),
           color: new Math.Color3.white());
 
   Movers.Group mover = new Movers.Group()
@@ -64,8 +64,8 @@ void main() {
 
   Textures.Texture2D color = td.textureLoader.load2DFromFile("../resources/AlphaWeave.png");
   tech
-    ..ambientColor = new Math.Color3(0.2, 0.2, 0.2)
-    ..diffuseColor = new Math.Color3(0.8, 0.8, 0.8)
+    ..ambientColor = new Math.Color3(0.5, 0.5, 0.5)
+    ..diffuseColor = new Math.Color3(0.6, 0.6, 0.6)
     ..ambientTexture2D = color
     ..diffuseTexture2D = color
     ..alphaTexture2D = color;

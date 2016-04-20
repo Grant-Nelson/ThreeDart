@@ -1,7 +1,7 @@
 part of ThreeDart.Data;
 
 /// A storage for a shapes with the components required for a specific technique.
-class BufferStore implements Core.Bindable, Core.Renderable, TechniqueCache {
+class BufferStore implements Core.Bindable, TechniqueCache {
 
   /// The buffer storing all the vertex data for the shape.
   Buffer _vertexBuf;

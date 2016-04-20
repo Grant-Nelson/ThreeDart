@@ -45,6 +45,10 @@ class RenderPass implements Scene {
     this._camara.bind(state);
 
     for (Core.Entity child in this._children) {
+      child.update(state);
+    }
+
+    for (Core.Entity child in this._children) {
       child.render(state);
     }
 

@@ -93,7 +93,7 @@ class UserZoom implements Mover, Core.UserInteractable {
   }
 
   /// Updates this mover and returns the matrix for the given object.
-  Math.Matrix4 update(Core.RenderState state, Core.Entity obj) {
+  Math.Matrix4 update(Core.RenderState state, Movable obj) {
     if (this._frameNum < state.frameNumber) this._update(state);
     return this._mat;
   }

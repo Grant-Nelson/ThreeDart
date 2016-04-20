@@ -42,6 +42,7 @@ class CoverPass implements Scene {
     this._target.bind(state);
     this._camara.bind(state);
 
+    this._box.update(state);
     this._box.render(state);
 
     this._camara.unbind(state);
