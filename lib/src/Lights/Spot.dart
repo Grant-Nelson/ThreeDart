@@ -36,6 +36,16 @@ class Spot implements Light {
     }
   }
 
+  /// Binds the light to the given [state].
+  void bind(Core.RenderState state){
+    // Do Nothing
+  }
+
+  /// Unbinds the bound the light  from the given [state].
+  void unbind(Core.RenderState state) {
+    // Do Nothing
+  }
+
   /// The location the light.
   Math.Point3 get position => this._position;
   Math.Point3 _position;

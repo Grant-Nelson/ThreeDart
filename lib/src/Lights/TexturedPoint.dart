@@ -4,9 +4,9 @@ part of ThreeDart.Lights;
 class TexturedPoint implements Light {
 
   /// Creates a new textured point light data.
-  Point({
+  TexturedPoint({
       Movers.Mover mover: null,
-      Math.Color4 color: null,
+      Math.Color3 color: null,
       Textures.TextureCube texture: null,
       double attenuation0: null,
       double attenuation1: null,
@@ -17,23 +17,30 @@ class TexturedPoint implements Light {
     this.attenuation0 = attenuation0;
     this.attenuation1 = attenuation1;
     this.attenuation2 = attenuation2;
-    this._position    = new Math.Point3(0.0, 0.0, 0.0);
+    this._matrix      = new Math.Matrix4.identity();
   }
 
   /// Updates the light with the current state.
   void update(Core.RenderState state) {
-    this._position = new Math.Point3(0.0, 0.0, 0.0);
+    this._matrix = new Math.Matrix4.identity();
     if (this._mover != null) {
-      Math.Matrix4 mat = this._mover.update(state, this);
-      if (mat != null) {
-        this._position = mat.transPnt3(this._position);
-      }
+      this._matrix = this._mover.update(state, this);
     }
   }
 
-  /// The location the light.
-  Math.Point3 get position => this._position;
-  Math.Point3 _position;
+  /// Binds the light to the given [state].
+  void bind(Core.RenderState state){
+    if(this.texture != null) this.texture.bind(state);
+  }
+
+  /// Unbinds the bound the light  from the given [state].
+  void unbind(Core.RenderState state) {
+    if(this.texture != null) this.texture.unbind(state);
+  }
+
+  /// The rotation and position of the point light.
+  Math.Matrix4 get matrix => this._matrix;
+  Math.Matrix4 _matrix;
 
   /// The mover to position this light.
   Movers.Mover get mover => this._mover;
@@ -41,10 +48,10 @@ class TexturedPoint implements Light {
   Movers.Mover _mover;
 
   /// The color of the light.
-  Math.Color4 get color => this._color;
-  set color(Math.Color4 color) =>
-    this._color = (color == null)? new Math.Color4.white(): color;
-  Math.Color4 _color;
+  Math.Color3 get color => this._color;
+  set color(Math.Color3 color) =>
+    this._color = (color == null)? new Math.Color3.white(): color;
+  Math.Color3 _color;
 
   /// The texture of the light.
   Textures.TextureCube get texture => this._texture;

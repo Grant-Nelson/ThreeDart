@@ -20,6 +20,7 @@ part 'Depth.dart';
 part 'Inspection.dart';
 part 'MaterialLight.dart';
 part 'MaterialLightConfig.dart';
+part 'MaterialLightUniforms.dart';
 part 'Skybox.dart';
 
 /// Inserts a number for each line in the given [text].

@@ -99,20 +99,44 @@ abstract class Shader extends Core.Bindable {
     for (int i = 0; i < count; ++i) {
       WebGL.ActiveInfo info = this._gl.getActiveUniform(this._program, i);
       WebGL.UniformLocation loc = this._gl.getUniformLocation(this._program, info.name);
-      uniforms.add(this.createUniform(info.type, info.name, loc));
+      uniforms.add(this.createUniform(info.type, info.size, info.name, loc));
     }
     this._uniforms = new UniformContainer._(uniforms);
   }
 
-  /// Creates a new uniform fot the given [type] information, [name], and uniform location.
-  Uniform createUniform(int type, String name, WebGL.UniformLocation loc) {
+  /// Creates a new Uniform1i or Uniform1iv for the given [size], [name], and uniform location.
+  Uniform _createUniform1i(int size, String name, WebGL.UniformLocation loc) {
+    if (size == 1) return new Uniform1i._(this._gl, this._program, name, loc);
+    else return new Uniform1iv._(this._gl, this._program, name, size, loc);
+  }
+
+  /// Creates a new UniformSampler2D or Uniform1iv for the given [size], [name], and uniform location.
+  Uniform _createUniformSampler2D(int size, String name, WebGL.UniformLocation loc) {
+    if (size == 1) return new UniformSampler2D._(this._gl, this._program, name, loc);
+    else return new Uniform1iv._(this._gl, this._program, name, size, loc);
+  }
+
+  /// Creates a new UniformSamplerCube or Uniform1iv for the given [size], [name], and uniform location.
+  Uniform _createUniformSamplerCube(int size, String name, WebGL.UniformLocation loc) {
+    if (size == 1) return new UniformSamplerCube._(this._gl, this._program, name, loc);
+    else return new Uniform1iv._(this._gl, this._program, name, size, loc);
+  }
+
+  /// Creats an exception for unsupported types.
+  Exception _unsupportedException(String type, String name) {
+    return new Exception("$type uniform variables are unsupported by all browsers.\n"+
+      "Please change the type of $name.");
+  }
+
+  /// Creates a new uniform for the given [type] information, [size], [name], and uniform location.
+  Uniform createUniform(int type, int size, String name, WebGL.UniformLocation loc) {
     switch(type) {
-      case WebGL.RenderingContext.BYTE:           return new Uniform1i._(this._gl, this._program, name, loc);
-      case WebGL.RenderingContext.UNSIGNED_BYTE:  return new Uniform1i._(this._gl, this._program, name, loc);
-      case WebGL.RenderingContext.SHORT:          return new Uniform1i._(this._gl, this._program, name, loc);
-      case WebGL.RenderingContext.UNSIGNED_SHORT: return new Uniform1i._(this._gl, this._program, name, loc);
-      case WebGL.RenderingContext.INT:            return new Uniform1i._(this._gl, this._program, name, loc);
-      case WebGL.RenderingContext.UNSIGNED_INT:   return new Uniform1i._(this._gl, this._program, name, loc);
+      case WebGL.RenderingContext.BYTE:           return this._createUniform1i(size, name, loc);
+      case WebGL.RenderingContext.UNSIGNED_BYTE:  return this._createUniform1i(size, name, loc);
+      case WebGL.RenderingContext.SHORT:          return this._createUniform1i(size, name, loc);
+      case WebGL.RenderingContext.UNSIGNED_SHORT: return this._createUniform1i(size, name, loc);
+      case WebGL.RenderingContext.INT:            return this._createUniform1i(size, name, loc);
+      case WebGL.RenderingContext.UNSIGNED_INT:   return this._createUniform1i(size, name, loc);
       case WebGL.RenderingContext.FLOAT:          return new Uniform1f._(this._gl, this._program, name, loc);
       case WebGL.RenderingContext.FLOAT_VEC2:     return new Uniform2f._(this._gl, this._program, name, loc);
       case WebGL.RenderingContext.FLOAT_VEC3:     return new Uniform3f._(this._gl, this._program, name, loc);
@@ -123,22 +147,13 @@ abstract class Shader extends Core.Bindable {
       case WebGL.RenderingContext.FLOAT_MAT2:     return new UniformMat2._(this._gl, this._program, name, loc);
       case WebGL.RenderingContext.FLOAT_MAT3:     return new UniformMat3._(this._gl, this._program, name, loc);
       case WebGL.RenderingContext.FLOAT_MAT4:     return new UniformMat4._(this._gl, this._program, name, loc);
-      case WebGL.RenderingContext.SAMPLER_2D:     return new UniformSampler2D._(this._gl, this._program, name, loc);
-      case WebGL.RenderingContext.SAMPLER_CUBE:   return new UniformSamplerCube._(this._gl, this._program, name, loc);
-      case WebGL.RenderingContext.BOOL:
-          throw new Exception("BOOL uniform variables are unsupported by all browsers.\n"+
-            "Please change the type of "+name+".");
-      case WebGL.RenderingContext.BOOL_VEC2:
-          throw new Exception("BOOL_VEC2 uniform variables are unsupported by all browsers.\n"+
-            "Please change the type of "+name+".");
-      case WebGL.RenderingContext.BOOL_VEC3:
-          throw new Exception("BOOL_VEC3 uniform variables are unsupported by all browsers.\n"+
-            "Please change the type of "+name+".");
-      case WebGL.RenderingContext.BOOL_VEC4:
-          throw new Exception("BOOL_VEC4 uniform variables are unsupported by all browsers.\n"+
-            "Please change the type of "+name+".");
-      default:
-          throw new Exception("Unknown uniform variable type "+type.toString()+" for "+name+".");
+      case WebGL.RenderingContext.SAMPLER_2D:     return this._createUniformSampler2D(size, name, loc);
+      case WebGL.RenderingContext.SAMPLER_CUBE:   return this._createUniformSamplerCube(size, name, loc);
+      case WebGL.RenderingContext.BOOL:           throw this._unsupportedException("BOOL", name);
+      case WebGL.RenderingContext.BOOL_VEC2:      throw this._unsupportedException("BOOL_VEC2", name);
+      case WebGL.RenderingContext.BOOL_VEC3:      throw this._unsupportedException("BOOL_VEC3", name);
+      case WebGL.RenderingContext.BOOL_VEC4:      throw this._unsupportedException("BOOL_VEC4", name);
+      default: throw new Exception("Unknown uniform variable type $type for $name.");
     }
   }
 }

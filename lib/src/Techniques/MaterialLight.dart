@@ -782,13 +782,13 @@ class MaterialLight extends Technique {
           break;
       }
 
-      Math.Matrix4 viewMat = state.view.matrix;
       if (cfg.dirLight > 0) {
         int count = this._lights._dirLights.length;
         this._shader.directionalLightCount = count;
+        Math.Matrix4 viewMat = state.view.matrix;
         for (int i = 0; i < count; ++i)  {
           Lights.Directional light = this._lights._dirLights[i];
-          Shaders.UniformDirectionalLight uniform = this._shader.directionalLight[i];
+          Shaders.UniformDirectionalLight uniform = this._shader.directionalLights[i];
           uniform.viewDir = viewMat.transVec3(light.direction).normal();
           uniform.color = light.color;
         }
@@ -797,9 +797,10 @@ class MaterialLight extends Technique {
       if (cfg.pointLight > 0) {
         int count = this._lights._pntLights.length;
         this._shader.pointLightCount = count;
+        Math.Matrix4 viewMat = state.view.matrix;
         for (int i = 0; i < count; ++i)  {
           Lights.Point light = this._lights._pntLights[i];
-          Shaders.UniformPointLight uniform = this._shader.pointLight[i];
+          Shaders.UniformPointLight uniform = this._shader.pointLights[i];
           uniform.viewPoint = viewMat.transPnt3(light.position);
           uniform.color = light.color;
           uniform.attenuation0 = light.attenuation0;
@@ -808,7 +809,30 @@ class MaterialLight extends Technique {
         }
       }
 
-      // TODO: Add other lights.
+      // TODO: Add spot light.
+
+      // TODO: Add textured directional light.
+
+      if (cfg.txtPointLight > 0) {
+        int count = this._lights._txtPntLights.length;
+        this._shader.texturedPointLightCount = count;
+        Math.Matrix4 viewMat = state.view.matrix;
+        for (int i = 0; i < count; ++i)  {
+          Lights.TexturedPoint light = this._lights._txtPntLights[i];
+          Shaders.UniformTexturedPointLight uniform = this._shader.texturedPointLights[i];
+          if (light.texture != null) this._addToTextureList(textures, light.texture);
+          Math.Matrix4 mat = viewMat*light.matrix;
+          uniform.viewPoint = mat.transPnt3(new Math.Point3(0.0, 0.0, 0.0));
+          uniform.inverseViewRotationMatrix = new Math.Matrix3.fromMatrix4(mat.inverse());
+          uniform.color = light.color;
+          uniform.texture = light.texture;
+          uniform.attenuation0 = light.attenuation0;
+          uniform.attenuation1 = light.attenuation1;
+          uniform.attenuation2 = light.attenuation2;
+        }
+      }
+
+      // TODO: Add textured spot light.
     }
 
     switch (cfg.bumpy) {
@@ -824,8 +848,11 @@ class MaterialLight extends Technique {
         break;
     }
 
-    if (cfg.enviromental) {
+    if (cfg.invViewMat) {
       this._shader.inverseViewMatrix = state.inverseViewMatrix;
+    }
+
+    if (cfg.enviromental) {
       this._addToTextureList(textures, this._envSampler);
       this._shader.environmentTextureCube = this._envSampler;
 

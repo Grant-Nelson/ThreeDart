@@ -84,7 +84,7 @@ void main() {
     ..lights.add(redPoint)
     ..lights.add(greenPoint)
     ..lights.add(bluePoint)
-    ..ambientColor = new Math.Color3.gray(0.5)
+    ..ambientColor = new Math.Color3.gray(0.1)
     ..diffuseColor = new Math.Color3.gray(0.7)
     ..specularColor = new Math.Color3.gray(0.3)
     ..shininess = 100.0;

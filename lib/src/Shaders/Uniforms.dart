@@ -110,7 +110,7 @@ class Uniform1i extends Uniform {
   }
 
   /// Gets the name for this uniform variable.
-  String toString() => "Uniform1: ${this.name}";
+  String toString() => "Uniform1i: ${this.name}";
 }
 
 /// The uniform variable for two integers.
@@ -133,7 +133,7 @@ class Uniform2i extends Uniform {
   }
 
   /// Gets the name for this uniform variable.
-  String toString() => "Uniform2: ${this.name}";
+  String toString() => "Uniform2i: ${this.name}";
 }
 
 /// The uniform variable for three integers.
@@ -182,6 +182,42 @@ class Uniform4i extends Uniform {
 
   /// Gets the name for this uniform variable.
   String toString() => "Uniform4i: ${this.name}";
+}
+
+/// The uniform variable for a single integer array.
+class Uniform1iv extends Uniform {
+  List<int> _values;
+
+  /// Creates a new single integer array uniform variable.
+  Uniform1iv._(gl, program, name, size, loc): super._(gl, program, name, loc) {
+    this._size = size;
+    this._values = new List<int>.filled(this._size, 0);
+  }
+
+  /// The size of the array;
+  int get size => this._size;
+  int _size;
+
+  /// Gets the list containing a single integer array.
+  List<int> getList() => this.rawValue;
+
+  /// Gets the list containing a single integer array.
+  List<int> getCachedList() => this._values;
+
+  /// Sets the array with the given list.
+  void setList(List<int> values) {
+    this._values = values;
+    this._gl.uniform1iv(super.loc, values);
+  }
+
+  /// Sets the value nt the list at the given index.
+  void setAt(int index, int value) {
+    this._values[index] = value;
+    this._gl.uniform1iv(super.loc, this._values);
+  }
+
+  /// Gets the name for this uniform variable.
+  String toString() => "Uniform1iv: ${this.name}";
 }
 
 //=======================================================================

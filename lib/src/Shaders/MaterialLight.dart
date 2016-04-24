@@ -1,55 +1,5 @@
 part of ThreeDart.Shaders;
 
-/// Directional light uniform.
-class UniformDirectionalLight {
-
-  /// Creates the directional light uniform.
-  UniformDirectionalLight._(Uniform3f this._viewDir, Uniform3f this._color);
-
-  /// The directional light's direction transformed by the view matrix.
-  Math.Vector3 get viewDir => this._viewDir.getVector3();
-  set viewDir(Math.Vector3 vec) => this._viewDir.setVector3(vec);
-  Uniform3f _viewDir;
-
-  /// The directional light color.
-  Math.Color3 get color => this._color.getColor3();
-  set color(Math.Color3 clr) => this._color.setColor3(clr);
-  Uniform3f _color;
-}
-
-/// Point light uniform.
-class UniformPointLight {
-
-  /// Creates the point light uniform.
-  UniformPointLight._(Uniform3f this._viewPnt, Uniform3f this._color,
-    Uniform1f this._att0, Uniform1f this._att1, Uniform1f this._att2);
-
-  /// The point light's location transformed by the view matrix.
-  Math.Point3 get viewPoint => this._viewPnt.getPoint3();
-  set viewPoint(Math.Point3 pnt) => this._viewPnt.setPoint3(pnt);
-  Uniform3f _viewPnt;
-
-  /// The point light color.
-  Math.Color3 get color => this._color.getColor3();
-  set color(Math.Color3 clr) => this._color.setColor3(clr);
-  Uniform3f _color;
-
-  /// The point light constant attenuation.
-   double get attenuation0 => this._att0.getValue();
-  set attenuation0(double att) => this._att0.setValue(att);
-  Uniform1f _att0;
-
-  /// The point light linear attenuation.
-  double get attenuation1 => this._att1.getValue();
-  set attenuation1(double att) => this._att1.setValue(att);
-  Uniform1f _att1;
-
-  /// The point light quatradic attenuation.
-  double get attenuation2 => this._att2.getValue();
-  set attenuation2(double att) => this._att2.setValue(att);
-  Uniform1f _att2;
-}
-
 /// A shader for rendering solid color light.
 class MaterialLight extends Shader {
 
@@ -116,10 +66,19 @@ class MaterialLight extends Shader {
   Uniform1i _nullAlphaTxt;
 
   Uniform1i _dirLightCount;
-  List<UniformDirectionalLight> _dirLight;
+  List<UniformDirectionalLight> _dirLights;
 
   Uniform1i _pntLightCount;
-  List<UniformPointLight> _pntLight;
+  List<UniformPointLight> _pntLights;
+
+  // TODO: Add spot lights.
+
+  // TODO: Add textured directional lights.
+
+  Uniform1i _txtPntLightCount;
+  List<UniformTexturedPointLight> _txtPntLights;
+
+  // TODO: Add textured spot lights.
 
   /// Checks for the shader in the shader cache in the given [state],
   /// if it is not found then this shader is compiled and added
@@ -150,8 +109,10 @@ class MaterialLight extends Shader {
     this._txt2DAttr   = this.attributes["txt2DAttr"];
     this._txtCubeAttr = this.attributes["txtCubeAttr"];
 
-    if (cfg._viewObjMat)  this._viewObjMat = this.uniforms.required("viewObjMat") as UniformMat4;
-    if (cfg.enviromental) this._invViewMat = this.uniforms.required("invViewMat") as UniformMat4;
+    // print(numberLines(this.uniforms.toString()));
+
+    if (cfg.viewObjMat) this._viewObjMat = this.uniforms.required("viewObjMat") as UniformMat4;
+    if (cfg.invViewMat) this._invViewMat = this.uniforms.required("invViewMat") as UniformMat4;
     this._projViewObjMat = this.uniforms.required("projViewObjMat") as UniformMat4;
 
     if (cfg.emission != MaterialComponentType.None) {
@@ -302,15 +263,16 @@ class MaterialLight extends Shader {
       }
     }
 
-    this._dirLight = new List<UniformDirectionalLight>();
-    this._pntLight = new List<UniformPointLight>();
+    this._dirLights = new List<UniformDirectionalLight>();
+    this._pntLights = new List<UniformPointLight>();
+    this._txtPntLights = new List<UniformTexturedPointLight>();
     if (cfg.lights) {
       if (cfg._dirLight > 0) {
         this._dirLightCount = this.uniforms.required("dirLightCount");
         for (int i = 0; i < cfg._dirLight; ++i) {
           Uniform3f viewDir = this.uniforms.required("dirLights[$i].viewDir") as Uniform3f;
           Uniform3f color = this.uniforms.required("dirLights[$i].color") as Uniform3f;
-          this._dirLight.add(new UniformDirectionalLight._(viewDir, color));
+          this._dirLights.add(new UniformDirectionalLight._(i, viewDir, color));
         }
       }
 
@@ -322,13 +284,30 @@ class MaterialLight extends Shader {
           Uniform1f att0 = this.uniforms.required("pntLights[$i].att0") as Uniform1f;
           Uniform1f att1 = this.uniforms.required("pntLights[$i].att1") as Uniform1f;
           Uniform1f att2 = this.uniforms.required("pntLights[$i].att2") as Uniform1f;
-          this._pntLight.add(new UniformPointLight._(viewPnt, color, att0, att1, att2));
+          this._pntLights.add(new UniformPointLight._(i, viewPnt, color, att0, att1, att2));
         }
       }
 
-      //
-      // TODO: Add more lights
-      //
+      // TODO: Add spot lights
+
+      // TODO: Add textured directional lights
+
+      if (cfg._txtPointLight > 0) {
+        this._txtPntLightCount = this.uniforms.required("txtPntLightCount");
+        Uniform1iv txtArray = this.uniforms.required("txtPntLightsTxtCube[0]") as Uniform1iv;
+        for (int i = 0; i < cfg._txtPointLight; ++i) {
+          Uniform3f viewPnt = this.uniforms.required("txtPntLights[$i].viewPnt") as Uniform3f;
+          UniformMat3 invViewRotMat = this.uniforms.required("txtPntLights[$i].invViewRotMat") as UniformMat3;
+          Uniform3f color = this.uniforms.required("txtPntLights[$i].color") as Uniform3f;
+          Uniform1i nullTxt = this.uniforms.required("txtPntLights[$i].nullTxt") as Uniform1i;
+          Uniform1f att0 = this.uniforms.required("txtPntLights[$i].att0") as Uniform1f;
+          Uniform1f att1 = this.uniforms.required("txtPntLights[$i].att1") as Uniform1f;
+          Uniform1f att2 = this.uniforms.required("txtPntLights[$i].att2") as Uniform1f;
+          this._txtPntLights.add(new UniformTexturedPointLight._(i, viewPnt, invViewRotMat, color, txtArray, nullTxt, att0, att1, att2));
+        }
+      }
+
+      // TODO: Add textured spot lights
     }
   }
 
@@ -507,16 +486,25 @@ class MaterialLight extends Shader {
   set directionalLightCount(int count) => this._dirLightCount.setValue(count);
 
   /// The list of directional lights.
-  List<UniformDirectionalLight> get directionalLight => this._dirLight;
+  List<UniformDirectionalLight> get directionalLights => this._dirLights;
 
   /// The number of currently used point lights.
   int get pointLightCount => this._pntLightCount.getValue();
   set pointLightCount(int count) => this._pntLightCount.setValue(count);
 
   /// The list of point lights.
-  List<UniformPointLight> get pointLight => this._pntLight;
+  List<UniformPointLight> get pointLights => this._pntLights;
 
-  //
-  // TODO: Add more lights
-  //
+  // TODO: Add spot lights
+
+  // TODO: Add textured directional lights
+
+  /// The number of currently used textured point lights.
+  int get texturedPointLightCount => this._txtPntLightCount.getValue();
+  set texturedPointLightCount(int count) => this._txtPntLightCount.setValue(count);
+
+  /// The list of textured point lights.
+  List<UniformTexturedPointLight> get texturedPointLights => this._txtPntLights;
+
+  // TODO: Add textured spot lights
 }

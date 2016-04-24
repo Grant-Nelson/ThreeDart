@@ -254,6 +254,13 @@ class Shape {
   void flip() {
     this._changed.suspend();
     this._faces.flip();
+    for (int i = this._vertices.length-1; i >= 0; --i) {
+      Vertex ver = this._vertices[i];
+      if (ver != null) {
+        if (ver.normal != null) ver.normal = -ver.normal;
+        if (ver.binormal != null) ver.binormal = -ver.binormal;
+      }
+    }
     this._changed.resume();
   }
 

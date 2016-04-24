@@ -45,7 +45,7 @@ void main() {
     ..scene = pass;
 
   Textures.Texture2D diffuse = td.textureLoader.load2DFromFile("../resources/Dirt.png");
-    Textures.Texture2D invDiffuse = td.textureLoader.load2DFromFile("../resources/Grass.png");
+  Textures.Texture2D invDiffuse = td.textureLoader.load2DFromFile("../resources/Grass.png");
   tech
     ..diffuseTexture2D = diffuse
     ..invDiffuseTexture2D = invDiffuse;

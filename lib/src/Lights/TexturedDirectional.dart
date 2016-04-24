@@ -25,6 +25,16 @@ class TexturedDirectional implements Light {
     }
   }
 
+  /// Binds the light to the given [state].
+  void bind(Core.RenderState state){
+    if(this.texture != null) this.texture.bind(state);
+  }
+
+  /// Unbinds the bound the light  from the given [state].
+  void unbind(Core.RenderState state) {
+    if(this.texture != null) this.texture.unbind(state);
+  }
+
   /// The direction the light is pointing.
   Math.Vector3 get direction => this._direction;
   Math.Vector3 _direction;

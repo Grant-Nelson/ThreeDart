@@ -26,6 +26,7 @@ class MaterialLightConfig {
   int _txtPointLight;
   int _txtSpotLight;
   bool _enviromental;
+  bool _invViewMat;
   bool _viewObjMat;
   bool _lights;
   bool _viewPos;
@@ -46,6 +47,7 @@ class MaterialLightConfig {
                       this._txtDirLight + this._txtPointLight + this._txtSpotLight;
     this._enviromental = (this._reflection != MaterialComponentType.None) ||
                          (this._refraction != MaterialComponentType.None);
+    this._invViewMat = this._enviromental;
     this._lights = ((this._ambient != MaterialComponentType.None) ||
                    (this._diffuse != MaterialComponentType.None) ||
                    (this._invDiffuse != MaterialComponentType.None) ||
@@ -134,6 +136,7 @@ class MaterialLightConfig {
   int get txtPointLight => this._txtPointLight;
   int get txtSpotLight => this._txtSpotLight;
   bool get enviromental => this._enviromental;
+  bool get invViewMat => this._invViewMat;
   bool get viewObjMat => this._viewObjMat;
   bool get lights => this._lights;
   bool get viewPos => this._viewPos;
@@ -288,8 +291,9 @@ class MaterialLightConfig {
         break;
     }
 
+    if (this._invViewMat) buf.writeln("uniform mat4 invViewMat;");
+
     if (this._enviromental) {
-      buf.writeln("uniform mat4 invViewMat;");
       buf.writeln("uniform samplerCube envSampler;");
       buf.writeln("uniform int nullEnvTxt;");
 
@@ -375,9 +379,28 @@ class MaterialLightConfig {
         buf.writeln("");
       }
 
-      //
-      // TODO: Add more lights.
-      //
+      // TODO: Add spot lights.
+
+      // TODO: Add textured directional lights.
+
+      if (this._txtPointLight > 0) {
+        buf.writeln("struct TexturedPointLight {");
+        buf.writeln("   vec3 viewPnt;");
+        buf.writeln("   mat3 invViewRotMat;");
+        buf.writeln("   vec3 color;");
+        buf.writeln("   int nullTxt;");
+        buf.writeln("   float att0;");
+        buf.writeln("   float att1;");
+        buf.writeln("   float att2;");
+        buf.writeln("};");
+        buf.writeln("");
+        buf.writeln("uniform int txtPntLightCount;");
+        buf.writeln("uniform TexturedPointLight txtPntLights[${this._txtPointLight}];");
+        buf.writeln("uniform samplerCube txtPntLightsTxtCube[${this._txtPointLight}];");
+        buf.writeln("");
+      }
+
+      // TODO: Add textured spot lights.
 
     }
 
@@ -633,9 +656,56 @@ class MaterialLightConfig {
       if (this._diffuse != MaterialComponentType.None) parts.add("diffuse(norm, litVec)");
       if (this._invDiffuse != MaterialComponentType.None) parts.add("invDiffuse(norm, litVec)");
       if (this._specular != MaterialComponentType.None) parts.add("specular(norm, litVec)");
-      buf.writeln("  return litClr*(" + parts.join(" + ") + ");");
+      buf.writeln("   return litClr*(" + parts.join(" + ") + ");");
       buf.writeln("}");
       buf.writeln("");
+
+      if (this._dirLight > 0) {
+        buf.writeln("vec3 dirLightValue(vec3 norm, DirLight lit)");
+        buf.writeln("{");
+        buf.writeln("   return lightValue(norm, lit.color, lit.viewDir);");
+        buf.writeln("}");
+        buf.writeln("");
+      }
+
+      if (this._pointLight > 0) {
+        buf.writeln("vec3 pointLightValue(vec3 norm, PointLight lit)");
+        buf.writeln("{");
+        buf.writeln("   vec3 viewDir = viewPos - lit.viewPnt;");
+        buf.writeln("   float dist = length(viewDir);");
+        buf.writeln("   float attenuation = 1.0/(lit.att0 + (lit.att1 + lit.att2*dist)*dist);");
+        buf.writeln("   if(attenuation <= 0.005) return vec3(0.0, 0.0, 0.0);");
+        buf.writeln("   return lightValue(norm, lit.color*attenuation, normalize(viewDir));");
+        buf.writeln("}");
+        buf.writeln("");
+      }
+
+      // TODO: Add spot light.
+
+      // TODO: Add textured directional light.
+
+      if (this._txtPointLight > 0) {
+        buf.writeln("vec3 txtPointLightValue(vec3 norm, TexturedPointLight lit, samplerCube txtCube)");
+        buf.writeln("{");
+        buf.writeln("   vec3 viewDir = viewPos - lit.viewPnt;");
+        buf.writeln("   float d = length(viewDir);");
+        buf.writeln("   float attenuation = 1.0/(lit.att0 + (lit.att1 + lit.att2*d)*d);");
+        buf.writeln("   if(attenuation <= 0.005) return vec3(0.0, 0.0, 0.0);");
+        buf.writeln("   vec3 normDir = normalize(viewDir);");
+        buf.writeln("   vec3 color;");
+        buf.writeln("   if(lit.nullTxt > 0) color = lit.color;");
+        buf.writeln("   else");
+        buf.writeln("   {");
+        buf.writeln("      vec3 invNormDir = lit.invViewRotMat*normDir;");
+        buf.writeln("      color = lit.color*textureCube(txtCube, invNormDir).xyz;");
+        buf.writeln("   }");
+        buf.writeln("   return lightValue(norm, attenuation*color, normDir);");
+        buf.writeln("}");
+        buf.writeln("");
+      }
+
+      // TODO: Add textured spot light.
+
     }
 
     buf.writeln("void main()");
@@ -658,8 +728,7 @@ class MaterialLightConfig {
         buf.writeln("   for(int i = 0; i < ${this._dirLight}; ++i)");
         buf.writeln("   {");
         buf.writeln("      if(i >= dirLightCount) break;");
-        buf.writeln("      DirLight lit = dirLights[i];");
-        buf.writeln("      lightAccum += lightValue(norm, lit.color, lit.viewDir);");
+        buf.writeln("      lightAccum += dirLightValue(norm, dirLights[i]);");
         buf.writeln("   }");
         buf.writeln("");
       }
@@ -668,21 +737,25 @@ class MaterialLightConfig {
         buf.writeln("   for(int i = 0; i < ${this._pointLight}; ++i)");
         buf.writeln("   {");
         buf.writeln("      if(i >= pntLightCount) break;");
-        buf.writeln("      PointLight lit = pntLights[i];");
-        buf.writeln("      vec3 viewDir = viewPos - lit.viewPnt;");
-        buf.writeln("      float d = length(viewDir);");
-        buf.writeln("      float attenuation = 1.0/(lit.att0 + (lit.att1 + lit.att2*d)*d);");
-        buf.writeln("      if(attenuation > 0.005)");
-        buf.writeln("      {");
-        buf.writeln("         lightAccum += lightValue(norm, lit.color*attenuation, normalize(viewDir));");
-        buf.writeln("      }");
+        buf.writeln("      lightAccum += pointLightValue(norm, pntLights[i]);");
         buf.writeln("   }");
         buf.writeln("");
       }
 
-      //
-      // TODO: Add new light types.
-      //
+      // TODO: Add spot light.
+
+      // TODO: Add textured directional light.
+
+      if (this._txtPointLight > 0) {
+        buf.writeln("   for(int i = 0; i < ${this._txtPointLight}; ++i)");
+        buf.writeln("   {");
+        buf.writeln("      if(i >= txtPntLightCount) break;");
+        buf.writeln("      lightAccum += txtPointLightValue(norm, txtPntLights[i], txtPntLightsTxtCube[i]);");
+        buf.writeln("   }");
+        buf.writeln("");
+      }
+
+      // TODO: Add textured spot light.
     }
     if (this._emission != MaterialComponentType.None) fragParts.add("emission()");
     if (this._reflection != MaterialComponentType.None) fragParts.add("reflect(refl)");
