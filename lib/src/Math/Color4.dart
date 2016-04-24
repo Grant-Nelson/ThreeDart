@@ -29,7 +29,11 @@ class Color4 {
   factory Color4.black() =>
     new Color4(0.0, 0.0, 0.0, 1.0);
 
-  /// Constructs a new [Color3] instance with full color, white.
+  /// Constructs a new [Color4] insstance with a gray color from the optional [value].
+  factory Color4.gray([double value = 0.5]) =>
+    new Color4(value, value, value, 1.0);
+
+  /// Constructs a new [Color4] instance with full color, white.
   factory Color4.white() =>
     new Color4(1.0, 1.0, 1.0, 1.0);
 

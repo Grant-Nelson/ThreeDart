@@ -6,7 +6,7 @@ class Point implements Light {
   /// Creates a new point light data.
   Point({
       Movers.Mover mover: null,
-      Math.Color4 color: null,
+      Math.Color3 color: null,
       double attenuation0: null,
       double attenuation1: null,
       double attenuation2: null}) {
@@ -39,10 +39,10 @@ class Point implements Light {
   Movers.Mover _mover;
 
   /// The color of the light.
-  Math.Color4 get color => this._color;
-  set color(Math.Color4 color) =>
-    this._color = (color == null)? new Math.Color4.white(): color;
-  Math.Color4 _color;
+  Math.Color3 get color => this._color;
+  set color(Math.Color3 color) =>
+    this._color = (color == null)? new Math.Color3.white(): color;
+  Math.Color3 _color;
 
   /// The constant attenuation factor of the light.
   double get attenuation0 => this._attenuation0;

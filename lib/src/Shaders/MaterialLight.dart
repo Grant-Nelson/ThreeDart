@@ -6,7 +6,7 @@ class UniformDirectionalLight {
   /// Creates the directional light uniform.
   UniformDirectionalLight._(Uniform3f this._viewDir, Uniform3f this._color);
 
-  /// The directional light's direction transpilied by the view matrix.
+  /// The directional light's direction transformed by the view matrix.
   Math.Vector3 get viewDir => this._viewDir.getVector3();
   set viewDir(Math.Vector3 vec) => this._viewDir.setVector3(vec);
   Uniform3f _viewDir;
@@ -15,6 +15,39 @@ class UniformDirectionalLight {
   Math.Color3 get color => this._color.getColor3();
   set color(Math.Color3 clr) => this._color.setColor3(clr);
   Uniform3f _color;
+}
+
+/// Point light uniform.
+class UniformPointLight {
+
+  /// Creates the point light uniform.
+  UniformPointLight._(Uniform3f this._viewPnt, Uniform3f this._color,
+    Uniform1f this._att0, Uniform1f this._att1, Uniform1f this._att2);
+
+  /// The point light's location transformed by the view matrix.
+  Math.Point3 get viewPoint => this._viewPnt.getPoint3();
+  set viewPoint(Math.Point3 pnt) => this._viewPnt.setPoint3(pnt);
+  Uniform3f _viewPnt;
+
+  /// The point light color.
+  Math.Color3 get color => this._color.getColor3();
+  set color(Math.Color3 clr) => this._color.setColor3(clr);
+  Uniform3f _color;
+
+  /// The point light constant attenuation.
+   double get attenuation0 => this._att0.getValue();
+  set attenuation0(double att) => this._att0.setValue(att);
+  Uniform1f _att0;
+
+  /// The point light linear attenuation.
+  double get attenuation1 => this._att1.getValue();
+  set attenuation1(double att) => this._att1.setValue(att);
+  Uniform1f _att1;
+
+  /// The point light quatradic attenuation.
+  double get attenuation2 => this._att2.getValue();
+  set attenuation2(double att) => this._att2.setValue(att);
+  Uniform1f _att2;
 }
 
 /// A shader for rendering solid color light.
@@ -85,6 +118,9 @@ class MaterialLight extends Shader {
   Uniform1i _dirLightCount;
   List<UniformDirectionalLight> _dirLight;
 
+  Uniform1i _pntLightCount;
+  List<UniformPointLight> _pntLight;
+
   /// Checks for the shader in the shader cache in the given [state],
   /// if it is not found then this shader is compiled and added
   /// to the shader cache before being returned.
@@ -103,9 +139,9 @@ class MaterialLight extends Shader {
     String vertexSource = this._cfg.createVertexSource();
     String fragmentSource = this._cfg.createFragmentSource();
 
-    print(this._cfg.toString());
-    print(numberLines(vertexSource));
-    print(numberLines(fragmentSource));
+    // print(this._cfg.toString());
+    // print(numberLines(vertexSource));
+    // print(numberLines(fragmentSource));
 
     this.initialize(vertexSource, fragmentSource);
     this._posAttr     = this.attributes["posAttr"];
@@ -267,13 +303,32 @@ class MaterialLight extends Shader {
     }
 
     this._dirLight = new List<UniformDirectionalLight>();
+    this._pntLight = new List<UniformPointLight>();
     if (cfg.lights) {
-      this._dirLightCount = this.uniforms.required("dirLightCount");
-      for (int i = 0; i < cfg._dirLight; ++i) {
-        Uniform3f viewDir = this.uniforms.required("dirLights[$i].viewDir") as Uniform3f;
-        Uniform3f color = this.uniforms.required("dirLights[$i].color") as Uniform3f;
-        this._dirLight.add(new UniformDirectionalLight._(viewDir, color));
+      if (cfg._dirLight > 0) {
+        this._dirLightCount = this.uniforms.required("dirLightCount");
+        for (int i = 0; i < cfg._dirLight; ++i) {
+          Uniform3f viewDir = this.uniforms.required("dirLights[$i].viewDir") as Uniform3f;
+          Uniform3f color = this.uniforms.required("dirLights[$i].color") as Uniform3f;
+          this._dirLight.add(new UniformDirectionalLight._(viewDir, color));
+        }
       }
+
+      if (cfg._pointLight > 0) {
+        this._pntLightCount = this.uniforms.required("pntLightCount");
+        for (int i = 0; i < cfg._pointLight; ++i) {
+          Uniform3f viewPnt = this.uniforms.required("pntLights[$i].viewPnt") as Uniform3f;
+          Uniform3f color = this.uniforms.required("pntLights[$i].color") as Uniform3f;
+          Uniform1f att0 = this.uniforms.required("pntLights[$i].att0") as Uniform1f;
+          Uniform1f att1 = this.uniforms.required("pntLights[$i].att1") as Uniform1f;
+          Uniform1f att2 = this.uniforms.required("pntLights[$i].att2") as Uniform1f;
+          this._pntLight.add(new UniformPointLight._(viewPnt, color, att0, att1, att2));
+        }
+      }
+
+      //
+      // TODO: Add more lights
+      //
     }
   }
 
@@ -453,4 +508,15 @@ class MaterialLight extends Shader {
 
   /// The list of directional lights.
   List<UniformDirectionalLight> get directionalLight => this._dirLight;
+
+  /// The number of currently used point lights.
+  int get pointLightCount => this._pntLightCount.getValue();
+  set pointLightCount(int count) => this._pntLightCount.setValue(count);
+
+  /// The list of point lights.
+  List<UniformPointLight> get pointLight => this._pntLight;
+
+  //
+  // TODO: Add more lights
+  //
 }

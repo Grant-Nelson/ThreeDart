@@ -331,7 +331,7 @@ void addMatrix3Tests(TestManager tests) {
     _transVec2Matrix3(args, mat,   1.0,  1.0,    3.0,  9.0);
   });
 
-// TODO: Quaternion/matrix3 tests.
+// TODO: A unit-test for Quaternion/matrix3 tests.
 
 }
 

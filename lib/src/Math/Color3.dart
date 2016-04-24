@@ -25,6 +25,10 @@ class Color3 {
   factory Color3.black() =>
     new Color3(0.0, 0.0, 0.0);
 
+  /// Constructs a new [Color3] insstance with a gray color from the optional [value].
+  factory Color3.gray([double value = 0.5]) =>
+    new Color3(value, value, value);
+
   /// Constructs a new [Color3] instance with full color, white.
   factory Color3.white() =>
     new Color3(1.0, 1.0, 1.0);

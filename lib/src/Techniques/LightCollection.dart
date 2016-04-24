@@ -6,12 +6,20 @@ class LightCollection {
 
   List<Lights.Light> _allLights;
   List<Lights.Directional> _dirLights;
-  // TODO: Add more lights.
+  List<Lights.Point> _pntLights;
+  List<Lights.Spot> _spotLights;
+  List<Lights.TexturedDirectional> _txtDirLights;
+  List<Lights.TexturedPoint> _txtPntLights;
+  List<Lights.TexturedSpot> _txtSpotLights;
 
   LightCollection._(MaterialLight this._tech) {
     this._allLights = new List<Lights.Light>();
     this._dirLights = new List<Lights.Directional>();
-    // TODO: Add more lights.
+    this._pntLights = new List<Lights.Point>();
+    this._spotLights = new List<Lights.Spot>();
+    this._txtDirLights = new List<Lights.TexturedDirectional>();
+    this._txtPntLights = new List<Lights.TexturedPoint>();
+    this._txtSpotLights = new List<Lights.TexturedSpot>();
   }
 
   /// The parent technique this collection belongs to.
@@ -22,7 +30,11 @@ class LightCollection {
     if (light == null) return;
     this._allLights.add(light);
     if (light is Lights.Directional) this._dirLights.add(light);
-    // TODO: Add more lights.
+    if (light is Lights.Point) this._pntLights.add(light);
+    if (light is Lights.Spot) this._spotLights.add(light);
+    if (light is Lights.TexturedDirectional) this._txtDirLights.add(light);
+    if (light is Lights.TexturedPoint) this._txtPntLights.add(light);
+    if (light is Lights.TexturedSpot) this._txtSpotLights.add(light);
     this._tech._shader = null;
   }
 
@@ -66,6 +78,10 @@ class LightCollection {
   /// Removes the light from the specific lists of lights.
   void _removeOther(Lights.Light light) {
     if (light is Lights.Directional) this._dirLights.remove(light);
-    // TODO: Add more lights.
+    if (light is Lights.Point) this._pntLights.remove(light);
+    if (light is Lights.Spot) this._spotLights.remove(light);
+    if (light is Lights.TexturedDirectional) this._txtDirLights.remove(light);
+    if (light is Lights.TexturedPoint) this._txtPntLights.remove(light);
+    if (light is Lights.TexturedSpot) this._txtSpotLights.remove(light);
   }
 }

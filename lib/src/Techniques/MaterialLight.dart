@@ -627,14 +627,15 @@ class MaterialLight extends Technique {
   /// Creates the configuration for this shader.
   Shaders.MaterialLightConfig _config() {
     int dirLight = this._lightLimit(this._lights._dirLights.length);
-    int pointLight = 0;
-    int spotLight = 0;
-    int txtPointLight = 0;
-    int txtSpotLight = 0;
+    int pointLight = this._lightLimit(this._lights._pntLights.length);
+    int spotLight = this._lightLimit(this._lights._spotLights.length);
+    int txtDirLight = this._lightLimit(this._lights._txtDirLights.length);
+    int txtPointLight = this._lightLimit(this._lights._txtPntLights.length);
+    int txtSpotLight = this._lightLimit(this._lights._txtSpotLights.length);
     return new Shaders.MaterialLightConfig(this._emissionType, this._ambientType,
       this._diffuseType, this._invDiffuseType, this._specularType, this._bumpyType,
       this._reflectionType, this._refractionType, this._alphaType,
-      dirLight, pointLight, spotLight, txtPointLight, txtSpotLight);
+      dirLight, pointLight, spotLight, txtDirLight, txtPointLight, txtSpotLight);
   }
 
   /// Checks if the texture is in the list and if not, sets it's index and adds it to the list.
@@ -692,24 +693,24 @@ class MaterialLight extends Technique {
     if (cfg.viewObjMat) this._shader.viewObjectMatrix = state.viewObjectMatrix;
     this._shader.projectViewObjectMatrix = state.projectionViewObjectMatrix;
 
-    if (cfg.lights) {
-      switch (cfg.emission) {
-        case Shaders.MaterialComponentType.None: break;
-        case Shaders.MaterialComponentType.Solid:
-          this._shader.emissionColor = this._emissionClr;
-          break;
-        case Shaders.MaterialComponentType.Texture2D:
-          this._addToTextureList(textures, this._emission2D);
-          this._shader.emissionTexture2D = this._emission2D;
-          this._shader.emissionColor = this._emissionClr;
-          break;
-        case Shaders.MaterialComponentType.TextureCube:
-          this._addToTextureList(textures, this._emissionCube);
-          this._shader.emissionTextureCube = this._emissionCube;
-          this._shader.emissionColor = this._emissionClr;
-          break;
-      }
+    switch (cfg.emission) {
+      case Shaders.MaterialComponentType.None: break;
+      case Shaders.MaterialComponentType.Solid:
+        this._shader.emissionColor = this._emissionClr;
+        break;
+      case Shaders.MaterialComponentType.Texture2D:
+        this._addToTextureList(textures, this._emission2D);
+        this._shader.emissionTexture2D = this._emission2D;
+        this._shader.emissionColor = this._emissionClr;
+        break;
+      case Shaders.MaterialComponentType.TextureCube:
+        this._addToTextureList(textures, this._emissionCube);
+        this._shader.emissionTextureCube = this._emissionCube;
+        this._shader.emissionColor = this._emissionClr;
+        break;
+    }
 
+    if (cfg.lights) {
       switch (cfg.ambient) {
         case Shaders.MaterialComponentType.None: break;
         case Shaders.MaterialComponentType.Solid:
@@ -793,7 +794,21 @@ class MaterialLight extends Technique {
         }
       }
 
-      // TODO: Add other directional lights.
+      if (cfg.pointLight > 0) {
+        int count = this._lights._pntLights.length;
+        this._shader.pointLightCount = count;
+        for (int i = 0; i < count; ++i)  {
+          Lights.Point light = this._lights._pntLights[i];
+          Shaders.UniformPointLight uniform = this._shader.pointLight[i];
+          uniform.viewPoint = viewMat.transPnt3(light.position);
+          uniform.color = light.color;
+          uniform.attenuation0 = light.attenuation0;
+          uniform.attenuation1 = light.attenuation1;
+          uniform.attenuation2 = light.attenuation2;
+        }
+      }
+
+      // TODO: Add other lights.
     }
 
     switch (cfg.bumpy) {
@@ -892,5 +907,11 @@ class MaterialLight extends Technique {
       textures[i].unbind(state);
     }
     this._shader.unbind(state);
+  }
+
+  /// The string for the technique
+  String toString() {
+    if (this._shader != null) return this._shader.name;
+    else return this._config().name;
   }
 }

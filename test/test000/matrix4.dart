@@ -450,8 +450,8 @@ void addMatrix4Tests(TestManager tests) {
     _transVec2Matrix4(args, mat,   1.0,  1.0,    3.0, 11.0);
   });
 
-  // TODO: Check custom rotation on vector.
-  // TODO: Perspective, ortho, lookTowards, and lookAtTarget.
+  // TODO: A unit-tests for Check custom rotation on vector.
+  // TODO: A unit-tests for Perspective, ortho, lookTowards, and lookAtTarget.
 
 }
 

@@ -28,13 +28,14 @@ class Rotater extends Mover {
   Math.Matrix4 _mat;
 
   /// Creates a new rotater.
-  Rotater() {
-    this._yaw = 0.0;
-    this._pitch = 0.0;
-    this._roll = 0.0;
-    this._deltaYaw = 0.1;
-    this._deltaPitch = 0.21;
-    this._deltaRoll = 0.32;
+  Rotater({double yaw: 0.0, double pitch: 0.0, double roll: 0.0,
+    double deltaYaw: 0.1, double deltaPitch: 0.21, double deltaRoll: 0.32 }) {
+    this._yaw = yaw;
+    this._pitch = pitch;
+    this._roll = roll;
+    this._deltaYaw = deltaYaw;
+    this._deltaPitch = deltaPitch;
+    this._deltaRoll = deltaRoll;
     this._frameNum = 0;
     this._mat = null;
   }
