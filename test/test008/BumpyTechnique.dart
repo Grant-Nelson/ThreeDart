@@ -21,6 +21,11 @@ class BumpyTechnique extends Techniques.Technique {
   double get offsetScalar => this._offsetScalar;
   set offsetScalar(double scalar) => this._offsetScalar = scalar;
 
+  /// Updates this technique for the given state.
+  void update(ThreeDart.RenderState state) {
+    // Do Nothing
+  }
+
   /// Renderes the given [obj] with the current texture for the given [state].
   void render(ThreeDart.RenderState state, ThreeDart.Entity obj) {
     if (this._shader == null)

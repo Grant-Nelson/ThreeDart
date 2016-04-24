@@ -29,6 +29,11 @@ class Skybox extends Technique {
   set boxColor(Math.Color3 color) =>
     this._boxClr = (color == null)? new Math.Color3.white(): color;
 
+  /// Updates this technique for the given state.
+  void update(Core.RenderState state) {
+    // Do Nothing
+  }
+
   /// Renders this technique for the given state and entity.
   void render(Core.RenderState state, Core.Entity obj) {
     if (this._shader == null)

@@ -32,8 +32,8 @@ void main() {
     ..shape = Shapes.cube();
 
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
-    ..light = new Lights.Directional(
-          direction: new Math.Vector3(-1.0, -1.0, -1.0));
+    ..lights.add(new Lights.Directional(
+          mover: new Movers.Constant(new Math.Matrix4.vectorTowards(-1.0, -1.0, -1.0))));
 
   Movers.Group mover = new Movers.Group()
     ..add(rotater)

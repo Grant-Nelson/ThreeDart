@@ -18,6 +18,11 @@ class Debugger extends Technique {
   /// The list of resulting points from a render.
   List<Math.Point3> get results => this._results;
 
+  /// Updates this technique for the given state.
+  void update(Core.RenderState state) {
+    // Do Nothing
+  }
+
   /// Renders this technique for the given state and entity.
   void render(Core.RenderState state, Core.Entity obj) {
     Math.Matrix4 projMat = state.projection.matrix;

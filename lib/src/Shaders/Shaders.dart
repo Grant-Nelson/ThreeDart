@@ -22,3 +22,12 @@ part 'Inspection.dart';
 part 'MaterialLight.dart';
 part 'MaterialLightConfig.dart';
 part 'Skybox.dart';
+
+/// Inserts a number for each line in the given [text].
+String numberLines(String text) {
+  List<String> lines = text.split("\n");
+  for (int i = 0; i < lines.length; i++) {
+    lines[i] = "${i+1}  ${lines[i]}";
+  }
+  return lines.join("\n");
+}

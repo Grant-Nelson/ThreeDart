@@ -12,7 +12,7 @@ class Perspective implements Camara {
 
   /// Creates a new perspective camara.
   Perspective({Movers.Mover mover: null,
-               double fov:  PI/3.0,
+               double fov:  math.PI/3.0,
                double near: 0.1,
                double far:  2000.0}) {
     this._mover = mover;

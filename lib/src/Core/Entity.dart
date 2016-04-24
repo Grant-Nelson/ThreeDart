@@ -64,7 +64,7 @@ class Entity implements Movers.Movable {
     this._shape = shape;
     this._cache = null;
     this._tech = tech;
-    this._mover = null;
+    this._mover = mover;
     this._matrix = null;
     this._children = new EntityCollection._(this);
     this._changed = null;
@@ -166,6 +166,9 @@ class Entity implements Movers.Movable {
       this.onMatrixChanged(oldMat, this._matrix);
     }
 
+    // Updated the technique.
+    if (this._tech != null) this._tech.update(state);
+
     // Update all children.
     for (Entity child in this._children._children) {
       child.update(state);
@@ -175,7 +178,7 @@ class Entity implements Movers.Movable {
   /// Renders the Entity with the given [RenderState].
   void render(RenderState state) {
     // Push state onto the render state.
-    state.object.push(this._matrix);
+    state.object.pushMul(this._matrix);
     state.pushTechnique(this._tech);
 
     // Render this entity.

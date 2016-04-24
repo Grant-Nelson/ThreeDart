@@ -17,6 +17,7 @@ import '../Core/Core.dart' as Core;
 part 'Debugger.dart';
 part 'Depth.dart';
 part 'Inspection.dart';
+part 'LightCollection.dart';
 part 'MaterialLight.dart';
 part 'Skybox.dart';
 part 'Technique.dart';

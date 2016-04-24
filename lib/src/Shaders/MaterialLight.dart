@@ -1,5 +1,22 @@
 part of ThreeDart.Shaders;
 
+/// Directional light uniform.
+class UniformDirectionalLight {
+
+  /// Creates the directional light uniform.
+  UniformDirectionalLight._(Uniform3f this._viewDir, Uniform3f this._color);
+
+  /// The directional light's direction transpilied by the view matrix.
+  Math.Vector3 get viewDir => this._viewDir.getVector3();
+  set viewDir(Math.Vector3 vec) => this._viewDir.setVector3(vec);
+  Uniform3f _viewDir;
+
+  /// The directional light color.
+  Math.Color3 get color => this._color.getColor3();
+  set color(Math.Color3 clr) => this._color.setColor3(clr);
+  Uniform3f _color;
+}
+
 /// A shader for rendering solid color light.
 class MaterialLight extends Shader {
 
@@ -15,9 +32,6 @@ class MaterialLight extends Shader {
   UniformMat4 _viewMat;
   UniformMat4 _projViewObjMat;
   UniformMat4 _invViewMat;
-
-  Uniform3f _lightVec;
-  Uniform3f _lightClr;
 
   Uniform3f _emissionClr;
   UniformSampler2D _emission2D;
@@ -68,6 +82,9 @@ class MaterialLight extends Shader {
   UniformSamplerCube _alphaCube;
   Uniform1i _nullAlphaTxt;
 
+  Uniform1i _dirLightCount;
+  List<UniformDirectionalLight> _dirLight;
+
   /// Checks for the shader in the shader cache in the given [state],
   /// if it is not found then this shader is compiled and added
   /// to the shader cache before being returned.
@@ -86,9 +103,9 @@ class MaterialLight extends Shader {
     String vertexSource = this._cfg.createVertexSource();
     String fragmentSource = this._cfg.createFragmentSource();
 
-    // print(this._cfg.toString());
-    // print(vertexSource);
-    // print(fragmentSource);
+    print(this._cfg.toString());
+    print(numberLines(vertexSource));
+    print(numberLines(fragmentSource));
 
     this.initialize(vertexSource, fragmentSource);
     this._posAttr     = this.attributes["posAttr"];
@@ -98,14 +115,8 @@ class MaterialLight extends Shader {
     this._txtCubeAttr = this.attributes["txtCubeAttr"];
 
     if (cfg._viewObjMat)  this._viewObjMat = this.uniforms.required("viewObjMat") as UniformMat4;
-    if (cfg._viewMat)     this._viewMat    = this.uniforms.required("viewMat") as UniformMat4;
     if (cfg.enviromental) this._invViewMat = this.uniforms.required("invViewMat") as UniformMat4;
     this._projViewObjMat = this.uniforms.required("projViewObjMat") as UniformMat4;
-
-    if (cfg.lights) {
-      this._lightVec = this.uniforms.required("lightVec") as Uniform3f;
-      this._lightClr = this.uniforms.required("lightClr") as Uniform3f;
-    }
 
     if (cfg.emission != MaterialComponentType.None) {
       this._emissionClr = this.uniforms.required("emissionClr") as Uniform3f;
@@ -254,6 +265,16 @@ class MaterialLight extends Shader {
           break;
       }
     }
+
+    this._dirLight = new List<UniformDirectionalLight>();
+    if (cfg.lights) {
+      this._dirLightCount = this.uniforms.required("dirLightCount");
+      for (int i = 0; i < cfg._dirLight; ++i) {
+        Uniform3f viewDir = this.uniforms.required("dirLights[$i].viewDir") as Uniform3f;
+        Uniform3f color = this.uniforms.required("dirLights[$i].color") as Uniform3f;
+        this._dirLight.add(new UniformDirectionalLight._(viewDir, color));
+      }
+    }
   }
 
   /// Sets the tcxture 2D and null texture indicator for the shader.
@@ -309,20 +330,6 @@ class MaterialLight extends Shader {
   /// The inverse view matrix.
   Math.Matrix4 get inverseViewMatrix => this._invViewMat.getMatrix4();
   set inverseViewMatrix(Math.Matrix4 mat) => this._invViewMat.setMatrix4(mat);
-
-  /// The direction the light is pointing.
-  Math.Vector3 get lightVector => this._lightVec.getVector3();
-  set lightVector(Math.Vector3 vec) => this._lightVec.setVector3(vec);
-
-  /// The color of the light.
-  Math.Color3 get lightColor => this._lightClr.getColor3();
-  set lightColor(Math.Color3 clr) => this._lightClr.setColor3(clr);
-
-  /// Sets the directional light's vector and color.
-  void setLight(Lights.Directional light) {
-    this.lightVector = light.direction;
-    this.lightColor = light.color;
-  }
 
   /// The emission color scalar of the object.
   Math.Color3 get emissionColor => this._emissionClr.getColor3();
@@ -439,4 +446,11 @@ class MaterialLight extends Shader {
   /// The alpha texture cube of the object.
   set alphaTextureCube(Textures.TextureCube txt) =>
     this._setTextureCube(this._alphaCube, this._nullAlphaTxt, txt);
+
+  /// The number of currently used directional lights.
+  int get directionalLightCount => this._dirLightCount.getValue();
+  set directionalLightCount(int count) => this._dirLightCount.setValue(count);
+
+  /// The list of directional lights.
+  List<UniformDirectionalLight> get directionalLight => this._dirLight;
 }

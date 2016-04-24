@@ -122,6 +122,11 @@ class Inspection extends Technique {
   set vectorScale(double scale) => this._vectorScale = scale;
   double get vectorScale => this._vectorScale;
 
+  /// Updates this technique for the given state.
+  void update(Core.RenderState state) {
+    // Do Nothing
+  }
+
   /// Renders the current [obj] with the current [state].
   void render(Core.RenderState state, Core.Entity obj) {
     if (this._shader == null)

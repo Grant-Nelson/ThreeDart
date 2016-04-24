@@ -33,6 +33,11 @@ class Depth extends Technique {
   double get fogStop => this._fogStop;
   set fogStop(double stop) => this._fogStop = stop;
 
+  /// Updates this technique for the given state.
+  void update(Core.RenderState state) {
+    // Do Nothing
+  }
+
   /// Renders this technique for the given state and entity.
   void render(Core.RenderState state, Core.Entity obj) {
     if (this._shader == null)

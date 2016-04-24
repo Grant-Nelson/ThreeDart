@@ -3,7 +3,6 @@ part of ThreeDart.Techniques;
 /// The material/light rendering technique.
 class MaterialLight extends Technique {
   Shaders.MaterialLight _shader;
-  Lights.Light _light;
 
   Shaders.MaterialComponentType _emissionType;
   Math.Color3 _emissionClr;
@@ -52,10 +51,11 @@ class MaterialLight extends Technique {
   Textures.Texture2D _alpha2D;
   Textures.TextureCube _alphaCube;
 
+  LightCollection _lights;
+
   /// Creates a new material/light technique.
-  MaterialLight({Lights.Light light: null}) {
+  MaterialLight() {
     this._shader = null;
-    this._light = light;
     this.clearEmission();
     this.clearAmbient();
     this.clearDiffuse();
@@ -65,14 +65,11 @@ class MaterialLight extends Technique {
     this.clearReflection();
     this.clearRefraction();
     this.clearAlpha();
+    this._lights = new LightCollection._(this);
   }
 
-  /// The light to render with.
-  Lights.Light get light => this._light;
-  set light(Lights.Light light) {
-    this._light = light;
-    this._shader = null;
-  }
+  /// The lights to render with.
+  LightCollection get lights => this._lights;
 
   /// Removes any emission from the material.
   void clearEmission() {
@@ -494,7 +491,7 @@ class MaterialLight extends Technique {
       this._shader = null;
       this._refractionType = Shaders.MaterialComponentType.None;
     }
-    this._shininess = 100.0;
+    this._refraction = 1.0;
     this._refractClr = new Math.Color3.black();
     this._refract2D = null;
     this._refractCube = null;
@@ -517,7 +514,7 @@ class MaterialLight extends Technique {
   set refractionColor(Math.Color3 clr) {
     if (clr == null) this.clearRefraction();
     else if (this._refractionType == Shaders.MaterialComponentType.None) {
-      this._shininess = 100.0;
+      this._refraction = 1.0;
       this._refractionType = Shaders.MaterialComponentType.Solid;
       this._shader = null;
     }
@@ -534,7 +531,7 @@ class MaterialLight extends Technique {
       }
     } else if (this._refractionType != Shaders.MaterialComponentType.Texture2D) {
       if (this._refractionType == Shaders.MaterialComponentType.None) {
-        this._shininess = 100.0;
+        this._refraction = 1.0;
         this._refractClr = new Math.Color3.white();
       }
       this._refractionType = Shaders.MaterialComponentType.Texture2D;
@@ -554,7 +551,7 @@ class MaterialLight extends Technique {
       }
     } else if (this._refractionType != Shaders.MaterialComponentType.TextureCube) {
       if (this._refractionType == Shaders.MaterialComponentType.None) {
-        this._shininess = 100.0;
+        this._refraction = 100.0;
         this._refractClr = new Math.Color3.white();
       }
       this._refractionType = Shaders.MaterialComponentType.TextureCube;
@@ -622,11 +619,22 @@ class MaterialLight extends Technique {
     this._alphaCube = txt;
   }
 
+  /// Calculates a limit for the lights for the shader from the current number of lights.
+  int _lightLimit(int count) {
+    return ((count + 3) ~/ 4) * 4;
+  }
+
   /// Creates the configuration for this shader.
   Shaders.MaterialLightConfig _config() {
+    int dirLight = this._lightLimit(this._lights._dirLights.length);
+    int pointLight = 0;
+    int spotLight = 0;
+    int txtPointLight = 0;
+    int txtSpotLight = 0;
     return new Shaders.MaterialLightConfig(this._emissionType, this._ambientType,
       this._diffuseType, this._invDiffuseType, this._specularType, this._bumpyType,
-      this._reflectionType, this._refractionType, this._alphaType);
+      this._reflectionType, this._refractionType, this._alphaType,
+      dirLight, pointLight, spotLight, txtPointLight, txtSpotLight);
   }
 
   /// Checks if the texture is in the list and if not, sets it's index and adds it to the list.
@@ -637,12 +645,15 @@ class MaterialLight extends Technique {
     }
   }
 
+  /// Updates the light and material technique.
+  void update(Core.RenderState state) {
+    for (Lights.Light light in this._lights._allLights) {
+      light.update(state);
+    }
+  }
+
   /// Renderes the given [obj] with the current light and material for the given [state].
   void render(Core.RenderState state, Core.Entity obj) {
-    if (this._light == null) return;
-    if (this._light is! Lights.Directional)
-      throw new Exception("Unsupported light type: $_light");
-
     if (this._shader == null) {
       this._shader = new Shaders.MaterialLight.cached(this._config(), state);
       obj.clearCache();
@@ -679,100 +690,110 @@ class MaterialLight extends Technique {
     this._shader.bind(state);
 
     if (cfg.viewObjMat) this._shader.viewObjectMatrix = state.viewObjectMatrix;
-    if (cfg.viewMat)    this._shader.viewMatrix = state.view.matrix;
     this._shader.projectViewObjectMatrix = state.projectionViewObjectMatrix;
 
     if (cfg.lights) {
-      this._shader.lightColor = (this._light as Lights.Directional).color;
-      this._shader.lightVector = (this._light as Lights.Directional).direction;
-    }
+      switch (cfg.emission) {
+        case Shaders.MaterialComponentType.None: break;
+        case Shaders.MaterialComponentType.Solid:
+          this._shader.emissionColor = this._emissionClr;
+          break;
+        case Shaders.MaterialComponentType.Texture2D:
+          this._addToTextureList(textures, this._emission2D);
+          this._shader.emissionTexture2D = this._emission2D;
+          this._shader.emissionColor = this._emissionClr;
+          break;
+        case Shaders.MaterialComponentType.TextureCube:
+          this._addToTextureList(textures, this._emissionCube);
+          this._shader.emissionTextureCube = this._emissionCube;
+          this._shader.emissionColor = this._emissionClr;
+          break;
+      }
 
-    switch (cfg.emission) {
-      case Shaders.MaterialComponentType.None: break;
-      case Shaders.MaterialComponentType.Solid:
-        this._shader.emissionColor = this._emissionClr;
-        break;
-      case Shaders.MaterialComponentType.Texture2D:
-        this._addToTextureList(textures, this._emission2D);
-        this._shader.emissionTexture2D = this._emission2D;
-        this._shader.emissionColor = this._emissionClr;
-        break;
-      case Shaders.MaterialComponentType.TextureCube:
-        this._addToTextureList(textures, this._emissionCube);
-        this._shader.emissionTextureCube = this._emissionCube;
-        this._shader.emissionColor = this._emissionClr;
-        break;
-    }
+      switch (cfg.ambient) {
+        case Shaders.MaterialComponentType.None: break;
+        case Shaders.MaterialComponentType.Solid:
+          this._shader.ambientColor = this._ambientClr;
+          break;
+        case Shaders.MaterialComponentType.Texture2D:
+          this._addToTextureList(textures, this._ambient2D);
+          this._shader.ambientTexture2D = this._ambient2D;
+          this._shader.ambientColor = this._ambientClr;
+          break;
+        case Shaders.MaterialComponentType.TextureCube:
+          this._addToTextureList(textures, this._ambientCube);
+          this._shader.ambientTextureCube = this._ambientCube;
+          this._shader.ambientColor = this._ambientClr;
+          break;
+      }
 
-    switch (cfg.ambient) {
-      case Shaders.MaterialComponentType.None: break;
-      case Shaders.MaterialComponentType.Solid:
-        this._shader.ambientColor = this._ambientClr;
-        break;
-      case Shaders.MaterialComponentType.Texture2D:
-        this._addToTextureList(textures, this._ambient2D);
-        this._shader.ambientTexture2D = this._ambient2D;
-        this._shader.ambientColor = this._ambientClr;
-        break;
-      case Shaders.MaterialComponentType.TextureCube:
-        this._addToTextureList(textures, this._ambientCube);
-        this._shader.ambientTextureCube = this._ambientCube;
-        this._shader.ambientColor = this._ambientClr;
-        break;
-    }
+      switch (cfg.diffuse) {
+        case Shaders.MaterialComponentType.None: break;
+        case Shaders.MaterialComponentType.Solid:
+          this._shader.diffuseColor = this._diffuseClr;
+          break;
+        case Shaders.MaterialComponentType.Texture2D:
+          this._addToTextureList(textures, this._diffuse2D);
+          this._shader.diffuseTexture2D = this._diffuse2D;
+          this._shader.diffuseColor = this._diffuseClr;
+          break;
+        case Shaders.MaterialComponentType.TextureCube:
+          this._addToTextureList(textures, this._diffuseCube);
+          this._shader.diffuseTextureCube = this._diffuseCube;
+          this._shader.diffuseColor = this._diffuseClr;
+          break;
+      }
 
-    switch (cfg.diffuse) {
-      case Shaders.MaterialComponentType.None: break;
-      case Shaders.MaterialComponentType.Solid:
-        this._shader.diffuseColor = this._diffuseClr;
-        break;
-      case Shaders.MaterialComponentType.Texture2D:
-        this._addToTextureList(textures, this._diffuse2D);
-        this._shader.diffuseTexture2D = this._diffuse2D;
-        this._shader.diffuseColor = this._diffuseClr;
-        break;
-      case Shaders.MaterialComponentType.TextureCube:
-        this._addToTextureList(textures, this._diffuseCube);
-        this._shader.diffuseTextureCube = this._diffuseCube;
-        this._shader.diffuseColor = this._diffuseClr;
-        break;
-    }
+      switch (cfg.invDiffuse) {
+        case Shaders.MaterialComponentType.None: break;
+        case Shaders.MaterialComponentType.Solid:
+          this._shader.invDiffuseColor = this._invDiffuseClr;
+          break;
+        case Shaders.MaterialComponentType.Texture2D:
+          this._addToTextureList(textures, this._invDiffuse2D);
+          this._shader.invDiffuseTexture2D = this._invDiffuse2D;
+          this._shader.invDiffuseColor = this._invDiffuseClr;
+          break;
+        case Shaders.MaterialComponentType.TextureCube:
+          this._addToTextureList(textures, this._invDiffuseCube);
+          this._shader.invDiffuseTextureCube = this._invDiffuseCube;
+          this._shader.invDiffuseColor = this._invDiffuseClr;
+          break;
+      }
 
-    switch (cfg.invDiffuse) {
-      case Shaders.MaterialComponentType.None: break;
-      case Shaders.MaterialComponentType.Solid:
-        this._shader.invDiffuseColor = this._invDiffuseClr;
-        break;
-      case Shaders.MaterialComponentType.Texture2D:
-        this._addToTextureList(textures, this._invDiffuse2D);
-        this._shader.invDiffuseTexture2D = this._invDiffuse2D;
-        this._shader.invDiffuseColor = this._invDiffuseClr;
-        break;
-      case Shaders.MaterialComponentType.TextureCube:
-        this._addToTextureList(textures, this._invDiffuseCube);
-        this._shader.invDiffuseTextureCube = this._invDiffuseCube;
-        this._shader.invDiffuseColor = this._invDiffuseClr;
-        break;
-    }
+      switch (cfg.specular) {
+        case Shaders.MaterialComponentType.None: break;
+        case Shaders.MaterialComponentType.Solid:
+          this._shader.specularColor = this._specularClr;
+          this._shader.shininess = this._shininess;
+          break;
+        case Shaders.MaterialComponentType.Texture2D:
+          this._addToTextureList(textures, this._specular2D);
+          this._shader.specularTexture2D = this._specular2D;
+          this._shader.specularColor = this._specularClr;
+          this._shader.shininess = this._shininess;
+          break;
+        case Shaders.MaterialComponentType.TextureCube:
+          this._addToTextureList(textures, this._specularCube);
+          this._shader.specularTextureCube = this._specularCube;
+          this._shader.specularColor = this._specularClr;
+          this._shader.shininess = this._shininess;
+          break;
+      }
 
-    switch (cfg.specular) {
-      case Shaders.MaterialComponentType.None: break;
-      case Shaders.MaterialComponentType.Solid:
-        this._shader.specularColor = this._specularClr;
-        this._shader.shininess = this._shininess;
-        break;
-      case Shaders.MaterialComponentType.Texture2D:
-        this._addToTextureList(textures, this._specular2D);
-        this._shader.specularTexture2D = this._specular2D;
-        this._shader.specularColor = this._specularClr;
-        this._shader.shininess = this._shininess;
-        break;
-      case Shaders.MaterialComponentType.TextureCube:
-        this._addToTextureList(textures, this._specularCube);
-        this._shader.specularTextureCube = this._specularCube;
-        this._shader.specularColor = this._specularClr;
-        this._shader.shininess = this._shininess;
-        break;
+      Math.Matrix4 viewMat = state.view.matrix;
+      if (cfg.dirLight > 0) {
+        int count = this._lights._dirLights.length;
+        this._shader.directionalLightCount = count;
+        for (int i = 0; i < count; ++i)  {
+          Lights.Directional light = this._lights._dirLights[i];
+          Shaders.UniformDirectionalLight uniform = this._shader.directionalLight[i];
+          uniform.viewDir = viewMat.transVec3(light.direction).normal();
+          uniform.color = light.color;
+        }
+      }
+
+      // TODO: Add other directional lights.
     }
 
     switch (cfg.bumpy) {

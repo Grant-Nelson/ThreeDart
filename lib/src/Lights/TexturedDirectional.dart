@@ -1,14 +1,16 @@
 part of ThreeDart.Lights;
 
 /// Storage for directional light data.
-class Directional implements Light {
+class TexturedDirectional implements Light {
 
   /// Creates a new directional light data.
-  Directional({
+  TexturedDirectional({
       Movers.Mover mover: null,
-      Math.Color3 color: null}) {
+      Math.Color3 color: null,
+      Textures.Texture2D texture: null}) {
     this.mover      = mover;
     this.color      = color;
+    this.texture    = texture;
     this._direction = new Math.Vector3(0.0, 0.0, 1.0);
   }
 
@@ -37,4 +39,9 @@ class Directional implements Light {
   set color(Math.Color3 color) =>
     this._color = (color == null)? new Math.Color3.white(): color;
   Math.Color3 _color;
+
+  /// The texture for the light.
+  Textures.Texture2D get texture => this._texture;
+  set texture(Textures.Texture2D texture) => this._texture = texture;
+  Textures.Texture2D _texture;
 }

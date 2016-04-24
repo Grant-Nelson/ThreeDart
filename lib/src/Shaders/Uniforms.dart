@@ -70,6 +70,15 @@ class UniformContainer {
     }
     return false;
   }
+
+  /// Gets the string for this collection.
+  String toString({String sep: "\n"}) {
+    String result = "";
+    for (Uniform uniform in this._uniforms) {
+        result += "$uniform$sep";
+    }
+    return result;
+  }
 }
 
 //=======================================================================
@@ -99,6 +108,9 @@ class Uniform1i extends Uniform {
     assert(values.length == 1);
     this.setValue(values[0]);
   }
+
+  /// Gets the name for this uniform variable.
+  String toString() => "Uniform1: ${this.name}";
 }
 
 /// The uniform variable for two integers.
@@ -119,6 +131,9 @@ class Uniform2i extends Uniform {
     assert(values.length == 2);
     this.setValues(values[0], values[1]);
   }
+
+  /// Gets the name for this uniform variable.
+  String toString() => "Uniform2: ${this.name}";
 }
 
 /// The uniform variable for three integers.
@@ -140,6 +155,9 @@ class Uniform3i extends Uniform {
     assert(values.length == 3);
     this.setValues(values[0], values[1], values[2]);
   }
+
+  /// Gets the name for this uniform variable.
+  String toString() => "Uniform3i: ${this.name}";
 }
 
 /// The uniform variable for four integers.
@@ -161,6 +179,9 @@ class Uniform4i extends Uniform {
     assert(values.length == 4);
     this.setValues(values[0], values[1], values[2], values[3]);
   }
+
+  /// Gets the name for this uniform variable.
+  String toString() => "Uniform4i: ${this.name}";
 }
 
 //=======================================================================
@@ -190,6 +211,9 @@ class Uniform1f extends Uniform {
     assert(values.length == 1);
     this.setValue(values[0]);
   }
+
+  /// Gets the name for this uniform variable.
+  String toString() => "Uniform1f: ${this.name}";
 }
 
 /// The uniform variable for two floats.
@@ -223,6 +247,9 @@ class Uniform2f extends Uniform {
 
   /// Sets the uniform with the given 2D point.
   void setPoint2(Math.Point2 pnt) => this.setValues(pnt.x, pnt.y);
+
+  /// Gets the name for this uniform variable.
+  String toString() => "Uniform2f: ${this.name}";
 }
 
 /// The uniform variable for three floats.
@@ -262,6 +289,9 @@ class Uniform3f extends Uniform {
 
   /// Sets the uniform with the given RGB color.
   void setColor3(Math.Color3 clr) => this.setValues(clr.red, clr.green, clr.blue);
+
+  /// Gets the name for this uniform variable.
+  String toString() => "Uniform3f: ${this.name}";
 }
 
 /// The uniform variable for four floats.
@@ -301,6 +331,9 @@ class Uniform4f extends Uniform {
 
   /// Sets the uniform with the given ARGB color.
   void setColor4(Math.Color4 clr) => this.setValues(clr.red, clr.green, clr.blue, clr.alpha);
+
+  /// Gets the name for this uniform variable.
+  String toString() => "Uniform4f: ${this.name}";
 }
 
 //=======================================================================
@@ -334,6 +367,9 @@ class UniformMat2 extends Uniform {
 
   /// Sets the uniform with the given 2x2 matrix.
   void setMatrix2(Math.Matrix2 mat) => this.setList(mat.toList(true));
+
+  /// Gets the name for this uniform variable.
+  String toString() => "Uniform1Mat2 ${this.name}";
 }
 
 /// The uniform variable for a 3x3 matrix.
@@ -367,6 +403,9 @@ class UniformMat3 extends Uniform {
 
   /// Sets the uniform with the given 3x3 matrix.
   void setMatrix3(Math.Matrix3 mat) => this.setList(mat.toList(true));
+
+  /// Gets the name for this uniform variable.
+  String toString() => "UniformMat3: ${this.name}";
 }
 
 /// The uniform variable for a 4x4 matrix.
@@ -402,6 +441,9 @@ class UniformMat4 extends Uniform {
 
   /// Sets the uniform with the given 4x4 matrix.
   void setMatrix4(Math.Matrix4 mat) => this.setList(mat.toList(true));
+
+  /// Gets the name for this uniform variable.
+  String toString() => "UniformMat4: ${this.name}";
 }
 
 //=======================================================================
@@ -425,6 +467,9 @@ class UniformSampler2D extends Uniform {
     if ((tex2D == null) || !tex2D.loaded) this.setIndex(0);
     else this.setIndex(tex2D.index);
   }
+
+  /// Gets the name for this uniform variable.
+  String toString() => "UniformSampler2D: ${this.name}";
 }
 
 /// The uniform variable for a cube texture sampler.
@@ -446,4 +491,7 @@ class UniformSamplerCube extends Uniform {
     if ((texCube == null) || !texCube.loaded) this.setIndex(0);
     else this.setIndex(texCube.index);
   }
+
+  /// Gets the name for this uniform variable.
+  String toString() => "UniformSamplerCube: ${this.name}";
 }

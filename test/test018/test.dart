@@ -32,9 +32,9 @@ void main() {
       ..add(zoom));
 
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
-    ..light = new Lights.Directional(
-          direction: new Math.Vector3(-1.0, -1.0, -1.0),
-          color: new Math.Color3.white());
+    ..lights.add(new Lights.Directional(
+          mover: new Movers.Constant(new Math.Matrix4.vectorTowards(-1.0, -1.0, -1.0)),
+          color: new Math.Color3.white()));
 
   Scenes.RenderPass pass = new Scenes.RenderPass()
     ..tech = tech

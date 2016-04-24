@@ -5,20 +5,38 @@ class Point implements Light {
 
   /// Creates a new point light data.
   Point({
-      Math.Point3 position: null,
+      Movers.Mover mover: null,
       Math.Color4 color: null,
       double attenuation0: null,
       double attenuation1: null,
       double attenuation2: null}) {
-    this.position = position;
-    this.color = color;
+    this.mover        = mover;
+    this.color        = color;
+    this.attenuation0 = attenuation0;
+    this.attenuation1 = attenuation1;
+    this.attenuation2 = attenuation2;
+    this._position    = new Math.Point3(0.0, 0.0, 0.0);
+  }
+
+  /// Updates the light with the current state.
+  void update(Core.RenderState state) {
+    this._position = new Math.Point3(0.0, 0.0, 0.0);
+    if (this._mover != null) {
+      Math.Matrix4 mat = this._mover.update(state, this);
+      if (mat != null) {
+        this._position = mat.transPnt3(this._position);
+      }
+    }
   }
 
   /// The location the light.
   Math.Point3 get position => this._position;
-  set position(Math.Point3 position) =>
-    this._position = (position == null)? new Math.Point3.zero(): position;
   Math.Point3 _position;
+
+  /// The mover to position this light.
+  Movers.Mover get mover => this._mover;
+  set mover(Movers.Mover mover) => this._mover = mover;
+  Movers.Mover _mover;
 
   /// The color of the light.
   Math.Color4 get color => this._color;

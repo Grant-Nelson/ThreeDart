@@ -19,9 +19,13 @@ class MaterialLightConfig {
   MaterialComponentType _reflection;
   MaterialComponentType _refraction;
   MaterialComponentType _alpha;
+  int _dirLight;
+  int _pointLight;
+  int _spotLight;
+  int _txtPointLight;
+  int _txtSpotLight;
   bool _enviromental;
   bool _viewObjMat;
-  bool _viewMat;
   bool _lights;
   bool _camPos;
   bool _norm;
@@ -34,13 +38,16 @@ class MaterialLightConfig {
     MaterialComponentType this._ambient, MaterialComponentType this._diffuse,
     MaterialComponentType this._invDiffuse, MaterialComponentType this._specular,
     MaterialComponentType this._bumpy, MaterialComponentType this._reflection,
-    MaterialComponentType this._refraction, MaterialComponentType this._alpha) {
+    MaterialComponentType this._refraction, MaterialComponentType this._alpha,
+    int this._dirLight, int this._pointLight, int this._spotLight,
+    int this._txtPointLight, int this._txtSpotLight) {
+    int totalLights = this._dirLight + this._pointLight + this._spotLight + this._txtPointLight + this._txtSpotLight;
     this._enviromental = (this._reflection != MaterialComponentType.None) ||
                          (this._refraction != MaterialComponentType.None);
-    this._lights = (this._ambient != MaterialComponentType.None) ||
+    this._lights = ((this._ambient != MaterialComponentType.None) ||
                    (this._diffuse != MaterialComponentType.None) ||
                    (this._invDiffuse != MaterialComponentType.None) ||
-                   (this._specular != MaterialComponentType.None);
+                   (this._specular != MaterialComponentType.None)) && (totalLights > 0);
     this._camPos = (this._specular != MaterialComponentType.None) || this._enviromental;
     this._norm = (this._diffuse != MaterialComponentType.None) ||
                  (this._invDiffuse != MaterialComponentType.None) ||
@@ -66,7 +73,6 @@ class MaterialLightConfig {
                     (this._refraction == MaterialComponentType.TextureCube) ||
                     (this._alpha == MaterialComponentType.TextureCube);
     this._viewObjMat = this._norm || this._binm || this._camPos;
-    this._viewMat = this._lights;
     this._name = this._createShaderName();
   }
 
@@ -95,6 +101,16 @@ class MaterialLightConfig {
     buf.write(this._stringForComponentType(this._reflection));
     buf.write(this._stringForComponentType(this._refraction));
     buf.write(this._stringForComponentType(this._alpha));
+    buf.write("_");
+    buf.write(this._dirLight);
+    buf.write("_");
+    buf.write(this._pointLight);
+    buf.write("_");
+    buf.write(this._spotLight);
+    buf.write("_");
+    buf.write(this._txtPointLight);
+    buf.write("_");
+    buf.write(this._txtSpotLight);
     return buf.toString();
   }
 
@@ -107,9 +123,13 @@ class MaterialLightConfig {
   MaterialComponentType get reflection => this._reflection;
   MaterialComponentType get refraction => this._refraction;
   MaterialComponentType get alpha => this._alpha;
+  int get dirLight => this._dirLight;
+  int get pointLight => this._pointLight;
+  int get spotLight => this._spotLight;
+  int get txtPointLight => this._txtPointLight;
+  int get txtSpotLight => this._txtSpotLight;
   bool get enviromental => this._enviromental;
   bool get viewObjMat => this._viewObjMat;
-  bool get viewMat => this._viewMat;
   bool get lights => this._lights;
   bool get camPos => this._camPos;
   bool get norm => this._norm;
@@ -121,12 +141,7 @@ class MaterialLightConfig {
   String createVertexSource() {
     StringBuffer buf = new StringBuffer();
     if (this._viewObjMat) buf.writeln("uniform mat4 viewObjMat;");
-    if (this._viewMat)    buf.writeln("uniform mat4 viewMat;");
     buf.writeln("uniform mat4 projViewObjMat;");
-    if (this._lights) {
-      // TODO: Work on different types of lights.
-      buf.writeln("uniform vec3 lightVec;");
-    }
     buf.writeln("");
 
     buf.writeln("attribute vec3 posAttr;");
@@ -140,7 +155,6 @@ class MaterialLightConfig {
     if (this._binm)    buf.writeln("varying vec3 binormalVec;");
     if (this._txt2D)   buf.writeln("varying vec2 txt2D;");
     if (this._txtCube) buf.writeln("varying vec3 txtCube;");
-    if (this._lights)  buf.writeln("varying vec3 litVec;");
     if (this._camPos)  buf.writeln("varying vec3 camPos;");
     buf.writeln("");
 
@@ -150,7 +164,6 @@ class MaterialLightConfig {
     if (this._binm)    buf.writeln("   binormalVec = normalize(viewObjMat*vec4(binmAttr, 0.0)).xyz;");
     if (this._txt2D)   buf.writeln("   txt2D = txt2DAttr;");
     if (this._txtCube) buf.writeln("   txtCube = txtCubeAttr;");
-    if (this._lights)  buf.writeln("   litVec = normalize((viewMat*vec4(lightVec, 0.0)).xyz);");
     if (this._camPos)  buf.writeln("   camPos = -(viewObjMat*vec4(posAttr, 1.0)).xyz;");
     buf.writeln("   gl_Position = projViewObjMat*vec4(posAttr, 1.0);");
     buf.writeln("}");
@@ -166,14 +179,8 @@ class MaterialLightConfig {
     if (this._binm)    buf.writeln("varying vec3 binormalVec;");
     if (this._txt2D)   buf.writeln("varying vec2 txt2D;");
     if (this._txtCube) buf.writeln("varying vec3 txtCube;");
-    if (this._lights)  buf.writeln("varying vec3 litVec;");
     if (this._camPos)  buf.writeln("varying vec3 camPos;");
     buf.writeln("");
-
-    if (this._lights) {
-      // TODO: Work on lights
-      buf.writeln("uniform vec3 lightClr;");
-    }
 
     switch (this._emission) {
       case MaterialComponentType.None: break;
@@ -337,6 +344,21 @@ class MaterialLightConfig {
     }
     buf.writeln("");
 
+    if (this._lights) {
+      if (this._dirLight > 0) {
+        buf.writeln("struct DirLight {");
+        buf.writeln("   vec3 viewDir;");
+        buf.writeln("   vec3 color;");
+        buf.writeln("};");
+        buf.writeln("");
+        buf.writeln("uniform int dirLightCount;");
+        buf.writeln("uniform DirLight dirLights[${this._dirLight}];");
+        buf.writeln("");
+      }
+
+      // TODO: Add more lights.
+    }
+
     if (this._emission != MaterialComponentType.None) {
       buf.writeln("vec3 emission()");
       buf.writeln("{");
@@ -380,74 +402,90 @@ class MaterialLightConfig {
     }
 
     if (this._diffuse != MaterialComponentType.None) {
-      buf.writeln("vec3 diffuse(vec3 norm)");
+      buf.writeln("vec3 diffuseColor;");
+      buf.writeln("void setDiffuseColor()");
       buf.writeln("{");
-      buf.writeln("   float scalar = dot(norm, -litVec);");
-      buf.writeln("   if(scalar < 0.0) return vec3(0.0, 0.0, 0.0);");
       switch (this._diffuse) {
         case MaterialComponentType.None: break;
         case MaterialComponentType.Solid:
-          buf.writeln("   return scalar*diffuseClr;");
+          buf.writeln("   diffuseColor = diffuseClr;");
           break;
         case MaterialComponentType.Texture2D:
-          buf.writeln("   if(nullDiffuseTxt > 0) return diffuseClr;");
-          buf.writeln("   return scalar*diffuseClr*texture2D(diffuseTxt, txt2D).rgb;");
+          buf.writeln("   if(nullDiffuseTxt > 0) diffuseColor = diffuseClr;");
+          buf.writeln("   else diffuseColor = diffuseClr*texture2D(diffuseTxt, txt2D).rgb;");
           break;
         case MaterialComponentType.TextureCube:
-          buf.writeln("   if(nullDiffuseTxt > 0) return diffuseClr;");
-          buf.writeln("   return scalar*diffuseClr*textureCube(diffuseTxt, txtCube).rgb;");
+          buf.writeln("   if(nullDiffuseTxt > 0) diffuseColor = diffuseClr;");
+          buf.writeln("   else diffuseColor = diffuseClr*textureCube(diffuseTxt, txtCube).rgb;");
           break;
       }
+      buf.writeln("}");
+      buf.writeln("");
+      buf.writeln("vec3 diffuse(vec3 norm, vec3 litVec)");
+      buf.writeln("{");
+      buf.writeln("   float scalar = dot(norm, -litVec);");
+      buf.writeln("   if(scalar < 0.0) return vec3(0.0, 0.0, 0.0);");
+      buf.writeln("   return diffuseColor*scalar;");
       buf.writeln("}");
       buf.writeln("");
     }
 
     if (this._invDiffuse != MaterialComponentType.None) {
-      buf.writeln("vec3 invDiffuse(vec3 norm)");
+      buf.writeln("vec3 invDiffuseColor;");
+      buf.writeln("void setInvDiffuseColor()");
       buf.writeln("{");
-      buf.writeln("   float scalar = clamp(1.0 - dot(norm, -litVec), 0.0, 1.0);");
-      buf.writeln("   if(scalar < 0.0) return vec3(0.0, 0.0, 0.0);");
       switch (this._invDiffuse) {
         case MaterialComponentType.None: break;
         case MaterialComponentType.Solid:
-          buf.writeln("   return scalar*invDiffuseClr;");
+          buf.writeln("   invDiffuseColor = invDiffuseClr;");
           break;
         case MaterialComponentType.Texture2D:
-          buf.writeln("   if(nullInvDiffuseTxt > 0) return invDiffuseClr;");
-          buf.writeln("   return scalar*invDiffuseClr*texture2D(invDiffuseTxt, txt2D).rgb;");
+          buf.writeln("   if(nullInvDiffuseTxt > 0) invDiffuseColor = invDiffuseClr;");
+          buf.writeln("   else invDiffuseColor = invDiffuseClr*texture2D(invDiffuseTxt, txt2D).rgb;");
           break;
         case MaterialComponentType.TextureCube:
-          buf.writeln("   if(nullInvDiffuseTxt > 0) return invDiffuseClr;");
-          buf.writeln("   return scalar*invDiffuseClr*textureCube(invDiffuseTxt, txtCube).rgb;");
+          buf.writeln("   if(nullInvDiffuseTxt > 0) invDiffuseColor = invDiffuseClr;");
+          buf.writeln("   else invDiffuseColor = invDiffuseClr*textureCube(invDiffuseTxt, txtCube).rgb;");
           break;
       }
+      buf.writeln("}");
+      buf.writeln("");
+      buf.writeln("vec3 invDiffuse(vec3 norm, vec3 litVec)");
+      buf.writeln("{");
+      buf.writeln("   float scalar = 1.0 - clamp(dot(norm, -litVec), 0.0, 1.0);");
+      buf.writeln("   if(scalar < 0.0) return vec3(0.0, 0.0, 0.0);");
+      buf.writeln("   return invDiffuseColor*scalar;");
       buf.writeln("}");
       buf.writeln("");
     }
 
     if (this._specular != MaterialComponentType.None) {
-      buf.writeln("vec3 specular(vec3 norm)");
+      buf.writeln("vec3 specularColor;");
+      buf.writeln("void setSpecularColor()");
+      buf.writeln("{");
+      switch (this._specular) {
+        case MaterialComponentType.None: break;
+        case MaterialComponentType.Solid:
+          buf.writeln("   specularColor = specularClr;");
+          break;
+        case MaterialComponentType.Texture2D:
+          buf.writeln("   if(nullSpecularTxt > 0) specularColor = specularClr;");
+          buf.writeln("   else specularColor = specularClr*texture2D(specularTxt, txt2D).rgb;");
+          break;
+        case MaterialComponentType.TextureCube:
+          buf.writeln("   if(nullSpecularTxt > 0) specularColor = specularClr;");
+          buf.writeln("   else specularColor = specularClr*textureCube(specularTxt, txtCube).rgb;");
+          break;
+      }
+      buf.writeln("}");
+      buf.writeln("");
+      buf.writeln("vec3 specular(vec3 norm, vec3 litVec)");
       buf.writeln("{");
       buf.writeln("   if(dot(norm, -litVec) < 0.0) return vec3(0.0, 0.0, 0.0);");
       buf.writeln("   vec3 lightRef = normalize(reflect(litVec, norm));");
       buf.writeln("   float scalar = dot(lightRef, normalize(camPos));");
       buf.writeln("   if(scalar < 0.0) return vec3(0.0, 0.0, 0.0);");
-      switch (this._specular) {
-        case MaterialComponentType.None: break;
-        case MaterialComponentType.Solid:
-          buf.writeln("   return specularClr*pow(scalar, shininess);");
-          break;
-        case MaterialComponentType.Texture2D:
-          buf.writeln("   if(nullSpecularTxt > 0) return specularClr;");
-          buf.writeln("   vec3 clr = specularClr*texture2D(specularTxt, txt2D).rgb;");
-          buf.writeln("   return clr*pow(scalar, shininess);");
-          break;
-        case MaterialComponentType.TextureCube:
-          buf.writeln("   if(nullSpecularTxt > 0) return specularClr;");
-          buf.writeln("   vec3 clr = specularClr*textureCube(specularTxt, txtCube).rgb;");
-          buf.writeln("   return clr*pow(scalar, shininess);");
-          break;
-      }
+      buf.writeln("   return specularColor*pow(scalar, shininess);");
       buf.writeln("}");
       buf.writeln("");
     }
@@ -535,7 +573,7 @@ class MaterialLightConfig {
       }
       buf.writeln("   vec3 refr = mix(-refl, -camPos, refraction);");
       buf.writeln("   vec3 invRefr = vec3(invViewMat*vec4(refr, 0.0));");
-      buf.writeln("   return scalar = textureCube(envSampler, invRefr).rgb;");
+      buf.writeln("   return scalar*textureCube(envSampler, invRefr).rgb;");
       buf.writeln("}");
       buf.writeln("");
     }
@@ -565,26 +603,50 @@ class MaterialLightConfig {
     buf.writeln("}");
     buf.writeln("");
 
+    if (this._lights) {
+      buf.writeln("vec3 lightValue(vec3 norm, vec3 litClr, vec3 litVec)");
+      buf.writeln("{");
+      List<String> parts = new List<String>();
+      if (this._ambient != MaterialComponentType.None) parts.add("ambient()");
+      if (this._diffuse != MaterialComponentType.None) parts.add("diffuse(norm, litVec)");
+      if (this._invDiffuse != MaterialComponentType.None) parts.add("invDiffuse(norm, litVec)");
+      if (this._specular != MaterialComponentType.None) parts.add("specular(norm, litVec)");
+      buf.writeln("  return litClr*(" + parts.join(" + ") + ");");
+      buf.writeln("}");
+      buf.writeln("");
+    }
+
     buf.writeln("void main()");
     buf.writeln("{");
+    buf.writeln("   float alpha = alphaValue();");
     if (this._norm) buf.writeln("   vec3 norm = normal();");
     if (this._enviromental) {
       buf.writeln("   vec3 refl = reflect(-normalize(camPos), norm);");
     }
     List<String> fragParts = new List<String>();
     if (this._lights) {
-      List<String> parts = new List<String>();
-      if (this._ambient != MaterialComponentType.None) parts.add("ambient()");
-      if (this._diffuse != MaterialComponentType.None) parts.add("diffuse(norm)");
-      if (this._invDiffuse != MaterialComponentType.None) parts.add("invDiffuse(norm)");
-      if (this._specular != MaterialComponentType.None) parts.add("specular(norm)");
-      fragParts.add("lightClr*(" + parts.join(" + ") + ")");
+      buf.writeln("   vec3 lightAccum = vec3(0.0, 0.0, 0.0);");
+      fragParts.add("lightAccum");
+      if (this._diffuse != MaterialComponentType.None) buf.writeln("   setDiffuseColor();");
+      if (this._invDiffuse != MaterialComponentType.None) buf.writeln("   setInvDiffuseColor();");
+      if (this._specular != MaterialComponentType.None) buf.writeln("   setSpecularColor();");
+      buf.writeln("");
+
+      if (this._dirLight > 0) {
+        buf.writeln("   for(int i = 0; i < ${this._dirLight}; ++i)");
+        buf.writeln("   {");
+        buf.writeln("      if(i >= dirLightCount) break;");
+        buf.writeln("      DirLight lit = dirLights[i];");
+        buf.writeln("      lightAccum += lightValue(norm, lit.color, lit.viewDir);");
+        buf.writeln("   }");
+        buf.writeln("");
+      }
     }
     if (this._emission != MaterialComponentType.None) fragParts.add("emission()");
     if (this._reflection != MaterialComponentType.None) fragParts.add("reflect(refl)");
     if (this._refraction != MaterialComponentType.None) fragParts.add("refract(refl)");
     if (fragParts.length <= 0) fragParts.add("vec3(0.0, 0.0, 0.0)");
-    buf.writeln("   gl_FragColor = vec4(" + fragParts.join(" + ") + ", alphaValue());");
+    buf.writeln("   gl_FragColor = vec4(" + fragParts.join(" + ") + ", alpha);");
     buf.writeln("}");
     return buf.toString();
   }
