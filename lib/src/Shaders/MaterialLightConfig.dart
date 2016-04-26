@@ -28,7 +28,9 @@ class MaterialLightConfig {
   bool _enviromental;
   bool _invViewMat;
   bool _viewObjMat;
+  bool _objMat;
   bool _lights;
+  bool _objPos;
   bool _viewPos;
   bool _norm;
   bool _binm;
@@ -48,10 +50,12 @@ class MaterialLightConfig {
     this._enviromental = (this._reflection != MaterialComponentType.None) ||
                          (this._refraction != MaterialComponentType.None);
     this._invViewMat = this._enviromental;
+    this._objMat = (this._pointLight + this._txtPointLight) > 0;
     this._lights = ((this._ambient != MaterialComponentType.None) ||
                    (this._diffuse != MaterialComponentType.None) ||
                    (this._invDiffuse != MaterialComponentType.None) ||
                    (this._specular != MaterialComponentType.None)) && (totalLights > 0);
+    this._objPos = this._objMat;
     this._viewPos = (this._specular != MaterialComponentType.None) || this._enviromental;
     this._norm = (this._diffuse != MaterialComponentType.None) ||
                  (this._invDiffuse != MaterialComponentType.None) ||
@@ -138,7 +142,9 @@ class MaterialLightConfig {
   bool get enviromental => this._enviromental;
   bool get invViewMat => this._invViewMat;
   bool get viewObjMat => this._viewObjMat;
+  bool get objMat => this._objMat;
   bool get lights => this._lights;
+  bool get objPos => this._objPos;
   bool get viewPos => this._viewPos;
   bool get norm => this._norm;
   bool get binm => this._binm;
@@ -146,8 +152,10 @@ class MaterialLightConfig {
   bool get txtCube => this._txtCube;
   String get name => this._name;
 
+  // Creates the vertex source code for the material light shader for the given configurations.
   String createVertexSource() {
     StringBuffer buf = new StringBuffer();
+    if (this._objMat) buf.writeln("uniform mat4 objMat;");
     if (this._viewObjMat) buf.writeln("uniform mat4 viewObjMat;");
     buf.writeln("uniform mat4 projViewObjMat;");
     buf.writeln("");
@@ -163,6 +171,7 @@ class MaterialLightConfig {
     if (this._binm)    buf.writeln("varying vec3 binormalVec;");
     if (this._txt2D)   buf.writeln("varying vec2 txt2D;");
     if (this._txtCube) buf.writeln("varying vec3 txtCube;");
+    if (this._objPos)  buf.writeln("varying vec3 objPos;");
     if (this._viewPos) buf.writeln("varying vec3 viewPos;");
     buf.writeln("");
 
@@ -172,12 +181,14 @@ class MaterialLightConfig {
     if (this._binm)    buf.writeln("   binormalVec = normalize(viewObjMat*vec4(binmAttr, 0.0)).xyz;");
     if (this._txt2D)   buf.writeln("   txt2D = txt2DAttr;");
     if (this._txtCube) buf.writeln("   txtCube = txtCubeAttr;");
+    if (this._objPos)  buf.writeln("   objPos = (objMat*vec4(posAttr, 1.0)).xyz;");
     if (this._viewPos) buf.writeln("   viewPos = (viewObjMat*vec4(posAttr, 1.0)).xyz;");
     buf.writeln("   gl_Position = projViewObjMat*vec4(posAttr, 1.0);");
     buf.writeln("}");
     return buf.toString();
   }
 
+  // Creates the fragmant source code for the material light shader for the given configurations.
   String createFragmentSource() {
     StringBuffer buf = new StringBuffer();
     buf.writeln("precision mediump float;");
@@ -187,6 +198,7 @@ class MaterialLightConfig {
     if (this._binm)    buf.writeln("varying vec3 binormalVec;");
     if (this._txt2D)   buf.writeln("varying vec2 txt2D;");
     if (this._txtCube) buf.writeln("varying vec3 txtCube;");
+    if (this._objPos)  buf.writeln("varying vec3 objPos;");
     if (this._viewPos) buf.writeln("varying vec3 viewPos;");
     buf.writeln("");
 
@@ -367,6 +379,7 @@ class MaterialLightConfig {
 
       if (this._pointLight > 0) {
         buf.writeln("struct PointLight {");
+        buf.writeln("   vec3 point;");
         buf.writeln("   vec3 viewPnt;");
         buf.writeln("   vec3 color;");
         buf.writeln("   float att0;");
@@ -385,6 +398,7 @@ class MaterialLightConfig {
 
       if (this._txtPointLight > 0) {
         buf.writeln("struct TexturedPointLight {");
+        buf.writeln("   vec3 point;");
         buf.writeln("   vec3 viewPnt;");
         buf.writeln("   mat3 invViewRotMat;");
         buf.writeln("   vec3 color;");
@@ -671,11 +685,10 @@ class MaterialLightConfig {
       if (this._pointLight > 0) {
         buf.writeln("vec3 pointLightValue(vec3 norm, PointLight lit)");
         buf.writeln("{");
-        buf.writeln("   vec3 viewDir = viewPos - lit.viewPnt;");
-        buf.writeln("   float dist = length(viewDir);");
+        buf.writeln("   float dist = length(objPos - lit.point);");
         buf.writeln("   float attenuation = 1.0/(lit.att0 + (lit.att1 + lit.att2*dist)*dist);");
         buf.writeln("   if(attenuation <= 0.005) return vec3(0.0, 0.0, 0.0);");
-        buf.writeln("   return lightValue(norm, lit.color*attenuation, normalize(viewDir));");
+        buf.writeln("   return lightValue(norm, lit.color*attenuation, normalize(viewPos - lit.viewPnt));");
         buf.writeln("}");
         buf.writeln("");
       }
@@ -687,11 +700,10 @@ class MaterialLightConfig {
       if (this._txtPointLight > 0) {
         buf.writeln("vec3 txtPointLightValue(vec3 norm, TexturedPointLight lit, samplerCube txtCube)");
         buf.writeln("{");
-        buf.writeln("   vec3 viewDir = viewPos - lit.viewPnt;");
-        buf.writeln("   float d = length(viewDir);");
-        buf.writeln("   float attenuation = 1.0/(lit.att0 + (lit.att1 + lit.att2*d)*d);");
+        buf.writeln("   float dist = length(objPos - lit.point);");
+        buf.writeln("   float attenuation = 1.0/(lit.att0 + (lit.att1 + lit.att2*dist)*dist);");
         buf.writeln("   if(attenuation <= 0.005) return vec3(0.0, 0.0, 0.0);");
-        buf.writeln("   vec3 normDir = normalize(viewDir);");
+        buf.writeln("   vec3 normDir = normalize(viewPos - lit.viewPnt);");
         buf.writeln("   vec3 color;");
         buf.writeln("   if(lit.nullTxt > 0) color = lit.color;");
         buf.writeln("   else");

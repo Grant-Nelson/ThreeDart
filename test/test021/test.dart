@@ -14,6 +14,33 @@ import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
 import '../common/common.dart' as common;
 
+void addLightBall(Techniques.MaterialLight tech, Scenes.RenderPass pass,
+    double r, double g, double b, double yaw, double pitch, double roll) {
+  Math.Color3 clr = new Math.Color3(r, g, b);
+
+  Movers.Group mover = new Movers.Group()
+    ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 2.0)))
+    ..add(new Movers.Rotater(deltaYaw: yaw, deltaPitch: pitch, deltaRoll: roll));
+
+  ThreeDart.Entity obj = new ThreeDart.Entity()
+    ..mover = (new Movers.Group()
+                ..add(new Movers.Constant(new Math.Matrix4.scale(0.1, 0.1, 0.1)))
+                ..add(mover))
+    ..shape = Shapes.sphere()
+    ..technique = (new Techniques.MaterialLight()
+                ..emissionColor = clr);
+
+  Lights.Point point = new Lights.Point(
+    mover: mover,
+    color: clr,
+    attenuation0: 1.0,
+    attenuation1: 0.5,
+    attenuation2: 0.15);
+
+  tech.lights.add(point);
+  pass.children.add(obj);
+}
+
 void main() {
   common.shellTest("Test 021", ["shapes"],
     "Test of multiple moving point lights.");
@@ -23,73 +50,8 @@ void main() {
   Movers.UserRoller roller = new Movers.UserRoller()
     ..ctrlPressed = true;
 
-  Movers.Group redMover = new Movers.Group()
-    ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 2.0)))
-    ..add(new Movers.Rotater(deltaYaw: 0.3, deltaPitch: 0.0, deltaRoll: 0.0));
-
-  ThreeDart.Entity redObj = new ThreeDart.Entity()
-    ..mover = (new Movers.Group()
-                ..add(new Movers.Constant(new Math.Matrix4.scale(0.1, 0.1, 0.1)))
-                ..add(redMover))
-    ..shape = Shapes.sphere()
-    ..technique = (new Techniques.MaterialLight()
-                ..emissionColor = new Math.Color3(1.0, 0.0, 0.0));
-
-  Lights.Point redPoint = new Lights.Point(
-    mover: redMover,
-    color: new Math.Color3(1.0, 0.0, 0.0),
-    attenuation0: 1.0,
-    attenuation1: 0.5,
-    attenuation2: 0.15);
-
-  Movers.Group greenMover = new Movers.Group()
-    ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 2.0)))
-    ..add(new Movers.Rotater(deltaYaw: 0.0, deltaPitch: 0.4, deltaRoll: 0.0));
-
-  ThreeDart.Entity greenObj = new ThreeDart.Entity()
-    ..mover = (new Movers.Group()
-                ..add(new Movers.Constant(new Math.Matrix4.scale(0.1, 0.1, 0.1)))
-                ..add(greenMover))
-    ..shape = Shapes.sphere()
-    ..technique = (new Techniques.MaterialLight()
-                ..emissionColor = new Math.Color3(0.0, 1.0, 0.0));
-
-  Lights.Point greenPoint = new Lights.Point(
-    mover: greenMover,
-    color: new Math.Color3(0.0, 1.0, 0.0),
-    attenuation0: 1.0,
-    attenuation1: 0.5,
-    attenuation2: 0.15);
-
-  Movers.Group blueMover = new Movers.Group()
-    ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 2.0)))
-    ..add(new Movers.Rotater(deltaYaw: 0.5, deltaPitch: 0.5, deltaRoll: 0.0));
-
-  ThreeDart.Entity blueObj = new ThreeDart.Entity()
-    ..mover = (new Movers.Group()
-                ..add(new Movers.Constant(new Math.Matrix4.scale(0.1, 0.1, 0.1)))
-                ..add(blueMover))
-    ..shape = Shapes.sphere()
-    ..technique = (new Techniques.MaterialLight()
-                ..emissionColor = new Math.Color3(0.0, 0.0, 1.0));
-
-  Lights.Point bluePoint = new Lights.Point(
-    mover: blueMover,
-    color: new Math.Color3(0.0, 0.0, 1.0),
-    attenuation0: 1.0,
-    attenuation1: 0.5,
-    attenuation2: 0.15);
-
-  Techniques.MaterialLight tech = new Techniques.MaterialLight()
-    ..lights.add(redPoint)
-    ..lights.add(greenPoint)
-    ..lights.add(bluePoint)
-    ..ambientColor = new Math.Color3.gray(0.1)
-    ..diffuseColor = new Math.Color3.gray(0.7)
-    ..specularColor = new Math.Color3.gray(0.3)
-    ..shininess = 100.0;
-
   ThreeDart.Entity centerObj = new ThreeDart.Entity()
+    ..mover = new Movers.Constant(new Math.Matrix4.scale(1.0, 1.0, 1.0))
     ..shape = Shapes.toroid();
 
   ThreeDart.Entity room = new ThreeDart.Entity()
@@ -97,19 +59,26 @@ void main() {
     ..shape = (Shapes.cube()..flip());
 
   Movers.Group camMover = new Movers.Group()
-  ..add(rotater)
-  ..add(roller)
-  ..add(zoom)
-  ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
+    ..add(rotater)
+    ..add(roller)
+    ..add(zoom)
+    ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
+
+  Techniques.MaterialLight tech = new Techniques.MaterialLight()
+    ..ambientColor = new Math.Color3.gray(0.4)
+    ..diffuseColor = new Math.Color3.gray(0.4)
+    ..specularColor = new Math.Color3.gray(0.3)
+    ..shininess = 100.0;
 
   Scenes.RenderPass pass = new Scenes.RenderPass()
     ..tech = tech
     ..children.add(room)
     ..children.add(centerObj)
-    ..children.add(redObj)
-    ..children.add(greenObj)
-    ..children.add(blueObj)
     ..camara.mover = camMover;
+
+  addLightBall(tech, pass, 1.0, 0.0, 0.0, 0.3, 0.0, 0.0);
+  addLightBall(tech, pass, 0.0, 1.0, 0.0, 0.0, 0.4, 0.0);
+  addLightBall(tech, pass, 0.0, 0.0, 1.0, 0.5, 0.5, 0.0);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart")
     ..scene = pass;

@@ -45,15 +45,15 @@ void main() {
   Lights.TexturedPoint objPoint = new Lights.TexturedPoint(
     mover: mover,
     texture: texture,
-    attenuation0: 0.0,
-    attenuation1: 0.2,
+    attenuation0: 1.0,
+    attenuation1: 0.15,
     attenuation2: 0.05);
 
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
     ..lights.add(objPoint)
-    ..ambientColor = new Math.Color3.gray(0.1)
-    ..diffuseColor = new Math.Color3.gray(0.9)
-    ..specularColor = new Math.Color3.gray(0.4)
+    ..ambientColor = new Math.Color3.gray(0.2)
+    ..diffuseColor = new Math.Color3.gray(1.0)
+    ..specularColor = new Math.Color3.gray(1.0)
     ..shininess = 100.0;
 
   ThreeDart.Entity room = new ThreeDart.Entity()

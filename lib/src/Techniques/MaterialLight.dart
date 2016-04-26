@@ -690,6 +690,7 @@ class MaterialLight extends Technique {
     List<Textures.Texture> textures = new List<Textures.Texture>();
     this._shader.bind(state);
 
+    if (cfg.objMat) this._shader.objectMatrix = state.object.matrix;
     if (cfg.viewObjMat) this._shader.viewObjectMatrix = state.viewObjectMatrix;
     this._shader.projectViewObjectMatrix = state.projectionViewObjectMatrix;
 
@@ -801,6 +802,7 @@ class MaterialLight extends Technique {
         for (int i = 0; i < count; ++i)  {
           Lights.Point light = this._lights._pntLights[i];
           Shaders.UniformPointLight uniform = this._shader.pointLights[i];
+          uniform.point = light.position;
           uniform.viewPoint = viewMat.transPnt3(light.position);
           uniform.color = light.color;
           uniform.attenuation0 = light.attenuation0;
@@ -821,9 +823,10 @@ class MaterialLight extends Technique {
           Lights.TexturedPoint light = this._lights._txtPntLights[i];
           Shaders.UniformTexturedPointLight uniform = this._shader.texturedPointLights[i];
           if (light.texture != null) this._addToTextureList(textures, light.texture);
-          Math.Matrix4 mat = viewMat*light.matrix;
-          uniform.viewPoint = mat.transPnt3(new Math.Point3(0.0, 0.0, 0.0));
-          uniform.inverseViewRotationMatrix = new Math.Matrix3.fromMatrix4(mat.inverse());
+          uniform.point = light.matrix.transPnt3(new Math.Point3(0.0, 0.0, 0.0));
+          Math.Matrix4 viewObjMat = viewMat*light.matrix;
+          uniform.viewPoint = viewObjMat.transPnt3(new Math.Point3(0.0, 0.0, 0.0));
+          uniform.inverseViewRotationMatrix = new Math.Matrix3.fromMatrix4(viewObjMat.inverse());
           uniform.color = light.color;
           uniform.texture = light.texture;
           uniform.attenuation0 = light.attenuation0;

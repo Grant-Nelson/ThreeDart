@@ -11,6 +11,7 @@ class MaterialLight extends Shader {
   Attribute _txt2DAttr;
   Attribute _txtCubeAttr;
 
+  UniformMat4 _objMat;
   UniformMat4 _viewObjMat;
   UniformMat4 _viewMat;
   UniformMat4 _projViewObjMat;
@@ -111,6 +112,7 @@ class MaterialLight extends Shader {
 
     // print(numberLines(this.uniforms.toString()));
 
+    if (cfg.objMat) this._objMat = this.uniforms.required("objMat") as UniformMat4;
     if (cfg.viewObjMat) this._viewObjMat = this.uniforms.required("viewObjMat") as UniformMat4;
     if (cfg.invViewMat) this._invViewMat = this.uniforms.required("invViewMat") as UniformMat4;
     this._projViewObjMat = this.uniforms.required("projViewObjMat") as UniformMat4;
@@ -279,12 +281,13 @@ class MaterialLight extends Shader {
       if (cfg._pointLight > 0) {
         this._pntLightCount = this.uniforms.required("pntLightCount");
         for (int i = 0; i < cfg._pointLight; ++i) {
+          Uniform3f point = this.uniforms.required("pntLights[$i].point") as Uniform3f;
           Uniform3f viewPnt = this.uniforms.required("pntLights[$i].viewPnt") as Uniform3f;
           Uniform3f color = this.uniforms.required("pntLights[$i].color") as Uniform3f;
           Uniform1f att0 = this.uniforms.required("pntLights[$i].att0") as Uniform1f;
           Uniform1f att1 = this.uniforms.required("pntLights[$i].att1") as Uniform1f;
           Uniform1f att2 = this.uniforms.required("pntLights[$i].att2") as Uniform1f;
-          this._pntLights.add(new UniformPointLight._(i, viewPnt, color, att0, att1, att2));
+          this._pntLights.add(new UniformPointLight._(i, point, viewPnt, color, att0, att1, att2));
         }
       }
 
@@ -296,6 +299,7 @@ class MaterialLight extends Shader {
         this._txtPntLightCount = this.uniforms.required("txtPntLightCount");
         Uniform1iv txtArray = this.uniforms.required("txtPntLightsTxtCube[0]") as Uniform1iv;
         for (int i = 0; i < cfg._txtPointLight; ++i) {
+          Uniform3f point = this.uniforms.required("txtPntLights[$i].point") as Uniform3f;
           Uniform3f viewPnt = this.uniforms.required("txtPntLights[$i].viewPnt") as Uniform3f;
           UniformMat3 invViewRotMat = this.uniforms.required("txtPntLights[$i].invViewRotMat") as UniformMat3;
           Uniform3f color = this.uniforms.required("txtPntLights[$i].color") as Uniform3f;
@@ -303,7 +307,7 @@ class MaterialLight extends Shader {
           Uniform1f att0 = this.uniforms.required("txtPntLights[$i].att0") as Uniform1f;
           Uniform1f att1 = this.uniforms.required("txtPntLights[$i].att1") as Uniform1f;
           Uniform1f att2 = this.uniforms.required("txtPntLights[$i].att2") as Uniform1f;
-          this._txtPntLights.add(new UniformTexturedPointLight._(i, viewPnt, invViewRotMat, color, txtArray, nullTxt, att0, att1, att2));
+          this._txtPntLights.add(new UniformTexturedPointLight._(i, point, viewPnt, invViewRotMat, color, txtArray, nullTxt, att0, att1, att2));
         }
       }
 
@@ -348,6 +352,10 @@ class MaterialLight extends Shader {
 
   /// The texture Cube vertex shader attribute.
   Attribute get txtCubeAttr => this._txtCubeAttr;
+
+  /// The object matrix.
+  Math.Matrix4 get objectMatrix => this._objMat.getMatrix4();
+  set objectMatrix(Math.Matrix4 mat) => this._objMat.setMatrix4(mat);
 
   /// The view matrix multiplied by the object matrix.
   Math.Matrix4 get viewObjectMatrix => this._viewObjMat.getMatrix4();
