@@ -21,6 +21,51 @@ class UniformDirectionalLight {
   Uniform3f _color;
 }
 
+/// Textured directional light uniform.
+class UniformTexturedDirectionalLight {
+
+  /// Creates the textured directional light uniform.
+  UniformTexturedDirectionalLight._(int this._index, Uniform3f this._objUp,
+     Uniform3f this._objDir, Uniform3f this._viewDir, Uniform3f this._color,
+    Uniform1iv this._txtArray, Uniform1i this._nullTxt);
+
+  /// The index of this light in the list of directional lights.
+  int get index => this._index;
+  int _index;
+
+  /// The directional light's up.
+  Math.Vector3 get objectUp => this._objUp.getVector3();
+  set objectUp(Math.Vector3 vec) => this._objUp.setVector3(vec);
+  Uniform3f _objUp;
+
+  /// The directional light's direction.
+  Math.Vector3 get objectDir => this._objDir.getVector3();
+  set objectDir(Math.Vector3 vec) => this._objDir.setVector3(vec);
+  Uniform3f _objDir;
+
+  /// The directional light's direction transformed by the view matrix.
+  Math.Vector3 get viewDir => this._viewDir.getVector3();
+  set viewDir(Math.Vector3 vec) => this._viewDir.setVector3(vec);
+  Uniform3f _viewDir;
+
+  /// The directional light color.
+  Math.Color3 get color => this._color.getColor3();
+  set color(Math.Color3 clr) => this._color.setColor3(clr);
+  Uniform3f _color;
+
+  /// The directional light texture.
+  set texture(Textures.Texture2D txt) {
+    if ((txt == null) || !txt.loaded) {
+      this._nullTxt.setValue(1);
+    } else {
+      this._txtArray.setAt(this._index, txt.index);
+      this._nullTxt.setValue(0);
+    }
+  }
+  Uniform1iv _txtArray;
+  Uniform1i _nullTxt;
+}
+
 /// Point light uniform.
 class UniformPointLight {
 
@@ -67,9 +112,9 @@ class UniformPointLight {
 class UniformTexturedPointLight {
 
   /// Creates the texture point light uniform.
-  UniformTexturedPointLight._(int this._index, Uniform3f this._point, Uniform3f this._viewPnt, UniformMat3 this._invViewRotMat,
-    Uniform3f this._color, Uniform1iv this._txtArray, Uniform1i this._nullTxt,
-    Uniform1f this._att0, Uniform1f this._att1, Uniform1f this._att2);
+  UniformTexturedPointLight._(int this._index, Uniform3f this._point, Uniform3f this._viewPnt,
+    UniformMat3 this._invViewRotMat, Uniform3f this._color, Uniform1iv this._txtArray,
+    Uniform1i this._nullTxt, Uniform1f this._att0, Uniform1f this._att1, Uniform1f this._att2);
 
   /// The index of this light in the list of texture point lights.
   int get index => this._index;

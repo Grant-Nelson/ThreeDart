@@ -813,7 +813,21 @@ class MaterialLight extends Technique {
 
       // TODO: Add spot light.
 
-      // TODO: Add textured directional light.
+      if (cfg.txtDirLight > 0) {
+        int count = this._lights._txtDirLights.length;
+        this._shader.texturedDirectionalLightCount = count;
+        Math.Matrix4 viewMat = state.view.matrix;
+        for (int i = 0; i < count; ++i)  {
+          Lights.TexturedDirectional light = this._lights._txtDirLights[i];
+          Shaders.UniformTexturedDirectionalLight uniform = this._shader.texturedDirectionalLights[i];
+          if (light.texture != null) this._addToTextureList(textures, light.texture);
+          uniform.objectDir = light.direction.normal();
+          uniform.objectUp = light.up.normal();
+          uniform.viewDir = viewMat.transVec3(light.direction).normal();
+          uniform.color = light.color;
+          uniform.texture = light.texture;
+        }
+      }
 
       if (cfg.txtPointLight > 0) {
         int count = this._lights._txtPntLights.length;

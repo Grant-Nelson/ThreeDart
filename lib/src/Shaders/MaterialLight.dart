@@ -74,7 +74,8 @@ class MaterialLight extends Shader {
 
   // TODO: Add spot lights.
 
-  // TODO: Add textured directional lights.
+  Uniform1i _txtDirLightCount;
+  List<UniformTexturedDirectionalLight> _txtDirLights;
 
   Uniform1i _txtPntLightCount;
   List<UniformTexturedPointLight> _txtPntLights;
@@ -267,7 +268,9 @@ class MaterialLight extends Shader {
 
     this._dirLights = new List<UniformDirectionalLight>();
     this._pntLights = new List<UniformPointLight>();
+    this._txtDirLights = new List<UniformTexturedDirectionalLight>();
     this._txtPntLights = new List<UniformTexturedPointLight>();
+
     if (cfg.lights) {
       if (cfg._dirLight > 0) {
         this._dirLightCount = this.uniforms.required("dirLightCount");
@@ -293,7 +296,18 @@ class MaterialLight extends Shader {
 
       // TODO: Add spot lights
 
-      // TODO: Add textured directional lights
+      if (cfg._txtDirLight > 0) {
+        this._txtDirLightCount = this.uniforms.required("txtDirLightCount");
+        Uniform1iv txtArray = this.uniforms.required("txtDirLightsTxt2D[0]") as Uniform1iv;
+        for (int i = 0; i < cfg._txtDirLight; ++i) {
+          Uniform3f objUp = this.uniforms.required("txtDirLights[$i].objUp") as Uniform3f;
+          Uniform3f objDir = this.uniforms.required("txtDirLights[$i].objDir") as Uniform3f;
+          Uniform3f viewDir = this.uniforms.required("txtDirLights[$i].viewDir") as Uniform3f;
+          Uniform3f color = this.uniforms.required("txtDirLights[$i].color") as Uniform3f;
+          Uniform1i nullTxt = this.uniforms.required("txtDirLights[$i].nullTxt") as Uniform1i;
+          this._txtDirLights.add(new UniformTexturedDirectionalLight._(i, objUp, objDir, viewDir, color, txtArray, nullTxt));
+        }
+      }
 
       if (cfg._txtPointLight > 0) {
         this._txtPntLightCount = this.uniforms.required("txtPntLightCount");
@@ -505,7 +519,12 @@ class MaterialLight extends Shader {
 
   // TODO: Add spot lights
 
-  // TODO: Add textured directional lights
+  /// The number of currently used textured directional lights.
+  int get texturedDirectionalLightCount => this._txtDirLightCount.getValue();
+  set texturedDirectionalLightCount(int count) => this._txtDirLightCount.setValue(count);
+
+  /// The list of textured directional lights.
+  List<UniformTexturedDirectionalLight> get texturedDirectionalLights => this._txtDirLights;
 
   /// The number of currently used textured point lights.
   int get texturedPointLightCount => this._txtPntLightCount.getValue();

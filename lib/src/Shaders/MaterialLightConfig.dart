@@ -50,7 +50,7 @@ class MaterialLightConfig {
     this._enviromental = (this._reflection != MaterialComponentType.None) ||
                          (this._refraction != MaterialComponentType.None);
     this._invViewMat = this._enviromental;
-    this._objMat = (this._pointLight + this._txtPointLight) > 0;
+    this._objMat = (this._pointLight + this._txtPointLight + this._txtDirLight) > 0;
     this._lights = ((this._ambient != MaterialComponentType.None) ||
                    (this._diffuse != MaterialComponentType.None) ||
                    (this._invDiffuse != MaterialComponentType.None) ||
@@ -394,7 +394,20 @@ class MaterialLightConfig {
 
       // TODO: Add spot lights.
 
-      // TODO: Add textured directional lights.
+      if (this._txtDirLight > 0) {
+        buf.writeln("struct TexturedDirLight {");
+        buf.writeln("   vec3 objUp;");
+        buf.writeln("   vec3 objDir;");
+        buf.writeln("   vec3 viewDir;");
+        buf.writeln("   vec3 color;");
+        buf.writeln("   int nullTxt;");
+        buf.writeln("};");
+        buf.writeln("");
+        buf.writeln("uniform int txtDirLightCount;");
+        buf.writeln("uniform TexturedDirLight txtDirLights[${this._txtDirLight}];");
+        buf.writeln("uniform sampler2D txtDirLightsTxt2D[${this._txtDirLight}];");
+        buf.writeln("");
+      }
 
       if (this._txtPointLight > 0) {
         buf.writeln("struct TexturedPointLight {");
@@ -665,6 +678,7 @@ class MaterialLightConfig {
     if (this._lights) {
       buf.writeln("vec3 lightValue(vec3 norm, vec3 litClr, vec3 litVec)");
       buf.writeln("{");
+      buf.writeln("   if ((litClr.r < 0.001) && (litClr.g < 0.001) && (litClr.b < 0.001)) return litClr;");
       List<String> parts = new List<String>();
       if (this._ambient != MaterialComponentType.None) parts.add("ambient()");
       if (this._diffuse != MaterialComponentType.None) parts.add("diffuse(norm, litVec)");
@@ -695,7 +709,23 @@ class MaterialLightConfig {
 
       // TODO: Add spot light.
 
-      // TODO: Add textured directional light.
+      if (this._txtDirLight > 0) {
+        buf.writeln("vec3 txtDirLightValue(vec3 norm, TexturedDirLight lit, sampler2D txt2D)");
+        buf.writeln("{");
+        buf.writeln("   vec3 color;");
+        buf.writeln("   if(lit.nullTxt > 0) color = lit.color;");
+        buf.writeln("   else");
+        buf.writeln("   {");
+        buf.writeln("      vec3 offset = objPos + lit.objDir*dot(objPos, lit.objDir);");
+        buf.writeln("      float tu = dot(offset, lit.objUp);");
+        buf.writeln("      vec3 objRight = cross(lit.objUp, lit.objDir);");
+        buf.writeln("      float tv = dot(offset, objRight);");
+        buf.writeln("      color = lit.color*texture2D(txt2D, vec2(tu, tv)).xyz;");
+        buf.writeln("   }");
+        buf.writeln("   return lightValue(norm, color, lit.viewDir);");
+        buf.writeln("}");
+        buf.writeln("");
+      }
 
       if (this._txtPointLight > 0) {
         buf.writeln("vec3 txtPointLightValue(vec3 norm, TexturedPointLight lit, samplerCube txtCube)");
@@ -756,7 +786,14 @@ class MaterialLightConfig {
 
       // TODO: Add spot light.
 
-      // TODO: Add textured directional light.
+      if (this._txtDirLight > 0) {
+        buf.writeln("   for(int i = 0; i < ${this._txtDirLight}; ++i)");
+        buf.writeln("   {");
+        buf.writeln("      if(i >= txtDirLightCount) break;");
+        buf.writeln("      lightAccum += txtDirLightValue(norm, txtDirLights[i], txtDirLightsTxt2D[i]);");
+        buf.writeln("   }");
+        buf.writeln("");
+      }
 
       if (this._txtPointLight > 0) {
         buf.writeln("   for(int i = 0; i < ${this._txtPointLight}; ++i)");
