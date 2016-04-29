@@ -72,7 +72,8 @@ class MaterialLight extends Shader {
   Uniform1i _pntLightCount;
   List<UniformPointLight> _pntLights;
 
-  // TODO: Add spot lights.
+  Uniform1i _spotLightCount;
+  List<UniformSpotLight> _spotLights;
 
   Uniform1i _txtDirLightCount;
   List<UniformTexturedDirectionalLight> _txtDirLights;
@@ -270,6 +271,7 @@ class MaterialLight extends Shader {
     this._pntLights = new List<UniformPointLight>();
     this._txtDirLights = new List<UniformTexturedDirectionalLight>();
     this._txtPntLights = new List<UniformTexturedPointLight>();
+    this._spotLights = new List<UniformSpotLight>();
 
     if (cfg.lights) {
       if (cfg._dirLight > 0) {
@@ -294,24 +296,37 @@ class MaterialLight extends Shader {
         }
       }
 
-      // TODO: Add spot lights
+      if (cfg._spotLight > 0) {
+        this._spotLightCount = this.uniforms.required("spotLightCount");
+        for (int i = 0; i < cfg._spotLight; ++i) {
+          Uniform3f objPnt = this.uniforms.required("spotLights[$i].objPnt") as Uniform3f;
+          Uniform3f objDir = this.uniforms.required("spotLights[$i].objDir") as Uniform3f;
+          Uniform3f viewPnt = this.uniforms.required("spotLights[$i].viewPnt") as Uniform3f;
+          Uniform3f color = this.uniforms.required("spotLights[$i].color") as Uniform3f;
+          Uniform1f cutoff = this.uniforms.required("spotLights[$i].cutoff") as Uniform1f;
+          Uniform1f coneAngle = this.uniforms.required("spotLights[$i].coneAngle") as Uniform1f;
+          Uniform1f att0 = this.uniforms.required("spotLights[$i].att0") as Uniform1f;
+          Uniform1f att1 = this.uniforms.required("spotLights[$i].att1") as Uniform1f;
+          Uniform1f att2 = this.uniforms.required("spotLights[$i].att2") as Uniform1f;
+          this._spotLights.add(new UniformSpotLight._(i, objPnt, objDir, viewPnt, color, cutoff, coneAngle, att0, att1, att2));
+        }
+      }
 
       if (cfg._txtDirLight > 0) {
         this._txtDirLightCount = this.uniforms.required("txtDirLightCount");
-        Uniform1iv txtArray = this.uniforms.required("txtDirLightsTxt2D[0]") as Uniform1iv;
         for (int i = 0; i < cfg._txtDirLight; ++i) {
           Uniform3f objUp = this.uniforms.required("txtDirLights[$i].objUp") as Uniform3f;
           Uniform3f objDir = this.uniforms.required("txtDirLights[$i].objDir") as Uniform3f;
           Uniform3f viewDir = this.uniforms.required("txtDirLights[$i].viewDir") as Uniform3f;
           Uniform3f color = this.uniforms.required("txtDirLights[$i].color") as Uniform3f;
           Uniform1i nullTxt = this.uniforms.required("txtDirLights[$i].nullTxt") as Uniform1i;
-          this._txtDirLights.add(new UniformTexturedDirectionalLight._(i, objUp, objDir, viewDir, color, txtArray, nullTxt));
+          UniformSampler2D txt = this.uniforms.required("txtDirLightsTxt2D$i") as UniformSampler2D;
+          this._txtDirLights.add(new UniformTexturedDirectionalLight._(i, objUp, objDir, viewDir, color, txt, nullTxt));
         }
       }
 
       if (cfg._txtPointLight > 0) {
         this._txtPntLightCount = this.uniforms.required("txtPntLightCount");
-        Uniform1iv txtArray = this.uniforms.required("txtPntLightsTxtCube[0]") as Uniform1iv;
         for (int i = 0; i < cfg._txtPointLight; ++i) {
           Uniform3f point = this.uniforms.required("txtPntLights[$i].point") as Uniform3f;
           Uniform3f viewPnt = this.uniforms.required("txtPntLights[$i].viewPnt") as Uniform3f;
@@ -321,7 +336,8 @@ class MaterialLight extends Shader {
           Uniform1f att0 = this.uniforms.required("txtPntLights[$i].att0") as Uniform1f;
           Uniform1f att1 = this.uniforms.required("txtPntLights[$i].att1") as Uniform1f;
           Uniform1f att2 = this.uniforms.required("txtPntLights[$i].att2") as Uniform1f;
-          this._txtPntLights.add(new UniformTexturedPointLight._(i, point, viewPnt, invViewRotMat, color, txtArray, nullTxt, att0, att1, att2));
+          UniformSamplerCube txt = this.uniforms.required("txtPntLightsTxtCube$i") as UniformSamplerCube;
+          this._txtPntLights.add(new UniformTexturedPointLight._(i, point, viewPnt, invViewRotMat, color, txt, nullTxt, att0, att1, att2));
         }
       }
 
@@ -517,7 +533,12 @@ class MaterialLight extends Shader {
   /// The list of point lights.
   List<UniformPointLight> get pointLights => this._pntLights;
 
-  // TODO: Add spot lights
+  /// The number of currently used spot lights.
+  int get spotLightCount => this._spotLightCount.getValue();
+  set spotLightCount(int count) => this._spotLightCount.setValue(count);
+
+  /// The list of spot lights.
+  List<UniformSpotLight> get spotLights => this._spotLights;
 
   /// The number of currently used textured directional lights.
   int get texturedDirectionalLightCount => this._txtDirLightCount.getValue();

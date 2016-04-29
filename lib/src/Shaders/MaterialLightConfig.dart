@@ -50,7 +50,7 @@ class MaterialLightConfig {
     this._enviromental = (this._reflection != MaterialComponentType.None) ||
                          (this._refraction != MaterialComponentType.None);
     this._invViewMat = this._enviromental;
-    this._objMat = (this._pointLight + this._txtPointLight + this._txtDirLight) > 0;
+    this._objMat = (this._pointLight + this._txtPointLight + this._txtDirLight + this.spotLight) > 0;
     this._lights = ((this._ambient != MaterialComponentType.None) ||
                    (this._diffuse != MaterialComponentType.None) ||
                    (this._invDiffuse != MaterialComponentType.None) ||
@@ -392,7 +392,23 @@ class MaterialLightConfig {
         buf.writeln("");
       }
 
-      // TODO: Add spot lights.
+      if (this._spotLight > 0) {
+        buf.writeln("struct SpotLight {");
+        buf.writeln("   vec3 objPnt;");
+        buf.writeln("   vec3 objDir;");
+        buf.writeln("   vec3 viewPnt;");
+        buf.writeln("   vec3 color;");
+        buf.writeln("   float cutoff;");
+        buf.writeln("   float coneAngle;");
+        buf.writeln("   float att0;");
+        buf.writeln("   float att1;");
+        buf.writeln("   float att2;");
+        buf.writeln("};");
+        buf.writeln("");
+        buf.writeln("uniform int spotLightCount;");
+        buf.writeln("uniform SpotLight spotLights[${this._spotLight}];");
+        buf.writeln("");
+      }
 
       if (this._txtDirLight > 0) {
         buf.writeln("struct TexturedDirLight {");
@@ -405,7 +421,8 @@ class MaterialLightConfig {
         buf.writeln("");
         buf.writeln("uniform int txtDirLightCount;");
         buf.writeln("uniform TexturedDirLight txtDirLights[${this._txtDirLight}];");
-        buf.writeln("uniform sampler2D txtDirLightsTxt2D[${this._txtDirLight}];");
+        for (int i = 0; i < this._txtDirLight; i++)
+          buf.writeln("uniform sampler2D txtDirLightsTxt2D$i;");
         buf.writeln("");
       }
 
@@ -423,7 +440,8 @@ class MaterialLightConfig {
         buf.writeln("");
         buf.writeln("uniform int txtPntLightCount;");
         buf.writeln("uniform TexturedPointLight txtPntLights[${this._txtPointLight}];");
-        buf.writeln("uniform samplerCube txtPntLightsTxtCube[${this._txtPointLight}];");
+        for (int i = 0; i < this._txtPointLight; i++)
+          buf.writeln("uniform samplerCube txtPntLightsTxtCube$i;");
         buf.writeln("");
       }
 
@@ -689,9 +707,16 @@ class MaterialLightConfig {
       buf.writeln("");
 
       if (this._dirLight > 0) {
-        buf.writeln("vec3 dirLightValue(vec3 norm, DirLight lit)");
+        buf.writeln("vec3 allDirLightValues(vec3 norm)");
         buf.writeln("{");
-        buf.writeln("   return lightValue(norm, lit.color, lit.viewDir);");
+        buf.writeln("   vec3 lightAccum = vec3(0.0, 0.0, 0.0);");
+        buf.writeln("   for(int i = 0; i < ${this._dirLight}; ++i)");
+        buf.writeln("   {");
+        buf.writeln("      if(i >= dirLightCount) break;");
+        buf.writeln("      DirLight lit = dirLights[i];");
+        buf.writeln("      lightAccum += lightValue(norm, lit.color, lit.viewDir);");
+        buf.writeln("   }");
+        buf.writeln("   return lightAccum;");
         buf.writeln("}");
         buf.writeln("");
       }
@@ -705,9 +730,45 @@ class MaterialLightConfig {
         buf.writeln("   return lightValue(norm, lit.color*attenuation, normalize(viewPos - lit.viewPnt));");
         buf.writeln("}");
         buf.writeln("");
+        buf.writeln("vec3 allPointLightValues(vec3 norm)");
+        buf.writeln("{");
+        buf.writeln("   vec3 lightAccum = vec3(0.0, 0.0, 0.0);");
+        buf.writeln("   for(int i = 0; i < ${this._pointLight}; ++i)");
+        buf.writeln("   {");
+        buf.writeln("      if(i >= pntLightCount) break;");
+        buf.writeln("      lightAccum += pointLightValue(norm, pntLights[i]);");
+        buf.writeln("   }");
+        buf.writeln("   return lightAccum;");
+        buf.writeln("}");
+        buf.writeln("");
       }
 
-      // TODO: Add spot light.
+      if (this._spotLight > 0) {
+        buf.writeln("vec3 spotLightValue(vec3 norm, SpotLight lit)");
+        buf.writeln("{");
+        buf.writeln("   vec3 dir = objPos - lit.objPnt;");
+        buf.writeln("   float dist = length(dir);");
+        buf.writeln("   float attenuation = 1.0/(lit.att0 + (lit.att1 + lit.att2*dist)*dist);");
+        buf.writeln("   if(attenuation <= 0.005) return vec3(0.0, 0.0, 0.0);");
+        buf.writeln("   float angle = acos(dot(normalize(dir), lit.objDir));");
+        buf.writeln("   float scale = (lit.cutoff-angle)/(lit.cutoff-lit.coneAngle);");
+        buf.writeln("   if(scale <= 0.0) return vec3(0.0, 0.0, 0.0);");
+        buf.writeln("   if(scale > 1.0) scale = 1.0;");
+        buf.writeln("   return lightValue(norm, lit.color*attenuation*scale, normalize(viewPos - lit.viewPnt));");
+        buf.writeln("}");
+        buf.writeln("");
+        buf.writeln("vec3 allSpotLightValues(vec3 norm)");
+        buf.writeln("{");
+        buf.writeln("   vec3 lightAccum = vec3(0.0, 0.0, 0.0);");
+        buf.writeln("   for(int i = 0; i < ${this._spotLight}; ++i)");
+        buf.writeln("   {");
+        buf.writeln("      if(i >= spotLightCount) break;");
+        buf.writeln("      lightAccum += spotLightValue(norm, spotLights[i]);");
+        buf.writeln("   }");
+        buf.writeln("   return lightAccum;");
+        buf.writeln("}");
+        buf.writeln("");
+      }
 
       if (this._txtDirLight > 0) {
         buf.writeln("vec3 txtDirLightValue(vec3 norm, TexturedDirLight lit, sampler2D txt2D)");
@@ -723,6 +784,16 @@ class MaterialLightConfig {
         buf.writeln("      color = lit.color*texture2D(txt2D, vec2(tu, tv)).xyz;");
         buf.writeln("   }");
         buf.writeln("   return lightValue(norm, color, lit.viewDir);");
+        buf.writeln("}");
+        buf.writeln("");
+        buf.writeln("vec3 allTxtDirLightValue(vec3 norm)");
+        buf.writeln("{");
+        buf.writeln("   vec3 lightAccum = vec3(0.0, 0.0, 0.0);");
+        for (int i = 0; i < this._txtDirLight; ++i) {
+          buf.writeln("   if($i >= txtDirLightCount) return lightAccum;");
+          buf.writeln("   lightAccum += txtDirLightValue(norm, txtDirLights[$i], txtDirLightsTxt2D$i);");
+        }
+        buf.writeln("   return lightAccum;");
         buf.writeln("}");
         buf.writeln("");
       }
@@ -742,6 +813,16 @@ class MaterialLightConfig {
         buf.writeln("      color = lit.color*textureCube(txtCube, invNormDir).xyz;");
         buf.writeln("   }");
         buf.writeln("   return lightValue(norm, attenuation*color, normDir);");
+        buf.writeln("}");
+        buf.writeln("");
+        buf.writeln("vec3 allTxtPointLightValue(vec3 norm)");
+        buf.writeln("{");
+        buf.writeln("   vec3 lightAccum = vec3(0.0, 0.0, 0.0);");
+        for (int i = 0; i < this._txtPointLight; ++i) {
+        buf.writeln("   if($i >= txtPntLightCount) return lightAccum;");
+        buf.writeln("   lightAccum += txtPointLightValue(norm, txtPntLights[$i], txtPntLightsTxtCube$i);");
+        }
+        buf.writeln("   return lightAccum;");
         buf.writeln("}");
         buf.writeln("");
       }
@@ -766,43 +847,11 @@ class MaterialLightConfig {
       if (this._specular != MaterialComponentType.None) buf.writeln("   setSpecularColor();");
       buf.writeln("");
 
-      if (this._dirLight > 0) {
-        buf.writeln("   for(int i = 0; i < ${this._dirLight}; ++i)");
-        buf.writeln("   {");
-        buf.writeln("      if(i >= dirLightCount) break;");
-        buf.writeln("      lightAccum += dirLightValue(norm, dirLights[i]);");
-        buf.writeln("   }");
-        buf.writeln("");
-      }
-
-      if (this._pointLight > 0) {
-        buf.writeln("   for(int i = 0; i < ${this._pointLight}; ++i)");
-        buf.writeln("   {");
-        buf.writeln("      if(i >= pntLightCount) break;");
-        buf.writeln("      lightAccum += pointLightValue(norm, pntLights[i]);");
-        buf.writeln("   }");
-        buf.writeln("");
-      }
-
-      // TODO: Add spot light.
-
-      if (this._txtDirLight > 0) {
-        buf.writeln("   for(int i = 0; i < ${this._txtDirLight}; ++i)");
-        buf.writeln("   {");
-        buf.writeln("      if(i >= txtDirLightCount) break;");
-        buf.writeln("      lightAccum += txtDirLightValue(norm, txtDirLights[i], txtDirLightsTxt2D[i]);");
-        buf.writeln("   }");
-        buf.writeln("");
-      }
-
-      if (this._txtPointLight > 0) {
-        buf.writeln("   for(int i = 0; i < ${this._txtPointLight}; ++i)");
-        buf.writeln("   {");
-        buf.writeln("      if(i >= txtPntLightCount) break;");
-        buf.writeln("      lightAccum += txtPointLightValue(norm, txtPntLights[i], txtPntLightsTxtCube[i]);");
-        buf.writeln("   }");
-        buf.writeln("");
-      }
+      if (this._dirLight > 0)      buf.writeln("   lightAccum += allDirLightValue(norm);");
+      if (this._pointLight > 0)    buf.writeln("   lightAccum += allPointLightValues(norm);");
+      if (this._spotLight > 0)     buf.writeln("   lightAccum += allSpotLightValues(norm);");
+      if (this._txtDirLight > 0)   buf.writeln("   lightAccum += allTxtDirLightValue(norm);");
+      if (this._txtPointLight > 0) buf.writeln("   lightAccum += allTxtPointLightValue(norm);");
 
       // TODO: Add textured spot light.
     }

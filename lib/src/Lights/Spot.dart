@@ -6,16 +6,16 @@ class Spot implements Light {
   /// Creates a new spot light data.
   Spot({
       Movers.Mover mover: null,
-      Math.Color4 color: null,
-      double penumbra: null,
-      double umbra: null,
+      Math.Color3 color: null,
+      double cutoff: null,
+      double coneAngle: null,
       double attenuation0: null,
       double attenuation1: null,
       double attenuation2: null}) {
     this.mover        = mover;
     this.color        = color;
-    this.penumbra     = penumbra;
-    this.umbra        = umbra;
+    this.cutoff       = cutoff;
+    this.coneAngle    = coneAngle;
     this.attenuation0 = attenuation0;
     this.attenuation1 = attenuation1;
     this.attenuation2 = attenuation2;
@@ -60,24 +60,24 @@ class Spot implements Light {
   Movers.Mover _mover;
 
   /// The color of the light.
-  Math.Color4 get color => this._color;
-  set color(Math.Color4 color) =>
-    this._color = (color == null)? new Math.Color4.white(): color;
-  Math.Color4 _color;
+  Math.Color3 get color => this._color;
+  set color(Math.Color3 color) =>
+    this._color = (color == null)? new Math.Color3.white(): color;
+  Math.Color3 _color;
 
-  /// The penumbra of the light.
-  double get penumbra => this._penumbra;
-  set penumbra(double penumbra) =>
-    this._penumbra = (penumbra == null)? math.PI:
-    Math.clampVal(penumbra, 0.0, math.PI);
-  double _penumbra;
+  /// The cut-off angle, in radians, of the light cone.
+  double get cutoff => this._cutoff;
+  set cutoff(double cutoff) =>
+    this._cutoff = (cutoff == null)? math.PI:
+    Math.clampVal(cutoff, 0.0, math.PI);
+  double _cutoff;
 
-  /// The umbra of the light.
-  double get umbra => this._umbra;
-  set umbra(double umbra) =>
-    this._umbra = (umbra == null)? math.PI:
-    Math.clampVal(umbra, 0.0, math.PI);
-  double _umbra;
+  /// The cone angle, in radians, of the light.
+  double get coneAngle => this._coneAngle;
+  set coneAngle(double coneAngle) =>
+    this._coneAngle = (coneAngle == null)? math.PI:
+    Math.clampVal(coneAngle, 0.0, math.PI);
+  double _coneAngle;
 
   /// The constant attenuation factor of the light.
   double get attenuation0 => this._attenuation0;

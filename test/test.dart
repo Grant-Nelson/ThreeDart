@@ -34,6 +34,7 @@ void main() {
   addTest(elem, "test021");
   addTest(elem, "test022");
   addTest(elem, "test023");
+  addTest(elem, "test024");
 
   common.shellPage("3Dart Tests", elem, true, "./resources/SnowTop.png");
 }

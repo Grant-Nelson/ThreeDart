@@ -811,7 +811,24 @@ class MaterialLight extends Technique {
         }
       }
 
-      // TODO: Add spot light.
+      if (cfg.spotLight > 0) {
+        int count = this._lights._spotLights.length;
+        this._shader.spotLightCount = count;
+        Math.Matrix4 viewMat = state.view.matrix;
+        for (int i = 0; i < count; ++i)  {
+          Lights.Spot light = this._lights._spotLights[i];
+          Shaders.UniformSpotLight uniform = this._shader.spotLights[i];
+          uniform.objectPoint = light.position;
+          uniform.objectDirection = light.direction.normal();
+          uniform.viewPoint = viewMat.transPnt3(light.position);
+          uniform.color = light.color;
+          uniform.cutoff       = light.cutoff;
+          uniform.coneAngle    = light.coneAngle;
+          uniform.attenuation0 = light.attenuation0;
+          uniform.attenuation1 = light.attenuation1;
+          uniform.attenuation2 = light.attenuation2;
+        }
+      }
 
       if (cfg.txtDirLight > 0) {
         int count = this._lights._txtDirLights.length;
