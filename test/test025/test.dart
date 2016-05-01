@@ -1,7 +1,7 @@
 // Copyright (c) 2016, SnowGremlin. All rights reserved. Use of this source code
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
-library ThreeDart.test.test024;
+library ThreeDart.test.test025;
 
 import 'dart:html';
 import 'dart:math';
@@ -16,7 +16,7 @@ import 'package:ThreeDart/Lights.dart' as Lights;
 import '../common/common.dart' as common;
 
 void main() {
-  common.shellTest("Test 024", ["shapes"],
+  common.shellTest("Test 025", ["shapes"],
     "Test of a simple spot light. Use Ctrl plus the mouse to move the light.");
 
   Movers.UserRotater viewRotater = new Movers.UserRotater();
@@ -27,19 +27,18 @@ void main() {
     ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, -2.5)))
     ..add(objRotater);
 
-  Lights.Spot spot = new Lights.Spot(
+  Lights.TexturedSpot spot = new Lights.TexturedSpot(
     mover:        lightMover,
     color:        new Math.Color3.white(),
-    cutoff:       0.6,
-    coneAngle:    0.5,
+    fov:          0.5,
+    ratio:        1.0,
     attenuation0: 0.5,
     attenuation1: 0.05,
     attenuation2: 0.05);
 
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
     ..lights.add(spot)
-    ..emissionColor = new Math.Color3.black()
-    ..ambientColor = new Math.Color3.gray(0.0)
+    ..ambientColor = new Math.Color3.gray(0.05)
     ..diffuseColor = new Math.Color3.gray(0.7)
     ..specularColor = new Math.Color3.gray(0.3)
     ..shininess = 100.0;
@@ -73,6 +72,8 @@ void main() {
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart")
     ..scene = pass;
+
+  spot.texture = td.textureLoader.load2DFromFile("../resources/Test.png");
 
   new common.RadioGroup("shapes")
     ..add("Cube",     () { centerObj.shape = Shapes.cube(); })

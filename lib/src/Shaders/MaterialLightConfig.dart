@@ -50,7 +50,7 @@ class MaterialLightConfig {
     this._enviromental = (this._reflection != MaterialComponentType.None) ||
                          (this._refraction != MaterialComponentType.None);
     this._invViewMat = this._enviromental;
-    this._objMat = (this._pointLight + this._txtPointLight + this._txtDirLight + this.spotLight) > 0;
+    this._objMat = (this._pointLight + this._txtPointLight + this._txtDirLight + this.spotLight + this.txtSpotLight) > 0;
     this._lights = ((this._ambient != MaterialComponentType.None) ||
                    (this._diffuse != MaterialComponentType.None) ||
                    (this._invDiffuse != MaterialComponentType.None) ||
@@ -413,6 +413,7 @@ class MaterialLightConfig {
       if (this._txtDirLight > 0) {
         buf.writeln("struct TexturedDirLight {");
         buf.writeln("   vec3 objUp;");
+        buf.writeln("   vec3 objRight;");
         buf.writeln("   vec3 objDir;");
         buf.writeln("   vec3 viewDir;");
         buf.writeln("   vec3 color;");
@@ -445,8 +446,28 @@ class MaterialLightConfig {
         buf.writeln("");
       }
 
-      // TODO: Add textured spot lights.
-
+      if (this._txtSpotLight > 0) {
+        buf.writeln("struct TexturedSpotLight {");
+        buf.writeln("   vec3 objPnt;");
+        buf.writeln("   vec3 objDir;");
+        buf.writeln("   vec3 objUp;");
+        buf.writeln("   vec3 objRight;");
+        buf.writeln("   vec3 viewPnt;");
+        buf.writeln("   int nullTxt;");
+        buf.writeln("   vec3 color;");
+        buf.writeln("   float tuScalar;");
+        buf.writeln("   float tvScalar;");
+        buf.writeln("   float att0;");
+        buf.writeln("   float att1;");
+        buf.writeln("   float att2;");
+        buf.writeln("};");
+        buf.writeln("");
+        buf.writeln("uniform int txtSpotLightCount;");
+        buf.writeln("uniform TexturedSpotLight txtSpotLights[${this._txtSpotLight}];");
+        for (int i = 0; i < this._txtSpotLight; i++)
+          buf.writeln("uniform sampler2D txtSpotLightsTxt2D$i;");
+        buf.writeln("");
+      }
     }
 
     if (this._emission != MaterialComponentType.None) {
@@ -779,8 +800,7 @@ class MaterialLightConfig {
         buf.writeln("   {");
         buf.writeln("      vec3 offset = objPos + lit.objDir*dot(objPos, lit.objDir);");
         buf.writeln("      float tu = dot(offset, lit.objUp);");
-        buf.writeln("      vec3 objRight = cross(lit.objUp, lit.objDir);");
-        buf.writeln("      float tv = dot(offset, objRight);");
+        buf.writeln("      float tv = dot(offset, lit.objRight);");
         buf.writeln("      color = lit.color*texture2D(txt2D, vec2(tu, tv)).xyz;");
         buf.writeln("   }");
         buf.writeln("   return lightValue(norm, color, lit.viewDir);");
@@ -790,7 +810,7 @@ class MaterialLightConfig {
         buf.writeln("{");
         buf.writeln("   vec3 lightAccum = vec3(0.0, 0.0, 0.0);");
         for (int i = 0; i < this._txtDirLight; ++i) {
-          buf.writeln("   if($i >= txtDirLightCount) return lightAccum;");
+          buf.writeln("   if(txtDirLightCount <= $i) return lightAccum;");
           buf.writeln("   lightAccum += txtDirLightValue(norm, txtDirLights[$i], txtDirLightsTxt2D$i);");
         }
         buf.writeln("   return lightAccum;");
@@ -819,16 +839,48 @@ class MaterialLightConfig {
         buf.writeln("{");
         buf.writeln("   vec3 lightAccum = vec3(0.0, 0.0, 0.0);");
         for (int i = 0; i < this._txtPointLight; ++i) {
-        buf.writeln("   if($i >= txtPntLightCount) return lightAccum;");
-        buf.writeln("   lightAccum += txtPointLightValue(norm, txtPntLights[$i], txtPntLightsTxtCube$i);");
+          buf.writeln("   if(txtPntLightCount <= $i) return lightAccum;");
+          buf.writeln("   lightAccum += txtPointLightValue(norm, txtPntLights[$i], txtPntLightsTxtCube$i);");
         }
         buf.writeln("   return lightAccum;");
         buf.writeln("}");
         buf.writeln("");
       }
 
-      // TODO: Add textured spot light.
-
+      if (this._txtSpotLight > 0) {
+        buf.writeln("vec3 txtSpotLightValue(vec3 norm, TexturedSpotLight lit, sampler2D txt2D)");
+        buf.writeln("{");
+        buf.writeln("   vec3 dir = objPos - lit.objPnt;");
+        buf.writeln("   float dist = length(dir);");
+        buf.writeln("   float attenuation = 1.0/(lit.att0 + (lit.att1 + lit.att2*dist)*dist);");
+        buf.writeln("   if(attenuation <= 0.005) return vec3(0.0, 0.0, 0.0);");
+        buf.writeln("   vec3 normDir = normalize(dir);");
+        buf.writeln("   float zScale = dot(normDir, lit.objDir);");
+        buf.writeln("   if(zScale < 0.0) return vec3(0.0, 0.0, 0.0);");
+        buf.writeln("   vec3 color;");
+        buf.writeln("   if(lit.nullTxt > 0) color = lit.color;");
+        buf.writeln("   else");
+        buf.writeln("   {");
+        buf.writeln("      float tu = dot(normDir, lit.objUp)*lit.tuScalar+0.5;");
+        buf.writeln("      if((tu > 1.0) || (tu < 0.0)) return vec3(0.0, 0.0, 0.0);");
+        buf.writeln("      float tv = dot(normDir, lit.objRight)*lit.tvScalar+0.5;");
+        buf.writeln("      if((tv > 1.0) || (tv < 0.0)) return vec3(0.0, 0.0, 0.0);");
+        buf.writeln("      color = lit.color*texture2D(txt2D, vec2(tu, tv)).xyz;");
+        buf.writeln("   }");
+        buf.writeln("   return lightValue(norm, color*attenuation, normalize(viewPos - lit.viewPnt));");
+        buf.writeln("}");
+        buf.writeln("");
+        buf.writeln("vec3 allTxtSpotLightValues(vec3 norm)");
+        buf.writeln("{");
+        buf.writeln("   vec3 lightAccum = vec3(0.0, 0.0, 0.0);");
+        for (int i = 0; i < this._txtSpotLight; ++i) {
+          buf.writeln("   if(txtSpotLightCount <= $i) return lightAccum;");
+          buf.writeln("   lightAccum += txtSpotLightValue(norm, txtSpotLights[$i], txtSpotLightsTxt2D$i);");
+        }
+        buf.writeln("   return lightAccum;");
+        buf.writeln("}");
+        buf.writeln("");
+      }
     }
 
     buf.writeln("void main()");
@@ -845,15 +897,12 @@ class MaterialLightConfig {
       if (this._diffuse != MaterialComponentType.None) buf.writeln("   setDiffuseColor();");
       if (this._invDiffuse != MaterialComponentType.None) buf.writeln("   setInvDiffuseColor();");
       if (this._specular != MaterialComponentType.None) buf.writeln("   setSpecularColor();");
-      buf.writeln("");
-
       if (this._dirLight > 0)      buf.writeln("   lightAccum += allDirLightValue(norm);");
       if (this._pointLight > 0)    buf.writeln("   lightAccum += allPointLightValues(norm);");
       if (this._spotLight > 0)     buf.writeln("   lightAccum += allSpotLightValues(norm);");
       if (this._txtDirLight > 0)   buf.writeln("   lightAccum += allTxtDirLightValue(norm);");
       if (this._txtPointLight > 0) buf.writeln("   lightAccum += allTxtPointLightValue(norm);");
-
-      // TODO: Add textured spot light.
+      if (this._txtSpotLight > 0)  buf.writeln("   lightAccum += allTxtSpotLightValues(norm);");
     }
     if (this._emission != MaterialComponentType.None) fragParts.add("emission()");
     if (this._reflection != MaterialComponentType.None) fragParts.add("reflect(refl)");

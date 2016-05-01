@@ -56,7 +56,7 @@ void main() {
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart")
     ..scene = pass;
 
-  txtDir.texture = td.textureLoader.load2DFromFile("../resources/WaterShine3.png", wrapEdges: true);
+  txtDir.texture = td.textureLoader.load2DFromFile("../resources/Test.png", wrapEdges: true);
 
   new common.RadioGroup("shapes")
     ..add("Cube",     () { centerObj.shape = Shapes.cube(); })

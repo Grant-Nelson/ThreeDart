@@ -13,6 +13,8 @@ class TexturedSpot implements Light {
       double attenuation0: null,
       double attenuation1: null,
       double attenuation2: null}) {
+    this._fov         = 0.6;
+    this._ratio       = 1.0;
     this.mover        = mover;
     this.color        = color;
     this.texture      = texture;
@@ -24,6 +26,7 @@ class TexturedSpot implements Light {
     this._position    = new Math.Point3(0.0, 0.0, 0.0);
     this._direction   = new Math.Vector3(0.0, 0.0, 1.0);
     this._up          = new Math.Vector3(0.0, 1.0, 0.0);
+    this._right       = new Math.Vector3(-1.0, 0.0, 0.0);
   }
 
   /// Updates the light with the current state.
@@ -31,12 +34,14 @@ class TexturedSpot implements Light {
     this._position  = new Math.Point3(0.0, 0.0, 0.0);
     this._direction = new Math.Vector3(0.0, 0.0, 1.0);
     this._up        = new Math.Vector3(0.0, 1.0, 0.0);
+    this._right     = new Math.Vector3(-1.0, 0.0, 0.0);
     if (this._mover != null) {
       Math.Matrix4 mat = this._mover.update(state, this);
       if (mat != null) {
         this._position  = mat.transPnt3(this._position);
-        this._direction = mat.transVec3(this._direction);
-        this._up        = mat.transVec3(this._up);
+        this._direction = mat.transVec3(this._direction).normal();
+        this._up        = mat.transVec3(this._up).normal();
+        this._right     = mat.transVec3(this._right).normal();
       }
     }
   }
@@ -59,9 +64,13 @@ class TexturedSpot implements Light {
   Math.Vector3 get direction => this._direction;
   Math.Vector3 _direction;
 
-  /// The direction the light is pointing.
+  /// The up direction of the light.
   Math.Vector3 get up => this._up;
   Math.Vector3 _up;
+
+  /// The right direction of the light.
+  Math.Vector3 get right => this._right;
+  Math.Vector3 _right;
 
   /// The mover to position this light.
   Movers.Mover get mover => this._mover;
@@ -79,17 +88,29 @@ class TexturedSpot implements Light {
   set texture(Textures.Texture2D texture) => this._texture = texture;
   Textures.Texture2D _texture;
 
+  /// The vertical texture scalar of the light.
+  double get tuScalar => this._tuScalar;
+  double _tuScalar;
+
+  /// The horizontal texture scalar of the light.
+  double get tvScalar => this._tvScalar;
+  double _tvScalar;
+
   /// The feild-of-view of the light in the y-axis (up) of the texture.
   double get fov => this._fov;
-  set fov(double fov) =>
-    this._fov = (fov == null)? math.PI/3.0:
-    Math.clampVal(fov, 0.0, math.PI);
+  set fov(double fov) {
+    this._fov = (fov == null)? math.PI/3.0: Math.clampVal(fov, 0.0, math.PI);
+    this._tuScalar = 1.0/(math.sqrt(2.0)*math.tan(this._fov));
+    this._tvScalar = this._tuScalar*this._ratio;
+  }
   double _fov;
 
   /// The ratio width to height of the texture.
   double get ratio => this._ratio;
-  set ratio(double ratio) =>
+  set ratio(double ratio) {
     this._ratio = (ratio == null)? 1.0: ratio;
+    this._tvScalar = this._tuScalar*this._ratio;
+  }
   double _ratio;
 
   /// The constant attenuation factor of the light.

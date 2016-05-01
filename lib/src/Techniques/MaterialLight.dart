@@ -640,9 +640,11 @@ class MaterialLight extends Technique {
 
   /// Checks if the texture is in the list and if not, sets it's index and adds it to the list.
   void _addToTextureList(List<Textures.Texture> textures, Textures.Texture txt) {
-    if (!textures.contains(txt)) {
-      txt.index = textures.length;
-      textures.add(txt);
+    if (txt != null) {
+      if (!textures.contains(txt)) {
+        txt.index = textures.length;
+        textures.add(txt);
+      }
     }
   }
 
@@ -680,9 +682,9 @@ class MaterialLight extends Technique {
 
       Data.BufferStore cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl), vertexType);
       cache.findAttribute(Data.VertexType.Pos).attr = this._shader.posAttr.loc;
-      if (cfg.norm) cache.findAttribute(Data.VertexType.Norm).attr = this._shader.normAttr.loc;
-      if (cfg.binm) cache.findAttribute(Data.VertexType.Binm).attr = this._shader.binmAttr.loc;
-      if (cfg.txt2D) cache.findAttribute(Data.VertexType.Txt2D).attr = this._shader.txt2DAttr.loc;
+      if (cfg.norm)    cache.findAttribute(Data.VertexType.Norm).attr    = this._shader.normAttr.loc;
+      if (cfg.binm)    cache.findAttribute(Data.VertexType.Binm).attr    = this._shader.binmAttr.loc;
+      if (cfg.txt2D)   cache.findAttribute(Data.VertexType.Txt2D).attr   = this._shader.txt2DAttr.loc;
       if (cfg.txtCube) cache.findAttribute(Data.VertexType.TxtCube).attr = this._shader.txtCubeAttr.loc;
       obj.cache = cache;
     }
@@ -702,12 +704,12 @@ class MaterialLight extends Technique {
       case Shaders.MaterialComponentType.Texture2D:
         this._addToTextureList(textures, this._emission2D);
         this._shader.emissionTexture2D = this._emission2D;
-        this._shader.emissionColor = this._emissionClr;
+        this._shader.emissionColor     = this._emissionClr;
         break;
       case Shaders.MaterialComponentType.TextureCube:
         this._addToTextureList(textures, this._emissionCube);
         this._shader.emissionTextureCube = this._emissionCube;
-        this._shader.emissionColor = this._emissionClr;
+        this._shader.emissionColor       = this._emissionClr;
         break;
     }
 
@@ -720,12 +722,12 @@ class MaterialLight extends Technique {
         case Shaders.MaterialComponentType.Texture2D:
           this._addToTextureList(textures, this._ambient2D);
           this._shader.ambientTexture2D = this._ambient2D;
-          this._shader.ambientColor = this._ambientClr;
+          this._shader.ambientColor     = this._ambientClr;
           break;
         case Shaders.MaterialComponentType.TextureCube:
           this._addToTextureList(textures, this._ambientCube);
           this._shader.ambientTextureCube = this._ambientCube;
-          this._shader.ambientColor = this._ambientClr;
+          this._shader.ambientColor       = this._ambientClr;
           break;
       }
 
@@ -737,12 +739,12 @@ class MaterialLight extends Technique {
         case Shaders.MaterialComponentType.Texture2D:
           this._addToTextureList(textures, this._diffuse2D);
           this._shader.diffuseTexture2D = this._diffuse2D;
-          this._shader.diffuseColor = this._diffuseClr;
+          this._shader.diffuseColor     = this._diffuseClr;
           break;
         case Shaders.MaterialComponentType.TextureCube:
           this._addToTextureList(textures, this._diffuseCube);
           this._shader.diffuseTextureCube = this._diffuseCube;
-          this._shader.diffuseColor = this._diffuseClr;
+          this._shader.diffuseColor       = this._diffuseClr;
           break;
       }
 
@@ -754,12 +756,12 @@ class MaterialLight extends Technique {
         case Shaders.MaterialComponentType.Texture2D:
           this._addToTextureList(textures, this._invDiffuse2D);
           this._shader.invDiffuseTexture2D = this._invDiffuse2D;
-          this._shader.invDiffuseColor = this._invDiffuseClr;
+          this._shader.invDiffuseColor     = this._invDiffuseClr;
           break;
         case Shaders.MaterialComponentType.TextureCube:
           this._addToTextureList(textures, this._invDiffuseCube);
           this._shader.invDiffuseTextureCube = this._invDiffuseCube;
-          this._shader.invDiffuseColor = this._invDiffuseClr;
+          this._shader.invDiffuseColor       = this._invDiffuseClr;
           break;
       }
 
@@ -767,19 +769,19 @@ class MaterialLight extends Technique {
         case Shaders.MaterialComponentType.None: break;
         case Shaders.MaterialComponentType.Solid:
           this._shader.specularColor = this._specularClr;
-          this._shader.shininess = this._shininess;
+          this._shader.shininess     = this._shininess;
           break;
         case Shaders.MaterialComponentType.Texture2D:
           this._addToTextureList(textures, this._specular2D);
           this._shader.specularTexture2D = this._specular2D;
-          this._shader.specularColor = this._specularClr;
-          this._shader.shininess = this._shininess;
+          this._shader.specularColor     = this._specularClr;
+          this._shader.shininess         = this._shininess;
           break;
         case Shaders.MaterialComponentType.TextureCube:
           this._addToTextureList(textures, this._specularCube);
           this._shader.specularTextureCube = this._specularCube;
-          this._shader.specularColor = this._specularClr;
-          this._shader.shininess = this._shininess;
+          this._shader.specularColor       = this._specularClr;
+          this._shader.shininess           = this._shininess;
           break;
       }
 
@@ -791,7 +793,7 @@ class MaterialLight extends Technique {
           Lights.Directional light = this._lights._dirLights[i];
           Shaders.UniformDirectionalLight uniform = this._shader.directionalLights[i];
           uniform.viewDir = viewMat.transVec3(light.direction).normal();
-          uniform.color = light.color;
+          uniform.color   = light.color;
         }
       }
 
@@ -802,9 +804,9 @@ class MaterialLight extends Technique {
         for (int i = 0; i < count; ++i)  {
           Lights.Point light = this._lights._pntLights[i];
           Shaders.UniformPointLight uniform = this._shader.pointLights[i];
-          uniform.point = light.position;
-          uniform.viewPoint = viewMat.transPnt3(light.position);
-          uniform.color = light.color;
+          uniform.point        = light.position;
+          uniform.viewPoint    = viewMat.transPnt3(light.position);
+          uniform.color        = light.color;
           uniform.attenuation0 = light.attenuation0;
           uniform.attenuation1 = light.attenuation1;
           uniform.attenuation2 = light.attenuation2;
@@ -818,15 +820,15 @@ class MaterialLight extends Technique {
         for (int i = 0; i < count; ++i)  {
           Lights.Spot light = this._lights._spotLights[i];
           Shaders.UniformSpotLight uniform = this._shader.spotLights[i];
-          uniform.objectPoint = light.position;
+          uniform.objectPoint     = light.position;
           uniform.objectDirection = light.direction.normal();
-          uniform.viewPoint = viewMat.transPnt3(light.position);
-          uniform.color = light.color;
-          uniform.cutoff       = light.cutoff;
-          uniform.coneAngle    = light.coneAngle;
-          uniform.attenuation0 = light.attenuation0;
-          uniform.attenuation1 = light.attenuation1;
-          uniform.attenuation2 = light.attenuation2;
+          uniform.viewPoint       = viewMat.transPnt3(light.position);
+          uniform.color           = light.color;
+          uniform.cutoff          = light.cutoff;
+          uniform.coneAngle       = light.coneAngle;
+          uniform.attenuation0    = light.attenuation0;
+          uniform.attenuation1    = light.attenuation1;
+          uniform.attenuation2    = light.attenuation2;
         }
       }
 
@@ -837,12 +839,13 @@ class MaterialLight extends Technique {
         for (int i = 0; i < count; ++i)  {
           Lights.TexturedDirectional light = this._lights._txtDirLights[i];
           Shaders.UniformTexturedDirectionalLight uniform = this._shader.texturedDirectionalLights[i];
-          if (light.texture != null) this._addToTextureList(textures, light.texture);
-          uniform.objectDir = light.direction.normal();
-          uniform.objectUp = light.up.normal();
-          uniform.viewDir = viewMat.transVec3(light.direction).normal();
-          uniform.color = light.color;
-          uniform.texture = light.texture;
+          this._addToTextureList(textures, light.texture);
+          uniform.objectDir   = light.direction;
+          uniform.objectUp    = light.up;
+          uniform.objectRight = light.right;
+          uniform.viewDir     = viewMat.transVec3(light.direction).normal();
+          uniform.color       = light.color;
+          uniform.texture     = light.texture;
         }
       }
 
@@ -853,20 +856,41 @@ class MaterialLight extends Technique {
         for (int i = 0; i < count; ++i)  {
           Lights.TexturedPoint light = this._lights._txtPntLights[i];
           Shaders.UniformTexturedPointLight uniform = this._shader.texturedPointLights[i];
-          if (light.texture != null) this._addToTextureList(textures, light.texture);
-          uniform.point = light.matrix.transPnt3(new Math.Point3(0.0, 0.0, 0.0));
+          this._addToTextureList(textures, light.texture);
           Math.Matrix4 viewObjMat = viewMat*light.matrix;
-          uniform.viewPoint = viewObjMat.transPnt3(new Math.Point3(0.0, 0.0, 0.0));
+          uniform.point        = light.matrix.transPnt3(new Math.Point3(0.0, 0.0, 0.0));
+          uniform.viewPoint    = viewObjMat.transPnt3(new Math.Point3(0.0, 0.0, 0.0));
           uniform.inverseViewRotationMatrix = new Math.Matrix3.fromMatrix4(viewObjMat.inverse());
-          uniform.color = light.color;
-          uniform.texture = light.texture;
+          uniform.color        = light.color;
+          uniform.texture      = light.texture;
           uniform.attenuation0 = light.attenuation0;
           uniform.attenuation1 = light.attenuation1;
           uniform.attenuation2 = light.attenuation2;
         }
       }
 
-      // TODO: Add textured spot light.
+      if (cfg.txtSpotLight > 0) {
+        int count = this._lights._txtSpotLights.length;
+        this._shader.texturedSpotLightCount = count;
+        Math.Matrix4 viewMat = state.view.matrix;
+        for (int i = 0; i < count; ++i)  {
+          Lights.TexturedSpot light = this._lights._txtSpotLights[i];
+          Shaders.UniformTexturedSpotLight uniform = this._shader.texturedSpotLights[i];
+          this._addToTextureList(textures, light.texture);
+          uniform.objectPoint     = light.position;
+          uniform.objectDirection = light.direction;
+          uniform.objectUp        = light.up;
+          uniform.objectRight     = light.right;
+          uniform.viewPoint       = viewMat.transPnt3(light.position);
+          uniform.texture         = light.texture;
+          uniform.color           = light.color;
+          uniform.tuScalar        = light.tuScalar;
+          uniform.tvScalar        = light.tvScalar;
+          uniform.attenuation0    = light.attenuation0;
+          uniform.attenuation1    = light.attenuation1;
+          uniform.attenuation2    = light.attenuation2;
+        }
+      }
     }
 
     switch (cfg.bumpy) {

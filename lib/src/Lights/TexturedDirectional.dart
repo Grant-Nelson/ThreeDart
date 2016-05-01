@@ -11,19 +11,22 @@ class TexturedDirectional implements Light {
     this.mover      = mover;
     this.color      = color;
     this.texture    = texture;
-    this._up        = new Math.Vector3(0.0, 1.0, 0.0);
     this._direction = new Math.Vector3(0.0, 0.0, 1.0);
+    this._up        = new Math.Vector3(0.0, 1.0, 0.0);
+    this._right     = new Math.Vector3(-1.0, 0.0, 0.0);
   }
 
   /// Updates the light with the current state.
   void update(Core.RenderState state) {
-    this._up        = new Math.Vector3(0.0, 1.0, 0.0);
     this._direction = new Math.Vector3(0.0, 0.0, 1.0);
+    this._up        = new Math.Vector3(0.0, 1.0, 0.0);
+    this._right     = new Math.Vector3(-1.0, 0.0, 0.0);
     if (this._mover != null) {
       Math.Matrix4 mat = this._mover.update(state, this);
       if (mat != null) {
-        this._up        = mat.transVec3(this._up);
-        this._direction = mat.transVec3(this._direction);
+        this._direction = mat.transVec3(this._direction).normal();
+        this._up        = mat.transVec3(this._up).normal();
+        this._right     = mat.transVec3(this._right).normal();
       }
     }
   }
@@ -38,13 +41,17 @@ class TexturedDirectional implements Light {
     if(this.texture != null) this.texture.unbind(state);
   }
 
+  /// The direction the light is pointing.
+  Math.Vector3 get direction => this._direction;
+  Math.Vector3 _direction;
+
   /// The up vector of the texture for the light.
   Math.Vector3 get up => this._up;
   Math.Vector3 _up;
 
-  /// The direction the light is pointing.
-  Math.Vector3 get direction => this._direction;
-  Math.Vector3 _direction;
+  /// The right vector of the texture for the light.
+  Math.Vector3 get right => this._right;
+  Math.Vector3 _right;
 
   /// The mover to position this light.
   Movers.Mover get mover => this._mover;
