@@ -16,6 +16,9 @@ class MaterialLight extends Shader {
   UniformMat4 _viewMat;
   UniformMat4 _projViewObjMat;
   UniformMat4 _invViewMat;
+  UniformMat3 _txt2DMat;
+  UniformMat4 _txtCubeMat;
+  UniformMat4 _colorMat;
 
   Uniform3f _emissionClr;
   UniformSampler2D _emission2D;
@@ -102,9 +105,9 @@ class MaterialLight extends Shader {
     String vertexSource = this._cfg.createVertexSource();
     String fragmentSource = this._cfg.createFragmentSource();
 
-    print(this._cfg.toString());
-    print(numberLines(vertexSource));
-    print(numberLines(fragmentSource));
+    // print(this._cfg.toString());
+    // print(numberLines(vertexSource));
+    // print(numberLines(fragmentSource));
 
     this.initialize(vertexSource, fragmentSource);
     this._posAttr     = this.attributes["posAttr"];
@@ -119,6 +122,9 @@ class MaterialLight extends Shader {
     if (cfg.viewObjMat) this._viewObjMat = this.uniforms.required("viewObjMat") as UniformMat4;
     if (cfg.invViewMat) this._invViewMat = this.uniforms.required("invViewMat") as UniformMat4;
     this._projViewObjMat = this.uniforms.required("projViewObjMat") as UniformMat4;
+    if (cfg.txt2D) this._txt2DMat = this.uniforms.required("txt2DMat") as UniformMat3;
+    if (cfg.txtCube) this._txtCubeMat = this.uniforms.required("txtCubeMat") as UniformMat4;
+    this._colorMat = this.uniforms.required("colorMat") as UniformMat4;
 
     if (cfg.emission != MaterialComponentType.None) {
       this._emissionClr = this.uniforms.required("emissionClr") as Uniform3f;
@@ -423,6 +429,18 @@ class MaterialLight extends Shader {
   /// The inverse view matrix.
   Math.Matrix4 get inverseViewMatrix => this._invViewMat.getMatrix4();
   set inverseViewMatrix(Math.Matrix4 mat) => this._invViewMat.setMatrix4(mat);
+
+  /// The 2D texture modification matrix.
+  Math.Matrix3 get texture2DMatrix => this._txt2DMat.getMatrix3();
+  set texture2DMatrix(Math.Matrix3 mat) => this._txt2DMat.setMatrix3(mat);
+
+  /// The cube texture modification matrix.
+  Math.Matrix4 get textureCubeMatrix => this._txtCubeMat.getMatrix4();
+  set textureCubeMatrix(Math.Matrix4 mat) => this._txtCubeMat.setMatrix4(mat);
+
+  /// The color modification matrix.
+  Math.Matrix4 get colorMatrix => this._colorMat.getMatrix4();
+  set colorMatrix(Math.Matrix4 mat) => this._colorMat.setMatrix4(mat);
 
   /// The emission color scalar of the object.
   Math.Color3 get emissionColor => this._emissionClr.getColor3();

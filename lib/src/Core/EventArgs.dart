@@ -102,3 +102,14 @@ class KeyEventArgs extends EventArgs {
   KeyEventArgs(Object sender, this.keyCode):
     super(sender);
 }
+
+/// The state event arguments for update and render events.
+class StateEventArgs extends EventArgs {
+
+  /// The render staste for an update or render.
+  final RenderState state;
+
+  /// Creates a new state event argument.
+  StateEventArgs(Object sender, this.state):
+    super(sender);
+}

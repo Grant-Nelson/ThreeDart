@@ -25,6 +25,7 @@ class MaterialLightConfig {
   int _txtDirLight;
   int _txtPointLight;
   int _txtSpotLight;
+  int _totalLights;
   bool _enviromental;
   bool _invViewMat;
   bool _viewObjMat;
@@ -37,6 +38,7 @@ class MaterialLightConfig {
   bool _txt2D;
   bool _txtCube;
   String _name;
+  Data.VertexType _vertexType;
 
   MaterialLightConfig(MaterialComponentType this._emission,
     MaterialComponentType this._ambient, MaterialComponentType this._diffuse,
@@ -45,43 +47,49 @@ class MaterialLightConfig {
     MaterialComponentType this._refraction, MaterialComponentType this._alpha,
     int this._dirLight, int this._pointLight, int this._spotLight,
     int this._txtDirLight, int this._txtPointLight, int this._txtSpotLight) {
-    int totalLights = this._dirLight + this._pointLight + this._spotLight +
+
+    this._totalLights = this._dirLight + this._pointLight + this._spotLight +
                       this._txtDirLight + this._txtPointLight + this._txtSpotLight;
     this._enviromental = (this._reflection != MaterialComponentType.None) ||
                          (this._refraction != MaterialComponentType.None);
     this._invViewMat = this._enviromental;
-    this._objMat = (this._pointLight + this._txtPointLight + this._txtDirLight + this.spotLight + this.txtSpotLight) > 0;
-    this._lights = ((this._ambient != MaterialComponentType.None) ||
-                   (this._diffuse != MaterialComponentType.None) ||
-                   (this._invDiffuse != MaterialComponentType.None) ||
-                   (this._specular != MaterialComponentType.None)) && (totalLights > 0);
+    this._objMat = (this._pointLight + this._txtPointLight + this._txtDirLight +
+                    this.spotLight + this.txtSpotLight) > 0;
+    this._lights = ((this._ambient    != MaterialComponentType.None) ||
+                    (this._diffuse    != MaterialComponentType.None) ||
+                    (this._invDiffuse != MaterialComponentType.None) ||
+                    (this._specular   != MaterialComponentType.None)) &&
+                   (this._totalLights > 0);
     this._objPos = this._objMat;
-    this._viewPos = (this._specular != MaterialComponentType.None) || this._enviromental;
-    this._norm = (this._diffuse != MaterialComponentType.None) ||
+    this._viewPos = (this._specular != MaterialComponentType.None) ||
+                    this._enviromental;
+    this._norm = (this._diffuse    != MaterialComponentType.None) ||
                  (this._invDiffuse != MaterialComponentType.None) ||
-                 (this._specular != MaterialComponentType.None) ||
-                 (this._bumpy != MaterialComponentType.None) || this._enviromental;
+                 (this._specular   != MaterialComponentType.None) ||
+                 (this._bumpy      != MaterialComponentType.None) ||
+                 this._enviromental;
     this._binm = (this._bumpy != MaterialComponentType.None);
-    this._txt2D = (this._emission == MaterialComponentType.Texture2D) ||
-                  (this._ambient == MaterialComponentType.Texture2D) ||
-                  (this._diffuse == MaterialComponentType.Texture2D) ||
+    this._txt2D = (this._emission   == MaterialComponentType.Texture2D) ||
+                  (this._ambient    == MaterialComponentType.Texture2D) ||
+                  (this._diffuse    == MaterialComponentType.Texture2D) ||
                   (this._invDiffuse == MaterialComponentType.Texture2D) ||
-                  (this._specular == MaterialComponentType.Texture2D) ||
-                  (this._bumpy == MaterialComponentType.Texture2D) ||
+                  (this._specular   == MaterialComponentType.Texture2D) ||
+                  (this._bumpy      == MaterialComponentType.Texture2D) ||
                   (this._reflection == MaterialComponentType.Texture2D) ||
                   (this._refraction == MaterialComponentType.Texture2D) ||
-                  (this._alpha == MaterialComponentType.Texture2D);
-    this._txtCube = (this._emission == MaterialComponentType.TextureCube) ||
-                    (this._ambient == MaterialComponentType.TextureCube) ||
-                    (this._diffuse == MaterialComponentType.TextureCube) ||
+                  (this._alpha      == MaterialComponentType.Texture2D);
+    this._txtCube = (this._emission   == MaterialComponentType.TextureCube) ||
+                    (this._ambient    == MaterialComponentType.TextureCube) ||
+                    (this._diffuse    == MaterialComponentType.TextureCube) ||
                     (this._invDiffuse == MaterialComponentType.TextureCube) ||
-                    (this._specular == MaterialComponentType.TextureCube) ||
-                    (this._bumpy == MaterialComponentType.TextureCube) ||
+                    (this._specular   == MaterialComponentType.TextureCube) ||
+                    (this._bumpy      == MaterialComponentType.TextureCube) ||
                     (this._reflection == MaterialComponentType.TextureCube) ||
                     (this._refraction == MaterialComponentType.TextureCube) ||
-                    (this._alpha == MaterialComponentType.TextureCube);
+                    (this._alpha      == MaterialComponentType.TextureCube);
     this._viewObjMat = this._norm || this._binm || this._viewPos;
     this._name = this._createShaderName();
+    this._vertexType = this._createVertexType();
   }
 
   String _stringForComponentType(MaterialComponentType type) {
@@ -124,6 +132,16 @@ class MaterialLightConfig {
     return buf.toString();
   }
 
+  Data.VertexType _createVertexType()
+  {
+    Data.VertexType vertexType = Data.VertexType.Pos;
+    if (this._norm) vertexType |= Data.VertexType.Norm;
+    if (this._binm) vertexType |= Data.VertexType.Binm;
+    if (this._txt2D) vertexType |= Data.VertexType.Txt2D;
+    if (this._txtCube) vertexType |= Data.VertexType.TxtCube;
+    return vertexType;
+  }
+
   MaterialComponentType get emission => this._emission;
   MaterialComponentType get ambient => this._ambient;
   MaterialComponentType get diffuse => this._diffuse;
@@ -139,6 +157,7 @@ class MaterialLightConfig {
   int get txtDirLight => this._txtDirLight;
   int get txtPointLight => this._txtPointLight;
   int get txtSpotLight => this._txtSpotLight;
+  int get totalLights => this._totalLights;
   bool get enviromental => this._enviromental;
   bool get invViewMat => this._invViewMat;
   bool get viewObjMat => this._viewObjMat;
@@ -151,6 +170,7 @@ class MaterialLightConfig {
   bool get txt2D => this._txt2D;
   bool get txtCube => this._txtCube;
   String get name => this._name;
+  Data.VertexType get vertexType => this._vertexType;
 
   // Creates the vertex source code for the material light shader for the given configurations.
   String createVertexSource() {
@@ -158,6 +178,8 @@ class MaterialLightConfig {
     if (this._objMat) buf.writeln("uniform mat4 objMat;");
     if (this._viewObjMat) buf.writeln("uniform mat4 viewObjMat;");
     buf.writeln("uniform mat4 projViewObjMat;");
+    if (this._txt2D)   buf.writeln("uniform mat3 txt2DMat;");
+    if (this._txtCube) buf.writeln("uniform mat4 txtCubeMat;");
     buf.writeln("");
 
     buf.writeln("attribute vec3 posAttr;");
@@ -179,8 +201,8 @@ class MaterialLightConfig {
     buf.writeln("{");
     if (this._norm)    buf.writeln("   normalVec = normalize(viewObjMat*vec4(normAttr, 0.0)).xyz;");
     if (this._binm)    buf.writeln("   binormalVec = normalize(viewObjMat*vec4(binmAttr, 0.0)).xyz;");
-    if (this._txt2D)   buf.writeln("   txt2D = txt2DAttr;");
-    if (this._txtCube) buf.writeln("   txtCube = txtCubeAttr;");
+    if (this._txt2D)   buf.writeln("   txt2D = (txt2DMat*vec3(txt2DAttr, 1.0)).xy;");
+    if (this._txtCube) buf.writeln("   txtCube = (txtCubeMat*vec4(txtCubeAttr, 1.0)).xyz;");
     if (this._objPos)  buf.writeln("   objPos = (objMat*vec4(posAttr, 1.0)).xyz;");
     if (this._viewPos) buf.writeln("   viewPos = (viewObjMat*vec4(posAttr, 1.0)).xyz;");
     buf.writeln("   gl_Position = projViewObjMat*vec4(posAttr, 1.0);");
@@ -363,6 +385,8 @@ class MaterialLightConfig {
         buf.writeln("uniform int nullAlphaTxt;");
         break;
     }
+    buf.writeln("");
+    buf.writeln("uniform mat4 colorMat;");
     buf.writeln("");
 
     if (this._lights) {
@@ -806,7 +830,7 @@ class MaterialLightConfig {
         buf.writeln("   return lightValue(norm, color, lit.viewDir);");
         buf.writeln("}");
         buf.writeln("");
-        buf.writeln("vec3 allTxtDirLightValue(vec3 norm)");
+        buf.writeln("vec3 allTxtDirLightValues(vec3 norm)");
         buf.writeln("{");
         buf.writeln("   vec3 lightAccum = vec3(0.0, 0.0, 0.0);");
         for (int i = 0; i < this._txtDirLight; ++i) {
@@ -835,7 +859,7 @@ class MaterialLightConfig {
         buf.writeln("   return lightValue(norm, attenuation*color, normDir);");
         buf.writeln("}");
         buf.writeln("");
-        buf.writeln("vec3 allTxtPointLightValue(vec3 norm)");
+        buf.writeln("vec3 allTxtPointLightValues(vec3 norm)");
         buf.writeln("{");
         buf.writeln("   vec3 lightAccum = vec3(0.0, 0.0, 0.0);");
         for (int i = 0; i < this._txtPointLight; ++i) {
@@ -857,6 +881,7 @@ class MaterialLightConfig {
         buf.writeln("   vec3 normDir = normalize(dir);");
         buf.writeln("   float zScale = dot(normDir, lit.objDir);");
         buf.writeln("   if(zScale < 0.0) return vec3(0.0, 0.0, 0.0);");
+        buf.writeln("   normDir = normDir/zScale;");
         buf.writeln("   vec3 color;");
         buf.writeln("   if(lit.nullTxt > 0) color = lit.color;");
         buf.writeln("   else");
@@ -897,18 +922,18 @@ class MaterialLightConfig {
       if (this._diffuse != MaterialComponentType.None) buf.writeln("   setDiffuseColor();");
       if (this._invDiffuse != MaterialComponentType.None) buf.writeln("   setInvDiffuseColor();");
       if (this._specular != MaterialComponentType.None) buf.writeln("   setSpecularColor();");
-      if (this._dirLight > 0)      buf.writeln("   lightAccum += allDirLightValue(norm);");
+      if (this._dirLight > 0)      buf.writeln("   lightAccum += allDirLightValues(norm);");
       if (this._pointLight > 0)    buf.writeln("   lightAccum += allPointLightValues(norm);");
       if (this._spotLight > 0)     buf.writeln("   lightAccum += allSpotLightValues(norm);");
-      if (this._txtDirLight > 0)   buf.writeln("   lightAccum += allTxtDirLightValue(norm);");
-      if (this._txtPointLight > 0) buf.writeln("   lightAccum += allTxtPointLightValue(norm);");
+      if (this._txtDirLight > 0)   buf.writeln("   lightAccum += allTxtDirLightValues(norm);");
+      if (this._txtPointLight > 0) buf.writeln("   lightAccum += allTxtPointLightValues(norm);");
       if (this._txtSpotLight > 0)  buf.writeln("   lightAccum += allTxtSpotLightValues(norm);");
     }
     if (this._emission != MaterialComponentType.None) fragParts.add("emission()");
     if (this._reflection != MaterialComponentType.None) fragParts.add("reflect(refl)");
     if (this._refraction != MaterialComponentType.None) fragParts.add("refract(refl)");
     if (fragParts.length <= 0) fragParts.add("vec3(0.0, 0.0, 0.0)");
-    buf.writeln("   gl_FragColor = vec4(" + fragParts.join(" + ") + ", alpha);");
+    buf.writeln("   gl_FragColor = colorMat*vec4(" + fragParts.join(" + ") + ", alpha);");
     buf.writeln("}");
     return buf.toString();
   }

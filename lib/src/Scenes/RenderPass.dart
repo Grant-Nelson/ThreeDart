@@ -15,12 +15,24 @@ class RenderPass implements Scene {
   /// The children entities to render.
   List<Core.Entity> _children;
 
+  /// Event emitted before an update for this pass.
+  Core.Event _onPreUpdate;
+
+  /// Event emitted after an update for this pass.
+  Core.Event _onPostUpdate;
+
+  /// Event emitted on an redner for this pass.
+  Core.Event _onRender;
+
   /// Creates a new render pass.
   RenderPass() {
     this._camara = new Views.Perspective();
     this._target = new Views.FrontTarget();
     this._tech = null;
     this._children = new List<Core.Entity>();
+    this._onPreUpdate = new Core.Event();
+    this._onPostUpdate = new Core.Event();
+    this._onRender = new Core.Event();
   }
 
   /// The camera describing the view of the scene.
@@ -38,8 +50,20 @@ class RenderPass implements Scene {
   /// The children entities to render.
   List<Core.Entity> get children => this._children;
 
+  /// Event emitted before an update for this pass.
+  Core.Event get onPreUpdate => this._onPreUpdate;
+
+  /// Event emitted after an update for this pass.
+  Core.Event get onPostUpdate => this._onPostUpdate;
+
+  /// Event emitted on an redner for this pass.
+  Core.Event get onRender => this._onRender;
+
   /// Render the scene with the given [state].
   void render(Core.RenderState state) {
+    Core.StateEventArgs args = new Core.StateEventArgs(this, state);
+    this._onPreUpdate.emit(args);
+
     state.pushTechnique(this._tech);
     this._target.bind(state);
     this._camara.bind(state);
@@ -48,10 +72,12 @@ class RenderPass implements Scene {
     for (Core.Entity child in this._children) {
       child.update(state);
     }
+    this._onPostUpdate.emit(args);
 
     for (Core.Entity child in this._children) {
       child.render(state);
     }
+    this._onRender.emit(args);
 
     this._camara.unbind(state);
     this._target.unbind(state);

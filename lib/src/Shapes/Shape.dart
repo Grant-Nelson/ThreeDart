@@ -293,7 +293,7 @@ class Shape {
     }
 
     Data.Buffer vertexBuf = builder.fromDoubleList(WebGL.ARRAY_BUFFER, vertices);
-    Data.BufferStore store = new Data.BufferStore(vertexBuf, attrs);
+    Data.BufferStore store = new Data.BufferStore(vertexBuf, attrs, type);
     if (!this._points.isEmpty) {
       List<int> indices = new List<int>();
       for (int i = 0; i < this._points.length; ++i) {

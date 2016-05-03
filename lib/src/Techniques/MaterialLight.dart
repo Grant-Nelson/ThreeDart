@@ -4,6 +4,10 @@ part of ThreeDart.Techniques;
 class MaterialLight extends Technique {
   Shaders.MaterialLight _shader;
 
+  Math.Matrix3 _txt2DMat;
+  Math.Matrix4 _txtCubeMat;
+  Math.Matrix4 _colorMat;
+
   Shaders.MaterialComponentType _emissionType;
   Math.Color3 _emissionClr;
   Textures.Texture2D _emission2D;
@@ -56,6 +60,9 @@ class MaterialLight extends Technique {
   /// Creates a new material/light technique.
   MaterialLight() {
     this._shader = null;
+    this._txt2DMat = new Math.Matrix3.identity();
+    this._txtCubeMat = new Math.Matrix4.identity();
+    this._colorMat = new Math.Matrix4.identity();
     this.clearEmission();
     this.clearAmbient();
     this.clearDiffuse();
@@ -70,6 +77,21 @@ class MaterialLight extends Technique {
 
   /// The lights to render with.
   LightCollection get lights => this._lights;
+
+  /// The 2D texture modification matrix.
+  Math.Matrix3 get texture2DMatrix => this._txt2DMat;
+  set texture2DMatrix(Math.Matrix3 mat) =>
+    this._txt2DMat = (mat == null)? new Math.Matrix3.identity(): mat;
+
+  /// The cube texture modification matrix.
+  Math.Matrix4 get textureCubeMatrix => this._txtCubeMat;
+  set textureCubeMatrix(Math.Matrix4 mat) =>
+    this._txtCubeMat = (mat == null)? new Math.Matrix4.identity(): mat;
+
+  /// The color modification matrix.
+  Math.Matrix4 get colorMatrix => this._colorMat;
+  set colorMatrix(Math.Matrix4 mat) =>
+    this._colorMat = (mat == null)? new Math.Matrix4.identity(): mat;
 
   /// Removes any emission from the material.
   void clearEmission() {
@@ -662,23 +684,12 @@ class MaterialLight extends Technique {
       obj.clearCache();
     }
     Shaders.MaterialLightConfig cfg = this._shader.configuration;
-    if (obj.cacheNeedsUpdate) {
-      Data.VertexType vertexType = Data.VertexType.Pos;
-      if (cfg.norm) {
-        obj.shape.calculateNormals();
-        vertexType |= Data.VertexType.Norm;
-      }
-      if (cfg.binm) {
-        obj.shape.calculateBinormals();
-        vertexType |= Data.VertexType.Binm;
-      }
-      if (cfg.txt2D) {
-        vertexType |= Data.VertexType.Txt2D;
-      }
-      if (cfg.txtCube) {
-        obj.shape.calculateCubeTextures();
-        vertexType |= Data.VertexType.TxtCube;
-      }
+    Data.VertexType vertexType = cfg.vertexType;
+    if (obj.cache is! Data.BufferStore) obj.clearCache();
+    if (obj.cacheNeedsUpdate || (obj.cache as Data.BufferStore).vertexType != vertexType) {
+      if (cfg.norm) obj.shape.calculateNormals();
+      if (cfg.binm) obj.shape.calculateBinormals();
+      if (cfg.txtCube) obj.shape.calculateCubeTextures();
 
       Data.BufferStore cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl), vertexType);
       cache.findAttribute(Data.VertexType.Pos).attr = this._shader.posAttr.loc;
@@ -692,9 +703,12 @@ class MaterialLight extends Technique {
     List<Textures.Texture> textures = new List<Textures.Texture>();
     this._shader.bind(state);
 
-    if (cfg.objMat) this._shader.objectMatrix = state.object.matrix;
+    if (cfg.objMat)     this._shader.objectMatrix = state.object.matrix;
     if (cfg.viewObjMat) this._shader.viewObjectMatrix = state.viewObjectMatrix;
     this._shader.projectViewObjectMatrix = state.projectionViewObjectMatrix;
+    if (cfg.txt2D)   this._shader.texture2DMatrix = this._txt2DMat;
+    if (cfg.txtCube) this._shader.textureCubeMatrix = this._txtCubeMat;
+    this._shader.colorMatrix = this._colorMat;
 
     switch (cfg.emission) {
       case Shaders.MaterialComponentType.None: break;
@@ -977,12 +991,10 @@ class MaterialLight extends Technique {
       textures[i].bind(state);
     }
 
-    if (obj.cache is Data.BufferStore) {
-      (obj.cache as Data.BufferStore)
+    obj.cache as Data.BufferStore
         ..bind(state)
         ..render(state)
         ..unbind(state);
-    } else obj.clearCache();
 
     if (cfg.alpha != Shaders.MaterialComponentType.None) {
       state.gl.disable(WebGL.BLEND);
