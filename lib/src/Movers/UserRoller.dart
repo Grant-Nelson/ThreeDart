@@ -49,7 +49,11 @@ class UserRoller implements Mover, Core.UserInteractable {
   Math.Matrix4 _mat;
 
   /// Creates a new user rotater instance.
-  UserRoller() {
+  UserRoller({
+    bool ctrl: false,
+    bool alt: false,
+    bool shift: false,
+    Core.UserInput input: null}) {
     this._input = null;
     this._roll = new ComponentShift()
       ..wrap = true
@@ -59,9 +63,9 @@ class UserRoller implements Mover, Core.UserInteractable {
       ..maximumVelocity = 100.0
       ..velocity = 0.0
       ..dampening = 0.2;
-    this._ctrlPressed = false;
-    this._altPressed = false;
-    this._shiftPressed = false;
+    this._ctrlPressed = ctrl;
+    this._altPressed = alt;
+    this._shiftPressed = shift;
     this._cumulative = false;
     this._rollScalar = 2.5;
     this._deadBand = 2.0;
@@ -72,6 +76,7 @@ class UserRoller implements Mover, Core.UserInteractable {
     this._prevVal = null;
     this._frameNum = 0;
     this._mat = null;
+    this.attach(input);
   }
 
   /// Attaches this mover to the user input.

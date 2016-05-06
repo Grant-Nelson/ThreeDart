@@ -58,7 +58,11 @@ class UserRotater implements Mover, Core.UserInteractable {
   Math.Matrix4 _mat;
 
   /// Creates a new user rotater instance.
-  UserRotater() {
+  UserRotater({
+    bool ctrl: false,
+    bool alt: false,
+    bool shift: false,
+    Core.UserInput input: null}) {
     this._input = null;
     this._pitch = new ComponentShift()
       ..wrap = true
@@ -76,9 +80,9 @@ class UserRotater implements Mover, Core.UserInteractable {
       ..maximumVelocity = 100.0
       ..velocity = 0.0
       ..dampening = 0.2;
-    this._ctrlPressed = false;
-    this._altPressed = false;
-    this._shiftPressed = false;
+    this._ctrlPressed = ctrl;
+    this._altPressed = alt;
+    this._shiftPressed = shift;
     this._cumulative = false;
     this._pitchScalar = 2.5;
     this._yawScalar = 2.5;
@@ -91,6 +95,7 @@ class UserRotater implements Mover, Core.UserInteractable {
     this._prevVal = null;
     this._frameNum = 0;
     this._mat = null;
+    this.attach(input);
   }
 
   /// Attaches this mover to the user input.

@@ -17,6 +17,13 @@ class Texture2D extends Texture {
   /// The loaded state of the texture.
   bool get loaded => this._loaded;
 
+  // Sets internal WebGL texture object.
+  // If the texture is non-null then loaded is set to true.
+  void setInternal(WebGL.Texture txt) {
+    this._texture = txt;
+    this._loaded = (txt != null);
+  }
+
   /// Binds some data to the given [state].
   void bind(Core.RenderState state) {
     if (!this._bound && this._loaded) {

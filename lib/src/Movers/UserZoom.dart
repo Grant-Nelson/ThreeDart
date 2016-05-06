@@ -28,15 +28,20 @@ class UserZoom implements Mover, Core.UserInteractable {
   Math.Matrix4 _mat;
 
   /// Creates an instance of [UserZoom].
-  UserZoom() {
+  UserZoom({
+    bool ctrl: false,
+    bool alt: false,
+    bool shift: false,
+    Core.UserInput input: null}) {
     this._input = null;
-    this._ctrlPressed = false;
-    this._altPressed = false;
-    this._shiftPressed = false;
+    this._ctrlPressed = ctrl;
+    this._altPressed = alt;
+    this._shiftPressed = shift;
     this._zoomScalar = 0.01;
     this._zoom = 0.0;
     this._frameNum = 0;
     this._mat = null;
+    this.attach(input);
   }
 
   /// Attaches this mover to the user input.
