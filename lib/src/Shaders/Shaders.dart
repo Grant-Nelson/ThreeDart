@@ -17,7 +17,9 @@ part 'Shader.dart';
 part 'Uniforms.dart';
 
 // Implemented Shaders
+part 'Blur.dart';
 part 'Depth.dart';
+part 'Distort.dart';
 part 'Inspection.dart';
 part 'MaterialLight.dart';
 part 'MaterialLightConfig.dart';

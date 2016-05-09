@@ -11,7 +11,7 @@ void main() {
   html.DivElement elem = new html.DivElement();
 
   // Add all tests in the format: addTest(elem, "test000");
-  for (int i = 0; i <= 27; i++)
+  for (int i = 0; i <= 29; i++)
     addTest(elem, "test"+"$i".padLeft(3, '0'));
 
   common.shellPage("3Dart Tests", elem, true, "./resources/SnowTop.png");

@@ -31,7 +31,9 @@ void main() {
 
   Scenes.CoverPass skybox = new Scenes.CoverPass()
     ..target = backTarget
-    ..camara = rotaterCamara;
+    ..camara = rotaterCamara
+    ..tech = new Techniques.Skybox(
+      boxTexture: td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg"));
 
   ThreeDart.Entity firstObj = new ThreeDart.Entity()
     ..shape = Shapes.toroid();
@@ -50,9 +52,6 @@ void main() {
     ..tech = firstTech
     ..target = backTarget
     ..children.add(firstObj);
-
-  skybox.tech = new Techniques.Skybox()
-    ..boxTexture = td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg");
 
   Movers.Group secondMover = new Movers.Group()
     ..add(new Movers.UserRotater(input: td.userInput))

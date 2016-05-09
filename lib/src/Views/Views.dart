@@ -13,6 +13,7 @@ import '../Movers/Movers.dart' as Movers;
 
 part 'BackTarget.dart';
 part 'Camara.dart';
+part 'IdentityCamara.dart';
 part 'Orthogonal.dart';
 part 'Perspective.dart';
 part 'FrontTarget.dart';

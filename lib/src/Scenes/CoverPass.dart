@@ -17,7 +17,7 @@ class CoverPass implements Scene {
 
   /// Creates a new cover render pass.
   CoverPass() {
-    this._camara = new Views.Perspective();
+    this._camara = new Views.IdentityCamara();
     this._target = new Views.FrontTarget();
     this._tech = null;
     this._box = new Core.Entity()

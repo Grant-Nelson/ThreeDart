@@ -39,7 +39,7 @@ class Perspective implements Camara {
 
   /// Binds this camara to the state.
   void bind(Core.RenderState state) {
-    double aspect = state.gl.drawingBufferWidth / state.gl.drawingBufferHeight;
+    double aspect = state.width.toDouble() / state.height.toDouble();
     state.projection.push(new Math.Matrix4.perspective(this._fov, aspect, this._near, this._far));
 
     if (_lookMat == null) {

@@ -49,7 +49,7 @@ class Skybox extends Technique {
       this._boxTxt.bind(state);
     }
 
-    double aspect = state.gl.drawingBufferWidth / state.gl.drawingBufferHeight;
+    double aspect = state.width.toDouble() / state.height.toDouble();
     this._shader
       ..bind(state)
       ..fov = fov

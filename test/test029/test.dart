@@ -1,7 +1,7 @@
 // Copyright (c) 2016, SnowGremlin. All rights reserved. Use of this source code
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
-library ThreeDart.test.test013;
+library ThreeDart.test.test029;
 
 import 'dart:html';
 
@@ -16,8 +16,8 @@ import 'package:ThreeDart/Lights.dart' as Lights;
 import '../common/common.dart' as common;
 
 void main() {
-  common.shellTest("Test 013", [],
-    "Test of sky box and cover pass.");
+  common.shellTest("Test 029", ["bumpMaps"],
+    "Test of bump distort pass.");
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
 
@@ -28,7 +28,7 @@ void main() {
     ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
   Views.Perspective userCamara = new Views.Perspective(mover: secondMover);
 
-  Views.FrontTarget target = new Views.FrontTarget()
+  Views.BackTarget colorTarget = new Views.BackTarget(512, 512)
     ..clearColor = false;
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
@@ -44,7 +44,7 @@ void main() {
     ..shininess = 10.0;
 
   Scenes.CoverPass skybox = new Scenes.CoverPass()
-    ..target = target
+    ..target = colorTarget
     ..camara = userCamara
     ..tech = new Techniques.Skybox(
         boxTexture: td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg"));
@@ -52,10 +52,27 @@ void main() {
   Scenes.RenderPass pass = new Scenes.RenderPass()
     ..camara = userCamara
     ..tech = tech
-    ..target = target
+    ..target = colorTarget
     ..children.add(obj);
 
-  td.scene = new Scenes.Compound(passes: [skybox, pass]);
+  Techniques.Distort distortTech = new Techniques.Distort()
+    ..colorTexture = colorTarget.colorTexture
+    ..bumpMatrix = new Math.Matrix4.scale(0.1, 0.1, 0.1);
+  Scenes.CoverPass distortPass = new Scenes.CoverPass()
+    ..tech = distortTech;
+
+  td.scene = new Scenes.Compound(passes: [skybox, pass, distortPass]);
+
+  new common.Texture2DGroup("bumpMaps", (String fileName) {
+    distortTech.bumpTexture = td.textureLoader.load2DFromFile(fileName);
+  })
+    ..add("../resources/BumpMap1.png", true)
+    ..add("../resources/BumpMap2.png")
+    ..add("../resources/BumpMap3.png")
+    ..add("../resources/BumpMap4.png")
+    ..add("../resources/BumpMap5.png")
+    ..add("../resources/ScrewBumpMap.png")
+    ..add("../resources/CtrlPnlBumpMap.png");
 
   var update;
   update = (num t) {
