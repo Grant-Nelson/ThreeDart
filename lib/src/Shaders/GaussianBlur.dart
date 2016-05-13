@@ -1,10 +1,10 @@
 part of ThreeDart.Shaders;
 
-/// A shader for cover pass blurring rendering.
-class Blur extends Shader {
+/// A shader for cover pass Gaussian blurring rendering.
+class GaussianBlur extends Shader {
 
   /// The name for this shader.
-  static const String defaultName = "Blur";
+  static const String defaultName = "GaussianBlur";
 
   /// The vertex shader source code in glsl.
   static String _vertexSource =
@@ -25,6 +25,8 @@ class Blur extends Shader {
   /// The fragment shader source code in glsl.
   static String _fragmentSource =
       "precision mediump float;                                 \n"+
+      "                                                         \n"+
+      "#define MAX_BLUR_RANGE 20.0                              \n"+
       "                                                         \n"+
       "uniform sampler2D colorTxt;                              \n"+
       "uniform sampler2D depthTxt;                              \n"+
@@ -59,19 +61,16 @@ class Blur extends Shader {
       "      return;                                            \n"+
       "   }                                                     \n"+
       "   color = texture2D(colorTxt, txt2D);                   \n"+
-      "   if(nullDepthTxt > 0)                                  \n"+
-      "   {                                                     \n"+
-      "      gl_FragColor = color;                              \n"+
-      "      return;                                            \n"+
-      "   }                                                     \n"+
-      "   float baseDepth = texture2D(depthTxt, txt2D).r;       \n"+
+      "   float baseDepth;                                      \n"+
+      "   if(nullDepthTxt > 0) baseDepth = 1.0;                 \n"+
+      "   else baseDepth = texture2D(depthTxt, txt2D).r;        \n"+
       "   float offset = mix(lowOffset, highOffset, baseDepth); \n"+
       "   offset = abs(offset);                                 \n"+
       "   div = 1.0;                                            \n"+
-      "   for(float x=0.0; x<50.0; x+=1.0)                      \n"+
+      "   for(float x=0.0; x<MAX_BLUR_RANGE; x+=1.0)            \n"+
       "   {                                                     \n"+
       "      if(x > offset) break;                              \n"+
-      "      for(float y=1.0; y<10.0; y+=1.0)                   \n"+
+      "      for(float y=1.0; y<MAX_BLUR_RANGE; y+=1.0)         \n"+
       "      {                                                  \n"+
       "         if(y > offset) break;                           \n"+
       "         offsetColor(baseDepth,  x,  y);                 \n"+
@@ -100,17 +99,17 @@ class Blur extends Shader {
   /// Checks for the shader in the shader cache in the given [state],
   /// if it is not found then this shader is compiled and added
   /// to the shader cache before being returned.
-  factory Blur.cached(Core.RenderState state) {
-    Blur shader = state.shader(defaultName);
+  factory GaussianBlur.cached(Core.RenderState state) {
+    GaussianBlur shader = state.shader(defaultName);
     if (shader == null) {
-      shader = new Blur(state.gl);
+      shader = new GaussianBlur(state.gl);
       state.addShader(shader);
     }
     return shader;
   }
 
   /// Compiles this shader for the given rendering context.
-  Blur(WebGL.RenderingContext gl): super(gl, defaultName) {
+  GaussianBlur(WebGL.RenderingContext gl): super(gl, defaultName) {
     this.initialize(_vertexSource, _fragmentSource);
     this._posAttr        = this.attributes["posAttr"];
     this._txtAttr        = this.attributes["txtAttr"];

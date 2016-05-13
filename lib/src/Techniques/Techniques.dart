@@ -14,12 +14,13 @@ import '../Shaders/Shaders.dart' as Shaders;
 import '../Textures/Textures.dart' as Textures;
 import '../Core/Core.dart' as Core;
 
-part 'Blur.dart';
 part 'Debugger.dart';
 part 'Depth.dart';
 part 'Distort.dart';
+part 'GaussianBlur.dart';
 part 'Inspection.dart';
 part 'LightCollection.dart';
 part 'MaterialLight.dart';
+part 'Normal.dart';
 part 'Skybox.dart';
 part 'Technique.dart';

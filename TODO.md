@@ -1,10 +1,9 @@
-# TODO
-
- - Add cube texture coordinates to not use position nor normals.
+TODO
+--------------------------------------------------
 
 # Future Features
 The following is a list of features that may or will be added to 3Dart.
-These are not small or in-progess features. These are features which
+These are not small or in-progress features. These are features which
 are currently not scheduled for being built but should be built at some
 point in the future.
 

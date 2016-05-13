@@ -1,8 +1,8 @@
 part of ThreeDart.Techniques;
 
-/// A technique for a cover pass with a blurred image based off depth.
-class Blur extends Technique {
-  Shaders.Blur _shader;
+/// A technique for a cover pass with a Gaussian blurred image based off depth.
+class GaussianBlur extends Technique {
+  Shaders.GaussianBlur _shader;
   Math.Matrix3 _txtMat;
   Textures.Texture2D _colorTxt;
   Textures.Texture2D _depthTxt;
@@ -10,13 +10,13 @@ class Blur extends Technique {
   double _lowOffset;
   double _depthLimit;
 
-  /// Creates a new cover blur technique with the given initial values.
-  Blur({Textures.Texture2D colorTxt: null,
-        Textures.Texture2D depthTxt: null,
-        Math.Matrix3 txtMat: null,
-        double highOffset: 0.0,
-        double lowOffset: 4.0,
-        double depthLimit: 0.001}) {
+  /// Creates a new cover Gaussian blur technique with the given initial values.
+  GaussianBlur({Textures.Texture2D colorTxt: null,
+                Textures.Texture2D depthTxt: null,
+                Math.Matrix3 txtMat: null,
+                double highOffset: 0.0,
+                double lowOffset: 4.0,
+                double depthLimit: 0.001}) {
     this._shader = null;
     this.colorTexture = colorTxt;
     this.depthTexture = depthTxt;
@@ -69,7 +69,7 @@ class Blur extends Technique {
   /// Renders this technique for the given state and entity.
   void render(Core.RenderState state, Core.Entity obj) {
     if (this._shader == null)
-      this._shader = new Shaders.Blur.cached(state);
+      this._shader = new Shaders.GaussianBlur.cached(state);
 
     if (obj.cacheNeedsUpdate) {
       obj.cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl), Data.VertexType.Pos|Data.VertexType.Txt2D)

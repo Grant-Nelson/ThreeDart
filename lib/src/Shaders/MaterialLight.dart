@@ -126,81 +126,81 @@ class MaterialLight extends Shader {
     if (cfg.txtCube) this._txtCubeMat = this.uniforms.required("txtCubeMat") as UniformMat4;
     this._colorMat = this.uniforms.required("colorMat") as UniformMat4;
 
-    if (cfg.emission != MaterialComponentType.None) {
+    if (cfg.emission != ColorSourceType.None) {
       this._emissionClr = this.uniforms.required("emissionClr") as Uniform3f;
       switch (cfg.emission) {
-        case MaterialComponentType.None: break;
-        case MaterialComponentType.Solid: break;
-        case MaterialComponentType.Texture2D:
+        case ColorSourceType.None: break;
+        case ColorSourceType.Solid: break;
+        case ColorSourceType.Texture2D:
           this._emission2D = this.uniforms.required("emissionTxt") as UniformSampler2D;
           this._nullEmissionTxt = this.uniforms.required("nullEmissionTxt") as Uniform1i;
           break;
-        case MaterialComponentType.TextureCube:
+        case ColorSourceType.TextureCube:
           this._emissionCube = this.uniforms.required("emissionTxt") as UniformSamplerCube;
           this._nullEmissionTxt = this.uniforms.required("nullEmissionTxt") as Uniform1i;
           break;
       }
     }
 
-    if (cfg.ambient != MaterialComponentType.None) {
+    if (cfg.ambient != ColorSourceType.None) {
       this._ambientClr = this.uniforms.required("ambientClr") as Uniform3f;
       switch (cfg.ambient) {
-        case MaterialComponentType.None: break;
-        case MaterialComponentType.Solid: break;
-        case MaterialComponentType.Texture2D:
+        case ColorSourceType.None: break;
+        case ColorSourceType.Solid: break;
+        case ColorSourceType.Texture2D:
           this._ambient2D = this.uniforms.required("ambientTxt") as UniformSampler2D;
           this._nullAmbientTxt = this.uniforms.required("nullAmbientTxt") as Uniform1i;
           break;
-        case MaterialComponentType.TextureCube:
+        case ColorSourceType.TextureCube:
           this._ambientCube = this.uniforms.required("ambientTxt") as UniformSamplerCube;
           this._nullAmbientTxt = this.uniforms.required("nullAmbientTxt") as Uniform1i;
           break;
       }
     }
 
-    if (cfg.diffuse != MaterialComponentType.None) {
+    if (cfg.diffuse != ColorSourceType.None) {
       this._diffuseClr = this.uniforms.required("diffuseClr") as Uniform3f;
       switch (cfg.diffuse) {
-        case MaterialComponentType.None: break;
-        case MaterialComponentType.Solid: break;
-        case MaterialComponentType.Texture2D:
+        case ColorSourceType.None: break;
+        case ColorSourceType.Solid: break;
+        case ColorSourceType.Texture2D:
           this._diffuse2D = this.uniforms.required("diffuseTxt") as UniformSampler2D;
           this._nullDiffuseTxt = this.uniforms.required("nullDiffuseTxt") as Uniform1i;
           break;
-        case MaterialComponentType.TextureCube:
+        case ColorSourceType.TextureCube:
           this._diffuseCube = this.uniforms.required("diffuseTxt") as UniformSamplerCube;
           this._nullDiffuseTxt = this.uniforms.required("nullDiffuseTxt") as Uniform1i;
           break;
       }
     }
 
-    if (cfg.invDiffuse != MaterialComponentType.None) {
+    if (cfg.invDiffuse != ColorSourceType.None) {
       this._invDiffuseClr = this.uniforms.required("invDiffuseClr") as Uniform3f;
       switch (cfg.invDiffuse) {
-        case MaterialComponentType.None: break;
-        case MaterialComponentType.Solid: break;
-        case MaterialComponentType.Texture2D:
+        case ColorSourceType.None: break;
+        case ColorSourceType.Solid: break;
+        case ColorSourceType.Texture2D:
           this._invDiffuse2D = this.uniforms.required("invDiffuseTxt") as UniformSampler2D;
           this._nullInvDiffuseTxt = this.uniforms.required("nullInvDiffuseTxt") as Uniform1i;
           break;
-        case MaterialComponentType.TextureCube:
+        case ColorSourceType.TextureCube:
           this._invDiffuseCube = this.uniforms.required("invDiffuseTxt") as UniformSamplerCube;
           this._nullInvDiffuseTxt = this.uniforms.required("nullInvDiffuseTxt") as Uniform1i;
           break;
       }
     }
 
-    if (cfg.specular != MaterialComponentType.None) {
+    if (cfg.specular != ColorSourceType.None) {
         this._shininess = this.uniforms.required("shininess") as Uniform1f;
         this._specularClr = this.uniforms.required("specularClr") as Uniform3f;
       switch (cfg.specular) {
-        case MaterialComponentType.None: break;
-        case MaterialComponentType.Solid: break;
-        case MaterialComponentType.Texture2D:
+        case ColorSourceType.None: break;
+        case ColorSourceType.Solid: break;
+        case ColorSourceType.Texture2D:
           this._specular2D = this.uniforms.required("specularTxt") as UniformSampler2D;
           this._nullSpecularTxt = this.uniforms.required("nullSpecularTxt") as Uniform1i;
           break;
-        case MaterialComponentType.TextureCube:
+        case ColorSourceType.TextureCube:
           this._specularCube = this.uniforms.required("specularTxt") as UniformSamplerCube;
           this._nullSpecularTxt = this.uniforms.required("nullSpecularTxt") as Uniform1i;
           break;
@@ -208,13 +208,13 @@ class MaterialLight extends Shader {
     }
 
     switch (cfg.bumpy) {
-      case MaterialComponentType.None: break;
-      case MaterialComponentType.Solid: break;
-      case MaterialComponentType.Texture2D:
+      case ColorSourceType.None: break;
+      case ColorSourceType.Solid: break;
+      case ColorSourceType.Texture2D:
         this._bump2D = this.uniforms.required("bumpTxt") as UniformSampler2D;
         this._nullBumpTxt = this.uniforms.required("nullBumpTxt") as Uniform1i;
         break;
-      case MaterialComponentType.TextureCube:
+      case ColorSourceType.TextureCube:
         this._bumpCube = this.uniforms.required("bumpTxt") as UniformSamplerCube;
         this._nullBumpTxt = this.uniforms.required("nullBumpTxt") as Uniform1i;
         break;
@@ -224,33 +224,33 @@ class MaterialLight extends Shader {
       this._envSampler = this.uniforms.required("envSampler") as UniformSamplerCube;
       this._nullEnvTxt = this.uniforms.required("nullEnvTxt") as Uniform1i;
 
-      if (cfg.reflection != MaterialComponentType.None) {
+      if (cfg.reflection != ColorSourceType.None) {
         this._reflectClr = this.uniforms.required("reflectClr") as Uniform3f;
         switch (cfg.reflection) {
-          case MaterialComponentType.None: break;
-          case MaterialComponentType.Solid: break;
-          case MaterialComponentType.Texture2D:
+          case ColorSourceType.None: break;
+          case ColorSourceType.Solid: break;
+          case ColorSourceType.Texture2D:
             this._reflect2D = this.uniforms.required("reflectTxt") as UniformSampler2D;
             this._nullReflectTxt = this.uniforms.required("nullReflectTxt") as Uniform1i;
             break;
-          case MaterialComponentType.TextureCube:
+          case ColorSourceType.TextureCube:
             this._reflectCube = this.uniforms.required("reflectTxt") as UniformSamplerCube;
             this._nullReflectTxt = this.uniforms.required("nullReflectTxt") as Uniform1i;
             break;
         }
       }
 
-      if (cfg.refraction != MaterialComponentType.None) {
+      if (cfg.refraction != ColorSourceType.None) {
         this._refraction = this.uniforms.required("refraction") as Uniform1f;
         this._refractClr = this.uniforms.required("refractClr") as Uniform3f;
         switch (cfg.refraction) {
-          case MaterialComponentType.None: break;
-          case MaterialComponentType.Solid: break;
-          case MaterialComponentType.Texture2D:
+          case ColorSourceType.None: break;
+          case ColorSourceType.Solid: break;
+          case ColorSourceType.Texture2D:
             this._refract2D = this.uniforms.required("refractTxt") as UniformSampler2D;
             this._nullRefractTxt = this.uniforms.required("nullRefractTxt") as Uniform1i;
             break;
-          case MaterialComponentType.TextureCube:
+          case ColorSourceType.TextureCube:
             this._refractCube = this.uniforms.required("refractTxt") as UniformSamplerCube;
             this._nullRefractTxt = this.uniforms.required("nullRefractTxt") as Uniform1i;
             break;
@@ -258,16 +258,16 @@ class MaterialLight extends Shader {
       }
     }
 
-    if (cfg.alpha != MaterialComponentType.None) {
+    if (cfg.alpha != ColorSourceType.None) {
       this._alpha = this.uniforms.required("alpha") as Uniform1f;
       switch (cfg.alpha) {
-        case MaterialComponentType.None: break;
-        case MaterialComponentType.Solid: break;
-        case MaterialComponentType.Texture2D:
+        case ColorSourceType.None: break;
+        case ColorSourceType.Solid: break;
+        case ColorSourceType.Texture2D:
           this._alpha2D = this.uniforms.required("alphaTxt") as UniformSampler2D;
           this._nullAlphaTxt = this.uniforms.required("nullAlphaTxt") as Uniform1i;
           break;
-        case MaterialComponentType.TextureCube:
+        case ColorSourceType.TextureCube:
           this._alphaCube = this.uniforms.required("alphaTxt") as UniformSamplerCube;
           this._nullAlphaTxt = this.uniforms.required("nullAlphaTxt") as Uniform1i;
           break;

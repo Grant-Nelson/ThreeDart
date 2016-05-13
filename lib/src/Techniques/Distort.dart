@@ -4,6 +4,7 @@ part of ThreeDart.Techniques;
 class Distort extends Technique {
   Shaders.Distort _shader;
 
+  /// TODO: Need to allow the color texture to also be a Cube texture.
   Textures.Texture2D _colorTxt;
   Textures.Texture2D _bumpTxt;
   Math.Matrix3 _colorTxt2DMat;

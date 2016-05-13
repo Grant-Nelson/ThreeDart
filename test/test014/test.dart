@@ -158,7 +158,6 @@ void main() {
         ..reflectionColor = new Math.Color3(0.3, 0.3, 0.3);
     });
 
-
   new common.RadioGroup("shapes")
     ..add("Cube",          () { obj.shape = Shapes.cube(); })
     ..add("Cuboid",        () { obj.shape = Shapes.cuboid(widthDiv: 15, heightDiv: 15,

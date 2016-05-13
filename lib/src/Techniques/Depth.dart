@@ -43,6 +43,8 @@ class Depth extends Technique {
     if (this._shader == null)
       this._shader = new Shaders.Depth.cached(state);
 
+    if (obj.cache is! Data.BufferStore)
+      obj.clearCache();
     if (obj.cacheNeedsUpdate) {
       obj.cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl), Data.VertexType.Pos)
         ..findAttribute(Data.VertexType.Pos).attr = this._shader.posAttr.loc;
@@ -57,12 +59,10 @@ class Depth extends Technique {
       ..projectMatrix = state.projection.matrix
       ..viewObjectMatrix = state.viewObjectMatrix;
 
-    if (obj.cache is Data.BufferStore) {
-      (obj.cache as Data.BufferStore)
-        ..bind(state)
-        ..render(state)
-        ..unbind(state);
-    } else obj.clearCache();
+    (obj.cache as Data.BufferStore)
+      ..bind(state)
+      ..render(state)
+      ..unbind(state);
 
     this._shader.unbind(state);
   }

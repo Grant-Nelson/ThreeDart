@@ -57,8 +57,8 @@ class BackTarget extends Target {
     // Setup color buffer
     this._colorBuffer = gl.createTexture();
     gl.bindTexture(WebGL.TEXTURE_2D, this._colorBuffer);
-    gl.texParameteri(WebGL.TEXTURE_2D, WebGL.TEXTURE_WRAP_S, WebGL.CLAMP_TO_EDGE);
-    gl.texParameteri(WebGL.TEXTURE_2D, WebGL.TEXTURE_WRAP_T, WebGL.CLAMP_TO_EDGE);
+    gl.texParameteri(WebGL.TEXTURE_2D, WebGL.TEXTURE_WRAP_S, WebGL.MIRRORED_REPEAT);
+    gl.texParameteri(WebGL.TEXTURE_2D, WebGL.TEXTURE_WRAP_T, WebGL.MIRRORED_REPEAT);
     gl.texParameteri(WebGL.TEXTURE_2D, WebGL.TEXTURE_MIN_FILTER, WebGL.LINEAR);
     gl.texParameteri(WebGL.TEXTURE_2D, WebGL.TEXTURE_MAG_FILTER, WebGL.LINEAR);
     gl.texImage2D(WebGL.TEXTURE_2D, 0, WebGL.RGBA, this._width, this._height, 0, WebGL.RGBA, WebGL.UNSIGNED_BYTE, null);

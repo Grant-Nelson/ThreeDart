@@ -8,49 +8,49 @@ class MaterialLight extends Technique {
   Math.Matrix4 _txtCubeMat;
   Math.Matrix4 _colorMat;
 
-  Shaders.MaterialComponentType _emissionType;
+  Shaders.ColorSourceType _emissionType;
   Math.Color3 _emissionClr;
   Textures.Texture2D _emission2D;
   Textures.TextureCube _emissionCube;
 
-  Shaders.MaterialComponentType _ambientType;
+  Shaders.ColorSourceType _ambientType;
   Math.Color3 _ambientClr;
   Textures.Texture2D _ambient2D;
   Textures.TextureCube _ambientCube;
 
-  Shaders.MaterialComponentType _diffuseType;
+  Shaders.ColorSourceType _diffuseType;
   Math.Color3 _diffuseClr;
   Textures.Texture2D _diffuse2D;
   Textures.TextureCube _diffuseCube;
 
-  Shaders.MaterialComponentType _invDiffuseType;
+  Shaders.ColorSourceType _invDiffuseType;
   Math.Color3 _invDiffuseClr;
   Textures.Texture2D _invDiffuse2D;
   Textures.TextureCube _invDiffuseCube;
 
-  Shaders.MaterialComponentType _specularType;
+  Shaders.ColorSourceType _specularType;
   double _shininess;
   Math.Color3 _specularClr;
   Textures.Texture2D _specular2D;
   Textures.TextureCube _specularCube;
 
-  Shaders.MaterialComponentType _bumpyType;
+  Shaders.ColorSourceType _bumpyType;
   Textures.Texture2D _bump2D;
   Textures.TextureCube _bumpCube;
 
   Textures.TextureCube _envSampler;
-  Shaders.MaterialComponentType _reflectionType;
+  Shaders.ColorSourceType _reflectionType;
   Math.Color3 _reflectClr;
   Textures.Texture2D _reflect2D;
   Textures.TextureCube _reflectCube;
 
-  Shaders.MaterialComponentType _refractionType;
+  Shaders.ColorSourceType _refractionType;
   double _refraction;
   Math.Color3 _refractClr;
   Textures.Texture2D _refract2D;
   Textures.TextureCube _refractCube;
 
-  Shaders.MaterialComponentType _alphaType;
+  Shaders.ColorSourceType _alphaType;
   double _alpha;
   Textures.Texture2D _alpha2D;
   Textures.TextureCube _alphaCube;
@@ -95,9 +95,9 @@ class MaterialLight extends Technique {
 
   /// Removes any emission from the material.
   void clearEmission() {
-    if (this._emissionType != Shaders.MaterialComponentType.None) {
+    if (this._emissionType != Shaders.ColorSourceType.None) {
       this._shader = null;
-      this._emissionType = Shaders.MaterialComponentType.None;
+      this._emissionType = Shaders.ColorSourceType.None;
     }
     this._emissionClr = new Math.Color3.black();
     this._emission2D = null;
@@ -108,8 +108,8 @@ class MaterialLight extends Technique {
   Math.Color3 get emissionColor => this._emissionClr;
   set emissionColor(Math.Color3 clr) {
     if (clr == null) this.clearEmission();
-    else if (this._emissionType == Shaders.MaterialComponentType.None) {
-      this._emissionType = Shaders.MaterialComponentType.Solid;
+    else if (this._emissionType == Shaders.ColorSourceType.None) {
+      this._emissionType = Shaders.ColorSourceType.Solid;
       this._shader = null;
     }
     this._emissionClr = clr;
@@ -119,14 +119,14 @@ class MaterialLight extends Technique {
   Textures.Texture2D get emissionTexture2D => this._emission2D;
   set emissionTexture2D(Textures.Texture2D txt) {
     if (txt == null) {
-      if (this._emissionType == Shaders.MaterialComponentType.Texture2D) {
+      if (this._emissionType == Shaders.ColorSourceType.Texture2D) {
         this._shader = null;
-        this._emissionType = Shaders.MaterialComponentType.Solid;
+        this._emissionType = Shaders.ColorSourceType.Solid;
       }
-    } else if (this._emissionType != Shaders.MaterialComponentType.Texture2D) {
-      if (this._emissionType == Shaders.MaterialComponentType.None)
+    } else if (this._emissionType != Shaders.ColorSourceType.Texture2D) {
+      if (this._emissionType == Shaders.ColorSourceType.None)
         this._emissionClr = new Math.Color3.white();
-      this._emissionType = Shaders.MaterialComponentType.Texture2D;
+      this._emissionType = Shaders.ColorSourceType.Texture2D;
       this._emissionCube = null;
       this._shader = null;
     }
@@ -137,14 +137,14 @@ class MaterialLight extends Technique {
   Textures.TextureCube get emissionTextureCube => this._emissionCube;
   set emissionTextureCube(Textures.TextureCube txt) {
     if (txt == null) {
-      if (this._emissionType == Shaders.MaterialComponentType.TextureCube) {
+      if (this._emissionType == Shaders.ColorSourceType.TextureCube) {
         this._shader = null;
-        this._emissionType = Shaders.MaterialComponentType.Solid;
+        this._emissionType = Shaders.ColorSourceType.Solid;
       }
-    } else if (this._emissionType != Shaders.MaterialComponentType.TextureCube) {
-      if (this._emissionType == Shaders.MaterialComponentType.None)
+    } else if (this._emissionType != Shaders.ColorSourceType.TextureCube) {
+      if (this._emissionType == Shaders.ColorSourceType.None)
         this._emissionClr = new Math.Color3.white();
-      this._emissionType = Shaders.MaterialComponentType.TextureCube;
+      this._emissionType = Shaders.ColorSourceType.TextureCube;
       this._emission2D = null;
       this._shader = null;
     }
@@ -153,9 +153,9 @@ class MaterialLight extends Technique {
 
   /// Removes any ambient from the material.
   void clearAmbient() {
-    if (this._ambientType != Shaders.MaterialComponentType.None) {
+    if (this._ambientType != Shaders.ColorSourceType.None) {
       this._shader = null;
-      this._ambientType = Shaders.MaterialComponentType.None;
+      this._ambientType = Shaders.ColorSourceType.None;
     }
     this._ambientClr = new Math.Color3.black();
     this._ambient2D = null;
@@ -166,8 +166,8 @@ class MaterialLight extends Technique {
   Math.Color3 get ambientColor => this._ambientClr;
   set ambientColor(Math.Color3 clr) {
     if (clr == null) this.clearAmbient();
-    else if (this._ambientType == Shaders.MaterialComponentType.None) {
-      this._ambientType = Shaders.MaterialComponentType.Solid;
+    else if (this._ambientType == Shaders.ColorSourceType.None) {
+      this._ambientType = Shaders.ColorSourceType.Solid;
       this._shader = null;
     }
     this._ambientClr = clr;
@@ -177,14 +177,14 @@ class MaterialLight extends Technique {
   Textures.Texture2D get ambientTexture2D => this._ambient2D;
   set ambientTexture2D(Textures.Texture2D txt) {
     if (txt == null) {
-      if (this._ambientType == Shaders.MaterialComponentType.Texture2D) {
+      if (this._ambientType == Shaders.ColorSourceType.Texture2D) {
         this._shader = null;
-        this._ambientType = Shaders.MaterialComponentType.Solid;
+        this._ambientType = Shaders.ColorSourceType.Solid;
       }
-    } else if (this._ambientType != Shaders.MaterialComponentType.Texture2D) {
-      if (this._ambientType == Shaders.MaterialComponentType.None)
+    } else if (this._ambientType != Shaders.ColorSourceType.Texture2D) {
+      if (this._ambientType == Shaders.ColorSourceType.None)
         this._ambientClr = new Math.Color3.white();
-      this._ambientType = Shaders.MaterialComponentType.Texture2D;
+      this._ambientType = Shaders.ColorSourceType.Texture2D;
       this._ambientCube = null;
       this._shader = null;
     }
@@ -195,14 +195,14 @@ class MaterialLight extends Technique {
   Textures.TextureCube get ambientTextureCube => this._ambientCube;
   set ambientTextureCube(Textures.TextureCube txt) {
     if (txt == null) {
-      if (this._ambientType == Shaders.MaterialComponentType.TextureCube) {
+      if (this._ambientType == Shaders.ColorSourceType.TextureCube) {
         this._shader = null;
-        this._ambientType = Shaders.MaterialComponentType.Solid;
+        this._ambientType = Shaders.ColorSourceType.Solid;
       }
-    } else if (this._ambientType != Shaders.MaterialComponentType.TextureCube) {
-      if (this._ambientType == Shaders.MaterialComponentType.None)
+    } else if (this._ambientType != Shaders.ColorSourceType.TextureCube) {
+      if (this._ambientType == Shaders.ColorSourceType.None)
         this._ambientClr = new Math.Color3.white();
-      this._ambientType = Shaders.MaterialComponentType.TextureCube;
+      this._ambientType = Shaders.ColorSourceType.TextureCube;
       this._ambient2D = null;
       this._shader = null;
     }
@@ -211,9 +211,9 @@ class MaterialLight extends Technique {
 
   /// Removes any diffuse from the material.
   void clearDiffuse() {
-    if (this._diffuseType != Shaders.MaterialComponentType.None) {
+    if (this._diffuseType != Shaders.ColorSourceType.None) {
       this._shader = null;
-      this._diffuseType = Shaders.MaterialComponentType.None;
+      this._diffuseType = Shaders.ColorSourceType.None;
     }
     this._diffuseClr = new Math.Color3.black();
     this._diffuse2D = null;
@@ -224,8 +224,8 @@ class MaterialLight extends Technique {
   Math.Color3 get diffuseColor => this._diffuseClr;
   set diffuseColor(Math.Color3 clr) {
     if (clr == null) this.clearDiffuse();
-    else if (this._diffuseType == Shaders.MaterialComponentType.None) {
-      this._diffuseType = Shaders.MaterialComponentType.Solid;
+    else if (this._diffuseType == Shaders.ColorSourceType.None) {
+      this._diffuseType = Shaders.ColorSourceType.Solid;
       this._shader = null;
     }
     this._diffuseClr = clr;
@@ -235,14 +235,14 @@ class MaterialLight extends Technique {
   Textures.Texture2D get diffuseTexture2D => this._diffuse2D;
   set diffuseTexture2D(Textures.Texture2D txt) {
     if (txt == null) {
-      if (this._diffuseType == Shaders.MaterialComponentType.Texture2D) {
+      if (this._diffuseType == Shaders.ColorSourceType.Texture2D) {
         this._shader = null;
-        this._diffuseType = Shaders.MaterialComponentType.Solid;
+        this._diffuseType = Shaders.ColorSourceType.Solid;
       }
-    } else if (this._diffuseType != Shaders.MaterialComponentType.Texture2D) {
-      if (this._diffuseType == Shaders.MaterialComponentType.None)
+    } else if (this._diffuseType != Shaders.ColorSourceType.Texture2D) {
+      if (this._diffuseType == Shaders.ColorSourceType.None)
         this._diffuseClr = new Math.Color3.white();
-      this._diffuseType = Shaders.MaterialComponentType.Texture2D;
+      this._diffuseType = Shaders.ColorSourceType.Texture2D;
       this._diffuseCube = null;
       this._shader = null;
     }
@@ -253,14 +253,14 @@ class MaterialLight extends Technique {
   Textures.TextureCube get diffuseTextureCube => this._diffuseCube;
   set diffuseTextureCube(Textures.TextureCube txt) {
     if (txt == null) {
-      if (this._diffuseType == Shaders.MaterialComponentType.TextureCube) {
+      if (this._diffuseType == Shaders.ColorSourceType.TextureCube) {
         this._shader = null;
-        this._diffuseType = Shaders.MaterialComponentType.Solid;
+        this._diffuseType = Shaders.ColorSourceType.Solid;
       }
-    } else if (this._diffuseType != Shaders.MaterialComponentType.TextureCube) {
-      if (this._diffuseType == Shaders.MaterialComponentType.None)
+    } else if (this._diffuseType != Shaders.ColorSourceType.TextureCube) {
+      if (this._diffuseType == Shaders.ColorSourceType.None)
         this._diffuseClr = new Math.Color3.white();
-      this._diffuseType = Shaders.MaterialComponentType.TextureCube;
+      this._diffuseType = Shaders.ColorSourceType.TextureCube;
       this._diffuse2D = null;
       this._shader = null;
     }
@@ -269,9 +269,9 @@ class MaterialLight extends Technique {
 
   /// Removes any inverse diffuse from the material.
   void clearInvDiffuse() {
-    if (this._invDiffuseType != Shaders.MaterialComponentType.None) {
+    if (this._invDiffuseType != Shaders.ColorSourceType.None) {
       this._shader = null;
-      this._invDiffuseType = Shaders.MaterialComponentType.None;
+      this._invDiffuseType = Shaders.ColorSourceType.None;
     }
     this._invDiffuseClr = new Math.Color3.black();
     this._invDiffuse2D = null;
@@ -282,8 +282,8 @@ class MaterialLight extends Technique {
   Math.Color3 get invDiffuseColor => this._invDiffuseClr;
   set invDiffuseColor(Math.Color3 clr) {
     if (clr == null) this.clearInvDiffuse();
-    else if (this._invDiffuseType == Shaders.MaterialComponentType.None) {
-      this._invDiffuseType = Shaders.MaterialComponentType.Solid;
+    else if (this._invDiffuseType == Shaders.ColorSourceType.None) {
+      this._invDiffuseType = Shaders.ColorSourceType.Solid;
       this._shader = null;
     }
     this._invDiffuseClr = clr;
@@ -293,14 +293,14 @@ class MaterialLight extends Technique {
   Textures.Texture2D get invDiffuseTexture2D => this._invDiffuse2D;
   set invDiffuseTexture2D(Textures.Texture2D txt) {
     if (txt == null) {
-      if (this._invDiffuseType == Shaders.MaterialComponentType.Texture2D) {
+      if (this._invDiffuseType == Shaders.ColorSourceType.Texture2D) {
         this._shader = null;
-        this._invDiffuseType = Shaders.MaterialComponentType.Solid;
+        this._invDiffuseType = Shaders.ColorSourceType.Solid;
       }
-    } else if (this._invDiffuseType != Shaders.MaterialComponentType.Texture2D) {
-      if (this._invDiffuseType == Shaders.MaterialComponentType.None)
+    } else if (this._invDiffuseType != Shaders.ColorSourceType.Texture2D) {
+      if (this._invDiffuseType == Shaders.ColorSourceType.None)
         this._invDiffuseClr = new Math.Color3.white();
-      this._invDiffuseType = Shaders.MaterialComponentType.Texture2D;
+      this._invDiffuseType = Shaders.ColorSourceType.Texture2D;
       this._invDiffuseCube = null;
       this._shader = null;
     }
@@ -311,14 +311,14 @@ class MaterialLight extends Technique {
   Textures.TextureCube get invDiffuseTextureCube => this._invDiffuseCube;
   set invDiffuseTextureCube(Textures.TextureCube txt) {
     if (txt == null) {
-      if (this._invDiffuseType == Shaders.MaterialComponentType.TextureCube) {
+      if (this._invDiffuseType == Shaders.ColorSourceType.TextureCube) {
         this._shader = null;
-        this._invDiffuseType = Shaders.MaterialComponentType.Solid;
+        this._invDiffuseType = Shaders.ColorSourceType.Solid;
       }
-    } else if (this._invDiffuseType != Shaders.MaterialComponentType.TextureCube) {
-      if (this._invDiffuseType == Shaders.MaterialComponentType.None)
+    } else if (this._invDiffuseType != Shaders.ColorSourceType.TextureCube) {
+      if (this._invDiffuseType == Shaders.ColorSourceType.None)
         this._invDiffuseClr = new Math.Color3.white();
-      this._invDiffuseType = Shaders.MaterialComponentType.TextureCube;
+      this._invDiffuseType = Shaders.ColorSourceType.TextureCube;
       this._invDiffuse2D = null;
       this._shader = null;
     }
@@ -327,9 +327,9 @@ class MaterialLight extends Technique {
 
   /// Removes any specular from the material.
   void clearSpecular() {
-    if (this._specularType != Shaders.MaterialComponentType.None) {
+    if (this._specularType != Shaders.ColorSourceType.None) {
       this._shader = null;
-      this._specularType = Shaders.MaterialComponentType.None;
+      this._specularType = Shaders.ColorSourceType.None;
     }
     this._shininess = 100.0;
     this._specularClr = new Math.Color3.black();
@@ -341,8 +341,8 @@ class MaterialLight extends Technique {
   double get shininess => this._shininess;
   set shininess(double value) {
     if (value <= 0.0) this.clearSpecular();
-    else if (this._specularType == Shaders.MaterialComponentType.None) {
-      this._specularType = Shaders.MaterialComponentType.Solid;
+    else if (this._specularType == Shaders.ColorSourceType.None) {
+      this._specularType = Shaders.ColorSourceType.Solid;
       this._specularClr = new Math.Color3.white();
       this._shader = null;
     }
@@ -353,9 +353,9 @@ class MaterialLight extends Technique {
   Math.Color3 get specularColor => this._specularClr;
   set specularColor(Math.Color3 clr) {
     if (clr == null) this.clearSpecular();
-    else if (this._specularType == Shaders.MaterialComponentType.None) {
+    else if (this._specularType == Shaders.ColorSourceType.None) {
       this._shininess = 100.0;
-      this._specularType = Shaders.MaterialComponentType.Solid;
+      this._specularType = Shaders.ColorSourceType.Solid;
       this._shader = null;
     }
     this._specularClr = clr;
@@ -365,16 +365,16 @@ class MaterialLight extends Technique {
   Textures.Texture2D get specularTexture2D => this._specular2D;
   set specularTexture2D(Textures.Texture2D txt) {
     if (txt == null) {
-      if (this._specularType == Shaders.MaterialComponentType.Texture2D) {
+      if (this._specularType == Shaders.ColorSourceType.Texture2D) {
         this._shader = null;
-        this._specularType = Shaders.MaterialComponentType.Solid;
+        this._specularType = Shaders.ColorSourceType.Solid;
       }
-    } else if (this._specularType != Shaders.MaterialComponentType.Texture2D) {
-      if (this._specularType == Shaders.MaterialComponentType.None) {
+    } else if (this._specularType != Shaders.ColorSourceType.Texture2D) {
+      if (this._specularType == Shaders.ColorSourceType.None) {
         this._shininess = 100.0;
         this._specularClr = new Math.Color3.white();
       }
-      this._specularType = Shaders.MaterialComponentType.Texture2D;
+      this._specularType = Shaders.ColorSourceType.Texture2D;
       this._specularCube = null;
       this._shader = null;
     }
@@ -385,16 +385,16 @@ class MaterialLight extends Technique {
   Textures.TextureCube get specularTextureCube => this._specularCube;
   set specularTextureCube(Textures.TextureCube txt) {
     if (txt == null) {
-      if (this._specularType == Shaders.MaterialComponentType.TextureCube) {
+      if (this._specularType == Shaders.ColorSourceType.TextureCube) {
         this._shader = null;
-        this._specularType = Shaders.MaterialComponentType.Solid;
+        this._specularType = Shaders.ColorSourceType.Solid;
       }
-    } else if (this._specularType != Shaders.MaterialComponentType.TextureCube) {
-      if (this._specularType == Shaders.MaterialComponentType.None) {
+    } else if (this._specularType != Shaders.ColorSourceType.TextureCube) {
+      if (this._specularType == Shaders.ColorSourceType.None) {
         this._shininess = 100.0;
         this._specularClr = new Math.Color3.white();
       }
-      this._specularType = Shaders.MaterialComponentType.TextureCube;
+      this._specularType = Shaders.ColorSourceType.TextureCube;
       this._specular2D = null;
       this._shader = null;
     }
@@ -403,9 +403,9 @@ class MaterialLight extends Technique {
 
   /// Removes any normal distortion from the material.
   void clearBump() {
-    if (this._bumpyType != Shaders.MaterialComponentType.None) {
+    if (this._bumpyType != Shaders.ColorSourceType.None) {
       this._shader = null;
-      this._bumpyType = Shaders.MaterialComponentType.None;
+      this._bumpyType = Shaders.ColorSourceType.None;
     }
     this._bump2D = null;
     this._bumpCube = null;
@@ -415,12 +415,12 @@ class MaterialLight extends Technique {
   Textures.Texture2D get bumpyTexture2D => this._bump2D;
   set bumpyTexture2D(Textures.Texture2D txt) {
     if (txt == null) {
-      if (this._bumpyType == Shaders.MaterialComponentType.Texture2D) {
+      if (this._bumpyType == Shaders.ColorSourceType.Texture2D) {
         this._shader = null;
-        this._bumpyType = Shaders.MaterialComponentType.None;
+        this._bumpyType = Shaders.ColorSourceType.None;
       }
-    } else if (this._bumpyType != Shaders.MaterialComponentType.Texture2D) {
-      this._bumpyType = Shaders.MaterialComponentType.Texture2D;
+    } else if (this._bumpyType != Shaders.ColorSourceType.Texture2D) {
+      this._bumpyType = Shaders.ColorSourceType.Texture2D;
       this._bumpCube = null;
       this._shader = null;
     }
@@ -431,12 +431,12 @@ class MaterialLight extends Technique {
   Textures.TextureCube get bumpyTextureCube => this._bumpCube;
   set bumpyTextureCube(Textures.TextureCube txt) {
     if (txt == null) {
-      if (this._bumpyType == Shaders.MaterialComponentType.TextureCube) {
+      if (this._bumpyType == Shaders.ColorSourceType.TextureCube) {
         this._shader = null;
-        this._bumpyType = Shaders.MaterialComponentType.None;
+        this._bumpyType = Shaders.ColorSourceType.None;
       }
-    } else if (this._bumpyType != Shaders.MaterialComponentType.TextureCube) {
-      this._bumpyType = Shaders.MaterialComponentType.TextureCube;
+    } else if (this._bumpyType != Shaders.ColorSourceType.TextureCube) {
+      this._bumpyType = Shaders.ColorSourceType.TextureCube;
       this._bump2D = null;
       this._shader = null;
     }
@@ -451,9 +451,9 @@ class MaterialLight extends Technique {
 
   /// Removes any reflection from the material.
   void clearReflection() {
-    if (this._reflectionType != Shaders.MaterialComponentType.None) {
+    if (this._reflectionType != Shaders.ColorSourceType.None) {
       this._shader = null;
-      this._reflectionType = Shaders.MaterialComponentType.None;
+      this._reflectionType = Shaders.ColorSourceType.None;
     }
     this._reflectClr = new Math.Color3.black();
     this._reflect2D = null;
@@ -464,8 +464,8 @@ class MaterialLight extends Technique {
   Math.Color3 get reflectionColor => this._reflectClr;
   set reflectionColor(Math.Color3 clr) {
     if (clr == null) this.clearReflection();
-    else if (this._reflectionType == Shaders.MaterialComponentType.None) {
-      this._reflectionType = Shaders.MaterialComponentType.Solid;
+    else if (this._reflectionType == Shaders.ColorSourceType.None) {
+      this._reflectionType = Shaders.ColorSourceType.Solid;
       this._shader = null;
     }
     this._reflectClr = clr;
@@ -475,14 +475,14 @@ class MaterialLight extends Technique {
   Textures.Texture2D get reflectionTexture2D => this._reflect2D;
   set reflectionTexture2D(Textures.Texture2D txt) {
     if (txt == null) {
-      if (this._reflectionType == Shaders.MaterialComponentType.Texture2D) {
+      if (this._reflectionType == Shaders.ColorSourceType.Texture2D) {
         this._shader = null;
-        this._reflectionType = Shaders.MaterialComponentType.Solid;
+        this._reflectionType = Shaders.ColorSourceType.Solid;
       }
-    } else if (this._reflectionType != Shaders.MaterialComponentType.Texture2D) {
-      if (this._reflectionType == Shaders.MaterialComponentType.None)
+    } else if (this._reflectionType != Shaders.ColorSourceType.Texture2D) {
+      if (this._reflectionType == Shaders.ColorSourceType.None)
         this._reflectClr = new Math.Color3.white();
-      this._reflectionType = Shaders.MaterialComponentType.Texture2D;
+      this._reflectionType = Shaders.ColorSourceType.Texture2D;
       this._reflectCube = null;
       this._shader = null;
     }
@@ -493,14 +493,14 @@ class MaterialLight extends Technique {
   Textures.TextureCube get reflectionTextureCube => this._reflectCube;
   set reflectionTextureCube(Textures.TextureCube txt) {
     if (txt == null) {
-      if (this._reflectionType == Shaders.MaterialComponentType.TextureCube) {
+      if (this._reflectionType == Shaders.ColorSourceType.TextureCube) {
         this._shader = null;
-        this._reflectionType = Shaders.MaterialComponentType.Solid;
+        this._reflectionType = Shaders.ColorSourceType.Solid;
       }
-    } else if (this._reflectionType != Shaders.MaterialComponentType.TextureCube) {
-      if (this._reflectionType == Shaders.MaterialComponentType.None)
+    } else if (this._reflectionType != Shaders.ColorSourceType.TextureCube) {
+      if (this._reflectionType == Shaders.ColorSourceType.None)
         this._reflectClr = new Math.Color3.white();
-      this._reflectionType = Shaders.MaterialComponentType.TextureCube;
+      this._reflectionType = Shaders.ColorSourceType.TextureCube;
       this._reflect2D = null;
       this._shader = null;
     }
@@ -509,9 +509,9 @@ class MaterialLight extends Technique {
 
   /// Clears the refraction of the material.
   void clearRefraction() {
-    if (this._refractionType != Shaders.MaterialComponentType.None) {
+    if (this._refractionType != Shaders.ColorSourceType.None) {
       this._shader = null;
-      this._refractionType = Shaders.MaterialComponentType.None;
+      this._refractionType = Shaders.ColorSourceType.None;
     }
     this._refraction = 1.0;
     this._refractClr = new Math.Color3.black();
@@ -523,8 +523,8 @@ class MaterialLight extends Technique {
   double get refraction => this._refraction;
   set refraction(double value) {
     if (value <= 0.0) this.clearRefraction();
-    else if (this._refractionType == Shaders.MaterialComponentType.None) {
-      this._refractionType = Shaders.MaterialComponentType.Solid;
+    else if (this._refractionType == Shaders.ColorSourceType.None) {
+      this._refractionType = Shaders.ColorSourceType.Solid;
       this._refractClr = new Math.Color3.white();
       this._shader = null;
     }
@@ -535,9 +535,9 @@ class MaterialLight extends Technique {
   Math.Color3 get refractionColor => this._refractClr;
   set refractionColor(Math.Color3 clr) {
     if (clr == null) this.clearRefraction();
-    else if (this._refractionType == Shaders.MaterialComponentType.None) {
+    else if (this._refractionType == Shaders.ColorSourceType.None) {
       this._refraction = 1.0;
-      this._refractionType = Shaders.MaterialComponentType.Solid;
+      this._refractionType = Shaders.ColorSourceType.Solid;
       this._shader = null;
     }
     this._refractClr = clr;
@@ -547,16 +547,16 @@ class MaterialLight extends Technique {
   Textures.Texture2D get refractionTexture2D => this._refract2D;
   set refractionTexture2D(Textures.Texture2D txt) {
     if (txt == null) {
-      if (this._refractionType == Shaders.MaterialComponentType.Texture2D) {
+      if (this._refractionType == Shaders.ColorSourceType.Texture2D) {
         this._shader = null;
-        this._refractionType = Shaders.MaterialComponentType.Solid;
+        this._refractionType = Shaders.ColorSourceType.Solid;
       }
-    } else if (this._refractionType != Shaders.MaterialComponentType.Texture2D) {
-      if (this._refractionType == Shaders.MaterialComponentType.None) {
+    } else if (this._refractionType != Shaders.ColorSourceType.Texture2D) {
+      if (this._refractionType == Shaders.ColorSourceType.None) {
         this._refraction = 1.0;
         this._refractClr = new Math.Color3.white();
       }
-      this._refractionType = Shaders.MaterialComponentType.Texture2D;
+      this._refractionType = Shaders.ColorSourceType.Texture2D;
       this._refractCube = null;
       this._shader = null;
     }
@@ -567,16 +567,16 @@ class MaterialLight extends Technique {
   Textures.TextureCube get refractionTextureCube => this._refractCube;
   set refractionTextureCube(Textures.TextureCube txt) {
     if (txt == null) {
-      if (this._refractionType == Shaders.MaterialComponentType.TextureCube) {
+      if (this._refractionType == Shaders.ColorSourceType.TextureCube) {
         this._shader = null;
-        this._refractionType = Shaders.MaterialComponentType.Solid;
+        this._refractionType = Shaders.ColorSourceType.Solid;
       }
-    } else if (this._refractionType != Shaders.MaterialComponentType.TextureCube) {
-      if (this._refractionType == Shaders.MaterialComponentType.None) {
+    } else if (this._refractionType != Shaders.ColorSourceType.TextureCube) {
+      if (this._refractionType == Shaders.ColorSourceType.None) {
         this._refraction = 100.0;
         this._refractClr = new Math.Color3.white();
       }
-      this._refractionType = Shaders.MaterialComponentType.TextureCube;
+      this._refractionType = Shaders.ColorSourceType.TextureCube;
       this._refract2D = null;
       this._shader = null;
     }
@@ -585,9 +585,9 @@ class MaterialLight extends Technique {
 
   /// Removes any alpha from the material.
   void clearAlpha() {
-    if (this._alphaType != Shaders.MaterialComponentType.None) {
+    if (this._alphaType != Shaders.ColorSourceType.None) {
       this._shader = null;
-      this._alphaType = Shaders.MaterialComponentType.None;
+      this._alphaType = Shaders.ColorSourceType.None;
     }
     this._alpha = 1.0;
     this._alpha2D = null;
@@ -598,8 +598,8 @@ class MaterialLight extends Technique {
   double get alpha => this._alpha;
   set alpha(double alpha) {
     if (Math.Comparer.equals(alpha, 1.0)) this.clearAlpha();
-    else if (this._alphaType == Shaders.MaterialComponentType.None) {
-      this._alphaType = Shaders.MaterialComponentType.Solid;
+    else if (this._alphaType == Shaders.ColorSourceType.None) {
+      this._alphaType = Shaders.ColorSourceType.Solid;
       this._shader = null;
       this._alpha = Math.clampVal(alpha);
     }
@@ -609,14 +609,14 @@ class MaterialLight extends Technique {
   Textures.Texture2D get alphaTexture2D => this._alpha2D;
   set alphaTexture2D(Textures.Texture2D txt) {
     if (txt == null) {
-      if (this._alphaType == Shaders.MaterialComponentType.Texture2D) {
+      if (this._alphaType == Shaders.ColorSourceType.Texture2D) {
         this._shader = null;
-        this._alphaType = Shaders.MaterialComponentType.Solid;
+        this._alphaType = Shaders.ColorSourceType.Solid;
       }
-    } else if (this._alphaType != Shaders.MaterialComponentType.Texture2D) {
-      if (this._alphaType == Shaders.MaterialComponentType.None)
+    } else if (this._alphaType != Shaders.ColorSourceType.Texture2D) {
+      if (this._alphaType == Shaders.ColorSourceType.None)
         this._alpha = 1.0;
-      this._alphaType = Shaders.MaterialComponentType.Texture2D;
+      this._alphaType = Shaders.ColorSourceType.Texture2D;
       this._alphaCube = null;
       this._shader = null;
     }
@@ -627,14 +627,14 @@ class MaterialLight extends Technique {
   Textures.TextureCube get alphaTextureCube => this._alphaCube;
   set alphaTextureCube(Textures.TextureCube txt) {
     if (txt == null) {
-      if (this._alphaType == Shaders.MaterialComponentType.TextureCube) {
+      if (this._alphaType == Shaders.ColorSourceType.TextureCube) {
         this._shader = null;
-        this._alphaType = Shaders.MaterialComponentType.Solid;
+        this._alphaType = Shaders.ColorSourceType.Solid;
       }
-    } else if (this._alphaType != Shaders.MaterialComponentType.TextureCube) {
-      if (this._alphaType == Shaders.MaterialComponentType.None)
+    } else if (this._alphaType != Shaders.ColorSourceType.TextureCube) {
+      if (this._alphaType == Shaders.ColorSourceType.None)
         this._alpha = 1.0;
-      this._alphaType = Shaders.MaterialComponentType.TextureCube;
+      this._alphaType = Shaders.ColorSourceType.TextureCube;
       this._alpha2D = null;
       this._shader = null;
     }
@@ -711,16 +711,16 @@ class MaterialLight extends Technique {
     this._shader.colorMatrix = this._colorMat;
 
     switch (cfg.emission) {
-      case Shaders.MaterialComponentType.None: break;
-      case Shaders.MaterialComponentType.Solid:
+      case Shaders.ColorSourceType.None: break;
+      case Shaders.ColorSourceType.Solid:
         this._shader.emissionColor = this._emissionClr;
         break;
-      case Shaders.MaterialComponentType.Texture2D:
+      case Shaders.ColorSourceType.Texture2D:
         this._addToTextureList(textures, this._emission2D);
         this._shader.emissionTexture2D = this._emission2D;
         this._shader.emissionColor     = this._emissionClr;
         break;
-      case Shaders.MaterialComponentType.TextureCube:
+      case Shaders.ColorSourceType.TextureCube:
         this._addToTextureList(textures, this._emissionCube);
         this._shader.emissionTextureCube = this._emissionCube;
         this._shader.emissionColor       = this._emissionClr;
@@ -729,16 +729,16 @@ class MaterialLight extends Technique {
 
     if (cfg.lights) {
       switch (cfg.ambient) {
-        case Shaders.MaterialComponentType.None: break;
-        case Shaders.MaterialComponentType.Solid:
+        case Shaders.ColorSourceType.None: break;
+        case Shaders.ColorSourceType.Solid:
           this._shader.ambientColor = this._ambientClr;
           break;
-        case Shaders.MaterialComponentType.Texture2D:
+        case Shaders.ColorSourceType.Texture2D:
           this._addToTextureList(textures, this._ambient2D);
           this._shader.ambientTexture2D = this._ambient2D;
           this._shader.ambientColor     = this._ambientClr;
           break;
-        case Shaders.MaterialComponentType.TextureCube:
+        case Shaders.ColorSourceType.TextureCube:
           this._addToTextureList(textures, this._ambientCube);
           this._shader.ambientTextureCube = this._ambientCube;
           this._shader.ambientColor       = this._ambientClr;
@@ -746,16 +746,16 @@ class MaterialLight extends Technique {
       }
 
       switch (cfg.diffuse) {
-        case Shaders.MaterialComponentType.None: break;
-        case Shaders.MaterialComponentType.Solid:
+        case Shaders.ColorSourceType.None: break;
+        case Shaders.ColorSourceType.Solid:
           this._shader.diffuseColor = this._diffuseClr;
           break;
-        case Shaders.MaterialComponentType.Texture2D:
+        case Shaders.ColorSourceType.Texture2D:
           this._addToTextureList(textures, this._diffuse2D);
           this._shader.diffuseTexture2D = this._diffuse2D;
           this._shader.diffuseColor     = this._diffuseClr;
           break;
-        case Shaders.MaterialComponentType.TextureCube:
+        case Shaders.ColorSourceType.TextureCube:
           this._addToTextureList(textures, this._diffuseCube);
           this._shader.diffuseTextureCube = this._diffuseCube;
           this._shader.diffuseColor       = this._diffuseClr;
@@ -763,16 +763,16 @@ class MaterialLight extends Technique {
       }
 
       switch (cfg.invDiffuse) {
-        case Shaders.MaterialComponentType.None: break;
-        case Shaders.MaterialComponentType.Solid:
+        case Shaders.ColorSourceType.None: break;
+        case Shaders.ColorSourceType.Solid:
           this._shader.invDiffuseColor = this._invDiffuseClr;
           break;
-        case Shaders.MaterialComponentType.Texture2D:
+        case Shaders.ColorSourceType.Texture2D:
           this._addToTextureList(textures, this._invDiffuse2D);
           this._shader.invDiffuseTexture2D = this._invDiffuse2D;
           this._shader.invDiffuseColor     = this._invDiffuseClr;
           break;
-        case Shaders.MaterialComponentType.TextureCube:
+        case Shaders.ColorSourceType.TextureCube:
           this._addToTextureList(textures, this._invDiffuseCube);
           this._shader.invDiffuseTextureCube = this._invDiffuseCube;
           this._shader.invDiffuseColor       = this._invDiffuseClr;
@@ -780,18 +780,18 @@ class MaterialLight extends Technique {
       }
 
       switch (cfg.specular) {
-        case Shaders.MaterialComponentType.None: break;
-        case Shaders.MaterialComponentType.Solid:
+        case Shaders.ColorSourceType.None: break;
+        case Shaders.ColorSourceType.Solid:
           this._shader.specularColor = this._specularClr;
           this._shader.shininess     = this._shininess;
           break;
-        case Shaders.MaterialComponentType.Texture2D:
+        case Shaders.ColorSourceType.Texture2D:
           this._addToTextureList(textures, this._specular2D);
           this._shader.specularTexture2D = this._specular2D;
           this._shader.specularColor     = this._specularClr;
           this._shader.shininess         = this._shininess;
           break;
-        case Shaders.MaterialComponentType.TextureCube:
+        case Shaders.ColorSourceType.TextureCube:
           this._addToTextureList(textures, this._specularCube);
           this._shader.specularTextureCube = this._specularCube;
           this._shader.specularColor       = this._specularClr;
@@ -908,13 +908,13 @@ class MaterialLight extends Technique {
     }
 
     switch (cfg.bumpy) {
-      case Shaders.MaterialComponentType.None: break;
-      case Shaders.MaterialComponentType.Solid: break;
-      case Shaders.MaterialComponentType.Texture2D:
+      case Shaders.ColorSourceType.None: break;
+      case Shaders.ColorSourceType.Solid: break;
+      case Shaders.ColorSourceType.Texture2D:
         this._addToTextureList(textures, this._bump2D);
         this._shader.bumpTexture2D = this._bump2D;
         break;
-      case Shaders.MaterialComponentType.TextureCube:
+      case Shaders.ColorSourceType.TextureCube:
         this._addToTextureList(textures, this._bumpCube);
         this._shader.bumpTextureCube = this._bumpCube;
         break;
@@ -929,16 +929,16 @@ class MaterialLight extends Technique {
       this._shader.environmentTextureCube = this._envSampler;
 
       switch (cfg.reflection) {
-        case Shaders.MaterialComponentType.None: break;
-        case Shaders.MaterialComponentType.Solid:
+        case Shaders.ColorSourceType.None: break;
+        case Shaders.ColorSourceType.Solid:
           this._shader.reflectionColor = this._reflectClr;
           break;
-        case Shaders.MaterialComponentType.Texture2D:
+        case Shaders.ColorSourceType.Texture2D:
           this._addToTextureList(textures, this._reflect2D);
           this._shader.reflectionTexture2D = this._reflect2D;
           this._shader.reflectionColor = this._reflectClr;
           break;
-        case Shaders.MaterialComponentType.TextureCube:
+        case Shaders.ColorSourceType.TextureCube:
           this._addToTextureList(textures, this._reflectCube);
           this._shader.reflectionTextureCube = this._reflectCube;
           this._shader.reflectionColor = this._reflectClr;
@@ -946,18 +946,18 @@ class MaterialLight extends Technique {
       }
 
       switch (cfg.refraction) {
-        case Shaders.MaterialComponentType.None: break;
-        case Shaders.MaterialComponentType.Solid:
+        case Shaders.ColorSourceType.None: break;
+        case Shaders.ColorSourceType.Solid:
           this._shader.refractionColor = this._refractClr;
           this._shader.refraction = this._refraction;
           break;
-        case Shaders.MaterialComponentType.Texture2D:
+        case Shaders.ColorSourceType.Texture2D:
           this._addToTextureList(textures, this._refract2D);
           this._shader.refractionTexture2D = this._refract2D;
           this._shader.refractionColor = this._refractClr;
           this._shader.refraction = this._refraction;
           break;
-        case Shaders.MaterialComponentType.TextureCube:
+        case Shaders.ColorSourceType.TextureCube:
           this._addToTextureList(textures, this._refractCube);
           this._shader.refractionTextureCube = this._refractCube;
           this._shader.refractionColor = this._refractClr;
@@ -966,18 +966,18 @@ class MaterialLight extends Technique {
       }
     }
 
-    if (cfg.alpha != Shaders.MaterialComponentType.None) {
+    if (cfg.alpha != Shaders.ColorSourceType.None) {
       switch (cfg.alpha) {
-        case Shaders.MaterialComponentType.None: break;
-        case Shaders.MaterialComponentType.Solid:
+        case Shaders.ColorSourceType.None: break;
+        case Shaders.ColorSourceType.Solid:
           this._shader.alpha = this._alpha;
           break;
-        case Shaders.MaterialComponentType.Texture2D:
+        case Shaders.ColorSourceType.Texture2D:
           this._addToTextureList(textures, this._alpha2D);
           this._shader.alphaTexture2D = this._alpha2D;
           this._shader.alpha = this._alpha;
           break;
-        case Shaders.MaterialComponentType.TextureCube:
+        case Shaders.ColorSourceType.TextureCube:
           this._addToTextureList(textures, this._alphaCube);
           this._shader.alphaTextureCube = this._alphaCube;
           this._shader.alpha = this._alpha;
@@ -996,7 +996,7 @@ class MaterialLight extends Technique {
         ..render(state)
         ..unbind(state);
 
-    if (cfg.alpha != Shaders.MaterialComponentType.None) {
+    if (cfg.alpha != Shaders.ColorSourceType.None) {
       state.gl.disable(WebGL.BLEND);
     }
 

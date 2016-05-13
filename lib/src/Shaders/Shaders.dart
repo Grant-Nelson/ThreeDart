@@ -17,14 +17,32 @@ part 'Shader.dart';
 part 'Uniforms.dart';
 
 // Implemented Shaders
-part 'Blur.dart';
 part 'Depth.dart';
 part 'Distort.dart';
+part 'GaussianBlur.dart';
 part 'Inspection.dart';
 part 'MaterialLight.dart';
 part 'MaterialLightConfig.dart';
 part 'MaterialLightUniforms.dart';
+part 'Normal.dart';
+part 'NormalConfig.dart';
 part 'Skybox.dart';
+
+/// Source of colors type for different shader components.
+enum ColorSourceType {
+
+  /// No color source, meaning component isn't being used.
+  None,
+
+  /// Solid color source or a scalar on the component.
+  Solid,
+
+  /// The 2D texture color source.
+  Texture2D,
+
+  /// The cube texture color source.
+  TextureCube
+}
 
 /// Inserts a number for each line in the given [text].
 String numberLines(String text) {
