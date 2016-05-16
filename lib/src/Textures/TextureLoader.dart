@@ -82,8 +82,8 @@ class TextureLoader {
     String negXPath, String negYPath, String negZPath, {bool flipY: false}) {
     WebGL.Texture texture = this._gl.createTexture();
     this._gl.bindTexture(WebGL.TEXTURE_CUBE_MAP, texture);
-    this._gl.texParameteri(WebGL.TEXTURE_CUBE_MAP, WebGL.TEXTURE_WRAP_S, WebGL.CLAMP_TO_EDGE);
-    this._gl.texParameteri(WebGL.TEXTURE_CUBE_MAP, WebGL.TEXTURE_WRAP_T, WebGL.CLAMP_TO_EDGE);
+    this._gl.texParameteri(WebGL.TEXTURE_CUBE_MAP, WebGL.TEXTURE_WRAP_S, WebGL.REPEAT);
+    this._gl.texParameteri(WebGL.TEXTURE_CUBE_MAP, WebGL.TEXTURE_WRAP_T, WebGL.REPEAT);
     this._gl.texParameteri(WebGL.TEXTURE_CUBE_MAP, WebGL.TEXTURE_MIN_FILTER, WebGL.LINEAR);
     this._gl.texParameteri(WebGL.TEXTURE_CUBE_MAP, WebGL.TEXTURE_MAG_FILTER, WebGL.LINEAR);
     this._gl.bindTexture(WebGL.TEXTURE_CUBE_MAP, null);

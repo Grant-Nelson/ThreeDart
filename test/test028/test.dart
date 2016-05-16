@@ -18,7 +18,8 @@ import '../common/common.dart' as common;
 
 void main() {
   common.shellTest("Test 028", [],
-    "Test of a Gaussian blur cover pass.");
+    "Test of a Gaussian blur cover pass. "+
+    "Notice the depth of field causing things further away to be blurry.");
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
 
@@ -63,11 +64,10 @@ void main() {
   Views.BackTarget colorTarget = new Views.BackTarget(512, 512)
     ..clearColor = false;
 
-  Scenes.CoverPass skybox = new Scenes.CoverPass()
+  Scenes.CoverPass skybox = new Scenes.CoverPass.skybox(
+    td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg"))
     ..camara = userCamara
-    ..target = colorTarget
-    ..tech = new Techniques.Skybox(
-      boxTexture: td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg"));
+    ..target = colorTarget;
 
   Scenes.RenderPass colorPass = new Scenes.RenderPass()
     ..camara = userCamara

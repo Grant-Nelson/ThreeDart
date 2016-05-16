@@ -16,14 +16,11 @@ import '../common/common.dart' as common;
 
 void main() {
   common.shellTest("Test 009", [],
-    "Another test of the Solid Color Directional Lighting Shader "+
-    "where the light and object don't move but the camara can be "+
+    "Another test of the Material Lighting shader with solid color and "+
+    "a directional lighting. The light and object don't move but the camara can be "+
     "moved around the object.");
 
-  Movers.UserRotater rotater = new Movers.UserRotater();
-  Movers.UserZoom zoom = new Movers.UserZoom();
-  Movers.UserRoller roller = new Movers.UserRoller()
-    ..ctrlPressed = true;
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..shape = Shapes.toroid();
@@ -39,22 +36,15 @@ void main() {
     ..shininess = 10.0;
 
   Movers.Group camMover = new Movers.Group()
-  ..add(rotater)
-  ..add(roller)
-  ..add(zoom)
-  ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
+    ..add(new Movers.UserRotater(input: td.userInput))
+    ..add(new Movers.UserRoller(input: td.userInput, ctrl: true))
+    ..add(new Movers.UserZoom(input: td.userInput))
+    ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
 
-  Scenes.RenderPass pass = new Scenes.RenderPass()
+  td.scene = new Scenes.RenderPass()
     ..tech = tech
     ..children.add(obj)
     ..camara.mover = camMover;
-
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart")
-    ..scene = pass;
-
-  rotater.attach(td.userInput);
-  zoom.attach(td.userInput);
-  roller.attach(td.userInput);
 
   var update;
   update = (num t) {

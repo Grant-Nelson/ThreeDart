@@ -16,14 +16,22 @@ import '../common/common.dart' as common;
 
 void main() {
   common.shellTest("Test 006", ["bumpMaps"],
-    "A test of the Bumpy Texture 2D Directional Lighting Shader.");
+    "A test of the Material Lighting shader with a bumpy 2D texture and "+
+    "a directional light. Select different bump maps for the test. "+
+    "The additional lines are part of shape inspection.");
+
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
 
   Shapes.Shape shape = Shapes.cube();
 
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
     ..lights.add(new Lights.Directional(
         mover: new Movers.Constant(new Math.Matrix4.vectorTowards(0.0, 0.0, -1.0)),
-        color: new Math.Color3.white()));
+        color: new Math.Color3.white()))
+    ..ambientColor = new Math.Color3(0.0, 0.0, 1.0)
+    ..diffuseColor = new Math.Color3(0.0, 1.0, 0.0)
+    ..specularColor = new Math.Color3(1.0, 0.0, 0.0)
+    ..shininess = 10.0;
 
   ThreeDart.Entity objTech = new ThreeDart.Entity()
     ..shape = shape
@@ -38,35 +46,17 @@ void main() {
         ..showNormals = true
         ..showBinormals = true);
 
-  Movers.UserRotater rotater = new Movers.UserRotater();
-  Movers.UserZoom zoom = new Movers.UserZoom();
-  Movers.UserRoller roller = new Movers.UserRoller()
-    ..ctrlPressed = true;
-
   ThreeDart.Entity group = new ThreeDart.Entity()
     ..children.add(objInspecTech)
     ..children.add(objTech)
     ..mover = (new Movers.Group()
-      ..add(rotater)
-      ..add(roller)
-      ..add(zoom));
+      ..add(new Movers.UserRotater(input: td.userInput))
+      ..add(new Movers.UserRoller(input: td.userInput, ctrl: true))
+      ..add(new Movers.UserZoom(input: td.userInput)));
 
-  Scenes.RenderPass pass = new Scenes.RenderPass()
+  td.scene = new Scenes.RenderPass()
     ..children.add(group)
     ..camara.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0));
-
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart")
-    ..scene = pass;
-
-  tech
-    ..ambientColor = new Math.Color3(0.0, 0.0, 1.0)
-    ..diffuseColor = new Math.Color3(0.0, 1.0, 0.0)
-    ..specularColor = new Math.Color3(1.0, 0.0, 0.0)
-    ..shininess = 10.0;
-
-  rotater.attach(td.userInput);
-  zoom.attach(td.userInput);
-  roller.attach(td.userInput);
 
   new common.Texture2DGroup("bumpMaps", (String fileName) {
     tech.bumpyTexture2D = td.textureLoader.load2DFromFile(fileName);

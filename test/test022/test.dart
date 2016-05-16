@@ -17,18 +17,10 @@ import '../common/common.dart' as common;
 
 void main() {
   common.shellTest("Test 022", ["shapes"],
-    "Test of multiple moving point lights.");
+    "Test of the Material Lighting shader with a textured point light.");
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
   Textures.TextureCube texture = td.textureLoader.loadCubeFromPath("../resources/earthColor");
-
-  Movers.UserRotater rotater = new Movers.UserRotater();
-  Movers.UserZoom zoom = new Movers.UserZoom();
-  Movers.UserRoller roller = new Movers.UserRoller()
-    ..ctrlPressed = true;
-  rotater.attach(td.userInput);
-  zoom.attach(td.userInput);
-  roller.attach(td.userInput);
 
   Movers.Group mover = new Movers.Group()
     ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 2.0)))
@@ -64,9 +56,9 @@ void main() {
     ..shape = Shapes.toroid();
 
   Movers.Group camMover = new Movers.Group()
-  ..add(rotater)
-  ..add(roller)
-  ..add(zoom)
+  ..add(new Movers.UserRotater(input: td.userInput))
+  ..add(new Movers.UserRoller(input: td.userInput, ctrl: true))
+  ..add(new Movers.UserZoom(input: td.userInput))
   ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
 
   Scenes.RenderPass pass = new Scenes.RenderPass()

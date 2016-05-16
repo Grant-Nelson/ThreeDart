@@ -17,7 +17,8 @@ import '../common/common.dart' as common;
 
 void main() {
   common.shellTest("Test 029", ["bumpMaps"],
-    "Test of bump distort pass.");
+    "Test of bump distort pass. It renders the scene to a back buffer then "+
+    "paints that back buffer texture to the front buffer with a distortion.");
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
 
@@ -43,11 +44,10 @@ void main() {
     ..specularColor = new Math.Color3(1.0, 0.0, 0.0)
     ..shininess = 10.0;
 
-  Scenes.CoverPass skybox = new Scenes.CoverPass()
+  Scenes.CoverPass skybox = new Scenes.CoverPass.skybox(
+    td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg"))
     ..target = colorTarget
-    ..camara = userCamara
-    ..tech = new Techniques.Skybox(
-        boxTexture: td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg"));
+    ..camara = userCamara;
 
   Scenes.RenderPass pass = new Scenes.RenderPass()
     ..camara = userCamara

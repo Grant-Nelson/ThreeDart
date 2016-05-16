@@ -18,12 +18,9 @@ import '../common/common.dart' as common;
 
 void main() {
   common.shellTest("Test 015", ["bumpMaps", "controls"],
-    "Test of bumpy reflection and refraction.");
+    "Test of Material Lighting shader with bump mapping, reflections, refractions.");
 
-  Movers.UserRotater rotater = new Movers.UserRotater();
-  Movers.UserZoom zoom = new Movers.UserZoom();
-  Movers.UserRoller roller = new Movers.UserRoller()
-    ..ctrlPressed = true;
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
 
   Views.FrontTarget target = new Views.FrontTarget()
     ..clearColor = false;
@@ -31,19 +28,29 @@ void main() {
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..shape = Shapes.cube();
 
+  Textures.TextureCube environment =
+    td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg");
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
     ..lights.add(new Lights.Directional(
-          mover: new Movers.Constant(new Math.Matrix4.vectorTowards(-1.0, -1.0, -1.0))));
+          mover: new Movers.Constant(new Math.Matrix4.vectorTowards(-1.0, -1.0, -1.0))))
+    ..ambientColor = new Math.Color3(0.1, 0.1, 0.1)
+    ..diffuseColor = new Math.Color3(0.1, 0.1, 0.1)
+    ..specularColor = new Math.Color3.black()
+    ..shininess = 10.0
+    ..environmentTexture = environment
+    ..refraction = 0.6
+    ..refractionColor = new Math.Color3(0.2, 0.3, 1.0)
+    ..reflectionColor = new Math.Color3(0.6, 0.6, 0.6);
 
   Movers.Group mover = new Movers.Group()
-    ..add(rotater)
-    ..add(roller)
-    ..add(zoom)
+    ..add(new Movers.UserRotater(input: td.userInput))
+    ..add(new Movers.UserRoller(input: td.userInput, ctrl: true))
+    ..add(new Movers.UserZoom(input: td.userInput))
     ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
 
   Views.Perspective camara = new Views.Perspective(mover: mover);
 
-  Scenes.CoverPass skybox = new Scenes.CoverPass()
+  Scenes.CoverPass skybox = new Scenes.CoverPass.skybox(environment)
     ..target = target
     ..camara = camara;
 
@@ -54,29 +61,7 @@ void main() {
     ..children.add(obj);
   (pass.target as Views.FrontTarget).clearColor = false;
 
-  Scenes.Compound compound = new Scenes.Compound(passes: [skybox, pass]);
-
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart")
-    ..scene = compound;
-
-  rotater.attach(td.userInput);
-  zoom.attach(td.userInput);
-  roller.attach(td.userInput);
-
-  Textures.TextureCube environment =
-    td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg");
-  skybox.tech = new Techniques.Skybox()
-    ..boxTexture = environment;
-
-  tech
-    ..ambientColor = new Math.Color3(0.1, 0.1, 0.1)
-    ..diffuseColor = new Math.Color3(0.1, 0.1, 0.1)
-    ..specularColor = new Math.Color3.black()
-    ..shininess = 10.0
-    ..environmentTexture = environment
-    ..refraction = 0.6
-    ..refractionColor = new Math.Color3(0.2, 0.3, 1.0)
-    ..reflectionColor = new Math.Color3(0.6, 0.6, 0.6);
+  td.scene = new Scenes.Compound(passes: [skybox, pass]);
 
   new common.RadioGroup("controls")
     ..add("Silver", () {

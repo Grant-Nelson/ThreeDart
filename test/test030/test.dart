@@ -1,7 +1,7 @@
 // Copyright (c) 2016, SnowGremlin. All rights reserved. Use of this source code
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
-library ThreeDart.test.test031;
+library ThreeDart.test.test030;
 
 import 'dart:html';
 
@@ -15,8 +15,8 @@ import 'package:ThreeDart/Views.dart' as Views;
 import '../common/common.dart' as common;
 
 void main() {
-  common.shellTest("Test 031", [],
-    "A test of the Solid Color Directional Lighting Shader with a cube texture bump map.");
+  common.shellTest("Test 030", [],
+    "A test of the Normal shader for dynamically rendering normal maps.");
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
 

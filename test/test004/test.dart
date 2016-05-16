@@ -15,7 +15,9 @@ import '../common/common.dart' as common;
 
 void main() {
   common.shellTest("Test 004", [],
-    "Test of repeat movers and shapes.");
+    "Test of repeat use of a single mover and shape. There are 9 rings "+
+    "moving at the same speed, however the second one is attached to "+
+    "the first, the third to the second, and so on.");
 
   Movers.Rotater rotater = new Movers.Rotater()
     ..deltaYaw = 0.51

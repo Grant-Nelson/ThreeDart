@@ -1,7 +1,7 @@
 // Copyright (c) 2016, SnowGremlin. All rights reserved. Use of this source code
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
-library ThreeDart.test.test011;
+library ThreeDart.test.test017;
 
 import 'dart:html';
 
@@ -18,12 +18,11 @@ import '../common/common.dart' as common;
 
 void main() {
   common.shellTest("Test 017", ["shapes"],
-    "A test of the Solid Color Directional Lighting Shader with a cube texture bump map.");
+    "A test of the Material Lighting shader with solid color directional "+
+    "light, cube mapped textures, and a reflection map. The specular map is "+
+    "also used to define where reflections are painted.");
 
-  Movers.UserRotater rotater = new Movers.UserRotater();
-  Movers.UserZoom zoom = new Movers.UserZoom();
-  Movers.UserRoller roller = new Movers.UserRoller()
-    ..ctrlPressed = true;
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..shape = Shapes.sphere();
@@ -31,40 +30,14 @@ void main() {
   Views.FrontTarget target = new Views.FrontTarget()
     ..clearColor = false;
 
+  Textures.TextureCube environment =
+    td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg");
+  Textures.TextureCube specular = td.textureLoader.loadCubeFromPath("../resources/earthSpecular");
+  Textures.TextureCube color = td.textureLoader.loadCubeFromPath("../resources/earthColor");
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
     ..lights.add(new Lights.Directional(
           mover: new Movers.Constant(new Math.Matrix4.vectorTowards(-1.0, -1.0, -1.0)),
-          color: new Math.Color3.white()));
-
-  Movers.Group mover = new Movers.Group()
-    ..add(rotater)
-    ..add(roller)
-    ..add(zoom)
-    ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
-
-  Views.Perspective camara = new Views.Perspective(mover: mover);
-
-  Scenes.CoverPass skybox = new Scenes.CoverPass()
-    ..target = target
-    ..camara = camara;
-
-  Scenes.RenderPass pass = new Scenes.RenderPass()
-    ..camara = camara
-    ..tech = tech
-    ..target = target
-    ..children.add(obj);
-
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart")
-    ..scene = new Scenes.Compound(passes: [skybox, pass]);
-
-  Textures.TextureCube environment =
-    td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg");
-  skybox.tech = new Techniques.Skybox()
-    ..boxTexture = environment;
-
-  Textures.TextureCube specular = td.textureLoader.loadCubeFromPath("../resources/earthSpecular");
-  Textures.TextureCube color = td.textureLoader.loadCubeFromPath("../resources/earthColor");
-  tech
+          color: new Math.Color3.white()))
     ..ambientColor=  new Math.Color3(0.5, 0.5, 0.5)
     ..diffuseColor = new Math.Color3(0.5, 0.5, 0.5)
     ..ambientTextureCube = color
@@ -74,6 +47,26 @@ void main() {
     ..reflectionTextureCube = specular
     ..reflectionColor = new Math.Color3(0.5, 0.5, 0.5)
     ..shininess = 10.0;
+
+  Movers.Group mover = new Movers.Group()
+    ..add(new Movers.UserRotater(input: td.userInput))
+    ..add(new Movers.UserRoller(input: td.userInput, ctrl: true))
+    ..add(new Movers.UserZoom(input: td.userInput))
+    ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
+
+  Views.Perspective camara = new Views.Perspective(mover: mover);
+
+  Scenes.CoverPass skybox = new Scenes.CoverPass.skybox(environment)
+    ..target = target
+    ..camara = camara;
+
+  Scenes.RenderPass pass = new Scenes.RenderPass()
+    ..camara = camara
+    ..tech = tech
+    ..target = target
+    ..children.add(obj);
+
+  td.scene = new Scenes.Compound(passes: [skybox, pass]);
 
   new common.RadioGroup("shapes")
     ..add("Cube",         () { obj.shape = Shapes.cube(); })
@@ -85,10 +78,6 @@ void main() {
     ..add("Sphere",       () { obj.shape = Shapes.sphere(widthDiv: 6, heightDiv: 6); }, true )
     ..add("Toroid",       () { obj.shape = Shapes.toroid(); })
     ..add("Knot",         () { obj.shape = Shapes.knot(); });
-
-  rotater.attach(td.userInput);
-  zoom.attach(td.userInput);
-  roller.attach(td.userInput);
 
   var update;
   update = (num t) {

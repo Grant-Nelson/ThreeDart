@@ -25,11 +25,17 @@ class RenderPass implements Scene {
   Core.Event _onRender;
 
   /// Creates a new render pass.
-  RenderPass() {
-    this._camara = new Views.Perspective();
-    this._target = new Views.FrontTarget();
-    this._tech = null;
+  RenderPass({
+      Views.Camara camara: null,
+      Views.Target target: null,
+      Techniques.Technique tech: null,
+      List<Core.Entity> children: null
+    }) {
+    this._camara = (camara == null)? new Views.Perspective(): camara;
+    this._target = (target == null)? new Views.FrontTarget(): target;
+    this._tech = tech;
     this._children = new List<Core.Entity>();
+    if (children != null)  this._children.addAll(children);
     this._onPreUpdate = new Core.Event();
     this._onPostUpdate = new Core.Event();
     this._onRender = new Core.Event();

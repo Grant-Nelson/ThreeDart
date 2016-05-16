@@ -43,11 +43,10 @@ void main() {
     ..specularColor = new Math.Color3(1.0, 0.0, 0.0)
     ..shininess = 10.0;
 
-  Scenes.CoverPass skybox = new Scenes.CoverPass()
+  Scenes.CoverPass skybox = new Scenes.CoverPass.skybox(
+    td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg"))
     ..target = target
-    ..camara = userCamara
-    ..tech = new Techniques.Skybox(
-        boxTexture: td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg"));
+    ..camara = userCamara;
 
   Scenes.RenderPass pass = new Scenes.RenderPass()
     ..camara = userCamara

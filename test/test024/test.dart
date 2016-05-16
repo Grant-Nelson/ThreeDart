@@ -17,15 +17,14 @@ import '../common/common.dart' as common;
 
 void main() {
   common.shellTest("Test 024", ["shapes"],
-    "Test of a simple spot light. Use Ctrl plus the mouse to move the light.");
+    "Test of the Material Lighting shader with a simple spot light. "+
+    "Use Ctrl plus the mouse to move the light.");
 
-  Movers.UserRotater viewRotater = new Movers.UserRotater();
-  Movers.UserRotater objRotater = new Movers.UserRotater()
-    ..ctrlPressed = true;
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
 
   Movers.Group lightMover = new Movers.Group()
     ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, -2.5)))
-    ..add(objRotater);
+    ..add(new Movers.UserRotater(input: td.userInput, ctrl: true));
 
   Lights.Spot spot = new Lights.Spot(
     mover:        lightMover,
@@ -52,7 +51,7 @@ void main() {
     ..shape = (Shapes.cube()..flip());
 
   Movers.Group camMover = new Movers.Group()
-  ..add(viewRotater)
+  ..add(new Movers.UserRotater(input: td.userInput))
   ..add(new Movers.Constant(new Math.Matrix4.rotateX(PI)))
   ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
 
@@ -64,15 +63,12 @@ void main() {
     ..technique = (new Techniques.MaterialLight()
                 ..emissionColor = new Math.Color3.white());
 
-  Scenes.RenderPass pass = new Scenes.RenderPass()
+  td.scene = new Scenes.RenderPass()
     ..tech = tech
     ..children.add(centerObj)
     ..children.add(room)
     ..children.add(obj)
     ..camara.mover = camMover;
-
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart")
-    ..scene = pass;
 
   new common.RadioGroup("shapes")
     ..add("Cube",     () { centerObj.shape = Shapes.cube(); })
@@ -81,9 +77,6 @@ void main() {
     ..add("Sphere",   () { centerObj.shape = Shapes.sphere(widthDiv: 6, heightDiv: 6); })
     ..add("Toroid",   () { centerObj.shape = Shapes.toroid(); }, true)
     ..add("Knot",     () { centerObj.shape = Shapes.knot(); });
-
-  viewRotater.attach(td.userInput);
-  objRotater.attach(td.userInput);
 
   var update;
   update = (num t) {

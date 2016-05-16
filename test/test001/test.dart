@@ -22,8 +22,8 @@ void main() {
     ..mover = new Movers.Rotater();
 
   Scenes.RenderPass pass = new Scenes.RenderPass()
-    ..tech = new Techniques.Depth(fogStart: 3.0, fogStop: 6.0)
     ..children.add(obj)
+    ..tech = new Techniques.Depth(fogStart: 3.0, fogStop: 6.0)
     ..camara.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0));
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart")

@@ -16,7 +16,7 @@ import '../common/common.dart' as common;
 
 void main() {
   common.shellTest("Test 003", [],
-    "A test of the Solid Color Directional Lighting Shader.");
+    "A test of the Material Light Shader with a solid color directional lighting.");
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..shape = Shapes.toroid()

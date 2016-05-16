@@ -6,6 +6,7 @@ library ThreeDart.Scenes;
 import '../Core/Core.dart' as Core;
 import '../Shapes/Shapes.dart' as Shapes;
 import '../Techniques/Techniques.dart' as Techniques;
+import '../Textures/Textures.dart' as Textures;
 import '../Views/Views.dart' as Views;
 
 part 'Compound.dart';

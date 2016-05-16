@@ -17,27 +17,23 @@ import '../common/common.dart' as common;
 
 void main() {
   common.shellTest("Test 005", [],
-    "A test of the Texture 2D Directional Lighting Shader.");
+    "A test of the Material Lighting shader with 2D textures and directional "+
+    "lighting. This test has texturing for emission, ambient, diffuse, and "+
+    "specular. The same texture is used for ambient and diffuse. "+
+    "The emission texture makes the lights on the panel glow. "+
+    "The specular texture makes specific parts shiny and other parts not.");
+
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..shape = (Shapes.cube()..adjustNormals())
     ..mover = new Movers.Rotater();
 
+  Textures.Texture2D color = td.textureLoader.load2DFromFile("../resources/CtrlPnlColor.png");
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
     ..lights.add(new Lights.Directional(
           mover: new Movers.Constant(new Math.Matrix4.vectorTowards(1.0, -1.0, -3.0)),
-          color: new Math.Color3.white()));
-
-  Scenes.RenderPass pass = new Scenes.RenderPass()
-    ..tech = tech
-    ..children.add(obj)
-    ..camara.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0));
-
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart")
-    ..scene = pass;
-
-  Textures.Texture2D color = td.textureLoader.load2DFromFile("../resources/CtrlPnlColor.png");
-  tech
+          color: new Math.Color3.white()))
     ..emissionTexture2D = td.textureLoader.load2DFromFile("../resources/CtrlPnlEmission.png")
     ..ambientColor = new Math.Color3(0.2, 0.2, 0.2)
     ..diffuseColor = new Math.Color3(0.8, 0.8, 0.8)
@@ -45,6 +41,11 @@ void main() {
     ..diffuseTexture2D = color
     ..specularTexture2D = td.textureLoader.load2DFromFile("../resources/CtrlPnlSpecular.png")
     ..shininess = 10.0;
+
+  td.scene = new Scenes.RenderPass()
+    ..tech = tech
+    ..children.add(obj)
+    ..camara.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0));
 
   var update;
   update = (num t) {

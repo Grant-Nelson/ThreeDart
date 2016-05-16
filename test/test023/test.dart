@@ -17,15 +17,18 @@ import '../common/common.dart' as common;
 
 void main() {
   common.shellTest("Test 023", ["shapes"],
-    "Test of a textured directional light. Use Ctrl plus the mouse to move the light.");
+    "Test of the Material Lighting shader with a textured directional "+
+    "light. Use Ctrl plus the mouse to move the light.");
 
-  Movers.UserRotater viewRotater = new Movers.UserRotater();
-  Movers.UserRotater objRotater = new Movers.UserRotater()
-    ..ctrlPressed = true;
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
+
+  Movers.UserRotater viewRotater = new Movers.UserRotater(input: td.userInput);
+  Movers.UserRotater objRotater = new Movers.UserRotater(input: td.userInput, ctrl: true);
 
   Lights.TexturedDirectional txtDir = new Lights.TexturedDirectional(
     mover: objRotater,
-    color: new Math.Color3(0.6, 0.9, 1.0));
+    color: new Math.Color3(0.6, 0.9, 1.0),
+    texture: td.textureLoader.load2DFromFile("../resources/Test.png", wrapEdges: true));
 
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
     ..lights.add(txtDir)
@@ -47,16 +50,11 @@ void main() {
   ..add(new Movers.Constant(new Math.Matrix4.rotateX(PI)))
   ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
 
-  Scenes.RenderPass pass = new Scenes.RenderPass()
+  td.scene = new Scenes.RenderPass()
     ..tech = tech
     ..children.add(centerObj)
     ..children.add(room)
     ..camara.mover = camMover;
-
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart")
-    ..scene = pass;
-
-  txtDir.texture = td.textureLoader.load2DFromFile("../resources/Test.png", wrapEdges: true);
 
   new common.RadioGroup("shapes")
     ..add("Cube",     () { centerObj.shape = Shapes.cube(); })
@@ -65,9 +63,6 @@ void main() {
     ..add("Sphere",   () { centerObj.shape = Shapes.sphere(widthDiv: 6, heightDiv: 6); })
     ..add("Toroid",   () { centerObj.shape = Shapes.toroid(); }, true)
     ..add("Knot",     () { centerObj.shape = Shapes.knot(); });
-
-  viewRotater.attach(td.userInput);
-  objRotater.attach(td.userInput);
 
   var update;
   update = (num t) {

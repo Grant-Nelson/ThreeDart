@@ -18,12 +18,9 @@ import '../common/common.dart' as common;
 
 void main() {
   common.shellTest("Test 019", [],
-    "A test of the Bumpy Texture 2D Directional Lighting Shader.");
+    "A test of the Material Lighting shader with an alpha texture.");
 
-  Movers.UserRotater rotater = new Movers.UserRotater();
-  Movers.UserZoom zoom = new Movers.UserZoom();
-  Movers.UserRoller roller = new Movers.UserRoller()
-    ..ctrlPressed = true;
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..shape = Shapes.cube();
@@ -31,20 +28,28 @@ void main() {
   Views.FrontTarget target = new Views.FrontTarget()
     ..clearColor = false;
 
+  Textures.TextureCube environment =
+    td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg");
+  Textures.Texture2D color = td.textureLoader.load2DFromFile("../resources/AlphaWeave.png");
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
     ..lights.add(new Lights.Directional(
           mover: new Movers.Constant(new Math.Matrix4.vectorTowards(1.0, -2.0, -3.0)),
-          color: new Math.Color3.white()));
+          color: new Math.Color3.white()))
+    ..ambientColor = new Math.Color3(0.5, 0.5, 0.5)
+    ..diffuseColor = new Math.Color3(0.6, 0.6, 0.6)
+    ..ambientTexture2D = color
+    ..diffuseTexture2D = color
+    ..alphaTexture2D = color;
 
   Movers.Group mover = new Movers.Group()
-    ..add(rotater)
-    ..add(roller)
-    ..add(zoom)
+    ..add(new Movers.UserRotater(input: td.userInput))
+    ..add(new Movers.UserRoller(input: td.userInput, ctrl: true))
+    ..add(new Movers.UserZoom(input: td.userInput))
     ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
 
   Views.Perspective camara = new Views.Perspective(mover: mover);
 
-  Scenes.CoverPass skybox = new Scenes.CoverPass()
+  Scenes.CoverPass skybox = new Scenes.CoverPass.skybox(environment)
     ..target = target
     ..camara = camara;
 
@@ -54,24 +59,7 @@ void main() {
     ..target = target
     ..children.add(obj);
 
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart")
-    ..scene = new Scenes.Compound(passes: [skybox, pass]);
-
-  Textures.TextureCube environment =
-    td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg");
-  skybox.tech = new Techniques.Skybox()
-    ..boxTexture = environment;
-
-  Textures.Texture2D color = td.textureLoader.load2DFromFile("../resources/AlphaWeave.png");
-  tech
-    ..ambientColor = new Math.Color3(0.5, 0.5, 0.5)
-    ..diffuseColor = new Math.Color3(0.6, 0.6, 0.6)
-    ..ambientTexture2D = color
-    ..diffuseTexture2D = color
-    ..alphaTexture2D = color;
-
-  rotater.attach(td.userInput);
-  zoom.attach(td.userInput);
+  td.scene = new Scenes.Compound(passes: [skybox, pass]);
 
   var update;
   update = (num t) {

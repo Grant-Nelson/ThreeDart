@@ -16,43 +16,32 @@ import '../common/common.dart' as common;
 
 void main() {
   common.shellTest("Test 010", [],
-    "A test of the Solid Color Directional Lighting Shader with a cube texture bump map.");
+    "A test of the Material Lighting shader with solid color and "+
+    "a directional light= with a cube texture bump map.");
 
-  Movers.UserRotater rotater = new Movers.UserRotater();
-  Movers.UserZoom zoom = new Movers.UserZoom();
-  Movers.UserRoller roller = new Movers.UserRoller()
-    ..ctrlPressed = true;
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..shape = Shapes.cube()
     ..mover = (new Movers.Group()
-      ..add(rotater)
-      ..add(roller)
-      ..add(zoom));
+      ..add(new Movers.UserRotater(input: td.userInput))
+      ..add(new Movers.UserRoller(input: td.userInput, ctrl: true))
+      ..add(new Movers.UserZoom(input: td.userInput)));
 
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
     ..lights.add(new Lights.Directional(
           mover: new Movers.Constant(new Math.Matrix4.vectorTowards(1.0, 1.0, -3.0)),
-          color: new Math.Color3.white()));
-
-  Scenes.RenderPass pass = new Scenes.RenderPass()
-    ..tech = tech
-    ..children.add(obj)
-    ..camara.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0));
-
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart")
-    ..scene = pass;
-
-  tech
+          color: new Math.Color3.white()))
     ..ambientColor = new Math.Color3(0.0, 0.0, 1.0)
     ..diffuseColor = new Math.Color3(0.0, 1.0, 0.0)
     ..specularColor = new Math.Color3(1.0, 0.0, 0.0)
     ..shininess = 10.0
     ..bumpyTextureCube = td.textureLoader.loadCubeFromPath("../resources/diceBumpMap");
 
-  rotater.attach(td.userInput);
-  zoom.attach(td.userInput);
-  roller.attach(td.userInput);
+  td.scene = new Scenes.RenderPass()
+    ..tech = tech
+    ..children.add(obj)
+    ..camara.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0));
 
   var update;
   update = (num t) {

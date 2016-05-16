@@ -43,12 +43,10 @@ void addLightBall(Techniques.MaterialLight tech, Scenes.RenderPass pass,
 
 void main() {
   common.shellTest("Test 021", ["shapes"],
-    "Test of multiple moving point lights.");
+    "Test of the Material Lighting shader with multiple moving point lights. "+
+    "Emissive spheres are added at the lights sources.");
 
-  Movers.UserRotater rotater = new Movers.UserRotater();
-  Movers.UserZoom zoom = new Movers.UserZoom();
-  Movers.UserRoller roller = new Movers.UserRoller()
-    ..ctrlPressed = true;
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
 
   ThreeDart.Entity centerObj = new ThreeDart.Entity()
     ..mover = new Movers.Constant(new Math.Matrix4.scale(1.0, 1.0, 1.0))
@@ -59,9 +57,9 @@ void main() {
     ..shape = (Shapes.cube()..flip());
 
   Movers.Group camMover = new Movers.Group()
-    ..add(rotater)
-    ..add(roller)
-    ..add(zoom)
+    ..add(new Movers.UserRotater(input: td.userInput))
+    ..add(new Movers.UserRoller(input: td.userInput, ctrl: true))
+    ..add(new Movers.UserZoom(input: td.userInput))
     ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
 
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
@@ -75,13 +73,10 @@ void main() {
     ..children.add(room)
     ..children.add(centerObj)
     ..camara.mover = camMover;
-
+  td.scene = pass;
   addLightBall(tech, pass, 1.0, 0.0, 0.0, 0.3, 0.0, 0.0);
   addLightBall(tech, pass, 0.0, 1.0, 0.0, 0.0, 0.4, 0.0);
   addLightBall(tech, pass, 0.0, 0.0, 1.0, 0.5, 0.5, 0.0);
-
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart")
-    ..scene = pass;
 
   new common.RadioGroup("shapes")
     ..add("Cube",     () { centerObj.shape = Shapes.cube(); })
@@ -90,10 +85,6 @@ void main() {
     ..add("Sphere",   () { centerObj.shape = Shapes.sphere(widthDiv: 6, heightDiv: 6); })
     ..add("Toroid",   () { centerObj.shape = Shapes.toroid(); }, true)
     ..add("Knot",     () { centerObj.shape = Shapes.knot(); });
-
-  rotater.attach(td.userInput);
-  zoom.attach(td.userInput);
-  roller.attach(td.userInput);
 
   var update;
   update = (num t) {

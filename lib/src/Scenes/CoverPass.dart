@@ -24,6 +24,13 @@ class CoverPass implements Scene {
       ..shape = Shapes.square();
   }
 
+  /// Creates a new cover render pass preset with a skybox technique.
+  /// The given [boxTexture] is the cube texture of the skybox.
+  factory CoverPass.skybox(Textures.TextureCube boxTexture) {
+    return new CoverPass()
+      ..tech = new Techniques.Skybox(boxTexture: boxTexture);
+  }
+
   /// The camera describing the view of the scene.
   Views.Camara get camara => this._camara;
   set camara(Views.Camara camara) => this._camara = camara;

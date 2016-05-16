@@ -22,17 +22,19 @@ part 'BumpyTechnique.dart';
 
 void main() {
   common.shellTest("Test 008", ["bumpMaps"],
-    "A test of the Bumpy Texture Shader Equation.");
+    "A custom shader for testing and fixing the normal distortion "+
+    "equation used for bump maps. This displays the normal vectors "+
+    "across a surface.");
+
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
 
   Shapes.Shape shape = Shapes.grid(widthDiv: 50, heightDiv: 50);
   shape.calculateNormals();
   shape.calculateBinormals();
   shape.faces.removeAll();
   for (int i = shape.vertices.length-1; i >= 0; i--) {
-    Shapes.Vertex ver1 = shape.vertices[i]
-      ..weight = 0.0;
-    Shapes.Vertex ver2 = ver1.copy()
-      ..weight = 1.0;
+    Shapes.Vertex ver1 = shape.vertices[i]..weight = 0.0;
+    Shapes.Vertex ver2 = ver1.copy()..weight = 1.0;
     shape.vertices.add(ver2);
     shape.lines.add(ver1, ver2);
   }
@@ -44,24 +46,16 @@ void main() {
     ..shape = shape
     ..technique = tech;
 
-  Movers.UserRotater rotater = new Movers.UserRotater();
-  Movers.UserZoom zoom = new Movers.UserZoom();
-
   ThreeDart.Entity group = new ThreeDart.Entity()
     ..children.add(objTech)
     ..mover = (new Movers.Group()
-      ..add(rotater)
-      ..add(zoom));
+      ..add(new Movers.UserRotater(input: td.userInput))
+      ..add(new Movers.UserRoller(input: td.userInput, ctrl: true))
+      ..add(new Movers.UserZoom(input: td.userInput)));
 
-  Scenes.RenderPass pass = new Scenes.RenderPass()
+  td.scene = new Scenes.RenderPass()
     ..children.add(group)
     ..camara.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0));
-
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart")
-    ..scene = pass;
-
-  rotater.attach(td.userInput);
-  zoom.attach(td.userInput);
 
   new common.Texture2DGroup("bumpMaps", (String fileName) {
     tech.bumpyTexture = td.textureLoader.load2DFromFile(fileName);

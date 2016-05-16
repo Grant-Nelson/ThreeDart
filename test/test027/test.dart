@@ -17,7 +17,8 @@ import '../common/common.dart' as common;
 
 void main() {
   common.shellTest("Test 027", [],
-    "Test of a back buffer for rendering to a texture.");
+    "Test of a back buffer target for rendering to a texture. "+
+    "That back buffer texture is applied to a box.");
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
 
@@ -29,11 +30,10 @@ void main() {
   Views.BackTarget backTarget = new Views.BackTarget(1024, 1024)
     ..clearColor = false;
 
-  Scenes.CoverPass skybox = new Scenes.CoverPass()
+  Scenes.CoverPass skybox = new Scenes.CoverPass.skybox(
+    td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg"))
     ..target = backTarget
-    ..camara = rotaterCamara
-    ..tech = new Techniques.Skybox(
-      boxTexture: td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg"));
+    ..camara = rotaterCamara;
 
   ThreeDart.Entity firstObj = new ThreeDart.Entity()
     ..shape = Shapes.toroid();

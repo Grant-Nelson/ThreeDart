@@ -18,33 +18,24 @@ void main() {
   common.shellTest("Test 002", ["controls", "shapes"],
     "The inspection test is used to check that shapes are built correctly "+
     "and for checking the data privided by the shapes. "+
-    "Also it is useful for testing out new shape configurations.");
+    "Also it is useful for testing out new generated shape configurations. "+
+    "For loaded shape testing see test032.");
 
-  Movers.UserRotater rotater = new Movers.UserRotater();
-  Movers.UserZoom zoom = new Movers.UserZoom();
-  Movers.UserRoller roller = new Movers.UserRoller()
-    ..ctrlPressed = true;
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..mover = (new Movers.Group()
-      ..add(rotater)
-      ..add(roller)
-      ..add(zoom));
+      ..add(new Movers.UserRotater(input: td.userInput))
+      ..add(new Movers.UserRoller(input: td.userInput, ctrl: true))
+      ..add(new Movers.UserZoom(input: td.userInput)));
 
   Techniques.Inspection tech = new Techniques.Inspection()
     ..vectorScale = 0.4;
 
-  Scenes.RenderPass pass = new Scenes.RenderPass()
+  td.scene = new Scenes.RenderPass()
     ..tech = tech
     ..children.add(obj)
     ..camara.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0));
-
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart")
-    ..scene = pass;
-
-  rotater.attach(td.userInput);
-  zoom.attach(td.userInput);
-  roller.attach(td.userInput);
 
   new common.CheckGroup("controls")
     ..add("Filled",          (bool show) { tech.showFilled         = show; }, true)

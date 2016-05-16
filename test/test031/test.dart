@@ -1,7 +1,7 @@
 // Copyright (c) 2016, SnowGremlin. All rights reserved. Use of this source code
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
-library ThreeDart.test.test030;
+library ThreeDart.test.test031;
 
 import 'dart:html';
 
@@ -16,8 +16,13 @@ import 'package:ThreeDart/Lights.dart' as Lights;
 import '../common/common.dart' as common;
 
 void main() {
-  common.shellTest("Test 030", [],
-    "A test of the Solid Color Directional Lighting Shader with a cube texture bump map.");
+  common.shellTest("Test 031", [],
+    "A test of the Distortion cover with a dynamic normal map. "+
+    "The distortion map is generated into one back buffer. "+
+    "The scene is generated into another back buffer. "+
+    "The two parts are combined with a Distortion cover. "+
+    "Use mouse to rotate cube in normal map and Ctrl plus mouse "+
+    "to rotate scene.");
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
 
@@ -60,11 +65,10 @@ void main() {
     ..specularColor = new Math.Color3(1.0, 0.0, 0.0)
     ..shininess = 10.0;
 
-  Scenes.CoverPass skybox = new Scenes.CoverPass()
+  Scenes.CoverPass skybox = new Scenes.CoverPass.skybox(
+    td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg"))
     ..target = colorTarget
-    ..camara = userCamara
-    ..tech = new Techniques.Skybox(
-        boxTexture: td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg"));
+    ..camara = userCamara;
 
   Scenes.RenderPass colorPass = new Scenes.RenderPass()
     ..camara = userCamara

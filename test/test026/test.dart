@@ -17,14 +17,16 @@ import '../common/common.dart' as common;
 
 void main() {
   common.shellTest("Test 026", ["shapes"],
-    "Test of a textured directional light. Use Ctrl plus the mouse to move the light.");
+    "Test of the Material Lighting shader with a textured directional light. "+
+    "The texturing of the directional light is being modified with a matrix. "+
+    "The texture metrix is updated using the pre-update mathods. "+
+    "Use Ctrl plus the mouse to move the center object.");
 
-  Movers.UserRotater viewRotater = new Movers.UserRotater();
-  Movers.UserRotater objRotater = new Movers.UserRotater()
-    ..ctrlPressed = true;
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
 
   Lights.Directional dir1 = new Lights.Directional()
     ..mover = new Movers.Constant(new Math.Matrix4.vectorTowards(0.3, 0.4, 1.0));
+
   Lights.Directional dir2 = new Lights.Directional()
     ..mover = new Movers.Constant(new Math.Matrix4.vectorTowards(-0.3, -0.4, -1.0))
     ..color = new Math.Color3(0.125, 0.125, 0.125);
@@ -36,10 +38,11 @@ void main() {
     ..ambientColor = new Math.Color3.gray(0.1)
     ..diffuseColor = new Math.Color3.gray(0.8)
     ..specularColor = new Math.Color3.gray(0.2)
-    ..shininess = 100.0;
+    ..shininess = 100.0
+    ..diffuseTexture2D = td.textureLoader.load2DFromFile("../resources/Test.png", wrapEdges: true);
 
   ThreeDart.Entity centerObj = new ThreeDart.Entity()
-    ..mover = objRotater
+    ..mover = new Movers.UserRotater(input: td.userInput, ctrl: true)
     ..shape = Shapes.toroid();
 
   ThreeDart.Entity room = new ThreeDart.Entity()
@@ -47,27 +50,21 @@ void main() {
     ..shape = (Shapes.cube()..flip());
 
   Movers.Group camMover = new Movers.Group()
-  ..add(viewRotater)
+  ..add(new Movers.UserRotater(input: td.userInput))
   ..add(new Movers.Constant(new Math.Matrix4.rotateX(PI)))
   ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
 
-  Scenes.RenderPass pass = new Scenes.RenderPass()
+  Movers.Rotater colorMover = new Movers.Rotater(deltaYaw: 0.3, deltaPitch: 0.5, deltaRoll: 0.7);
+  Movers.Rotater txtMover   = new Movers.Rotater(deltaYaw: 0.0, deltaPitch: 0.0, deltaRoll: 0.1);
+  td.scene = new Scenes.RenderPass()
     ..tech = tech
     ..children.add(centerObj)
     ..children.add(room)
-    ..camara.mover = camMover;
-
-  Movers.Rotater colorMover = new Movers.Rotater(deltaYaw: 0.3, deltaPitch: 0.5, deltaRoll: 0.7);
-  Movers.Rotater txtMover   = new Movers.Rotater(deltaYaw: 0.0, deltaPitch: 0.0, deltaRoll: 0.1);
-  pass.onPreUpdate.add((ThreeDart.StateEventArgs args) {
-    tech.colorMatrix = colorMover.update(args.state, null);
-    tech.texture2DMatrix = new Math.Matrix3.fromMatrix4(txtMover.update(args.state, null));
-  });
-
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart")
-    ..scene = pass;
-
-  tech.diffuseTexture2D = td.textureLoader.load2DFromFile("../resources/Test.png", wrapEdges: true);
+    ..camara.mover = camMover
+    ..onPreUpdate.add((ThreeDart.StateEventArgs args) {
+      tech.colorMatrix = colorMover.update(args.state, null);
+      tech.texture2DMatrix = new Math.Matrix3.fromMatrix4(txtMover.update(args.state, null));
+    });
 
   new common.RadioGroup("shapes")
     ..add("Cube",     () { centerObj.shape = Shapes.cube(); })
@@ -76,9 +73,6 @@ void main() {
     ..add("Sphere",   () { centerObj.shape = Shapes.sphere(widthDiv: 6, heightDiv: 6); })
     ..add("Toroid",   () { centerObj.shape = Shapes.toroid(); }, true)
     ..add("Knot",     () { centerObj.shape = Shapes.knot(); });
-
-  objRotater.attach(td.userInput);
-  viewRotater.attach(td.userInput);
 
   var update;
   update = (num t) {
