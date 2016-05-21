@@ -74,6 +74,12 @@ class Region3 {
     } else this._dz = dz;
   }
 
+  /// The center point of the region.
+  Point3 get center => new Point3(
+    this._x + this._dx/2.0,
+    this._y + this._dy/2.0,
+    this._z + this._dz/2.0);
+
   /// Expands the region to include the given point, [pnt].
   void expand(Point3 pnt) {
     if (pnt._x < this._x) {

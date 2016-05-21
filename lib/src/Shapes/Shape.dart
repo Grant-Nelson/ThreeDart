@@ -264,6 +264,15 @@ class Shape {
     this._changed.resume();
   }
 
+  /// Translate vertices to center the shape based on it's AABB.
+  void centerAABB() {
+    Math.Point3 pnt = this.calculateAABB().center;
+    for (int i = this._vertices.length-1; i >= 0; --i) {
+      Vertex ver = this._vertices[i];
+      ver.location-=pnt;
+    }
+  }
+
   /// Builds a buffer store for caching the shape for rendering.
   /// This requires the buffer [builder] for WebGL or testing,
   /// and the vertex [type] required for technique.
