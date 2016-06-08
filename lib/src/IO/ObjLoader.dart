@@ -1,5 +1,14 @@
 part of ThreeDart.IO;
 
+class _objVertex {
+  Math.Point3 pos;
+  Map<String, Shapes.Vertex> verts;
+
+  _objVertex(Math.Point3 this.pos) {
+    this.verts = new Map<String, Shapes.Vertex>();
+  }
+}
+
 // TODO: Comment
 // Still under-construction
 class ObjLoader {
@@ -36,7 +45,7 @@ class ObjLoader {
   RegExp _useRegex;
   RegExp _groupRegex;
   RegExp _sRegex;
-  List<Math.Point3> _posList;
+  List<_objVertex> _posList;
   List<Math.Point2> _texList;
   List<Math.Vector3> _normList;
   Shapes.Shape _shape;
@@ -55,7 +64,7 @@ class ObjLoader {
     this._useRegex = new RegExp(r'^usemtl\s+.*$');
     this._groupRegex = new RegExp(r'^g\s+.*$');
     this._sRegex = new RegExp(r'^s\s+.*$');
-    this._posList = new List<Math.Point3>();
+    this._posList = new List<_objVertex>();
     this._texList = new List<Math.Point2>();
     this._normList = new List<Math.Vector3>();
     this._shape = new Shapes.Shape();
@@ -121,7 +130,7 @@ class ObjLoader {
       if (!Math.Comparer.equals(list[3], 1.0))
         throw new Exception("Currently, non-one w values in positions are not supported.");
     }
-    this._posList.add(new Math.Point3.fromList(list));
+    this._posList.add(new _objVertex(new Math.Point3.fromList(list)));
     return true;
   }
 
@@ -153,42 +162,54 @@ class ObjLoader {
     if (!this._faceRegex.hasMatch(line)) return false;
     List<Shapes.Vertex> vertices = new List<Shapes.Vertex>();
     for (Match match in this._vecRegex.allMatches(line)) {
-      Shapes.Vertex vertex = new Shapes.Vertex();
 
-      int index = int.parse(match.group(1));
+      int posIndex = int.parse(match.group(1));
       final int count = this._posList.length;
-      if ((index < -count) || (index > count))
-        throw new Exception("The position index, $index, was out of range [-$count..$count] or 0.");
-      if (index < 0) index = count + index + 1;
-      vertex.location = this._posList[index-1];
+      if ((posIndex < -count) || (posIndex > count))
+        throw new Exception("The position index, $posIndex, was out of range [-$count..$count] or 0.");
+      if (posIndex < 0) posIndex = count + posIndex + 1;
+      posIndex--;
 
+      int txtIndex = -1;
       if (match.groupCount >= 2) {
         String value = match.group(2);
         if ((value != null) && (value.length > 0)) {
-          int index = int.parse(value);
+          txtIndex = int.parse(value);
           final int count = this._texList.length;
-          if ((index < -count) || (index > count))
-            throw new Exception("The texture index, $index, was out of range [-$count..$count] or 0.");
-          if (index < 0) index = count + index + 1;
-          vertex.texture2D = this._texList[index-1];
+          if ((txtIndex < -count) || (txtIndex > count))
+            throw new Exception("The texture index, $txtIndex, was out of range [-$count..$count] or 0.");
+          if (txtIndex < 0) txtIndex = count + txtIndex + 1;
+          txtIndex--;
         }
       }
 
+      int normIndex = -1;
       if (match.groupCount == 3) {
         String value = match.group(3);
         if ((value != null) && (value.length > 0)) {
-          int index = int.parse(value);
+          normIndex = int.parse(value);
           final int count = this._normList.length;
-          if ((index < -count) || (index > count))
-            throw new Exception("The normal index, $index, was out of range [-$count..$count] or 0.");
-          if (index < 0) index = count + index + 1;
-          vertex.normal = this._normList[index-1];
+          if ((normIndex < -count) || (normIndex > count))
+            throw new Exception("The normal index, $normIndex, was out of range [-$count..$count] or 0.");
+          if (normIndex < 0) normIndex = count + normIndex + 1;
+          normIndex--;
         }
       }
 
-      Shapes.Vertex oldVer = shape.findFirst(vertex);
-      if (oldVer != null) vertex = oldVer;
-      else shape.vertices.add(vertex);
+      Shapes.Vertex vertex;
+      _objVertex vert = this._posList[posIndex];
+      String key = "$txtIndex:$normIndex";
+      if (vert.verts.containsKey(key)) {
+        vertex = vert.verts[key];
+      } else {
+        vertex = new Shapes.Vertex();
+        vertex.location = vert.pos;
+        if (txtIndex >= 0) vertex.texture2D = this._texList[txtIndex];
+        if (normIndex >= 0) vertex.normal = this._normList[normIndex];
+        shape.vertices.add(vertex);
+        vert.verts[key] = vertex;
+      }
+
       vertices.add(vertex);
     }
 

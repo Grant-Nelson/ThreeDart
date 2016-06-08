@@ -53,9 +53,10 @@ void main() {
     ..add("AABB",            (bool show) { tech.showAABB           = show; });
 
   new common.RadioGroup("shapes")
-    ..add("Cube.obj", () async { obj.shape = await IO.ObjLoader.fromFile("../resources/Cube.obj"); }, true)
-    ..add("Tree.obj", () async { obj.shape = await IO.ObjLoader.fromFile("../resources/Tree.obj"); }, false)
-    ..add("Wolf.obj", () async { obj.shape = await IO.ObjLoader.fromFile("../resources/Wolf.obj"); }, false);
+    ..add("Cube.obj",       () async { obj.shape = await IO.ObjLoader.fromFile("../resources/Cube.obj");       }, true)
+    ..add("Tree.obj",       () async { obj.shape = await IO.ObjLoader.fromFile("../resources/Tree.obj");       }, false)
+    ..add("Wolf.obj",       () async { obj.shape = await IO.ObjLoader.fromFile("../resources/Wolf.obj");       }, false)
+    ..add("Aliens_APC.obj", () async { obj.shape = await IO.ObjLoader.fromFile("../resources/Aliens_APC.obj"); }, false);
 
   var update;
   update = (num t) {
