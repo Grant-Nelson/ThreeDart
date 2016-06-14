@@ -425,6 +425,23 @@ class Matrix4 {
       this._m13 * pnt.x + this._m23 * pnt.y + this._m33 * pnt.z + this._m43 * pnt.w,
       this._m14 * pnt.x + this._m24 * pnt.y + this._m34 * pnt.z + this._m44 * pnt.w);
 
+  /// Transposes the given [clr] with this matrix.
+  ///
+  /// The A component of the color is treated a 1.0,
+  /// meaning the 4th (A) column of the matrix can be used for translation.
+  Color3 transClr3(Color3 clr) => new Color3(
+      this._m11 * clr.red + this._m21 * clr.green + this._m31 * clr.blue + this._m41,
+      this._m12 * clr.red + this._m22 * clr.green + this._m32 * clr.blue + this._m42,
+      this._m13 * clr.red + this._m23 * clr.green + this._m33 * clr.blue + this._m43);
+
+
+  /// Transposes the given [clr] with this matrix.
+  Color4 transClr4(Color4 clr) => new Color4(
+      this._m11 * clr.red + this._m21 * clr.green + this._m31 * clr.blue + this._m41 * clr.alpha,
+      this._m12 * clr.red + this._m22 * clr.green + this._m32 * clr.blue + this._m42 * clr.alpha,
+      this._m13 * clr.red + this._m23 * clr.green + this._m33 * clr.blue + this._m43 * clr.alpha,
+      this._m14 * clr.red + this._m24 * clr.green + this._m34 * clr.blue + this._m44 * clr.alpha);
+
   /// Determines if the given [other] variable is a [Matrix4] equal to this metrix.
   ///
   /// The equality of the doubles is tested with the current [Comparer] method.

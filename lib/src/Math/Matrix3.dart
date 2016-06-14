@@ -242,6 +242,21 @@ class Matrix3 {
       this._m12 * pnt.x + this._m22 * pnt.y + this._m32 * pnt.z,
       this._m13 * pnt.x + this._m23 * pnt.y + this._m33 * pnt.z);
 
+  /// Transposes the given [clr] with this matrix.
+  Color3 transClr3(Color3 clr) => new Color3(
+      this._m11 * clr.red + this._m21 * clr.green + this._m31 * clr.blue,
+      this._m12 * clr.red + this._m22 * clr.green + this._m32 * clr.blue,
+      this._m13 * clr.red + this._m23 * clr.green + this._m33 * clr.blue);
+
+  /// Transposes the given [clr] with this matrix.
+  ///
+  /// The alpha component is not modified.
+  Color4 transClr4(Color4 clr) => new Color4(
+      this._m11 * clr.red + this._m21 * clr.green + this._m31 * clr.blue,
+      this._m12 * clr.red + this._m22 * clr.green + this._m32 * clr.blue,
+      this._m13 * clr.red + this._m23 * clr.green + this._m33 * clr.blue,
+      clr.alpha);
+
   /// Determines if the given [other] variable is a [Matrix3] equal to this metrix.
   ///
   /// The equality of the doubles is tested with the current [Comparer] method.

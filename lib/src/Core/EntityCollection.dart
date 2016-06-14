@@ -23,6 +23,15 @@ class EntityCollection {
     this._entity.onChildAdded(entity);
   }
 
+  /// Removes all the children.
+  /// This will not emit the child removed
+  void clear() {
+    if (this._children.length > 0) {
+      this._children.clear();
+      this._entity.onChildrenCleared();
+    }
+  }
+
   /// Determines if the collection is empty.
   bool get isEmpty => this._children.isEmpty;
 

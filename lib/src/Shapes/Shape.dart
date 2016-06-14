@@ -106,7 +106,7 @@ class Shape {
     if (count <= 0) return new Math.Region3.zero();
     Math.Region3 result = new Math.Region3.fromPoint(this._vertices[0].location);
     for (int i = count-1; i >= 1; i--)
-      result.expand(this._vertices[i].location);
+      result.expandWithPoint(this._vertices[i].location);
     return result;
   }
 
@@ -218,8 +218,8 @@ class Shape {
     this._lines.removeCollapsed();
     this._faces.removeCollapsed();
     this._points.removeRepeats();
-    this._lines.removeRepeats(new UndirectedLineMatcher());
-    this._faces.removeRepeats(new SimilarFaceMatcher());
+    this._lines.removeVertexRepeats(new UndirectedLineMatcher());
+    this._faces.removeVertexRepeats(new SimilarFaceMatcher());
     this._changed.resume();
   }
 
@@ -264,12 +264,60 @@ class Shape {
     this._changed.resume();
   }
 
-  /// Translate vertices to center the shape based on it's AABB.
-  void centerAABB() {
-    Math.Point3 pnt = this.calculateAABB().center;
+  /// Scales the AABB so that the longest size the given [size],
+  /// and the shape is centered then offset by the given [offset].
+  void resizeCenter([double size = 2.0, Math.Point3 offset = null]) {
+    Math.Region3 aabb = this.calculateAABB();
+    if (offset == null) offset = new Math.Point3.zero();
+    offset = offset - aabb.center;
+    double maxSize = aabb.dx;
+    if (aabb.dy > maxSize) maxSize = aabb.dy;
+    if (aabb.dz > maxSize) maxSize = aabb.dz;
+    if (maxSize == 0.0) return;
+    double invSize = size/maxSize;
+    this.applyPositionMatrix(
+      new Math.Matrix4.scale(invSize, invSize, invSize)*
+      new Math.Matrix4.translate(offset.x, offset.y, offset.z));
+  }
+
+  /// Modifies the position, normal, and binormal
+  /// by translating it with the given [mat].
+  void applyPositionMatrix(Math.Matrix4 mat) {
     for (int i = this._vertices.length-1; i >= 0; --i) {
       Vertex ver = this._vertices[i];
-      ver.location-=pnt;
+      if (ver != null) {
+        if (ver.location != null) ver.location = mat.transPnt3(ver.location);
+        if (ver.normal   != null) ver.normal   = mat.transVec3(ver.normal);
+        if (ver.binormal != null) ver.binormal = mat.transVec3(ver.binormal);
+      }
+    }
+  }
+
+  /// Modifies the color by translating it with the given [mat].
+  void applyColorMatrix(Math.Matrix3 mat) {
+    for (int i = this._vertices.length-1; i >= 0; --i) {
+      Vertex ver = this._vertices[i];
+      if ((ver != null) && (ver.color != null)) {
+        ver.color = mat.transClr4(ver.color);
+      }
+    }
+  }
+
+  /// Modifies the 2D texture by translating it with the given [mat].
+  void applyTexture2DMatrix(Math.Matrix3 mat) {
+    for (int i = this._vertices.length-1; i >= 0; --i) {
+      Vertex ver = this._vertices[i];
+      if ((ver != null) && (ver.color != null)) {
+        ver.texture2D = mat.transPnt2(ver.texture2D);
+      }
+    }
+  }
+
+  /// Modifies the cube texture by translating it with the given [mat].
+  void applyTextureCubeMatrix(Math.Matrix4 mat) {
+    for (int i = this._vertices.length-1; i >= 0; --i) {
+      Vertex ver = this._vertices[i];
+      if (ver != null) ver.textureCube = mat.transVec3(ver.textureCube);
     }
   }
 

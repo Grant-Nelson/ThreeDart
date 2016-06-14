@@ -103,39 +103,74 @@ class Face {
   Math.Vector3 get binormal => this._binm;
   set binormal(Math.Vector3 binm) => this._binm = binm.normal();
 
+  /// Calculates the normal vector from the average of the vertex normals.
+  /// Returns null if not all vertices have normals.
+  Math.Vector3 _averageNormal() {
+    Math.Vector3 norm1 = (this._ver1 == null) ? null : this._ver1.normal;
+    Math.Vector3 norm2 = (this._ver2 == null) ? null : this._ver2.normal;
+    Math.Vector3 norm3 = (this._ver3 == null) ? null : this._ver3.normal;
+    Math.Vector3 sum = new Math.Vector3.zero();
+    if (norm1 != null) sum += norm1;
+    if (norm2 != null) sum += norm2;
+    if (norm3 != null) sum += norm3;
+    if (sum.isZero()) return null;
+    return sum.normal();
+  }
+
+  /// Calculates the normal vector from the cross product of locations.
+  /// Returns null if not all vertices have locations.
+  Math.Vector3 _calcNormal() {
+    Math.Point3 loc1 = (this._ver1 == null) ? null : this._ver1.location;
+    Math.Point3 loc2 = (this._ver2 == null) ? null : this._ver2.location;
+    Math.Point3 loc3 = (this._ver3 == null) ? null : this._ver3.location;
+    if ((loc1 == null) || (loc2 == null) || (loc3 == null)) return null;
+
+    Math.Vector3 vec1 = new Math.Vector3.fromPoint3(loc2 - loc1).normal();
+    Math.Vector3 vec2 = new Math.Vector3.fromPoint3(loc3 - loc1).normal();
+    return vec1.cross(vec2).normal();
+  }
+
   /// Calculates the normal vector if not already set.
   /// This uses the locations of the vertices to determine the normal
   /// of the plane this face lays on.
   bool calculateNormal() {
-    if(this._norm != null) return true;
-
-    Math.Point3 loc1 = (this._ver1 == null) ? null : this._ver1.location;
-    Math.Point3 loc2 = (this._ver2 == null) ? null : this._ver2.location;
-    Math.Point3 loc3 = (this._ver3 == null) ? null : this._ver3.location;
-    if ((loc1 == null) || (loc2 == null) || (loc3 == null)) return false;
-
-    Math.Vector3 vec1 = new Math.Vector3.fromPoint3(loc2 - loc1).normal();
-    Math.Vector3 vec2 = new Math.Vector3.fromPoint3(loc3 - loc1).normal();
-    this._norm = vec1.cross(vec2).normal();
+    if (this._norm != null) return true;
+    Math.Vector3 norm = this._averageNormal();
+    if (norm != null) {
+      norm = this._calcNormal();
+      if (norm == null) return false;
+    }
+    this._norm = norm;
     this._ver1._shape.onFaceModified(this);
     return true;
   }
 
-  /// Calculates the binormal vector if not already set.
-  /// This requires the normal and texture location.
-  /// See Shapes/README.md for more information.
-  bool calculateBinormal() {
-    if(this._binm != null) return true;
+  /// Calculates the binormal vector from the average of the vertex binormals.
+  /// Returns null if not all vertices have binormals.
+  Math.Vector3 _averageBinormal() {
+    Math.Vector3 binm1 = (this._ver1 == null) ? null : this._ver1.binormal;
+    Math.Vector3 binm2 = (this._ver2 == null) ? null : this._ver2.binormal;
+    Math.Vector3 binm3 = (this._ver3 == null) ? null : this._ver3.binormal;
+    Math.Vector3 sum = new Math.Vector3.zero();
+    if (binm1 != null) sum += binm1;
+    if (binm2 != null) sum += binm2;
+    if (binm3 != null) sum += binm3;
+    if (sum.isZero()) return null;
+    return sum.normal();
+  }
 
+  /// Calculates the binormal vector from the location and texture values.
+  /// Returns null if not all vertices have location and texture values.
+  Math.Vector3 _calcBinormal() {
     Math.Point3 loc1 = (this._ver1 == null) ? null : this._ver1.location;
     Math.Point3 loc2 = (this._ver2 == null) ? null : this._ver2.location;
     Math.Point3 loc3 = (this._ver3 == null) ? null : this._ver3.location;
-    if ((loc1 == null) || (loc2 == null) || (loc3 == null)) return false;
+    if ((loc1 == null) || (loc2 == null) || (loc3 == null)) return null;
 
     Math.Point2 txt1 = this._ver1.texture2D;
     Math.Point2 txt2 = this._ver2.texture2D;
     Math.Point2 txt3 = this._ver3.texture2D;
-    if ((txt1 == null) || (txt2 == null) || (txt3 == null)) return false;
+    if ((txt1 == null) || (txt2 == null) || (txt3 == null)) return null;
 
     Math.Vector3 binm;
     double du = txt2.y - txt3.y;
@@ -155,7 +190,19 @@ class Face {
       Math.Vector3 trnm = norm.cross(binm).normal();
       binm = trnm.cross(norm).normal();
     }
+    return binm;
+  }
 
+  /// Calculates the binormal vector if not already set.
+  /// This requires the normal and texture location.
+  /// See Shapes/README.md for more information.
+  bool calculateBinormal() {
+    if (this._binm != null) return true;
+    Math.Vector3 binm = this._averageBinormal();
+    if (binm != null) {
+      binm = this._calcBinormal();
+      if (binm == null) return false;
+    }
     this._binm = binm;
     this._ver1._shape.onFaceModified(this);
     return true;

@@ -132,6 +132,14 @@ class Vector3 {
     return new Vector3(this._dx / scalar, this._dy / scalar, this._dz / scalar);
   }
 
+  /// Determines if this vector is equal to zero.
+  bool isZero() {
+    if (!Comparer.equals(0.0, this._dx)) return false;
+    if (!Comparer.equals(0.0, this._dy)) return false;
+    if (!Comparer.equals(0.0, this._dz)) return false;
+    return true;
+  }
+
   /// Determines if the given [other] variable is a [Vector3] equal to this vector.
   ///
   /// The equality of the doubles is tested with the current [Comparer] method.

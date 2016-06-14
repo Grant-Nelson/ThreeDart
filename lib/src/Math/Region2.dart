@@ -33,6 +33,18 @@ class Region2 {
     return new Region2(values[0], values[1], values[2], values[3]);
   }
 
+  /// Constructs the union of the given regions. If both are null, null is returned.
+  factory Region2.union(Region2 a, Region2 b) {
+    if (a == null) {
+      if (b == null) return null;
+      return b.copy();
+    }
+    Region2 region = a.copy();
+    if (b == null) return region;
+    region.expand(b._x, b._y);
+    region.expand(b._x + b._dx, b._y + b._dy);
+  }
+
   /// The left edge component of the region.
   double get x => this._x;
   set x(double x) => this._x = x;
@@ -60,19 +72,24 @@ class Region2 {
   }
 
   /// Expands the region to include the given point, [pnt].
-  void expand(Point2 pnt) {
-    if (pnt._x < this._x) {
-      this._dx += (this._x - pnt._x);
-      this._x = pnt._x;
-    } else if (pnt.x > this._x + this._dx) {
-      this._dx = pnt._x - this._x;
+  void expandWithPoint(Point2 pnt) {
+    this.expand(pnt.x, pnt.y);
+  }
+
+  /// Expands the region to include the given location components.
+  void expand(double x, double y) {
+    if (x < this._x) {
+      this._dx += (this._x - x);
+      this._x = x;
+    } else if (x > this._x + this._dx) {
+      this._dx = x - this._x;
     }
 
-    if (pnt._y < this._y) {
-      this._dy += (this._y - pnt._y);
-      this._y = pnt._y;
-    } else if (pnt.y > this._y + this._dy) {
-      this._dy = pnt._y - this._y;
+    if (y < this._y) {
+      this._dy += (this._y - y);
+      this._y = y;
+    } else if (y > this._y + this._dy) {
+      this._dy = y - this._y;
     }
   }
 

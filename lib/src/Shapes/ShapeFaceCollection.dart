@@ -18,7 +18,8 @@ class ShapeFaceCollection {
     this._shape._vertices.add(ver1);
     this._shape._vertices.add(ver2);
     this._shape._vertices.add(ver3);
-    return new Face(ver1, ver2, ver3);
+    Face face = new Face(ver1, ver2, ver3);
+    return face;
   }
 
   /// Adds a fan of faces with the given vertices to the shape.
@@ -147,6 +148,29 @@ class ShapeFaceCollection {
             if (matcher.matches(faceA, faceB)) {
               faceA.dispose();
               break;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /// Removes all faces which match eachother based
+  /// on the given matcher and share a vertex.
+  void removeVertexRepeats([FaceMatcher matcher = null]) {
+    if (matcher == null) matcher = new ExactFaceMatcher();
+    for (int k = this._shape.vertices.length-1; k >= 0; --k) {
+      Vertex ver = this._shape.vertices[k];
+      for (int i = ver._faces.length-1; i >= 0; --i) {
+        Face faceA = ver._faces[i];
+        if (faceA != null) {
+          for (int j = i - 1; j >= 0; --j) {
+            Face faceB = ver._faces[j];
+            if (faceB != null) {
+              if (matcher.matches(faceA, faceB)) {
+                faceA.dispose();
+                break;
+              }
             }
           }
         }

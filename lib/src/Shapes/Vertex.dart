@@ -207,6 +207,25 @@ class Vertex {
     return true;
   }
 
+  /// Finds the first line which starts at this vertex
+  /// and ends at the given [ver].
+  Line firstLineTo(Vertex ver) {
+    final int count = this._lines.length1;
+    for (int i = 0; i < count; ++i) {
+      Line line = this._lines.at1(i);
+      if (line.vertex2.index == ver.index) return line;
+    }
+    return null;
+  }
+
+  /// Finds the first line which goes between this vertex
+  /// and the given [ver] in either direction.
+  Line firstLineBetween(Vertex ver) {
+    Line line = this.firstLineTo(ver);
+    if (line != null) return line;
+    return ver.firstLineTo(this);
+  }
+
   /// Determines if the given [other] value is a vertex with the
   /// same values as this vertex.
   /// Does not compare the shape, indices, points, lines, or faces.

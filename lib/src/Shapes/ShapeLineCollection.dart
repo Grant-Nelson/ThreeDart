@@ -101,6 +101,29 @@ class ShapeLineCollection {
     }
   }
 
+  /// Removes all lines which match eachother based
+  /// on the given matcher and share a vertex.
+  void removeVertexRepeats([LineMatcher matcher = null]) {
+    if (matcher == null) matcher = new ExactLineMatcher();
+    for (int k = this._shape.vertices.length-1; k >= 0; --k) {
+      Vertex ver = this._shape.vertices[k];
+      for (int i = ver._lines.length-1; i >= 0; --i) {
+        Line lineA = ver._lines[i];
+        if (lineA != null) {
+          for (int j = i - 1; j >= 0; --j) {
+            Line lineB = ver._lines[j];
+            if (lineB != null) {
+              if (matcher.matches(lineA, lineB)) {
+                lineA.dispose();
+                break;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
   /// Removes all the collapsed lines.
   void removeCollapsed() {
     for (int i = this._lines.length-1; i >= 0; --i) {

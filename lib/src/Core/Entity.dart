@@ -6,6 +6,13 @@ part of ThreeDart.Core;
 /// to create an output when rendered.
 class Entity implements Movers.Movable {
 
+  /// The name for this entity.
+  String _name;
+
+  /// Indicates if this entity and its children
+  /// will be rendered or not.
+  bool _enabled;
+
   /// The shape to render.
   /// May be null to not render this Entity which is useful
   /// when grouping other Entitys.
@@ -61,6 +68,8 @@ class Entity implements Movers.Movable {
   Entity({Shapes.Shape shape: null,
           Techniques.Technique tech: null,
           Movers.Mover mover: null}) {
+    this._name = "";
+    this._enabled = true;
     this._shape = shape;
     this._cache = null;
     this._tech = tech;
@@ -77,6 +86,15 @@ class Entity implements Movers.Movable {
     this._extensionAdded = null;
     this._extensionRemoved = null;
   }
+
+  /// The name for this entity.
+  String get name => this._name;
+  set name(String name) => this._name = name;
+
+  /// Indicates if this entity and its children
+  /// will be rendered or not.
+  bool get enabled => this._enabled;
+  set enabled(bool enabled) => this._enabled = enabled;
 
   /// Indicates if the shape cashe needs to be updated.
   bool get cacheNeedsUpdate => this._cache == null;
@@ -151,8 +169,71 @@ class Entity implements Movers.Movable {
     }
   }
 
-  /// The matrix for the location and rotation of the entitry.
+  /// The matrix for the location and rotation of the entity.
   Math.Matrix4 get matrix => this._matrix;
+
+  /// Calculates the axial alligned bounding box of this entity and its children.
+  Math.Region3 calculateAABB() {
+    Math.Region3 region = null;
+    if (this.shape != null)
+      region = new Math.Region3.union(region, this.shape.calculateAABB());
+    for (Entity child in this._children._children)
+      region = new Math.Region3.union(region, child.calculateAABB());
+    return region;
+  }
+
+  /// Scales the AABB so that the longest size the given [size],
+  /// and the shape is centered then offset by the given [offset].
+  void resizeCenter([double size = 2.0, Math.Point3 offset = null]) {
+    Math.Region3 aabb = this.calculateAABB();
+    if (offset == null) offset = new Math.Point3.zero();
+    offset = offset - aabb.center;
+    double maxSize = aabb.dx;
+    if (aabb.dy > maxSize) maxSize = aabb.dy;
+    if (aabb.dz > maxSize) maxSize = aabb.dz;
+    if (maxSize == 0.0) return;
+    double invSize = size/maxSize;
+    this.applyPositionMatrix(
+      new Math.Matrix4.scale(invSize, invSize, invSize)*
+      new Math.Matrix4.translate(offset.x, offset.y, offset.z));
+  }
+
+  /// Modifies the position, normal, and binormal
+  /// by translating it with the given [mat]
+  /// for this entity's shape and chilren shapes.
+  void applyPositionMatrix(Math.Matrix4 mat) {
+    if (this.shape != null)
+      this.shape.applyPositionMatrix(mat);
+    for (Entity child in this._children._children)
+      child.applyPositionMatrix(mat);
+  }
+
+  /// Modifies the color by translating it with the given [mat]
+  /// for this entity's shape and chilren shapes.
+  void applyColorMatrix(Math.Matrix3 mat) {
+    if (this.shape != null)
+      this.shape.applyColorMatrix(mat);
+    for (Entity child in this._children._children)
+      child.applyColorMatrix(mat);
+  }
+
+  /// Modifies the 2D texture by translating it with the given [mat]
+  /// for this entity's shape and chilren shapes.
+  void applyTexture2DMatrix(Math.Matrix3 mat) {
+    if (this.shape != null)
+      this.shape.applyTexture2DMatrix(mat);
+    for (Entity child in this._children._children)
+      child.applyTexture2DMatrix(mat);
+  }
+
+  /// Modifies the cube texture by translating it with the given [mat]
+  /// for this entity's shape and chilren shapes.
+  void applyTextureCubeMatrix(Math.Matrix4 mat) {
+    if (this.shape != null)
+      this.shape.applyTextureCubeMatrix(mat);
+    for (Entity child in this._children._children)
+      child.applyTextureCubeMatrix(mat);
+  }
 
   /// Updates the Entity with the given [UpdateState].
   void update(RenderState state) {
@@ -177,6 +258,8 @@ class Entity implements Movers.Movable {
 
   /// Renders the Entity with the given [RenderState].
   void render(RenderState state) {
+    if (!this._enabled) return;
+
     // Push state onto the render state.
     state.object.pushMul(this._matrix);
     state.pushTechnique(this._tech);
@@ -340,6 +423,11 @@ class Entity implements Movers.Movable {
   /// these methods can be overwritten. If overwritten call this super method to still emit events.
   void onChildRemoved(Entity entity) {
     if (this._childRemoved != null) this._childRemoved.emit();
+    this.onChanged();
+  }
+
+  /// Called when all the children are removed.
+  void onChildrenCleared() {
     this.onChanged();
   }
 }

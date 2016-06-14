@@ -238,27 +238,31 @@ class Inspection extends Technique {
   }
 
   /// Convertes the given [shape] into the wire frame shape.
-  Shapes.Shape _wireFrame(Shapes.Shape shape) {
+  Shapes.Shape _wireFrame(Shapes.Shape shape, {Math.Color4 color: null}) {
     Shapes.Shape result = new Shapes.Shape();
-    Math.Color4 color = new Math.Color4(0.0, 0.7, 1.0);
+    if (color == null) color = new Math.Color4(0.0, 0.7, 1.0);
     shape.vertices.forEach((Shapes.Vertex vertex) {
       result.vertices.add(vertex.copy()
         ..color = color);
     });
+    void addLine(Shapes.Vertex ver1, Shapes.Vertex ver2) {
+      if (ver1.firstLineBetween(ver2) == null) {
+        result.lines.add(ver1, ver2);
+      }
+    }
     shape.lines.forEach((Shapes.Line line) {
       Shapes.Vertex ver1 = result.vertices[line.vertex1.index];
       Shapes.Vertex ver2 = result.vertices[line.vertex2.index];
-      result.lines.add(ver1, ver2);
+      addLine(ver1, ver2);
     });
     shape.faces.forEach((Shapes.Face face) {
       Shapes.Vertex ver1 = result.vertices[face.vertex1.index];
       Shapes.Vertex ver2 = result.vertices[face.vertex2.index];
       Shapes.Vertex ver3 = result.vertices[face.vertex3.index];
-      result.lines.add(ver1, ver2);
-      result.lines.add(ver2, ver3);
-      result.lines.add(ver3, ver1);
+      addLine(ver1, ver2);
+      addLine(ver2, ver3);
+      addLine(ver3, ver1);
     });
-    result.joinSeams();
     return result;
   }
 
