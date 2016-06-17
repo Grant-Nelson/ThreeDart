@@ -26,16 +26,35 @@ class LightCollection {
   MaterialLight get technique => this._tech;
 
   /// Adds the given [light] to this collection.
-  void add(Lights.Light light) {
-    if (light == null) return;
+  bool add(Lights.Light light) {
+    if (light == null) return false;
+    if (light is Lights.Directional) {
+      if (this._dirLights.contains(light)) return false;
+      this._dirLights.add(light);
+    }
+    if (light is Lights.Point) {
+      if (this._pntLights.contains(light)) return false;
+      this._pntLights.add(light);
+    }
+    if (light is Lights.Spot) {
+      if (this._spotLights.contains(light)) return false;
+      this._spotLights.add(light);
+    }
+    if (light is Lights.TexturedDirectional) {
+      if (this._txtDirLights.contains(light)) return false;
+      this._txtDirLights.add(light);
+    }
+    if (light is Lights.TexturedPoint) {
+      if (this._txtPntLights.contains(light)) return false;
+      this._txtPntLights.add(light);
+    }
+    if (light is Lights.TexturedSpot) {
+      if (this._txtSpotLights.contains(light)) return false;
+      this._txtSpotLights.add(light);
+    }
     this._allLights.add(light);
-    if (light is Lights.Directional) this._dirLights.add(light);
-    if (light is Lights.Point) this._pntLights.add(light);
-    if (light is Lights.Spot) this._spotLights.add(light);
-    if (light is Lights.TexturedDirectional) this._txtDirLights.add(light);
-    if (light is Lights.TexturedPoint) this._txtPntLights.add(light);
-    if (light is Lights.TexturedSpot) this._txtSpotLights.add(light);
     this._tech._shader = null;
+    return true;
   }
 
   /// Determines if the collection is empty.

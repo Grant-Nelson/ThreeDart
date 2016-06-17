@@ -4,12 +4,14 @@
 library ThreeDart.test.test032;
 
 import 'dart:html';
+import 'dart:async';
 
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 import 'package:ThreeDart/IO.dart' as IO;
 import 'package:ThreeDart/Movers.dart' as Movers;
 import 'package:ThreeDart/Math.dart' as Math;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
+import 'package:ThreeDart/Lights.dart' as Lights;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import '../common/common.dart' as common;
 
@@ -17,9 +19,13 @@ void main() {
   common.shellTest("Test 032", ["controls", "shapes"],
     "The inspection test for shapes loaders. "+
     "For generated shapes see test002. "+
-    "Note: Some shapes will take time to load and WireFrame takes longer.");
+    "Note: Some shapes will take time to load.");
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
+
+  Lights.Directional light = new Lights.Directional(
+    mover: new Movers.Constant(new Math.Matrix4.vectorTowards(1.0, -2.0, -1.0)),
+    color: new Math.Color3.white());
 
   bool showMtrl = true;
   ThreeDart.Entity obj = new ThreeDart.Entity()
@@ -58,6 +64,9 @@ void main() {
     ..add("AABB",            (bool show) { tech.showAABB           = show; });
 
   ThreeDart.Entity copyEntity(ThreeDart.Entity entity) {
+    if (entity.technique is Techniques.MaterialLight) {
+      (entity.technique as Techniques.MaterialLight).lights.add(light);
+    }
     ThreeDart.Entity copy = new ThreeDart.Entity();
     copy.shape = entity.shape;
     entity.children.forEach((ThreeDart.Entity child) {
@@ -66,8 +75,9 @@ void main() {
     return copy;
   }
 
-  void setEntity(ThreeDart.Entity entity) {
-    entity.resizeCenter();
+  Future setEntity(String objFile) async {
+    ThreeDart.Entity entity = await IO.ObjLoader.fromFile(objFile, td.textureLoader);
+    entity.resizeCenter(3.5);
     obj.children.clear();
     obj.children.add(entity);
     entity.enabled = showMtrl;
@@ -77,10 +87,10 @@ void main() {
   }
 
   new common.RadioGroup("shapes")
-    ..add("Cube.obj",  () async { setEntity(await IO.ObjLoader.fromFile("../resources/Cube.obj"));        }, true)
-    ..add("Tree.obj",  () async { setEntity(await IO.ObjLoader.fromFile("../resources/Tree.obj"));        }, false)
-    ..add("Wolf.obj",  () async { setEntity(await IO.ObjLoader.fromFile("../resources/Wolf.obj"));        }, false)
-    ..add("plant.obj", () async { setEntity(await IO.ObjLoader.fromFile("../resources/plant/plant.obj")); }, false);
+    ..add("Cube",          () async { setEntity("../resources/Cube.obj");         }, true)
+    ..add("Low Poly Tree", () async { setEntity("../resources/tree/tree.obj");    }, false)
+    ..add("Low Poly Wolf", () async { setEntity("../resources/Wolf.obj");         }, false)
+    ..add("Plant",         () async { setEntity("../resources/plant/plant.obj");  }, false);
 
   var update;
   update = (num t) {

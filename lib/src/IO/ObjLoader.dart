@@ -2,10 +2,10 @@ part of ThreeDart.IO;
 
 class _objVertex {
   Math.Point3 pos;
-  Map<String, Shapes.Vertex> verts;
+  List<Shapes.Vertex> verts;
 
   _objVertex(Math.Point3 this.pos) {
-    this.verts = new Map<String, Shapes.Vertex>();
+    this.verts = new List<Shapes.Vertex>();
   }
 }
 
@@ -13,11 +13,13 @@ class _objVertex {
 // Still under-construction
 class ObjLoader {
 
-  static Future<Core.Entity> fromFile(String fileName) async {
+  // TODO: Comment
+  static Future<Core.Entity> fromFile(String fileName, Textures.TextureLoader txtLoader, {bool strict: false}) async {
     try {
-      ObjLoader loader = new ObjLoader._();
+      String dir = getPathTo(fileName);
+      ObjLoader loader = new ObjLoader._(txtLoader);
       String data = await HttpRequest.getString(fileName);
-      loader.processMultiline(data);
+      await loader.processMultiline(data, strict: strict, dir: dir);
       print("Done.");
       // print("Vertices: ${loader.shape.vertices.length}");
       // print("Faces: ${loader.shape.faces.length}");
@@ -28,49 +30,28 @@ class ObjLoader {
     }
   }
 
-  RegExp _commentRegex;
-  RegExp _numRegex;
-  RegExp _posRegex;
-  RegExp _txtRegex;
-  RegExp _normRegex;
-  RegExp _vecRegex;
-  RegExp _pointRegex;
-  RegExp _lineRegex;
-  RegExp _faceRegex;
-  RegExp _mtrlRegex;
-  RegExp _useRegex;
-  RegExp _objRegex;
-  RegExp _groupRegex;
-  RegExp _smoothRegex;
+  Textures.TextureLoader _txtLoader;
+  RegExp _slicerRegex;
   List<_objVertex> _posList;
   List<Math.Point2> _texList;
   List<Math.Vector3> _normList;
+  Map<String, Techniques.MaterialLight> _mtls;
+  String _name;
   Techniques.MaterialLight _mat;
   Shapes.Shape _shape;
   Core.Entity _entity;
   Core.Entity _rootEntity;
 
-  ObjLoader._() {
-    this._commentRegex = new RegExp(r'^\s*#.*$');
-    String d = r'((?:-|\+)?\d+(?:\.\d+)?(?:e(?:-|\+)?\d+)?)';
-    this._numRegex = new RegExp(d);
-    this._posRegex = new RegExp('^v(?:\\s+$d)*\$');
-    this._txtRegex = new RegExp('^vt(?:\\s+$d)*\$');
-    this._normRegex = new RegExp('^vn(?:\\s+$d)*\$');
-    String v = r'((?:-|\+)?\d+)(?:/((?:-|\+)?\d*)(?:/((?:-|\+)?\d*))?)?';
-    this._vecRegex = new RegExp(v);
-    this._pointRegex = new RegExp('^p(?:\\s+$v)*\$');
-    this._lineRegex = new RegExp('^l(?:\\s+$v)*\$');
-    this._faceRegex = new RegExp('^f(?:\\s+$v)*\$');
-    this._mtrlRegex = new RegExp(r'^mtllib\s*.*$');
-    this._useRegex = new RegExp(r'^usemtl\s*.*$');
-    this._groupRegex = new RegExp(r'^g\s*.*$');
-    this._objRegex = new RegExp(r'^o\s*.*$');
-    this._smoothRegex = new RegExp(r'^s\s*.*$');
+  ObjLoader._(Textures.TextureLoader this._txtLoader) {
+    this._slicerRegex = new RegExp(r'([^\s]+)');
     this._posList = new List<_objVertex>();
     this._texList = new List<Math.Point2>();
     this._normList = new List<Math.Vector3>();
-    this._mat = null;
+    this._mtls = new Map<String, Techniques.MaterialLight>();
+    this._name = "";
+    this._mat = new Techniques.MaterialLight()
+      ..ambientColor = new Math.Color3.gray(0.35)
+      ..diffuseColor = new Math.Color3.gray(0.65);
     this._shape = null;
     this._entity = null;
     this._rootEntity = new Core.Entity();
@@ -83,66 +64,92 @@ class ObjLoader {
     return this._rootEntity;
   }
 
-  void processMultiline(String data) {
-    this.processLines(data.split("\n"));
+  Future processMultiline(String data, {bool strict: false, String dir: ""}) async {
+    await this.processLines(data.split("\n"), strict: strict, dir: dir);
   }
 
-  void processLines(List<String> lines) {
+  Future processLines(List<String> lines, {bool strict: false, String dir: ""}) async {
     for (int i = 0; i < lines.length; ++i) {
-      if ((i % 100) == 0) print("${i*100.0/lines.length}");
+      //if ((i % 1000) == 0) print("${i*100.0/lines.length}");
       try {
-        this.processLine(lines[i]);
+        await this.processLine(lines[i], strict: strict, dir: dir);
       } catch(e) {
         throw new Exception("Line ${i+1}: $e");
       }
     }
   }
 
-  void processLine(String line) {
+  Future processLine(String line, {bool strict: false, String dir: ""}) async {
     try {
+      // Trim off comments and whitespace.
+      int index = line.indexOf("#");
+      if (index >= 0) line = line.substring(0, index);
       line = line.trim();
       if (line.length <= 0) return;
-      if (this._processComment(line)) return;
-      if (this._processPos(line)) return;
-      if (this._processTxt(line)) return;
-      if (this._processNorm(line)) return;
-      if (this._processPoint(line)) return;
-      if (this._processLine(line)) return;
-      if (this._processFace(line)) return;
-      if (this._processMtrl(line)) return;
-      if (this._processUse(line)) return;
-      if (this._processObjName(line)) return;
-      if (this._processGroup(line)) return;
-      if (this._processSmooth(line)) return;
-      throw new Exception("Unknown or unsupported line.");
+
+            // Strip off first part of line.
+      List<String> parts = this._stripFront(line);
+      if (parts.length < 1) return;
+
+      // Determine line type.
+      switch (parts[0]) {
+        case "v":      this._processPos(parts[1]);       return;
+        case "vt":     this._processTxt(parts[1]);       return;
+        case "vn":     this._processNorm(parts[1]);      return;
+        case "p":      this._processPoint(parts[1]);     return;
+        case "l":      this._processLine(parts[1]);      return;
+        case "f":      this._processFace(parts[1]);      return;
+        case "mtllib": await this._processLoadMtrl(parts[1], dir, strict); return;
+        case "usemtl": this._processUseMtrl(parts[1]);   return;
+        case "g":      this._processGroupName(parts[1]); return;
+        case "o":      this._processObjName(parts[1]);   return;
+        default:
+          if (!strict) return;
+          throw new Exception("Unknown or unsupported line type \"${parts[0]}\".");
+      }
     } catch(e) {
       throw new Exception("Line: \"$line\": $e");
     }
   }
 
   void _startShape() {
-    this._mat = new Techniques.MaterialLight();
-    this._shape = new Shapes.Shape();
-    this._entity = new Core.Entity(shape: this._shape, tech: this._mat);
-    this._rootEntity.children.add(this._entity);
+    if ((this._entity == null) || (!this._shape.vertices.isEmpty)) {
+      this._shape = new Shapes.Shape();
+      this._entity = new Core.Entity(shape: this._shape);
+      this._rootEntity.children.add(this._entity);
+      for (_objVertex vec in this._posList) vec.verts.clear();
+    }
+    this._entity.technique = this._mat;
+    this._entity.name = this._name;
   }
 
-  bool _processComment(String line) {
-    if (!this._commentRegex.hasMatch(line)) return false;
-    return true;
+  List<String> _stripFront(String line) {
+    Match match = this._slicerRegex.firstMatch(line);
+    if (match == null) return [];
+    String front = match.group(1);
+    String rest = line.substring(front.length).trim();
+    return [front, rest];
   }
 
-  List<double> _getNumbers(String line) {
-    List<double> list = new List<double>();
-    for (Match match in this._numRegex.allMatches(line)) {
-      list.add(double.parse(match.group(1)));
+  List<String> _sliceLine(String data) {
+    List<String> list = new List<String>();
+    for (Match match in this._slicerRegex.allMatches(data)) {
+      list.add(match.group(1));
     }
     return list;
   }
 
-  bool _processPos(String line) {
-    if (!this._posRegex.hasMatch(line)) return false;
-    List<double> list = this._getNumbers(line);
+  List<double> _getNumbers(String data) {
+    List<String> parts = this._sliceLine(data);
+    List<double> values = new List<double>();
+    final int count = parts.length;
+    for (int i = 0; i < count; ++i)
+      values.add(double.parse(parts[i]));
+    return values;
+  }
+
+  void _processPos(String data) {
+    List<double> list = this._getNumbers(data);
     if (list.length < 3)
       throw new Exception("Positions must have at least 3 numbers.");
     if (list.length > 4)
@@ -152,12 +159,10 @@ class ObjLoader {
         throw new Exception("Currently, non-one w values in positions are not supported.");
     }
     this._posList.add(new _objVertex(new Math.Point3.fromList(list)));
-    return true;
   }
 
-  bool _processTxt(String line) {
-    if (!this._txtRegex.hasMatch(line)) return false;
-    List<double> list = this._getNumbers(line);
+  void _processTxt(String data) {
+    List<double> list = this._getNumbers(data);
     if (list.length < 2)
       throw new Exception("Textures must have at least 2 numbers.");
     if (list.length > 3)
@@ -167,129 +172,114 @@ class ObjLoader {
         throw new Exception("Currently, non-zero z values in textures are not supported.");
     }
     this._texList.add(new Math.Point2.fromList(list));
-    return true;
   }
 
-  bool _processNorm(String line) {
-    if (!this._normRegex.hasMatch(line)) return false;
-    List<double> list = this._getNumbers(line);
+  void _processNorm(String data) {
+    List<double> list = this._getNumbers(data);
     if (list.length != 3)
       throw new Exception("Normals must have exactly 3 numbers.");
     this._normList.add(new Math.Vector3.fromList(list));
-    return true;
   }
 
-  Shapes.Vertex _addVertex(Match match) {
-    int posIndex = int.parse(match.group(1));
+  Shapes.Vertex _addVertex(String vertexStr) {
+    List<String> vertexParts = vertexStr.split('/');
+    int posIndex = int.parse(vertexParts[0]);
     final int count = this._posList.length;
     if ((posIndex < -count) || (posIndex > count))
       throw new Exception("The position index, $posIndex, was out of range [-$count..$count] or 0.");
     if (posIndex < 0) posIndex = count + posIndex + 1;
     posIndex--;
 
-    int txtIndex = -1;
-    if (match.groupCount >= 2) {
-      String value = match.group(2);
+    Math.Point2 txt2D = null;
+    if (vertexParts.length > 1) {
+      String value = vertexParts[1];
       if ((value != null) && (value.length > 0)) {
-        txtIndex = int.parse(value);
+        int txtIndex = int.parse(value);
         final int count = this._texList.length;
         if ((txtIndex < -count) || (txtIndex > count))
           throw new Exception("The texture index, $txtIndex, was out of range [-$count..$count] or 0.");
         if (txtIndex < 0) txtIndex = count + txtIndex + 1;
-        txtIndex--;
+        txt2D = this._texList[txtIndex-1];
       }
     }
 
-    int normIndex = -1;
-    if (match.groupCount >= 3) {
-      String value = match.group(3);
+    Math.Vector3 norm = null;
+    if (vertexParts.length > 2) {
+      String value = vertexParts[2];
       if ((value != null) && (value.length > 0)) {
-        normIndex = int.parse(value);
+        int normIndex = int.parse(value);
         final int count = this._normList.length;
         if ((normIndex < -count) || (normIndex > count))
           throw new Exception("The normal index, $normIndex, was out of range [-$count..$count] or 0.");
         if (normIndex < 0) normIndex = count + normIndex + 1;
-        normIndex--;
+        norm = this._normList[normIndex-1];
       }
     }
 
-    Shapes.Vertex vertex;
-    _objVertex vert = this._posList[posIndex];
-    // TODO: May have a repeat vertex with different indices.
-    //       May want to change how lookup works.
-    String key = "$txtIndex:$normIndex";
-    if (vert.verts.containsKey(key)) {
-      vertex = vert.verts[key];
-    } else {
-      vertex = new Shapes.Vertex();
-      vertex.location = vert.pos;
-      if (txtIndex >= 0) vertex.texture2D = this._texList[txtIndex];
-      if (normIndex >= 0) vertex.normal = this._normList[normIndex];
-      this._shape.vertices.add(vertex);
-      vert.verts[key] = vertex;
+    // TODO: Update once the Oct-tree is implements. Until the Oct-tree is implemented
+    //       lookup vertex group by index in the list. This may cause repeat vertices.
+    _objVertex vertGroup = this._posList[posIndex];
+    for (Shapes.Vertex vertex in vertGroup.verts) {
+      if ((vertex.texture2D == txt2D) && (vertex.normal == norm)) {
+        return vertex;
+      }
     }
 
+    Shapes.Vertex vertex = new Shapes.Vertex();
+    vertex.location = vertGroup.pos;
+    vertex.texture2D = txt2D;
+    vertex.normal = norm;
+    this._shape.vertices.add(vertex);
+    vertGroup.verts.add(vertex);
     return vertex;
   }
 
-  bool _processPoint(String line) {
-    if (!this._pointRegex.hasMatch(line)) return false;
+  void _processPoint(String data) {
+    List<String> parts = this._sliceLine(data);
     List<Shapes.Vertex> vertices = new List<Shapes.Vertex>();
-    for (Match match in this._vecRegex.allMatches(line))
-      vertices.add(this._addVertex(match));
+    final int count = parts.length;
+    for (int i = 0; i < count; ++i)
+      vertices.add(this._addVertex(parts[i]));
     this._shape.points.addList(vertices);
-    return true;
   }
 
-  bool _processLine(String line) {
-    if (!this._lineRegex.hasMatch(line)) return false;
+  void _processLine(String data) {
+    List<String> parts = this._sliceLine(data);
     List<Shapes.Vertex> vertices = new List<Shapes.Vertex>();
-    for (Match match in this._vecRegex.allMatches(line))
-      vertices.add(this._addVertex(match));
+    final int count = parts.length;
+    for (int i = 0; i < count; ++i)
+      vertices.add(this._addVertex(parts[i]));
     this._shape.lines.addLines(vertices);
-    return true;
   }
 
-  bool _processFace(String line) {
-    if (!this._faceRegex.hasMatch(line)) return false;
+  void _processFace(String data) {
+    List<String> parts = this._sliceLine(data);
     List<Shapes.Vertex> vertices = new List<Shapes.Vertex>();
-    for (Match match in this._vecRegex.allMatches(line))
-      vertices.add(this._addVertex(match));
+    final int count = parts.length;
+    for (int i = 0; i < count; ++i)
+      vertices.add(this._addVertex(parts[i]));
     this._shape.faces.addFan(vertices);
-    return true;
   }
 
-  bool _processMtrl(String line) {
-    if (!this._mtrlRegex.hasMatch(line)) return false;
-    //
-    // TODO: Implement matrial loading.
-    //
-    return true;
+  Future _processLoadMtrl(String data, String dir, bool strict) async {
+    String file = joinPath(dir, data);
+    Map<String, Techniques.MaterialLight> mtls =
+      await MtlLoader.fromFile(file, this._txtLoader, strict:strict);
+    this._mtls.addAll(mtls);
   }
 
-  bool _processUse(String line) {
-    if (!this._useRegex.hasMatch(line)) return false;
-    //
-    // TODO: Implement matrial loading.
-    //
-    return true;
+  void _processUseMtrl(String data) {
+    this._mat = this._mtls[data];
+    this._startShape();
   }
 
-  bool _processObjName(String line) {
-    if (!this._objRegex.hasMatch(line)) return false;
-    // Object names are not used.
-    return true;
+  void _processObjName(String data) {
+    this._name = data;
+    this._startShape();
   }
 
-  bool _processGroup(String line) {
-    if (!this._groupRegex.hasMatch(line)) return false;
-    // Group names are not used.
-    return true;
-  }
-
-  bool _processSmooth(String line) {
-    if (!this._smoothRegex.hasMatch(line)) return false;
-    // Custom smoothing not implemented.
-    return true;
+  void _processGroupName(String data) {
+    this._name = data;
+    this._startShape();
   }
 }

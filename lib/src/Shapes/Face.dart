@@ -136,7 +136,7 @@ class Face {
   bool calculateNormal() {
     if (this._norm != null) return true;
     Math.Vector3 norm = this._averageNormal();
-    if (norm != null) {
+    if (norm == null) {
       norm = this._calcNormal();
       if (norm == null) return false;
     }
@@ -199,7 +199,7 @@ class Face {
   bool calculateBinormal() {
     if (this._binm != null) return true;
     Math.Vector3 binm = this._averageBinormal();
-    if (binm != null) {
+    if (binm == null) {
       binm = this._calcBinormal();
       if (binm == null) return false;
     }

@@ -64,11 +64,12 @@ class Entity implements Movers.Movable {
   Event _extensionRemoved;
 
   /// Creates a new Entity.
-  /// May provide an initial [shape], [tech], or [mover].
+  /// May provide an initial [name], [shape], [tech], or [mover].
   Entity({Shapes.Shape shape: null,
           Techniques.Technique tech: null,
-          Movers.Mover mover: null}) {
-    this._name = "";
+          Movers.Mover mover: null,
+          String name: ""}) {
+    this._name = name;
     this._enabled = true;
     this._shape = shape;
     this._cache = null;
@@ -175,8 +176,8 @@ class Entity implements Movers.Movable {
   /// Calculates the axial alligned bounding box of this entity and its children.
   Math.Region3 calculateAABB() {
     Math.Region3 region = null;
-    if (this.shape != null)
-      region = new Math.Region3.union(region, this.shape.calculateAABB());
+    if (this._shape != null)
+      region = new Math.Region3.union(region, this._shape.calculateAABB());
     for (Entity child in this._children._children)
       region = new Math.Region3.union(region, child.calculateAABB());
     return region;

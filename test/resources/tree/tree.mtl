@@ -1,0 +1,17 @@
+newmtl bottom
+Ka 0.5 0.5 0.5
+Kd 1.0 1.0 1.0
+map_Ka bottom.jpg
+map_Kd bottom.jpg
+Ni 1.00
+Ks 0.00 0.00 0.00
+Ns 0.00
+
+newmtl top
+Ka 0.5 0.5 0.5
+Kd 1.0 1.0 1.0
+map_Ka top.jpg
+map_Kd top.jpg
+Ni 1.00
+Ks 0.00 0.00 0.00
+Ns 0.00

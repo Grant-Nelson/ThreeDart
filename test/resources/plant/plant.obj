@@ -1,6 +1,6 @@
 # Max2Obj Version 4.0 Mar 10th, 2001
 #
-mtllib ./house plant.mtl
+mtllib ./plant.mtl
 g
 # object (null) to come ...
 #
@@ -33105,7 +33105,7 @@ vn  1.731131 -0.362695 -0.039134
 # 8256 vertex normals
 
 g (null)
-usemtl Arch41_064_mat_1
+usemtl mat_1
 s 8
 f 2212/2212/2212 2330/2330/2330 2266/2266/2266 2333/2333/2333
 f 2330/2330/2330 2218/2218/2218 2331/2331/2331 2266/2266/2266

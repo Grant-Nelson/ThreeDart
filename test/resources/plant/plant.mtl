@@ -15,5 +15,7 @@ Ks  0.2 0.2 0.2
 d  1.0
 Ns  10.0
 illum 2
+map_Ka leaf.jpg
+map_Kd leaf.jpg
 #
 # EOF

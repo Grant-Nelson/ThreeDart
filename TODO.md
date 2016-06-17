@@ -31,3 +31,13 @@ and new functionality, like shape union, intersection, and clipping.
 Add a basic tessilator for determining how to tessilate a complex
 polygon into triangles. This allows quick creating of extruded polygons
 and complex surfaces.
+
+### Future Technique Features
+###### Cartoon Shader
+A basic outline shader and cell shader for drawing cartoons.
+
+###### MaterialLight Improvements
+Transmission color, displacement map, several bend weights,
+shininess map, and several presets with built in textures.
+Also need better error messages such as when a light is
+required but no lights are included.
