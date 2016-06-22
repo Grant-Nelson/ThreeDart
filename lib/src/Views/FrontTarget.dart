@@ -9,6 +9,7 @@ class FrontTarget extends Target {
   int _stencil;
   bool _clearStencil;
 
+  /// Constructs a new front target.
   FrontTarget() {
     this._color = new Math.Color4.black();
     this._clearColor = true;

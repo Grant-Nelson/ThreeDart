@@ -101,7 +101,6 @@ class RenderState {
   }
 
   /// Resets the state to start another render.
-  ///
   /// This should only be called by [ThreeDart] before starting a new render.
   void reset() {
     this._frameNum++;

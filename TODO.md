@@ -41,3 +41,13 @@ Transmission color, displacement map, several bend weights,
 shininess map, and several presets with built in textures.
 Also need better error messages such as when a light is
 required but no lights are included.
+
+### Future IO Features
+###### Obj and Mtl Improvements
+Implement more of the features for these file types.
+Will require some of the MaterialLight improvements.
+
+###### Implement Other File Types
+Try Loading some of these:
+.3dm, .3ds, .blend, .c4d, .dae, .dds,
+.fbx, .lwo, .ma, .max, .mb, .tga, .ztl

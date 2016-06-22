@@ -282,18 +282,18 @@ class MaterialLight extends Shader {
     this._txtSpotLights = new List<UniformTexturedSpotLight>();
 
     if (cfg.lights) {
-      if (cfg._dirLight > 0) {
+      if (cfg.dirLight > 0) {
         this._dirLightCount = this.uniforms.required("dirLightCount");
-        for (int i = 0; i < cfg._dirLight; ++i) {
+        for (int i = 0; i < cfg.dirLight; ++i) {
           Uniform3f viewDir = this.uniforms.required("dirLights[$i].viewDir") as Uniform3f;
           Uniform3f color = this.uniforms.required("dirLights[$i].color") as Uniform3f;
           this._dirLights.add(new UniformDirectionalLight._(i, viewDir, color));
         }
       }
 
-      if (cfg._pointLight > 0) {
+      if (cfg.pointLight > 0) {
         this._pntLightCount = this.uniforms.required("pntLightCount");
-        for (int i = 0; i < cfg._pointLight; ++i) {
+        for (int i = 0; i < cfg.pointLight; ++i) {
           Uniform3f point = this.uniforms.required("pntLights[$i].point") as Uniform3f;
           Uniform3f viewPnt = this.uniforms.required("pntLights[$i].viewPnt") as Uniform3f;
           Uniform3f color = this.uniforms.required("pntLights[$i].color") as Uniform3f;
@@ -304,9 +304,9 @@ class MaterialLight extends Shader {
         }
       }
 
-      if (cfg._spotLight > 0) {
+      if (cfg.spotLight > 0) {
         this._spotLightCount = this.uniforms.required("spotLightCount");
-        for (int i = 0; i < cfg._spotLight; ++i) {
+        for (int i = 0; i < cfg.spotLight; ++i) {
           Uniform3f objPnt = this.uniforms.required("spotLights[$i].objPnt") as Uniform3f;
           Uniform3f objDir = this.uniforms.required("spotLights[$i].objDir") as Uniform3f;
           Uniform3f viewPnt = this.uniforms.required("spotLights[$i].viewPnt") as Uniform3f;
@@ -320,9 +320,9 @@ class MaterialLight extends Shader {
         }
       }
 
-      if (cfg._txtDirLight > 0) {
+      if (cfg.txtDirLight > 0) {
         this._txtDirLightCount = this.uniforms.required("txtDirLightCount");
-        for (int i = 0; i < cfg._txtDirLight; ++i) {
+        for (int i = 0; i < cfg.txtDirLight; ++i) {
           Uniform3f objUp = this.uniforms.required("txtDirLights[$i].objUp") as Uniform3f;
           Uniform3f objRight = this.uniforms.required("txtDirLights[$i].objRight") as Uniform3f;
           Uniform3f objDir = this.uniforms.required("txtDirLights[$i].objDir") as Uniform3f;
@@ -334,9 +334,9 @@ class MaterialLight extends Shader {
         }
       }
 
-      if (cfg._txtPointLight > 0) {
+      if (cfg.txtPointLight > 0) {
         this._txtPntLightCount = this.uniforms.required("txtPntLightCount");
-        for (int i = 0; i < cfg._txtPointLight; ++i) {
+        for (int i = 0; i < cfg.txtPointLight; ++i) {
           Uniform3f point = this.uniforms.required("txtPntLights[$i].point") as Uniform3f;
           Uniform3f viewPnt = this.uniforms.required("txtPntLights[$i].viewPnt") as Uniform3f;
           UniformMat3 invViewRotMat = this.uniforms.required("txtPntLights[$i].invViewRotMat") as UniformMat3;
@@ -350,9 +350,9 @@ class MaterialLight extends Shader {
         }
       }
 
-      if (cfg._txtSpotLight > 0) {
+      if (cfg.txtSpotLight > 0) {
         this._txtSpotLightCount = this.uniforms.required("txtSpotLightCount");
-        for (int i = 0; i < cfg._txtSpotLight; ++i) {
+        for (int i = 0; i < cfg.txtSpotLight; ++i) {
           Uniform3f objPnt = this.uniforms.required("txtSpotLights[$i].objPnt") as Uniform3f;
           Uniform3f objDir = this.uniforms.required("txtSpotLights[$i].objDir") as Uniform3f;
           Uniform3f objUp = this.uniforms.required("txtSpotLights[$i].objUp") as Uniform3f;

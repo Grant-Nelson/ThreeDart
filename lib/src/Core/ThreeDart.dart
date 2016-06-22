@@ -114,8 +114,6 @@ class ThreeDart {
     this.render();
   }
 
-  // TODO: Add JSON load methods.
-
   /// Makes sure the size of the canvas is correctly set.
   void _justifySize() {
     // Lookup the size the browser is displaying the canvas.

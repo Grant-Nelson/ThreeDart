@@ -11,7 +11,6 @@ import 'package:ThreeDart/IO.dart' as IO;
 import 'package:ThreeDart/Movers.dart' as Movers;
 import 'package:ThreeDart/Math.dart' as Math;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
-import 'package:ThreeDart/Lights.dart' as Lights;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import '../common/common.dart' as common;
 
@@ -22,10 +21,6 @@ void main() {
     "Note: Some shapes will take time to load.");
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
-
-  Lights.Directional light = new Lights.Directional(
-    mover: new Movers.Constant(new Math.Matrix4.vectorTowards(1.0, -2.0, -1.0)),
-    color: new Math.Color3.white());
 
   bool showMtrl = true;
   ThreeDart.Entity obj = new ThreeDart.Entity()
@@ -64,9 +59,6 @@ void main() {
     ..add("AABB",            (bool show) { tech.showAABB           = show; });
 
   ThreeDart.Entity copyEntity(ThreeDart.Entity entity) {
-    if (entity.technique is Techniques.MaterialLight) {
-      (entity.technique as Techniques.MaterialLight).lights.add(light);
-    }
     ThreeDart.Entity copy = new ThreeDart.Entity();
     copy.shape = entity.shape;
     entity.children.forEach((ThreeDart.Entity child) {

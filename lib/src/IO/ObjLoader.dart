@@ -1,23 +1,33 @@
 part of ThreeDart.IO;
 
+/// An object to store vertices in while loading objects.
 class _objVertex {
+
+  /// The location of the vertex.
   Math.Point3 pos;
+
+  /// All the vertices for this location.
+  /// Vertices will have unique normal and texture coordinates.
   List<Shapes.Vertex> verts;
 
+  /// Creates a new vertex store for the given location, [pos].
   _objVertex(Math.Point3 this.pos) {
     this.verts = new List<Shapes.Vertex>();
   }
 }
 
-// TODO: Comment
-// Still under-construction
+/// Entity loader for loading *.obj files.
+/// @see https://en.wikipedia.org/wiki/Wavefront_.obj_file
 class ObjLoader {
 
-  // TODO: Comment
-  static Future<Core.Entity> fromFile(String fileName, Textures.TextureLoader txtLoader, {bool strict: false}) async {
+  /// Loads a *.obj from the given [filename].
+  /// [txtLoader] is used to load any textures required by materials for this entity.
+  /// [strict] is optional and will print errors for unknown line types.
+  static Future<Core.Entity> fromFile(String fileName, Textures.TextureLoader txtLoader,
+    {bool strict: false, Map<String, Techniques.MaterialLight> mtls: null}) async {
     try {
       String dir = getPathTo(fileName);
-      ObjLoader loader = new ObjLoader._(txtLoader);
+      ObjLoader loader = new ObjLoader._(txtLoader, mtls: mtls);
       String data = await HttpRequest.getString(fileName);
       await loader.processMultiline(data, strict: strict, dir: dir);
       print("Done.");
@@ -30,20 +40,38 @@ class ObjLoader {
     }
   }
 
+  /// The texture loader to load all required images with.
   Textures.TextureLoader _txtLoader;
-  RegExp _slicerRegex;
+
+  /// The list of locations paired with created objects.
   List<_objVertex> _posList;
+
+  /// The list of 2D texture coordinates.
   List<Math.Point2> _texList;
+
+  /// The list of normal vectors.
   List<Math.Vector3> _normList;
+
+  /// The map of material names to loaded material techniques.
   Map<String, Techniques.MaterialLight> _mtls;
+
+  /// The current name of the object part being loaded.
   String _name;
+
+  /// The current material technique for the object being loaded.
   Techniques.MaterialLight _mat;
+
+  /// The current shape being loaded for the current part of the object.
   Shapes.Shape _shape;
+
+  /// The current entity for the shape being loaded.
   Core.Entity _entity;
+
+  /// The root entity for the whole object containing other entities.
   Core.Entity _rootEntity;
 
-  ObjLoader._(Textures.TextureLoader this._txtLoader) {
-    this._slicerRegex = new RegExp(r'([^\s]+)');
+  /// Creates a new object loader.
+  ObjLoader._(Textures.TextureLoader this._txtLoader, {Map<String, Techniques.MaterialLight> mtls: null}) {
     this._posList = new List<_objVertex>();
     this._texList = new List<Math.Point2>();
     this._normList = new List<Math.Vector3>();
@@ -55,19 +83,24 @@ class ObjLoader {
     this._shape = null;
     this._entity = null;
     this._rootEntity = new Core.Entity();
+    if (mtls != null) this._mtls.addAll(mtls);
     this._startShape();
   }
 
+  /// Gets the entity containing the object which was loaded.
+  /// The entity may be on it's own or it may contain many entities.
   Core.Entity get entity {
     if (this._rootEntity.children.length == 1)
       return this._rootEntity.children[0];
     return this._rootEntity;
   }
 
+  /// Processes multiple lines of a *.obj file.
   Future processMultiline(String data, {bool strict: false, String dir: ""}) async {
     await this.processLines(data.split("\n"), strict: strict, dir: dir);
   }
 
+  /// Processes a list of lines of a *.obj file.
   Future processLines(List<String> lines, {bool strict: false, String dir: ""}) async {
     for (int i = 0; i < lines.length; ++i) {
       //if ((i % 1000) == 0) print("${i*100.0/lines.length}");
@@ -79,6 +112,7 @@ class ObjLoader {
     }
   }
 
+  /// Processes a single line of a *.obj file.
   Future processLine(String line, {bool strict: false, String dir: ""}) async {
     try {
       // Trim off comments and whitespace.
@@ -88,7 +122,7 @@ class ObjLoader {
       if (line.length <= 0) return;
 
             // Strip off first part of line.
-      List<String> parts = this._stripFront(line);
+      List<String> parts = _stripFront(line);
       if (parts.length < 1) return;
 
       // Determine line type.
@@ -112,6 +146,7 @@ class ObjLoader {
     }
   }
 
+  /// Starts and prepares a new shape and entity if the current one isn't empty.
   void _startShape() {
     if ((this._entity == null) || (!this._shape.vertices.isEmpty)) {
       this._shape = new Shapes.Shape();
@@ -123,33 +158,9 @@ class ObjLoader {
     this._entity.name = this._name;
   }
 
-  List<String> _stripFront(String line) {
-    Match match = this._slicerRegex.firstMatch(line);
-    if (match == null) return [];
-    String front = match.group(1);
-    String rest = line.substring(front.length).trim();
-    return [front, rest];
-  }
-
-  List<String> _sliceLine(String data) {
-    List<String> list = new List<String>();
-    for (Match match in this._slicerRegex.allMatches(data)) {
-      list.add(match.group(1));
-    }
-    return list;
-  }
-
-  List<double> _getNumbers(String data) {
-    List<String> parts = this._sliceLine(data);
-    List<double> values = new List<double>();
-    final int count = parts.length;
-    for (int i = 0; i < count; ++i)
-      values.add(double.parse(parts[i]));
-    return values;
-  }
-
+  /// Process a new vertex position (v) line.
   void _processPos(String data) {
-    List<double> list = this._getNumbers(data);
+    List<double> list = _getNumbers(data);
     if (list.length < 3)
       throw new Exception("Positions must have at least 3 numbers.");
     if (list.length > 4)
@@ -161,8 +172,9 @@ class ObjLoader {
     this._posList.add(new _objVertex(new Math.Point3.fromList(list)));
   }
 
+  /// Process a new vertex texture (vt) line.
   void _processTxt(String data) {
-    List<double> list = this._getNumbers(data);
+    List<double> list = _getNumbers(data);
     if (list.length < 2)
       throw new Exception("Textures must have at least 2 numbers.");
     if (list.length > 3)
@@ -174,13 +186,16 @@ class ObjLoader {
     this._texList.add(new Math.Point2.fromList(list));
   }
 
+  /// Process a new vertex normal (vn) line.
   void _processNorm(String data) {
-    List<double> list = this._getNumbers(data);
+    List<double> list = _getNumbers(data);
     if (list.length != 3)
       throw new Exception("Normals must have exactly 3 numbers.");
     this._normList.add(new Math.Vector3.fromList(list));
   }
 
+  /// Adds a new vertex to the current shape.
+  /// The [vertexStr] is in the vertex index/texture index/normal index form.
   Shapes.Vertex _addVertex(String vertexStr) {
     List<String> vertexParts = vertexStr.split('/');
     int posIndex = int.parse(vertexParts[0]);
@@ -234,8 +249,9 @@ class ObjLoader {
     return vertex;
   }
 
+  /// Process a new point list (p) line.
   void _processPoint(String data) {
-    List<String> parts = this._sliceLine(data);
+    List<String> parts = _sliceLine(data);
     List<Shapes.Vertex> vertices = new List<Shapes.Vertex>();
     final int count = parts.length;
     for (int i = 0; i < count; ++i)
@@ -243,8 +259,9 @@ class ObjLoader {
     this._shape.points.addList(vertices);
   }
 
+  /// Process a new line list (l) line.
   void _processLine(String data) {
-    List<String> parts = this._sliceLine(data);
+    List<String> parts = _sliceLine(data);
     List<Shapes.Vertex> vertices = new List<Shapes.Vertex>();
     final int count = parts.length;
     for (int i = 0; i < count; ++i)
@@ -252,8 +269,9 @@ class ObjLoader {
     this._shape.lines.addLines(vertices);
   }
 
+  /// Process a new face list (f) line.
   void _processFace(String data) {
-    List<String> parts = this._sliceLine(data);
+    List<String> parts = _sliceLine(data);
     List<Shapes.Vertex> vertices = new List<Shapes.Vertex>();
     final int count = parts.length;
     for (int i = 0; i < count; ++i)
@@ -261,6 +279,7 @@ class ObjLoader {
     this._shape.faces.addFan(vertices);
   }
 
+  /// Process a new material loading (mtllib) line.
   Future _processLoadMtrl(String data, String dir, bool strict) async {
     String file = joinPath(dir, data);
     Map<String, Techniques.MaterialLight> mtls =
@@ -268,16 +287,19 @@ class ObjLoader {
     this._mtls.addAll(mtls);
   }
 
+  /// Process a new use material (usemtl) line.
   void _processUseMtrl(String data) {
     this._mat = this._mtls[data];
     this._startShape();
   }
 
+  /// Process a new object name (o) line.
   void _processObjName(String data) {
     this._name = data;
     this._startShape();
   }
-
+  
+  /// Process a new group name (g) line.
   void _processGroupName(String data) {
     this._name = data;
     this._startShape();

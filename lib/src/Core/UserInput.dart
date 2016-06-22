@@ -97,7 +97,8 @@ class UserInput {
   /// Gets the mouse arguments for the given [msEvent].
   /// If [setStart] is true then the start point and time are set.
   MouseEventArgs _getMouseArgs(html.MouseEvent msEvent, bool setStart) {
-    final Math.Point2 pnt = new Math.Point2(msEvent.offset.x, msEvent.offset.y);
+    html.Rectangle rect = this._elem.getBoundingClientRect();
+    final Math.Point2 pnt = new Math.Point2(msEvent.page.x-rect.left, msEvent.page.y-rect.top);
     final DateTime curTime = new DateTime.now();
     final Math.Region2 size = new Math.Region2(0.0, 0.0, this._elem.client.width, this._elem.client.height);
     this._ctrlPressed = msEvent.ctrlKey||msEvent.metaKey;

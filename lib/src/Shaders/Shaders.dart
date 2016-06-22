@@ -44,6 +44,16 @@ enum ColorSourceType {
   TextureCube
 }
 
+/// Gets the string to indicate a source type used for the name of the material light.
+String stringForComponentType(ColorSourceType type) {
+  switch (type) {
+    case ColorSourceType.None:        return "0";
+    case ColorSourceType.Solid:       return "1";
+    case ColorSourceType.Texture2D:   return "2";
+    case ColorSourceType.TextureCube: return "3";
+  }
+}
+
 /// Inserts a number for each line in the given [text].
 String numberLines(String text) {
   List<String> lines = text.split("\n");

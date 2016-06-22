@@ -28,7 +28,6 @@ class Matrix4Stack {
   Event get onChanged => this._onChanged;
 
   /// The current matrix on the top of the stack.
-  ///
   /// Returns the identity matrix if the stack is empty.
   Math.Matrix4 get matrix {
     if (this._mat.length > 0) return this._mat.last;
@@ -36,7 +35,6 @@ class Matrix4Stack {
   }
 
   /// Pushes a new matrix onto the stack.
-  ///
   /// If null is pushed the identity matrix will be put on the top of the stack.
   void push(Math.Matrix4 mat) {
     if (mat == null) {
@@ -48,7 +46,6 @@ class Matrix4Stack {
   }
 
   /// Pushes a new matrix onto the stack which is the multiple of this and the given [mat].
-  ///
   /// If null is pushed the current top of the stack will be pushed on the top
   /// of the stack as if multiplies by the identity.
   void pushMul(Math.Matrix4 mat) {

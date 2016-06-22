@@ -1,10 +1,12 @@
 part of ThreeDart.IO;
 
-// TODO: Comment
-// Still under-construction
+/// MaterialLight technique loader for loading *.mtl files.
+/// @see https://en.wikipedia.org/wiki/Wavefront_.obj_file#Material_template_library
 class MtlLoader {
 
-  // TODO: Comment
+  /// Loads a *.mtl from the given [filename].
+  /// [txtLoader] is used to load any textures required by this material.
+  /// [strict] is optional and will print errors for unknown line types.
   static Future<Map<String, Techniques.MaterialLight>> fromFile(String fileName, Textures.TextureLoader txtLoader, {bool strict: false}) async {
     try {
       String dir = getPathTo(fileName);
@@ -18,23 +20,30 @@ class MtlLoader {
     }
   }
 
+  /// The texture loader to load all required images with.
   Textures.TextureLoader _txtLoader;
-  RegExp _slicerRegex;
+
+  /// The map of material names to materials which have been loaded.
   Map<String, Techniques.MaterialLight> _mtls;
+
+  /// The material currently being loaded.
   Techniques.MaterialLight _cur;
 
+  /// Creates a new material loader.
   MtlLoader._(Textures.TextureLoader this._txtLoader) {
-    this._slicerRegex = new RegExp(r'([^\s]+)');
     this._mtls = new Map<String, Techniques.MaterialLight>();
     this._cur = null;
   }
 
+  /// The map of material names to materials which have been loaded.
   Map<String, Techniques.MaterialLight> get materials => this._mtls;
 
+  /// Processes multiple lines of a *.mtl file.
   Future processMultiline(String data, {bool strict: false, String dir: ""}) async {
     await this.processLines(data.split("\n"), strict: strict, dir:dir);
   }
 
+  /// Processes a list of lines of a *.mtl file.
   Future processLines(List<String> lines, {bool strict: false, String dir: ""}) async {
     for (int i = 0; i < lines.length; ++i) {
       try {
@@ -45,6 +54,7 @@ class MtlLoader {
     }
   }
 
+  /// Processes a single line of a *.mtl file.
   Future processLine(String line, {bool strict: false, String dir: ""}) async {
     try {
       // Trim off comments and whitespace.
@@ -54,7 +64,7 @@ class MtlLoader {
       if (line.length <= 0) return;
 
       // Strip off first part of line.
-      List<String> parts = this._stripFront(line);
+      List<String> parts = _stripFront(line);
       if (parts.length < 1) return;
 
       // Determine line type.
@@ -69,12 +79,9 @@ class MtlLoader {
         case "map_Ka":   await this._processAmbientMap(parts[1], dir);   return;
         case "map_Kd":   await this._processDiffuseMap(parts[1], dir);   return;
         case "map_Ks":   await this._processSpecularMap(parts[1], dir);  return;
-        case "map_Ns":   await this._processShininessMap(parts[1], dir); return;
         case "map_d":    await this._processAlphaMap(parts[1], dir);     return;
         case "map_bump": await this._processBumpMap(parts[1], dir);      return;
         case "bump":     await this._processBumpMap(parts[1], dir);      return;
-        case "disp":     await this._processDispMap(parts[1], dir);      return;
-        case "refl ":    await this._processReflection(parts[1], dir);   return;
         default:
           if (!strict) return;
           throw new Exception("Unknown or unsupported line type \"${parts[0]}\".");
@@ -84,103 +91,81 @@ class MtlLoader {
     }
   }
 
-  List<String> _stripFront(String line) {
-    Match match = this._slicerRegex.firstMatch(line);
-    if (match == null) return [];
-    String front = match.group(1);
-    String rest = line.substring(front.length).trim();
-    return [front, rest];
-  }
-
-  List<String> _sliceLine(String data) {
-    List<String> list = new List<String>();
-    for (Match match in this._slicerRegex.allMatches(data)) {
-      list.add(match.group(1));
-    }
-    return list;
-  }
-
-  List<double> _getNumbers(String data) {
-    List<String> parts = this._sliceLine(data);
-    List<double> values = new List<double>();
-    final int count = parts.length;
-    for (int i = 0; i < count; ++i)
-      values.add(double.parse(parts[i]));
-    return values;
-  }
-
+  /// processes a new material (newmtl) line of a *.mtl file.
   void _processNewMaterial(String data) {
     this._cur = new Techniques.MaterialLight();
     this._mtls[data] = this._cur;
   }
 
+  /// processes a new ambient colors (Ka) line of a *.mtl file.
   void _processAmbient(String data) {
-    List<double> vals = this._getNumbers(data);
+    List<double> vals = _getNumbers(data);
     this._cur.ambientColor = new Math.Color3.fromList(vals);
   }
 
+  /// processes a new diffuse colors (Kd) line of a *.mtl file.
   void _processDiffuse(String data) {
-    List<double> vals = this._getNumbers(data);
+    List<double> vals = _getNumbers(data);
     this._cur.diffuseColor = new Math.Color3.fromList(vals);
   }
 
+  /// processes a new specular colors (Ks) line of a *.mtl file.
   void _processSpecular(String data) {
-    List<double> vals = this._getNumbers(data);
+    List<double> vals = _getNumbers(data);
     this._cur.specularColor = new Math.Color3.fromList(vals);
   }
 
+  /// processes a new shininess (Ns) line of a *.mtl file.
   void _processShininess(String data) {
-    List<double> vals = this._getNumbers(data);
+    List<double> vals = _getNumbers(data);
     if (vals.length != 1)
       throw new Exception("Shininess may only have 1 number.");
     this._cur.shininess = vals[0];
   }
 
+  /// processes a new alpha (d) line of a *.mtl file.
   void _processAlpha(String data) {
-    List<double> vals = this._getNumbers(data);
+    List<double> vals = _getNumbers(data);
     if (vals.length != 1)
       throw new Exception("Alpha may only have 1 number.");
     this._cur.alpha = vals[0];
   }
 
+  /// processes a new transparency (Tr) line of a *.mtl file.
   void _processTransparency(String data) {
-    List<double> vals = this._getNumbers(data);
+    List<double> vals = _getNumbers(data);
     if (vals.length != 1)
       throw new Exception("Alpha may only have 1 number.");
     this._cur.alpha = 1.0-vals[0];
   }
 
+  /// processes a new ambient map (map_Ka) line of a *.mtl file.
   Future _processAmbientMap(String data, String dir) async {
     String file = joinPath(dir, data);
     this._cur.ambientTexture2D = this._txtLoader.load2DFromFile(file);
   }
 
+  /// processes a new diffuse map (map_Kd) line of a *.mtl file.
   Future _processDiffuseMap(String data, String dir) async {
     String file = joinPath(dir, data);
     this._cur.diffuseTexture2D = this._txtLoader.load2DFromFile(file);
   }
 
+  /// processes a new specular map (map_Ks) line of a *.mtl file.
   Future _processSpecularMap(String data, String dir) async {
-    // TODO: Implement
+    String file = joinPath(dir, data);
+    this._cur.specularTexture2D = this._txtLoader.load2DFromFile(file);
   }
 
-  Future _processShininessMap(String data, String dir) async {
-    // TODO: Implement
-  }
-
+  /// processes a new alpha map (map_d) line of a *.mtl file.
   Future _processAlphaMap(String data, String dir) async {
-    // TODO: Implement
+    String file = joinPath(dir, data);
+    this._cur.alphaTexture2D = this._txtLoader.load2DFromFile(file);
   }
 
+  /// processes a new bump map (map_bump/bump) line of a *.mtl file.
   Future _processBumpMap(String data, String dir) async {
-    // TODO: Implement
-  }
-
-  Future _processDispMap(String data, String dir) async {
-    // TODO: Implement
-  }
-
-  Future _processReflection(String data, String dir) async {
-    // TODO: Implement
+    String file = joinPath(dir, data);
+    this._cur.bumpyTexture2D = this._txtLoader.load2DFromFile(file);
   }
 }

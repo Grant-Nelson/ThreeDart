@@ -648,12 +648,12 @@ class MaterialLight extends Technique {
 
   /// Creates the configuration for this shader.
   Shaders.MaterialLightConfig _config() {
-    int dirLight = this._lightLimit(this._lights._dirLights.length);
-    int pointLight = this._lightLimit(this._lights._pntLights.length);
-    int spotLight = this._lightLimit(this._lights._spotLights.length);
-    int txtDirLight = this._lightLimit(this._lights._txtDirLights.length);
+    int dirLight      = this._lightLimit(this._lights._dirLights.length);
+    int pointLight    = this._lightLimit(this._lights._pntLights.length);
+    int spotLight     = this._lightLimit(this._lights._spotLights.length);
+    int txtDirLight   = this._lightLimit(this._lights._txtDirLights.length);
     int txtPointLight = this._lightLimit(this._lights._txtPntLights.length);
-    int txtSpotLight = this._lightLimit(this._lights._txtSpotLights.length);
+    int txtSpotLight  = this._lightLimit(this._lights._txtSpotLights.length);
     return new Shaders.MaterialLightConfig(this._emissionType, this._ambientType,
       this._diffuseType, this._invDiffuseType, this._specularType, this._bumpyType,
       this._reflectionType, this._refractionType, this._alphaType,

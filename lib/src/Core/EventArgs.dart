@@ -10,6 +10,18 @@ class EventArgs {
   EventArgs(this.sender);
 }
 
+/// The event argument for event's with information about entities changing.
+class EntityEventArgs extends EventArgs {
+
+  /// The list of entities which have been changed.
+  /// Typically this will be entities added or removed.
+  final List<Entity> entities;
+
+  /// Creates a entity event argument.
+  EntityEventArgs(Object sender, this.entities):
+    super(sender);
+}
+
 /// The event argument for event's with information about a point on a region.
 class PointEventArgs extends EventArgs {
 

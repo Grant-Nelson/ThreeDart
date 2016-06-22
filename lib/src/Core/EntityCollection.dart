@@ -20,15 +20,22 @@ class EntityCollection {
   /// Adds the given [entity] to this collection.
   void add(Entity entity) {
     this._children.add(entity);
-    this._entity.onChildAdded(entity);
+    this._entity.onChildrenAdded([entity]);
+  }
+
+  /// Adds the given [entities] to this collection.
+  void addAll(Iterable<Entity> entities) {
+    this._children.addAll(entities);
+    this._entity.onChildrenAdded(entities);
   }
 
   /// Removes all the children.
   /// This will not emit the child removed
   void clear() {
     if (this._children.length > 0) {
-      this._children.clear();
-      this._entity.onChildrenCleared();
+      List<Entity> children = this._children;
+      this._children = new List<Entity>();
+      this._entity.onChildrenRemoved(children);
     }
   }
 
@@ -51,7 +58,7 @@ class EntityCollection {
   /// The removed entity is returned.
   Entity removeAt(int index) {
     Entity entity = this._children.removeAt(index);
-    if (entity != null) this._entity.onChildRemoved(entity);
+    if (entity != null) this._entity.onChildrenRemoved([entity]);
     return entity;
   }
 
@@ -59,7 +66,7 @@ class EntityCollection {
   /// True is returned if the entity was found and removed, false if not found.
   bool remove(Entity entity) {
     if (this._children.remove(entity)) {
-      this._entity.onChildRemoved(entity);
+      this._entity.onChildrenRemoved([entity]);
       return true;
     }
     return false;
