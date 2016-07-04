@@ -79,30 +79,39 @@ void shellTest(String title, List<String> ctrlBoxes, String comment) {
 
   html.TableElement table = new html.TableElement();
   table.style
-    ..padding = "0px"
+    ..padding     = "0px"
     ..marginLeft  = "auto"
     ..marginRight = "auto";
   elem.append(table);
 
-  html.TableRowElement tableRow = table.addRow();
-
+  html.TableRowElement topRow = table.addRow();
   html.CanvasElement canvas = new html.CanvasElement()
-    ..id = "threeDart"
-    ..style.width = "600px"
-    ..style.height = "600px";
-  html.TableCellElement cell = tableRow.addCell();
+    ..id = "threeDart";
+  canvas.style
+    ..width  = "800px"
+    ..height = "600px";
+  html.TableCellElement cell = topRow.addCell();
+  int length = ctrlBoxes.length + 2;
+  if (comment.length > 0) length++;
   cell.style
       ..textAlign   = "center"
       ..marginLeft  = "auto"
       ..marginRight = "auto";
+  cell.colSpan = length;
   cell.append(canvas);
 
+  html.TableRowElement bottomRow = table.addRow();
+  bottomRow.addCell().style
+    ..textAlign     = "center"
+    ..verticalAlign = "top"
+    ..marginLeft    = "auto"
+    ..marginRight   = "auto";
   for (int i = 0; i < ctrlBoxes.length; i++) {
     html.DivElement ctrlBlock = new html.DivElement()
       ..id = ctrlBoxes[i]
-      ..style.textAlign = "left"
+      ..style.textAlign     = "left"
       ..style.verticalAlign = "top";
-    html.TableCellElement cell = tableRow.addCell();
+    html.TableCellElement cell = bottomRow.addCell();
     cell.style
         ..textAlign     = "center"
         ..verticalAlign = "top"
@@ -110,12 +119,23 @@ void shellTest(String title, List<String> ctrlBoxes, String comment) {
         ..marginRight   = "auto";
     cell.append(ctrlBlock);
   }
-
   if (comment.length > 0) {
     html.DivElement cmt = new html.DivElement()
       ..text = comment;
-    elem.append(cmt);
+    html.TableCellElement cell = bottomRow.addCell();
+    cell.style
+        ..width         = "400px"
+        ..textAlign     = "center"
+        ..verticalAlign = "top"
+        ..marginLeft    = "auto"
+        ..marginRight   = "auto";
+    cell.append(cmt);
   }
+  bottomRow.addCell().style
+    ..textAlign     = "center"
+    ..verticalAlign = "top"
+    ..marginLeft    = "auto"
+    ..marginRight   = "auto";
 
   shellPage(title, elem, false, "../resources/SnowTop.png");
 }
