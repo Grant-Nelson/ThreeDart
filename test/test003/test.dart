@@ -31,7 +31,7 @@ void main() {
     ..specularColor = new Math.Color3(1.0, 0.0, 0.0)
     ..shininess = 10.0;
 
-  Scenes.RenderPass pass = new Scenes.RenderPass()
+  Scenes.EntityPass pass = new Scenes.EntityPass()
     ..tech = tech
     ..children.add(obj)
     ..camara.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0));

@@ -21,7 +21,7 @@ void main() {
     ..shape = Shapes.toroid()
     ..mover = new Movers.Rotater();
 
-  Scenes.RenderPass pass = new Scenes.RenderPass()
+  Scenes.EntityPass pass = new Scenes.EntityPass()
     ..children.add(obj)
     ..tech = new Techniques.Depth(fogStart: 3.0, fogStop: 6.0)
     ..camara.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0));

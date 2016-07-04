@@ -56,7 +56,7 @@ void main() {
 
   Movers.Rotater colorMover = new Movers.Rotater(deltaYaw: 0.3, deltaPitch: 0.5, deltaRoll: 0.7);
   Movers.Rotater txtMover   = new Movers.Rotater(deltaYaw: 0.0, deltaPitch: 0.0, deltaRoll: 0.1);
-  td.scene = new Scenes.RenderPass()
+  td.scene = new Scenes.EntityPass()
     ..tech = tech
     ..children.add(centerObj)
     ..children.add(room)

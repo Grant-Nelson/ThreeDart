@@ -1,92 +1,20 @@
 part of ThreeDart.Scenes;
 
 /// The render pass renders a single scene.
-class RenderPass implements Scene {
+abstract class RenderPass extends Scene {
 
-  /// The camera describing the view of the scene.
-  Views.Camara _camara;
-
-  /// The target defining the storage to render to.
-  Views.Target _target;
-
-  /// The default technique to render with.
-  Techniques.Technique _tech;
-
-  /// The children entities to render.
-  List<Core.Entity> _children;
-
-  /// Event emitted before an update for this pass.
-  Core.Event _onPreUpdate;
-
-  /// Event emitted after an update for this pass.
-  Core.Event _onPostUpdate;
-
-  /// Event emitted on an redner for this pass.
-  Core.Event _onRender;
-
-  /// Creates a new render pass.
-  RenderPass({
-      Views.Camara camara: null,
-      Views.Target target: null,
-      Techniques.Technique tech: null,
-      List<Core.Entity> children: null
-    }) {
-    this._camara = (camara == null)? new Views.Perspective(): camara;
-    this._target = (target == null)? new Views.FrontTarget(): target;
-    this._tech = tech;
-    this._children = new List<Core.Entity>();
-    if (children != null)  this._children.addAll(children);
-    this._onPreUpdate = new Core.Event();
-    this._onPostUpdate = new Core.Event();
-    this._onRender = new Core.Event();
-  }
-
-  /// The camera describing the view of the scene.
-  Views.Camara get camara => this._camara;
-  set camara(Views.Camara camara) => this._camara = camara;
+  /// The camara describing the view of the scene.
+  Views.Camara get camara;
+  set camara(Views.Camara camara);
 
   /// The target defining the storage to render to.
-  Views.Target get target => this._target;
-  set target(Views.Target target) => this._target = target;
+  Views.Target get target;
+  set target(Views.Target target);
 
   /// The default technique to render with.
-  Techniques.Technique get tech => this._tech;
-  set tech(Techniques.Technique tech) => this._tech = tech;
-
-  /// The children entities to render.
-  List<Core.Entity> get children => this._children;
-
-  /// Event emitted before an update for this pass.
-  Core.Event get onPreUpdate => this._onPreUpdate;
-
-  /// Event emitted after an update for this pass.
-  Core.Event get onPostUpdate => this._onPostUpdate;
+  Techniques.Technique get tech;
+  set tech(Techniques.Technique tech);
 
   /// Event emitted on an redner for this pass.
-  Core.Event get onRender => this._onRender;
-
-  /// Render the scene with the given [state].
-  void render(Core.RenderState state) {
-    Core.StateEventArgs args = new Core.StateEventArgs(this, state);
-    this._onPreUpdate.emit(args);
-
-    state.pushTechnique(this._tech);
-    this._target.bind(state);
-    this._camara.bind(state);
-
-    if (this._tech != null) this._tech.update(state);
-    for (Core.Entity child in this._children) {
-      child.update(state);
-    }
-    this._onPostUpdate.emit(args);
-
-    for (Core.Entity child in this._children) {
-      child.render(state);
-    }
-    this._onRender.emit(args);
-
-    this._camara.unbind(state);
-    this._target.unbind(state);
-    state.popTechnique();
-  }
+  Core.Event get onRender;
 }

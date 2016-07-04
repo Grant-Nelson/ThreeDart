@@ -38,7 +38,7 @@ void main() {
   Views.BackTarget normalTarget = new Views.BackTarget(1024, 1024)
     ..color = new Math.Color4(0.5, 0.5, 1.0, 1.0);
 
-  Scenes.RenderPass normalPass = new Scenes.RenderPass()
+  Scenes.EntityPass normalPass = new Scenes.EntityPass()
     ..tech = normalTech
     ..target = normalTarget
     ..children.add(normalObj)
@@ -70,7 +70,7 @@ void main() {
     ..target = colorTarget
     ..camara = userCamara;
 
-  Scenes.RenderPass colorPass = new Scenes.RenderPass()
+  Scenes.EntityPass colorPass = new Scenes.EntityPass()
     ..camara = userCamara
     ..tech = colorTech
     ..target = colorTarget

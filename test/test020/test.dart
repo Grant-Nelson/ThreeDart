@@ -55,7 +55,7 @@ void main() {
   ..add(new Movers.UserZoom(input: td.userInput))
   ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
 
-  td.scene = new Scenes.RenderPass()
+  td.scene = new Scenes.EntityPass()
     ..tech = tech
     ..children.add(centerObj)
     ..children.add(room)

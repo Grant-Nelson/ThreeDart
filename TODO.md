@@ -37,7 +37,7 @@ and complex surfaces.
 A basic outline shader and cell shader for drawing cartoons.
 
 ###### MaterialLight Improvements
-Transmission color, displacement map, several bend weights,
+Displacement map, several bend weights,
 shininess map, and several presets with built in textures.
 Also need better error messages such as when a light is
 required but no lights are included.

@@ -38,7 +38,7 @@ void main() {
     ..shininess = 10.0
     ..bumpyTextureCube = td.textureLoader.loadCubeFromPath("../resources/diceBumpMap");
 
-  td.scene = new Scenes.RenderPass()
+  td.scene = new Scenes.EntityPass()
     ..tech = tech
     ..children.add(obj)
     ..camara.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0));

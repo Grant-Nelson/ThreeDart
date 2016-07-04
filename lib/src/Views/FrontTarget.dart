@@ -8,6 +8,7 @@ class FrontTarget extends Target {
   bool _clearDepth;
   int _stencil;
   bool _clearStencil;
+  Math.Region2 _region;
 
   /// Constructs a new front target.
   FrontTarget() {
@@ -17,6 +18,7 @@ class FrontTarget extends Target {
     this._clearDepth = true;
     this._stencil = 0;
     this._clearStencil = false;
+    this._region = new Math.Region2(0.0, 0.0, 1.0, 1.0);
   }
 
   /// The clear color to clear the target to before rendering.
@@ -43,6 +45,11 @@ class FrontTarget extends Target {
   bool get clearStencil => this._clearStencil;
   set clearStencil(bool clearStencil) => this._clearStencil = clearStencil;
 
+  /// The region of the front target to render to.
+  /// <0, 0> is top left corner and <1, 1> is botton right.
+  Math.Region2 get region => this._region;
+  set region(Math.Region2 region) => this._region = region;
+
   /// Binds this target to the given state so that the following render
   /// will target the front target.
   void bind(Core.RenderState state) {
@@ -51,9 +58,13 @@ class FrontTarget extends Target {
     state.gl.enable(WebGL.DEPTH_TEST);
     state.gl.depthFunc(WebGL.LESS);
 
-    state.width = state.gl.drawingBufferWidth;
-    state.height = state.gl.drawingBufferHeight;
-    state.gl.viewport(0, 0, state.width, state.height);
+    int width  = state.gl.drawingBufferWidth;
+    int height = state.gl.drawingBufferHeight;
+    int xOffset  = (this._region.x *width ).round();
+    int yOffset  = (this._region.y *height).round();
+    state.width  = (this._region.dx*width ).round();
+    state.height = (this._region.dy*height).round();
+    state.gl.viewport(xOffset, yOffset, state.width, state.height);
 
     int clearMask = 0;
     if (this._clearStencil) {

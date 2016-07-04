@@ -53,7 +53,7 @@ void main() {
       ..add(new Movers.UserRoller(input: td.userInput, ctrl: true))
       ..add(new Movers.UserZoom(input: td.userInput)));
 
-  td.scene = new Scenes.RenderPass()
+  td.scene = new Scenes.EntityPass()
     ..children.add(group)
     ..camara.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0));
 

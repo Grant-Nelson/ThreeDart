@@ -7,8 +7,9 @@ class Group extends Mover {
   List<Mover> _movers;
 
   /// Creates a new group of movers.
-  Group() {
+  Group([List<Mover> movers = null]) {
     this._movers = new List<Mover>();
+    if (movers != null) this._movers.addAll(movers);
   }
 
   /// The list of movers in the group.

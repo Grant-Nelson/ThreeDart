@@ -33,7 +33,7 @@ void main() {
   Views.FrontTarget target = new Views.FrontTarget()
     ..color = new Math.Color4(0.5, 0.5, 1.0, 1.0);
 
-  Scenes.RenderPass pass = new Scenes.RenderPass()
+  Scenes.EntityPass pass = new Scenes.EntityPass()
     ..tech = tech
     ..target = target
     ..children.add(obj)

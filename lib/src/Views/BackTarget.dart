@@ -16,6 +16,7 @@ class BackTarget extends Target {
   bool _clearColor;
   double _depth;
   bool _clearDepth;
+  Math.Region2 _region;
 
   /// Creates a new back target.
   BackTarget(int this._width, int this._height, {bool hasDepth: true}) {
@@ -28,6 +29,7 @@ class BackTarget extends Target {
     this._clearColor = true;
     this._depth = 2000.0;
     this._clearDepth = true;
+    this._region = new Math.Region2(0.0, 0.0, 1.0, 1.0);
   }
 
   /// The width of the back buffer.
@@ -58,6 +60,11 @@ class BackTarget extends Target {
   /// Indicates if the depth target should be cleared with the clear depth.
   bool get clearDepth => this._clearDepth;
   set clearDepth(bool clearDepth) => this._clearDepth = clearDepth;
+
+  /// The region of the front target to render to.
+  /// <0, 0> is top left corner and <1, 1> is botton right.
+  Math.Region2 get region => this._region;
+  set region(Math.Region2 region) => this._region = region;
 
   /// Initializes the back target.
   void _initialize(WebGL.RenderingContext gl) {

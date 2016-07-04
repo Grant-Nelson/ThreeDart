@@ -267,7 +267,7 @@ class MaterialLight extends Technique {
     this._diffuseCube = txt;
   }
 
-  /// Removes any inverse diffuse from the material.
+  /// Removes any inverse diffuse (transmission) from the material.
   void clearInvDiffuse() {
     if (this._invDiffuseType != Shaders.ColorSourceType.None) {
       this._shader = null;
@@ -278,7 +278,8 @@ class MaterialLight extends Technique {
     this._invDiffuseCube = null;
   }
 
-  /// The inverse diffuse color or scalar on the inverse diffuse texture for the material.
+  /// The inverse diffuse (transmission) color or scalar
+  /// on the inverse diffuse texture for the material.
   Math.Color3 get invDiffuseColor => this._invDiffuseClr;
   set invDiffuseColor(Math.Color3 clr) {
     if (clr == null) this.clearInvDiffuse();
@@ -289,7 +290,7 @@ class MaterialLight extends Technique {
     this._invDiffuseClr = clr;
   }
 
-  /// The 2D inverse diffuse texture for the material.
+  /// The 2D inverse diffuse (transmission) texture for the material.
   Textures.Texture2D get invDiffuseTexture2D => this._invDiffuse2D;
   set invDiffuseTexture2D(Textures.Texture2D txt) {
     if (txt == null) {
@@ -307,7 +308,7 @@ class MaterialLight extends Technique {
     this._invDiffuse2D = txt;
   }
 
-  /// The cube inverse diffuse texture for the material.
+  /// The cube inverse diffuse (transmission) texture for the material.
   Textures.TextureCube get invDiffuseTextureCube => this._invDiffuseCube;
   set invDiffuseTextureCube(Textures.TextureCube txt) {
     if (txt == null) {

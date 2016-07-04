@@ -42,7 +42,7 @@ void main() {
     ..specularTexture2D = td.textureLoader.load2DFromFile("../resources/CtrlPnlSpecular.png")
     ..shininess = 10.0;
 
-  td.scene = new Scenes.RenderPass()
+  td.scene = new Scenes.EntityPass()
     ..tech = tech
     ..children.add(obj)
     ..camara.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0));

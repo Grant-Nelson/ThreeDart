@@ -72,7 +72,7 @@ class MaterialLightConfig {
   /// Indicates the object's position is needed by the fragment shader.
   final bool objPos;
 
-  /// Indicates the camera's position is needed by the fragment shader.
+  /// Indicates the camara's position is needed by the fragment shader.
   final bool viewPos;
 
   /// Indicates the normal vector is needed by the fragment shader.

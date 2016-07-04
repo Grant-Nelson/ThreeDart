@@ -60,7 +60,7 @@ void main() {
     ..target = target
     ..camara = camara;
 
-  Scenes.RenderPass pass = new Scenes.RenderPass()
+  Scenes.EntityPass pass = new Scenes.EntityPass()
     ..camara = camara
     ..tech = tech
     ..target = target

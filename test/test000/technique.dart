@@ -46,7 +46,7 @@ void testTechnique(TestArgs args, Math.Matrix4 objMat, Math.Matrix4 camMat, List
 
   StringBuffer buf = new StringBuffer();
   Techniques.Debugger tech = new Techniques.Debugger(buf);
-  Scenes.RenderPass pass = new Scenes.RenderPass()
+  Scenes.EntityPass pass = new Scenes.EntityPass()
     ..tech = tech
     ..children.add(obj)
     ..camara.mover = new Movers.Constant(camMat);

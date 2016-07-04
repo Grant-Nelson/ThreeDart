@@ -49,7 +49,7 @@ void main() {
     ..target = colorTarget
     ..camara = userCamara;
 
-  Scenes.RenderPass pass = new Scenes.RenderPass()
+  Scenes.EntityPass pass = new Scenes.EntityPass()
     ..camara = userCamara
     ..tech = tech
     ..target = colorTarget

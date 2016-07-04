@@ -14,7 +14,7 @@ import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
 import '../common/common.dart' as common;
 
-void addLightBall(Techniques.MaterialLight tech, Scenes.RenderPass pass,
+void addLightBall(Techniques.MaterialLight tech, Scenes.EntityPass pass,
     double r, double g, double b, double yaw, double pitch, double roll) {
   Math.Color3 clr = new Math.Color3(r, g, b);
 
@@ -68,7 +68,7 @@ void main() {
     ..specularColor = new Math.Color3.gray(0.3)
     ..shininess = 100.0;
 
-  Scenes.RenderPass pass = new Scenes.RenderPass()
+  Scenes.EntityPass pass = new Scenes.EntityPass()
     ..tech = tech
     ..children.add(room)
     ..children.add(centerObj)

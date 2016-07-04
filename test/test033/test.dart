@@ -17,21 +17,13 @@ import 'package:ThreeDart/Scenes.dart' as Scenes;
 import '../common/common.dart' as common;
 
 void main() {
-  common.shellTest("Test 028", [],
-    "Test of a Gaussian blur cover pass. "+
-    "Notice the depth of field causing things further away to be blurry.");
+  common.shellTest("Test 033", [],
+    "Test of a sterioscopic scene.");
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
 
-  Movers.Group secondMover = new Movers.Group()
-    ..add(new Movers.UserRotater(input: td.userInput))
-    ..add(new Movers.UserRoller(ctrl: true, input: td.userInput))
-    ..add(new Movers.UserZoom(input: td.userInput))
-    ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
-  Views.Perspective userCamara = new Views.Perspective(mover: secondMover);
-
   ThreeDart.Entity cubeEntity = new ThreeDart.Entity(shape: Shapes.cube());
-  ThreeDart.Entity group = new ThreeDart.Entity();
+  ThreeDart.Entity shapeEntity = new ThreeDart.Entity();
   for (double x = -1.6; x <= 1.7; x += 0.8) {
     for (double y = -1.6; y <= 1.7; y += 0.8) {
       for (double z = -1.6; z <= 1.7; z += 0.8) {
@@ -40,7 +32,7 @@ void main() {
         ThreeDart.Entity entity = new ThreeDart.Entity()
           ..mover = new Movers.Constant(mat)
           ..children.add(cubeEntity);
-        group.children.add(entity);
+        shapeEntity.children.add(entity);
       }
     }
   }
@@ -61,36 +53,23 @@ void main() {
     ..shininess = 10.0
     ..bumpyTextureCube = td.textureLoader.loadCubeFromPath("../resources/diceBumpMap");
 
-  Views.BackTarget colorTarget = new Views.BackTarget(512, 512)
+  Movers.Group mover = new Movers.Group()
+    ..add(new Movers.UserRotater(input: td.userInput))
+    ..add(new Movers.UserRoller(ctrl: true, input: td.userInput))
+    ..add(new Movers.UserZoom(input: td.userInput))
+    ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 6.0)));
+
+  Views.FrontTarget target = new Views.FrontTarget()
     ..clearColor = false;
 
   Scenes.CoverPass skybox = new Scenes.CoverPass.skybox(
-    td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg"))
-    ..camara = userCamara
-    ..target = colorTarget;
+    td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg"));
 
-  Scenes.EntityPass colorPass = new Scenes.EntityPass()
-    ..camara = userCamara
-    ..target = colorTarget
+  Scenes.EntityPass pass = new Scenes.EntityPass()
     ..tech = colorTech
-    ..children.add(group);
+    ..children.add(shapeEntity);
 
-  Views.BackTarget depthTarget = new Views.BackTarget(256, 256);
-  Scenes.EntityPass depthPass = new Scenes.EntityPass()
-    ..camara = userCamara
-    ..target = depthTarget
-    ..tech = new Techniques.Depth(fogStart: 3.5, fogStop: 5.5)
-    ..children.add(group);
-
-  Scenes.CoverPass blurPass = new Scenes.CoverPass()
-    ..tech = new Techniques.GaussianBlur(
-      colorTxt: colorTarget.colorTexture,
-      depthTxt: depthTarget.colorTexture,
-      highOffset: 0.0,
-      lowOffset: 8.0,
-      depthLimit: 0.001);
-
-  td.scene = new Scenes.Compound(passes: [skybox, colorPass, depthPass, blurPass]);
+  td.scene = new Scenes.Sterioscopic(mover: mover, passes: [skybox, pass], target: target);
 
   var update;
   update = (num t) {

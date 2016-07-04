@@ -47,7 +47,7 @@ void main() {
     ..specularColor = new Math.Color3(1.0, 0.0, 0.0)
     ..shininess = 10.0;
 
-  Scenes.RenderPass firstPass = new Scenes.RenderPass()
+  Scenes.EntityPass firstPass = new Scenes.EntityPass()
     ..camara = rotaterCamara
     ..tech = firstTech
     ..target = backTarget
@@ -66,7 +66,7 @@ void main() {
   Techniques.MaterialLight secondTech = new Techniques.MaterialLight()
     ..emissionTexture2D = backTarget.colorTexture;
 
-  Scenes.RenderPass secondPass = new Scenes.RenderPass()
+  Scenes.EntityPass secondPass = new Scenes.EntityPass()
     ..camara = userCamara
     ..tech = secondTech
     ..children.add(secondObj);

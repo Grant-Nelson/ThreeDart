@@ -32,7 +32,7 @@ void main() {
   Techniques.Inspection tech = new Techniques.Inspection()
     ..vectorScale = 0.4;
 
-  td.scene = new Scenes.RenderPass()
+  td.scene = new Scenes.EntityPass()
     ..tech = tech
     ..children.add(obj)
     ..camara.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0));
