@@ -87,9 +87,7 @@ class ThreeDart {
     this._state = new RenderState(this._gl, this._canvas);
     this._txtLoader = new Textures.TextureLoader(this._gl);
     this._input = new UserInput(this._canvas);
-
-    this._canvas.onResize.listen(this._resize);
-    this._justifySize();
+    this._resize();
   }
 
   /// The width of the canvas in pixels.
@@ -115,10 +113,12 @@ class ThreeDart {
   }
 
   /// Makes sure the size of the canvas is correctly set.
-  void _justifySize() {
-    // Lookup the size the browser is displaying the canvas.
-    var displayWidth  = this._canvas.clientWidth;
-    var displayHeight = this._canvas.clientHeight;
+  void _resize() {
+    // Lookup the size the browser is displaying the canvas in CSS pixels and
+    // compute a size needed to make our drawingbuffer match it in device pixels.
+    num ratio = html.window.devicePixelRatio;
+    int displayWidth  = (this._canvas.clientWidth  * ratio).floor();
+    int displayHeight = (this._canvas.clientHeight * ratio).floor();
     // Check if the canvas is not the same size.
     if ((this._canvas.width  != displayWidth) ||
         (this._canvas.height != displayHeight)) {
@@ -128,15 +128,10 @@ class ThreeDart {
     }
   }
 
-  /// The event handler for the canvas changing size.
-  void _resize(html.Event _) {
-    this._justifySize();
-    this.render();
-  }
-
   /// Renders the screne to the canvas.
   void render() {
     try {
+      this._resize();
       if (this._scene != null) {
         this._state.reset();
         this._scene.render(this._state);

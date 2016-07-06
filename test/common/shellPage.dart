@@ -55,7 +55,6 @@ void shellPage(String title, html.Element elem,  bool showTitle, String backImg)
   if (elem != null) {
     html.DivElement elemContainer = new html.DivElement();
     pageCenter.append(elemContainer);
-
     elemContainer.append(elem);
 
     html.DivElement endPage = new html.DivElement();
@@ -77,7 +76,8 @@ void shellTest(String title, List<String> ctrlBoxes, String comment) {
       ..marginLeft  = "auto"
       ..marginRight = "auto";
 
-  html.TableElement table = new html.TableElement();
+  html.TableElement table = new html.TableElement()
+    ..id = "shellTable";
   table.style
     ..padding     = "0px"
     ..marginLeft  = "auto"
