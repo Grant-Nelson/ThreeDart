@@ -95,3 +95,8 @@ String formatInt(int v, [int whole = 0]) {
 /// Gets the nearest (lower) power of the [radix] to the given [value].
 int nearestPower(int value, [int radix = 2]) =>
   math.pow(radix, (math.log(value)/math.log(radix)).floor()).toInt();
+
+/// Gets the exclusive OR for booleans.
+bool xor(bool a, bool b) {
+  return (!a&&b)||(a&&!b);
+}

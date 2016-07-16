@@ -24,6 +24,8 @@ class Inspection extends Technique {
   bool _showFaceTangentals;
   bool _showColorFill;
   bool _showTxt2DColor;
+  bool _showWeight;
+  bool _showBending;
   bool _showAxis;
   bool _showAABB;
   double _vectorScale;
@@ -52,6 +54,8 @@ class Inspection extends Technique {
     this._showFaceTangentals = false;
     this._showColorFill      = false;
     this._showTxt2DColor     = false;
+    this._showWeight         = false;
+    this._showBending        = false;
     this._showAxis           = false;
     this._showAABB           = false;
     this._vectorScale        = 1.0;
@@ -109,6 +113,14 @@ class Inspection extends Technique {
   set showTxt2DColor(bool show) => this._showTxt2DColor = show;
   bool get showTxt2DColor => this._showTxt2DColor;
 
+  /// Indicates if the weights of the shape should be showed.
+  set showWeight(bool show) => this._showWeight = show;
+  bool get showWeight => this._showWeight;
+
+  /// Indicates if the bendings of the shape should be showed.
+  set showBending(bool show) => this._showBending = show;
+  bool get showBending => this._showBending;
+
   /// Indicates if the axis should be showed.
   set showAxis(bool show) => this._showAxis = show;
   bool get showAxis => this._showAxis;
@@ -165,6 +177,10 @@ class Inspection extends Technique {
         this._render(state, store, obj.shape, 'colorFill', this._colorFill, this._ambient3, this._diffuse3);
       if (this._showTxt2DColor)
         this._render(state, store, obj.shape, 'txt2DColor', this._txt2DColor, this._ambient3, this._diffuse3);
+      if (this._showWeight)
+        this._render(state, store, obj.shape, 'weight', this._weight, this._ambient3, this._diffuse3);
+      if (this._showBending)
+        this._render(state, store, obj.shape, 'bending', this._bending, this._ambient3, this._diffuse3);
 
       state.gl.disable(WebGL.DEPTH_TEST);
       state.gl.enable(WebGL.BLEND);
@@ -438,7 +454,61 @@ class Inspection extends Technique {
     shape.vertices.forEach((Shapes.Vertex vertex) {
       Math.Point2 txt = vertex.texture2D;
       result.vertices.add(vertex.copy()
-        ..color =  new Math.Color4(txt.x, txt.y, txt.y));
+        ..color = new Math.Color4(txt.x, txt.y, txt.y));
+    });
+    shape.faces.forEach((Shapes.Face face) {
+      Shapes.Vertex ver1 = result.vertices[face.vertex1.index];
+      Shapes.Vertex ver2 = result.vertices[face.vertex2.index];
+      Shapes.Vertex ver3 = result.vertices[face.vertex3.index];
+      result.faces.add(ver1, ver2, ver3);
+    });
+    return result;
+  }
+
+  /// Convertes the given [shape] into the weight color shape.
+  Shapes.Shape _weight(Shapes.Shape shape) {
+    Shapes.Shape result = new Shapes.Shape();
+    if (shape.vertices.length < 1) return result;
+    double min = shape.vertices[0].weight;
+    double max = min;
+    shape.vertices.forEach((Shapes.Vertex vertex) {
+      if (min > vertex.weight) min = vertex.weight;
+      if (max < vertex.weight) max = vertex.weight;
+    });
+    double div = max-min;
+    if (div <= 0.0) div = 1.0;
+    shape.vertices.forEach((Shapes.Vertex vertex) {
+      double spectrum = (vertex.weight-min)/div;
+      Math.Color3 clr = new Math.Color3.fromHVS(spectrum*5.0/6.0, 1.0, 1.0);
+      result.vertices.add(vertex.copy()
+        ..color = new Math.Color4.fromColor3(clr));
+    });
+    shape.faces.forEach((Shapes.Face face) {
+      Shapes.Vertex ver1 = result.vertices[face.vertex1.index];
+      Shapes.Vertex ver2 = result.vertices[face.vertex2.index];
+      Shapes.Vertex ver3 = result.vertices[face.vertex3.index];
+      result.faces.add(ver1, ver2, ver3);
+    });
+    return result;
+  }
+
+  /// Convertes the given [shape] into the bending color shape.
+  Shapes.Shape _bending(Shapes.Shape shape) {
+    Shapes.Shape result = new Shapes.Shape();
+    if (shape.vertices.length < 1) return result;
+    double min = shape.vertices[0].bending;
+    double max = min;
+    shape.vertices.forEach((Shapes.Vertex vertex) {
+      if (min > vertex.bending) min = vertex.bending;
+      if (max < vertex.bending) max = vertex.bending;
+    });
+    double div = max-min;
+    if (div <= 0.0) div = 1.0;
+    shape.vertices.forEach((Shapes.Vertex vertex) {
+      double spectrum = (vertex.bending-min)/div;
+      Math.Color3 clr = new Math.Color3.fromHVS(spectrum*5.0/6.0, 1.0, 1.0);
+      result.vertices.add(vertex.copy()
+        ..color = new Math.Color4.fromColor3(clr));
     });
     shape.faces.forEach((Shapes.Face face) {
       Shapes.Vertex ver1 = result.vertices[face.vertex1.index];

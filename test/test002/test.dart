@@ -51,40 +51,48 @@ void main() {
     ..add("Colors",          (bool show) { tech.showColorFill      = show; })
     ..add("Textures2D",      (bool show) { tech.showTxt2DColor     = show; })
     ..add("TexturesCube",    (bool show) { tech.showTxtCube        = show; })
+    ..add("Weight",          (bool show) { tech.showWeight         = show; })
+    ..add("Bending",         (bool show) { tech.showBending        = show; })
     ..add("Axis",            (bool show) { tech.showAxis           = show; }, true)
     ..add("AABB",            (bool show) { tech.showAABB           = show; });
 
+  void setShape(Shapes.Shape shape) {
+    shape.calculateWeights();
+    shape.calculateBending();
+    obj.shape = shape;
+  }
+
   new common.RadioGroup("shapes")
-    ..add("Square",        () { obj.shape = Shapes.square(); }, true)
-    ..add("Cube",          () { obj.shape = Shapes.cube(); })
-    ..add("Cuboid",        () { obj.shape = Shapes.cuboid(); })
-    ..add("Cuboid+",       () { obj.shape = Shapes.cuboid(widthDiv: 15, heightDiv: 15,
+    ..add("Square",        () { setShape(Shapes.square()); }, true)
+    ..add("Cube",          () { setShape(Shapes.cube()); })
+    ..add("Cuboid",        () { setShape(Shapes.cuboid()); })
+    ..add("Cuboid+",       () { setShape(Shapes.cuboid(widthDiv: 15, heightDiv: 15,
                                 vertexHndl: (Shapes.Vertex ver, double u, double v) {
                                   double height = cos(v*4.0*PI+PI)*0.1 + cos(u*4.0*PI+PI)*0.1;
                                   Math.Vector3 vec = new Math.Vector3.fromPoint3(ver.location).normal();
                                   ver.location += new Math.Point3.fromVector3(vec*height);
-                                });
+                                }));
                               })
-    ..add("Disk",          () { obj.shape = Shapes.disk(); })
-    ..add("Disk+",         () { obj.shape = Shapes.disk(sides: 30); })
-    ..add("Cylinder",      () { obj.shape = Shapes.cylinder(); })
-    ..add("Cylinder+",     () { obj.shape = Shapes.cylinder(sides: 16, div: 4); })
-    ..add("Cone",          () { obj.shape = Shapes.cylinder(topRadius: 0.0, sides: 12, capTop: false); })
-    ..add("Cylindrical",   () { obj.shape = Shapes.cylindrical(sides: 50, div: 25,
-                                radiusHndl: (double u, double v) => cos(v*4.0*PI + PI)*0.2 + cos(u*6.0*PI)*0.3 + 0.8); })
-    ..add("LatLonSphere",  () { obj.shape = Shapes.latLonSphere(10, 20); })
-    ..add("LatLonSphere+", () { obj.shape = Shapes.latLonSphere(20, 40); })
-    ..add("IsoSphere",     () { obj.shape = Shapes.isosphere(2); })
-    ..add("IsoSphere+",    () { obj.shape = Shapes.isosphere(3); })
-    ..add("Sphere",        () { obj.shape = Shapes.sphere(widthDiv: 6, heightDiv: 6); })
-    ..add("Sphere+",       () { obj.shape = Shapes.sphere(widthDiv: 10, heightDiv: 10); })
-    ..add("Spherical",     () { obj.shape = Shapes.sphere(widthDiv: 10, heightDiv: 10,
-                                heightHndl: (double u, double v) => cos(sqrt((u-0.5)*(u-0.5) + (v-0.5)*(v-0.5))*PI)*0.3); })
-    ..add("Toroid",        () { obj.shape = Shapes.toroid(); })
-    ..add("Knot",          () { obj.shape = Shapes.knot(); })
-    ..add("Grid",          () { obj.shape = Shapes.grid(); })
-    ..add("Grid+",         () { obj.shape = Shapes.grid(widthDiv: 16, heightDiv: 16,
-                                heightHndl: (double u, double v) => sin(u*8.0)*cos(v*8.0)*0.3 ); });
+    ..add("Disk",          () { setShape(Shapes.disk()); })
+    ..add("Disk+",         () { setShape(Shapes.disk(sides: 30)); })
+    ..add("Cylinder",      () { setShape(Shapes.cylinder()); })
+    ..add("Cylinder+",     () { setShape(Shapes.cylinder(sides: 16, div: 4)); })
+    ..add("Cone",          () { setShape(Shapes.cylinder(topRadius: 0.0, sides: 12, capTop: false)); })
+    ..add("Cylindrical",   () { setShape(Shapes.cylindrical(sides: 50, div: 25,
+                                radiusHndl: (double u, double v) => cos(v*4.0*PI + PI)*0.2 + cos(u*6.0*PI)*0.3 + 0.8)); })
+    ..add("LatLonSphere",  () { setShape(Shapes.latLonSphere(10, 20)); })
+    ..add("LatLonSphere+", () { setShape(Shapes.latLonSphere(20, 40)); })
+    ..add("IsoSphere",     () { setShape(Shapes.isosphere(2)); })
+    ..add("IsoSphere+",    () { setShape(Shapes.isosphere(3)); })
+    ..add("Sphere",        () { setShape(Shapes.sphere(widthDiv: 6, heightDiv: 6)); })
+    ..add("Sphere+",       () { setShape(Shapes.sphere(widthDiv: 10, heightDiv: 10)); })
+    ..add("Spherical",     () { setShape(Shapes.sphere(widthDiv: 10, heightDiv: 10,
+                                heightHndl: (double u, double v) => cos(sqrt((u-0.5)*(u-0.5) + (v-0.5)*(v-0.5))*PI)*0.3)); })
+    ..add("Toroid",        () { setShape(Shapes.toroid()); })
+    ..add("Knot",          () { setShape(Shapes.knot()); })
+    ..add("Grid",          () { setShape(Shapes.grid()); })
+    ..add("Grid+",         () { setShape(Shapes.grid(widthDiv: 16, heightDiv: 16,
+                                heightHndl: (double u, double v) => sin(u*8.0)*cos(v*8.0)*0.3 )); });
 
   var update;
   update = (num t) {

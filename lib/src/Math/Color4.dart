@@ -46,8 +46,8 @@ class Color4 {
   /// [clr] contains the initial components for the color.
   /// [alpha] is the transparent component of the new color.
   /// If [alpha] is not provided the color will be completely opaque.
-  factory Color4.fromColor3(Color3 clr, [double apha = 1.0]) =>
-    new Color4(clr._red, clr._green, clr._blue, apha);
+  factory Color4.fromColor3(Color3 clr, [double alpha = 1.0]) =>
+    new Color4(clr._red, clr._green, clr._blue, alpha);
 
   /// Constructs a new [Color3] instance given a list of 4 doubles.
   ///
@@ -56,6 +56,13 @@ class Color4 {
   factory Color4.fromList(List<double> values) {
     assert(values.length == 4);
     return new Color4(values[0], values[1], values[2], values[3]);
+  }
+
+  /// Constructs a new [Color4] instance given the hue, saturation, and value.
+  ///
+  /// [hue], [value], and [saturation] are from 0.0 to 1.0.
+  factory Color4.fromHVS(double hue, double value, double saturation, [double alpha = 1.0]) {
+  	return new Color4.fromColor3(new Color3.fromHVS(hue, value, saturation), alpha);
   }
 
   /// The red component between 0.0 and 1.0 inclusively.

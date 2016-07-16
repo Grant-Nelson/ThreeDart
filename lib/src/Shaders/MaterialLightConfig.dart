@@ -58,11 +58,20 @@ class MaterialLightConfig {
   /// Indicates the inverse view matrix is needed for this shader.
   final bool invViewMat;
 
+  /// Indicates the object matrix is needed for this shader.
+  final bool objMat;
+
   /// Indicates the view object matrix is needed for this shader.
   final bool viewObjMat;
 
-  /// Indicates the object matrix is needed for this shader.
-  final bool objMat;
+  /// Indicates the projection view object matrix is needed for this shader.
+  final bool projViewObjMat;
+
+  /// Indicates the view matrix is needed for this shader.
+  final bool viewMat;
+
+  /// Indicates the projection view matrix is needed for this shader.
+  final bool projViewMat;
 
   /// Indicates the ambient, diffuse, inverse diffuse, or specular
   /// material compenent is used meaning lighting is needed for this shader.
@@ -87,6 +96,21 @@ class MaterialLightConfig {
   /// Indicates the cube texture coordinate is needed by the fragment shader.
   final bool txtCube;
 
+  /// Indicates the bending is needed by the vertex shader.
+  final bool bending;
+
+  /// Indicates the 2D texture matrix is needed by the vertex shader.
+  final bool txt2DMat;
+
+  /// Indicates the cube texture matrix is needed by the vertex shader.
+  final bool txtCubeMat;
+
+  /// Indicates the color matrix is needed by the fragment shader.
+  final bool colorMat;
+
+  /// The total number of bend matrices allowed by this shader.
+  final int bendMats;
+
   /// The name of this shader configuration.
   final String name;
 
@@ -104,15 +128,21 @@ class MaterialLightConfig {
     int this.dirLight, int this.pointLight, int this.spotLight,
     int this.txtDirLight, int this.txtPointLight, int this.txtSpotLight,
     int this.totalLights,
-    bool this.enviromental, bool this.invViewMat, bool this.viewObjMat,
-    bool this.objMat, bool this.lights, bool this.objPos,
+    bool this.enviromental, bool this.invViewMat,
+    bool this.objMat, bool this.viewObjMat, bool this.projViewObjMat,
+    bool this.viewMat, bool this.projViewMat,
+    bool this.lights, bool this.objPos,
     bool this.viewPos, bool this.norm, bool this.binm,
-    bool this.txt2D, bool this.txtCube,
+    bool this.txt2D, bool this.txtCube, bool this.bending,
+    bool this.txt2DMat, bool this.txtCubeMat,
+    bool this.colorMat, int this.bendMats,
     String this.name, Data.VertexType this.vertexType);
 
   /// Creates a new material light configuration.
   /// The configuration for the material light shader.
-  factory MaterialLightConfig(ColorSourceType emission,
+  factory MaterialLightConfig(
+    bool txt2DMat, bool txtCubeMat, bool colorMat,
+    int bendMats, ColorSourceType emission,
     ColorSourceType ambient, ColorSourceType diffuse,
     ColorSourceType invDiffuse, ColorSourceType specular,
     ColorSourceType bumpy, ColorSourceType reflection,
@@ -120,18 +150,46 @@ class MaterialLightConfig {
     int dirLight, int pointLight, int spotLight,
     int txtDirLight, int txtPointLight, int txtSpotLight) {
 
+    StringBuffer buf = new StringBuffer();
+    buf.write("MaterialLight_");
+    buf.write(stringForComponentType(emission));
+    buf.write(stringForComponentType(ambient));
+    buf.write(stringForComponentType(diffuse));
+    buf.write(stringForComponentType(invDiffuse));
+    buf.write(stringForComponentType(specular));
+    buf.write(stringForComponentType(bumpy));
+    buf.write(stringForComponentType(reflection));
+    buf.write(stringForComponentType(refraction));
+    buf.write(stringForComponentType(alpha));
+    buf.write("_");
+    buf.write(txt2DMat?   "1": "0");
+    buf.write(txtCubeMat? "1": "0");
+    buf.write(colorMat?   "1": "0");
+    buf.write("_");
+    buf.write(bendMats);
+    buf.write("_");
+    buf.write(dirLight);
+    buf.write("_");
+    buf.write(pointLight);
+    buf.write("_");
+    buf.write(spotLight);
+    buf.write("_");
+    buf.write(txtDirLight);
+    buf.write("_");
+    buf.write(txtPointLight);
+    buf.write("_");
+    buf.write(txtSpotLight);
+    String name = buf.toString();
+
     int totalLights = dirLight + pointLight + spotLight +
                       txtDirLight + txtPointLight + txtSpotLight;
     bool enviromental = (reflection != ColorSourceType.None) ||
                         (refraction != ColorSourceType.None);
     bool invViewMat = enviromental;
-    bool objMat = (pointLight + txtPointLight + txtDirLight +
-                   spotLight + txtSpotLight) > 0;
     bool lights = (ambient    != ColorSourceType.None) ||
                   (diffuse    != ColorSourceType.None) ||
                   (invDiffuse != ColorSourceType.None) ||
                   (specular   != ColorSourceType.None);
-    bool objPos = objMat;
     bool viewPos = (specular != ColorSourceType.None) ||
                     enviromental;
     bool norm = (diffuse    != ColorSourceType.None) ||
@@ -158,84 +216,245 @@ class MaterialLightConfig {
                    (reflection == ColorSourceType.TextureCube) ||
                    (refraction == ColorSourceType.TextureCube) ||
                    (alpha      == ColorSourceType.TextureCube);
-    bool viewObjMat = norm || binm || viewPos;
-
-    StringBuffer buf = new StringBuffer();
-    buf.write("MaterialLight_");
-    buf.write(stringForComponentType(emission));
-    buf.write(stringForComponentType(ambient));
-    buf.write(stringForComponentType(diffuse));
-    buf.write(stringForComponentType(invDiffuse));
-    buf.write(stringForComponentType(specular));
-    buf.write(stringForComponentType(bumpy));
-    buf.write(stringForComponentType(reflection));
-    buf.write(stringForComponentType(refraction));
-    buf.write(stringForComponentType(alpha));
-    buf.write("_");
-    buf.write(dirLight);
-    buf.write("_");
-    buf.write(pointLight);
-    buf.write("_");
-    buf.write(spotLight);
-    buf.write("_");
-    buf.write(txtDirLight);
-    buf.write("_");
-    buf.write(txtPointLight);
-    buf.write("_");
-    buf.write(txtSpotLight);
-    String name = buf.toString();
+    bool objPos = (pointLight + txtPointLight + txtDirLight +
+                   spotLight + txtSpotLight) > 0;
+    bool bending = bendMats > 0;
+    bool objMat = objPos || bending;
+    bool viewObjMat = (norm || binm || viewPos) && !bending;
+    bool viewMat    = (norm || binm || viewPos) && bending;
+    bool projViewObjMat = !bending;
+    bool projViewMat    = bending;
+    txt2DMat   = txt2DMat   && txt2D;
+    txtCubeMat = txtCubeMat && txtCube;
 
     Data.VertexType vertexType = Data.VertexType.Pos;
-    if (norm) vertexType |= Data.VertexType.Norm;
-    if (binm) vertexType |= Data.VertexType.Binm;
-    if (txt2D) vertexType |= Data.VertexType.Txt2D;
+    if (norm)    vertexType |= Data.VertexType.Norm;
+    if (binm)    vertexType |= Data.VertexType.Binm;
+    if (txt2D)   vertexType |= Data.VertexType.Txt2D;
     if (txtCube) vertexType |= Data.VertexType.TxtCube;
+    if (bending) vertexType |= Data.VertexType.Bending;
 
     return new MaterialLightConfig._(emission, ambient,
       diffuse, invDiffuse, specular, bumpy, reflection, refraction,
       alpha, dirLight, pointLight, spotLight, txtDirLight,
       txtPointLight, txtSpotLight, totalLights, enviromental,
-      invViewMat, viewObjMat, objMat, lights, objPos, viewPos,
-      norm, binm, txt2D, txtCube, name, vertexType);
+      invViewMat, objMat, viewObjMat, projViewObjMat,
+      viewMat, projViewMat, lights, objPos, viewPos,
+      norm, binm, txt2D, txtCube, bending, txt2DMat, txtCubeMat,
+      colorMat, bendMats, name, vertexType);
+  }
+
+  //=====================================================================
+
+  /// Writes normal coordinates for the vertex shader [buf].
+  void _writeNormCoord(StringBuffer buf) {
+    if (!this.norm) return;
+    buf.writeln("attribute vec3 normAttr;");
+    buf.writeln("varying vec3 normalVec;");
+    buf.writeln("");
+    buf.writeln("vec3 getNorm(mat4 viewObjMatrix)");
+    buf.writeln("{");
+    buf.writeln("   return normalize(viewObjMatrix*vec4(normAttr, 0.0)).xyz;");
+    buf.writeln("}");
+    buf.writeln("");
+  }
+
+  /// Writes binormal coordinates for the vertex shader [buf].
+  void _writeBinmCoord(StringBuffer buf) {
+    if (!this.binm) return;
+    buf.writeln("attribute vec3 binmAttr;");
+    buf.writeln("varying vec3 binormalVec;");
+    buf.writeln("");
+    buf.writeln("vec3 getBinm(mat4 viewObjMatrix)");
+    buf.writeln("{");
+    buf.writeln("   return normalize(viewObjMatrix*vec4(binmAttr, 0.0)).xyz;");
+    buf.writeln("}");
+    buf.writeln("");
+  }
+
+  /// Writes texture 2D coordinates for the vertex shader [buf].
+  void _writeTxt2DCoord(StringBuffer buf) {
+    if (!this.txt2D) return;
+    if (this.txt2DMat) buf.writeln("uniform mat3 txt2DMat;");
+    buf.writeln("attribute vec2 txt2DAttr;");
+    buf.writeln("varying vec2 txt2D;");
+    buf.writeln("");
+    buf.writeln("vec2 getTxt2D()");
+    buf.writeln("{");
+    if (this.txt2DMat) buf.writeln("   return (txt2DMat*vec3(txt2DAttr, 1.0)).xy;");
+    else               buf.writeln("   return vec3(txt2DAttr, 1.0).xy;");
+    buf.writeln("}");
+    buf.writeln("");
+  }
+
+  /// Writes texture Cube coordinates for the vertex shader [buf].
+  void _writeTxtCubeCoord(StringBuffer buf) {
+    if (!this.txtCube) return;
+    if (this.txtCubeMat) buf.writeln("uniform mat4 txtCubeMat;");
+    buf.writeln("attribute vec3 txtCubeAttr;");
+    buf.writeln("varying vec3 txtCube;");
+    buf.writeln("");
+    buf.writeln("vec3 getTxtCube()");
+    buf.writeln("{");
+    if (this.txtCubeMat) buf.writeln("   return (txtCubeMat*vec4(txtCubeAttr, 1.0)).xyz;");
+    else                 buf.writeln("   return vec4(txtCubeAttr, 1.0).xyz;");
+    buf.writeln("}");
+    buf.writeln("");
+  }
+
+  /// Writes object position for the vertex shader [buf].
+  void _writeObjPos(StringBuffer buf) {
+    if (!this.objPos) return;
+    buf.writeln("varying vec3 objPos;");
+    buf.writeln("");
+    buf.writeln("vec3 setObjPos(mat4 objMatrix)");
+    buf.writeln("{");
+    buf.writeln("   return (objMatrix*vec4(posAttr, 1.0)).xyz;");
+    buf.writeln("}");
+    buf.writeln("");
+  }
+
+  /// Writes view object position for the vertex shader [buf].
+  void _writeViewPos(StringBuffer buf) {
+    if (!this.viewPos) return;
+    buf.writeln("varying vec3 viewPos;");
+    buf.writeln("");
+    buf.writeln("vec3 getViewPos(mat4 viewObjMatrix)");
+    buf.writeln("{");
+    buf.writeln("   return (viewObjMatrix*vec4(posAttr, 1.0)).xyz;");
+    buf.writeln("}");
+    buf.writeln("");
+  }
+
+  /// Writes projected object position for the vertex shader [buf].
+  void _writePos(StringBuffer buf) {
+    buf.writeln("vec4 getPos(mat4 projViewObjMatrix)");
+    buf.writeln("{");
+    buf.writeln("   return projViewObjMatrix*vec4(posAttr, 1.0);");
+    buf.writeln("}");
+    buf.writeln("");
+  }
+
+  /// Writes the non-bending main method for the vertex shader [buf].
+  void _writeMain(StringBuffer buf) {
+    if (this.objMat)     buf.writeln("uniform mat4 objMat;");
+    if (this.viewObjMat) buf.writeln("uniform mat4 viewObjMat;");
+    buf.writeln("uniform mat4 projViewObjMat;");
+    buf.writeln("");
+
+    buf.writeln("void main()");
+    buf.writeln("{");
+    if (this.norm)    buf.writeln("   normalVec = getNorm(viewObjMat);");
+    if (this.binm)    buf.writeln("   binormalVec = getBinm(viewObjMat);");
+    if (this.txt2D)   buf.writeln("   txt2D = getTxt2D();");
+    if (this.txtCube) buf.writeln("   txtCube = getTxtCube();");
+    if (this.objPos)  buf.writeln("   objPos = getObjPos(objMat);");
+    if (this.viewPos) buf.writeln("   viewPos = getViewPos(viewObjMat);");
+    buf.writeln("   gl_Position = getPos(projViewObjMat);");
+    buf.writeln("}");
+    buf.writeln("");
+  }
+
+  /// Writes the bending main method for the vertex shader [buf].
+  void _writeBendMain(StringBuffer buf) {
+    buf.writeln("uniform mat4 objMat;");
+    if (this.viewMat)     buf.writeln("uniform mat4 viewMat;");
+    if (this.projViewMat) buf.writeln("uniform mat4 projViewMat;");
+    buf.writeln("struct BendingValue");
+    buf.writeln("{");
+    buf.writeln("   mat4 mat;");
+    buf.writeln("};");
+    buf.writeln("uniform int bendMatCount;");
+    buf.writeln("uniform BendingValue bendValues[${this.bendMats}];");
+    buf.writeln("attribute float blendAttr;");
+    buf.writeln("");
+
+    buf.writeln("void getValues(mat4 objMatrix)");
+    buf.writeln("{");
+    if (this.viewMat)     buf.writeln("   mat4 viewObjMat = viewMat*objMatrix;");
+    if (this.projViewMat) buf.writeln("   mat4 projViewObjMat = projViewMat*objMatrix;");
+    if (this.norm)        buf.writeln("   normalVec = getNorm(viewObjMat);");
+    if (this.binm)        buf.writeln("   binormalVec = getBinm(viewObjMat);");
+    if (this.txt2D)       buf.writeln("   txt2D = getTxt2D();");
+    if (this.txtCube)     buf.writeln("   txtCube = getTxtCube();");
+    if (this.objPos)      buf.writeln("   objPos = getObjPos(objMatrix);");
+    if (this.viewPos)     buf.writeln("   viewPos = getViewPos(viewObjMat);");
+    buf.writeln("   gl_Position = getPos(projViewObjMat);");
+    buf.writeln("}");
+    buf.writeln("");
+
+    buf.writeln("void getLerpValues(mat4 objMat1, mat4 objMat2, float inter)");
+    buf.writeln("{");
+    if (this.viewMat) {
+      buf.writeln("   mat4 viewObjMat1 = viewMat*objMat1;");
+      buf.writeln("   mat4 viewObjMat2 = viewMat*objMat2;");
+    }
+    if (this.projViewMat) {
+      buf.writeln("   mat4 projViewObjMat1 = projViewMat*objMat1;");
+      buf.writeln("   mat4 projViewObjMat2 = projViewMat*objMat2;");
+    }
+    if (this.norm) {
+      buf.writeln("   vec3 normalVec1 = getNorm(viewObjMat1);");
+      buf.writeln("   vec3 normalVec2 = getNorm(viewObjMat2);");
+      buf.writeln("   normalVec = normalize(mix(normalVec1, normalVec2, inter));");
+    }
+    if (this.binm) {
+      buf.writeln("   vec3 binormalVec1 = getBinm(viewObjMat1);");
+      buf.writeln("   vec3 binormalVec2 = getBinm(viewObjMat2);");
+      buf.writeln("   binormalVec = normalize(mix(binormalVec1, binormalVec2, inter));");
+    }
+    if (this.txt2D)   buf.writeln("   txt2D = getTxt2D();");
+    if (this.txtCube) buf.writeln("   txtCube = getTxtCube();");
+    if (this.objPos) {
+      buf.writeln("   vec3 objPos1 = getObjPos(objMat1);");
+      buf.writeln("   vec3 objPos2 = getObjPos(objMat2);");
+      buf.writeln("   objPos = mix(objPos1, objPos2, inter);");
+    }
+    if (this.viewPos) {
+      buf.writeln("   vec3 viewPos1 = getViewPos(viewObjMat1);");
+      buf.writeln("   vec3 viewPos2 = getViewPos(viewObjMat2);");
+      buf.writeln("   viewPos = mix(viewPos1, viewPos2, inter);");
+    }
+    buf.writeln("   vec4 pos1 = getPos(projViewObjMat1);");
+    buf.writeln("   vec4 pos2 = getPos(projViewObjMat2);");
+    buf.writeln("   gl_Position = mix(pos1, pos2, inter);");
+    buf.writeln("}");
+    buf.writeln("");
+
+    buf.writeln("void main()");
+    buf.writeln("{");
+    buf.writeln("   int index = int(floor(blendAttr));");
+    buf.writeln("   float inter = blendAttr - float(index);");
+    buf.writeln("   if(index < 0) getValues(objMat);");
+    buf.writeln("   else if(index == 0)");
+    buf.writeln("   {");
+    buf.writeln("      if(bendMatCount < 1) getValues(objMat);");
+    buf.writeln("      else getLerpValues(objMat, bendValues[0].mat, inter);");
+    buf.writeln("   }");
+    buf.writeln("   else if(index >= bendMatCount - 1) getValues(bendValues[bendMatCount-1].mat);");
+    buf.writeln("   else getLerpValues(bendValues[index-1].mat, bendValues[index].mat, inter);");
+    buf.writeln("}");
+    buf.writeln("");
   }
 
   /// Creates the vertex source code for the material light shader for the given configurations.
   String createVertexSource() {
     StringBuffer buf = new StringBuffer();
-    if (this.objMat) buf.writeln("uniform mat4 objMat;");
-    if (this.viewObjMat) buf.writeln("uniform mat4 viewObjMat;");
-    buf.writeln("uniform mat4 projViewObjMat;");
-    if (this.txt2D)   buf.writeln("uniform mat3 txt2DMat;");
-    if (this.txtCube) buf.writeln("uniform mat4 txtCubeMat;");
-    buf.writeln("");
-
     buf.writeln("attribute vec3 posAttr;");
-    if (this.norm)    buf.writeln("attribute vec3 normAttr;");
-    if (this.binm)    buf.writeln("attribute vec3 binmAttr;");
-    if (this.txt2D)   buf.writeln("attribute vec2 txt2DAttr;");
-    if (this.txtCube) buf.writeln("attribute vec3 txtCubeAttr;");
     buf.writeln("");
-
-    if (this.norm)    buf.writeln("varying vec3 normalVec;");
-    if (this.binm)    buf.writeln("varying vec3 binormalVec;");
-    if (this.txt2D)   buf.writeln("varying vec2 txt2D;");
-    if (this.txtCube) buf.writeln("varying vec3 txtCube;");
-    if (this.objPos)  buf.writeln("varying vec3 objPos;");
-    if (this.viewPos) buf.writeln("varying vec3 viewPos;");
-    buf.writeln("");
-
-    buf.writeln("void main()");
-    buf.writeln("{");
-    if (this.norm)    buf.writeln("   normalVec = normalize(viewObjMat*vec4(normAttr, 0.0)).xyz;");
-    if (this.binm)    buf.writeln("   binormalVec = normalize(viewObjMat*vec4(binmAttr, 0.0)).xyz;");
-    if (this.txt2D)   buf.writeln("   txt2D = (txt2DMat*vec3(txt2DAttr, 1.0)).xy;");
-    if (this.txtCube) buf.writeln("   txtCube = (txtCubeMat*vec4(txtCubeAttr, 1.0)).xyz;");
-    if (this.objPos)  buf.writeln("   objPos = (objMat*vec4(posAttr, 1.0)).xyz;");
-    if (this.viewPos) buf.writeln("   viewPos = (viewObjMat*vec4(posAttr, 1.0)).xyz;");
-    buf.writeln("   gl_Position = projViewObjMat*vec4(posAttr, 1.0);");
-    buf.writeln("}");
+    this._writeNormCoord(buf);
+    this._writeBinmCoord(buf);
+    this._writeTxt2DCoord(buf);
+    this._writeTxtCubeCoord(buf);
+    this._writeObjPos(buf);
+    this._writeViewPos(buf);
+    this._writePos(buf);
+    if (this.bending) this._writeBendMain(buf);
+    else this._writeMain(buf);
     return buf.toString();
   }
+
+  //=====================================================================
 
   /// Writes the typical variables for the given source type
   /// with the given [name] to the fragment shader [buf].
@@ -864,7 +1083,7 @@ class MaterialLightConfig {
     if (this.viewPos) buf.writeln("varying vec3 viewPos;");
     buf.writeln("");
 
-    buf.writeln("uniform mat4 colorMat;");
+    if (this.colorMat)   buf.writeln("uniform mat4 colorMat;");
     if (this.invViewMat) buf.writeln("uniform mat4 invViewMat;");
     buf.writeln("");
 
@@ -937,7 +1156,9 @@ class MaterialLightConfig {
     if (this.reflection != ColorSourceType.None) fragParts.add("reflect(refl)");
     if (this.refraction != ColorSourceType.None) fragParts.add("refract(refl)");
     if (fragParts.length <= 0) fragParts.add("vec3(0.0, 0.0, 0.0)");
-    buf.writeln("   gl_FragColor = colorMat*vec4(" + fragParts.join(" + ") + ", alpha);");
+    String colorComp = "vec4(" + fragParts.join(" + ") + ", alpha);";
+    if (this.colorMat) buf.writeln("   gl_FragColor = colorMat*" + colorComp);
+    else               buf.writeln("   gl_FragColor = " + colorComp);
     buf.writeln("}");
     return buf.toString();
   }

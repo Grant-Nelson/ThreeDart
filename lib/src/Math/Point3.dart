@@ -77,10 +77,10 @@ class Point3 {
 
   /// The distance squared between this point and the [other] point.
   double distance2(Point3 other) {
-    double dx = this._x - other._y;
+    double dx = this._x - other._x;
     double dy = this._y - other._y;
     double dz = this._z - other._z;
-    return dx * dx + dy * dy + dz * dz;
+    return (dx*dx) + (dy*dy) + (dz*dz);
   }
 
   /// The distance between this point and the [other] point.

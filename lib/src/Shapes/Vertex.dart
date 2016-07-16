@@ -16,10 +16,12 @@ class Vertex {
   Math.Vector3 _txtCube;
   Math.Color4 _clr;
   double _weight;
+  double _bending;
 
   /// Creates a new vertex with the default values.
   Vertex({Math.Point3 loc: null, Math.Vector3 norm: null, Math.Vector3 binm: null,
-          Math.Point2 txt2D: null, Math.Vector3 txtCube: null, Math.Color4 clr: null, double weight: 0.0}) {
+          Math.Point2 txt2D: null, Math.Vector3 txtCube: null, Math.Color4 clr: null,
+          double weight: 0.0, double bending: 0.0}) {
     this._shape = null;
     this._points = new VertexPointCollection._(this);
     this._lines = new VertexLineCollection._(this);
@@ -33,6 +35,7 @@ class Vertex {
     this._txtCube = txtCube;
     this._clr = clr;
     this._weight = weight;
+    this._bending = bending;
   }
 
   /// Creates a copy of the vertex values.
@@ -44,7 +47,8 @@ class Vertex {
       txt2D:   (this._txt2D   == null)? null: this._txt2D.copy(),
       txtCube: (this._txtCube == null)? null: this._txtCube.copy(),
       clr:     (this._clr     == null)? null: this._clr.copy(),
-      weight:  this._weight
+      weight:  this._weight,
+      bending: this._bending
     );
   }
 
@@ -141,6 +145,16 @@ class Vertex {
     }
   }
 
+  /// The bending value of the vertex.
+  double get bending => this._bending;
+  set bending(double bending) {
+    if (this._bending != bending) {
+      this._bending = bending;
+      if (this._shape != null)
+        this._shape.onVertexModified(this);
+    }
+  }
+
   /// Gets the list of doubles for the vertex component for the given [type].
   List<double> listFor(Data.VertexType type) {
     if (type == Data.VertexType.Pos) {
@@ -166,6 +180,8 @@ class Vertex {
       else return this._clr.toList();
     } else if (type == Data.VertexType.Weight)
       return [ this._weight ];
+    else if (type == Data.VertexType.Bending)
+      return [ this._bending ];
     else return [];
   }
 
@@ -240,6 +256,7 @@ class Vertex {
     if (this._txtCube != ver._txtCube) return false;
     if (this._clr != ver._clr) return false;
     if (Math.Comparer.equals(this._weight, ver._weight)) return false;
+    if (Math.Comparer.equals(this._bending, ver._bending)) return false;
     return true;
   }
 
@@ -263,6 +280,7 @@ class Vertex {
     if (this._clr != null) parts.add(this._clr.toString());
     else                   parts.add("-");
     parts.add(Math.formatDouble(this._weight));
+    parts.add(Math.formatDouble(this._bending));
     String result = parts.join(", ");
     return "$indent{$result}";
   }

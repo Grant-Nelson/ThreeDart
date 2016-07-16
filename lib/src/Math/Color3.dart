@@ -49,6 +49,26 @@ class Color3 {
     return new Color3(values[0], values[1], values[2]);
   }
 
+  /// Constructs a new [Color3] instance given the hue, saturation, and value.
+  ///
+  /// [hue], [value], and [saturation] are from 0.0 to 1.0.
+  factory Color3.fromHVS(double hue, double value, double saturation) {
+  	hue *= 6.0; // sector 0 to 5
+  	int index = hue.floor();
+  	double fract = hue - index; // factorial part of h
+  	double p = value*(1.0 - saturation);
+  	double q = value*(1.0 - saturation*fract);
+  	double t = value*(1.0 - saturation*(1.0 - fract));
+  	switch (index) {
+  		case 0: return new Color3(value, t, p);
+  		case 1: return new Color3(q, value, p);
+  		case 2: return new Color3(p, value, t);
+  		case 3: return new Color3(p, q, value);
+  		case 4: return new Color3(t, p, value);
+  		default: return new Color3(value, p, q);
+  	}
+  }
+
   /// The red component between 0.0 and 1.0 inclusively.
   double get red => this._red;
   set red(double red) => this._red = clampVal(red);

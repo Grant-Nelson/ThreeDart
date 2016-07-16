@@ -4,31 +4,34 @@ part of ThreeDart.Data;
 class VertexType {
 
   /// [None] indicates no vertex type at all.
-  static VertexType None = new VertexType._(0x00);
+  static VertexType None = new VertexType._(0x0000);
 
   /// [Pos] indicates 3D positional data.
-  static VertexType Pos = new VertexType._(0x01);
+  static VertexType Pos = new VertexType._(0x0001);
 
   /// [Norm] indicates 3D normal data.
-  static VertexType Norm = new VertexType._(0x02);
+  static VertexType Norm = new VertexType._(0x0002);
 
   /// [Binm] indicates 3D binormal data.
-  static VertexType Binm = new VertexType._(0x04);
+  static VertexType Binm = new VertexType._(0x0004);
 
   /// [Txt2D] indicates 2D texture data.
-  static VertexType Txt2D = new VertexType._(0x08);
+  static VertexType Txt2D = new VertexType._(0x0008);
 
   /// [TxtCube] indicates cube texture data.
-  static VertexType TxtCube = new VertexType._(0x10);
+  static VertexType TxtCube = new VertexType._(0x0010);
 
   /// [Clr3] indicates RGB color data.
-  static VertexType Clr3 = new VertexType._(0x20);
+  static VertexType Clr3 = new VertexType._(0x0020);
 
   /// [Clr4] indicates RGBA color data.
-  static VertexType Clr4 = new VertexType._(0x40);
+  static VertexType Clr4 = new VertexType._(0x0040);
 
   /// [Weight] indicates an additional single float data.
-  static VertexType Weight = new VertexType._(0x80);
+  static VertexType Weight = new VertexType._(0x0080);
+
+  /// [Bending] indicates float data for bending a shape.
+  static VertexType Bending = new VertexType._(0x0100);
 
   /// The combined vertex type value.
   final int _value;
@@ -60,6 +63,7 @@ class VertexType {
     if (this.has(Clr3))    result++;
     if (this.has(Clr4))    result++;
     if (this.has(Weight))  result++;
+    if (this.has(Bending)) result++;
     return result;
   }
 
@@ -74,6 +78,7 @@ class VertexType {
     if (this.has(Clr3))    result += 3;
     if (this.has(Clr4))    result += 4;
     if (this.has(Weight))  result += 1;
+    if (this.has(Bending)) result += 1;
     return result;
   }
 
@@ -112,6 +117,10 @@ class VertexType {
       if (count == index) return Weight;
       count++;
     }
+    if (this.has(Bending)) {
+      if (count == index) return Bending;
+      count++;
+    }
     return None;
   }
 
@@ -148,6 +157,10 @@ class VertexType {
     }
     if (this.has(Weight)) {
       if (type == Weight) return result;
+      result++;
+    }
+    if (this.has(Bending)) {
+      if (type == Bending) return result;
       //result++;
     }
     return -1;
@@ -186,7 +199,11 @@ class VertexType {
     }
     if (this.has(Weight)) {
       if (type == Weight) return result;
-      //result += 1;
+      result += 1;
+    }
+    if (this.has(Bending)) {
+      if (type == Bending) return result;
+      result += 1;
     }
     return -1;
   }
@@ -202,6 +219,7 @@ class VertexType {
     if (this.has(Clr3))    parts.add("Clr3");
     if (this.has(Clr4))    parts.add("Clr4");
     if (this.has(Weight))  parts.add("Weight");
+    if (this.has(Bending)) parts.add("Bending");
     if (parts.length <= 0) return "None";
     return parts.join("|");
   }

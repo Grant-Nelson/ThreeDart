@@ -55,6 +55,8 @@ void main() {
     ..add("Colors",          (bool show) { tech.showColorFill      = show; })
     ..add("Textures2D",      (bool show) { tech.showTxt2DColor     = show; })
     ..add("TexturesCube",    (bool show) { tech.showTxtCube        = show; })
+    ..add("Weight",          (bool show) { tech.showWeight         = show; })
+    ..add("Bending",         (bool show) { tech.showBending        = show; })
     ..add("Axis",            (bool show) { tech.showAxis           = show; }, true)
     ..add("AABB",            (bool show) { tech.showAABB           = show; });
 

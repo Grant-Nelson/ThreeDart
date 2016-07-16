@@ -36,9 +36,17 @@ and complex surfaces.
 ###### Cartoon Shader
 A basic outline shader and cell shader for drawing cartoons.
 
+###### LED Sign Shader
+A shader which makes the image look like round or square pixelated
+points to simulate old LED red signs, CRTs, and oscilloscopes.
+
+###### Bloom Shader
+A shader which has a high and low cut-off for handing light blooms
+for bright lights similar to glinting and glare.
+
 ###### MaterialLight Improvements
-Displacement map, several bend weights,
-shininess map, and several presets with built in textures.
+Displacement map, shininess map,
+and several presets with built in textures.
 Also need better error messages such as when a light is
 required but no lights are included.
 

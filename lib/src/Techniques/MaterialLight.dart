@@ -7,6 +7,7 @@ class MaterialLight extends Technique {
   Math.Matrix3 _txt2DMat;
   Math.Matrix4 _txtCubeMat;
   Math.Matrix4 _colorMat;
+  List<Math.Matrix4> _bendMats;
 
   Shaders.ColorSourceType _emissionType;
   Math.Color3 _emissionClr;
@@ -60,9 +61,10 @@ class MaterialLight extends Technique {
   /// Creates a new material/light technique.
   MaterialLight() {
     this._shader = null;
-    this._txt2DMat = new Math.Matrix3.identity();
-    this._txtCubeMat = new Math.Matrix4.identity();
-    this._colorMat = new Math.Matrix4.identity();
+    this._txt2DMat = null;
+    this._txtCubeMat = null;
+    this._colorMat = null;
+    this._bendMats = new List<Math.Matrix4>();
     this.clearEmission();
     this.clearAmbient();
     this.clearDiffuse();
@@ -80,18 +82,31 @@ class MaterialLight extends Technique {
 
   /// The 2D texture modification matrix.
   Math.Matrix3 get texture2DMatrix => this._txt2DMat;
-  set texture2DMatrix(Math.Matrix3 mat) =>
-    this._txt2DMat = (mat == null)? new Math.Matrix3.identity(): mat;
+  set texture2DMatrix(Math.Matrix3 mat) {
+    if (Math.xor(this._txt2DMat == null, mat == null))
+      this._shader = null;
+    this._txt2DMat = mat;
+  }
 
   /// The cube texture modification matrix.
   Math.Matrix4 get textureCubeMatrix => this._txtCubeMat;
-  set textureCubeMatrix(Math.Matrix4 mat) =>
-    this._txtCubeMat = (mat == null)? new Math.Matrix4.identity(): mat;
+  set textureCubeMatrix(Math.Matrix4 mat) {
+    if (Math.xor(this._txtCubeMat == null, mat == null))
+      this._shader = null;
+    this._txtCubeMat = mat;
+  }
 
   /// The color modification matrix.
   Math.Matrix4 get colorMatrix => this._colorMat;
-  set colorMatrix(Math.Matrix4 mat) =>
-    this._colorMat = (mat == null)? new Math.Matrix4.identity(): mat;
+  set colorMatrix(Math.Matrix4 mat) {
+    if (Math.xor(this._colorMat == null, mat == null))
+      this._shader = null;
+    this._colorMat = mat;
+  }
+
+  /// TODO: Make a collection so that the shader can be cleared out.
+  /// The list of matrices for bending the shape by weights.
+  List<Math.Matrix4> get blendMatrices => this._bendMats;
 
   /// Removes any emission from the material.
   void clearEmission() {
@@ -642,22 +657,26 @@ class MaterialLight extends Technique {
     this._alphaCube = txt;
   }
 
-  /// Calculates a limit for the lights for the shader from the current number of lights.
-  int _lightLimit(int count) {
+  /// Calculates a limit for the lights and other arrays for the shader from
+  /// the current number of lights and lengths. This helps reduce and reuse
+  /// shaders with similar number of attributes.
+  int _lengthLimit(int count) {
     return ((count + 3) ~/ 4) * 4;
   }
 
   /// Creates the configuration for this shader.
   Shaders.MaterialLightConfig _config() {
-    int dirLight      = this._lightLimit(this._lights._dirLights.length);
-    int pointLight    = this._lightLimit(this._lights._pntLights.length);
-    int spotLight     = this._lightLimit(this._lights._spotLights.length);
-    int txtDirLight   = this._lightLimit(this._lights._txtDirLights.length);
-    int txtPointLight = this._lightLimit(this._lights._txtPntLights.length);
-    int txtSpotLight  = this._lightLimit(this._lights._txtSpotLights.length);
-    return new Shaders.MaterialLightConfig(this._emissionType, this._ambientType,
-      this._diffuseType, this._invDiffuseType, this._specularType, this._bumpyType,
-      this._reflectionType, this._refractionType, this._alphaType,
+    int dirLight      = this._lengthLimit(this._lights._dirLights.length);
+    int pointLight    = this._lengthLimit(this._lights._pntLights.length);
+    int spotLight     = this._lengthLimit(this._lights._spotLights.length);
+    int txtDirLight   = this._lengthLimit(this._lights._txtDirLights.length);
+    int txtPointLight = this._lengthLimit(this._lights._txtPntLights.length);
+    int txtSpotLight  = this._lengthLimit(this._lights._txtSpotLights.length);
+    int bendMats      = this._lengthLimit(this._bendMats.length);
+    return new Shaders.MaterialLightConfig(
+      this._txt2DMat != null, this._txtCubeMat != null, this._colorMat != null, bendMats,
+      this._emissionType, this._ambientType, this._diffuseType, this._invDiffuseType, this._specularType,
+      this._bumpyType, this._reflectionType, this._refractionType, this._alphaType,
       dirLight, pointLight, spotLight, txtDirLight, txtPointLight, txtSpotLight);
   }
 
@@ -698,18 +717,31 @@ class MaterialLight extends Technique {
       if (cfg.binm)    cache.findAttribute(Data.VertexType.Binm).attr    = this._shader.binmAttr.loc;
       if (cfg.txt2D)   cache.findAttribute(Data.VertexType.Txt2D).attr   = this._shader.txt2DAttr.loc;
       if (cfg.txtCube) cache.findAttribute(Data.VertexType.TxtCube).attr = this._shader.txtCubeAttr.loc;
+      if (cfg.bending) cache.findAttribute(Data.VertexType.Bending).attr = this._shader.bendAttr.loc;
       obj.cache = cache;
     }
 
     List<Textures.Texture> textures = new List<Textures.Texture>();
     this._shader.bind(state);
 
-    if (cfg.objMat)     this._shader.objectMatrix = state.object.matrix;
-    if (cfg.viewObjMat) this._shader.viewObjectMatrix = state.viewObjectMatrix;
-    this._shader.projectViewObjectMatrix = state.projectionViewObjectMatrix;
-    if (cfg.txt2D)   this._shader.texture2DMatrix = this._txt2DMat;
-    if (cfg.txtCube) this._shader.textureCubeMatrix = this._txtCubeMat;
-    this._shader.colorMatrix = this._colorMat;
+    if (cfg.objMat)         this._shader.objectMatrix = state.object.matrix;
+    if (cfg.viewObjMat)     this._shader.viewObjectMatrix = state.viewObjectMatrix;
+    if (cfg.projViewObjMat) this._shader.projectViewObjectMatrix = state.projectionViewObjectMatrix;
+    if (cfg.viewMat)        this._shader.viewMatrix = state.view.matrix;
+    if (cfg.projViewMat)    this._shader.projectViewMatrix = state.projectionViewMatrix;
+
+    if (cfg.txt2DMat)   this._shader.texture2DMatrix = this._txt2DMat;
+    if (cfg.txtCubeMat) this._shader.textureCubeMatrix = this._txtCubeMat;
+    if (cfg.colorMat)   this._shader.colorMatrix = this._colorMat;
+
+    if (cfg.bendMats > 0) {
+      int count = this._bendMats.length;
+      this._shader.bendMatricesCount = count;
+      Math.Matrix4 projViewMat = state.projectionViewMatrix;
+      for (int i = 0; i < count; ++i)  {
+        this._shader.setBendMatrix(i, projViewMat*this._bendMats[i]);
+      }
+    }
 
     switch (cfg.emission) {
       case Shaders.ColorSourceType.None: break;

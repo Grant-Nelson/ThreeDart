@@ -26,5 +26,6 @@ part 'VertexCollection.dart';
 part 'VertexFaceCollection.dart';
 part 'VertexLineCollection.dart';
 part 'VertexMatcher.dart';
+part 'VertexMeasure.dart';
 part 'VertexMerger.dart';
 part 'VertexPointCollection.dart';
