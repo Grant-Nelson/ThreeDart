@@ -106,7 +106,7 @@ class MaterialLight extends Technique {
 
   /// TODO: Make a collection so that the shader can be cleared out.
   /// The list of matrices for bending the shape by weights.
-  List<Math.Matrix4> get blendMatrices => this._bendMats;
+  List<Math.Matrix4> get bendMatrices => this._bendMats;
 
   /// Removes any emission from the material.
   void clearEmission() {
@@ -737,9 +737,8 @@ class MaterialLight extends Technique {
     if (cfg.bendMats > 0) {
       int count = this._bendMats.length;
       this._shader.bendMatricesCount = count;
-      Math.Matrix4 projViewMat = state.projectionViewMatrix;
       for (int i = 0; i < count; ++i)  {
-        this._shader.setBendMatrix(i, projViewMat*this._bendMats[i]);
+        this._shader.setBendMatrix(i, this._bendMats[i]);
       }
     }
 

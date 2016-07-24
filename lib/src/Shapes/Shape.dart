@@ -101,7 +101,7 @@ class Shape {
   }
 
   /// Calculate the weight using a vertex measuring tool.
-  void calculateWeights({VertexMeasure measure: null, double exponent: 0.0, double maximum: 1.0}) {
+  void calculateWeights([VertexMeasure measure = null]) {
     if (measure == null) {
       Math.Region3 aabb = calculateAABB();
       double length = new Math.Vector3(aabb.dx, aabb.dy, aabb.dz).length();
@@ -110,17 +110,15 @@ class Shape {
         center: new Math.Point3(aabb.x, aabb.y, aabb.z),
         scalar: 1.0/length);
     }
-    final double power = pow(2.0, exponent);
     final int count = this._vertices.length;
     for (int i = count-1; i >= 0; i--) {
       Vertex ver = this._vertices[i];
-      double dist = measure.measure(ver);
-      ver.weight = Math.clampVal(1.0 - pow(dist, power), 0.0, maximum);
+      ver.weight = measure.measure(ver);
     }
   }
 
   /// Calculate the bending using a vertex measuring tool.
-  void calculateBending({VertexMeasure measure: null, double exponent: 0.0, double maximum: 1.0}) {
+  void calculateBending([VertexMeasure measure = null]) {
     if (measure == null) {
       Math.Region3 aabb = calculateAABB();
       double length = new Math.Vector3(aabb.dx, aabb.dy, aabb.dz).length();
@@ -129,12 +127,10 @@ class Shape {
         center: new Math.Point3(aabb.x, aabb.y, aabb.z),
         scalar: 1.0/length);
     }
-    final double power = pow(2.0, exponent);
     final int count = this._vertices.length;
     for (int i = count-1; i >= 0; i--) {
       Vertex ver = this._vertices[i];
-      double dist = measure.measure(ver);
-      ver.bending = Math.clampVal(1.0 - pow(dist, power), 0.0, maximum);
+      ver.bending = measure.measure(ver);
     }
   }
 

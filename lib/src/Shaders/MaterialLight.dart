@@ -10,7 +10,7 @@ class MaterialLight extends Shader {
   Attribute _normAttr;
   Attribute _txt2DAttr;
   Attribute _txtCubeAttr;
-  Attribute _blendAttr;
+  Attribute _bendAttr;
 
   UniformMat4 _objMat;
   UniformMat4 _viewObjMat;
@@ -120,7 +120,7 @@ class MaterialLight extends Shader {
     this._binmAttr    = this.attributes["binmAttr"];
     this._txt2DAttr   = this.attributes["txt2DAttr"];
     this._txtCubeAttr = this.attributes["txtCubeAttr"];
-    this._blendAttr   = this.attributes["blendAttr"];
+    this._bendAttr    = this.attributes["bendAttr"];
 
     // print(numberLines(this.uniforms.toString()));
     // print(this._cfg.vertexType);
@@ -428,7 +428,7 @@ class MaterialLight extends Shader {
   Attribute get txtCubeAttr => this._txtCubeAttr;
 
   /// The bending value shader attribute.
-  Attribute get bendAttr => this._blendAttr;
+  Attribute get bendAttr => this._bendAttr;
 
   /// The object matrix.
   Math.Matrix4 get objectMatrix => this._objMat.getMatrix4();

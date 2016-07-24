@@ -307,7 +307,7 @@ class MaterialLightConfig {
     if (!this.objPos) return;
     buf.writeln("varying vec3 objPos;");
     buf.writeln("");
-    buf.writeln("vec3 setObjPos(mat4 objMatrix)");
+    buf.writeln("vec3 getObjPos(mat4 objMatrix)");
     buf.writeln("{");
     buf.writeln("   return (objMatrix*vec4(posAttr, 1.0)).xyz;");
     buf.writeln("}");
@@ -366,7 +366,7 @@ class MaterialLightConfig {
     buf.writeln("};");
     buf.writeln("uniform int bendMatCount;");
     buf.writeln("uniform BendingValue bendValues[${this.bendMats}];");
-    buf.writeln("attribute float blendAttr;");
+    buf.writeln("attribute float bendAttr;");
     buf.writeln("");
 
     buf.writeln("void getValues(mat4 objMatrix)");
@@ -423,15 +423,13 @@ class MaterialLightConfig {
 
     buf.writeln("void main()");
     buf.writeln("{");
-    buf.writeln("   int index = int(floor(blendAttr));");
-    buf.writeln("   float inter = blendAttr - float(index);");
+    buf.writeln("   float bend = bendAttr*float(bendMatCount);");
+    buf.writeln("   int index = int(floor(bend));");
+    buf.writeln("   float inter = bend - float(index);");
     buf.writeln("   if(index < 0) getValues(objMat);");
-    buf.writeln("   else if(index == 0)");
-    buf.writeln("   {");
-    buf.writeln("      if(bendMatCount < 1) getValues(objMat);");
-    buf.writeln("      else getLerpValues(objMat, bendValues[0].mat, inter);");
-    buf.writeln("   }");
-    buf.writeln("   else if(index >= bendMatCount - 1) getValues(bendValues[bendMatCount-1].mat);");
+    buf.writeln("   else if(bendMatCount <= 0) getValues(objMat);");
+    buf.writeln("   else if(index >= bendMatCount) getValues(bendValues[bendMatCount-1].mat);");
+    buf.writeln("   else if(index == 0) getLerpValues(objMat, bendValues[0].mat, inter);");
     buf.writeln("   else getLerpValues(bendValues[index-1].mat, bendValues[index].mat, inter);");
     buf.writeln("}");
     buf.writeln("");

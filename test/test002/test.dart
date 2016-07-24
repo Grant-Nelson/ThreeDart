@@ -76,7 +76,7 @@ void main() {
     ..add("Disk",          () { setShape(Shapes.disk()); })
     ..add("Disk+",         () { setShape(Shapes.disk(sides: 30)); })
     ..add("Cylinder",      () { setShape(Shapes.cylinder()); })
-    ..add("Cylinder+",     () { setShape(Shapes.cylinder(sides: 16, div: 4)); })
+    ..add("Cylinder+",     () { setShape(Shapes.cylinder(sides: 16, div: 8)); })
     ..add("Cone",          () { setShape(Shapes.cylinder(topRadius: 0.0, sides: 12, capTop: false)); })
     ..add("Cylindrical",   () { setShape(Shapes.cylindrical(sides: 50, div: 25,
                                 radiusHndl: (double u, double v) => cos(v*4.0*PI + PI)*0.2 + cos(u*6.0*PI)*0.3 + 0.8)); })
