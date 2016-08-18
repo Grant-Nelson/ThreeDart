@@ -35,7 +35,7 @@ void main() {
   Techniques.Normal normalTech = new Techniques.Normal()
     ..bumpyTextureCube = td.textureLoader.loadCubeFromPath("../resources/diceBumpMap");
 
-  Views.BackTarget normalTarget = new Views.BackTarget(1024, 1024)
+  Views.BackTarget normalTarget = new Views.BackTarget(800, 600)
     ..color = new Math.Color4(0.5, 0.5, 1.0, 1.0);
 
   Scenes.EntityPass normalPass = new Scenes.EntityPass()
@@ -50,7 +50,7 @@ void main() {
   ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
   Views.Perspective userCamara = new Views.Perspective(mover: secondMover);
 
-  Views.BackTarget colorTarget = new Views.BackTarget(512, 512)
+  Views.BackTarget colorTarget = new Views.BackTarget(800, 600)
     ..clearColor = false;
 
   ThreeDart.Entity colorObj = new ThreeDart.Entity()
@@ -83,7 +83,19 @@ void main() {
   Scenes.CoverPass distortPass = new Scenes.CoverPass()
     ..tech = distortTech;
 
-  td.scene = new Scenes.Compound(passes: [skybox, colorPass, normalPass, distortPass]);
+  Techniques.TextureLayout layoutTech = new Techniques.TextureLayout()
+    ..entries.add(new Techniques.TextureLayoutEntry(
+      texture: normalTarget.colorTexture,
+      destination: new Math.Region2(0.0, 0.8, 0.2, 0.2),
+      flip: true))
+    ..entries.add(new Techniques.TextureLayoutEntry(
+      texture: colorTarget.colorTexture,
+      destination: new Math.Region2(0.0, 0.6, 0.2, 0.2)));
+  Scenes.CoverPass layout = new Scenes.CoverPass()
+    ..target = new Views.FrontTarget(clearColor: false)
+    ..tech = layoutTech;
+
+  td.scene = new Scenes.Compound(passes: [skybox, colorPass, normalPass, distortPass, layout]);
 
   var update;
   update = (num t) {

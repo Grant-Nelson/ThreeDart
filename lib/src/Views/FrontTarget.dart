@@ -11,19 +11,25 @@ class FrontTarget extends Target {
   Math.Region2 _region;
 
   /// Constructs a new front target.
-  FrontTarget() {
-    this._color = new Math.Color4.black();
-    this._clearColor = true;
-    this._depth = 2000.0;
-    this._clearDepth = true;
-    this._stencil = 0;
-    this._clearStencil = false;
-    this._region = new Math.Region2(0.0, 0.0, 1.0, 1.0);
+  FrontTarget({Math.Color4  color:        null,
+               bool         clearColor:   true,
+               double       depth:        2000.0,
+               bool         clearDepth:   true,
+               int          stencil:      0,
+               bool         clearStencil: false,
+               Math.Region2 region:       null}) {
+    this.color = color;
+    this.clearColor = clearColor;
+    this.depth = depth;
+    this.clearDepth = clearDepth;
+    this.stencil = stencil;
+    this.clearStencil = clearStencil;
+    this.region = region;
   }
 
   /// The clear color to clear the target to before rendering.
   Math.Color4 get color => this._color;
-  set color(Math.Color4 color) => this._color = color;
+  set color(Math.Color4 color) => this._color = color ?? new Math.Color4.black();
 
   /// Indicates if the color target should be cleared with the clear color.
   bool get clearColor => this._clearColor;
@@ -48,7 +54,7 @@ class FrontTarget extends Target {
   /// The region of the front target to render to.
   /// <0, 0> is top left corner and <1, 1> is botton right.
   Math.Region2 get region => this._region;
-  set region(Math.Region2 region) => this._region = region;
+  set region(Math.Region2 region) => this._region = region ?? new Math.Region2(0.0, 0.0, 1.0, 1.0);
 
   /// Binds this target to the given state so that the following render
   /// will target the front target.
@@ -58,8 +64,8 @@ class FrontTarget extends Target {
     state.gl.enable(WebGL.DEPTH_TEST);
     state.gl.depthFunc(WebGL.LESS);
 
-    int width  = state.gl.drawingBufferWidth;
-    int height = state.gl.drawingBufferHeight;
+    int width    = state.gl.drawingBufferWidth;
+    int height   = state.gl.drawingBufferHeight;
     int xOffset  = (this._region.x *width ).round();
     int yOffset  = (this._region.y *height).round();
     state.width  = (this._region.dx*width ).round();

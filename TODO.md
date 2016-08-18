@@ -47,8 +47,6 @@ for bright lights similar to glinting and glare.
 ###### MaterialLight Improvements
 Displacement map, shininess map,
 and several presets with built in textures.
-Also need better error messages such as when a light is
-required but no lights are included.
 
 ### Future IO Features
 ###### Obj and Mtl Improvements

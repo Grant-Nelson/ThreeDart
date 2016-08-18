@@ -1,12 +1,12 @@
 part of ThreeDart.Views;
 
-// TODO: Comment All
-
 /// A rendering target which renders to a texture instead of the screen.
 class BackTarget extends Target {
 
   int _width;
   int _height;
+  int _actualWidth;
+  int _actualHeight;
   bool _hasDepth;
   WebGL.Framebuffer _framebuffer;
   WebGL.Texture _colorBuffer;
@@ -20,6 +20,8 @@ class BackTarget extends Target {
 
   /// Creates a new back target.
   BackTarget(int this._width, int this._height, {bool hasDepth: true}) {
+    this._actualWidth = this._height;
+    this._actualHeight = this._height;
     this._hasDepth = hasDepth;
     this._framebuffer = null;
     this._colorBuffer = null;
@@ -32,11 +34,17 @@ class BackTarget extends Target {
     this._region = new Math.Region2(0.0, 0.0, 1.0, 1.0);
   }
 
-  /// The width of the back buffer.
+  /// The requested width in pixels of the back buffer.
   int get width => this._width;
 
-  /// The height of the back buffer.
+  /// The requested height in pixels of the back buffer.
   int get height => this._height;
+
+  /// The actual width in pixel of the back buffer.
+  int get actualWidth => this._actualWidth;
+
+  /// The actual height in pixel of the back buffer.
+  int get actualHeight => this._actualHeight;
 
   /// Indicates is a back buffer has ben attached to this back target.
   /// True indicates depth is enabled.
@@ -68,24 +76,18 @@ class BackTarget extends Target {
 
   /// Initializes the back target.
   void _initialize(WebGL.RenderingContext gl) {
-    int maxSize = gl.getParameter(WebGL.MAX_TEXTURE_SIZE);
-    if (this._width > maxSize) this._width = maxSize;
-    if (this._height > maxSize) this._height = maxSize;
-
     // Setup color buffer
-    this._colorBuffer = gl.createTexture();
+    this._colorTxt.replace(new Textures.Texture2D.fromSize(gl, this._width, this._height));
+    this._colorBuffer  = this._colorTxt.texture;
+    this._actualWidth  = this._colorTxt.actualWidth;
+    this._actualHeight = this._colorTxt.actualHeight;
     gl.bindTexture(WebGL.TEXTURE_2D, this._colorBuffer);
-    gl.texParameteri(WebGL.TEXTURE_2D, WebGL.TEXTURE_WRAP_S, WebGL.MIRRORED_REPEAT);
-    gl.texParameteri(WebGL.TEXTURE_2D, WebGL.TEXTURE_WRAP_T, WebGL.MIRRORED_REPEAT);
-    gl.texParameteri(WebGL.TEXTURE_2D, WebGL.TEXTURE_MIN_FILTER, WebGL.LINEAR);
-    gl.texParameteri(WebGL.TEXTURE_2D, WebGL.TEXTURE_MAG_FILTER, WebGL.LINEAR);
-    gl.texImage2D(WebGL.TEXTURE_2D, 0, WebGL.RGBA, this._width, this._height, 0, WebGL.RGBA, WebGL.UNSIGNED_BYTE, null);
 
     // Setup depth buffer.
     if (this._hasDepth) {
       this._depthBuffer = gl.createRenderbuffer();
       gl.bindRenderbuffer(WebGL.RENDERBUFFER, this._depthBuffer);
-      gl.renderbufferStorage(WebGL.RENDERBUFFER, WebGL.DEPTH_COMPONENT16, this._width, this._height);
+      gl.renderbufferStorage(WebGL.RENDERBUFFER, WebGL.DEPTH_COMPONENT16, this._actualWidth, this._actualHeight);
     }
 
     // Bind render buffers to a render target frame buffer.
@@ -96,7 +98,6 @@ class BackTarget extends Target {
       gl.framebufferRenderbuffer(WebGL.FRAMEBUFFER, WebGL.DEPTH_ATTACHMENT, WebGL.RENDERBUFFER, this._depthBuffer);
 
     // Clean up and release buffers.
-    this._colorTxt.setInternal(this._colorBuffer);
     gl.bindTexture(WebGL.TEXTURE_2D, null);
     if (this._hasDepth) gl.bindRenderbuffer(WebGL.RENDERBUFFER, null);
     gl.bindFramebuffer(WebGL.FRAMEBUFFER, null);
@@ -113,9 +114,13 @@ class BackTarget extends Target {
     if (this._hasDepth) state.gl.enable(WebGL.DEPTH_TEST);
     state.gl.depthFunc(WebGL.LESS);
 
-    state.width = this._width;
-    state.height = this._height;
-    state.gl.viewport(0, 0, this._width, this._height);
+    state.width  = (this._region.dx*this._width ).round();
+    state.height = (this._region.dy*this._height).round();
+    int xOffset  = (this._region.x *this._actualWidth ).round();
+    int yOffset  = (this._region.y *this._actualHeight).round();
+    int width    = (this._region.dx*this._actualWidth ).round();
+    int height   = (this._region.dy*this._actualHeight).round();
+    state.gl.viewport(xOffset, yOffset, width, height);
 
     int clearMask = 0;
     if (this._clearDepth && this._hasDepth) {

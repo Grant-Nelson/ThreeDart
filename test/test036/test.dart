@@ -1,7 +1,7 @@
 // Copyright (c) 2016, SnowGremlin. All rights reserved. Use of this source code
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
-library ThreeDart.test.test029;
+library ThreeDart.test.test036;
 
 import 'dart:html';
 
@@ -16,9 +16,8 @@ import 'package:ThreeDart/Lights.dart' as Lights;
 import '../common/common.dart' as common;
 
 void main() {
-  common.shellTest("Test 029", ["bumpMaps"],
-    "Test of bump distort pass. It renders the scene to a back buffer then "+
-    "paints that back buffer texture to the front buffer with a distortion.");
+  common.shellTest("Test 036", [],
+    "Test of the texture layout cover technique.");
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
 
@@ -29,8 +28,8 @@ void main() {
     ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
   Views.Perspective userCamara = new Views.Perspective(mover: secondMover);
 
-  Views.BackTarget colorTarget = new Views.BackTarget(800, 600)
-    ..clearColor = false;
+  Views.BackTarget target = new Views.BackTarget(800, 600)
+    ..color = new Math.Color4.transparent();
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..shape = Shapes.toroid();
@@ -44,35 +43,33 @@ void main() {
     ..specularColor = new Math.Color3(1.0, 0.0, 0.0)
     ..shininess = 10.0;
 
-  Scenes.CoverPass skybox = new Scenes.CoverPass.skybox(
-    td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg"))
-    ..target = colorTarget
-    ..camara = userCamara;
-
   Scenes.EntityPass pass = new Scenes.EntityPass()
     ..camara = userCamara
     ..tech = tech
-    ..target = colorTarget
+    ..target = target
     ..children.add(obj);
 
-  Techniques.Distort distortTech = new Techniques.Distort()
-    ..colorTexture = colorTarget.colorTexture
-    ..bumpMatrix = new Math.Matrix4.scale(0.05, 0.05, 0.05);
-  Scenes.CoverPass distortPass = new Scenes.CoverPass()
-    ..tech = distortTech;
+  Techniques.TextureLayout layout = new Techniques.TextureLayout(
+    backColor: new Math.Color4.black());
+  final int count = 3;
+  double scale = 1.0/count.toDouble();
+  for (int i = 0; i < count; ++i) {
+    double xOffset = i.toDouble()*scale;
+    for (int j = 0; j < count; ++j) {
+      double yOffset = j.toDouble()*scale;
+      layout.entries.add(new Techniques.TextureLayoutEntry(
+        texture: target.colorTexture,
+        destination: new Math.Region2(xOffset, yOffset, scale, scale)));
+    }
+  }
+  layout.entries.add(new Techniques.TextureLayoutEntry()
+    ..texture = target.colorTexture);
 
-  td.scene = new Scenes.Compound(passes: [skybox, pass, distortPass]);
+  Scenes.CoverPass layoutCover = new Scenes.CoverPass()
+    ..tech = layout
+    ..target = new Views.FrontTarget(color: new Math.Color4.black());
 
-  new common.Texture2DGroup("bumpMaps", (String fileName) {
-    distortTech.bumpTexture = td.textureLoader.load2DFromFile(fileName);
-  })
-    ..add("../resources/BumpMap1.png", true)
-    ..add("../resources/BumpMap2.png")
-    ..add("../resources/BumpMap3.png")
-    ..add("../resources/BumpMap4.png")
-    ..add("../resources/BumpMap5.png")
-    ..add("../resources/ScrewBumpMap.png")
-    ..add("../resources/CtrlPnlBumpMap.png");
+  td.scene = new Scenes.Compound(passes: [pass, layoutCover]);
 
   var update;
   update = (num t) {

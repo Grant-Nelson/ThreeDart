@@ -101,8 +101,8 @@ class ExpVertexMeasure extends VertexMeasure {
     this._divs = (divs <= 0.0)? 1.0: divs;
   }
 
-  /// Determins the distance from the center point of the given vertex
-  /// projected on the vector.
+  /// Determins the distance from the center point
+  /// of the given vertex projected on the vector.
   double measure(Vertex ver) {
     double dist = Math.clampVal(this._measure.measure(ver));
     double offset = (dist * this._divs).floorToDouble() / this._divs;

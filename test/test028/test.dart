@@ -61,7 +61,7 @@ void main() {
     ..shininess = 10.0
     ..bumpyTextureCube = td.textureLoader.loadCubeFromPath("../resources/diceBumpMap");
 
-  Views.BackTarget colorTarget = new Views.BackTarget(512, 512)
+  Views.BackTarget colorTarget = new Views.BackTarget(800, 600)
     ..clearColor = false;
 
   Scenes.CoverPass skybox = new Scenes.CoverPass.skybox(
@@ -75,7 +75,7 @@ void main() {
     ..tech = colorTech
     ..children.add(group);
 
-  Views.BackTarget depthTarget = new Views.BackTarget(256, 256);
+  Views.BackTarget depthTarget = new Views.BackTarget(400, 300);
   Scenes.EntityPass depthPass = new Scenes.EntityPass()
     ..camara = userCamara
     ..target = depthTarget
@@ -90,7 +90,18 @@ void main() {
       lowOffset: 8.0,
       depthLimit: 0.001);
 
-  td.scene = new Scenes.Compound(passes: [skybox, colorPass, depthPass, blurPass]);
+  Techniques.TextureLayout layoutTech = new Techniques.TextureLayout()
+    ..entries.add(new Techniques.TextureLayoutEntry(
+      texture: depthTarget.colorTexture,
+      destination: new Math.Region2(0.0, 0.8, 0.2, 0.2)))
+    ..entries.add(new Techniques.TextureLayoutEntry(
+      texture: colorTarget.colorTexture,
+      destination: new Math.Region2(0.0, 0.6, 0.2, 0.2)));
+  Scenes.CoverPass layout = new Scenes.CoverPass()
+    ..target = new Views.FrontTarget(clearColor: false)
+    ..tech = layoutTech;
+
+  td.scene = new Scenes.Compound(passes: [skybox, colorPass, depthPass, blurPass, layout]);
 
   var update;
   update = (num t) {

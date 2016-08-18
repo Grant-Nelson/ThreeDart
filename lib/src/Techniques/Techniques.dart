@@ -24,3 +24,4 @@ part 'MaterialLight.dart';
 part 'Normal.dart';
 part 'Skybox.dart';
 part 'Technique.dart';
+part 'TextureLayout.dart';

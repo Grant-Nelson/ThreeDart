@@ -51,7 +51,12 @@ class TextureLoader {
     html.ImageElement image = new html.ImageElement(src: path);
     Texture2D result = new Texture2D(texture: texture);
     image.onLoad.listen((_) {
+      result._width  = image.width;
+      result._height = image.height;
       image = this._resizeImage(image, this._max2DSize);
+      result._actualWidth  = image.width;
+      result._actualHeight = image.height;
+
       this._gl.bindTexture(WebGL.TEXTURE_2D, texture);
       this._gl.pixelStorei(WebGL.UNPACK_FLIP_Y_WEBGL, flipY? 1: 0);
       this._gl.texImage2D(WebGL.TEXTURE_2D, 0, WebGL.RGBA, WebGL.RGBA, WebGL.UNSIGNED_BYTE, image);
@@ -116,16 +121,17 @@ class TextureLoader {
 
   /// Resizes the given image to the maximum size proportional to the power of 2.
   html.ImageElement _resizeImage(html.ImageElement image, int maxSize) {
-    maxSize = Math.nearestPower(maxSize);
-    int size = math.max(image.width, image.height);
-    size = Math.nearestPower(size);
-    size = math.min(size, maxSize);
-    if ((image.width == size) && (image.height == size)) {
+    maxSize    = Math.nearestPower(maxSize);
+    int width  = Math.nearestPower(image.width);
+    int height = Math.nearestPower(image.height);
+    width  = math.min(width, maxSize);
+    height = math.min(height, maxSize);
+    if ((image.width == width) && (image.height == height)) {
       return image;
     } else {
       html.CanvasElement canvas = new html.CanvasElement()
-        ..width = size
-        ..height = size;
+        ..width  = width
+        ..height = height;
 
       var ctx = canvas.getContext('2d');
       ctx.drawImageScaled(image, 0, 0, canvas.width, canvas.height);

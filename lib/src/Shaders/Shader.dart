@@ -54,6 +54,7 @@ abstract class Shader extends Core.Bindable {
   /// Compiles a shader component from the given [shaderSource] for
   /// either the shader type fragment shader or vertex shader.
   WebGL.Shader _createShader(String shaderSource, int shaderType) {
+    // print(numberLines(shaderSource));
     WebGL.Shader shader = this._gl.createShader(shaderType);
     this._gl.shaderSource(shader, shaderSource);
     this._gl.compileShader(shader);

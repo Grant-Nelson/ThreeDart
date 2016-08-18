@@ -27,7 +27,7 @@ void main() {
     ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
   Views.Perspective rotaterCamara = new Views.Perspective(mover: firstMover);
 
-  Views.BackTarget backTarget = new Views.BackTarget(1024, 1024)
+  Views.BackTarget backTarget = new Views.BackTarget(512, 512)
     ..clearColor = false;
 
   Scenes.CoverPass skybox = new Scenes.CoverPass.skybox(

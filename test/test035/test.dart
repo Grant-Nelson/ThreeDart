@@ -11,17 +11,16 @@ import 'package:ThreeDart/Movers.dart' as Movers;
 import 'package:ThreeDart/Math.dart' as Math;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
-import 'package:ThreeDart/Views.dart' as Views;
 import 'package:ThreeDart/Lights.dart' as Lights;
 import '../common/common.dart' as common;
 
 void main() {
   common.shellTest("Test 035", [],
-    "A test of the Material Light Shader with a solid color directional lighting.");
+    "A test of the bending a shape with the Material Light Shader.");
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
 
-  Shapes.Shape shape = Shapes.cuboid(widthDiv: 100, heightDiv: 100)
+  Shapes.Shape shape = Shapes.cylinder(div: 100, sides: 20)
     ..calculateBending(new Shapes.ExpVertexMeasure(
       new Shapes.DirectionalVertexMeasure(
         center: new Math.Point3(0.0, 0.0, -1.0),
@@ -57,9 +56,9 @@ void main() {
     ..add(new Movers.Rotater(deltaYaw: 0.0, deltaPitch: 0.0, deltaRoll: 0.7));
 
   Movers.Mover mover2 = new Movers.Group()
-    ..add(new Movers.Rotater(deltaYaw: 0.0, deltaPitch: 0.0, deltaRoll: -1.0))
+    ..add(new Movers.Rotater(deltaYaw: 0.0, deltaPitch: 0.0, deltaRoll: -1.4))
     ..add(new Movers.Constant(new Math.Matrix4.translate(0.5, 0.0, 0.0)))
-    ..add(new Movers.Rotater(deltaYaw: 0.0, deltaPitch: 0.0, deltaRoll: 1.0));
+    ..add(new Movers.Rotater(deltaYaw: 0.0, deltaPitch: 0.0, deltaRoll: 1.4));
 
   Scenes.EntityPass pass = new Scenes.EntityPass()
     ..tech = tech
