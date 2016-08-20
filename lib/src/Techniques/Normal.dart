@@ -21,13 +21,11 @@ class Normal extends Technique {
 
   /// The 2D texture modification matrix.
   Math.Matrix3 get texture2DMatrix => this._txt2DMat;
-  set texture2DMatrix(Math.Matrix3 mat) =>
-    this._txt2DMat = (mat == null)? new Math.Matrix3.identity(): mat;
+  set texture2DMatrix(Math.Matrix3 mat) => this._txt2DMat = mat ?? new Math.Matrix3.identity();
 
   /// The cube texture modification matrix.
   Math.Matrix4 get textureCubeMatrix => this._txtCubeMat;
-  set textureCubeMatrix(Math.Matrix4 mat) =>
-    this._txtCubeMat = (mat == null)? new Math.Matrix4.identity(): mat;
+  set textureCubeMatrix(Math.Matrix4 mat) => this._txtCubeMat = mat ?? new Math.Matrix4.identity();
 
   /// Removes any normal distortion from the material.
   void clearBump() {

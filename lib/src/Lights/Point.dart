@@ -50,25 +50,21 @@ class Point implements Light {
 
   /// The color of the light.
   Math.Color3 get color => this._color;
-  set color(Math.Color3 color) =>
-    this._color = (color == null)? new Math.Color3.white(): color;
+  set color(Math.Color3 color) => this._color = color ?? new Math.Color3.white();
   Math.Color3 _color;
 
   /// The constant attenuation factor of the light.
   double get attenuation0 => this._attenuation0;
-  set attenuation0(double attenuation0) =>
-    this._attenuation0 = (attenuation0 == null)? 0.0: attenuation0;
+  set attenuation0(double attenuation0) => this._attenuation0 = attenuation0 ?? 0.0;
   double _attenuation0;
 
   /// The linear attenuation factor of the light.
   double get attenuation1 => this._attenuation1;
-  set attenuation1(double attenuation1) =>
-    this._attenuation1 = (attenuation1 == null)? 0.0: attenuation1;
+  set attenuation1(double attenuation1) => this._attenuation1 = attenuation1 ?? 0.0;
   double _attenuation1;
 
   /// The quadratic attenuation factor of the light.
   double get attenuation2 => this._attenuation2;
-  set attenuation2(double attenuation2) =>
-    this._attenuation2 = (attenuation2 == null)? 0.0: attenuation2;
+  set attenuation2(double attenuation2) => this._attenuation2 = attenuation2 ?? 0.0;
   double _attenuation2;
 }

@@ -33,12 +33,12 @@ class TexturedDirectional implements Light {
 
   /// Binds the light to the given [state].
   void bind(Core.RenderState state){
-    if(this.texture != null) this.texture.bind(state);
+    this.texture?.bind(state);
   }
 
   /// Unbinds the bound the light  from the given [state].
   void unbind(Core.RenderState state) {
-    if(this.texture != null) this.texture.unbind(state);
+    this.texture?.unbind(state);
   }
 
   /// The direction the light is pointing.
@@ -60,8 +60,7 @@ class TexturedDirectional implements Light {
 
   /// The color of the light.
   Math.Color3 get color => this._color;
-  set color(Math.Color3 color) =>
-    this._color = (color == null)? new Math.Color3.white(): color;
+  set color(Math.Color3 color) => this._color = color ?? new Math.Color3.white();
   Math.Color3 _color;
 
   /// The texture for the light.

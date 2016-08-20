@@ -26,8 +26,7 @@ class Skybox extends Technique {
 
   /// The sky box color scalar.
   Math.Color3 get boxColor => this._boxClr;
-  set boxColor(Math.Color3 color) =>
-    this._boxClr = (color == null)? new Math.Color3.white(): color;
+  set boxColor(Math.Color3 color) => this._boxClr = color ?? new Math.Color3.white();
 
   /// Updates this technique for the given state.
   void update(Core.RenderState state) {

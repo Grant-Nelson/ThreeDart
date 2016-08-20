@@ -187,7 +187,7 @@ class Entity implements Movers.Movable {
   /// and the shape is centered then offset by the given [offset].
   void resizeCenter([double size = 2.0, Math.Point3 offset = null]) {
     Math.Region3 aabb = this.calculateAABB();
-    if (offset == null) offset = new Math.Point3.zero();
+    offset = offset ?? new Math.Point3.zero();
     offset = offset - aabb.center;
     double maxSize = aabb.dx;
     if (aabb.dy > maxSize) maxSize = aabb.dy;
@@ -341,7 +341,7 @@ class Entity implements Movers.Movable {
   /// be a protected method. This method is exposed to that the entity is extended and
   /// these methods can be overwritten. If overwritten call this super method to still emit events.
   void onChanged() {
-    if (this._changed != null) this._changed.emit();
+    this._changed?.emit();
   }
 
   /// Called when the shape is modified.
@@ -363,7 +363,7 @@ class Entity implements Movers.Movable {
   /// be a protected method. This method is exposed to that the entity is extended and
   /// these methods can be overwritten. If overwritten call this super method to still emit events.
   void onShapeChanged(Shapes.Shape oldShape, Shapes.Shape newShape) {
-    if (this._shapeChanged != null) this._shapeChanged.emit();
+    this._shapeChanged?.emit();
     this.onChanged();
   }
 
@@ -375,7 +375,7 @@ class Entity implements Movers.Movable {
   /// be a protected method. This method is exposed to that the entity is extended and
   /// these methods can be overwritten. If overwritten call this super method to still emit events.
   void onTechChanged(Techniques.Technique oldTech, Techniques.Technique newTech) {
-    if (this._techChanged != null) this._techChanged.emit();
+    this._techChanged?.emit();
     this.onChanged();
   }
 
@@ -387,7 +387,7 @@ class Entity implements Movers.Movable {
   /// be a protected method. This method is exposed to that the entity is extended and
   /// these methods can be overwritten. If overwritten call this super method to still emit events.
   void onMoverChanged(Movers.Mover oldMover, Movers.Mover newMover) {
-    if (this._moverChanged != null) this._moverChanged.emit();
+    this._moverChanged?.emit();
     this.onChanged();
   }
 
@@ -399,7 +399,7 @@ class Entity implements Movers.Movable {
   /// be a protected method. This method is exposed to that the entity is extended and
   /// these methods can be overwritten. If overwritten call this super method to still emit events.
   void onMatrixChanged(Math.Matrix4 oldMatrix, Math.Matrix4 newMatrix) {
-    if (this._matrixChanged != null) this._matrixChanged.emit();
+    this._matrixChanged?.emit();
     this.onChanged();
   }
 

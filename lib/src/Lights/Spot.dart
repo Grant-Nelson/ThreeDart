@@ -61,39 +61,33 @@ class Spot implements Light {
 
   /// The color of the light.
   Math.Color3 get color => this._color;
-  set color(Math.Color3 color) =>
-    this._color = (color == null)? new Math.Color3.white(): color;
+  set color(Math.Color3 color) => this._color = color ?? new Math.Color3.white();
   Math.Color3 _color;
 
   /// The cut-off angle, in radians, of the light cone.
   double get cutoff => this._cutoff;
   set cutoff(double cutoff) =>
-    this._cutoff = (cutoff == null)? math.PI:
-    Math.clampVal(cutoff, 0.0, math.PI);
+    this._cutoff = Math.clampVal(cutoff ?? math.PI, 0.0, math.PI);
   double _cutoff;
 
   /// The cone angle, in radians, of the light.
   double get coneAngle => this._coneAngle;
   set coneAngle(double coneAngle) =>
-    this._coneAngle = (coneAngle == null)? math.PI:
-    Math.clampVal(coneAngle, 0.0, math.PI);
+     this._coneAngle = Math.clampVal(coneAngle ?? math.PI, 0.0, math.PI);
   double _coneAngle;
 
   /// The constant attenuation factor of the light.
   double get attenuation0 => this._attenuation0;
-  set attenuation0(double attenuation0) =>
-    this._attenuation0 = (attenuation0 == null)? 1.0: attenuation0;
+  set attenuation0(double attenuation0) => this._attenuation0 = attenuation0 ?? 1.0;
   double _attenuation0;
 
   /// The linear attenuation factor of the light.
   double get attenuation1 => this._attenuation1;
-  set attenuation1(double attenuation1) =>
-    this._attenuation1 = (attenuation1 == null)? 0.0: attenuation1;
+  set attenuation1(double attenuation1) => this._attenuation1 = attenuation1 ?? 0.0;
   double _attenuation1;
 
   /// The quadratic attenuation factor of the light.
   double get attenuation2 => this._attenuation2;
-  set attenuation2(double attenuation2) =>
-    this._attenuation2 = (attenuation2 == null)? 0.0: attenuation2;
+  set attenuation2(double attenuation2) => this._attenuation2 = attenuation2 ?? 0.0;
   double _attenuation2;
 }

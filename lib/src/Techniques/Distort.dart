@@ -35,18 +35,15 @@ class Distort extends Technique {
 
   /// The color texture modification matrix.
   Math.Matrix3 get colorTexture2DMatrix => this._colorTxt2DMat;
-  set colorTexture2DMatrix(Math.Matrix3 mat) =>
-    this._colorTxt2DMat = (mat == null)? new Math.Matrix3.identity(): mat;
+  set colorTexture2DMatrix(Math.Matrix3 mat) => this._colorTxt2DMat = mat ?? new Math.Matrix3.identity();
 
   /// The bump texture modification matrix.
   Math.Matrix3 get bumpTexture2DMatrix => this._bumpTxt2DMat;
-  set bumpTexture2DMatrix(Math.Matrix3 mat) =>
-    this._bumpTxt2DMat = (mat == null)? new Math.Matrix3.identity(): mat;
+  set bumpTexture2DMatrix(Math.Matrix3 mat) => this._bumpTxt2DMat = mat ?? new Math.Matrix3.identity();
 
   /// The matrix to modify the bump normal with.
   Math.Matrix4 get bumpMatrix => this._bumpMat;
-  set bumpMatrix(Math.Matrix4 mat) =>
-    this._bumpMat = (mat == null)? new Math.Matrix4.identity(): mat;
+  set bumpMatrix(Math.Matrix4 mat) => this._bumpMat = mat ?? new Math.Matrix4.identity();
 
   /// Updates this technique for the given state.
   void update(Core.RenderState state) {

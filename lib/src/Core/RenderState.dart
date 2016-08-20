@@ -191,7 +191,7 @@ class RenderState {
   /// Pushes a new technique onto the stack of techniques.
   /// Pushing null will put the current technique onto the top of the stack.
   void pushTechnique(Techniques.Technique tech) {
-    this._tech.add((tech == null)?this.technique:tech);
+    this._tech.add(tech ?? this.technique);
   }
 
   /// Pops the current technique off of the top of the stack.

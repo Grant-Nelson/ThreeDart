@@ -77,7 +77,7 @@ class Sterioscopic implements Scene {
   /// The target defining the storage to render to.
   Views.Target get target => this._target;
   set target(Views.Target target) =>
-    this._target = (target == null)? new Views.FrontTarget(): target;
+    this._target = target ?? new Views.FrontTarget();
 
   /// The passes in the order to render them.
   List<RenderPass> get passes => this._passes;

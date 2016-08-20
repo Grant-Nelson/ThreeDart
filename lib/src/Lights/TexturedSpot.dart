@@ -48,12 +48,12 @@ class TexturedSpot implements Light {
 
   /// Binds the light to the given [state].
   void bind(Core.RenderState state){
-    if(this.texture != null) this.texture.bind(state);
+    this.texture?.bind(state);
   }
 
   /// Unbinds the bound the light  from the given [state].
   void unbind(Core.RenderState state) {
-    if(this.texture != null) this.texture.unbind(state);
+    this.texture?.unbind(state);
   }
 
   /// The location the light.
@@ -79,8 +79,7 @@ class TexturedSpot implements Light {
 
   /// The color of the light.
   Math.Color3 get color => this._color;
-  set color(Math.Color3 color) =>
-    this._color = (color == null)? new Math.Color3.white(): color;
+  set color(Math.Color3 color) => this._color = color ?? new Math.Color3.white();
   Math.Color3 _color;
 
   /// The texture for the light.
@@ -99,7 +98,7 @@ class TexturedSpot implements Light {
   /// The feild-of-view of the light in the y-axis (up) of the texture.
   double get fov => this._fov;
   set fov(double fov) {
-    this._fov = (fov == null)? math.PI/3.0: Math.clampVal(fov, 0.0, math.PI);
+    this._fov = Math.clampVal(fov ?? math.PI/3.0, 0.0, math.PI);
     this._tuScalar = 1.0/(math.sqrt(2.0)*math.tan(this._fov));
     this._tvScalar = this._tuScalar*this._ratio;
   }
@@ -108,26 +107,23 @@ class TexturedSpot implements Light {
   /// The ratio width to height of the texture.
   double get ratio => this._ratio;
   set ratio(double ratio) {
-    this._ratio = (ratio == null)? 1.0: ratio;
+    this._ratio = ratio ?? 1.0;
     this._tvScalar = this._tuScalar*this._ratio;
   }
   double _ratio;
 
   /// The constant attenuation factor of the light.
   double get attenuation0 => this._attenuation0;
-  set attenuation0(double attenuation0) =>
-    this._attenuation0 = (attenuation0 == null)? 0.0: attenuation0;
+  set attenuation0(double attenuation0) => this._attenuation0 = attenuation0 ?? 0.0;
   double _attenuation0;
 
   /// The linear attenuation factor of the light.
   double get attenuation1 => this._attenuation1;
-  set attenuation1(double attenuation1) =>
-    this._attenuation1 = (attenuation1 == null)? 0.0: attenuation1;
+  set attenuation1(double attenuation1) => this._attenuation1 = attenuation1 ?? 0.0;
   double _attenuation1;
 
   /// The quadratic attenuation factor of the light.
   double get attenuation2 => this._attenuation2;
-  set attenuation2(double attenuation2) =>
-    this._attenuation2 = (attenuation2 == null)? 0.0: attenuation2;
+  set attenuation2(double attenuation2) => this._attenuation2 = attenuation2 ?? 0.0;
   double _attenuation2;
 }

@@ -9,12 +9,15 @@ class Depth extends Technique {
   double _fogStop;
 
   /// Creates a new depth technique with the given initial values.
-  Depth({Math.Color3 objClr: null, Math.Color3 fogClr: null, double fogStart: 1.0, double fogStop: 10.0}) {
-    this._shader = null;
-    this._objClr = (objClr != null)? objClr: new Math.Color3(1.0, 1.0, 1.0);
-    this._fogClr = (fogClr != null)? fogClr: new Math.Color3.black();
+  Depth({Math.Color3 objClr:   null,
+         Math.Color3 fogClr:   null,
+         double      fogStart: 1.0,
+         double      fogStop:  10.0}) {
+    this._shader   = null;
+    this._objClr   = objClr ?? new Math.Color3(1.0, 1.0, 1.0);
+    this._fogClr   = fogClr ?? new Math.Color3.black();
     this._fogStart = fogStart;
-    this._fogStop = fogStop;
+    this._fogStop  = fogStop;
   }
 
   /// The color to draw the object with.

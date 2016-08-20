@@ -41,12 +41,12 @@ class Vertex {
   /// Creates a copy of the vertex values.
   Vertex copy() {
     return new Vertex(
-      loc:     (this._loc     == null)? null: this._loc.copy(),
-      norm:    (this._norm    == null)? null: this._norm.copy(),
-      binm:    (this._binm    == null)? null: this._binm.copy(),
-      txt2D:   (this._txt2D   == null)? null: this._txt2D.copy(),
-      txtCube: (this._txtCube == null)? null: this._txtCube.copy(),
-      clr:     (this._clr     == null)? null: this._clr.copy(),
+      loc:     this._loc?.copy(),
+      norm:    this._norm?.copy(),
+      binm:    this._binm?.copy(),
+      txt2D:   this._txt2D?.copy(),
+      txtCube: this._txtCube?.copy(),
+      clr:     this._clr?.copy(),
       weight:  this._weight,
       bending: this._bending
     );
@@ -86,7 +86,7 @@ class Vertex {
   /// The 3D normal vector of the vertex.
   Math.Vector3 get normal => this._norm;
   set normal(Math.Vector3 norm) {
-    norm = (norm == null)? null: norm.normal();
+    norm = norm?.normal();
     if (this._norm != norm) {
       this._norm = norm;
       if (this._shape != null)
@@ -97,7 +97,7 @@ class Vertex {
   /// The 3D binormal vector of the vertex.
   Math.Vector3 get binormal => this._binm;
   set binormal(Math.Vector3 binm) {
-    binm = (binm == null)? null: binm.normal();
+    binm = binm?.normal();
     if (this._binm != binm) {
       this._binm = binm;
       if (this._shape != null)
@@ -193,7 +193,7 @@ class Vertex {
     if (this._shape != null) this._shape._changed.suspend();
     Math.Vector3 normSum = new Math.Vector3.zero();
     this._faces.forEach((Face face) {
-      Math.Vector3 norm = (face == null) ? null : face.normal;
+      Math.Vector3 norm = face?.normal;
       if (norm != null) normSum += norm;
     });
     this._norm = normSum.normal();
@@ -212,7 +212,7 @@ class Vertex {
     if (this._shape != null) this._shape._changed.suspend();
     Math.Vector3 binmSum = new Math.Vector3.zero();
     this._faces.forEach((Face face) {
-      Math.Vector3 binm = (face == null) ? null : face.binormal;
+      Math.Vector3 binm = face?.binormal;
       if(binm != null) binmSum += binm;
     });
     this._binm = binmSum.normal();

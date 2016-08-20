@@ -48,8 +48,7 @@ class GaussianBlur extends Technique {
 
   /// The texture modification matrix.
   Math.Matrix3 get textureMatrix => this._txtMat;
-  set textureMatrix(Math.Matrix3 mat) =>
-    this._txtMat = (mat == null)? new Math.Matrix3.identity(): mat;
+  set textureMatrix(Math.Matrix3 mat) => this._txtMat = mat ?? new Math.Matrix3.identity();
 
   /// Updates this technique for the given state.
   void update(Core.RenderState state) {
