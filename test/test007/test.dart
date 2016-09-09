@@ -35,14 +35,14 @@ void main() {
     ..lights.add(new Lights.Directional(
           mover: new Movers.Constant(new Math.Matrix4.vectorTowards(0.0, 0.0, -1.0)),
           color: new Math.Color3.white()))
-    ..ambientColor = new Math.Color3(0.2, 0.2, 0.2)
-    ..diffuseColor = new Math.Color3(0.8, 0.8, 0.8)
-    ..ambientTexture2D = color
-    ..diffuseTexture2D = color
-    ..bumpyTexture2D = td.textureLoader.load2DFromFile("../resources/ScrewBumpMap.png")
-    ..specularColor = new Math.Color3.white()
-    ..specularTexture2D = td.textureLoader.load2DFromFile("../resources/ScrewSpecular.png")
-    ..shininess = 10.0;
+    ..ambient.color = new Math.Color3(0.2, 0.2, 0.2)
+    ..diffuse.color = new Math.Color3(0.8, 0.8, 0.8)
+    ..ambient.texture2D = color
+    ..diffuse.texture2D = color
+    ..bump.texture2D = td.textureLoader.load2DFromFile("../resources/ScrewBumpMap.png")
+    ..specular.color = new Math.Color3.white()
+    ..specular.texture2D = td.textureLoader.load2DFromFile("../resources/ScrewSpecular.png")
+    ..specular.shininess = 10.0;
 
   td.scene = new Scenes.EntityPass()
     ..tech = tech

@@ -34,12 +34,12 @@ void main() {
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
     ..lights.add(dir1)
     ..lights.add(dir2)
-    ..emissionColor = new Math.Color3.black()
-    ..ambientColor = new Math.Color3.gray(0.1)
-    ..diffuseColor = new Math.Color3.gray(0.8)
-    ..specularColor = new Math.Color3.gray(0.2)
-    ..shininess = 100.0
-    ..diffuseTexture2D = td.textureLoader.load2DFromFile("../resources/Test.png", wrapEdges: true);
+    ..emission.color = new Math.Color3.black()
+    ..ambient.color = new Math.Color3.gray(0.1)
+    ..diffuse.color = new Math.Color3.gray(0.8)
+    ..specular.color = new Math.Color3.gray(0.2)
+    ..specular.shininess = 100.0
+    ..diffuse.texture2D = td.textureLoader.load2DFromFile("../resources/Test.png", wrapEdges: true);
 
   ThreeDart.Entity centerObj = new ThreeDart.Entity()
     ..mover = new Movers.UserRotater(input: td.userInput, ctrl: true)

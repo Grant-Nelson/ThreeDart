@@ -28,7 +28,7 @@ void addLightBall(Techniques.MaterialLight tech, Scenes.EntityPass pass,
                 ..add(mover))
     ..shape = Shapes.sphere()
     ..technique = (new Techniques.MaterialLight()
-                ..emissionColor = clr);
+                ..emission.color = clr);
 
   Lights.Point point = new Lights.Point(
     mover: mover,
@@ -63,10 +63,10 @@ void main() {
     ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
 
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
-    ..ambientColor = new Math.Color3.gray(0.4)
-    ..diffuseColor = new Math.Color3.gray(0.4)
-    ..specularColor = new Math.Color3.gray(0.3)
-    ..shininess = 100.0;
+    ..ambient.color = new Math.Color3.gray(0.4)
+    ..diffuse.color = new Math.Color3.gray(0.4)
+    ..specular.color = new Math.Color3.gray(0.3)
+    ..specular.shininess = 100.0;
 
   Scenes.EntityPass pass = new Scenes.EntityPass()
     ..tech = tech

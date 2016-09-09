@@ -35,11 +35,11 @@ void main() {
     ..lights.add(new Lights.Directional(
           mover: new Movers.Constant(new Math.Matrix4.vectorTowards(1.0, -2.0, -3.0)),
           color: new Math.Color3.white()))
-    ..ambientColor = new Math.Color3(0.5, 0.5, 0.5)
-    ..diffuseColor = new Math.Color3(0.6, 0.6, 0.6)
-    ..ambientTexture2D = color
-    ..diffuseTexture2D = color
-    ..alphaTexture2D = color;
+    ..ambient.color = new Math.Color3(0.5, 0.5, 0.5)
+    ..diffuse.color = new Math.Color3(0.6, 0.6, 0.6)
+    ..ambient.texture2D = color
+    ..diffuse.texture2D = color
+    ..alpha.texture2D = color;
 
   Movers.Group mover = new Movers.Group()
     ..add(new Movers.UserRotater(input: td.userInput))

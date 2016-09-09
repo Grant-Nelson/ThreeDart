@@ -78,8 +78,8 @@ class ObjLoader {
     this._mtls = new Map<String, Techniques.MaterialLight>();
     this._name = "";
     this._mat = new Techniques.MaterialLight()
-      ..ambientColor = new Math.Color3.gray(0.35)
-      ..diffuseColor = new Math.Color3.gray(0.65);
+      ..ambient.color = new Math.Color3.gray(0.35)
+      ..diffuse.color = new Math.Color3.gray(0.65);
     this._shape = null;
     this._entity = null;
     this._rootEntity = new Core.Entity();
@@ -298,7 +298,7 @@ class ObjLoader {
     this._name = data;
     this._startShape();
   }
-  
+
   /// Process a new group name (g) line.
   void _processGroupName(String data) {
     this._name = data;

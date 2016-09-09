@@ -38,15 +38,15 @@ void main() {
     ..lights.add(new Lights.Directional(
           mover: new Movers.Constant(new Math.Matrix4.vectorTowards(-1.0, -1.0, -1.0)),
           color: new Math.Color3.white()))
-    ..ambientColor=  new Math.Color3(0.5, 0.5, 0.5)
-    ..diffuseColor = new Math.Color3(0.5, 0.5, 0.5)
-    ..ambientTextureCube = color
-    ..diffuseTextureCube = color
-    ..specularTextureCube = specular
-    ..environmentTexture = environment
-    ..reflectionTextureCube = specular
-    ..reflectionColor = new Math.Color3(0.5, 0.5, 0.5)
-    ..shininess = 10.0;
+    ..ambient.color=  new Math.Color3(0.5, 0.5, 0.5)
+    ..diffuse.color = new Math.Color3(0.5, 0.5, 0.5)
+    ..ambient.textureCube = color
+    ..diffuse.textureCube = color
+    ..specular.textureCube = specular
+    ..environment = environment
+    ..reflection.textureCube = specular
+    ..reflection.color = new Math.Color3(0.5, 0.5, 0.5)
+    ..specular.shininess= 10.0;
 
   Movers.Group mover = new Movers.Group()
     ..add(new Movers.UserRotater(input: td.userInput))

@@ -36,8 +36,8 @@ void main() {
     ..lights.add(new Lights.Directional(
           mover: new Movers.Constant(new Math.Matrix4.vectorTowards(-1.0, -1.0, -1.0)),
           color: new Math.Color3.white()))
-    ..diffuseTexture2D = diffuse
-    ..invDiffuseTexture2D = invDiffuse;
+    ..diffuse.texture2D = diffuse
+    ..invDiffuse.texture2D = invDiffuse;
 
   td.scene = new Scenes.EntityPass()
     ..tech = tech

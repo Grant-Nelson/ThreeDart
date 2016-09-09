@@ -28,10 +28,10 @@ void main() {
     ..lights.add(new Lights.Directional(
         mover: new Movers.Constant(new Math.Matrix4.vectorTowards(0.0, 0.0, -1.0)),
         color: new Math.Color3.white()))
-    ..ambientColor = new Math.Color3(0.0, 0.0, 1.0)
-    ..diffuseColor = new Math.Color3(0.0, 1.0, 0.0)
-    ..specularColor = new Math.Color3(1.0, 0.0, 0.0)
-    ..shininess = 10.0;
+    ..ambient.color = new Math.Color3(0.0, 0.0, 1.0)
+    ..diffuse.color = new Math.Color3(0.0, 1.0, 0.0)
+    ..specular.color = new Math.Color3(1.0, 0.0, 0.0)
+    ..specular.shininess = 10.0;
 
   ThreeDart.Entity objTech = new ThreeDart.Entity()
     ..shape = shape
@@ -59,7 +59,7 @@ void main() {
     ..camara.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0));
 
   new common.Texture2DGroup("bumpMaps", (String fileName) {
-    tech.bumpyTexture2D = td.textureLoader.load2DFromFile(fileName);
+    tech.bump.texture2D = td.textureLoader.load2DFromFile(fileName);
   })
     ..add("../resources/BumpMap1.png", true)
     ..add("../resources/BumpMap2.png")

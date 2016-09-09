@@ -42,9 +42,9 @@ void main() {
   Views.Perspective userCamara = new Views.Perspective(mover: mover);
 
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
-    ..ambientColor = new Math.Color3.gray(0.3)
-    ..diffuseColor = new Math.Color3.gray(0.8)
-    ..diffuseTexture2D = td.textureLoader.load2DFromFile("../resources/Test.png");
+    ..ambient.color = new Math.Color3.gray(0.3)
+    ..diffuse.color = new Math.Color3.gray(0.8)
+    ..diffuse.texture2D = td.textureLoader.load2DFromFile("../resources/Test.png");
 
   Views.FrontTarget target = new Views.FrontTarget()
     ..clearColor = false;

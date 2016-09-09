@@ -34,13 +34,13 @@ void main() {
     ..lights.add(new Lights.Directional(
           mover: new Movers.Constant(new Math.Matrix4.vectorTowards(1.0, -1.0, -3.0)),
           color: new Math.Color3.white()))
-    ..emissionTexture2D = td.textureLoader.load2DFromFile("../resources/CtrlPnlEmission.png")
-    ..ambientColor = new Math.Color3(0.2, 0.2, 0.2)
-    ..diffuseColor = new Math.Color3(0.8, 0.8, 0.8)
-    ..ambientTexture2D = color
-    ..diffuseTexture2D = color
-    ..specularTexture2D = td.textureLoader.load2DFromFile("../resources/CtrlPnlSpecular.png")
-    ..shininess = 10.0;
+    ..emission.texture2D = td.textureLoader.load2DFromFile("../resources/CtrlPnlEmission.png")
+    ..ambient.color = new Math.Color3(0.2, 0.2, 0.2)
+    ..diffuse.color = new Math.Color3(0.8, 0.8, 0.8)
+    ..ambient.texture2D = color
+    ..diffuse.texture2D = color
+    ..specular.texture2D = td.textureLoader.load2DFromFile("../resources/CtrlPnlSpecular.png")
+    ..specular.shininess = 10.0;
 
   td.scene = new Scenes.EntityPass()
     ..tech = tech

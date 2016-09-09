@@ -100,19 +100,19 @@ class MtlLoader {
   /// processes a new ambient colors (Ka) line of a *.mtl file.
   void _processAmbient(String data) {
     List<double> vals = _getNumbers(data);
-    this._cur.ambientColor = new Math.Color3.fromList(vals);
+    this._cur.ambient.color = new Math.Color3.fromList(vals);
   }
 
   /// processes a new diffuse colors (Kd) line of a *.mtl file.
   void _processDiffuse(String data) {
     List<double> vals = _getNumbers(data);
-    this._cur.diffuseColor = new Math.Color3.fromList(vals);
+    this._cur.diffuse.color = new Math.Color3.fromList(vals);
   }
 
   /// processes a new specular colors (Ks) line of a *.mtl file.
   void _processSpecular(String data) {
     List<double> vals = _getNumbers(data);
-    this._cur.specularColor = new Math.Color3.fromList(vals);
+    this._cur.specular.color = new Math.Color3.fromList(vals);
   }
 
   /// processes a new shininess (Ns) line of a *.mtl file.
@@ -120,7 +120,7 @@ class MtlLoader {
     List<double> vals = _getNumbers(data);
     if (vals.length != 1)
       throw new Exception("Shininess may only have 1 number.");
-    this._cur.shininess = vals[0];
+    this._cur.specular.shininess = vals[0];
   }
 
   /// processes a new alpha (d) line of a *.mtl file.
@@ -128,7 +128,7 @@ class MtlLoader {
     List<double> vals = _getNumbers(data);
     if (vals.length != 1)
       throw new Exception("Alpha may only have 1 number.");
-    this._cur.alpha = vals[0];
+    this._cur.alpha.value = vals[0];
   }
 
   /// processes a new transparency (Tr) line of a *.mtl file.
@@ -136,36 +136,36 @@ class MtlLoader {
     List<double> vals = _getNumbers(data);
     if (vals.length != 1)
       throw new Exception("Alpha may only have 1 number.");
-    this._cur.alpha = 1.0-vals[0];
+    this._cur.alpha.value = 1.0-vals[0];
   }
 
   /// processes a new ambient map (map_Ka) line of a *.mtl file.
   Future _processAmbientMap(String data, String dir) async {
     String file = joinPath(dir, data);
-    this._cur.ambientTexture2D = this._txtLoader.load2DFromFile(file);
+    this._cur.ambient.texture2D = this._txtLoader.load2DFromFile(file);
   }
 
   /// processes a new diffuse map (map_Kd) line of a *.mtl file.
   Future _processDiffuseMap(String data, String dir) async {
     String file = joinPath(dir, data);
-    this._cur.diffuseTexture2D = this._txtLoader.load2DFromFile(file);
+    this._cur.diffuse.texture2D = this._txtLoader.load2DFromFile(file);
   }
 
   /// processes a new specular map (map_Ks) line of a *.mtl file.
   Future _processSpecularMap(String data, String dir) async {
     String file = joinPath(dir, data);
-    this._cur.specularTexture2D = this._txtLoader.load2DFromFile(file);
+    this._cur.specular.texture2D = this._txtLoader.load2DFromFile(file);
   }
 
   /// processes a new alpha map (map_d) line of a *.mtl file.
   Future _processAlphaMap(String data, String dir) async {
     String file = joinPath(dir, data);
-    this._cur.alphaTexture2D = this._txtLoader.load2DFromFile(file);
+    this._cur.alpha.texture2D = this._txtLoader.load2DFromFile(file);
   }
 
   /// processes a new bump map (map_bump/bump) line of a *.mtl file.
   Future _processBumpMap(String data, String dir) async {
     String file = joinPath(dir, data);
-    this._cur.bumpyTexture2D = this._txtLoader.load2DFromFile(file);
+    this._cur.bump.texture2D = this._txtLoader.load2DFromFile(file);
   }
 }

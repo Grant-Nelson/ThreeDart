@@ -32,7 +32,7 @@ void main() {
                 ..add(mover))
     ..shape = Shapes.sphere()
     ..technique = (new Techniques.MaterialLight()
-                ..emissionTextureCube = texture);
+                ..emission.textureCube = texture);
 
   Lights.TexturedPoint objPoint = new Lights.TexturedPoint(
     mover: mover,
@@ -43,10 +43,10 @@ void main() {
 
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
     ..lights.add(objPoint)
-    ..ambientColor = new Math.Color3.gray(0.2)
-    ..diffuseColor = new Math.Color3.gray(1.0)
-    ..specularColor = new Math.Color3.gray(1.0)
-    ..shininess = 100.0;
+    ..ambient.color = new Math.Color3.gray(0.2)
+    ..diffuse.color = new Math.Color3.gray(1.0)
+    ..specular.color = new Math.Color3.gray(1.0)
+    ..specular.shininess = 100.0;
 
   ThreeDart.Entity room = new ThreeDart.Entity()
     ..mover = new Movers.Constant(new Math.Matrix4.scale(3.0, 3.0, 3.0))

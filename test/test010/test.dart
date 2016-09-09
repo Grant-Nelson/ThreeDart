@@ -32,11 +32,11 @@ void main() {
     ..lights.add(new Lights.Directional(
           mover: new Movers.Constant(new Math.Matrix4.vectorTowards(1.0, 1.0, -3.0)),
           color: new Math.Color3.white()))
-    ..ambientColor = new Math.Color3(0.0, 0.0, 1.0)
-    ..diffuseColor = new Math.Color3(0.0, 1.0, 0.0)
-    ..specularColor = new Math.Color3(1.0, 0.0, 0.0)
-    ..shininess = 10.0
-    ..bumpyTextureCube = td.textureLoader.loadCubeFromPath("../resources/diceBumpMap");
+    ..ambient.color = new Math.Color3(0.0, 0.0, 1.0)
+    ..diffuse.color = new Math.Color3(0.0, 1.0, 0.0)
+    ..specular.color = new Math.Color3(1.0, 0.0, 0.0)
+    ..specular.shininess = 10.0
+    ..bump.textureCube = td.textureLoader.loadCubeFromPath("../resources/diceBumpMap");
 
   td.scene = new Scenes.EntityPass()
     ..tech = tech

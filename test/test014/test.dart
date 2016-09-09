@@ -37,14 +37,14 @@ void main() {
     ..lights.add(new Lights.Directional(
           mover: new Movers.Constant(new Math.Matrix4.vectorTowards(-1.0, -1.0, -1.0)),
           color: new Math.Color3.white()))
-    ..ambientColor = new Math.Color3(0.1, 0.1, 0.1)
-    ..diffuseColor = new Math.Color3(0.1, 0.1, 0.1)
-    ..specularColor = new Math.Color3(1.0, 1.0, 1.0)
-    ..shininess = 10.0
-    ..environmentTexture = environment
-    ..refraction = 0.6
-    ..refractionColor = new Math.Color3(0.2, 0.3, 1.0)
-    ..reflectionColor = new Math.Color3(0.6, 0.6, 0.6);
+    ..ambient.color = new Math.Color3(0.1, 0.1, 0.1)
+    ..diffuse.color = new Math.Color3(0.1, 0.1, 0.1)
+    ..specular.color = new Math.Color3(1.0, 1.0, 1.0)
+    ..specular.shininess = 10.0
+    ..environment = environment
+    ..refraction.deflection = 0.6
+    ..refraction.color = new Math.Color3(0.2, 0.3, 1.0)
+    ..reflection.color = new Math.Color3(0.6, 0.6, 0.6);
 
   Movers.Group mover = new Movers.Group()
     ..add(new Movers.UserRotater(input: td.userInput))
@@ -70,81 +70,81 @@ void main() {
   new common.RadioGroup("controls")
     ..add("Silver", () {
       tech
-        ..ambientColor    = new Math.Color3(0.1, 0.1, 0.1)
-        ..diffuseColor    = new Math.Color3(0.2, 0.2, 0.2)
-        ..specularColor   = new Math.Color3(1.0, 1.0, 1.0)
-        ..refractionColor = new Math.Color3.black()
-        ..reflectionColor = new Math.Color3(1.0, 1.0, 1.0);
+        ..ambient.color    = new Math.Color3(0.1, 0.1, 0.1)
+        ..diffuse.color    = new Math.Color3(0.2, 0.2, 0.2)
+        ..specular.color   = new Math.Color3(1.0, 1.0, 1.0)
+        ..refraction.color = new Math.Color3.black()
+        ..reflection.color = new Math.Color3(1.0, 1.0, 1.0);
     }, true)
     ..add("Gold", () {
       tech
-        ..ambientColor    = new Math.Color3(0.11, 0.11, 0.1)
-        ..diffuseColor    = new Math.Color3(0.21, 0.21, 0.2)
-        ..specularColor   = new Math.Color3(1.0, 1.0, 1.0)
-        ..refractionColor = new Math.Color3.black()
-        ..reflectionColor = new Math.Color3(1.0, 0.9, 0.5);
+        ..ambient.color    = new Math.Color3(0.11, 0.11, 0.1)
+        ..diffuse.color    = new Math.Color3(0.21, 0.21, 0.2)
+        ..specular.color   = new Math.Color3(1.0, 1.0, 1.0)
+        ..refraction.color = new Math.Color3.black()
+        ..reflection.color = new Math.Color3(1.0, 0.9, 0.5);
     })
     ..add("Glass", () {
       tech
-        ..ambientColor    = new Math.Color3(0.1, 0.1, 0.1)
-        ..diffuseColor    = new Math.Color3(0.1, 0.1, 0.1)
-        ..specularColor   = new Math.Color3(1.0, 1.0, 1.0)
-        ..refraction      = 0.4
-        ..refractionColor = new Math.Color3(0.6, 0.6, 0.6)
-        ..reflectionColor = new Math.Color3(0.4, 0.4, 0.4);
+        ..ambient.color         = new Math.Color3(0.1, 0.1, 0.1)
+        ..diffuse.color         = new Math.Color3(0.1, 0.1, 0.1)
+        ..specular.color        = new Math.Color3(1.0, 1.0, 1.0)
+        ..refraction.deflection = 0.4
+        ..refraction.color      = new Math.Color3(0.6, 0.6, 0.6)
+        ..reflection.color      = new Math.Color3(0.4, 0.4, 0.4);
     })
     ..add("Blue Glass", () {
       tech
-        ..ambientColor    = new Math.Color3(0.1, 0.1, 0.1)
-        ..diffuseColor    = new Math.Color3(0.1, 0.1, 0.1)
-        ..specularColor   = new Math.Color3(1.0, 1.0, 1.0)
-        ..refraction      = 0.4
-        ..refractionColor = new Math.Color3(0.2, 0.3, 1.0)
-        ..reflectionColor = new Math.Color3(0.3, 0.3, 0.3);
+        ..ambient.color         = new Math.Color3(0.1, 0.1, 0.1)
+        ..diffuse.color         = new Math.Color3(0.1, 0.1, 0.1)
+        ..specular.color        = new Math.Color3(1.0, 1.0, 1.0)
+        ..refraction.deflection = 0.4
+        ..refraction.color      = new Math.Color3(0.2, 0.3, 1.0)
+        ..reflection.color      = new Math.Color3(0.3, 0.3, 0.3);
     })
     ..add("Water Bubble", () {
       tech
-        ..ambientColor    = new Math.Color3(0.1, 0.1, 0.1)
-        ..diffuseColor    = new Math.Color3(0.1, 0.1, 0.1)
-        ..specularColor   = new Math.Color3(1.0, 1.0, 1.0)
-        ..refraction      = 0.6
-        ..refractionColor = new Math.Color3(0.8, 0.8, 0.8)
-        ..reflectionColor = new Math.Color3(0.2, 0.2, 0.2);
+        ..ambient.color         = new Math.Color3(0.1, 0.1, 0.1)
+        ..diffuse.color         = new Math.Color3(0.1, 0.1, 0.1)
+        ..specular.color        = new Math.Color3(1.0, 1.0, 1.0)
+        ..refraction.deflection = 0.6
+        ..refraction.color      = new Math.Color3(0.8, 0.8, 0.8)
+        ..reflection.color      = new Math.Color3(0.2, 0.2, 0.2);
     })
     ..add("No Reflection", () {
       tech
-        ..ambientColor    = new Math.Color3(0.1, 0.1, 0.1)
-        ..diffuseColor    = new Math.Color3(0.1, 0.1, 0.1)
-        ..specularColor   = new Math.Color3(1.0, 1.0, 1.0)
-        ..refraction      = 0.6
-        ..refractionColor = new Math.Color3(1.0, 1.0, 1.0)
-        ..reflectionColor = new Math.Color3.black();
+        ..ambient.color         = new Math.Color3(0.1, 0.1, 0.1)
+        ..diffuse.color         = new Math.Color3(0.1, 0.1, 0.1)
+        ..specular.color        = new Math.Color3(1.0, 1.0, 1.0)
+        ..refraction.deflection = 0.6
+        ..refraction.color      = new Math.Color3(1.0, 1.0, 1.0)
+        ..reflection.color      = new Math.Color3.black();
     })
     ..add("Pink Distort", () {
       tech
-        ..ambientColor    = new Math.Color3(0.1, 0.1, 0.1)
-        ..diffuseColor    = new Math.Color3(0.1, 0.1, 0.1)
-        ..specularColor   = new Math.Color3(1.0, 1.0, 1.0)
-        ..refraction      = 0.9
-        ..refractionColor = new Math.Color3(1.0, 0.8, 0.8)
-        ..reflectionColor = new Math.Color3.black();
+        ..ambient.color         = new Math.Color3(0.1, 0.1, 0.1)
+        ..diffuse.color         = new Math.Color3(0.1, 0.1, 0.1)
+        ..specular.color        = new Math.Color3(1.0, 1.0, 1.0)
+        ..refraction.deflection = 0.9
+        ..refraction.color      = new Math.Color3(1.0, 0.8, 0.8)
+        ..reflection.color      = new Math.Color3.black();
     })
     ..add("Cloak", () {
       tech
-        ..ambientColor    = new Math.Color3(0.0, 0.0, 0.0)
-        ..diffuseColor    = new Math.Color3(0.1, 0.1, 0.1)
-        ..specularColor   = new Math.Color3(0.1, 0.1, 0.1)
-        ..refraction      = 0.99
-        ..refractionColor = new Math.Color3(0.95, 0.95, 0.95)
-        ..reflectionColor = new Math.Color3.black();
+        ..ambient.color         = new Math.Color3(0.0, 0.0, 0.0)
+        ..diffuse.color         = new Math.Color3(0.1, 0.1, 0.1)
+        ..specular.color        = new Math.Color3(0.1, 0.1, 0.1)
+        ..refraction.deflection = 0.99
+        ..refraction.color      = new Math.Color3(0.95, 0.95, 0.95)
+        ..reflection.color      = new Math.Color3.black();
     })
     ..add("White and Shiny", () {
       tech
-        ..ambientColor    = new Math.Color3(0.3, 0.3, 0.3)
-        ..diffuseColor    = new Math.Color3(0.5, 0.5, 0.5)
-        ..specularColor   = new Math.Color3(1.0, 1.0, 1.0)
-        ..refractionColor = new Math.Color3.black()
-        ..reflectionColor = new Math.Color3(0.3, 0.3, 0.3);
+        ..ambient.color    = new Math.Color3(0.3, 0.3, 0.3)
+        ..diffuse.color    = new Math.Color3(0.5, 0.5, 0.5)
+        ..specular.color   = new Math.Color3(1.0, 1.0, 1.0)
+        ..refraction.color = new Math.Color3.black()
+        ..reflection.color = new Math.Color3(0.3, 0.3, 0.3);
     });
 
   new common.RadioGroup("shapes")

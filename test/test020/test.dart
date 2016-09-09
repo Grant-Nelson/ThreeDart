@@ -36,11 +36,11 @@ void main() {
     ..lights.add(redDir)
     ..lights.add(greenDir)
     ..lights.add(blueDir)
-    ..emissionColor = new Math.Color3.black()
-    ..ambientColor = new Math.Color3.gray(0.1)
-    ..diffuseColor = new Math.Color3.gray(0.7)
-    ..specularColor = new Math.Color3.gray(0.3)
-    ..shininess = 100.0;
+    ..emission.color = new Math.Color3.black()
+    ..ambient.color = new Math.Color3.gray(0.1)
+    ..diffuse.color = new Math.Color3.gray(0.7)
+    ..specular.color = new Math.Color3.gray(0.3)
+    ..specular.shininess = 100.0;
 
   ThreeDart.Entity centerObj = new ThreeDart.Entity()
     ..shape = Shapes.toroid();

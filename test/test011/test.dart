@@ -35,12 +35,12 @@ void main() {
     ..lights.add(new Lights.Directional(
           mover: new Movers.Constant(new Math.Matrix4.vectorTowards(-1.0, -1.0, -1.0)),
           color: new Math.Color3.white()))
-    ..ambientColor =  new Math.Color3(0.2, 0.2, 0.2)
-    ..diffuseColor = new Math.Color3(0.8, 0.8, 0.8)
-    ..ambientTextureCube = color
-    ..diffuseTextureCube = color
-    ..specularTextureCube = td.textureLoader.loadCubeFromPath("../resources/earthSpecular")
-    ..shininess = 10.0;
+    ..ambient.color =  new Math.Color3(0.2, 0.2, 0.2)
+    ..diffuse.color = new Math.Color3(0.8, 0.8, 0.8)
+    ..ambient.textureCube = color
+    ..diffuse.textureCube = color
+    ..specular.textureCube = td.textureLoader.loadCubeFromPath("../resources/earthSpecular")
+    ..specular.shininess = 10.0;
 
   td.scene = new Scenes.EntityPass()
     ..tech = tech

@@ -29,11 +29,11 @@ void main() {
     ..lights.add(new Lights.Directional(
           mover: new Movers.Constant(new Math.Matrix4.vectorTowards(-1.0, -1.0, -1.0)),
           color: new Math.Color3.white()))
-    ..emissionColor = new Math.Color3.black()
-    ..ambientColor = new Math.Color3(0.0, 0.0, 1.0)
-    ..diffuseColor = new Math.Color3(0.0, 1.0, 0.0)
-    ..specularColor = new Math.Color3(1.0, 0.0, 0.0)
-    ..shininess = 10.0;
+    ..emission.color = new Math.Color3.black()
+    ..ambient.color = new Math.Color3(0.0, 0.0, 1.0)
+    ..diffuse.color = new Math.Color3(0.0, 1.0, 0.0)
+    ..specular.color = new Math.Color3(1.0, 0.0, 0.0)
+    ..specular.shininess = 10.0;
 
   Movers.Group camMover = new Movers.Group()
     ..add(new Movers.UserRotater(input: td.userInput))
