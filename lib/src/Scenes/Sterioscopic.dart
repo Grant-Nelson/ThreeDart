@@ -53,7 +53,7 @@ class Sterioscopic implements Scene {
     this._leftConstMat = new Movers.Constant();
     this._rightConstMat = new Movers.Constant();
     this._leftMovGroup = new Movers.Group([null, this._leftConstMat]);
-    this._rightMovGroup = new Movers.Group([null, this._leftConstMat]);
+    this._rightMovGroup = new Movers.Group([null, this._rightConstMat]);
     this._leftCamara = new Views.Perspective(mover: this._leftMovGroup);
     this._rightCamara = new Views.Perspective(mover: this._rightMovGroup);
     this._leftRegion = new Math.Region2(0.0, 0.0, 0.5, 1.0);
@@ -65,6 +65,7 @@ class Sterioscopic implements Scene {
     this._eyeSpacing = eyeSpacing;
     this._focusDistance = focusDistance;
     this._onRender = new Core.Event();
+    this._updateConstMats();
   }
 
   /// The camara mover describing the view of the scene.
@@ -103,11 +104,11 @@ class Sterioscopic implements Scene {
   void _updateConstMats() {
     double tanAngle = math.atan2(this._eyeSpacing, this._focusDistance);
     this._leftConstMat.matrix =
-      new Math.Matrix4.translate(eyeSpacing, 0.0, 0.0)*
-      new Math.Matrix4.rotateY(-tanAngle);
-    this._rightConstMat.matrix =
       new Math.Matrix4.translate(-eyeSpacing, 0.0, 0.0)*
       new Math.Matrix4.rotateY(tanAngle);
+    this._rightConstMat.matrix =
+      new Math.Matrix4.translate(eyeSpacing, 0.0, 0.0)*
+      new Math.Matrix4.rotateY(-tanAngle);
   }
 
   /// Render the scene with the given [state].

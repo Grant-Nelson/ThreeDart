@@ -21,7 +21,7 @@ part 'Entity.dart';
 part 'EntityCollection.dart';
 part 'Event.dart';
 part 'EventArgs.dart';
-part 'MatrixStack.dart';
+part 'Matrix4Stack.dart';
 part 'RenderState.dart';
 part 'ThreeDart.dart';
 part 'UserInput.dart';

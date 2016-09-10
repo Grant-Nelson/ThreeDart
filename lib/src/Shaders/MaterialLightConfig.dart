@@ -756,8 +756,17 @@ class MaterialLightConfig {
   void _writeAlpha(StringBuffer buf) {
     buf.writeln("// === Alpha ===");
     buf.writeln("");
-    this._fragmentSrcTypeVars(buf, this.alpha, "alpha");
-    buf.writeln("");
+    if (this.alpha != ColorSourceType.None) {
+      buf.writeln("uniform float alpha;");
+      if (this.alpha != ColorSourceType.Solid) {
+        buf.writeln("uniform int nullAlphaTxt;");
+        if (this.alpha == ColorSourceType.Texture2D)
+          buf.writeln("uniform sampler2D alphaTxt;");
+        else if (this.alpha == ColorSourceType.TextureCube)
+          buf.writeln("uniform samplerCube alphaTxt;");
+      }
+      buf.writeln("");
+    }
     buf.writeln("float alphaValue()");
     buf.writeln("{");
     switch (this.alpha) {

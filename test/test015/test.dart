@@ -148,7 +148,7 @@ void main() {
   var update;
   update = (num t) {
     td.render();
-  };
     window.requestAnimationFrame(update);
+  };
   window.requestAnimationFrame(update);
 }

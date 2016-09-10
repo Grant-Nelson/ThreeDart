@@ -7,7 +7,7 @@ class MaterialLight extends Technique {
   Math.Matrix3 _txt2DMat;
   Math.Matrix4 _txtCubeMat;
   Math.Matrix4 _colorMat;
-  List<Math.Matrix4> _bendMats;
+  MaterialLightBendList _bendMats;
 
   MaterialLightColorComponent _emission;
   MaterialLightColorComponent _ambient;
@@ -27,7 +27,7 @@ class MaterialLight extends Technique {
     this._txt2DMat = null;
     this._txtCubeMat = null;
     this._colorMat = null;
-    this._bendMats = new List<Math.Matrix4>();
+    this._bendMats = new MaterialLightBendList._(this);
     this._emission = new MaterialLightColorComponent._(this);
     this._ambient = new MaterialLightColorComponent._(this);
     this._diffuse = new MaterialLightColorComponent._(this);
@@ -73,9 +73,8 @@ class MaterialLight extends Technique {
     this._colorMat = mat;
   }
 
-  /// TODO: Make a collection so that the shader can be cleared out.
   /// The list of matrices for bending the shape by weights.
-  List<Math.Matrix4> get bendMatrices => this._bendMats;
+  MaterialLightBendList get bendMatrices => this._bendMats;
 
   /// The emission component of the material.
   MaterialLightColorComponent get emission => this._emission;

@@ -21,4 +21,9 @@ class Constant extends Mover {
   Math.Matrix4 update(Core.RenderState state, Movable obj) {
     return this._mat;
   }
+
+  /// The string for this constant mover.
+  String toString() {
+    return "Constant: "+((this._mat == null)? "null": this._mat.toString("          "));
+  }
 }
