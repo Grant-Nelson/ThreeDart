@@ -89,6 +89,18 @@ class Shape {
     return success;
   }
 
+  /// Calculates the bending adjacents point to all the vertices.
+  /// The adjacent is the vertex in the same line or triangle with the
+  /// maximum value returned from the given [hndl]. If the adjacent
+  /// is already set this will have no effect.
+  bool calculateBendingAdjacents() {
+    bool success = true;
+    this._changed.suspend();
+    if (!this._vertices.calculateBendingAdjacents()) success = false;
+    this._changed.resume();
+    return success;
+  }
+
   /// Calculates the cube texture coordinate for the vertices and favces.
   /// The normals should be calculated first.
   /// True if successful, false on error.

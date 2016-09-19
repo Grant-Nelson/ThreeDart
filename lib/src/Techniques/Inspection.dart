@@ -10,6 +10,8 @@ class Inspection extends Technique {
   Math.Color3 _ambient2;
   Math.Color3 _diffuse3;
   Math.Color3 _ambient3;
+  Math.Color3 _diffuse4;
+  Math.Color3 _ambient4;
 
   bool _showFilled;
   bool _showWireFrame;
@@ -34,12 +36,14 @@ class Inspection extends Technique {
   Inspection() {
     this._shader = null;
     this._lightVec = new Math.Vector3(0.0, 0.0, -1.0);
-    this._diffuse1 = new Math.Color3(0.1, 0.2, 0.3);
+    this._diffuse1 = new Math.Color3(0.2, 0.3, 0.4);
     this._ambient1 = new Math.Color3(0.1, 0.2, 0.3);
-    this._diffuse2 = new Math.Color3(0.5, 0.5, 0.5);
-    this._ambient2 = new Math.Color3(0.5, 0.5, 0.5);
-    this._diffuse3 = new Math.Color3(0.3, 0.3, 0.3);
-    this._ambient3 = new Math.Color3(0.7, 0.7, 0.7);
+    this._diffuse2 = new Math.Color3(0.7, 0.7, 0.7);
+    this._ambient2 = new Math.Color3(0.3, 0.3, 0.3);
+    this._diffuse3 = new Math.Color3(0.5, 0.5, 0.5);
+    this._ambient3 = new Math.Color3(0.5, 0.5, 0.5);
+    this._diffuse4 = new Math.Color3(1.0, 1.0, 1.0);
+    this._ambient4 = new Math.Color3(0.8, 0.8, 0.8);
 
     this._showFilled         = false;
     this._showWireFrame      = false;
@@ -153,16 +157,17 @@ class Inspection extends Technique {
 
     this._shader
       ..bind(state)
+      ..weightScalar = this._vectorScale
       ..lightVector = this._lightVec
-      ..projectMatrix = state.projection.matrix
       ..viewMatrix = state.view.matrix
-      ..objectMatrix = state.object.matrix;
+      ..viewObjectMatrix = state.viewObjectMatrix
+      ..projectViewObjectMatrix = state.projectionViewObjectMatrix;
 
     if (obj.cache is Data.BufferStoreSet) {
       Data.BufferStoreSet store = obj.cache as Data.BufferStoreSet;
       state.gl.blendFunc(WebGL.ONE, WebGL.ONE);
-            state.gl.enable(WebGL.DEPTH_TEST);
-            state.gl.disable(WebGL.BLEND);
+      state.gl.enable(WebGL.DEPTH_TEST);
+      state.gl.disable(WebGL.BLEND);
 
       // TODO: Why does POINTS not respect depth tests?
       // Once they do move these two below with the other DEPTH_TEST disabled.
@@ -202,9 +207,9 @@ class Inspection extends Technique {
       if (this._showFaceTangentals)
         this._render(state, store, obj.shape, 'faceTangentals', this._faceTangentals, this._ambient3, this._diffuse3);
       if (this._showAxis)
-        this._render(state, store, obj.shape, 'Axis', this._axis, this._ambient3, this._diffuse3);
+        this._render(state, store, obj.shape, 'Axis', this._axis, this._ambient4, this._diffuse4);
       if (this._showAABB)
-        this._render(state, store, obj.shape, 'AABB', this._aabb, this._ambient2, this._diffuse2);
+        this._render(state, store, obj.shape, 'AABB', this._aabb, this._ambient4, this._diffuse4);
 
       state.gl.enable(WebGL.DEPTH_TEST);
       state.gl.disable(WebGL.BLEND);
@@ -229,11 +234,12 @@ class Inspection extends Technique {
   /// Builds and sets up the shape for a component.
   Data.BufferStore _buildShape(Core.RenderState state, Shapes.Shape shape) {
     Data.BufferStore store = shape.build(new Data.WebGLBufferBuilder(state.gl),
-      Data.VertexType.Pos|Data.VertexType.Norm|Data.VertexType.Clr3);
+      Data.VertexType.Pos|Data.VertexType.Norm|Data.VertexType.Binm|Data.VertexType.Clr3);
     return store
       ..findAttribute(Data.VertexType.Pos).attr  = this._shader.posAttr.loc
       ..findAttribute(Data.VertexType.Norm).attr = this._shader.normAttr.loc
-      ..findAttribute(Data.VertexType.Clr3).attr = this._shader.clrAttr.loc;
+      ..findAttribute(Data.VertexType.Clr3).attr = this._shader.clrAttr.loc
+      ..findAttribute(Data.VertexType.Binm).attr = this._shader.binmAttr.loc;
   }
 
   /// Convertes the given [shape] into the filled shape.
@@ -242,7 +248,8 @@ class Inspection extends Technique {
     Math.Color4 color =  new Math.Color4.white();
     shape.vertices.forEach((Shapes.Vertex vertex) {
       result.vertices.add(vertex.copy()
-        ..color = color);
+        ..color = color
+        ..binormal = new Math.Vector3.zero());
     });
     shape.faces.forEach((Shapes.Face face) {
       Shapes.Vertex ver1 = result.vertices[face.vertex1.index];
@@ -259,7 +266,8 @@ class Inspection extends Technique {
     if (color == null) color = new Math.Color4(0.0, 0.7, 1.0);
     shape.vertices.forEach((Shapes.Vertex vertex) {
       result.vertices.add(vertex.copy()
-        ..color = color);
+        ..color = color
+        ..binormal = new Math.Vector3.zero());
     });
     void addLine(Shapes.Vertex ver1, Shapes.Vertex ver2) {
       if (ver1.firstLineBetween(ver2) == null) {
@@ -288,7 +296,8 @@ class Inspection extends Technique {
     Math.Color4 color = new Math.Color4.white();
     shape.vertices.forEach((Shapes.Vertex vertex) {
       Shapes.Vertex ver = vertex.copy()
-        ..color = color;
+        ..color = color
+        ..binormal = new Math.Vector3.zero();
       result.vertices.add(ver);
       result.points.add(ver);
     });
@@ -301,9 +310,10 @@ class Inspection extends Technique {
     Math.Color4 color = new Math.Color4(1.0, 1.0, 0.3);
     shape.vertices.forEach((Shapes.Vertex vertex) {
       Shapes.Vertex ver1 = vertex.copy()
-        ..color = color;
-      Shapes.Vertex ver2 = ver1.copy();
-      ver2.location = ver2.location + new Math.Point3.fromVector3(ver2.normal)*this._vectorScale;
+        ..color = color
+        ..binormal = new Math.Vector3.zero();
+      Shapes.Vertex ver2 = ver1.copy()
+        ..binormal = ver1.normal;
       result.vertices.add(ver1);
       result.vertices.add(ver2);
       result.lines.add(ver1, ver2);
@@ -317,9 +327,10 @@ class Inspection extends Technique {
     Math.Color4 color = new Math.Color4(1.0, 0.3, 0.3);
     shape.vertices.forEach((Shapes.Vertex vertex) {
       Shapes.Vertex ver1 = vertex.copy()
-        ..color = color;
-      Shapes.Vertex ver2 = ver1.copy();
-      ver2.location = ver2.location + new Math.Point3.fromVector3(ver2.binormal)*this._vectorScale;
+        ..color = color
+        ..binormal = new Math.Vector3.zero();
+      Shapes.Vertex ver2 = ver1.copy()
+        ..binormal = vertex.binormal;
       result.vertices.add(ver1);
       result.vertices.add(ver2);
       result.lines.add(ver1, ver2);
@@ -333,10 +344,10 @@ class Inspection extends Technique {
     Math.Color4 color = new Math.Color4(1.0, 0.3, 1.0);
     shape.vertices.forEach((Shapes.Vertex vertex) {
       Shapes.Vertex ver1 = vertex.copy()
-        ..color = color;
-      Shapes.Vertex ver2 = ver1.copy();
-      Math.Vector3 tangental = -ver2.binormal.cross(ver2.normal);
-      ver2.location = ver2.location + new Math.Point3.fromVector3(tangental)*this._vectorScale;
+        ..color = color
+        ..binormal = new Math.Vector3.zero();
+      Shapes.Vertex ver2 = ver1.copy()
+        ..binormal = -vertex.binormal.cross(vertex.normal);
       result.vertices.add(ver1);
       result.vertices.add(ver2);
       result.lines.add(ver1, ver2);
@@ -350,9 +361,10 @@ class Inspection extends Technique {
     Math.Color4 color = new Math.Color4(1.0, 0.3, 0.3);
     shape.vertices.forEach((Shapes.Vertex vertex) {
       Shapes.Vertex ver1 = vertex.copy()
-        ..color = color;
-      Shapes.Vertex ver2 = ver1.copy();
-      ver2.location = ver2.location + new Math.Point3.fromVector3(ver2.textureCube)*this._vectorScale;
+        ..color = color
+        ..binormal = new Math.Vector3.zero();
+      Shapes.Vertex ver2 = ver1.copy()
+        ..binormal = vertex.textureCube;
       result.vertices.add(ver1);
       result.vertices.add(ver2);
       result.lines.add(ver1, ver2);
@@ -368,6 +380,7 @@ class Inspection extends Technique {
       Shapes.Vertex ver = new Shapes.Vertex(
         loc: (face.vertex1.location + face.vertex2.location + face.vertex3.location)/3.0,
         norm: face.normal,
+        binm: new Math.Vector3.zero(),
         clr: color);
       result.vertices.add(ver);
       result.points.add(ver);
@@ -383,10 +396,10 @@ class Inspection extends Technique {
       Shapes.Vertex cen1 = new Shapes.Vertex(
         loc: (face.vertex1.location + face.vertex2.location + face.vertex3.location)/3.0,
         norm: face.normal,
+        binm: new Math.Vector3.zero(),
         clr: color);
-
-      Shapes.Vertex cen2 = cen1.copy();
-      cen2.location += new Math.Point3.fromVector3(cen2.normal)*this._vectorScale;
+      Shapes.Vertex cen2 = cen1.copy()
+        ..binormal = face.normal;
       result.vertices.add(cen1);
       result.vertices.add(cen2);
       result.lines.add(cen1, cen2);
@@ -402,10 +415,10 @@ class Inspection extends Technique {
       Shapes.Vertex cen1 = new Shapes.Vertex(
         loc: (face.vertex1.location + face.vertex2.location + face.vertex3.location)/3.0,
         norm: face.normal,
+        binm: new Math.Vector3.zero(),
         clr: color);
-
-      Shapes.Vertex cen2 = cen1.copy();
-      cen2.location += new Math.Point3.fromVector3(face.binormal)*this._vectorScale;
+      Shapes.Vertex cen2 = cen1.copy()
+        ..binormal = face.binormal;
       result.vertices.add(cen1);
       result.vertices.add(cen2);
       result.lines.add(cen1, cen2);
@@ -421,11 +434,10 @@ class Inspection extends Technique {
       Shapes.Vertex cen1 = new Shapes.Vertex(
         loc: (face.vertex1.location + face.vertex2.location + face.vertex3.location)/3.0,
         norm: face.normal,
+        binm: new Math.Vector3.zero(),
         clr: color);
-
-      Shapes.Vertex cen2 = cen1.copy();
-      Math.Vector3 tangental = -face.binormal.cross(face.normal);
-      cen2.location += new Math.Point3.fromVector3(tangental)*this._vectorScale;
+      Shapes.Vertex cen2 = cen1.copy()
+        ..binormal = -face.binormal.cross(face.normal);
       result.vertices.add(cen1);
       result.vertices.add(cen2);
       result.lines.add(cen1, cen2);
@@ -481,6 +493,7 @@ class Inspection extends Technique {
       double spectrum = (vertex.weight-min)/div;
       Math.Color3 clr = new Math.Color3.fromHVS(spectrum*5.0/6.0, 1.0, 1.0);
       result.vertices.add(vertex.copy()
+        ..binormal = new Math.Vector3.zero()
         ..color = new Math.Color4.fromColor3(clr));
     });
     shape.faces.forEach((Shapes.Face face) {
@@ -508,6 +521,7 @@ class Inspection extends Technique {
       double spectrum = (vertex.bending-min)/div;
       Math.Color3 clr = new Math.Color3.fromHVS(spectrum*5.0/6.0, 1.0, 1.0);
       result.vertices.add(vertex.copy()
+        ..binormal = new Math.Vector3.zero()
         ..color = new Math.Color4.fromColor3(clr));
     });
     shape.faces.forEach((Shapes.Face face) {
@@ -522,15 +536,21 @@ class Inspection extends Technique {
   /// Creates the axii shape.
   Shapes.Shape _axis(Shapes.Shape shape) {
     Shapes.Shape result = new Shapes.Shape();
-    Shapes.Vertex verX1 = result.vertices.addNewLoc(0.0, 0.0, 0.0)..color = new Math.Color4(1.0, 0.0, 0.0);
-    Shapes.Vertex verX2 = result.vertices.addNewLoc(1.0, 0.0, 0.0)..color = new Math.Color4(1.0, 0.0, 0.0);
-    Shapes.Vertex verY1 = result.vertices.addNewLoc(0.0, 0.0, 0.0)..color = new Math.Color4(0.0, 1.0, 0.0);
-    Shapes.Vertex verY2 = result.vertices.addNewLoc(0.0, 1.0, 0.0)..color = new Math.Color4(0.0, 1.0, 0.0);
-    Shapes.Vertex verZ1 = result.vertices.addNewLoc(0.0, 0.0, 0.0)..color = new Math.Color4(0.0, 0.0, 1.0);
-    Shapes.Vertex verZ2 = result.vertices.addNewLoc(0.0, 0.0, 1.0)..color = new Math.Color4(0.0, 0.0, 1.0);
-    result.lines.add(verX1, verX2);
-    result.lines.add(verY1, verY2);
-    result.lines.add(verZ1, verZ2);
+    var add = (double dx, double dy, double dz) {
+      Math.Color4 clr = new Math.Color4(dx, dy, dz);
+      Shapes.Vertex ver1 = result.vertices.addNewLoc(0.0, 0.0, 0.0)
+        ..binormal = new Math.Vector3.zero()
+        ..normal = new Math.Vector3(1.0, 0.0, 0.0)
+        ..color = clr;
+      Shapes.Vertex ver2 = result.vertices.addNewLoc(dx, dy, dz)
+        ..binormal = new Math.Vector3.zero()
+        ..normal = new Math.Vector3(1.0, 0.0, 0.0)
+        ..color = clr;
+      result.lines.add(ver1, ver2);
+    };
+    add(1.0, 0.0, 0.0);
+    add(0.0, 1.0, 0.0);
+    add(0.0, 0.0, 1.0);
     return result;
   }
 
@@ -538,14 +558,19 @@ class Inspection extends Technique {
   Shapes.Shape _aabb(Shapes.Shape shape) {
     Math.Region3 aabb = shape.calculateAABB();
     Shapes.Shape result = new Shapes.Shape();
-    Shapes.Vertex ver1 = result.vertices.addNewLoc(aabb.x,         aabb.y,         aabb.z);
-    Shapes.Vertex ver2 = result.vertices.addNewLoc(aabb.x+aabb.dx, aabb.y,         aabb.z);
-    Shapes.Vertex ver3 = result.vertices.addNewLoc(aabb.x+aabb.dx, aabb.y+aabb.dy, aabb.z);
-    Shapes.Vertex ver4 = result.vertices.addNewLoc(aabb.x,         aabb.y+aabb.dy, aabb.z);
-    Shapes.Vertex ver5 = result.vertices.addNewLoc(aabb.x,         aabb.y,         aabb.z+aabb.dz);
-    Shapes.Vertex ver6 = result.vertices.addNewLoc(aabb.x+aabb.dx, aabb.y,         aabb.z+aabb.dz);
-    Shapes.Vertex ver7 = result.vertices.addNewLoc(aabb.x+aabb.dx, aabb.y+aabb.dy, aabb.z+aabb.dz);
-    Shapes.Vertex ver8 = result.vertices.addNewLoc(aabb.x,         aabb.y+aabb.dy, aabb.z+aabb.dz);
+    var add = (double dx, double dy, double dz) {
+      return result.vertices.addNewLoc(dx, dy, dz)
+        ..binormal = new Math.Vector3.zero()
+        ..normal = new Math.Vector3(dx, dy, dz);
+    };
+    Shapes.Vertex ver1 = add(aabb.x,         aabb.y,         aabb.z);
+    Shapes.Vertex ver2 = add(aabb.x+aabb.dx, aabb.y,         aabb.z);
+    Shapes.Vertex ver3 = add(aabb.x+aabb.dx, aabb.y+aabb.dy, aabb.z);
+    Shapes.Vertex ver4 = add(aabb.x,         aabb.y+aabb.dy, aabb.z);
+    Shapes.Vertex ver5 = add(aabb.x,         aabb.y,         aabb.z+aabb.dz);
+    Shapes.Vertex ver6 = add(aabb.x+aabb.dx, aabb.y,         aabb.z+aabb.dz);
+    Shapes.Vertex ver7 = add(aabb.x+aabb.dx, aabb.y+aabb.dy, aabb.z+aabb.dz);
+    Shapes.Vertex ver8 = add(aabb.x,         aabb.y+aabb.dy, aabb.z+aabb.dz);
     result.lines.add(ver1, ver2);
     result.lines.add(ver2, ver3);
     result.lines.add(ver3, ver4);

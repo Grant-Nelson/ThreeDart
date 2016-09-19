@@ -119,12 +119,22 @@ class VertexCollection {
     return success;
   }
 
-  /// Calculates the binormals for all the faces in the shape.
-  /// Returns true if faces' binormals are calculated, false on error.
+  /// Calculates the binormals for all the vertices in the shape.
+  /// Returns true if vertices' binormals are calculated, false on error.
   bool calculateBinormals() {
     bool success = true;
     for (Vertex vertex in this._vertices) {
       if (!vertex.calculateBinormal()) success = false;
+    }
+    return success;
+  }
+
+  /// Calculates the bending adjacent locations for all the vertices in the shape.
+  /// Returns true if vertices' adjacents are calculated, false on error.
+  bool calculateBendingAdjacents() {
+    bool success = true;
+    for (Vertex vertex in this._vertices) {
+      if (!vertex.calculateBendingAdjacents()) success = false;
     }
     return success;
   }

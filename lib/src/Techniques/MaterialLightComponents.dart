@@ -1,5 +1,7 @@
 part of ThreeDart.Techniques;
 
+// TODO: Comment this whole file
+
 abstract class MaterialLightBaseComponent {
   MaterialLight _owner;
   Shaders.ColorSourceType _type;

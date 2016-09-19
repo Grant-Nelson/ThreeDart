@@ -15,21 +15,12 @@ import 'package:ThreeDart/Lights.dart' as Lights;
 import '../common/common.dart' as common;
 
 void main() {
-  common.shellTest("Test 035", [],
+  common.shellTest("Test 035", ["shapes"],
     "A test of the bending a shape with the Material Light Shader.");
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
 
-  Shapes.Shape shape = Shapes.cylinder(div: 100, sides: 20)
-    ..calculateBending(new Shapes.ExpVertexMeasure(
-      new Shapes.DirectionalVertexMeasure(
-        center: new Math.Point3(0.0, 0.0, -1.0),
-        vector: new Math.Vector3(0.0, 0.0, 2.0)),
-      1.0, 3.0))
-    ..applyPositionMatrix(new Math.Matrix4.scale(0.25, 0.25, 2.0));
-
   ThreeDart.Entity obj = new ThreeDart.Entity()
-    ..shape = shape
     ..mover = new Movers.Constant();
 
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
@@ -70,6 +61,42 @@ void main() {
       tech.bendMatrices[2] = new Math.Matrix4.identity();
     });
   td.scene = pass;
+
+  // Techniques.Inspection inspTech = new Techniques.Inspection()
+  //   ..showWireFrame = true
+  //   ..showAxis = true;
+  //
+  // Shapes.Shape inspShap = Shapes.cube()
+  //   ..applyPositionMatrix(new Math.Matrix4.scale(0.1, 0.1, 0.1));
+  //
+  // pass.children.add(new ThreeDart.Entity(
+  //   mover: new Movers.Constant(), shape: inspShap, tech: inspTech));
+  //
+  // pass.children.add(new ThreeDart.Entity(
+  //   mover: mover1, shape: inspShap, tech: inspTech));
+  //
+  // pass.children.add(new ThreeDart.Entity(
+  //   mover: mover2, shape: inspShap, tech: inspTech));
+
+  void setShape(Shapes.Shape shape) {
+    shape.calculateNormals();
+    shape.calculateBending(new Shapes.ExpVertexMeasure(
+      new Shapes.DirectionalVertexMeasure(
+        center: new Math.Point3(0.0, 0.0, -1.0),
+        vector: new Math.Vector3(0.0, 0.0, 2.0)),
+      1.0, 3.0));
+    shape.calculateBendingAdjacents();
+    shape.applyPositionMatrix(new Math.Matrix4.scale(0.25, 0.25, 2.0));
+    obj.shape = shape;
+  }
+
+  new common.RadioGroup("shapes")
+    ..add("Cuboid",   () { setShape(Shapes.cuboid(widthDiv: 30, heightDiv: 30)); })
+    ..add("Cylinder", () { setShape(Shapes.cylinder(div: 100, sides: 20)); }, true)
+    ..add("Cone",     () { setShape(Shapes.cylinder(topRadius: 0.0, sides: 12, capTop: false, div: 30)); })
+    ..add("Sphere",   () { setShape(Shapes.sphere(widthDiv: 20, heightDiv: 20)); })
+    ..add("Toroid",   () { setShape(Shapes.toroid(minorRadius: 0.25, majorRadius: 1.5)); })
+    ..add("Knot",     () { setShape(Shapes.knot(minorRadius: 0.1)); });
 
   var update;
   update = (num t) {

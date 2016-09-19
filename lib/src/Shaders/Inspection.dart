@@ -8,29 +8,31 @@ class Inspection extends Shader {
 
   /// The vertex shader source code in glsl.
   static String _vertexSource =
-      "uniform mat4 objMat;                                        \n"+
-      "uniform mat4 viewMat;                                       \n"+
-      "uniform mat4 projMat;                                       \n"+
-      "uniform vec3 lightVec;                                      \n"+
-      "                                                            \n"+
-      "attribute vec3 posAttr;                                     \n"+
-      "attribute vec3 normAttr;                                    \n"+
-      "attribute vec3 clrAttr;                                     \n"+
-      "                                                            \n"+
-      "varying vec3 normal;                                        \n"+
-      "varying vec3 color;                                         \n"+
-      "varying vec3 litVec;                                        \n"+
-      "varying vec3 camPos;                                        \n"+
-      "                                                            \n"+
-      "void main()                                                 \n"+
-      "{                                                           \n"+
-      "   gl_PointSize = 6.0;                                      \n"+
-      "   color = clrAttr;                                         \n"+
-      "   camPos = (viewMat*vec4(0.0, 0.0, 0.0, -1.0)).xyz;        \n"+
-      "   normal = normalize(objMat*vec4(normAttr, 0.0)).xyz;      \n"+
-      "   litVec = normalize((viewMat*vec4(lightVec, 0.0)).xyz);   \n"+
-      "   gl_Position = projMat*viewMat*objMat*vec4(posAttr, 1.0); \n"+
-      "}                                                           \n";
+      "uniform mat4 viewMat;                                         \n"+
+      "uniform mat4 viewObjMatrix;                                   \n"+
+      "uniform mat4 projViewObjMatrix;                               \n"+
+      "uniform vec3 lightVec;                                        \n"+
+      "uniform float weightScalar;                                   \n"+
+      "                                                              \n"+
+      "attribute vec3 posAttr;                                       \n"+
+      "attribute vec3 normAttr;                                      \n"+
+      "attribute vec3 clrAttr;                                       \n"+
+      "attribute vec3 binmAttr;                                      \n"+
+      "                                                              \n"+
+      "varying vec3 normal;                                          \n"+
+      "varying vec3 color;                                           \n"+
+      "varying vec3 litVec;                                          \n"+
+      "varying vec3 camPos;                                          \n"+
+      "                                                              \n"+
+      "void main()                                                   \n"+
+      "{                                                             \n"+
+      "   gl_PointSize = 6.0;                                        \n"+
+      "   color = clrAttr;                                           \n"+
+      "   normal = normalize(viewObjMatrix*vec4(normAttr, 0.0)).xyz; \n"+
+      "   litVec = normalize((viewMat*vec4(-lightVec, 0.0)).xyz);    \n"+
+      "   vec3 pos = posAttr + binmAttr*weightScalar;                \n"+
+      "   gl_Position = projViewObjMatrix*vec4(pos, 1.0);            \n"+
+      "}                                                             \n";
 
   /// The fragment shader source code in glsl.
   static String _fragmentSource =
@@ -42,7 +44,6 @@ class Inspection extends Shader {
       "varying vec3 normal;                                       \n"+
       "varying vec3 color;                                        \n"+
       "varying vec3 litVec;                                       \n"+
-      "varying vec3 camPos;                                       \n"+
       "                                                           \n"+
       "void main()                                                \n"+
       "{                                                          \n"+
@@ -55,12 +56,14 @@ class Inspection extends Shader {
   Attribute _posAttr;
   Attribute _normAttr;
   Attribute _clrAttr;
+  Attribute _binmAttr;
   Uniform3f _lightVec;
   Uniform3f _ambientClr;
   Uniform3f _diffuseClr;
-  UniformMat4 _objMat;
+  Uniform1f _weightScalar;
   UniformMat4 _viewMat;
-  UniformMat4 _projMat;
+  UniformMat4 _viewObjMatrix;
+  UniformMat4 _projViewObjMatrix;
 
   /// Checks for the shader in the shader cache in the given [state],
   /// if it is not found then this shader is compiled and added
@@ -77,15 +80,17 @@ class Inspection extends Shader {
   /// Compiles this shader for the given rendering context.
   Inspection(WebGL.RenderingContext gl): super(gl, defaultName) {
     this.initialize(_vertexSource, _fragmentSource);
-    this._posAttr    = this.attributes["posAttr"];
-    this._normAttr   = this.attributes["normAttr"];
-    this._clrAttr    = this.attributes["clrAttr"];
-    this._lightVec   = this.uniforms["lightVec"] as Uniform3f;
-    this._ambientClr = this.uniforms["ambientClr"] as Uniform3f;
-    this._diffuseClr = this.uniforms["diffuseClr"] as Uniform3f;
-    this._objMat     = this.uniforms["objMat"] as UniformMat4;
-    this._viewMat    = this.uniforms["viewMat"] as UniformMat4;
-    this._projMat    = this.uniforms["projMat"] as UniformMat4;
+    this._posAttr           = this.attributes["posAttr"];
+    this._normAttr          = this.attributes["normAttr"];
+    this._clrAttr           = this.attributes["clrAttr"];
+    this._binmAttr          = this.attributes["binmAttr"];
+    this._lightVec          = this.uniforms["lightVec"] as Uniform3f;
+    this._ambientClr        = this.uniforms["ambientClr"] as Uniform3f;
+    this._diffuseClr        = this.uniforms["diffuseClr"] as Uniform3f;
+    this._weightScalar      = this.uniforms["weightScalar"] as Uniform1f;
+    this._viewMat           = this.uniforms["viewMat"] as UniformMat4;
+    this._viewObjMatrix     = this.uniforms["viewObjMatrix"] as UniformMat4;
+    this._projViewObjMatrix = this.uniforms["projViewObjMatrix"] as UniformMat4;
   }
 
   /// The position vertex shader attribute.
@@ -96,6 +101,9 @@ class Inspection extends Shader {
 
   /// The color vertex shader attribute.
   Attribute get clrAttr => this._clrAttr;
+
+  /// The binormal vertex shader attribute.
+  Attribute get binmAttr => this._binmAttr;
 
   /// The direction of the light on to the shape.
   Math.Vector3 get lightVector => this._lightVec.getVector3();
@@ -115,15 +123,19 @@ class Inspection extends Shader {
     this._diffuseClr.setColor3(diffuseClr);
   }
 
-  /// The object matrix.
-  Math.Matrix4 get objectMatrix => this._objMat.getMatrix4();
-  set objectMatrix(Math.Matrix4 mat) => this._objMat.setMatrix4(mat);
+  /// The scalar of the weighting for the shape.
+  double get weightScalar => this._weightScalar.getValue();
+  set weightScalar(double scalar) => this._weightScalar.setValue(scalar);
 
   /// The view matrix.
   Math.Matrix4 get viewMatrix => this._viewMat.getMatrix4();
   set viewMatrix(Math.Matrix4 mat) => this._viewMat.setMatrix4(mat);
 
-  /// The projection matrix.
-  Math.Matrix4 get projectMatrix => this._projMat.getMatrix4();
-  set projectMatrix(Math.Matrix4 mat) => this._projMat.setMatrix4(mat);
+  /// The view object matrix.
+  Math.Matrix4 get viewObjectMatrix => this._viewObjMatrix.getMatrix4();
+  set viewObjectMatrix(Math.Matrix4 mat) => this._viewObjMatrix.setMatrix4(mat);
+
+  /// The projection view object matrix.
+  Math.Matrix4 get projectViewObjectMatrix => this._projViewObjMatrix.getMatrix4();
+  set projectViewObjectMatrix(Math.Matrix4 mat) => this._projViewObjMatrix.setMatrix4(mat);
 }

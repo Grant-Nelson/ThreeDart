@@ -15,13 +15,14 @@ class Vertex {
   Math.Point2 _txt2D;
   Math.Vector3 _txtCube;
   Math.Color4 _clr;
+  Math.Point3 _adj;
   double _weight;
   double _bending;
 
   /// Creates a new vertex with the default values.
   Vertex({Math.Point3 loc: null, Math.Vector3 norm: null, Math.Vector3 binm: null,
           Math.Point2 txt2D: null, Math.Vector3 txtCube: null, Math.Color4 clr: null,
-          double weight: 0.0, double bending: 0.0}) {
+          Math.Point3 adj: null, double weight: 0.0, double bending: 0.0}) {
     this._shape = null;
     this._points = new VertexPointCollection._(this);
     this._lines = new VertexLineCollection._(this);
@@ -34,6 +35,7 @@ class Vertex {
     this._txt2D = txt2D;
     this._txtCube = txtCube;
     this._clr = clr;
+    this._adj = adj;
     this._weight = weight;
     this._bending = bending;
   }
@@ -47,6 +49,7 @@ class Vertex {
       txt2D:   this._txt2D?.copy(),
       txtCube: this._txtCube?.copy(),
       clr:     this._clr?.copy(),
+      adj:     this._adj?.copy(),
       weight:  this._weight,
       bending: this._bending
     );
@@ -135,6 +138,16 @@ class Vertex {
     }
   }
 
+  /// The 3D adjacent location of the vertex.
+  Math.Point3 get adjacent => this._adj;
+  set adjacent(Math.Point3 adj) {
+    if (this._adj != adj) {
+      this._adj = adj;
+      if (this._shape != null)
+        this._shape.onVertexModified(this);
+    }
+  }
+
   /// The weight value of the vertex.
   double get weight => this._weight;
   set weight(double weight) {
@@ -178,6 +191,9 @@ class Vertex {
     } else if (type == Data.VertexType.Clr4) {
       if (this._clr == null) return [1.0, 1.0, 1.0, 1.0];
       else return this._clr.toList();
+    } else if (type == Data.VertexType.Adj) {
+      if (this._adj == null) return [0.0, 0.0, 0.0];
+      else return this._adj.toList();
     } else if (type == Data.VertexType.Weight)
       return [ this._weight ];
     else if (type == Data.VertexType.Bending)
@@ -223,6 +239,56 @@ class Vertex {
     return true;
   }
 
+  /// Calculates the bending adjacent point to this vertex. The adjacent is
+  /// the vertex in the same line or triangle with the maximum value returned
+  /// from the given [hndl]. If the adjacent is already set this will have
+  /// no effect.
+  bool calculateBendingAdjacents() {
+    if (this._adj != null) return true;
+    if (this._norm == null) return false;
+    if (this._shape != null) this._shape._changed.suspend();
+
+    double weight = this._weight;
+    Math.Point3 adj = this._loc?.copy();
+
+    var process = (Vertex ver) {
+      if ((ver != null) && (ver != this)) {
+        double weight2 = ver.bending - this._weight;
+        if (weight2 < 0.0) weight2 = -weight2;
+        if (weight < weight2) {
+          weight = weight2;
+          adj = ver.location?.copy();
+        }
+      }
+    };
+
+    this._lines.forEach((Line line) {
+      process(line.vertex1);
+      process(line.vertex2);
+    });
+    this._faces.forEach((Face face) {
+      process(face.vertex1);
+      process(face.vertex2);
+      process(face.vertex3);
+    });
+
+    if (!Math.Comparer.equals(weight, 0.0)) {
+      Math.Vector3 adjVec = new Math.Vector3.fromPoint3(adj - this._loc);
+      double length = adjVec.length() / weight;
+      Math.Vector3 cross = this._norm.cross(adjVec).normal();
+      adjVec = cross.cross(this._norm).normal();
+      adjVec *= length;
+      adj = this._loc + new Math.Point3.fromVector3(adjVec);
+    }
+
+    this._adj = adj;
+    if (this._shape != null) {
+      this._shape.onVertexModified(this);
+      this._shape._changed.resume();
+    }
+    return true;
+  }
+
   /// Finds the first line which starts at this vertex
   /// and ends at the given [ver].
   Line firstLineTo(Vertex ver) {
@@ -255,6 +321,7 @@ class Vertex {
     if (this._txt2D != ver._txt2D) return false;
     if (this._txtCube != ver._txtCube) return false;
     if (this._clr != ver._clr) return false;
+    if (this._adj != ver._adj) return false;
     if (Math.Comparer.equals(this._weight, ver._weight)) return false;
     if (Math.Comparer.equals(this._bending, ver._bending)) return false;
     return true;
@@ -278,6 +345,8 @@ class Vertex {
     if (this._txtCube != null) parts.add(this._txtCube.toString());
     else                       parts.add("-");
     if (this._clr != null) parts.add(this._clr.toString());
+    else                   parts.add("-");
+    if (this._adj != null) parts.add(this._adj.toString());
     else                   parts.add("-");
     parts.add(Math.formatDouble(this._weight));
     parts.add(Math.formatDouble(this._bending));

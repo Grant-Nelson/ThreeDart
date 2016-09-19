@@ -15,7 +15,7 @@ import 'package:ThreeDart/Scenes.dart' as Scenes;
 import '../common/common.dart' as common;
 
 void main() {
-  common.shellTest("Test 002", ["controls", "shapes"],
+  common.shellTest("Test 002", ["controls", "shapes", "scalars"],
     "The inspection test is used to check that shapes are built correctly "+
     "and for checking the data privided by the shapes. "+
     "Also it is useful for testing out new generated shape configurations. "+
@@ -93,6 +93,19 @@ void main() {
     ..add("Grid",          () { setShape(Shapes.grid()); })
     ..add("Grid+",         () { setShape(Shapes.grid(widthDiv: 16, heightDiv: 16,
                                 heightHndl: (double u, double v) => sin(u*8.0)*cos(v*8.0)*0.3 )); });
+
+  new common.RadioGroup("scalars")
+    ..add("0.01", () { tech.vectorScale = 0.01; })
+    ..add("0.02", () { tech.vectorScale = 0.02; })
+    ..add("0.04", () { tech.vectorScale = 0.04; })
+    ..add("0.06", () { tech.vectorScale = 0.06; })
+    ..add("0.08", () { tech.vectorScale = 0.08; })
+    ..add("0.1", () { tech.vectorScale = 0.1; })
+    ..add("0.2", () { tech.vectorScale = 0.2; })
+    ..add("0.4", () { tech.vectorScale = 0.4; }, true)
+    ..add("0.6", () { tech.vectorScale = 0.6; })
+    ..add("0.8", () { tech.vectorScale = 0.8; })
+    ..add("1.0", () { tech.vectorScale = 1.0; });
 
   var update;
   update = (num t) {

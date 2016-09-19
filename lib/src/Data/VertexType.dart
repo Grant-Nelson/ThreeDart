@@ -27,11 +27,14 @@ class VertexType {
   /// [Clr4] indicates RGBA color data.
   static VertexType Clr4 = new VertexType._(0x0040);
 
+  /// [Adj] indicates adjacents positional data.
+  static VertexType Adj = new VertexType._(0x0080);
+
   /// [Weight] indicates an additional single float data.
-  static VertexType Weight = new VertexType._(0x0080);
+  static VertexType Weight = new VertexType._(0x0100);
 
   /// [Bending] indicates float data for bending a shape.
-  static VertexType Bending = new VertexType._(0x0100);
+  static VertexType Bending = new VertexType._(0x0200);
 
   /// The combined vertex type value.
   final int _value;
@@ -62,6 +65,7 @@ class VertexType {
     if (this.has(TxtCube)) result++;
     if (this.has(Clr3))    result++;
     if (this.has(Clr4))    result++;
+    if (this.has(Adj))     result++;
     if (this.has(Weight))  result++;
     if (this.has(Bending)) result++;
     return result;
@@ -77,6 +81,7 @@ class VertexType {
     if (this.has(TxtCube)) result += 3;
     if (this.has(Clr3))    result += 3;
     if (this.has(Clr4))    result += 4;
+    if (this.has(Adj))     result += 3;
     if (this.has(Weight))  result += 1;
     if (this.has(Bending)) result += 1;
     return result;
@@ -111,6 +116,10 @@ class VertexType {
     }
     if (this.has(Clr4)) {
       if (count == index) return Clr4;
+      count++;
+    }
+    if (this.has(Adj)) {
+      if (count == index) return Adj;
       count++;
     }
     if (this.has(Weight)) {
@@ -155,6 +164,10 @@ class VertexType {
       if (type == Clr4) return result;
       result++;
     }
+    if (this.has(Adj)) {
+      if (type == Adj) return result;
+      result++;
+    }
     if (this.has(Weight)) {
       if (type == Weight) return result;
       result++;
@@ -197,6 +210,10 @@ class VertexType {
       if (type == Clr4) return result;
       result += 4;
     }
+    if (this.has(Adj)) {
+      if (type == Adj) return result;
+      result += 3;
+    }
     if (this.has(Weight)) {
       if (type == Weight) return result;
       result += 1;
@@ -218,6 +235,7 @@ class VertexType {
     if (this.has(TxtCube)) parts.add("TxtCube");
     if (this.has(Clr3))    parts.add("Clr3");
     if (this.has(Clr4))    parts.add("Clr4");
+    if (this.has(Adj))     parts.add("Adj");
     if (this.has(Weight))  parts.add("Weight");
     if (this.has(Bending)) parts.add("Bending");
     if (parts.length <= 0) return "None";

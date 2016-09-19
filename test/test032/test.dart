@@ -15,7 +15,7 @@ import 'package:ThreeDart/Scenes.dart' as Scenes;
 import '../common/common.dart' as common;
 
 void main() {
-  common.shellTest("Test 032", ["controls", "shapes"],
+  common.shellTest("Test 032", ["controls", "shapes", "scalars"],
     "The inspection test for shapes loaders. "+
     "For generated shapes see test002. "+
     "Note: Some shapes will take time to load.");
@@ -82,9 +82,22 @@ void main() {
 
   new common.RadioGroup("shapes")
     ..add("Cube",          () async { setEntity("../resources/Cube.obj");         }, true)
-    ..add("Low Poly Tree", () async { setEntity("../resources/tree/tree.obj");    }, false)
-    ..add("Low Poly Wolf", () async { setEntity("../resources/Wolf.obj");         }, false)
-    ..add("Plant",         () async { setEntity("../resources/plant/plant.obj");  }, false);
+    ..add("Low Poly Tree", () async { setEntity("../resources/tree/tree.obj");    })
+    ..add("Low Poly Wolf", () async { setEntity("../resources/Wolf.obj");         })
+    ..add("Plant",         () async { setEntity("../resources/plant/plant.obj");  });
+
+  new common.RadioGroup("scalars")
+    ..add("0.01", () { tech.vectorScale = 0.01; })
+    ..add("0.02", () { tech.vectorScale = 0.02; })
+    ..add("0.04", () { tech.vectorScale = 0.04; })
+    ..add("0.06", () { tech.vectorScale = 0.06; })
+    ..add("0.08", () { tech.vectorScale = 0.08; })
+    ..add("0.1", () { tech.vectorScale = 0.1; })
+    ..add("0.2", () { tech.vectorScale = 0.2; })
+    ..add("0.4", () { tech.vectorScale = 0.4; }, true)
+    ..add("0.6", () { tech.vectorScale = 0.6; })
+    ..add("0.8", () { tech.vectorScale = 0.8; })
+    ..add("1.0", () { tech.vectorScale = 1.0; });
 
   var update;
   update = (num t) {

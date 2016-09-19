@@ -99,6 +99,9 @@ class MaterialLightConfig {
   /// Indicates the bending is needed by the vertex shader.
   final bool bending;
 
+  /// Indicates the adjacent vector is needed by the vertex shader.
+  final bool adj;
+
   /// Indicates the 2D texture matrix is needed by the vertex shader.
   final bool txt2DMat;
 
@@ -134,7 +137,7 @@ class MaterialLightConfig {
     bool this.lights, bool this.objPos,
     bool this.viewPos, bool this.norm, bool this.binm,
     bool this.txt2D, bool this.txtCube, bool this.bending,
-    bool this.txt2DMat, bool this.txtCubeMat,
+    bool this.adj, bool this.txt2DMat, bool this.txtCubeMat,
     bool this.colorMat, int this.bendMats,
     String this.name, Data.VertexType this.vertexType);
 
@@ -226,6 +229,7 @@ class MaterialLightConfig {
     bool projViewMat    = bending;
     txt2DMat   = txt2DMat   && txt2D;
     txtCubeMat = txtCubeMat && txtCube;
+    bool adj = bending && (norm || binm);
 
     Data.VertexType vertexType = Data.VertexType.Pos;
     if (norm)    vertexType |= Data.VertexType.Norm;
@@ -233,6 +237,7 @@ class MaterialLightConfig {
     if (txt2D)   vertexType |= Data.VertexType.Txt2D;
     if (txtCube) vertexType |= Data.VertexType.TxtCube;
     if (bending) vertexType |= Data.VertexType.Bending;
+    if (adj)     vertexType |= Data.VertexType.Adj;
 
     return new MaterialLightConfig._(emission, ambient,
       diffuse, invDiffuse, specular, bumpy, reflection, refraction,
@@ -240,7 +245,7 @@ class MaterialLightConfig {
       txtPointLight, txtSpotLight, totalLights, enviromental,
       invViewMat, objMat, viewObjMat, projViewObjMat,
       viewMat, projViewMat, lights, objPos, viewPos,
-      norm, binm, txt2D, txtCube, bending, txt2DMat, txtCubeMat,
+      norm, binm, txt2D, txtCube, bending, adj, txt2DMat, txtCubeMat,
       colorMat, bendMats, name, vertexType);
   }
 
@@ -254,7 +259,7 @@ class MaterialLightConfig {
     buf.writeln("");
     buf.writeln("vec3 getNorm(mat4 viewObjMatrix)");
     buf.writeln("{");
-    buf.writeln("   return normalize(viewObjMatrix*vec4(normAttr, 0.0)).xyz;");
+    buf.writeln("   return normalize((viewObjMatrix*vec4(normAttr, 0.0)).xyz);");
     buf.writeln("}");
     buf.writeln("");
   }
@@ -267,7 +272,7 @@ class MaterialLightConfig {
     buf.writeln("");
     buf.writeln("vec3 getBinm(mat4 viewObjMatrix)");
     buf.writeln("{");
-    buf.writeln("   return normalize(viewObjMatrix*vec4(binmAttr, 0.0)).xyz;");
+    buf.writeln("   return normalize((viewObjMatrix*vec4(binmAttr, 0.0)).xyz);");
     buf.writeln("}");
     buf.writeln("");
   }
@@ -367,6 +372,7 @@ class MaterialLightConfig {
     buf.writeln("uniform int bendMatCount;");
     buf.writeln("uniform BendingValue bendValues[${this.bendMats}];");
     buf.writeln("attribute float bendAttr;");
+    if (this.adj) buf.writeln("attribute float adjAttr;");
     buf.writeln("");
 
     buf.writeln("void getValues(mat4 objMatrix)");
