@@ -27,7 +27,7 @@ void main() {
     ..add(new Movers.UserRoller(ctrl: true, input: td.userInput))
     ..add(new Movers.UserZoom(input: td.userInput))
     ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
-  Views.Perspective userCamara = new Views.Perspective(mover: secondMover);
+  Views.Perspective userCamera = new Views.Perspective(mover: secondMover);
 
   Views.BackTarget colorTarget = new Views.BackTarget(800, 600)
     ..clearColor = false;
@@ -47,10 +47,10 @@ void main() {
   Scenes.CoverPass skybox = new Scenes.CoverPass.skybox(
     td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg"))
     ..target = colorTarget
-    ..camara = userCamara;
+    ..camera = userCamera;
 
   Scenes.EntityPass pass = new Scenes.EntityPass()
-    ..camara = userCamara
+    ..camera = userCamera
     ..tech = tech
     ..target = colorTarget
     ..children.add(obj);

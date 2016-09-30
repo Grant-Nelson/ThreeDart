@@ -45,7 +45,7 @@ void main() {
   td.scene = new Scenes.EntityPass()
     ..tech = tech
     ..children.add(obj)
-    ..camara.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0));
+    ..camera.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0));
 
   var update;
   update = (num t) {

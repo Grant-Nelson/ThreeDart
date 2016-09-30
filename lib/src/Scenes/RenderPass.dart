@@ -3,9 +3,9 @@ part of ThreeDart.Scenes;
 /// The render pass renders a single scene.
 abstract class RenderPass extends Scene {
 
-  /// The camara describing the view of the scene.
-  Views.Camara get camara;
-  set camara(Views.Camara camara);
+  /// The camera describing the view of the scene.
+  Views.Camera get camera;
+  set camera(Views.Camera camera);
 
   /// The target defining the storage to render to.
   Views.Target get target;

@@ -28,7 +28,7 @@ void main() {
     ..add(new Movers.UserRoller(ctrl: true, input: td.userInput))
     ..add(new Movers.UserZoom(input: td.userInput))
     ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
-  Views.Perspective userCamara = new Views.Perspective(mover: secondMover);
+  Views.Perspective userCamera = new Views.Perspective(mover: secondMover);
 
   ThreeDart.Entity cubeEntity = new ThreeDart.Entity(shape: Shapes.cube());
   ThreeDart.Entity group = new ThreeDart.Entity();
@@ -66,18 +66,18 @@ void main() {
 
   Scenes.CoverPass skybox = new Scenes.CoverPass.skybox(
     td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg"))
-    ..camara = userCamara
+    ..camera = userCamera
     ..target = colorTarget;
 
   Scenes.EntityPass colorPass = new Scenes.EntityPass()
-    ..camara = userCamara
+    ..camera = userCamera
     ..target = colorTarget
     ..tech = colorTech
     ..children.add(group);
 
   Views.BackTarget depthTarget = new Views.BackTarget(400, 300);
   Scenes.EntityPass depthPass = new Scenes.EntityPass()
-    ..camara = userCamara
+    ..camera = userCamera
     ..target = depthTarget
     ..tech = new Techniques.Depth(fogStart: 3.5, fogStop: 5.5)
     ..children.add(group);

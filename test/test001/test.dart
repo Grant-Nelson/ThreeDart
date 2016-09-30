@@ -24,7 +24,7 @@ void main() {
   Scenes.EntityPass pass = new Scenes.EntityPass()
     ..children.add(obj)
     ..tech = new Techniques.Depth(fogStart: 3.0, fogStop: 6.0)
-    ..camara.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0));
+    ..camera.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0));
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart")
     ..scene = pass;

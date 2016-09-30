@@ -72,7 +72,7 @@ void main() {
     ..tech = tech
     ..children.add(room)
     ..children.add(centerObj)
-    ..camara.mover = camMover;
+    ..camera.mover = camMover;
   td.scene = pass;
   addLightBall(tech, pass, 1.0, 0.0, 0.0, 0.3, 0.0, 0.0);
   addLightBall(tech, pass, 0.0, 1.0, 0.0, 0.0, 0.4, 0.0);

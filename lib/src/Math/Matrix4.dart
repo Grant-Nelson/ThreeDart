@@ -145,11 +145,11 @@ class Matrix4 {
     return new Matrix4.lookTowards(new Point3(0.0, 0.0, 0.0), upHint, forward);
   }
 
-  /// Constructs a camara matrix.
+  /// Constructs a camera matrix.
   ///
-  /// [pos] is the position of the camara,
-  /// [up] is the top direction of the camara,
-  /// and [forward] is the direction the camara is looking towards.
+  /// [pos] is the position of the camera,
+  /// [up] is the top direction of the camera,
+  /// and [forward] is the direction the camera is looking towards.
   factory Matrix4.lookTowards(Point3 pos, Vector3 up, Vector3 forward) {
     Vector3 zaxis = forward.normal();
     Vector3 xaxis = up.cross(zaxis).normal();
@@ -164,11 +164,11 @@ class Matrix4 {
                          0.0,      0.0,      0.0,    1.0);
   }
 
-  /// Constructs a camara matrix.
+  /// Constructs a camera matrix.
   ///
-  /// [pos] is the position of the camara,
-  /// [up] is the top direction of the camara,
-  /// and [focus] is the point the camara is looking at.
+  /// [pos] is the position of the camera,
+  /// [up] is the top direction of the camera,
+  /// and [focus] is the point the camera is looking at.
   factory Matrix4.lookAtTarget(Point3 pos, Vector3 up, Point3 focus) {
     Vector3 forward = new Vector3.fromPoint3(focus - pos);
     return new Matrix4.lookTowards(pos, up, forward);

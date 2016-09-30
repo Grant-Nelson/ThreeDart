@@ -53,14 +53,14 @@ void main() {
     ..add(new Movers.UserZoom(input: td.userInput))
     ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
 
-  Views.Perspective camara = new Views.Perspective(mover: mover);
+  Views.Perspective camera = new Views.Perspective(mover: mover);
 
   Scenes.CoverPass skybox = new Scenes.CoverPass.skybox(environment)
     ..target = target
-    ..camara = camara;
+    ..camera = camera;
 
   Scenes.EntityPass pass = new Scenes.EntityPass()
-    ..camara = camara
+    ..camera = camera
     ..tech = tech
     ..target = target
     ..children.add(obj);

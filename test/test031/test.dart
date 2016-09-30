@@ -42,13 +42,13 @@ void main() {
     ..tech = normalTech
     ..target = normalTarget
     ..children.add(normalObj)
-    ..camara.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0));
+    ..camera.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0));
 
   Movers.Group secondMover = new Movers.Group()
   ..add(new Movers.UserRotater(ctrl: true, input: td.userInput))
   ..add(new Movers.UserZoom(ctrl: true, input: td.userInput))
   ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
-  Views.Perspective userCamara = new Views.Perspective(mover: secondMover);
+  Views.Perspective userCamera = new Views.Perspective(mover: secondMover);
 
   Views.BackTarget colorTarget = new Views.BackTarget(800, 600)
     ..clearColor = false;
@@ -68,10 +68,10 @@ void main() {
   Scenes.CoverPass skybox = new Scenes.CoverPass.skybox(
     td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg"))
     ..target = colorTarget
-    ..camara = userCamara;
+    ..camera = userCamera;
 
   Scenes.EntityPass colorPass = new Scenes.EntityPass()
-    ..camara = userCamara
+    ..camera = userCamera
     ..tech = colorTech
     ..target = colorTarget
     ..children.add(colorObj);

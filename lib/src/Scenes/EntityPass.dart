@@ -3,8 +3,8 @@ part of ThreeDart.Scenes;
 /// The render pass renders a single scene.
 class EntityPass implements RenderPass {
 
-  /// The camara describing the view of the scene.
-  Views.Camara _camara;
+  /// The camera describing the view of the scene.
+  Views.Camera _camera;
 
   /// The target defining the storage to render to.
   Views.Target _target;
@@ -26,12 +26,12 @@ class EntityPass implements RenderPass {
 
   /// Creates a new render pass.
   EntityPass({
-      Views.Camara camara: null,
+      Views.Camera camera: null,
       Views.Target target: null,
       Techniques.Technique tech: null,
       List<Core.Entity> children: null
     }) {
-    this.camara = camara;
+    this.camera = camera;
     this.target = target;
     this.tech = tech;
     this._children = new List<Core.Entity>();
@@ -41,10 +41,10 @@ class EntityPass implements RenderPass {
     this._onRender = new Core.Event();
   }
 
-  /// The camara describing the view of the scene.
-  /// If null is set, the camara is set to a Perspective.
-  Views.Camara get camara => this._camara;
-  set camara(Views.Camara camara) => this._camara = camara ?? new Views.Perspective();
+  /// The camera describing the view of the scene.
+  /// If null is set, the camera is set to a Perspective.
+  Views.Camera get camera => this._camera;
+  set camera(Views.Camera camera) => this._camera = camera ?? new Views.Perspective();
 
   /// The target defining the storage to render to.
   /// If null is set, the target is set to an FrontTarget.
@@ -74,7 +74,7 @@ class EntityPass implements RenderPass {
 
     state.pushTechnique(this._tech);
     this._target.bind(state);
-    this._camara.bind(state);
+    this._camera.bind(state);
 
     if (this._tech != null) this._tech.update(state);
     for (Core.Entity child in this._children) {
@@ -87,7 +87,7 @@ class EntityPass implements RenderPass {
     }
     this._onRender.emit(args);
 
-    this._camara.unbind(state);
+    this._camera.unbind(state);
     this._target.unbind(state);
     state.popTechnique();
   }

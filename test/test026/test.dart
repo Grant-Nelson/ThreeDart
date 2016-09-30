@@ -60,7 +60,7 @@ void main() {
     ..tech = tech
     ..children.add(centerObj)
     ..children.add(room)
-    ..camara.mover = camMover
+    ..camera.mover = camMover
     ..onPreUpdate.add((ThreeDart.StateEventArgs args) {
       tech.colorMatrix = colorMover.update(args.state, null);
       tech.texture2DMatrix = new Math.Matrix3.fromMatrix4(txtMover.update(args.state, null));

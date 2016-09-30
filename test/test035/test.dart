@@ -54,7 +54,7 @@ void main() {
   Scenes.EntityPass pass = new Scenes.EntityPass()
     ..tech = tech
     ..children.add(obj)
-    ..camara.mover = camMover
+    ..camera.mover = camMover
     ..onPreUpdate.add((ThreeDart.StateEventArgs args) {
       tech.bendMatrices[0] = mover1.update(args.state, null);
       tech.bendMatrices[1] = mover2.update(args.state, null);

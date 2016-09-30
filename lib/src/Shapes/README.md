@@ -1,6 +1,6 @@
 # Shapes
 
-Shapes describe the geometry of an entity being rendered.
+Shapes describes the geometry of an entity being rendered.
 
 The shape is defined as a set of vertices and renderable elements.
 The vertices are the location and additional rendering information such as

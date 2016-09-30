@@ -16,7 +16,7 @@ class Skybox extends Technique {
     this.boxColor = boxColor;
   }
 
-  /// Feild of view vertically in radians of the camara.
+  /// Feild of view vertically in radians of the camera.
   double get fov => this._fov;
   set fov(double fov) => this._fov = fov;
 

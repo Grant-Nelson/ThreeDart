@@ -26,7 +26,7 @@ void main() {
     ..add(new Movers.UserRoller(ctrl: true, input: td.userInput))
     ..add(new Movers.UserZoom(input: td.userInput))
     ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
-  Views.Perspective userCamara = new Views.Perspective(mover: secondMover);
+  Views.Perspective userCamera = new Views.Perspective(mover: secondMover);
 
   Views.BackTarget target = new Views.BackTarget(800, 600)
     ..color = new Math.Color4.transparent();
@@ -44,7 +44,7 @@ void main() {
     ..specular.shininess = 10.0;
 
   Scenes.EntityPass pass = new Scenes.EntityPass()
-    ..camara = userCamara
+    ..camera = userCamera
     ..tech = tech
     ..target = target
     ..children.add(obj);

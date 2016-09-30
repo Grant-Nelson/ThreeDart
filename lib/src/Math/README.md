@@ -1,3 +1,7 @@
+# Math
+
+Math defines data structures and equations for performing and storing multidimensional mathematics.
+
 ### Coordinate System
 [![Right-handed Coordinate System](../../../resources/RightHand.png)](https://en.wikipedia.org/wiki/Cartesian_coordinate_system#In_three_dimensions)
 

@@ -3,23 +3,23 @@ part of ThreeDart.Scenes;
 /// The render pass renders a single scene.
 class Sterioscopic implements Scene {
 
-  /// The left constant for offseting the camara.
+  /// The left constant for offseting the camera.
   Movers.Constant _leftConstMat;
 
-  /// The right constant for offseting the camara.
+  /// The right constant for offseting the camera.
   Movers.Constant _rightConstMat;
 
-  /// The left camara's main mover group.
+  /// The left camera's main mover group.
   Movers.Group _leftMovGroup;
 
-  /// The right camara's main mover group.
+  /// The right camera's main mover group.
   Movers.Group _rightMovGroup;
 
-  /// The left camara describing the view of the scene.
-  Views.Perspective _leftCamara;
+  /// The left camera describing the view of the scene.
+  Views.Perspective _leftCamera;
 
-  /// The right camara describing the view of the scene.
-  Views.Perspective _rightCamara;
+  /// The right camera describing the view of the scene.
+  Views.Perspective _rightCamera;
 
   /// The left target region.
   Math.Region2 _leftRegion;
@@ -54,11 +54,11 @@ class Sterioscopic implements Scene {
     this._rightConstMat = new Movers.Constant();
     this._leftMovGroup = new Movers.Group([null, this._leftConstMat]);
     this._rightMovGroup = new Movers.Group([null, this._rightConstMat]);
-    this._leftCamara = new Views.Perspective(mover: this._leftMovGroup);
-    this._rightCamara = new Views.Perspective(mover: this._rightMovGroup);
+    this._leftCamera = new Views.Perspective(mover: this._leftMovGroup);
+    this._rightCamera = new Views.Perspective(mover: this._rightMovGroup);
     this._leftRegion = new Math.Region2(0.0, 0.0, 0.5, 1.0);
     this._rightRegion = new Math.Region2(0.5, 0.0, 0.5, 1.0);
-    this.camaraMover = mover;
+    this.cameraMover = mover;
     this.target = target;
     this._passes = new List<RenderPass>();
     if (passes != null) this._passes.addAll(passes);
@@ -68,9 +68,9 @@ class Sterioscopic implements Scene {
     this._updateConstMats();
   }
 
-  /// The camara mover describing the view of the scene.
-  Movers.Mover get camaraMover => this._leftMovGroup.list[0];
-  set camaraMover(Movers.Mover camMover) {
+  /// The camera mover describing the view of the scene.
+  Movers.Mover get cameraMover => this._leftMovGroup.list[0];
+  set cameraMover(Movers.Mover camMover) {
     this._leftMovGroup.list[0] = camMover;
     this._rightMovGroup.list[0] = camMover;
   }
@@ -100,7 +100,7 @@ class Sterioscopic implements Scene {
   /// Event emitted on an redner for this pass.
   Core.Event get onRender => this._onRender;
 
-  /// Updates the camara offset constant matrices.
+  /// Updates the camera offset constant matrices.
   void _updateConstMats() {
     double tanAngle = math.atan2(this._eyeSpacing, this._focusDistance);
     this._leftConstMat.matrix =
@@ -116,14 +116,14 @@ class Sterioscopic implements Scene {
     this.target.region = this._leftRegion;
     for (RenderPass pass in this._passes) {
       pass.target = this.target;
-      pass.camara = this._leftCamara;
+      pass.camera = this._leftCamera;
       pass.render(state);
     }
 
     this.target.region = this._rightRegion;
     for (RenderPass pass in this._passes) {
       pass.target = this.target;
-      pass.camara = this._rightCamara;
+      pass.camera = this._rightCamera;
       pass.render(state);
     }
 

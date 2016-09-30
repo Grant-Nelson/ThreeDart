@@ -1,7 +1,7 @@
 part of ThreeDart.Views;
 
-/// A camara for a perspective rendering of a scene.
-class Perspective implements Camara {
+/// A camera for a perspective rendering of a scene.
+class Perspective implements Camera {
 
   static Math.Matrix4 _lookMat = null;
 
@@ -10,7 +10,7 @@ class Perspective implements Camara {
   double _near;
   double _far;
 
-  /// Creates a new perspective camara.
+  /// Creates a new perspective camera.
   Perspective({Movers.Mover mover: null,
                double fov:  math.PI/3.0,
                double near: 0.1,
@@ -21,23 +21,23 @@ class Perspective implements Camara {
     this._far = far;
   }
 
-  /// Feild of view vertically in radians of the camara.
+  /// Feild of view vertically in radians of the camera.
   double get fov => this._fov;
   set fov(double fov) => this._fov = fov;
 
-  /// The near depth, distance from the camara, to start rendering at.
+  /// The near depth, distance from the camera, to start rendering at.
   double get near => this._near;
   set near(double near) => this._near = near;
 
-  /// The far depth, distance from the camara, to stop rendering at.
+  /// The far depth, distance from the camera, to stop rendering at.
   double get far => this._far;
   set far(double far) => this._far = far;
 
-  /// The mover to position this camara.
+  /// The mover to position this camera.
   Movers.Mover get mover => this._mover;
   set mover(Movers.Mover mover) => this._mover = mover;
 
-  /// Binds this camara to the state.
+  /// Binds this camera to the state.
   void bind(Core.RenderState state) {
     double aspect = state.width.toDouble() / state.height.toDouble();
     state.projection.push(new Math.Matrix4.perspective(this._fov, aspect, this._near, this._far));
@@ -58,7 +58,7 @@ class Perspective implements Camara {
     state.view.push(look);
   }
 
-  /// Unbinds this camara and returns to the previous camara.
+  /// Unbinds this camera and returns to the previous camera.
   void unbind(Core.RenderState state) {
     state.projection.pop();
     state.view.pop();

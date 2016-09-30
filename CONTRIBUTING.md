@@ -21,7 +21,7 @@
    ```
     ### Feature, Bug Fix, or Improvement
     (A summary of the feature, steps to reproduce the bug,
-    or a discription of the improvement.)
+    or a description of the improvement.)
 
     ### Implementation
     (A list of all the changes made.)
@@ -41,8 +41,7 @@
    people are currently working on the project only a `+10` is required
    if a `+11` isn't possible. The `+10` should come from one of the
    codebase managers.
-9. If the code doesn't pass or has a merge conflict then the PR's
-   title should have `[WIP]` added to the front of the title
-   until the code is ready to go back into PR.
+9. If the code doesn't pass or has a merge conflict then the PR
+   should be tagged with `WIP` until the code is ready to go back into CR.
 10. Also note that this list is subject to change as new issues
     are revealed and discovered.

@@ -17,7 +17,7 @@ import '../common/common.dart' as common;
 void main() {
   common.shellTest("Test 009", [],
     "Another test of the Material Lighting shader with solid color and "+
-    "a directional lighting. The light and object don't move but the camara can be "+
+    "a directional lighting. The light and object don't move but the camera can be "+
     "moved around the object.");
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
@@ -44,7 +44,7 @@ void main() {
   td.scene = new Scenes.EntityPass()
     ..tech = tech
     ..children.add(obj)
-    ..camara.mover = camMover;
+    ..camera.mover = camMover;
 
   var update;
   update = (num t) {

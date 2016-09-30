@@ -49,7 +49,7 @@ void testTechnique(TestArgs args, Math.Matrix4 objMat, Math.Matrix4 camMat, List
   Scenes.EntityPass pass = new Scenes.EntityPass()
     ..tech = tech
     ..children.add(obj)
-    ..camara.mover = new Movers.Constant(camMat);
+    ..camera.mover = new Movers.Constant(camMat);
 
   new ThreeDart.ThreeDart.fromCanvas(new html.CanvasElement())
     ..scene = pass;

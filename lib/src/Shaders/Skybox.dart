@@ -73,7 +73,7 @@ class Skybox extends Shader {
   /// The position vertex shader attribute.
   Attribute get posAttr => this._posAttr;
 
-  /// Feild of view vertically in radians of the camara.
+  /// Feild of view vertically in radians of the camera.
   double get fov => this._fov.getValue();
   set fov(double value) => this._fov.setValue(value);
 
