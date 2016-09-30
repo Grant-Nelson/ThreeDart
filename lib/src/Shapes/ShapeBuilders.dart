@@ -16,31 +16,39 @@ typedef Math.Point3 func2PntHandle(double a, double b);
 typedef void ver2Handle(Vertex ver, double a, double b);
 
 /// Creates a square shape.
-Shape square() {
+Shape square({Data.VertexType type: null}) {
   Shape shape = new Shape();
   Vertex ver1 = shape.vertices.addNew(
+    type:    type,
     loc:     new Math.Point3(-1.0, -1.0, 0.0),
     txt2D:   new Math.Point2(0.0, 1.0),
     txtCube: new Math.Vector3(-1.0, -1.0, 1.0).normal(),
-    clr:     new Math.Color4(1.0, 0.0, 0.0, 1.0));
+    clr:     new Math.Color4(1.0, 0.0, 0.0, 1.0),
+    bending: new Math.Point4(0.0, 1.9999, 2.9999, 3.9999));
 
   Vertex ver2 = shape.vertices.addNew(
+    type:    type,
     loc:     new Math.Point3(1.0, -1.0, 0.0),
     txt2D:   new Math.Point2(1.0, 1.0),
     txtCube: new Math.Vector3(1.0, -1.0, 1.0).normal(),
-    clr:     new Math.Color4(0.0, 0.0, 1.0, 1.0));
+    clr:     new Math.Color4(0.0, 0.0, 1.0, 1.0),
+    bending: new Math.Point4(0.9999, 1.0, 2.9999, 3.9999));
 
   Vertex ver3 = shape.vertices.addNew(
+    type:    type,
     loc:     new Math.Point3(1.0, 1.0, 0.0),
     txt2D:   new Math.Point2(1.0, 0.0),
     txtCube: new Math.Vector3(1.0, 1.0, 1.0).normal(),
-    clr:     new Math.Color4(0.0, 1.0, 0.0, 1.0));
+    clr:     new Math.Color4(0.0, 1.0, 0.0, 1.0),
+    bending: new Math.Point4(0.9999, 1.9999, 2.0, 3.9999));
 
   Vertex ver4 = shape.vertices.addNew(
+    type:    type,
     loc:     new Math.Point3(-1.0, 1.0, 0.0),
     txt2D:   new Math.Point2(0.0, 0.0),
     txtCube: new Math.Vector3(-1.0, 1.0, 1.0).normal(),
-    clr:     new Math.Color4(1.0, 1.0, 0.0, 1.0));
+    clr:     new Math.Color4(1.0, 1.0, 0.0, 1.0),
+    bending: new Math.Point4(0.9999, 1.9999, 2.9999, 3.0));
 
   shape.faces.addFan([ver1, ver2, ver3, ver4]);
   shape.calculateNormals();
@@ -48,27 +56,38 @@ Shape square() {
 }
 
 /// Creates a cube shape.
-Shape cube() {
-  return cuboid(widthDiv: 1, heightDiv: 1);
+Shape cube({Data.VertexType type: null}) {
+  return cuboid(type: type, widthDiv: 1, heightDiv: 1);
 }
 
 /// Creates a cuboid shape designed for cube texturing using six grids.
 /// The [widthDiv] and [heightDiv] define the divisions of the grids used.
 /// The [heightHndl] added addition height to the sides.
-Shape cuboid({int widthDiv: 8, int heightDiv: 8, ver2Handle vertexHndl: null}) {
+Shape cuboid({Data.VertexType type: null, int widthDiv: 8,
+              int heightDiv: 8, ver2Handle vertexHndl: null}) {
   Shape shape = new Shape();
-  _addCuboidSide(shape, vertexHndl, widthDiv, heightDiv,  1.0,  0.0,  0.0, 1);
-  _addCuboidSide(shape, vertexHndl, widthDiv, heightDiv,  0.0,  1.0,  0.0, 3);
-  _addCuboidSide(shape, vertexHndl, widthDiv, heightDiv,  0.0,  0.0,  1.0, 2);
-  _addCuboidSide(shape, vertexHndl, widthDiv, heightDiv, -1.0,  0.0,  0.0, 0);
-  _addCuboidSide(shape, vertexHndl, widthDiv, heightDiv,  0.0, -1.0,  0.0, 0);
-  _addCuboidSide(shape, vertexHndl, widthDiv, heightDiv,  0.0,  0.0, -1.0, 3);
+  _addCuboidSide(shape, type, vertexHndl, widthDiv, heightDiv,  1.0,  0.0,  0.0, 1);
+  _addCuboidSide(shape, type, vertexHndl, widthDiv, heightDiv,  0.0,  1.0,  0.0, 3);
+  _addCuboidSide(shape, type, vertexHndl, widthDiv, heightDiv,  0.0,  0.0,  1.0, 2);
+  _addCuboidSide(shape, type, vertexHndl, widthDiv, heightDiv, -1.0,  0.0,  0.0, 0);
+  _addCuboidSide(shape, type, vertexHndl, widthDiv, heightDiv,  0.0, -1.0,  0.0, 0);
+  _addCuboidSide(shape, type, vertexHndl, widthDiv, heightDiv,  0.0,  0.0, -1.0, 3);
   shape.calculateNormals();
   return shape;
 }
 
+// Determines the bend index for the cuboid corner vector.
+int _cornerBendIndex(Math.Vector3 vec) {
+  int index = 0;
+  if (vec.dx > 0.0) index++;
+  if (vec.dy > 0.0) index+=2;
+  if (vec.dz > 0.0) index+=4;
+  return index;
+}
+
 /// Adds a cuboid side to a cube [shape] given the normal direciton of the side's plain.
-void _addCuboidSide(Shape shape, ver2Handle vertexHndl, int widthDiv, int heightDiv,
+void _addCuboidSide(Shape shape, Data.VertexType type, ver2Handle vertexHndl,
+                    int widthDiv, int heightDiv,
                     double nx, double ny, double nz, int rotate) {
   Math.Vector3 vec1 = new Math.Vector3(nx+ny+nz, ny+nz+nx, nz+nx+ny);
   Math.Vector3 vec2 = new Math.Vector3(nx-ny+nz, ny-nz+nx, nz-nx+ny);
@@ -86,15 +105,26 @@ void _addCuboidSide(Shape shape, ver2Handle vertexHndl, int widthDiv, int height
     vec3 = vec4;
     vec4 = t;
   }
+  double scalar = 0.9999;
+  double index1 = _cornerBendIndex(vec1) + scalar;
+  double index2 = _cornerBendIndex(vec2) + scalar;
+  double index3 = _cornerBendIndex(vec3) + scalar;
+  double index4 = _cornerBendIndex(vec4) + scalar;
   Shape face = surface(widthDiv, heightDiv, (Vertex ver, double u, double v) {
     Math.Vector3 vec5 = vec1.lerp(vec2, u);
     Math.Vector3 vec6 = vec4.lerp(vec3, u);
     Math.Vector3 vec7 = vec5.lerp(vec6, v);
     ver.location = new Math.Point3.fromVector3(vec7);
     ver.textureCube = vec7.normal();
+
+    Math.Vector4 vecB = new Math.Vector4(u*v, (1.0-u)*v, u*(1.0-v), (1.0-u)*(1.0-v));
+    vecB = vecB.normal()*scalar;
+    ver.bending = new Math.Point4(index1-vecB.dx, index2-vecB.dy, index3-vecB.dz, index4-vecB.dw);
     if (vertexHndl != null) vertexHndl(ver, u, v);
-  });
+  }, type);
   if (face != null) shape.merge(face);
+
+  print(shape.toString());
 }
 
 /// Creates a disk shape.
@@ -353,7 +383,7 @@ Shape grid({int widthDiv: 4, int heightDiv: 4, func2Handle heightHndl: null}) {
 }
 
 /// Creates a grid surface which can be bent and twisted with the given [vertexHndl].
-Shape surface(int widthDiv, int heightDiv, ver2Handle vertexHndl) {
+Shape surface(int widthDiv, int heightDiv, ver2Handle vertexHndl, [Data.VertexType type = null]) {
   if (widthDiv < 1) return null;
   if (heightDiv < 1) return null;
   Shape shape = new Shape();
@@ -364,7 +394,7 @@ Shape surface(int widthDiv, int heightDiv, ver2Handle vertexHndl) {
       txt2D: new Math.Point2(u, 1.0),
       clr:   new Math.Color4(u, 0.0, 0.0));
     vertexHndl(ver, u, 0.0);
-    vers.add(ver);
+    vers.add(ver.copy(type));
   }
   for (int i = 1; i <= widthDiv; i++) {
     double v = i.toDouble()/widthDiv.toDouble();
@@ -374,7 +404,7 @@ Shape surface(int widthDiv, int heightDiv, ver2Handle vertexHndl) {
         txt2D: new Math.Point2(u, 1.0-v),
         clr:   new Math.Color4(u, v, v));
       vertexHndl(ver, u, v);
-      vers.add(ver);
+      vers.add(ver.copy(type));
     }
   }
   shape.faces.addGrid(widthDiv+1, heightDiv+1, vers);

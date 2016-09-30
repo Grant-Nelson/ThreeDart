@@ -168,7 +168,6 @@ class MaterialLight extends Technique {
       if (cfg.txt2D)   cache.findAttribute(Data.VertexType.Txt2D).attr   = this._shader.txt2DAttr.loc;
       if (cfg.txtCube) cache.findAttribute(Data.VertexType.TxtCube).attr = this._shader.txtCubeAttr.loc;
       if (cfg.bending) cache.findAttribute(Data.VertexType.Bending).attr = this._shader.bendAttr.loc;
-      if (cfg.adj)     cache.findAttribute(Data.VertexType.Adj).attr     = this._shader.adjAttr.loc;
       obj.cache = cache;
     }
 

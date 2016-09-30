@@ -89,18 +89,6 @@ class Shape {
     return success;
   }
 
-  /// Calculates the bending adjacents point to all the vertices.
-  /// The adjacent is the vertex in the same line or triangle with the
-  /// maximum value returned from the given [hndl]. If the adjacent
-  /// is already set this will have no effect.
-  bool calculateBendingAdjacents() {
-    bool success = true;
-    this._changed.suspend();
-    if (!this._vertices.calculateBendingAdjacents()) success = false;
-    this._changed.resume();
-    return success;
-  }
-
   /// Calculates the cube texture coordinate for the vertices and favces.
   /// The normals should be calculated first.
   /// True if successful, false on error.
@@ -126,23 +114,6 @@ class Shape {
     for (int i = count-1; i >= 0; i--) {
       Vertex ver = this._vertices[i];
       ver.weight = measure.measure(ver);
-    }
-  }
-
-  /// Calculate the bending using a vertex measuring tool.
-  void calculateBending([VertexMeasure measure = null]) {
-    if (measure == null) {
-      Math.Region3 aabb = calculateAABB();
-      double length = new Math.Vector3(aabb.dx, aabb.dy, aabb.dz).length();
-      if (length <= 0.0) length = 1.0;
-      measure = new RadialVertexMeasure(
-        center: new Math.Point3(aabb.x, aabb.y, aabb.z),
-        scalar: 1.0/length);
-    }
-    final int count = this._vertices.length;
-    for (int i = count-1; i >= 0; i--) {
-      Vertex ver = this._vertices[i];
-      ver.bending = measure.measure(ver);
     }
   }
 

@@ -52,13 +52,15 @@ void main() {
     ..add("Textures2D",      (bool show) { tech.showTxt2DColor     = show; })
     ..add("TexturesCube",    (bool show) { tech.showTxtCube        = show; })
     ..add("Weight",          (bool show) { tech.showWeight         = show; })
-    ..add("Bending",         (bool show) { tech.showBending        = show; })
+    ..add("Bend1",           (bool show) { tech.showBend1          = show; })
+    ..add("Bend2",           (bool show) { tech.showBend2          = show; })
+    ..add("Bend3",           (bool show) { tech.showBend3          = show; })
+    ..add("Bend4",           (bool show) { tech.showBend4          = show; })
     ..add("Axis",            (bool show) { tech.showAxis           = show; }, true)
     ..add("AABB",            (bool show) { tech.showAABB           = show; });
 
   void setShape(Shapes.Shape shape) {
     shape.calculateWeights();
-    shape.calculateBending();
     obj.shape = shape;
   }
 

@@ -46,9 +46,12 @@ class VertexCollection {
   }
 
   /// Creates and adds a new vertex to this collection with the default values.
-  Vertex addNew({Math.Point3 loc: null, Math.Vector3 norm: null, Math.Vector3 binm: null,
-                 Math.Point2 txt2D: null, Math.Vector3 txtCube: null, Math.Color4 clr: null, double weight: 0.0}) {
-    Vertex ver = new Vertex(loc: loc, norm: norm, binm: binm, txt2D: txt2D, txtCube: txtCube, clr: clr, weight: weight);
+  Vertex addNew({Data.VertexType type: null,
+                 Math.Point3 loc: null, Math.Vector3 norm: null, Math.Vector3 binm: null,
+                 Math.Point2 txt2D: null, Math.Vector3 txtCube: null, Math.Color4 clr: null,
+                 double weight: 0.0, Math.Point4 bending: null}) {
+    Vertex ver = new Vertex(type: type, loc: loc, norm: norm, binm: binm, txt2D: txt2D,
+      txtCube: txtCube, clr: clr, weight: weight, bending: bending);
     this.add(ver);
     return ver;
   }
@@ -125,16 +128,6 @@ class VertexCollection {
     bool success = true;
     for (Vertex vertex in this._vertices) {
       if (!vertex.calculateBinormal()) success = false;
-    }
-    return success;
-  }
-
-  /// Calculates the bending adjacent locations for all the vertices in the shape.
-  /// Returns true if vertices' adjacents are calculated, false on error.
-  bool calculateBendingAdjacents() {
-    bool success = true;
-    for (Vertex vertex in this._vertices) {
-      if (!vertex.calculateBendingAdjacents()) success = false;
     }
     return success;
   }

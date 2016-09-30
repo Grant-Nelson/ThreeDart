@@ -80,12 +80,6 @@ void main() {
 
   void setShape(Shapes.Shape shape) {
     shape.calculateNormals();
-    shape.calculateBending(new Shapes.ExpVertexMeasure(
-      new Shapes.DirectionalVertexMeasure(
-        center: new Math.Point3(0.0, 0.0, -1.0),
-        vector: new Math.Vector3(0.0, 0.0, 2.0)),
-      1.0, 3.0));
-    shape.calculateBendingAdjacents();
     shape.applyPositionMatrix(new Math.Matrix4.scale(0.25, 0.25, 2.0));
     obj.shape = shape;
   }

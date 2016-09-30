@@ -11,7 +11,6 @@ class MaterialLight extends Shader {
   Attribute _txt2DAttr;
   Attribute _txtCubeAttr;
   Attribute _bendAttr;
-  Attribute _adjAttr;
 
   UniformMat4 _objMat;
   UniformMat4 _viewObjMat;
@@ -122,7 +121,6 @@ class MaterialLight extends Shader {
     this._txt2DAttr   = this.attributes["txt2DAttr"];
     this._txtCubeAttr = this.attributes["txtCubeAttr"];
     this._bendAttr    = this.attributes["bendAttr"];
-    this._adjAttr     = this.attributes["adjAttr"];
 
     // print(numberLines(this.uniforms.toString()));
     // print(this._cfg.vertexType);
@@ -431,9 +429,6 @@ class MaterialLight extends Shader {
 
   /// The bending value shader attribute.
   Attribute get bendAttr => this._bendAttr;
-
-  /// The adjacent value shader attribute.
-  Attribute get adjAttr => this._adjAttr;
 
   /// The object matrix.
   Math.Matrix4 get objectMatrix => this._objMat.getMatrix4();
