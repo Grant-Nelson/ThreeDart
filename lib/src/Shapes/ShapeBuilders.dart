@@ -119,12 +119,10 @@ void _addCuboidSide(Shape shape, Data.VertexType type, ver2Handle vertexHndl,
 
     Math.Vector4 vecB = new Math.Vector4(u*v, (1.0-u)*v, u*(1.0-v), (1.0-u)*(1.0-v));
     vecB = vecB.normal()*scalar;
-    ver.bending = new Math.Point4(index1-vecB.dx, index2-vecB.dy, index3-vecB.dz, index4-vecB.dw);
+    ver.bending = new Math.Point4(index1-vecB.dx, index2-vecB.dy, index4-vecB.dz, index3-vecB.dw);
     if (vertexHndl != null) vertexHndl(ver, u, v);
   }, type);
   if (face != null) shape.merge(face);
-
-  print(shape.toString());
 }
 
 /// Creates a disk shape.
