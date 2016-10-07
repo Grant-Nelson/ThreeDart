@@ -85,8 +85,8 @@ void main() {
   }
 
   new common.RadioGroup("shapes")
-    ..add("Cuboid",   () { setShape(Shapes.cuboid(widthDiv: 30, heightDiv: 30)); })
-    ..add("Cylinder", () { setShape(Shapes.cylinder(div: 100, sides: 20)); }, true)
+    ..add("Cuboid",   () { setShape(Shapes.cuboid(widthDiv: 30, heightDiv: 30)); }, true)
+    ..add("Cylinder", () { setShape(Shapes.cylinder(div: 100, sides: 20)); })
     ..add("Cone",     () { setShape(Shapes.cylinder(topRadius: 0.0, sides: 12, capTop: false, div: 30)); })
     ..add("Sphere",   () { setShape(Shapes.sphere(widthDiv: 20, heightDiv: 20)); })
     ..add("Toroid",   () { setShape(Shapes.toroid(minorRadius: 0.25, majorRadius: 1.5)); })

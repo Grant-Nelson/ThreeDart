@@ -219,11 +219,11 @@ class MaterialLightConfig {
     bool objPos = (pointLight + txtPointLight + txtDirLight +
                    spotLight + txtSpotLight) > 0;
     bool bending = bendMats > 0;
-    bool objMat = objPos || bending;
-    bool viewObjMat = (norm || binm || viewPos) && !bending;
-    bool viewMat    = (norm || binm || viewPos) && bending;
-    bool projViewObjMat = !bending;
-    bool projViewMat    = bending;
+    bool objMat  = objPos;
+    bool viewObjMat = norm || binm || viewPos;
+    bool viewMat    = false;
+    bool projViewObjMat = true;
+    bool projViewMat    = false;
     txt2DMat   = txt2DMat   && txt2D;
     txtCubeMat = txtCubeMat && txtCube;
 
@@ -246,15 +246,83 @@ class MaterialLightConfig {
 
   //=====================================================================
 
+  /// Writes variables for the vertex shader [buf].
+  void _writeVariables(StringBuffer buf) {
+    if (this.objMat)     buf.writeln("uniform mat4 objMat;");
+    if (this.viewObjMat) buf.writeln("uniform mat4 viewObjMat;");
+    buf.writeln("uniform mat4 projViewObjMat;");
+    buf.writeln("");
+    buf.writeln("attribute vec3 posAttr;");
+    if (this.norm) buf.writeln("attribute vec3 normAttr;");
+    if (this.binm) buf.writeln("attribute vec3 binmAttr;");
+    buf.writeln("");
+  }
+
+  /// Writes vertex bending method for the vertex shader [buf].
+  void _writeBendSetup(StringBuffer buf) {
+    if (!this.bending) return;
+    buf.writeln("struct BendingValue");
+    buf.writeln("{");
+    buf.writeln("   mat4 mat;");
+    buf.writeln("};");
+    buf.writeln("uniform int bendMatCount;");
+    buf.writeln("uniform BendingValue bendValues[${this.bendMats}];");
+    buf.writeln("attribute vec4 bendAttr;");
+    buf.writeln("");
+    buf.writeln("float weightSum;");
+    buf.writeln("vec3 bendPos;");
+    if (this.norm) buf.writeln("vec3 bendNorm;");
+    if (this.binm) buf.writeln("vec3 bendBinm;");
+    buf.writeln("");
+    buf.writeln("void adjustBend(float bendVal)");
+    buf.writeln("{");
+    buf.writeln("   if(bendVal >= 0.0)");
+    buf.writeln("   {");
+    buf.writeln("      int index = int(floor(bendVal));");
+    buf.writeln("      if(index < bendMatCount)");
+    buf.writeln("      {");
+    buf.writeln("         float weight = bendVal - float(index);");
+    buf.writeln("         mat4 m = bendValues[index].mat;");
+    buf.writeln("         weightSum += weight;");
+    buf.writeln("         bendPos += (m*vec4(posAttr, 1.0)).xyz*weight;");
+    if (this.norm) buf.writeln("         bendNorm += (m*vec4(normAttr, 0.0)).xyz*weight;");
+    if (this.binm) buf.writeln("         bendBinm += (m*vec4(binmAttr, 0.0)).xyz*weight;");
+    buf.writeln("      }");
+    buf.writeln("   }");
+    buf.writeln("}");
+    buf.writeln("");
+    buf.writeln("void setupBendData()");
+    buf.writeln("{");
+    buf.writeln("   bendPos = vec3(0.0, 0.0, 0.0);");
+    if (this.norm) buf.writeln("   bendNorm = vec3(0.0, 0.0, 0.0);");
+    if (this.binm) buf.writeln("   bendBinm = vec3(0.0, 0.0, 0.0);");
+    buf.writeln("   weightSum = 0.0;");
+    buf.writeln("   adjustBend(bendAttr.x);");
+    buf.writeln("   adjustBend(bendAttr.y);");
+    buf.writeln("   adjustBend(bendAttr.z);");
+    buf.writeln("   adjustBend(bendAttr.w);");
+    buf.writeln("   if(weightSum < 1.0)");
+    buf.writeln("   {");
+    buf.writeln("      float weight = 1.0 - weightSum;");
+    buf.writeln("      bendPos += posAttr*weight;");
+    if (this.norm) buf.writeln("      bendNorm += normAttr*weight;");
+    if (this.binm) buf.writeln("      bendBinm += binmAttr*weight;");
+    buf.writeln("   }");
+    if (this.norm) buf.writeln("   bendNorm = normalize(bendNorm);");
+    if (this.binm) buf.writeln("   bendBinm = normalize(bendBinm);");
+    buf.writeln("}");
+    buf.writeln("");
+  }
+
   /// Writes normal coordinates for the vertex shader [buf].
   void _writeNormCoord(StringBuffer buf) {
     if (!this.norm) return;
-    buf.writeln("attribute vec3 normAttr;");
     buf.writeln("varying vec3 normalVec;");
     buf.writeln("");
-    buf.writeln("vec3 getNorm(mat4 viewObjMatrix)");
+    buf.writeln("vec3 getNorm()");
     buf.writeln("{");
-    buf.writeln("   return normalize((viewObjMatrix*vec4(normAttr, 0.0)).xyz);");
+    String normAttr = (this.bending)? "bendNorm": "normAttr";
+    buf.writeln("   return normalize((viewObjMat*vec4($normAttr, 0.0)).xyz);");
     buf.writeln("}");
     buf.writeln("");
   }
@@ -262,12 +330,12 @@ class MaterialLightConfig {
   /// Writes binormal coordinates for the vertex shader [buf].
   void _writeBinmCoord(StringBuffer buf) {
     if (!this.binm) return;
-    buf.writeln("attribute vec3 binmAttr;");
     buf.writeln("varying vec3 binormalVec;");
     buf.writeln("");
-    buf.writeln("vec3 getBinm(mat4 viewObjMatrix)");
+    buf.writeln("vec3 getBinm()");
     buf.writeln("{");
-    buf.writeln("   return normalize((viewObjMatrix*vec4(binmAttr, 0.0)).xyz);");
+    String binmAttr = (this.bending)? "bendBinm": "binmAttr";
+    buf.writeln("   return normalize((viewObjMat*vec4($binmAttr, 0.0)).xyz);");
     buf.writeln("}");
     buf.writeln("");
   }
@@ -307,9 +375,10 @@ class MaterialLightConfig {
     if (!this.objPos) return;
     buf.writeln("varying vec3 objPos;");
     buf.writeln("");
-    buf.writeln("vec3 getObjPos(mat4 objMatrix)");
+    buf.writeln("vec3 getObjPos()");
     buf.writeln("{");
-    buf.writeln("   return (objMatrix*vec4(posAttr, 1.0)).xyz;");
+    String posAttr = (this.bending)? "bendPos": "posAttr";
+    buf.writeln("   return (objMat*vec4($posAttr, 1.0)).xyz;");
     buf.writeln("}");
     buf.writeln("");
   }
@@ -319,118 +388,36 @@ class MaterialLightConfig {
     if (!this.viewPos) return;
     buf.writeln("varying vec3 viewPos;");
     buf.writeln("");
-    buf.writeln("vec3 getViewPos(mat4 viewObjMatrix)");
+    buf.writeln("vec3 getViewPos()");
     buf.writeln("{");
-    buf.writeln("   return (viewObjMatrix*vec4(posAttr, 1.0)).xyz;");
+    String posAttr = (this.bending)? "bendPos": "posAttr";
+    buf.writeln("   return (viewObjMat*vec4($posAttr, 1.0)).xyz;");
     buf.writeln("}");
     buf.writeln("");
   }
 
   /// Writes projected object position for the vertex shader [buf].
   void _writePos(StringBuffer buf) {
-    buf.writeln("vec4 getPos(mat4 projViewObjMatrix)");
+    buf.writeln("vec4 getPos()");
     buf.writeln("{");
-    buf.writeln("   return projViewObjMatrix*vec4(posAttr, 1.0);");
+    String posAttr = (this.bending)? "bendPos": "posAttr";
+    buf.writeln("   return projViewObjMat*vec4($posAttr, 1.0);");
     buf.writeln("}");
     buf.writeln("");
   }
 
   /// Writes the non-bending main method for the vertex shader [buf].
   void _writeMain(StringBuffer buf) {
-    if (this.objMat)     buf.writeln("uniform mat4 objMat;");
-    if (this.viewObjMat) buf.writeln("uniform mat4 viewObjMat;");
-    buf.writeln("uniform mat4 projViewObjMat;");
-    buf.writeln("");
-
     buf.writeln("void main()");
     buf.writeln("{");
-    if (this.norm)    buf.writeln("   normalVec = getNorm(viewObjMat);");
-    if (this.binm)    buf.writeln("   binormalVec = getBinm(viewObjMat);");
+    if (this.bending) buf.writeln("   setupBendData();");
+    if (this.norm)    buf.writeln("   normalVec = getNorm();");
+    if (this.binm)    buf.writeln("   binormalVec = getBinm();");
     if (this.txt2D)   buf.writeln("   txt2D = getTxt2D();");
     if (this.txtCube) buf.writeln("   txtCube = getTxtCube();");
-    if (this.objPos)  buf.writeln("   objPos = getObjPos(objMat);");
-    if (this.viewPos) buf.writeln("   viewPos = getViewPos(viewObjMat);");
-    buf.writeln("   gl_Position = getPos(projViewObjMat);");
-    buf.writeln("}");
-    buf.writeln("");
-  }
-
-  /// Writes the bending main method for the vertex shader [buf].
-  void _writeBendMain(StringBuffer buf) {
-    buf.writeln("uniform mat4 objMat;");
-    if (this.viewMat)     buf.writeln("uniform mat4 viewMat;");
-    if (this.projViewMat) buf.writeln("uniform mat4 projViewMat;");
-    buf.writeln("struct BendingValue");
-    buf.writeln("{");
-    buf.writeln("   mat4 mat;");
-    buf.writeln("};");
-    buf.writeln("uniform int bendMatCount;");
-    buf.writeln("uniform BendingValue bendValues[${this.bendMats}];");
-    buf.writeln("attribute float bendAttr;"); // TODO: Update
-    buf.writeln("");
-
-    buf.writeln("void getValues(mat4 objMatrix)");
-    buf.writeln("{");
-    if (this.viewMat)     buf.writeln("   mat4 viewObjMat = viewMat*objMatrix;");
-    if (this.projViewMat) buf.writeln("   mat4 projViewObjMat = projViewMat*objMatrix;");
-    if (this.norm)        buf.writeln("   normalVec = getNorm(viewObjMat);");
-    if (this.binm)        buf.writeln("   binormalVec = getBinm(viewObjMat);");
-    if (this.txt2D)       buf.writeln("   txt2D = getTxt2D();");
-    if (this.txtCube)     buf.writeln("   txtCube = getTxtCube();");
-    if (this.objPos)      buf.writeln("   objPos = getObjPos(objMatrix);");
-    if (this.viewPos)     buf.writeln("   viewPos = getViewPos(viewObjMat);");
-    buf.writeln("   gl_Position = getPos(projViewObjMat);");
-    buf.writeln("}");
-    buf.writeln("");
-
-    buf.writeln("void getLerpValues(mat4 objMat1, mat4 objMat2, float inter)");
-    buf.writeln("{");
-    if (this.viewMat) {
-      buf.writeln("   mat4 viewObjMat1 = viewMat*objMat1;");
-      buf.writeln("   mat4 viewObjMat2 = viewMat*objMat2;");
-    }
-    if (this.projViewMat) {
-      buf.writeln("   mat4 projViewObjMat1 = projViewMat*objMat1;");
-      buf.writeln("   mat4 projViewObjMat2 = projViewMat*objMat2;");
-    }
-    if (this.norm) {
-      buf.writeln("   vec3 normalVec1 = getNorm(viewObjMat1);");
-      buf.writeln("   vec3 normalVec2 = getNorm(viewObjMat2);");
-      buf.writeln("   normalVec = normalize(mix(normalVec1, normalVec2, inter));");
-    }
-    if (this.binm) {
-      buf.writeln("   vec3 binormalVec1 = getBinm(viewObjMat1);");
-      buf.writeln("   vec3 binormalVec2 = getBinm(viewObjMat2);");
-      buf.writeln("   binormalVec = normalize(mix(binormalVec1, binormalVec2, inter));");
-    }
-    if (this.txt2D)   buf.writeln("   txt2D = getTxt2D();");
-    if (this.txtCube) buf.writeln("   txtCube = getTxtCube();");
-    if (this.objPos) {
-      buf.writeln("   vec3 objPos1 = getObjPos(objMat1);");
-      buf.writeln("   vec3 objPos2 = getObjPos(objMat2);");
-      buf.writeln("   objPos = mix(objPos1, objPos2, inter);");
-    }
-    if (this.viewPos) {
-      buf.writeln("   vec3 viewPos1 = getViewPos(viewObjMat1);");
-      buf.writeln("   vec3 viewPos2 = getViewPos(viewObjMat2);");
-      buf.writeln("   viewPos = mix(viewPos1, viewPos2, inter);");
-    }
-    buf.writeln("   vec4 pos1 = getPos(projViewObjMat1);");
-    buf.writeln("   vec4 pos2 = getPos(projViewObjMat2);");
-    buf.writeln("   gl_Position = mix(pos1, pos2, inter);");
-    buf.writeln("}");
-    buf.writeln("");
-
-    buf.writeln("void main()");
-    buf.writeln("{");
-    buf.writeln("   float bend = bendAttr*float(bendMatCount);");
-    buf.writeln("   int index = int(floor(bend));");
-    buf.writeln("   float inter = bend - float(index);");
-    buf.writeln("   if(index < 0) getValues(objMat);");
-    buf.writeln("   else if(bendMatCount <= 0) getValues(objMat);");
-    buf.writeln("   else if(index >= bendMatCount) getValues(bendValues[bendMatCount-1].mat);");
-    buf.writeln("   else if(index == 0) getLerpValues(objMat, bendValues[0].mat, inter);");
-    buf.writeln("   else getLerpValues(bendValues[index-1].mat, bendValues[index].mat, inter);");
+    if (this.objPos)  buf.writeln("   objPos = getObjPos();");
+    if (this.viewPos) buf.writeln("   viewPos = getViewPos();");
+    buf.writeln("   gl_Position = getPos();");
     buf.writeln("}");
     buf.writeln("");
   }
@@ -438,8 +425,8 @@ class MaterialLightConfig {
   /// Creates the vertex source code for the material light shader for the given configurations.
   String createVertexSource() {
     StringBuffer buf = new StringBuffer();
-    buf.writeln("attribute vec3 posAttr;");
-    buf.writeln("");
+    this._writeVariables(buf);
+    this._writeBendSetup(buf);
     this._writeNormCoord(buf);
     this._writeBinmCoord(buf);
     this._writeTxt2DCoord(buf);
@@ -447,8 +434,7 @@ class MaterialLightConfig {
     this._writeObjPos(buf);
     this._writeViewPos(buf);
     this._writePos(buf);
-    if (this.bending) this._writeBendMain(buf);
-    else this._writeMain(buf);
+    this._writeMain(buf);
     return buf.toString();
   }
 
