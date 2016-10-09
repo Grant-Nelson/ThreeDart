@@ -33,7 +33,7 @@ void main() {
     ..specular.shininess = 10.0
     ..bendMatrices.add(new Math.Matrix4.identity())
     ..bendMatrices.add(new Math.Matrix4.identity())
-    ..bendMatrices.add(new Math.Matrix4.identity());
+    ;
 
   Movers.Group camMover = new Movers.Group()
     ..add(new Movers.UserRotater(input: td.userInput))
@@ -42,13 +42,13 @@ void main() {
     ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
 
   Movers.Mover mover1 = new Movers.Group()
-    ..add(new Movers.Rotater(deltaYaw: 0.0, deltaPitch: 0.0, deltaRoll: -0.7))
-    ..add(new Movers.Constant(new Math.Matrix4.translate(0.5, 0.0, 0.0)))
-    ..add(new Movers.Rotater(deltaYaw: 0.0, deltaPitch: 0.0, deltaRoll: 0.7));
+    ..add(new Movers.Rotater(deltaYaw: 0.0, deltaPitch: 0.0, deltaRoll: -1.7))
+    ..add(new Movers.Constant(new Math.Matrix4.translate(0.25, 0.0, 0.0)))
+    ..add(new Movers.Rotater(deltaYaw: 0.0, deltaPitch: 0.0, deltaRoll: 1.7));
 
   Movers.Mover mover2 = new Movers.Group()
     ..add(new Movers.Rotater(deltaYaw: 0.0, deltaPitch: 0.0, deltaRoll: -1.4))
-    ..add(new Movers.Constant(new Math.Matrix4.translate(0.5, 0.0, 0.0)))
+    ..add(new Movers.Constant(new Math.Matrix4.translate(0.25, 0.0, 0.0)))
     ..add(new Movers.Rotater(deltaYaw: 0.0, deltaPitch: 0.0, deltaRoll: 1.4));
 
   Scenes.EntityPass pass = new Scenes.EntityPass()
@@ -58,7 +58,6 @@ void main() {
     ..onPreUpdate.add((ThreeDart.StateEventArgs args) {
       tech.bendMatrices[0] = mover1.update(args.state, null);
       tech.bendMatrices[1] = mover2.update(args.state, null);
-      tech.bendMatrices[2] = new Math.Matrix4.identity();
     });
   td.scene = pass;
 
@@ -80,7 +79,6 @@ void main() {
 
   void setShape(Shapes.Shape shape) {
     shape.calculateNormals();
-    shape.applyPositionMatrix(new Math.Matrix4.scale(0.25, 0.25, 2.0));
     obj.shape = shape;
   }
 

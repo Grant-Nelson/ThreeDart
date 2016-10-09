@@ -29,10 +29,7 @@ class Inspection extends Technique {
   bool _showWeight;
   bool _showAxis;
   bool _showAABB;
-  bool _showBend1;
-  bool _showBend2;
-  bool _showBend3;
-  bool _showBend4;
+  bool _showBend;
   double _vectorScale;
 
   /// Creates a new inspection techinque.
@@ -64,10 +61,7 @@ class Inspection extends Technique {
     this._showWeight         = false;
     this._showAxis           = false;
     this._showAABB           = false;
-    this._showBend1          = false;
-    this._showBend2          = false;
-    this._showBend3          = false;
-    this._showBend4          = false;
+    this._showBend           = false;
     this._vectorScale        = 1.0;
   }
 
@@ -136,20 +130,8 @@ class Inspection extends Technique {
   bool get showAABB => this._showAABB;
 
   /// Indicates if the first bend should be showed.
-  set showBend1(bool show) => this._showBend1 = show;
-  bool get showBend1 => this._showBend1;
-
-  /// Indicates if the second bend should be showed.
-  set showBend2(bool show) => this._showBend2 = show;
-  bool get showBend2 => this._showBend2;
-
-  /// Indicates if the third bend should be showed.
-  set showBend3(bool show) => this._showBend3 = show;
-  bool get showBend3 => this._showBend3;
-
-  /// Indicates if the fourth bend should be showed.
-  set showBend4(bool show) => this._showBend4 = show;
-  bool get showBend4 => this._showBend4;
+  set showBend(bool show) => this._showBend = show;
+  bool get showBend => this._showBend;
 
   /// The scalar to apply to vectors lengths.
   /// To make the vectors change length the cache also has to be cleared.
@@ -202,14 +184,8 @@ class Inspection extends Technique {
         this._render(state, store, obj.shape, 'txt2DColor', this._txt2DColor, this._ambient3, this._diffuse3);
       if (this._showWeight)
         this._render(state, store, obj.shape, 'weight', this._weight, this._ambient3, this._diffuse3);
-      if (this._showBend1)
-        this._render(state, store, obj.shape, 'bend1', this._bend1Fill, this._ambient3, this._diffuse3);
-      if (this._showBend2)
-        this._render(state, store, obj.shape, 'bend2', this._bend2Fill, this._ambient3, this._diffuse3);
-      if (this._showBend3)
-        this._render(state, store, obj.shape, 'bend3', this._bend3Fill, this._ambient3, this._diffuse3);
-      if (this._showBend4)
-        this._render(state, store, obj.shape, 'bend4', this._bend4Fill, this._ambient3, this._diffuse3);
+      if (this._showBend)
+        this._render(state, store, obj.shape, 'bend1', this._bendFill, this._ambient3, this._diffuse3);
 
       state.gl.disable(WebGL.DEPTH_TEST);
       state.gl.enable(WebGL.BLEND);
@@ -529,26 +505,7 @@ class Inspection extends Technique {
     return result;
   }
 
-  /// Convertes the given [shape] into the bend 1 color shape.
-  Shapes.Shape _bend1Fill(Shapes.Shape shape) {
-    return this._bendFill(shape, (Math.Point4 bend) => bend.x);
-  }
-
-  /// Convertes the given [shape] into the bend 2 color shape.
-  Shapes.Shape _bend2Fill(Shapes.Shape shape) {
-    return this._bendFill(shape, (Math.Point4 bend) => bend.y);
-  }
-
-  /// Convertes the given [shape] into the bend 3 color shape.
-  Shapes.Shape _bend3Fill(Shapes.Shape shape) {
-    return this._bendFill(shape, (Math.Point4 bend) => bend.z);
-  }
-
-  /// Convertes the given [shape] into the bend 4 color shape.
-  Shapes.Shape _bend4Fill(Shapes.Shape shape) {
-    return this._bendFill(shape, (Math.Point4 bend) => bend.w);
-  }
-
+  /// Gets the maximum bend index of the given [shape].
   int _maxIndex(Shapes.Shape shape) {
     double maxBend = 0.0;
     shape.vertices.forEach((Shapes.Vertex vertex) {
@@ -562,6 +519,7 @@ class Inspection extends Technique {
     return maxBend.floor()+1;
   }
 
+  /// Gets the spectrum color for the [bendVal] in the [maxIndex] range.
   Math.Color3 _bendColor(double bendVal, int maxIndex) {
     if (bendVal < 0.0) {
       return new Math.Color3.black();
@@ -572,15 +530,18 @@ class Inspection extends Technique {
     }
   }
 
-  /// Convertes the given [shape] into one of the bend color shapes.
-  Shapes.Shape _bendFill(Shapes.Shape shape, double hndl(Math.Point4 bend)) {
+  /// Convertes the given [shape] into the bend color shape.
+  Shapes.Shape _bendFill(Shapes.Shape shape) {
     int maxIndex = this._maxIndex(shape);
     Shapes.Shape result = new Shapes.Shape();
     shape.vertices.forEach((Shapes.Vertex vertex) {
       Math.Point4 bend = vertex.bending;
       if (bend == null) bend = new Math.Point4.zero();
-      double bendVal = hndl(bend);
-      Math.Color3 clr = this._bendColor(bendVal, maxIndex);
+      Math.Color3 clr = new Math.Color3.black();
+      clr = clr + this._bendColor(bend.x, maxIndex);
+      clr = clr + this._bendColor(bend.y, maxIndex);
+      clr = clr + this._bendColor(bend.z, maxIndex);
+      clr = clr + this._bendColor(bend.w, maxIndex);
       result.vertices.add(vertex.copy()
         ..binormal = new Math.Vector3.zero()
         ..color = new Math.Color4.fromColor3(clr));

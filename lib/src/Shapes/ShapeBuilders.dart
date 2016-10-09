@@ -117,9 +117,8 @@ void _addCuboidSide(Shape shape, Data.VertexType type, ver2Handle vertexHndl,
     ver.location = new Math.Point3.fromVector3(vec7);
     ver.textureCube = vec7.normal();
 
-    Math.Vector4 vecB = new Math.Vector4(u*v, (1.0-u)*v, u*(1.0-v), (1.0-u)*(1.0-v));
-    vecB = vecB.normal()*scalar;
-    ver.bending = new Math.Point4(index1-vecB.dx, index2-vecB.dy, index4-vecB.dz, index3-vecB.dw);
+    Math.Vector4 vecB = new Math.Vector4(u*v, (1.0-u)*v, u*(1.0-v), (1.0-u)*(1.0-v))*scalar;
+    ver.bending = new Math.Point4(index3-vecB.dx, index4-vecB.dy, index2-vecB.dz, index1-vecB.dw);
     if (vertexHndl != null) vertexHndl(ver, u, v);
   }, type);
   if (face != null) shape.merge(face);
