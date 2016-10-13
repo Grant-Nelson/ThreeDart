@@ -184,7 +184,7 @@ class Vertex {
     } else if (type == Data.VertexType.Weight) {
       return [ this._weight ];
     } else if (type == Data.VertexType.Bending) {
-      if (this._bending == null) return [0.0, 0.0, 0.0, 0.0];
+      if (this._bending == null) return [-1.0, -1.0, -1.0, -1.0];
       else return this._bending.toList();
     } else return [];
   }

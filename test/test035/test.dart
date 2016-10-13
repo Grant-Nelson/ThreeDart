@@ -4,6 +4,7 @@
 library ThreeDart.test.test035;
 
 import 'dart:html';
+import 'dart:math';
 
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 import 'package:ThreeDart/Shapes.dart' as Shapes;
@@ -16,7 +17,8 @@ import '../common/common.dart' as common;
 
 void main() {
   common.shellTest("Test 035", ["shapes"],
-    "A test of the bending a shape with the Material Light Shader.");
+    "A test of the bending a shape with the Material Light Shader. "+
+    "Not all of the shapes have predefined bend values.");
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
 
@@ -33,7 +35,12 @@ void main() {
     ..specular.shininess = 10.0
     ..bendMatrices.add(new Math.Matrix4.identity())
     ..bendMatrices.add(new Math.Matrix4.identity())
-    ;
+    ..bendMatrices.add(new Math.Matrix4.identity())
+    ..bendMatrices.add(new Math.Matrix4.identity())
+    ..bendMatrices.add(new Math.Matrix4.identity())
+    ..bendMatrices.add(new Math.Matrix4.identity())
+    ..bendMatrices.add(new Math.Matrix4.identity())
+    ..bendMatrices.add(new Math.Matrix4.identity());
 
   Movers.Group camMover = new Movers.Group()
     ..add(new Movers.UserRotater(input: td.userInput))
@@ -42,13 +49,17 @@ void main() {
     ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
 
   Movers.Mover mover1 = new Movers.Group()
+    ..add(new Movers.Constant(new Math.Matrix4.translate(0.5, 0.0, 0.0)))
+    ..add(new Movers.Rotater(deltaYaw: 0.0, deltaPitch: 0.0, deltaRoll: 1.7))
+    ..add(new Movers.Rotater(deltaYaw: 0.0, deltaPitch: 0.5, deltaRoll: 0.0))
+    ..add(new Movers.Constant(new Math.Matrix4.rotateX(0.35)))
+    ..add(new Movers.Rotater(deltaYaw: 0.0, deltaPitch: -0.5, deltaRoll: 0.0))
     ..add(new Movers.Rotater(deltaYaw: 0.0, deltaPitch: 0.0, deltaRoll: -1.7))
-    ..add(new Movers.Constant(new Math.Matrix4.translate(0.25, 0.0, 0.0)))
-    ..add(new Movers.Rotater(deltaYaw: 0.0, deltaPitch: 0.0, deltaRoll: 1.7));
+    ..add(new Movers.Constant(new Math.Matrix4.translate(-0.5, 0.0, 0.0)));
 
   Movers.Mover mover2 = new Movers.Group()
     ..add(new Movers.Rotater(deltaYaw: 0.0, deltaPitch: 0.0, deltaRoll: -1.4))
-    ..add(new Movers.Constant(new Math.Matrix4.translate(0.25, 0.0, 0.0)))
+    ..add(new Movers.Constant(new Math.Matrix4.translate(0.5, 0.0, 0.0)))
     ..add(new Movers.Rotater(deltaYaw: 0.0, deltaPitch: 0.0, deltaRoll: 1.4));
 
   Scenes.EntityPass pass = new Scenes.EntityPass()
@@ -56,26 +67,18 @@ void main() {
     ..children.add(obj)
     ..camera.mover = camMover
     ..onPreUpdate.add((ThreeDart.StateEventArgs args) {
-      tech.bendMatrices[0] = mover1.update(args.state, null);
-      tech.bendMatrices[1] = mover2.update(args.state, null);
+      Math.Matrix4 mat1 = mover1.update(args.state, null);
+      Math.Matrix4 mat2 = mover2.update(args.state, null);
+      tech.bendMatrices[0] = mat1;
+      tech.bendMatrices[1] = mat2;
+      tech.bendMatrices[2] = mat1;
+      tech.bendMatrices[3] = mat2;
+      tech.bendMatrices[4] = mat1;
+      tech.bendMatrices[5] = mat2;
+      tech.bendMatrices[6] = mat1;
+      tech.bendMatrices[7] = mat2;
     });
   td.scene = pass;
-
-  // Techniques.Inspection inspTech = new Techniques.Inspection()
-  //   ..showWireFrame = true
-  //   ..showAxis = true;
-  //
-  // Shapes.Shape inspShap = Shapes.cube()
-  //   ..applyPositionMatrix(new Math.Matrix4.scale(0.1, 0.1, 0.1));
-  //
-  // pass.children.add(new ThreeDart.Entity(
-  //   mover: new Movers.Constant(), shape: inspShap, tech: inspTech));
-  //
-  // pass.children.add(new ThreeDart.Entity(
-  //   mover: mover1, shape: inspShap, tech: inspTech));
-  //
-  // pass.children.add(new ThreeDart.Entity(
-  //   mover: mover2, shape: inspShap, tech: inspTech));
 
   void setShape(Shapes.Shape shape) {
     shape.calculateNormals();
@@ -88,7 +91,8 @@ void main() {
     ..add("Cone",     () { setShape(Shapes.cylinder(topRadius: 0.0, sides: 12, capTop: false, div: 30)); })
     ..add("Sphere",   () { setShape(Shapes.sphere(widthDiv: 20, heightDiv: 20)); })
     ..add("Toroid",   () { setShape(Shapes.toroid(minorRadius: 0.25, majorRadius: 1.5)); })
-    ..add("Knot",     () { setShape(Shapes.knot(minorRadius: 0.1)); });
+    ..add("Knot",     () { setShape(Shapes.knot(minorRadius: 0.1)); })
+    ..add("Grid",     () { setShape(Shapes.grid()); });
 
   var update;
   update = (num t) {

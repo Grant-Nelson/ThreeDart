@@ -127,7 +127,8 @@ void _addCuboidSide(Shape shape, Data.VertexType type, ver2Handle vertexHndl,
 /// Creates a disk shape.
 /// [sides] is the number of division on the side, and [height] is the y offset of the disk.
 /// [flip] will flip the disk over, and [radiusHndl] is a handle for custom variant radius.
-Shape disk({int sides: 8, double height: 0.0, bool flip: false, func1Handle radiusHndl: null}) {
+Shape disk({int sides: 8, double height: 0.0, bool flip: false,
+    double bending: -1.0, func1Handle radiusHndl: null}) {
   if (radiusHndl == null) radiusHndl = (double a) => 1.0;
   if (sides < 3) return null;
   Shape shape = new Shape();
@@ -139,7 +140,8 @@ Shape disk({int sides: 8, double height: 0.0, bool flip: false, func1Handle radi
     norm:    new Math.Vector3(0.0, 0.0, sign),
     txt2D:   new Math.Point2(0.5, 0.5),
     txtCube: new Math.Vector3(0.0, 0.0, sign).normal(),
-    clr:     new Math.Color4(1.0, 1.0, 1.0)));
+    clr:     new Math.Color4(1.0, 1.0, 1.0),
+    bending: new Math.Point4(bending, -1.0, -1.0, -1.0)));
   for (int i = 0; i <= sides; i++) {
     double angle = step*i.toDouble();
     double x = sign*sin(angle), y = cos(angle);
@@ -149,7 +151,8 @@ Shape disk({int sides: 8, double height: 0.0, bool flip: false, func1Handle radi
       norm:    new Math.Vector3(0.0, 0.0, sign),
       txt2D:   new Math.Point2(x*0.5+0.5, y*0.5+0.5),
       txtCube: new Math.Vector3(x, y, sign).normal(),
-      clr:     new Math.Color4(x, y, y)));
+      clr:     new Math.Color4(x, y, y),
+      bending: new Math.Point4(bending, -1.0, -1.0, -1.0)));
   }
   shape.faces.addFan(vers);
   return shape;
@@ -182,17 +185,18 @@ Shape cylindrical({func2Handle radiusHndl: null, int sides: 8, int div: 1, bool 
     double radius = radiusHndl(u, v);
     ver.location = new Math.Point3(x*radius, y*radius, z);
     ver.textureCube = new Math.Vector3(x*radius, y*radius, z).normal();
+    ver.bending = new Math.Point4(0.9999*(1.0-v), 1.0 + 0.9999*v, -1.0, -1.0);
   });
   if (shape == null) return null;
   shape.calculateNormals();
   shape.adjustNormals();
   if (capTop) {
-    Shape top = disk(sides: sides, height: 1.0, flip: false,
+    Shape top = disk(sides: sides, height: 1.0, flip: false, bending: 0.0,
       radiusHndl: (double u) => radiusHndl(u, 1.0));
     shape.merge(top);
   }
   if (capBottom) {
-    Shape bottom = disk(sides: sides, height: -1.0, flip: true,
+    Shape bottom = disk(sides: sides, height: -1.0, flip: true, bending: 1.0,
       radiusHndl: (double u) => radiusHndl(1.0-u, 0.0));
     shape.merge(bottom);
   }
@@ -376,6 +380,8 @@ Shape grid({int widthDiv: 4, int heightDiv: 4, func2Handle heightHndl: null}) {
     double y = v*2.0-1.0;
     ver.location = new Math.Point3(x, y, heightHndl(u, v));
     ver.textureCube = new Math.Vector3(x, y, 1.0).normal();
+    ver.bending = new Math.Point4(u*v*0.9999, 1.0 + (1.0-u)*v*0.9999,
+      3.0 + u*(1.0-v)*0.9999, 2.0 + (1.0-u)*(1.0-v)*0.9999);
   });
 }
 

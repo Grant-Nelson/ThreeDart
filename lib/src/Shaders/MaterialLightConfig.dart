@@ -278,7 +278,7 @@ class MaterialLightConfig {
     buf.writeln("{");
     buf.writeln("   if(bendVal >= 0.0)");
     buf.writeln("   {");
-    buf.writeln("      int index = int(floor(bendVal));");
+    buf.writeln("      int index = int(floor(bendVal))/2;");
     buf.writeln("      if(index < bendMatCount)");
     buf.writeln("      {");
     buf.writeln("         float weight = 1.0 - bendVal + float(index);");
@@ -307,6 +307,10 @@ class MaterialLightConfig {
     buf.writeln("      bendPos += posAttr*weight;");
     if (this.norm) buf.writeln("      bendNorm += normAttr*weight;");
     if (this.binm) buf.writeln("      bendBinm += binmAttr*weight;");
+    buf.writeln("   }");
+    buf.writeln("   else");
+    buf.writeln("   {");
+    buf.writeln("      bendPos = bendPos/weightSum;");
     buf.writeln("   }");
     if (this.norm) buf.writeln("   bendNorm = normalize(bendNorm);");
     if (this.binm) buf.writeln("   bendBinm = normalize(bendBinm);");
