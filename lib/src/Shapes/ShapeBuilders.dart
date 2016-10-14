@@ -24,7 +24,7 @@ Shape square({Data.VertexType type: null}) {
     txt2D:   new Math.Point2(0.0, 1.0),
     txtCube: new Math.Vector3(-1.0, -1.0, 1.0).normal(),
     clr:     new Math.Color4(1.0, 0.0, 0.0, 1.0),
-    bending: new Math.Point4(0.0, 1.9999, 2.9999, 3.9999));
+    bending: new Math.Point4(1.0, 2.0, 4.0, 6.0));
 
   Vertex ver2 = shape.vertices.addNew(
     type:    type,
@@ -32,7 +32,7 @@ Shape square({Data.VertexType type: null}) {
     txt2D:   new Math.Point2(1.0, 1.0),
     txtCube: new Math.Vector3(1.0, -1.0, 1.0).normal(),
     clr:     new Math.Color4(0.0, 0.0, 1.0, 1.0),
-    bending: new Math.Point4(0.9999, 1.0, 2.9999, 3.9999));
+    bending: new Math.Point4(0.0, 3.0, 4.0, 6.0));
 
   Vertex ver3 = shape.vertices.addNew(
     type:    type,
@@ -40,7 +40,7 @@ Shape square({Data.VertexType type: null}) {
     txt2D:   new Math.Point2(1.0, 0.0),
     txtCube: new Math.Vector3(1.0, 1.0, 1.0).normal(),
     clr:     new Math.Color4(0.0, 1.0, 0.0, 1.0),
-    bending: new Math.Point4(0.9999, 1.9999, 2.0, 3.9999));
+    bending: new Math.Point4(0.0, 2.0, 5.0, 6.0));
 
   Vertex ver4 = shape.vertices.addNew(
     type:    type,
@@ -48,7 +48,7 @@ Shape square({Data.VertexType type: null}) {
     txt2D:   new Math.Point2(0.0, 0.0),
     txtCube: new Math.Vector3(-1.0, 1.0, 1.0).normal(),
     clr:     new Math.Color4(1.0, 1.0, 0.0, 1.0),
-    bending: new Math.Point4(0.9999, 1.9999, 2.9999, 3.0));
+    bending: new Math.Point4(0.0, 2.0, 4.0, 7.0));
 
   shape.faces.addFan([ver1, ver2, ver3, ver4]);
   shape.calculateNormals();
@@ -77,12 +77,12 @@ Shape cuboid({Data.VertexType type: null, int widthDiv: 8,
 }
 
 // Determines the bend index for the cuboid corner vector.
-int _cornerBendIndex(Math.Vector3 vec) {
+double _cornerBendIndex(Math.Vector3 vec) {
   int index = 0;
   if (vec.dx > 0.0) index++;
   if (vec.dy > 0.0) index+=2;
   if (vec.dz > 0.0) index+=4;
-  return index;
+  return index*2.0;
 }
 
 /// Adds a cuboid side to a cube [shape] given the normal direciton of the side's plain.
@@ -105,20 +105,18 @@ void _addCuboidSide(Shape shape, Data.VertexType type, ver2Handle vertexHndl,
     vec3 = vec4;
     vec4 = t;
   }
-  double scalar = 0.9999;
-  double index1 = _cornerBendIndex(vec1) + scalar;
-  double index2 = _cornerBendIndex(vec2) + scalar;
-  double index3 = _cornerBendIndex(vec3) + scalar;
-  double index4 = _cornerBendIndex(vec4) + scalar;
+  double index1 = _cornerBendIndex(vec1);
+  double index2 = _cornerBendIndex(vec2);
+  double index3 = _cornerBendIndex(vec3);
+  double index4 = _cornerBendIndex(vec4);
   Shape face = surface(widthDiv, heightDiv, (Vertex ver, double u, double v) {
     Math.Vector3 vec5 = vec1.lerp(vec2, u);
     Math.Vector3 vec6 = vec4.lerp(vec3, u);
     Math.Vector3 vec7 = vec5.lerp(vec6, v);
     ver.location = new Math.Point3.fromVector3(vec7);
     ver.textureCube = vec7.normal();
-
-    Math.Vector4 vecB = new Math.Vector4(u*v, (1.0-u)*v, u*(1.0-v), (1.0-u)*(1.0-v))*scalar;
-    ver.bending = new Math.Point4(index3-vecB.dx, index4-vecB.dy, index2-vecB.dz, index1-vecB.dw);
+    ver.bending = new Math.Point4(index3 + u*v,       index4 + (1.0-u)*v,
+                                  index2 + u*(1.0-v), index1 + (1.0-u)*(1.0-v));
     if (vertexHndl != null) vertexHndl(ver, u, v);
   }, type);
   if (face != null) shape.merge(face);
@@ -185,13 +183,13 @@ Shape cylindrical({func2Handle radiusHndl: null, int sides: 8, int div: 1, bool 
     double radius = radiusHndl(u, v);
     ver.location = new Math.Point3(x*radius, y*radius, z);
     ver.textureCube = new Math.Vector3(x*radius, y*radius, z).normal();
-    ver.bending = new Math.Point4(0.9999*(1.0-v), 1.0 + 0.9999*v, -1.0, -1.0);
+    ver.bending = new Math.Point4((1.0-v), 2.0 + v, -1.0, -1.0);
   });
   if (shape == null) return null;
   shape.calculateNormals();
   shape.adjustNormals();
   if (capTop) {
-    Shape top = disk(sides: sides, height: 1.0, flip: false, bending: 0.0,
+    Shape top = disk(sides: sides, height: 1.0, flip: false, bending: 3.0,
       radiusHndl: (double u) => radiusHndl(u, 1.0));
     shape.merge(top);
   }
@@ -380,8 +378,8 @@ Shape grid({int widthDiv: 4, int heightDiv: 4, func2Handle heightHndl: null}) {
     double y = v*2.0-1.0;
     ver.location = new Math.Point3(x, y, heightHndl(u, v));
     ver.textureCube = new Math.Vector3(x, y, 1.0).normal();
-    ver.bending = new Math.Point4(u*v*0.9999, 1.0 + (1.0-u)*v*0.9999,
-      3.0 + u*(1.0-v)*0.9999, 2.0 + (1.0-u)*(1.0-v)*0.9999);
+    ver.bending = new Math.Point4(u*v, 2.0 + (1.0-u)*v,
+      4.0 + u*(1.0-v), 6.0 + (1.0-u)*(1.0-v));
   });
 }
 

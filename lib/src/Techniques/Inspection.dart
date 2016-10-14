@@ -516,7 +516,7 @@ class Inspection extends Technique {
       maxBend = math.max(maxBend, bend.z);
       maxBend = math.max(maxBend, bend.w);
     });
-    return maxBend.floor()+1;
+    return ((maxBend + 1.5)*0.5).floor();
   }
 
   /// Gets the spectrum color for the [bendVal] in the [maxIndex] range.
@@ -524,9 +524,9 @@ class Inspection extends Technique {
     if (bendVal < 0.0) {
       return new Math.Color3.black();
     } else {
-      double index = bendVal.floor().toDouble();
-      double value = 1.0 - (bendVal - index.toDouble());
-      return new Math.Color3.fromHVS(index/maxIndex.toDouble(), value, 1.0);
+      double index = ((bendVal + 0.5)*0.5).floorToDouble();
+      double value = (bendVal - index*2.0);
+      return new Math.Color3.fromHVS(index/maxIndex, value, 1.0);
     }
   }
 
