@@ -84,7 +84,7 @@ class VertexType {
     if (this.has(Clr3))    result += 3;
     if (this.has(Clr4))    result += 4;
     if (this.has(Weight))  result += 1;
-    if (this.has(Bending)) result += 1;
+    if (this.has(Bending)) result += 4;
     return result;
   }
 
@@ -209,7 +209,7 @@ class VertexType {
     }
     if (this.has(Bending)) {
       if (type == Bending) return result;
-      result += 1;
+      result += 4;
     }
     return -1;
   }
