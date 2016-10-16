@@ -1,6 +1,6 @@
 part of ThreeDart.test.common;
 
-void shellPage(String title, html.Element elem,  bool showTitle, String backImg) {
+void shellPage(String title, html.Element elem, bool showTitle, String backImg) {
   html.BodyElement body = html.document.body;
   body.style
     ..backgroundColor = "#FFFFFF"
@@ -37,7 +37,7 @@ void shellPage(String title, html.Element elem,  bool showTitle, String backImg)
     ..boxShadow    = "3px 3px 4px 2px rgba(0,0,0,0.5)";
   scrollPage.append(pageCenter);
 
-  if (title.length > 0) {
+  if (title.isNotEmpty) {
     html.document.title = title;
     if (showTitle) {
       html.DivElement titleElem = new html.DivElement();
