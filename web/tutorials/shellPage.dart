@@ -59,6 +59,10 @@ class ShellPage {
 
     this._elem = new html.DivElement();
     pageCenter.append(this._elem);
+
+    html.document.onScroll.listen((_) {
+    	scrollTop.style.top = "${-0.05*body.scrollTop}px";
+    });
   }
 
   void addHeader(int level, String text) {
@@ -74,7 +78,7 @@ class ShellPage {
 
   void addPar(List<String> text) {
     html.DivElement textElem = new html.DivElement()
-      ..text = text;
+      ..text = text.join();
     textElem.style
       ..paddingLeft   = "20px"
       ..paddingBottom = "10px"
@@ -84,8 +88,67 @@ class ShellPage {
     this._elem.append(textElem);
   }
 
-  void addCode(String text) {
+  void addCode(String lang, List<String> code) {
+    html.TableElement tblElem = new html.TableElement();
+    tblElem.style
+      ..border        = "solid 3 black"
+      ..paddingLeft   = "20px"
+      ..paddingBottom = "10px"
+      ..textAlign     = "left"
+      ..color         = "#111"
+      ..font          = "14px Consolas, Sans-Serif";
+    html.TableRowElement rowElem = new html.TableRowElement();
+    html.TableCellElement cell1Elem = new html.TableCellElement();
+    for (int lineNo = 0; lineNo < code.length; lineNo++) {
+      html.DivElement lineElem = new html.DivElement()
+        ..text = "${lineNo+1}";
+      cell1Elem.append(lineElem);
+    }
+    rowElem.append(cell1Elem);
+    html.TableCellElement cell2Elem = new html.TableCellElement();
+    for (String line in code) {
+      html.DivElement lineElem = new html.DivElement();
+      lineElem.style
+        ..paddingLeft = "10px";
+      cell2Elem.append(lineElem);
+      if (lang == "html") {
+        this._parseHtmlLine(line, lineElem);
+      } else if (lang == "dart") {
+        this._parseDartLine(line, lineElem);
+      } else if (lang == "glsl") {
+        this._parseGlslLine(line, lineElem);
+      } else {
+        this._addLinePart(line, "#111", lineElem);
+      }
+    }
+    rowElem.append(cell2Elem);
+    tblElem.append(rowElem);
+    this._elem.append(tblElem);
+  }
 
+  String _escapeText(String text) {
+    return text.replaceAll(" ", "&nbsp;");
+  }
+
+  void _addLinePart(String part, String color, html.DivElement parent) {
+    html.DivElement lineElem = new html.DivElement()
+      ..innerHtml = this._escapeText(part);
+    lineElem.style
+      ..float = "left"
+      ..color = color;
+    parent.append(lineElem);
+  }
+
+  void _parseHtmlLine(String line, html.DivElement parent) {
+    this._addLinePart(line, "#911", parent);
+  }
+
+  void _parseDartLine(String line, html.DivElement parent) {
+    this._addLinePart(line, "#191", parent);
+  }
+
+  void _parseGlslLine(String line, html.DivElement parent) {
+    this._addLinePart(line, "#119", parent);
   }
 
   void addImage(String id, String path) {

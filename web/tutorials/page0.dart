@@ -5,7 +5,9 @@ part of ThreeDart.web.tutorials;
 
 void page0() {
   new ShellPage("Getting Started")
-    ..addHeader(2, "Test")
+    ..addHeader(1, "1 Test")
+    ..addHeader(2, "2 Test")
+    ..addHeader(3, "3 Test")
     ..addPar(["This is an example of a paragraph. This is an example of a ",
       "paragraph. This is an example of a paragraph. This is an example of ",
       "a paragraph. This is an example of a paragraph. This is an example ",
@@ -13,6 +15,9 @@ void page0() {
     ..addPar(["This is an example of a paragraph. This is an example of a ",
       "paragraph. This is an example of a paragraph. This is an example of ",
       "a paragraph. This is an example of a paragraph. This is an example ",
-      "of a paragraph. This is an example of a paragraph."]);
-
+      "of a paragraph. This is an example of a paragraph."])
+    ..addCode("dart", [
+      "void thisIsATest() {",
+      "  print(\"Hello World\");",
+      "}"]);
 }
