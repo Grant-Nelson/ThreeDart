@@ -4,11 +4,16 @@
 library ThreeDart.web.tutorials;
 
 import 'dart:html' as html;
+import 'dart:convert' as convert;
 
-part "page0.dart";
-part "shellPage.dart";
+import 'package:ThreeDart/Tokenizer.dart' as Tokenizer;
+
+part 'shellPage.dart';
+
+part 'page0.dart';
 
 void main() {
 
   page0();
+
 }
