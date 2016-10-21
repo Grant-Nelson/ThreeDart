@@ -62,7 +62,7 @@ class Event {
     return new async.Future(() { this.emit(args); });
   }
 
-  /// Suspends this event or increases the level of suspention.
+  /// Suspends this event or increases the level of suspension.
   void suspend() {
     this._suspended++;
   }
@@ -79,11 +79,11 @@ class Event {
   EventArgs get pendingArgs => this._pendingArgs;
   void set pendingArgs(EventArgs args) { this._pendingArgs = args; }
 
-  /// Resumes the event or removes a level of suspention.
+  /// Resumes the event or removes a level of suspension.
   ///
   /// If an argument is pending and [emitPending] is true then
   /// the event is emitted with that pending argument.
-  /// If [force] is set to true then the level of suspention is
+  /// If [force] is set to true then the level of suspension is
   /// ignored an the event is immediately set to no longer suspended.
   void resume({bool force: false, bool emitPending: true}) {
     if (this.suspended) {

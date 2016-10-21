@@ -4,7 +4,6 @@
 library ThreeDart.test.test035;
 
 import 'dart:html';
-import 'dart:math';
 
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 import 'package:ThreeDart/Shapes.dart' as Shapes;

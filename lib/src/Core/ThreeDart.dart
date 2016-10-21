@@ -128,7 +128,7 @@ class ThreeDart {
     }
   }
 
-  /// Renders the screne to the canvas.
+  /// Renders the scene to the canvas.
   void render() {
     try {
       this._resize();
@@ -143,7 +143,7 @@ class ThreeDart {
     }
   }
 
-  /// Disposes this instands of 3Dart.
+  /// Disposes this instance of 3Dart.
   void dispose() {
     if (this._elem != this._canvas) {
       this._elem.children.remove(this._canvas);

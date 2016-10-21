@@ -63,7 +63,7 @@ class Matrix4 {
                        0.0, 0.0, 0.0, 1.0);
   }
 
-  /// Constructs a 4x4 X asix rotation matrix.
+  /// Constructs a 4x4 X axis rotation matrix.
   ///
   /// The given [angle] is in radians.
   factory Matrix4.rotateX(double angle) {
@@ -75,7 +75,7 @@ class Matrix4 {
                        0.0, 0.0, 0.0, 1.0);
   }
 
-  /// Constructs a 4x4 Y asix rotation matrix.
+  /// Constructs a 4x4 Y axis rotation matrix.
   ///
   /// The given [angle] is in radians.
   factory Matrix4.rotateY(double angle) {
@@ -87,7 +87,7 @@ class Matrix4 {
                        0.0, 0.0, 0.0, 1.0);
   }
 
-  /// Constructs a 4x4 Z asix rotation matrix.
+  /// Constructs a 4x4 Z axis rotation matrix.
   ///
   /// The given [angle] is in radians.
   factory Matrix4.rotateZ(double angle) {

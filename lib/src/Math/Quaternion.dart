@@ -101,7 +101,7 @@ class Quaternion {
   /// The length of this quaternion.
   ///
   /// [length2] is faster since it does not take the [sqrt],
-  /// therefor it should be used instead of [length] where possible.
+  /// therefore it should be used instead of [length] where possible.
   double length() =>
     math.sqrt(this.length2());
 

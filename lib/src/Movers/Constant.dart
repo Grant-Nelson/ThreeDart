@@ -1,6 +1,6 @@
 part of ThreeDart.Movers;
 
-/// Constant mover applys a constant matrix to an entity or group.
+/// Constant mover applies a constant matrix to an entity or group.
 class Constant extends Mover {
 
   Math.Matrix4 _mat;

@@ -1,6 +1,6 @@
 part of ThreeDart.Math;
 
-/// A function signiture for testing equality between two doubles.
+/// A function signature for testing equality between two doubles.
 typedef bool EqualityFunction(double a, double b);
 
 /// A set of static methods and values used for comparing doubles.

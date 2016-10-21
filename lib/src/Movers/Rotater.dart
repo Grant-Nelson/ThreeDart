@@ -64,7 +64,7 @@ class Rotater extends Mover {
   double get deltaRoll => this._deltaRoll;
   set deltaRoll(double value) => this._deltaRoll = value;
 
-  /// Updates the ratation matrix.
+  /// Updates the rotation matrix.
   /// This is only called once per frame.
   void _update(Core.RenderState state) {
     this._frameNum = state.frameNumber;

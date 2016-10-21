@@ -1,6 +1,6 @@
 part of ThreeDart.Core;
 
-/// A renderable dntity in a tree of dntities for a scene.
+/// A renderable entity in a tree of entities for a scene.
 ///
 /// An [Entity] is a [Shape], [Technique], and a [Mover]
 /// to create an output when rendered.
@@ -33,7 +33,7 @@ class Entity implements Movers.Movable {
   /// The location and rotation of this entity.
   Math.Matrix4 _matrix;
 
-  /// The list of children entitiess to this entity.
+  /// The list of children entities to this entity.
   EntityCollection _children;
 
   /// The event emitted when any part of the entity is changed.
@@ -173,7 +173,7 @@ class Entity implements Movers.Movable {
   /// The matrix for the location and rotation of the entity.
   Math.Matrix4 get matrix => this._matrix;
 
-  /// Calculates the axial alligned bounding box of this entity and its children.
+  /// Calculates the axial aligned bounding box of this entity and its children.
   Math.Region3 calculateAABB() {
     Math.Region3 region = null;
     if (this._shape != null)
@@ -210,7 +210,7 @@ class Entity implements Movers.Movable {
   }
 
   /// Modifies the color by translating it with the given [mat]
-  /// for this entity's shape and chilren shapes.
+  /// for this entity's shape and children shapes.
   void applyColorMatrix(Math.Matrix3 mat) {
     if (this.shape != null)
       this.shape.applyColorMatrix(mat);
@@ -219,7 +219,7 @@ class Entity implements Movers.Movable {
   }
 
   /// Modifies the 2D texture by translating it with the given [mat]
-  /// for this entity's shape and chilren shapes.
+  /// for this entity's shape and children shapes.
   void applyTexture2DMatrix(Math.Matrix3 mat) {
     if (this.shape != null)
       this.shape.applyTexture2DMatrix(mat);
@@ -228,7 +228,7 @@ class Entity implements Movers.Movable {
   }
 
   /// Modifies the cube texture by translating it with the given [mat]
-  /// for this entity's shape and chilren shapes.
+  /// for this entity's shape and children shapes.
   void applyTextureCubeMatrix(Math.Matrix4 mat) {
     if (this.shape != null)
       this.shape.applyTextureCubeMatrix(mat);

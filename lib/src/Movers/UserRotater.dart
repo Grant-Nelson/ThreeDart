@@ -192,7 +192,7 @@ class UserRotater implements Mover, Core.UserInteractable {
   double get yawScalar => this._yawScalar;
   void set yawScalar(double value) { this._yawScalar = value; }
 
-  /// The dead-band, in pixels, before anymovement is made.
+  /// The dead-band, in pixels, before any movement is made.
   double get deadBand => this._deadBand;
   void set deadBand(double value) {
     this._deadBand = value;

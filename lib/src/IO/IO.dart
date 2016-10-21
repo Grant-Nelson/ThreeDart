@@ -45,7 +45,7 @@ List<String> _stripFront(String line) {
   return [front, rest];
 }
 
-/// Splits the given [line] into w ords.
+/// Splits the given [line] into words.
 List<String> _sliceLine(String line) {
   List<String> list = new List<String>();
   for (Match match in _slicerRegex.allMatches(line)) {

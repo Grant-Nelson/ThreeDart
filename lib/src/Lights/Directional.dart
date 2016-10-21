@@ -28,7 +28,7 @@ class Directional implements Light {
     // Do Nothing
   }
 
-  /// Unbinds the bound the light  from the given [state].
+  /// Unbinds the bound the light from the given [state].
   void unbind(Core.RenderState state) {
     // Do Nothing
   }
