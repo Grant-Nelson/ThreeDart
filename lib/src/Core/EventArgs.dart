@@ -118,7 +118,7 @@ class KeyEventArgs extends EventArgs {
 /// The state event arguments for update and render events.
 class StateEventArgs extends EventArgs {
 
-  /// The render staste for an update or render.
+  /// The render state for an update or render.
   final RenderState state;
 
   /// Creates a new state event argument.

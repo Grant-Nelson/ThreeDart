@@ -93,7 +93,7 @@ class Point4 {
   /// The distance between this point and the [other] point.
   ///
   /// [distance2] is faster since it does not take the [sqrt],
-  /// therefor it should be used instead of [distance] where possible.
+  /// therefore it should be used instead of [distance] where possible.
   double distance(Point4 other) =>
       math.sqrt(this.distance2(other));
 

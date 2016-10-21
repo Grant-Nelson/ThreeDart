@@ -1,6 +1,6 @@
 part of ThreeDart.Data;
 
-  /// The indices for the order of vertex rendering and type of resterization.
+  /// The indices for the order of vertex rendering and type of rasterization.
 class IndexObject {
 
   /// The type of rasterization to use.

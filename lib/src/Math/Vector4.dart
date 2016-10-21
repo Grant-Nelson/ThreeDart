@@ -86,7 +86,7 @@ class Vector4 {
   /// The length of this vector.
   ///
   /// [length2] is faster since it does not take the [sqrt],
-  /// therefor it should be used instead of [length] where possible.
+  /// therefore it should be used instead of [length] where possible.
   double length() => math.sqrt(this.length2());
 
   /// Gets the dot product of this vector and the [other] vector.

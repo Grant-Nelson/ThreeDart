@@ -51,7 +51,7 @@ class TexturedSpot implements Light {
     this.texture?.bind(state);
   }
 
-  /// Unbinds the bound the light  from the given [state].
+  /// Unbinds the bound the light from the given [state].
   void unbind(Core.RenderState state) {
     this.texture?.unbind(state);
   }

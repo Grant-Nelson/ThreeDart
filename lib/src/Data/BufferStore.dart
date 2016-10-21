@@ -6,7 +6,7 @@ class BufferStore implements Core.Bindable, TechniqueCache {
   /// The buffer storing all the vertex data for the shape.
   Buffer _vertexBuf;
 
-  /// The list of indices for the order of vertex rendering and type of resterization.
+  /// The list of indices for the order of vertex rendering and type of rasterization.
   List<IndexObject> _indexObjs;
 
   /// The list of buffer attributes describing the type of vertices in the buffer.
@@ -23,7 +23,7 @@ class BufferStore implements Core.Bindable, TechniqueCache {
   /// The list of buffer attributes describing the type of vertices in the buffer.
   List<BufferAttr> get attributes => this._attrs;
 
-  /// The list of indices for the order of vertex rendering and type of resterization.
+  /// The list of indices for the order of vertex rendering and type of rasterization.
   List<IndexObject> get indexObjects => this._indexObjs;
 
   /// The vertex type stored in these buffers.

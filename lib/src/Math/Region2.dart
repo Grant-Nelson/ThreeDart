@@ -43,6 +43,7 @@ class Region2 {
     if (b == null) return region;
     region.expand(b._x, b._y);
     region.expand(b._x + b._dx, b._y + b._dy);
+    return region;
   }
 
   /// The left edge component of the region.

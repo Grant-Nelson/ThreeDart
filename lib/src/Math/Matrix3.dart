@@ -34,7 +34,7 @@ class Matrix3 {
                 0.0, sy,  0.0,
                 0.0, 0.0, sz);
 
-  /// Constructs a 3x3 X asix rotation matrix.
+  /// Constructs a 3x3 X axis rotation matrix.
   ///
   /// The given [angle] is in radians.
   factory Matrix3.rotateX(double angle) {
@@ -45,7 +45,7 @@ class Matrix3 {
                        0.0, s,    c);
   }
 
-  /// Constructs a 3x3 Y asix rotation matrix.
+  /// Constructs a 3x3 Y axis rotation matrix.
   ///
   /// The given [angle] is in radians.
   factory Matrix3.rotateY(double angle) {
@@ -56,7 +56,7 @@ class Matrix3 {
                         s,  0.0,  c);
   }
 
-  /// Constructs a 3x3 Z asix rotation matrix.
+  /// Constructs a 3x3 Z axis rotation matrix.
   ///
   /// The given [angle] is in radians.
   factory Matrix3.rotateZ(double angle) {

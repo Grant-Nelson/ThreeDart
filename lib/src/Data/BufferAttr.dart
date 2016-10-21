@@ -35,7 +35,7 @@ class BufferAttr extends Core.Bindable {
   set attr(int value) => _attr = value;
 
   /// Binds this attribute to the render state so that it may
-  /// be used when rendering from it's assotiated buffer.
+  /// be used when rendering from it's associated buffer.
   void bind(Core.RenderState state) {
     try {
       state.gl.enableVertexAttribArray(this._attr);

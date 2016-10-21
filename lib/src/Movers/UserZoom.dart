@@ -81,7 +81,7 @@ class UserZoom implements Mover, Core.UserInteractable {
   bool get shiftPressed => this._shiftPressed;
   void set shiftPressed(bool enable) { this._shiftPressed = enable; }
 
-  /// The scalar to change how fast the zoom occures.
+  /// The scalar to change how fast the zoom occurs.
   double get zoomScalar => this._zoomScalar;
   void set zoomScalar(double value) { this._zoomScalar = value; }
 

@@ -20,7 +20,7 @@ class Group extends Mover {
     this._movers.add(mover);
   }
 
-  /// Updates all of the contained movers then multiply thier results in order.
+  /// Updates all of the contained movers then multiply their results in order.
   ///
   /// This updates with the given [state] and the [obj] this mover is attached to.
   Math.Matrix4 update(Core.RenderState state, Movable obj) {
