@@ -97,17 +97,38 @@ class ShellPage {
     if (this._htmlTokenizer != null) return;
     Tokenizer.Tokenizer tok = new Tokenizer.Tokenizer();
     tok.start("Start");
-    tok.state("Start").join("Id")
+    tok.join("Start", "Id")
       ..addSet("_")
       ..addRange("a", "z")
       ..addRange("A", "Z");
-    tok.state("Id").join("Id")
+    tok.join("Id", "Id")
       ..addSet("_")
       ..addRange("0", "9")
       ..addRange("a", "z")
       ..addRange("A", "Z");
-    tok.state("Id").setToken("Id");
-    tok.token("Id")
+    tok.join("Start", "Sym")
+      ..addSet("</\\-!>=");
+    tok.join("Sym", "Sym")
+      ..addSet("</\\-!>=");
+    tok.join("Start", "OpenStr")
+      ..addSet("\"");
+    tok.join("OpenStr", "CloseStr")
+      ..addSet("\"");
+    tok.join("OpenStr", "EscStr")
+      ..addSet("\\");
+    tok.join("EscStr", "OpenStr")
+      ..addSet("\"");
+    tok.join("OpenStr", "OpenStr")
+      ..addAll();
+    tok.join("Start", "Other")
+      ..addAll();
+    tok.join("Other", "Other").addNot()
+      ..addSet("</\\-!>=_\"")
+      ..addRange("a", "z")
+      ..addRange("A", "Z");
+    tok.setToken("Sym", "Symbol");
+    tok.setToken("CloseStr", "String");
+    tok.setToken("Id", "Id")
       ..replace("DOCTYPE", "Reserved")
       ..replace("html", "Reserved")
       ..replace("head", "Reserved")
@@ -116,40 +137,27 @@ class ShellPage {
       ..replace("title", "Reserved")
       ..replace("body", "Reserved")
       ..replace("script", "Reserved");
-    tok.state("Start").join("Sym")
-      ..addSet("</\\-!>=");
-    tok.state("Sym").join("Sym")
-      ..addSet("</\\-!>=");
-    tok.state("Sym").setToken("Symbol");
-    tok.state("Start").join("OpenStr")
-      ..addSet("\"");
-    tok.state("OpenStr").join("CloseStr")
-      ..addSet("\"");
-    tok.state("OpenStr").join("EscStr")
-      ..addSet("\\");
-    tok.state("EscStr").join("OpenStr")
-      ..addSet("\"");
-    tok.state("OpenStr").join("OpenStr")
-      ..addAll();
-    tok.state("CloseStr").setToken("String");
-    tok.state("Start").join("Other")
-      ..addAll();
-    tok.state("Other").join("Other").addNot()
-      ..addSet("</\\-!>=_\"")
-      ..addRange("a", "z")
-      ..addRange("A", "Z");
-    tok.state("Other").setToken("Other");
+    tok.setToken("Other", "Other");
     this._htmlTokenizer = tok;
   }
 
   void _setupDartTokenizer() {
     if (this._dartTokenizer != null) return;
-    this._dartTokenizer = new Tokenizer.Tokenizer();
+    Tokenizer.Tokenizer tok = new Tokenizer.Tokenizer();
+
+
+
+    this._dartTokenizer = tok;
   }
 
   void _setupGlslTokenizer() {
     if (this._glslTokenizer != null) return;
-    this._glslTokenizer = new Tokenizer.Tokenizer();
+    Tokenizer.Tokenizer tok = new Tokenizer.Tokenizer();
+
+
+
+
+    this._glslTokenizer = tok;
   }
 
   void addCode(String lang, List<String> lines) {
