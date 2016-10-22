@@ -10,51 +10,24 @@ class ShellPage {
 
   ShellPage([String title = ""]) {
     html.BodyElement body = html.document.body;
-    body.style
-      ..backgroundColor = "#FFFFFF"
-      ..margin  = "40px"
-      ..padding = "0";
 
-    html.DivElement scrollTop = new html.DivElement();
-    scrollTop.style
-      ..position = "fixed"
-      ..width    = "100%"
-      ..height   = "100%"
-      ..left     = "0px"
-      ..top      = "0px"
-      ..zIndex   = "-1"
-      ..backgroundImage  = "url('../resources/SnowTop.png')"
-      ..backgroundRepeat = "no-repeat";
+    html.DivElement scrollTop = new html.DivElement()
+      ..className = "scrollTop";
     body.append(scrollTop);
 
-    html.DivElement scrollPage = new html.DivElement();
-    scrollPage.style
-      ..position  = "relative"
-      ..textAlign = "center";
+    html.DivElement scrollPage = new html.DivElement()
+      ..className = "scrollPage";
     body.append(scrollPage);
 
-    html.DivElement pageCenter = new html.DivElement();
-    pageCenter.style
-      ..textAlign    = "center"
-      ..marginLeft   = "auto"
-      ..marginRight  = "auto"
-      ..marginTop    = "40px"
-      ..marginBottom = "40px"
-      ..padding      = "40px"
-      ..background   = "rgba(255,255,255,0.8)"
-      ..boxShadow    = "3px 3px 4px 2px rgba(0,0,0,0.5)";
+    html.DivElement pageCenter = new html.DivElement()
+      ..className = "pageCenter";
     scrollPage.append(pageCenter);
 
     if (title.isNotEmpty) {
       html.document.title = title;
-      html.DivElement titleElem = new html.DivElement();
-      titleElem.text = title;
-      titleElem.style
-        ..textAlign     = "center"
-        ..paddingBottom = "40px"
-        ..color         = "#222"
-        ..textShadow    = "0px 2px 3px #555555"
-        ..font          = "30px Tahoma, Helvetica, Arial, Sans-Serif";
+      html.DivElement titleElem = new html.DivElement()
+        ..className = "pageTitle"
+        ..text = title;
       pageCenter.append(titleElem);
     }
 
@@ -71,25 +44,17 @@ class ShellPage {
   }
 
   void addHeader(int level, String text) {
-    html.DivElement textElem = new html.DivElement()
-      ..text = text;
-    textElem.style
-      ..textAlign     = "left"
-      ..paddingBottom = "10px"
-      ..color         = "#111"
-      ..font          = "${28 - level*4}px Tahoma, Helvetica, Arial, Sans-Serif";
-    this._elem.append(textElem);
+    html.DivElement textHeaderElem = new html.DivElement()
+      ..className = "textHeader"
+      ..text = text
+      ..style.fontSize = "${28 - level*4}px";
+    this._elem.append(textHeaderElem);
   }
 
   void addPar(List<String> text) {
     html.DivElement textElem = new html.DivElement()
+      ..className = "textPar"
       ..text = text.join();
-    textElem.style
-      ..paddingLeft   = "20px"
-      ..paddingBottom = "10px"
-      ..textAlign     = "left"
-      ..color         = "#111"
-      ..font          = "14px Tahoma, Helvetica, Arial, Sans-Serif";
     this._elem.append(textElem);
   }
 
@@ -106,6 +71,8 @@ class ShellPage {
       ..addRange("0", "9")
       ..addRange("a", "z")
       ..addRange("A", "Z");
+    tok.join("Id", "Attr")
+      ..addSet("=");
     tok.join("Start", "Sym")
       ..addSet("</\\-!>=");
     tok.join("Sym", "Sym")
@@ -137,6 +104,7 @@ class ShellPage {
       ..replace("title", "Reserved")
       ..replace("body", "Reserved")
       ..replace("script", "Reserved");
+    tok.setToken("Attr", "Attr");
     tok.setToken("Other", "Other");
     this._htmlTokenizer = tok;
   }
@@ -161,37 +129,38 @@ class ShellPage {
   }
 
   void addCode(String lang, List<String> lines) {
-    html.TableElement tblElem = new html.TableElement();
-    tblElem.style
-      ..border       = "1px solid #888"
-      ..marginLeft   = "20px"
-      ..marginBottom = "10px"
-      ..textAlign    = "left"
-      ..color        = "#111"
-      ..font         = "14px Consolas, Sans-Serif";
-    html.TableRowElement rowElem = new html.TableRowElement();
-    html.TableCellElement cell1Elem = new html.TableCellElement();
-    cell1Elem.style
-      ..padding         = "5px"
-      ..backgroundColor = "#DDD";
-    for (int lineNo = 0; lineNo < lines.length; lineNo++) {
-      html.DivElement lineElem = new html.DivElement()
-        ..text = "${lineNo+1}";
-      cell1Elem.append(lineElem);
-    }
-    rowElem.append(cell1Elem);
-    html.TableCellElement cell2Elem = new html.TableCellElement();
-    cell2Elem.style
-      ..padding         = "5px"
-      ..backgroundColor = "#F8F8F8";
+    List<List<html.DivElement>> lineList = [];
     String code = lines.join("\n");
-    if (lang == "html")      this._colorHtml(code, cell2Elem);
-    else if (lang == "dart") this._colorDart(code, cell2Elem);
-    else if (lang == "glsl") this._colorGlsl(code, cell2Elem);
-    else                     this._colorPlain(code, cell2Elem);
-    rowElem.append(cell2Elem);
-    tblElem.append(rowElem);
-    this._elem.append(tblElem);
+    if (lang == "html")      this._colorHtml(code, lineList);
+    else if (lang == "dart") this._colorDart(code, lineList);
+    else if (lang == "glsl") this._colorGlsl(code, lineList);
+    else                     this._colorPlain(code, lineList);
+
+    html.DivElement codeTableScroll = new html.DivElement()
+      ..className = "codeTableScroll";
+    html.TableElement codeTable = new html.TableElement()
+      ..className = "codeTable";
+
+    int lineNo = 0;
+    for (List<html.DivElement> line in lineList) {
+      html.TableRowElement rowElem = new html.TableRowElement()
+        ..className = "codeTableRow";
+      html.TableCellElement cell1Elem = new html.TableCellElement()
+        ..className = "codeLineNums"
+        ..text = "${lineNo+1}";
+      rowElem.append(cell1Elem);
+
+      html.TableCellElement cell2Elem = new html.TableCellElement()
+        ..className = "codeLineText";
+      for (html.DivElement partElem in line) {
+        cell2Elem.append(partElem);
+      }
+      rowElem.append(cell2Elem);
+      codeTable.append(rowElem);
+      lineNo++;
+    }
+    codeTableScroll.append(codeTable);
+    this._elem.append(codeTableScroll);
   }
 
   String _escapeText(String text) {
@@ -206,49 +175,43 @@ class ShellPage {
       if (first) first = false;
       else lineList.add(new List<html.DivElement>());
       html.DivElement partElem = new html.DivElement()
-        ..innerHtml = this._escapeText(line);
-      partElem.style
-        ..float = "left"
-        ..color = color;
+        ..className = "codePart"
+        ..innerHtml = this._escapeText(line)
+        ..style.color = color;
       lineList.last.add(partElem);
     }
   }
 
-  void _addAllLines(html.Element parent, List<List<html.DivElement>> lineList) {
-    for (List<html.DivElement> line in lineList) {
-      html.DivElement lineElem = new html.DivElement();
-      lineElem.style
-        ..whiteSpace = "nowrap";
-      for (html.DivElement partElem in line) {
-        lineElem.append(partElem);
-      }
-      parent.append(lineElem);
-    }
-  }
-
-  void _colorHtml(String code, html.Element parent) {
+  void _colorHtml(String code, List<List<html.DivElement>> lineList) {
     this._setupHtmlTokenizer();
     List<Tokenizer.Token> tokens = this._htmlTokenizer.tokenize(code);
     for (Tokenizer.Token token in tokens) {
-      print(token.toString());
+      switch(token.name) {
+        case "Symbol":   this._addLineParts(token.text, "#616", lineList); break;
+        case "String":   this._addLineParts(token.text, "#191", lineList); break;
+        case "Id":       this._addLineParts(token.text, "#111", lineList); break;
+        case "Attr":
+          this._addLineParts(token.text.substring(0, token.text.length-1), "#911", lineList);
+          this._addLineParts("=", "#111", lineList);
+          break;
+        case "Reserved": this._addLineParts(token.text, "#119", lineList); break;
+        case "Other":    this._addLineParts(token.text, "#111", lineList); break;
+      }
     }
-    //this._addLineParts(code, "#911", parent);
   }
 
-  void _colorDart(String code, html.Element parent) {
+  void _colorDart(String code, List<List<html.DivElement>> lineList) {
     this._setupDartTokenizer();
     //this._addLineParts(code, "#191", parent);
   }
 
-  void _colorGlsl(String code, html.Element parent) {
+  void _colorGlsl(String code, List<List<html.DivElement>> lineList) {
     this._setupGlslTokenizer();
     //this._addLineParts(code, "#119", parent);
   }
 
-  void _colorPlain(String code, html.Element parent) {
-    List<List<html.DivElement>> lineList = [];
+  void _colorPlain(String code, List<List<html.DivElement>> lineList) {
     this._addLineParts(code, "#111", lineList);
-    this._addAllLines(parent, lineList);
   }
 
   void addImage(String id, String path) {
