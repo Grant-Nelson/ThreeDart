@@ -28,7 +28,30 @@ void page0() {
       "a paragraph. This is an example of a paragraph. This is an example ",
       "of a paragraph. This is an example of a paragraph."])
     ..addCode("dart", [
+      "// This is a test of the dart coloring",
       "void thisIsATest() {",
       "  print(\"Hello World\");",
-      "}"]);
+      "}"])
+    ..addPar(["This is an example of a paragraph. This is an example of a ",
+      "paragraph. This is an example of a paragraph. This is an example of ",
+      "a paragraph. This is an example of a paragraph. This is an example ",
+      "of a paragraph. This is an example of a paragraph."])
+    ..addCode("glsl", [
+      "uniform mat4 viewObjMat;",
+      "uniform mat4 projMat;",
+      "",
+      "attribute vec3 posAttr;",
+      "",
+      "varying float depth;",
+      "",
+      "void main()",
+      "{",
+      "  vec4 pos = viewObjMat*vec4(posAttr, 1.0);",
+      "  depth = pos.z;",
+      "  gl_Position = projMat*pos;",
+      "}"])
+    ..addPar(["This is an example of a paragraph. This is an example of a ",
+      "paragraph. This is an example of a paragraph. This is an example of ",
+      "a paragraph. This is an example of a paragraph. This is an example ",
+      "of a paragraph. This is an example of a paragraph."]);
 }

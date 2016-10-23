@@ -13,9 +13,11 @@ class TokenState {
   }
 
   /// Adds a replacement which replaces this token's name with the given
-  /// [tokenName] when the accepted text is the same as the given [text].
-  void replace(String text, String tokenName) {
-    this._replace[text] = tokenName;
+  /// [tokenName] when the accepted text is the same as any of the given [text].
+  void replace(String tokenName, List<String> text) {
+    for (String t in text) {
+      this._replace[t] = tokenName;
+    }
   }
 
   /// Creates a token for this token state and the given [text].

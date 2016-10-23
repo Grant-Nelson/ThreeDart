@@ -13,7 +13,9 @@ part 'shellPage.dart';
 part 'page0.dart';
 
 void main() {
-
-  page0();
-
+  try {
+    page0();
+  } catch (ex) {
+    print(ex);
+  }
 }
