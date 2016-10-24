@@ -44,13 +44,11 @@ class State {
     return trans;
   }
 
-  /// Finds the next state given a character. This will search the transitions
-  /// to find a transition which matches this character then returns the
-  /// target of that transition.
-  /// If no transition matches a null state is returned.
-  State findNext(int c) {
+  /// Finds the matching transition given a character.
+  /// If no transition matches null is returned.
+  Transition findTansition(int c) {
     for (Transition trans in this._trans) {
-      if (trans.match(c)) return trans.target;
+      if (trans.match(c)) return trans;
     }
     return null;
   }

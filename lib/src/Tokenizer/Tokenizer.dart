@@ -88,15 +88,15 @@ class Tokenizer {
 
       // Transition to the next state with the current character.
       int c = chars[index];
-      prevText.add(c);
-      State next = state.findNext(c);
-      if (next == null) {
+      Transition trans = state.findTansition(c);
+      if (trans == null) {
         // No transition found.
         if (lastToken == null) {
           // No previous found token state, therefore this part
           // of the input isn't tokenizable with this tokenizer.
+          prevText.add(c);
           String text = new String.fromCharCodes(prevText);
-          throw new Exception("Untokenizable string [state: ${state.name}, index $index]: $text");
+          throw new Exception("Untokenizable string [state: ${state.name}, index $index]: \"$text\"");
         }
 
         // Reset to previous found token's state.
@@ -108,7 +108,8 @@ class Tokenizer {
       } else {
         // Transition to the next state and check if it is an acceptance state.
         // Store acceptance state to return to if needed.
-        state = next;
+        if (!trans.consume) prevText.add(c);
+        state = trans.target;
         if (state.token != null) {
           String text = new String.fromCharCodes(prevText);
           lastToken = state.token.getToken(text, index);

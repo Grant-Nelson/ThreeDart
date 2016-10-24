@@ -46,12 +46,53 @@ body {
   font: 28px Tahoma, Helvetica, Arial, Sans-Serif;
 }
 
+.textHeader a:link {
+  color: #111;
+  text-decoration: none;
+}
+
+.textHeader a:visited {
+  color: #111;
+  text-decoration: none;
+}
+
+.textHeader a:hover {
+  color: #111;
+  text-decoration: underline;
+}
+
+.textHeader a:active {
+  color: #111;
+  text-decoration: underline;
+}
+
 .textPar {
   padding-left: 20px;
   padding-bottom: 10px;
   text-align: left;
   color: #111;
   font: 14px Tahoma, Helvetica, Arial, Sans-Serif;
+}
+
+.normalPar {
+  display: inline;
+}
+
+.boldPar {
+  font-weight: bold;
+  display: inline;
+}
+
+.italicPar {
+  font-style: italic;
+  display: inline;
+}
+
+.codePar {
+  color: #111;
+  font: 14px Consolas, Sans-Serif;
+  background-color: #F4F4F4;
+  display: inline;
 }
 
 .codeTableScroll {
