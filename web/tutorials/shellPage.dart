@@ -82,7 +82,21 @@ class ShellPage {
           parElem.append(textElem);
           break;
         case "Link":
-          // TODO: Implement
+          if (token.text.contains("|")) {
+            List<String> parts = token.text.split("|");
+            html.AnchorElement anchor = new html.AnchorElement()
+              ..className = "linkPar"
+              ..href = parts[1]
+              ..text = parts[0];
+            parElem.append(anchor);
+          } else {
+            String id = Uri.encodeFull(token.text);
+            html.AnchorElement anchor = new html.AnchorElement()
+              ..className = "linkPar"
+              ..href = "#${id}"
+              ..text = token.text;
+            parElem.append(anchor);
+          }
           break;
         case "Other":
           html.DivElement textElem = new html.DivElement()
@@ -95,7 +109,7 @@ class ShellPage {
     this._elem.append(parElem);
   }
 
-  void addCode(String lang, List<String> lines) {
+  void addCode(String title, String lang, List<String> lines) {
     List<List<html.DivElement>> lineList = [];
     String code = lines.join("\n");
     if (lang == "html")      this._colorHtml(code, lineList);
@@ -107,6 +121,23 @@ class ShellPage {
       ..className = "codeTableScroll";
     html.TableElement codeTable = new html.TableElement()
       ..className = "codeTable";
+
+    String id = Uri.encodeFull(title);
+    html.TableRowElement headerElem = new html.TableRowElement()
+      ..className = "headerRow";
+    html.TableCellElement headerCellElem = new html.TableCellElement()
+      ..className = "headerCell"
+      ..colSpan = 2;
+    html.DivElement tableHeaderElem = new html.DivElement()
+      ..className = "tableHeader"
+      ..id = id;
+    html.AnchorElement anchor = new html.AnchorElement()
+      ..href = "#${id}"
+      ..text = title;
+    tableHeaderElem.append(anchor);
+    headerCellElem.append(tableHeaderElem);
+    headerElem.append(headerCellElem);
+    codeTable.append(headerElem);
 
     int lineNo = 0;
     for (List<html.DivElement> line in lineList) {

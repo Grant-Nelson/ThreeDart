@@ -9,7 +9,7 @@ void page0() {
       "paragraph. *This is an example of a bold paragraph.* This is an example of ",
       "a paragraph. _This is an example of an italics paragraph._ `This is an example ",
       "of a code paragraph.` This is an example of a paragraph."])
-    ..addCode("html", [
+    ..addCode("Test of HTML code", "html", [
       '<!DOCTYPE html>',
       '<html>',
       '  <head>',
@@ -24,10 +24,10 @@ void page0() {
       '  </body>',
       '</html>'])
     ..addPar(["This is an example of a paragraph. This is an example of a ",
-      "paragraph. This is an example of a paragraph. This is an example of ",
-      "a paragraph. This is an example of a paragraph. This is an example ",
+      "paragraph. This is an example of the [1 Test] link. This is an example of ",
+      "a paragraph. This is an example of a [google|http://www.google.com] link. This is an example ",
       "of a paragraph. This is an example of a paragraph."])
-    ..addCode("dart", [
+    ..addCode("Test of Dart code", "dart", [
       "// This is a test of the dart coloring",
       "void thisIsATest() {",
       "  print(\"Hello World\");",
@@ -36,7 +36,7 @@ void page0() {
       "paragraph. This is an example of a paragraph. This is an example of ",
       "a paragraph. This is an example of a paragraph. This is an example ",
       "of a paragraph. This is an example of a paragraph."])
-    ..addCode("glsl", [
+    ..addCode("Test of GLSL code", "glsl", [
       "uniform mat4 viewObjMat;",
       "uniform mat4 projMat;",
       "",
