@@ -4,6 +4,7 @@ class ShellPage {
 
   convert.HtmlEscape _escape;
   html.DivElement _elem;
+  Tokenizer.Tokenizer _parTokenizer;
   Tokenizer.Tokenizer _htmlTokenizer;
   Tokenizer.Tokenizer _dartTokenizer;
   Tokenizer.Tokenizer _glslTokenizer;
@@ -43,22 +44,72 @@ class ShellPage {
     });
   }
 
-  void addHeader(int level, String text) {
+  void addHeader(int level, String text, [String id = ""]) {
+    if (id.isEmpty) id = Uri.encodeFull(text);
     html.DivElement textHeaderElem = new html.DivElement()
       ..className = "textHeader"
-      ..text = text
+      ..id = id
       ..style.fontSize = "${28 - level*4}px";
+    html.AnchorElement anchor = new html.AnchorElement()
+      ..href = "#${id}"
+      ..text = text;
+    textHeaderElem.append(anchor);
     this._elem.append(textHeaderElem);
   }
 
   void addPar(List<String> text) {
-    html.DivElement textElem = new html.DivElement()
-      ..className = "textPar"
-      ..text = text.join();
-    this._elem.append(textElem);
+    this._setupParTokenizer();
+    html.DivElement parElem = new html.DivElement()
+      ..className = "textPar";
+    for (Tokenizer.Token token in this._parTokenizer.tokenize(text.join())) {
+      switch(token.name) {
+        case "Bold":
+          html.DivElement textElem = new html.DivElement()
+            ..className = "boldPar"
+            ..text = token.text;
+          parElem.append(textElem);
+          break;
+        case "Italic":
+          html.DivElement textElem = new html.DivElement()
+            ..className = "italicPar"
+            ..text = token.text;
+          parElem.append(textElem);
+          break;
+        case "Code":
+          html.DivElement textElem = new html.DivElement()
+            ..className = "codePar"
+            ..text = token.text;
+          parElem.append(textElem);
+          break;
+        case "Link":
+          if (token.text.contains("|")) {
+            List<String> parts = token.text.split("|");
+            html.AnchorElement anchor = new html.AnchorElement()
+              ..className = "linkPar"
+              ..href = parts[1]
+              ..text = parts[0];
+            parElem.append(anchor);
+          } else {
+            String id = Uri.encodeFull(token.text);
+            html.AnchorElement anchor = new html.AnchorElement()
+              ..className = "linkPar"
+              ..href = "#${id}"
+              ..text = token.text;
+            parElem.append(anchor);
+          }
+          break;
+        case "Other":
+          html.DivElement textElem = new html.DivElement()
+            ..className = "normalPar"
+            ..text = token.text;
+          parElem.append(textElem);
+          break;
+      }
+    }
+    this._elem.append(parElem);
   }
 
-  void addCode(String lang, List<String> lines) {
+  void addCode(String title, String lang, List<String> lines) {
     List<List<html.DivElement>> lineList = [];
     String code = lines.join("\n");
     if (lang == "html")      this._colorHtml(code, lineList);
@@ -70,6 +121,23 @@ class ShellPage {
       ..className = "codeTableScroll";
     html.TableElement codeTable = new html.TableElement()
       ..className = "codeTable";
+
+    String id = Uri.encodeFull(title);
+    html.TableRowElement headerElem = new html.TableRowElement()
+      ..className = "headerRow";
+    html.TableCellElement headerCellElem = new html.TableCellElement()
+      ..className = "headerCell"
+      ..colSpan = 2;
+    html.DivElement tableHeaderElem = new html.DivElement()
+      ..className = "tableHeader"
+      ..id = id;
+    html.AnchorElement anchor = new html.AnchorElement()
+      ..href = "#${id}"
+      ..text = title;
+    tableHeaderElem.append(anchor);
+    headerCellElem.append(tableHeaderElem);
+    headerElem.append(headerCellElem);
+    codeTable.append(headerElem);
 
     int lineNo = 0;
     for (List<html.DivElement> line in lineList) {
@@ -92,6 +160,11 @@ class ShellPage {
     codeTableScroll.append(codeTable);
     this._elem.append(codeTableScroll);
   }
+
+  void addImage(String id, String path) {
+    // TODO: Implement
+  }
+
 
   String _escapeText(String text) {
     return this._escape.convert(text).replaceAll(" ", "&nbsp;");
@@ -166,8 +239,59 @@ class ShellPage {
     this._addLineParts(code, "#111", lineList);
   }
 
-  void addImage(String id, String path) {
-    // TODO: Implement
+  void _setupParTokenizer() {
+    if (this._parTokenizer != null) return;
+    Tokenizer.Tokenizer tok = new Tokenizer.Tokenizer();
+    tok.start("Start");
+    tok.join("Start", "Bold")
+      ..addSet("*")
+      ..consume = true;
+    tok.join("Bold", "Bold")
+      ..addNot().addSet("*");
+    tok.join("Bold", "BoldEnd")
+      ..addSet("*")
+      ..consume = true;
+    tok.join("Start", "Italic")
+      ..addSet("_")
+      ..consume = true;
+    tok.join("Italic", "Italic")
+      ..addNot().addSet("_");
+    tok.join("Italic", "ItalicEnd")
+      ..addSet("_")
+      ..consume = true;
+    tok.join("Start", "Code")
+      ..addSet("`")
+      ..consume = true;
+    tok.join("Code", "Code")
+      ..addNot().addSet("`");
+    tok.join("Code", "CodeEnd")
+      ..addSet("`")
+      ..consume = true;
+    tok.join("Start", "LinkHead")
+      ..addSet("[")
+      ..consume = true;
+    tok.join("LinkHead", "LinkTail")
+      ..addSet("|");
+    tok.join("LinkHead", "LinkEnd")
+      ..addSet("]")
+      ..consume = true;
+    tok.join("LinkHead", "LinkHead")
+      ..addNot().addSet("|]");
+    tok.join("LinkTail", "LinkEnd")
+      ..addSet("]")
+      ..consume = true;
+    tok.join("LinkTail", "LinkTail")
+      ..addNot().addSet("|]");
+    tok.join("Start", "Other")
+      ..addAll();
+    tok.join("Other", "Other")
+      ..addNot().addSet("*_`[");
+    tok.setToken("BoldEnd", "Bold");
+    tok.setToken("ItalicEnd", "Italic");
+    tok.setToken("CodeEnd", "Code");
+    tok.setToken("LinkEnd", "Link");
+    tok.setToken("Other", "Other");
+    this._parTokenizer = tok;
   }
 
   void _setupHtmlTokenizer() {

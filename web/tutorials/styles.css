@@ -46,12 +46,73 @@ body {
   font: 28px Tahoma, Helvetica, Arial, Sans-Serif;
 }
 
+.textHeader a:link {
+  color: #111;
+  text-decoration: none;
+}
+
+.textHeader a:visited {
+  color: #111;
+  text-decoration: none;
+}
+
+.textHeader a:hover {
+  color: #111;
+  text-decoration: underline;
+}
+
+.textHeader a:active {
+  color: #111;
+  text-decoration: underline;
+}
+
 .textPar {
   padding-left: 20px;
   padding-bottom: 10px;
   text-align: left;
   color: #111;
   font: 14px Tahoma, Helvetica, Arial, Sans-Serif;
+}
+
+.normalPar {
+  display: inline;
+}
+
+.boldPar {
+  font-weight: bold;
+  display: inline;
+}
+
+.italicPar {
+  font-style: italic;
+  display: inline;
+}
+
+.codePar {
+  color: #111;
+  font: 14px Consolas, Sans-Serif;
+  background-color: #F4F4F4;
+  display: inline;
+}
+
+.linkPar:link {
+  color: #111;
+  text-decoration: underline;
+}
+
+.linkPar:visited {
+  color: #111;
+  text-decoration: underline;
+}
+
+.linkPar:hover {
+  color: #11F;
+  text-decoration: underline;
+}
+
+.linkPar:active {
+  color: #11F;
+  text-decoration: underline;
 }
 
 .codeTableScroll {
@@ -69,6 +130,43 @@ body {
   padding: 0px;
   color: #111;
   font: 14px Consolas, Sans-Serif;
+  width: 100%;
+}
+
+.headerRow {
+  padding: 0px;
+  margin: 0px;
+}
+
+.headerCell {
+  padding: 0px 5px 0px 5px;
+  background-color: #CCC;
+  margin: 0px;
+}
+
+.tableHeader {
+  color: #111;
+  font-weight: bold;
+}
+
+.tableHeader a:link {
+  color: #111;
+  text-decoration: none;
+}
+
+.tableHeader a:visited {
+  color: #111;
+  text-decoration: none;
+}
+
+.tableHeader a:hover {
+  color: #111;
+  text-decoration: underline;
+}
+
+.tableHeader a:active {
+  color: #111;
+  text-decoration: underline;
 }
 
 .codeTableRow {
@@ -94,6 +192,7 @@ body {
   white-space: nowrap;
   padding: 0px 5px 0px 5px;
   margin: 0px;
+  width: 100%;
 }
 
 .codePart {
