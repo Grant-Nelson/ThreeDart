@@ -1,14 +1,17 @@
 part of ThreeDart.web.tutorials;
 
+/// The shell page is a tool for creating pages quickly and
+/// easily which will have a consistent look and feel.
 class ShellPage {
 
   convert.HtmlEscape _escape;
-  html.DivElement _elem;
+  html.DivElement _page;
   Tokenizer.Tokenizer _parTokenizer;
   Tokenizer.Tokenizer _htmlTokenizer;
   Tokenizer.Tokenizer _dartTokenizer;
   Tokenizer.Tokenizer _glslTokenizer;
 
+  /// Creates a new shell page with an optional [title].
   ShellPage([String title = ""]) {
     html.BodyElement body = html.document.body;
 
@@ -33,8 +36,8 @@ class ShellPage {
     }
 
     this._escape = new convert.HtmlEscape(convert.HtmlEscapeMode.ELEMENT);
-    this._elem = new html.DivElement();
-    pageCenter.append(this._elem);
+    this._page = new html.DivElement();
+    pageCenter.append(this._page);
     this._htmlTokenizer = null;
     this._dartTokenizer = null;
     this._glslTokenizer = null;
@@ -44,6 +47,10 @@ class ShellPage {
     });
   }
 
+  /// Adds a section header with the give [text] into the page.
+  /// The [level] defines its weight where it is 0, largest to 4, smallest.
+  /// The optional [id] is a custom link identifier for this header,
+  /// if left blank the id will be auto-generated.
   void addHeader(int level, String text, [String id = ""]) {
     if (id.isEmpty) id = Uri.encodeFull(text);
     html.DivElement textHeaderElem = new html.DivElement()
@@ -54,9 +61,16 @@ class ShellPage {
       ..href = "#${id}"
       ..text = text;
     textHeaderElem.append(anchor);
-    this._elem.append(textHeaderElem);
+    this._page.append(textHeaderElem);
   }
 
+  /// Adds a paragraph to the page. The body of the paragraph
+  /// can be split across several lines as several entries into the list.
+  /// If the text is wrapped by asterisks the text will be bolded.
+  /// If the text is wrapped by underscores the text will be italic.
+  /// If the text is wrapped by back ticks the text will be syled like code.
+  /// If the text has square brackets around the text it will be a link.
+  /// The link can have a custom location after a vertical bar.
   void addPar(List<String> text) {
     this._setupParTokenizer();
     html.DivElement parElem = new html.DivElement()
@@ -106,9 +120,13 @@ class ShellPage {
           break;
       }
     }
-    this._elem.append(parElem);
+    this._page.append(parElem);
   }
 
+  /// Adds a code box with the given [title] to the page.
+  /// The given [lang] is the language to color the code with.
+  /// Currently it supports HTML, Dart, GLSL, and other.
+  /// The [lines] are the lines of the code for the box.
   void addCode(String title, String lang, List<String> lines) {
     List<List<html.DivElement>> lineList = [];
     String code = lines.join("\n");
@@ -158,18 +176,30 @@ class ShellPage {
       lineNo++;
     }
     codeTableScroll.append(codeTable);
-    this._elem.append(codeTableScroll);
+    this._page.append(codeTableScroll);
   }
 
+  /// Adds an image to the page with the given [id].
   void addImage(String id, String path) {
-    // TODO: Implement
+    html.DivElement pageImageElem = new html.DivElement()
+      ..className = "pageImage"
+      ..id = id;
+    html.AnchorElement anchor = new html.AnchorElement()
+      ..href = "#${id}";
+    html.ImageElement image = new html.ImageElement()
+      ..src = path;
+    anchor.append(image);
+    pageImageElem.append(anchor);
+    this._page.append(pageImageElem);
   }
 
-
+  /// Escapes the given [text] for html.
   String _escapeText(String text) {
     return this._escape.convert(text).replaceAll(" ", "&nbsp;");
   }
 
+  /// Adds line parts to the list of code lines, the [lineList].
+  /// The given [code] to add as lines in the given [color].
   void _addLineParts(String code, String color, List<List<html.DivElement>> lineList) {
     if (lineList.isEmpty) lineList.add(new List<html.DivElement>());
     List<String> lines = code.split("\n");
@@ -185,6 +215,7 @@ class ShellPage {
     }
   }
 
+  /// Adds color for the given HTML [code] to the given [lineList].
   void _colorHtml(String code, List<List<html.DivElement>> lineList) {
     this._setupHtmlTokenizer();
     for (Tokenizer.Token token in this._htmlTokenizer.tokenize(code)) {
@@ -193,7 +224,7 @@ class ShellPage {
         case "String":   this._addLineParts(token.text, "#191", lineList); break;
         case "Id":       this._addLineParts(token.text, "#111", lineList); break;
         case "Attr":
-          this._addLineParts(token.text.substring(0, token.text.length-1), "#911", lineList);
+          this._addLineParts(token.text, "#911", lineList);
           this._addLineParts("=", "#111", lineList);
           break;
         case "Reserved": this._addLineParts(token.text, "#119", lineList); break;
@@ -202,6 +233,7 @@ class ShellPage {
     }
   }
 
+  /// Adds color for the given Dart [code] to the given [lineList].
   void _colorDart(String code, List<List<html.DivElement>> lineList) {
     this._setupDartTokenizer();
     for (Tokenizer.Token token in this._dartTokenizer.tokenize(code)) {
@@ -218,6 +250,7 @@ class ShellPage {
     }
   }
 
+  /// Adds color for the given GLSL [code] to the given [lineList].
   void _colorGlsl(String code, List<List<html.DivElement>> lineList) {
     this._setupGlslTokenizer();
     for (Tokenizer.Token token in this._glslTokenizer.tokenize(code)) {
@@ -235,10 +268,14 @@ class ShellPage {
     }
   }
 
+  /// Adds color for the given plain [code] to the given [lineList].
   void _colorPlain(String code, List<List<html.DivElement>> lineList) {
     this._addLineParts(code, "#111", lineList);
   }
 
+  /// Constructs the paragraph tokenizer if the tokenizer hasn't been setup yet.
+  /// The paragraph tokenizer breaks up a paragraph to label tokens for
+  /// bold, italic, code, links, and normal.
   void _setupParTokenizer() {
     if (this._parTokenizer != null) return;
     Tokenizer.Tokenizer tok = new Tokenizer.Tokenizer();
@@ -294,6 +331,9 @@ class ShellPage {
     this._parTokenizer = tok;
   }
 
+  /// Constructs the HTML code tokenizer if the tokenizer hasn't
+  /// been setup yet. The HTML code tokenizer breaks up code to
+  /// label tokens to color the code appropriately.
   void _setupHtmlTokenizer() {
     if (this._htmlTokenizer != null) return;
     Tokenizer.Tokenizer tok = new Tokenizer.Tokenizer();
@@ -308,7 +348,8 @@ class ShellPage {
       ..addRange("a", "z")
       ..addRange("A", "Z");
     tok.join("Id", "Attr")
-      ..addSet("=");
+      ..addSet("=")
+      ..consume = true;
     tok.join("Start", "Sym")
       ..addSet("</\\-!>=");
     tok.join("Sym", "Sym")
@@ -339,6 +380,9 @@ class ShellPage {
     this._htmlTokenizer = tok;
   }
 
+  /// Constructs the Dart code tokenizer if the tokenizer hasn't
+  /// been setup yet. The Dart code tokenizer breaks up code to
+  /// label tokens to color the code appropriately.
   void _setupDartTokenizer() {
     if (this._dartTokenizer != null) return;
     Tokenizer.Tokenizer tok = new Tokenizer.Tokenizer();
@@ -414,8 +458,9 @@ class ShellPage {
     tok.setToken("EndComment", "Comment");
     tok.setToken("Whitespace", "Whitespace");
     tok.setToken("Id", "Id")
-      ..replace("Type", ["double", "dynamic", "false", "int", "List", "Map",
-        "null", "num", "Object", "String", "this", "true", "var", "void"])
+      ..replace("Type", ["bool", "double", "dynamic", "false", "int",
+        "List", "Map", "null", "num", "Object", "String", "this",
+        "true", "var", "void"])
       ..replace("Reserved", ["abstract", "as", "assert", "async", "await",
         "break", "case", "catch", "class", "continue", "const", "default",
         "deferred", "do", "else", "enum", "export", "extends", "external",
@@ -426,6 +471,9 @@ class ShellPage {
     this._dartTokenizer = tok;
   }
 
+  /// Constructs the GLSL code tokenizer if the tokenizer hasn't
+  /// been setup yet. The GLSL code tokenizer breaks up code to
+  /// label tokens to color the code appropriately.
   void _setupGlslTokenizer() {
     if (this._glslTokenizer != null) return;
     Tokenizer.Tokenizer tok = new Tokenizer.Tokenizer();

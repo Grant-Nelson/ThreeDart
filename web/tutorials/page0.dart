@@ -6,6 +6,11 @@ void page0() {
     ..addHeader(2, "2 Test")
     ..addHeader(3, "3 Test")
     ..addPar(["This is an example of a paragraph. This is an example of a ",
+      "paragraph. This is an example of a paragraph. This is an example of ",
+      "a paragraph. This is an example of a paragraph. This is an example ",
+      "of a paragraph. This is an example of a paragraph."])
+    ..addImage("dartImage", "../resources/ThreeDart.png")
+    ..addPar(["This is an example of a paragraph. This is an example of a ",
       "paragraph. *This is an example of a bold paragraph.* This is an example of ",
       "a paragraph. _This is an example of an italics paragraph._ `This is an example ",
       "of a code paragraph.` This is an example of a paragraph."])

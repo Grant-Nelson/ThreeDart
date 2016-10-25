@@ -201,3 +201,28 @@ body {
   display: inline-block;
   white-space: nowrap;
 }
+
+.pageImage {
+  padding-bottom: 10px;
+  display: inline-block;
+}
+
+.pageImage a:link {
+  color: #111;
+  text-decoration: none;
+}
+
+.pageImage a:visited {
+  color: #111;
+  text-decoration: none;
+}
+
+.pageImage a:hover {
+  color: #111;
+  text-decoration: underline;
+}
+
+.pageImage a:active {
+  color: #111;
+  text-decoration: underline;
+}
