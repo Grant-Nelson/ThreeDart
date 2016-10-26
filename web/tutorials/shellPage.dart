@@ -47,16 +47,20 @@ class ShellPage {
     });
   }
 
+  /// The page element to append new data to.
+  html.DivElement get page => this._page;
+
   /// Adds a section header with the give [text] into the page.
   /// The [level] defines its weight where it is 0, largest to 4, smallest.
   /// The optional [id] is a custom link identifier for this header,
   /// if left blank the id will be auto-generated.
   void addHeader(int level, String text, [String id = ""]) {
+    level = level.clamp(0, 4);
     if (id.isEmpty) id = Uri.encodeFull(text);
     html.DivElement textHeaderElem = new html.DivElement()
       ..className = "textHeader"
       ..id = id
-      ..style.fontSize = "${28 - level*4}px";
+      ..style.fontSize = "${28 - level*3}px";
     html.AnchorElement anchor = new html.AnchorElement()
       ..href = "#${id}"
       ..text = text;
@@ -191,6 +195,15 @@ class ShellPage {
     anchor.append(image);
     pageImageElem.append(anchor);
     this._page.append(pageImageElem);
+  }
+
+  /// Adds a canvas to the page with the given [id]
+  /// which can be used to host a ThreeDart
+  void addCanvas(String id) {
+    html.CanvasElement canvas = new html.CanvasElement()
+      ..className = "pageCanvas"
+      ..id = id;
+    this._page.append(canvas);
   }
 
   /// Escapes the given [text] for html.
