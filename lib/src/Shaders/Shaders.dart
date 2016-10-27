@@ -31,7 +31,6 @@ part 'TextureLayout.dart';
 
 /// Source of colors type for different shader components.
 enum ColorSourceType {
-
   /// No color source, meaning component isn't being used.
   None,
 
@@ -46,14 +45,7 @@ enum ColorSourceType {
 }
 
 /// Gets the string to indicate a source type used for the name of the material light.
-String stringForComponentType(ColorSourceType type) {
-  switch (type) {
-    case ColorSourceType.None:        return "0";
-    case ColorSourceType.Solid:       return "1";
-    case ColorSourceType.Texture2D:   return "2";
-    case ColorSourceType.TextureCube: return "3";
-  }
-}
+String stringForComponentType(ColorSourceType type) => type.index.toString();
 
 /// Inserts a number for each line in the given [text].
 String numberLines(String text) {
