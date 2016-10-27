@@ -41,6 +41,7 @@ body {
 
 .textHeader {
   text-align: left;
+  padding-top: 20px;
   padding-bottom: 10px;
   color: #111;
   font: 28px Tahoma, Helvetica, Arial, Sans-Serif;

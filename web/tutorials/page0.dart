@@ -1,65 +1,54 @@
 part of ThreeDart.web.tutorials;
 
 void page0() {
-  new ShellPage("Getting Started")
-    ..addHeader(0, "0 Test")
-    ..addHeader(1, "1 Test")
-    ..addHeader(2, "2 Test")
-    ..addHeader(3, "3 Test")
-    ..addHeader(4, "4 Test")
-    ..addPar(["This is an example of a paragraph. This is an example of a ",
-      "paragraph. This is an example of a paragraph. This is an example of ",
-      "a paragraph. This is an example of a paragraph. This is an example ",
-      "of a paragraph. This is an example of a paragraph."])
-    ..addImage("dartImage", "../resources/ThreeDart.png")
-    ..addPar(["This is an example of a paragraph. This is an example of a ",
-      "paragraph. *This is an example of a bold paragraph.* This is an example of ",
-      "a paragraph. _This is an example of an italics paragraph._ `This is an example ",
-      "of a code paragraph.` This is an example of a paragraph."])
-    ..addCode("Test of HTML code", "html", [
+  new ShellPage("Tutorial 1")
+    ..addPar(["This tutorial will walk you through creating the \"Hello World\" ",
+      "of 3D graphics, a rotating cube. After this tutorial you should know how ",
+      "to create a [ThreeDart|https://github.com/Grant-Nelson/ThreeDart] project. ",
+      "However, it is recommended you have a basic understanding of [Dart|https://www.dartlang.org] ",
+      "and [3D Matrices|http://www.opengl-tutorial.org/beginners-tutorials/tutorial-3-matrices/] ",
+      "before starting. You will not need to know [WebGL|https://en.wikipedia.org/wiki/WebGL] ",
+      "nor [OpenGL|https://en.wikipedia.org/wiki/OpenGL] until the more advanced ",
+      "tutorials."])
+    ..addHeader(0, "Getting Started")
+    ..addPar(["First, let's setup a canvas and Dart."])
+
+    ..addCode("index.html", "html", [
       '<!DOCTYPE html>',
       '<html>',
       '  <head>',
       '  	<meta charset="utf-8">',
       '  	<meta name="viewport" content="width=device-width, initial-scale=1.0">',
-      '    <link rel="stylesheet" href="styles.css">',
-      '    <title>Loading Dart...</title>',
+      '   <title>Tutorial 1</title>',
       '  </head>',
       '  <body>',
       '    <script type="application/dart" src="main.dart"></script>',
       '    <script src="packages/browser/dart.js"></script>',
       '  </body>',
       '</html>'])
-    ..addPar(["This is an example of a paragraph. This is an example of a ",
-      "paragraph. This is an example of the [1 Test] link. This is an example of ",
-      "a paragraph. This is an example of a [google|http://www.google.com] link. This is an example ",
-      "of a paragraph. This is an example of a paragraph."])
-    ..addCode("Test of Dart code", "dart", [
-      "// This is a test of the dart coloring",
-      "void thisIsATest() {",
-      "  print(\"Hello World\");",
-      "}"])
-    ..addCanvas("testCanvas")
-    ..addPar(["This is an example of a paragraph. This is an example of a ",
-      "paragraph. This is an example of a paragraph. This is an example of ",
-      "a paragraph. This is an example of a paragraph. This is an example ",
-      "of a paragraph. This is an example of a paragraph."])
-    ..addCode("Test of GLSL code", "glsl", [
-      "uniform mat4 viewObjMat;",
-      "uniform mat4 projMat;",
+    ..addCode("main.dart", "dart", [
+      "library threeDartTutorial;",
       "",
-      "attribute vec3 posAttr;",
+      "import 'dart:html';",
+      "import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;",
+      "import 'package:ThreeDart/Shapes.dart' as Shapes;",
+      "import 'package:ThreeDart/Scenes.dart' as Scenes;",
       "",
-      "varying float depth;",
+      "void main() {",
+      "  ThreeDart.Entity obj = new ThreeDart.Entity()",
+      "    ..shape = Shapes.cube()",
       "",
-      "void main()",
-      "{",
-      "  vec4 pos = viewObjMat*vec4(posAttr, 1.0);",
-      "  depth = pos.z;",
-      "  gl_Position = projMat*pos;",
-      "}"])
-    ..addPar(["This is an example of a paragraph. This is an example of a ",
-      "paragraph. This is an example of a paragraph. This is an example of ",
-      "a paragraph. This is an example of a paragraph. This is an example ",
-      "of a paragraph. This is an example of a paragraph."]);
+      "  Scenes.EntityPass pass = new Scenes.EntityPass()",
+      "    ..children.add(obj);",
+      "",
+      "  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId('threeDart')",
+      "    ..scene = pass;",
+      "",
+      "  var update;",
+      "  update = (num t) {",
+      "    td.render();",
+      "    window.requestAnimationFrame(update);",
+      "  };",
+      "  window.requestAnimationFrame(update);",
+      "}"]);
 }
