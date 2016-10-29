@@ -203,6 +203,30 @@ body {
   white-space: nowrap;
 }
 
+.codeLineCenter {
+  text-align: center;
+}
+
+.codeLineLightRed {
+  background-color: #F8C8C8;
+}
+
+.codeLineLightGreen {
+  background-color: #C8F8C8;
+}
+
+.codeLineLight {
+  background-color: #E8E8E8;
+}
+
+.codeLineRed {
+  background-color: #D88;
+}
+
+.codeLineGreen {
+  background-color: #8D8;
+}
+
 .pageImage {
   padding-bottom: 10px;
   display: inline-block;

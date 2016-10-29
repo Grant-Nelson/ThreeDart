@@ -13,7 +13,7 @@ void page0() {
     ..addHeader(0, "Getting Started")
     ..addPar(["First, let's setup a canvas and Dart."])
 
-    ..addCode("index.html", "html", [
+    ..addCode("index.html", "html", 0, [
       '<!DOCTYPE html>',
       '<html>',
       '  <head>',
@@ -26,8 +26,8 @@ void page0() {
       '    <script src="packages/browser/dart.js"></script>',
       '  </body>',
       '</html>'])
-    ..addCode("main.dart", "dart", [
-      "library threeDartTutorial;",
+    ..addCode("main.dart", "dart", 0, [
+      "library threeDartTutorial1;",
       "",
       "import 'dart:html';",
       "import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;",

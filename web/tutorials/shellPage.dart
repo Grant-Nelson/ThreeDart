@@ -131,7 +131,24 @@ class ShellPage {
   /// The given [lang] is the language to color the code with.
   /// Currently it supports HTML, Dart, GLSL, and other.
   /// The [lines] are the lines of the code for the box.
-  void addCode(String title, String lang, List<String> lines) {
+  /// If any line starts with a + or - then a diff is shown.
+  /// The [firstLineNo] is the offset for the first line number.
+  void addCode(String title, String lang, int firstLineNo, List<String> lines) {
+    List<int> diff = [];
+    bool showDiff = false;
+    for (int i = 0; i < lines.length; ++i) {
+      String line = lines[i];
+      if (line.startsWith("+")) {
+        lines[i] = line.substring(1);
+        diff.add(1);
+        showDiff = true;
+      } else if (line.startsWith("-")) {
+        lines[i] = line.substring(1);
+        diff.add(-1);
+        showDiff = true;
+      } else diff.add(0);
+    }
+
     List<List<html.DivElement>> lineList = [];
     String code = lines.join("\n");
     if (lang == "html")      this._colorHtml(code, lineList);
@@ -143,13 +160,15 @@ class ShellPage {
       ..className = "codeTableScroll";
     html.TableElement codeTable = new html.TableElement()
       ..className = "codeTable";
+    codeTableScroll.append(codeTable);
+    this._page.append(codeTableScroll);
 
     String id = Uri.encodeFull(title);
     html.TableRowElement headerElem = new html.TableRowElement()
       ..className = "headerRow";
     html.TableCellElement headerCellElem = new html.TableCellElement()
       ..className = "headerCell"
-      ..colSpan = 2;
+      ..colSpan = showDiff? 3: 2;
     html.DivElement tableHeaderElem = new html.DivElement()
       ..className = "tableHeader"
       ..id = id;
@@ -161,26 +180,69 @@ class ShellPage {
     headerElem.append(headerCellElem);
     codeTable.append(headerElem);
 
-    int lineNo = 0;
-    for (List<html.DivElement> line in lineList) {
-      html.TableRowElement rowElem = new html.TableRowElement()
-        ..className = "codeTableRow";
-      html.TableCellElement cell1Elem = new html.TableCellElement()
-        ..className = "codeLineNums"
-        ..text = "${lineNo+1}";
-      rowElem.append(cell1Elem);
+    if (showDiff) {
+      int lineNoSub = firstLineNo, lineNoAdd = firstLineNo;
+      for (int i = 0; i < lineList.length; ++i) {
+        List<html.DivElement> line = lineList[i];
+        html.TableRowElement rowElem = new html.TableRowElement()
+          ..className = "codeTableRow";
+        html.TableCellElement cell1Elem = new html.TableCellElement()
+          ..className = "codeLineNums codeLineLight";
+        html.TableCellElement cell2Elem = new html.TableCellElement()
+          ..className = "codeLineNums";
 
-      html.TableCellElement cell2Elem = new html.TableCellElement()
-        ..className = "codeLineText";
-      for (html.DivElement partElem in line) {
-        cell2Elem.append(partElem);
+        int value = diff[i];
+        if (value == 0) {
+          lineNoSub++;
+          lineNoAdd++;
+          cell1Elem.text = "$lineNoSub";
+          cell2Elem.text = "$lineNoAdd";
+        } else if (value > 0) {
+          rowElem.className = "codeTableRow codeLineLightGreen";
+          cell1Elem.className = "codeLineNums codeLineGreen codeLineCenter";
+          cell2Elem.className = "codeLineNums codeLineGreen";
+          lineNoAdd++;
+          cell1Elem.text = "+";
+          cell2Elem.text = "$lineNoAdd";
+        } else if (value < 0) {
+          rowElem.className = "codeTableRow codeLineLightRed";
+          cell1Elem.className = "codeLineNums codeLineRed";
+          cell2Elem.className = "codeLineNums codeLineRed codeLineCenter";
+          lineNoSub++;
+          cell1Elem.text = "$lineNoSub";
+          cell2Elem.text = "-";
+        }
+
+        html.TableCellElement cell3Elem = new html.TableCellElement()
+          ..className = "codeLineText";
+        for (html.DivElement partElem in line) {
+          cell3Elem.append(partElem);
+        }
+        rowElem.append(cell1Elem);
+        rowElem.append(cell2Elem);
+        rowElem.append(cell3Elem);
+        codeTable.append(rowElem);
       }
-      rowElem.append(cell2Elem);
-      codeTable.append(rowElem);
-      lineNo++;
+    } else {
+      int lineNo = firstLineNo;
+      for (List<html.DivElement> line in lineList) {
+        html.TableRowElement rowElem = new html.TableRowElement()
+          ..className = "codeTableRow";
+        html.TableCellElement cell1Elem = new html.TableCellElement()
+          ..className = "codeLineNums"
+          ..text = "${lineNo+1}";
+
+        html.TableCellElement cell2Elem = new html.TableCellElement()
+          ..className = "codeLineText";
+        for (html.DivElement partElem in line) {
+          cell2Elem.append(partElem);
+        }
+        rowElem.append(cell1Elem);
+        rowElem.append(cell2Elem);
+        codeTable.append(rowElem);
+        lineNo++;
+      }
     }
-    codeTableScroll.append(codeTable);
-    this._page.append(codeTableScroll);
   }
 
   /// Adds an image to the page with the given [id].
@@ -257,7 +319,7 @@ class ShellPage {
         case "Whitespace": this._addLineParts(token.text, "#111", lineList); break;
         case "Num":        this._addLineParts(token.text, "#191", lineList); break;
         case "Reserved":   this._addLineParts(token.text, "#119", lineList); break;
-        case "Type":       this._addLineParts(token.text, "#419", lineList); break;
+        case "Type":       this._addLineParts(token.text, "#B11", lineList); break;
         case "Comment":    this._addLineParts(token.text, "#777", lineList); break;
       }
     }
