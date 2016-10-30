@@ -295,15 +295,15 @@ class ShellPage {
     this._setupHtmlTokenizer();
     for (Tokenizer.Token token in this._htmlTokenizer.tokenize(code)) {
       switch(token.name) {
-        case "Symbol":   this._addLineParts(token.text, "#616", lineList); break;
-        case "String":   this._addLineParts(token.text, "#191", lineList); break;
-        case "Id":       this._addLineParts(token.text, "#111", lineList); break;
         case "Attr":
           this._addLineParts(token.text, "#911", lineList);
           this._addLineParts("=", "#111", lineList);
           break;
-        case "Reserved": this._addLineParts(token.text, "#119", lineList); break;
+        case "Id":       this._addLineParts(token.text, "#111", lineList); break;
         case "Other":    this._addLineParts(token.text, "#111", lineList); break;
+        case "Reserved": this._addLineParts(token.text, "#119", lineList); break;
+        case "String":   this._addLineParts(token.text, "#171", lineList); break;
+        case "Symbol":   this._addLineParts(token.text, "#616", lineList); break;
       }
     }
   }
@@ -313,14 +313,15 @@ class ShellPage {
     this._setupDartTokenizer();
     for (Tokenizer.Token token in this._dartTokenizer.tokenize(code)) {
       switch(token.name) {
-        case "Symbol":     this._addLineParts(token.text, "#616", lineList); break;
-        case "String":     this._addLineParts(token.text, "#191", lineList); break;
+        case "Class":      this._addLineParts(token.text, "#551", lineList); break;
+        case "Comment":    this._addLineParts(token.text, "#777", lineList); break;
         case "Id":         this._addLineParts(token.text, "#111", lineList); break;
-        case "Whitespace": this._addLineParts(token.text, "#111", lineList); break;
         case "Num":        this._addLineParts(token.text, "#191", lineList); break;
         case "Reserved":   this._addLineParts(token.text, "#119", lineList); break;
+        case "String":     this._addLineParts(token.text, "#171", lineList); break;
+        case "Symbol":     this._addLineParts(token.text, "#616", lineList); break;
         case "Type":       this._addLineParts(token.text, "#B11", lineList); break;
-        case "Comment":    this._addLineParts(token.text, "#777", lineList); break;
+        case "Whitespace": this._addLineParts(token.text, "#111", lineList); break;
       }
     }
   }
@@ -330,15 +331,15 @@ class ShellPage {
     this._setupGlslTokenizer();
     for (Tokenizer.Token token in this._glslTokenizer.tokenize(code)) {
       switch(token.name) {
-        case "Symbol":     this._addLineParts(token.text, "#611", lineList); break;
-        case "Id":         this._addLineParts(token.text, "#111", lineList); break;
-        case "Whitespace": this._addLineParts(token.text, "#111", lineList); break;
-        case "Num":        this._addLineParts(token.text, "#191", lineList); break;
-        case "Reserved":   this._addLineParts(token.text, "#119", lineList); break;
-        case "Type":       this._addLineParts(token.text, "#191", lineList); break;
-        case "Comment":    this._addLineParts(token.text, "#777", lineList); break;
-        case "Preprocess": this._addLineParts(token.text, "#737", lineList); break;
         case "Builtin":    this._addLineParts(token.text, "#411", lineList); break;
+        case "Comment":    this._addLineParts(token.text, "#777", lineList); break;
+        case "Id":         this._addLineParts(token.text, "#111", lineList); break;
+        case "Num":        this._addLineParts(token.text, "#191", lineList); break;
+        case "Preprocess": this._addLineParts(token.text, "#737", lineList); break;
+        case "Reserved":   this._addLineParts(token.text, "#119", lineList); break;
+        case "Symbol":     this._addLineParts(token.text, "#611", lineList); break;
+        case "Type":       this._addLineParts(token.text, "#171", lineList); break;
+        case "Whitespace": this._addLineParts(token.text, "#111", lineList); break;
       }
     }
   }
@@ -533,6 +534,9 @@ class ShellPage {
     tok.setToken("EndComment", "Comment");
     tok.setToken("Whitespace", "Whitespace");
     tok.setToken("Id", "Id")
+      ..replace("Class", ["Constant", "Depth", "Entity",
+        "EntityPass", "Math", "Matrix4", "Movers", "Rotater",
+        "Scenes", "Shapes", "Techniques", "ThreeDart"])
       ..replace("Type", ["bool", "double", "dynamic", "false", "int",
         "List", "Map", "null", "num", "Object", "String", "this",
         "true", "var", "void"])
