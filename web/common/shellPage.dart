@@ -1,4 +1,4 @@
-part of ThreeDart.web.tutorials;
+part of ThreeDart.web.common;
 
 /// The shell page is a tool for creating pages quickly and
 /// easily which will have a consistent look and feel.

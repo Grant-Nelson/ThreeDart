@@ -1,10 +1,10 @@
 part of ThreeDart.web.tutorials;
 
 void tutorial1() {
-  new ShellPage("Tutorial 1")
+  new common.ShellPage("Tutorial 1")
     ..addPar(["This tutorial will walk you through creating the \"Hello World\" ",
       "of 3D graphics, a rotating cube. After this tutorial you should know how ",
-      "to create a [ThreeDart|https://github.com/Grant-Nelson/ThreeDart] project. ",
+      "to create a [3Dart|https://github.com/Grant-Nelson/ThreeDart] project. ",
       "However, it is recommended you have a basic understanding of [Dart|https://www.dartlang.org] ",
       "and [3D Matrices|http://www.opengl-tutorial.org/beginners-tutorials/tutorial-3-matrices/] ",
       "before starting. You will not need to know [WebGL|https://en.wikipedia.org/wiki/WebGL] ",
