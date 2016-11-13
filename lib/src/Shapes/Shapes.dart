@@ -10,6 +10,7 @@ import 'dart:math';
 import '../Core/Core.dart' as Core;
 import '../Data/Data.dart' as Data;
 import '../Math/Math.dart' as Math;
+import '../Textures/Textures.dart' as Textures;
 
 part 'Face.dart';
 part 'FaceMatcher.dart';

@@ -61,7 +61,7 @@ class TextureLoader {
       this._gl.pixelStorei(WebGL.UNPACK_FLIP_Y_WEBGL, flipY? 1: 0);
       this._gl.texImage2D(WebGL.TEXTURE_2D, 0, WebGL.RGBA, WebGL.RGBA, WebGL.UNSIGNED_BYTE, image);
       this._gl.bindTexture(WebGL.TEXTURE_2D, null);
-      result._loaded = true;
+      result._setLoaded();
       this._decLoading();
     });
     return result;
@@ -114,7 +114,7 @@ class TextureLoader {
         this._gl.pixelStorei(WebGL.UNPACK_FLIP_Y_WEBGL, flipY? 1: 0);
         this._gl.texImage2D(face, 0, WebGL.RGBA, WebGL.RGBA, WebGL.UNSIGNED_BYTE, image);
         this._gl.bindTexture(WebGL.TEXTURE_CUBE_MAP, null);
-        result._loaded++;
+        result._incLoaded();
         this._decLoading();
     });
   }

@@ -23,20 +23,20 @@ class Vertex {
           Math.Point3 loc: null, Math.Vector3 norm: null, Math.Vector3 binm: null,
           Math.Point2 txt2D: null, Math.Vector3 txtCube: null, Math.Color4 clr: null,
           double weight: 0.0, Math.Point4 bending: null}) {
-    this._shape = null;
+    this._shape  = null;
     this._points = new VertexPointCollection._(this);
-    this._lines = new VertexLineCollection._(this);
-    this._faces = new VertexFaceCollection._(this);
+    this._lines  = new VertexLineCollection._(this);
+    this._faces  = new VertexFaceCollection._(this);
     if (type == null) type = Data.VertexType.All;
 
-    this._index = 0;
-    this._loc = type.has(Data.VertexType.Pos)? loc: null;
-    this._norm = type.has(Data.VertexType.Norm)? norm: null;
-    this._binm = type.has(Data.VertexType.Binm)? binm: null;
-    this._txt2D = type.has(Data.VertexType.Txt2D)? txt2D: null;
+    this._index   = 0;
+    this._loc     = type.has(Data.VertexType.Pos)?     loc:     null;
+    this._norm    = type.has(Data.VertexType.Norm)?    norm:    null;
+    this._binm    = type.has(Data.VertexType.Binm)?    binm:    null;
+    this._txt2D   = type.has(Data.VertexType.Txt2D)?   txt2D:   null;
     this._txtCube = type.has(Data.VertexType.TxtCube)? txtCube: null;
-    this._clr = type.has(Data.VertexType.Color)? clr: null;
-    this._weight = type.has(Data.VertexType.Weight)? weight: 0.0;
+    this._clr     = type.has(Data.VertexType.Color)?   clr:     null;
+    this._weight  = type.has(Data.VertexType.Weight)?  weight:  0.0;
     this._bending = type.has(Data.VertexType.Bending)? bending: null;
   }
 
@@ -53,6 +53,19 @@ class Vertex {
       weight:  this._weight,
       bending: this._bending?.copy()
     );
+  }
+
+  /// Trims the vertex to have just the given vertex type,
+  /// everything else is nulled out.
+  void trim(Data.VertexType type) {
+    if (!type.has(Data.VertexType.Pos))     this._loc     = null;
+    if (!type.has(Data.VertexType.Norm))    this._norm    = null;
+    if (!type.has(Data.VertexType.Binm))    this._binm    = null;
+    if (!type.has(Data.VertexType.Txt2D))   this._txt2D   = null;
+    if (!type.has(Data.VertexType.TxtCube)) this._txtCube = null;
+    if (!type.has(Data.VertexType.Color))   this._clr     = null;
+    if (!type.has(Data.VertexType.Weight))  this._weight  = 0.0;
+    if (!type.has(Data.VertexType.Bending)) this._bending = null;
   }
 
   /// The shape the vertex belongs to.

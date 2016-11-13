@@ -127,6 +127,47 @@ class Shape {
     return result;
   }
 
+  /// Apply the given [height] map to offset the vertices of the shape.
+  /// Use the [scalar] to adjust the amount of offset the height moves the vertices.
+  /// The height is pulled from the map using the texture 2D values of the vertices and
+  /// the offset is applied in the direction of the normal vector.
+  void applyHeightMap(WebGL.RenderingContext gl, Textures.Texture2D height, [double scalar = 1.0]) {
+    Textures.TextureReader reader = new Textures.TextureReader.readAll(gl, height);
+    this._changed.suspend();
+    for (int i = this._vertices.length-1; i >= 0; --i) {
+      Vertex ver = this._vertices[i];
+      if ((ver != null) || (ver.location != null) ||
+          (ver.normal != null) || (ver.texture2D != null)) {
+        Math.Color4 clr = reader.atLoc(ver.texture2D);
+        double length = (clr.red + clr.green + clr.blue)*scalar/3.0;
+        ver.location += new Math.Point3.fromVector3(ver.normal*length);
+      }
+    }
+    this._changed.resume();
+  }
+
+  /// Trims all the vertices down to the given vertex types,
+  /// everything else is nulled out.
+  void trimVertices(Data.VertexType type) {
+    this._changed.suspend();
+    for (int i = this._vertices.length-1; i >= 0; --i) {
+      Vertex ver = this._vertices[i];
+      if (ver != null) ver.trim(type);
+    }
+    this._changed.resume();
+  }
+
+  /// Trims all the faces down have the true values,
+  /// everything else is nulled out.
+  void trimFaces({bool norm: true, bool binm: true}) {
+    this._changed.suspend();
+    for (int i = this._faces.length-1; i >= 0; --i) {
+      Face face = this._faces[i];
+      if (face != null) face.trim(norm: norm, binm: binm);
+    }
+    this._changed.resume();
+  }
+
   /// Finds the first index of the vertex which matches the given vertex.
   /// If no match is found then -1 is returned.
   int findFirstIndex(Vertex ver, [VertexMatcher matcher = null, int startIndex = 0]) {

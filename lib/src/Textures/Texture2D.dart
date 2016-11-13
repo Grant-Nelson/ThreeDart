@@ -9,6 +9,7 @@ class Texture2D extends Texture {
   int _height;
   int _actualWidth;
   int _actualHeight;
+  Core.Event _loadFinished;
 
   /// Creates a new 2D texture.
   Texture2D({int index: 0, WebGL.Texture texture: null}):
@@ -20,6 +21,7 @@ class Texture2D extends Texture {
     this._height  = 0;
     this._actualWidth  = 0;
     this._actualHeight = 0;
+    this._loadFinished = new Core.Event();
   }
 
   /// Creates a new 2D image from the given [width] and [height].
@@ -50,8 +52,16 @@ class Texture2D extends Texture {
     result._height = height;
     result._actualWidth  = aWidth;
     result._actualHeight = aHeight;
-    result._loaded = true;
+    result._setLoaded();
     return result;
+  }
+
+  /// Sets the loaded state for this texture.
+  void _setLoaded() {
+    if (!this._loaded) {
+      this._loaded = true;
+      this._loadFinished.emit();
+    }
   }
 
   /// The internal texture instance.
@@ -71,6 +81,9 @@ class Texture2D extends Texture {
 
   /// The height of the image in pixels allowed by this machine's architecture.
   int get actualHeight => this._actualHeight;
+
+  /// Emitted when the texture has finished being loaded.
+  Core.Event get loadFinished => this._loadFinished;
 
   /// This replaces the internals of this texture with the given [txt].
   void replace(Texture2D txt) {

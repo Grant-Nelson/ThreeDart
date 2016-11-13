@@ -102,6 +102,9 @@ class ThreeDart {
   /// The user input listener.
   UserInput get userInput => this._input;
 
+  /// The state used for rendering.
+  RenderState get state => this._state;
+
   /// The loader to create textures with.
   Textures.TextureLoader get textureLoader => this._txtLoader;
 
