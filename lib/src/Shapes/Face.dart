@@ -41,6 +41,13 @@ class Face {
     this._removeVertex3();
   }
 
+  /// Trims all the faces down have the true values,
+  /// everything else is nulled out.
+  void trim({bool norm: true, bool binm: true}) {
+    if (!norm) this._norm = null;
+    if (!binm) this._binm = null;
+  }
+
   /// Sets the first vertex to the given value.
   void _setVertex1(Vertex ver1) {
     this._ver1 = ver1;

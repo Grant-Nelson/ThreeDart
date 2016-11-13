@@ -50,6 +50,16 @@ class VertexType {
     return new VertexType._(this._value|right._value);
   }
 
+  /// Unions two vertex types.
+  VertexType operator&(VertexType right) {
+    return new VertexType._(this._value&right._value);
+  }
+
+  /// Gets the opposite of this type.
+  VertexType operator ~() {
+    return new VertexType._(All._value & ~this._value);
+  }
+
   /// The interal value of the vertex type.
   int get value => this._value;
 
