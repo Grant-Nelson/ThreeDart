@@ -27,6 +27,9 @@ class UserZoom implements Mover, Core.UserInteractable {
   /// The matrix describing the zoom.
   Math.Matrix4 _mat;
 
+  /// Event for handling changes to this mover.
+  Core.Event _changed;
+
   /// Creates an instance of [UserZoom].
   UserZoom({
     bool ctrl: false,
@@ -41,6 +44,7 @@ class UserZoom implements Mover, Core.UserInteractable {
     this._zoom = 0.0;
     this._frameNum = 0;
     this._mat = null;
+    this._changed = new Core.Event();
     this.attach(input);
   }
 
@@ -66,7 +70,7 @@ class UserZoom implements Mover, Core.UserInteractable {
     if (this._ctrlPressed != this._input.ctrlPressed) return;
     if (this._altPressed != this._input.altPressed) return;
     if (this._shiftPressed != this._input.shiftPressed) return;
-    this._zoom += args.wheel.dy*this._zoomScalar;
+    this.zoom += args.wheel.dy*this._zoomScalar;
   }
 
   /// Indicates if the control/meta key must be pressed or released.
@@ -87,19 +91,23 @@ class UserZoom implements Mover, Core.UserInteractable {
 
   /// The current zoom value, the exponent on the scalar.
   double get zoom => this._zoom;
-  void set zoom(double value) { this._zoom = value; }
-
-  /// Updates the matrix for this mover.
-  /// This is only called once per frame.
-  void _update(Core.RenderState state) {
-    this._frameNum = state.frameNumber;
-    double pow = math.pow(10.0, this._zoom);
-    this._mat = new Math.Matrix4.scale(pow, pow, pow);
+  void set zoom(double value) {
+    if (this._zoom != value) {
+      this._zoom = value;
+      this._changed.emit();
+    }
   }
+
+  /// Emits when the mover has changed.
+  Core.Event get changed => this._changed;
 
   /// Updates this mover and returns the matrix for the given object.
   Math.Matrix4 update(Core.RenderState state, Movable obj) {
-    if (this._frameNum < state.frameNumber) this._update(state);
+    if (this._frameNum < state.frameNumber) {
+      this._frameNum = state.frameNumber;
+      double pow = math.pow(10.0, this._zoom);
+      this._mat = new Math.Matrix4.scale(pow, pow, pow);
+    }
     return this._mat;
   }
 }

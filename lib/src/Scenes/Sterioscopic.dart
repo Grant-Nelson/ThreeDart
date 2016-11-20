@@ -69,10 +69,10 @@ class Sterioscopic implements Scene {
   }
 
   /// The camera mover describing the view of the scene.
-  Movers.Mover get cameraMover => this._leftMovGroup.list[0];
+  Movers.Mover get cameraMover => this._leftMovGroup[0];
   set cameraMover(Movers.Mover camMover) {
-    this._leftMovGroup.list[0] = camMover;
-    this._rightMovGroup.list[0] = camMover;
+    this._leftMovGroup[0] = camMover;
+    this._rightMovGroup[0] = camMover;
   }
 
   /// The target defining the storage to render to.

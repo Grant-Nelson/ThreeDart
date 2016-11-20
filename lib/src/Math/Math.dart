@@ -21,6 +21,12 @@ part 'Vector2.dart';
 part 'Vector3.dart';
 part 'Vector4.dart';
 
+/// Pi constant.
+const double PI = math.PI;
+
+/// Tau constant, twice Pi.
+const double TAU = math.PI*2.0;
+
 /// Gets the linear interpolation between the two given doubles.
 ///
 /// The [i] is interpolation factor. 0.0 or less will return [a].

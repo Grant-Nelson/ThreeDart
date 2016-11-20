@@ -103,6 +103,23 @@ class TextureLoader {
     return result;
   }
 
+  /// Reads the entire given [texture] into the reader buffer.
+  TextureReader readAll(Texture2D texture) {
+    return this.read(texture, 0, 0, texture.actualWidth, texture.actualHeight);
+  }
+
+  /// Reads the given range of the given [texture] into the reader buffer.
+  TextureReader read(Texture2D texture, int x, int y, int width, int height) {
+    WebGL.Framebuffer fb = this._gl.createFramebuffer();
+    this._gl.bindFramebuffer(WebGL.FRAMEBUFFER, fb);
+    this._gl.framebufferTexture2D(WebGL.FRAMEBUFFER, WebGL.COLOR_ATTACHMENT0, WebGL.TEXTURE_2D, texture.texture, 0);
+
+    Typed.Uint8List data = new Typed.Uint8List(width*height*4);
+    this._gl.readPixels(x, y, width, height, WebGL.RGBA, WebGL.UNSIGNED_BYTE, data);
+    this._gl.bindFramebuffer(WebGL.FRAMEBUFFER, null);
+    return new TextureReader(data, width, height);
+  }
+
   /// Loads a face from the given path.
   /// The image will load asynchronously.
   void _loadCubeFace(TextureCube result, WebGL.Texture texture, String path, int face, bool flipY) {

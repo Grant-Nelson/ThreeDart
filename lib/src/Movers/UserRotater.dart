@@ -57,6 +57,9 @@ class UserRotater implements Mover, Core.UserInteractable {
   /// The matrix describing the mover's rotation.
   Math.Matrix4 _mat;
 
+  /// Event for handling changes to this mover.
+  Core.Event _changed;
+
   /// Creates a new user rotater instance.
   UserRotater({
     bool ctrl: false,
@@ -72,6 +75,7 @@ class UserRotater implements Mover, Core.UserInteractable {
       ..maximumVelocity = 100.0
       ..velocity = 0.0
       ..dampening = 0.2;
+    this._pitch.changed.add(this._onChanged);
     this._yaw = new ComponentShift()
       ..wrap = true
       ..maximumLocation = math.PI * 2.0
@@ -80,6 +84,7 @@ class UserRotater implements Mover, Core.UserInteractable {
       ..maximumVelocity = 100.0
       ..velocity = 0.0
       ..dampening = 0.2;
+    this._yaw.changed.add(this._onChanged);
     this._ctrlPressed = ctrl;
     this._altPressed = alt;
     this._shiftPressed = shift;
@@ -95,7 +100,13 @@ class UserRotater implements Mover, Core.UserInteractable {
     this._prevVal = null;
     this._frameNum = 0;
     this._mat = null;
+    this._changed = new Core.Event();
     this.attach(input);
+  }
+
+  /// Handles emitting a change for this Mover.
+  void _onChanged([Core.EventArgs args = null]) {
+    this._changed.emit(args);
   }
 
   /// Attaches this mover to the user input.
@@ -149,6 +160,7 @@ class UserRotater implements Mover, Core.UserInteractable {
       this._yaw.velocity = 0.0;
       this._prevVal = args.adjustedDelta;
     }
+    this._onChanged();
   }
 
   /// Handle the mouse up event.
@@ -159,6 +171,7 @@ class UserRotater implements Mover, Core.UserInteractable {
     if (this._prevVal.length2() > 0.0001) {
       this._pitch.velocity = this._prevVal.dx*10.0*this._pitchScalar;
       this._yaw.velocity = this._prevVal.dy*10.0*this._yawScalar;
+      this._onChanged();
     }
   }
 
@@ -199,20 +212,19 @@ class UserRotater implements Mover, Core.UserInteractable {
     this._deadBand2 = this._deadBand * this._deadBand;
   }
 
-  /// Updates the matrix for this mover.
-  /// This is only called once per frame.
-  void _update(Core.RenderState state) {
-    this._frameNum = state.frameNumber;
-    final double dt = state.dt;
-    this._yaw.update(dt);
-    this._pitch.update(dt);
-    this._mat = new Math.Matrix4.rotateX(this._yaw.location)*
-                new Math.Matrix4.rotateY(this._pitch.location);
-  }
+  /// Emits when the mover has changed.
+  Core.Event get changed => this._changed;
 
   /// Updates this mover and returns the matrix for the given object.
   Math.Matrix4 update(Core.RenderState state, Movable obj) {
-    if (this._frameNum < state.frameNumber) this._update(state);
+    if (this._frameNum < state.frameNumber) {
+      this._frameNum = state.frameNumber;
+      final double dt = state.dt;
+      this._yaw.update(dt);
+      this._pitch.update(dt);
+      this._mat = new Math.Matrix4.rotateX(this._yaw.location)*
+                  new Math.Matrix4.rotateY(this._pitch.location);
+    }
     return this._mat;
   }
 }

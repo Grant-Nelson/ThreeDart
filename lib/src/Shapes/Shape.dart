@@ -131,14 +131,13 @@ class Shape {
   /// Use the [scalar] to adjust the amount of offset the height moves the vertices.
   /// The height is pulled from the map using the texture 2D values of the vertices and
   /// the offset is applied in the direction of the normal vector.
-  void applyHeightMap(WebGL.RenderingContext gl, Textures.Texture2D height, [double scalar = 1.0]) {
-    Textures.TextureReader reader = new Textures.TextureReader.readAll(gl, height);
+  void applyHeightMap(Textures.TextureReader height, [double scalar = 1.0]) {
     this._changed.suspend();
     for (int i = this._vertices.length-1; i >= 0; --i) {
       Vertex ver = this._vertices[i];
       if ((ver != null) || (ver.location != null) ||
           (ver.normal != null) || (ver.texture2D != null)) {
-        Math.Color4 clr = reader.atLoc(ver.texture2D);
+        Math.Color4 clr = height.atLoc(ver.texture2D);
         double length = (clr.red + clr.green + clr.blue)*scalar/3.0;
         ver.location += new Math.Point3.fromVector3(ver.normal*length);
       }

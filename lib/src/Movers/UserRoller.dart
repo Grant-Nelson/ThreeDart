@@ -48,6 +48,9 @@ class UserRoller implements Mover, Core.UserInteractable {
   /// The matrix describing the mover's rotation.
   Math.Matrix4 _mat;
 
+  /// Event for handling changes to this mover.
+  Core.Event _changed;
+
   /// Creates a new user rotater instance.
   UserRoller({
     bool ctrl: false,
@@ -63,6 +66,7 @@ class UserRoller implements Mover, Core.UserInteractable {
       ..maximumVelocity = 100.0
       ..velocity = 0.0
       ..dampening = 0.2;
+    this._roll.changed.add(this._onChanged);
     this._ctrlPressed = ctrl;
     this._altPressed = alt;
     this._shiftPressed = shift;
@@ -76,7 +80,13 @@ class UserRoller implements Mover, Core.UserInteractable {
     this._prevVal = null;
     this._frameNum = 0;
     this._mat = null;
+    this._changed = new Core.Event();
     this.attach(input);
+  }
+
+  /// Handles emitting a change for this Mover.
+  void _onChanged([Core.EventArgs args = null]) {
+    this._changed.emit(args);
   }
 
   /// Attaches this mover to the user input.
@@ -126,6 +136,7 @@ class UserRoller implements Mover, Core.UserInteractable {
       this._roll.velocity = 0.0;
       this._prevVal = args.adjustedDelta;
     }
+    this._onChanged();
   }
 
   /// Handle the mouse up event.
@@ -135,6 +146,7 @@ class UserRoller implements Mover, Core.UserInteractable {
     if (this._inDeadBand) return;
     if (this._prevVal.length2() > 0.0001) {
       this._roll.velocity = this._prevVal.dx*10.0*this._rollScalar;
+      this._onChanged();
     }
   }
 
@@ -168,18 +180,17 @@ class UserRoller implements Mover, Core.UserInteractable {
     this._deadBand2 = this._deadBand * this._deadBand;
   }
 
-  /// Updates the matrix for this mover.
-  /// This is only called once per frame.
-  void _update(Core.RenderState state) {
-    this._frameNum = state.frameNumber;
-    final double dt = state.dt;
-    this._roll.update(dt);
-    this._mat = new Math.Matrix4.rotateZ(this._roll.location);
-  }
+  /// Emits when the mover has changed.
+  Core.Event get changed => this._changed;
 
   /// Updates this mover and returns the matrix for the given object.
   Math.Matrix4 update(Core.RenderState state, Movable obj) {
-    if (this._frameNum < state.frameNumber) this._update(state);
+    if (this._frameNum < state.frameNumber) {
+      this._frameNum = state.frameNumber;
+      final double dt = state.dt;
+      this._roll.update(dt);
+      this._mat = new Math.Matrix4.rotateZ(this._roll.location);
+    }
     return this._mat;
   }
 }
