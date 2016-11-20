@@ -2,6 +2,13 @@ part of ThreeDart.Lights;
 
 /// Storage for point light data.
 class Point implements Light {
+  Math.Point3 _position;
+  Movers.Mover _mover;
+  Math.Color3 _color;
+  double _attenuation0;
+  double _attenuation1;
+  double _attenuation2;
+  Core.Event _changed;
 
   /// Creates a new point light data.
   Point({
@@ -16,6 +23,14 @@ class Point implements Light {
     this.attenuation1 = attenuation1;
     this.attenuation2 = attenuation2;
     this._position    = new Math.Point3(0.0, 0.0, 0.0);
+    this._changed     = null;
+  }
+
+  /// Emits when the light is changed.
+  Core.Event get changed {
+    if (this._changed == null)
+      this._changed = new Core.Event();
+    return this._changed;
   }
 
   /// Updates the light with the current state.
@@ -41,30 +56,34 @@ class Point implements Light {
 
   /// The location the light.
   Math.Point3 get position => this._position;
-  Math.Point3 _position;
 
   /// The mover to position this light.
   Movers.Mover get mover => this._mover;
-  set mover(Movers.Mover mover) => this._mover = mover;
-  Movers.Mover _mover;
+  void set mover(Movers.Mover mover) {
+    this._mover = mover;
+  }
 
   /// The color of the light.
   Math.Color3 get color => this._color;
-  set color(Math.Color3 color) => this._color = color ?? new Math.Color3.white();
-  Math.Color3 _color;
+  void set color(Math.Color3 color) {
+    this._color = color ?? new Math.Color3.white();
+  }
 
   /// The constant attenuation factor of the light.
   double get attenuation0 => this._attenuation0;
-  set attenuation0(double attenuation0) => this._attenuation0 = attenuation0 ?? 0.0;
-  double _attenuation0;
+  void set attenuation0(double attenuation0) {
+    this._attenuation0 = attenuation0 ?? 0.0;
+  }
 
   /// The linear attenuation factor of the light.
   double get attenuation1 => this._attenuation1;
-  set attenuation1(double attenuation1) => this._attenuation1 = attenuation1 ?? 0.0;
-  double _attenuation1;
+  void set attenuation1(double attenuation1) {
+    this._attenuation1 = attenuation1 ?? 0.0;
+  }
 
   /// The quadratic attenuation factor of the light.
   double get attenuation2 => this._attenuation2;
-  set attenuation2(double attenuation2) => this._attenuation2 = attenuation2 ?? 0.0;
-  double _attenuation2;
+  void set attenuation2(double attenuation2) {
+    this._attenuation2 = attenuation2 ?? 0.0;
+  }
 }

@@ -3,47 +3,52 @@ part of ThreeDart.Math;
 /// A math structure for storing a 4D point.
 class Point4 {
 
-  double _x;
-  double _y;
-  double _z;
-  double _w;
+  /// The x component of the point.
+  final double x;
+
+  /// The y component of the point.
+  final double y;
+
+  /// The z component of the point.
+  final double z;
+
+  /// The w component of the point.
+  final double w;
 
   /// Constructs a new [Point4] instance.
-  Point4(double x, double y, double z, double w) {
-    this.set(x, y, z, w);
-  }
+  Point4(double this.x, double this.y, double this.z, double this.w);
 
   /// Constructs a new [Point4] at the origin.
   factory Point4.zero() =>
-      new Point4(0.0, 0.0, 0.0, 0.0);
+    new Point4(0.0, 0.0, 0.0, 0.0);
 
   /// Constructs a new [Point4] from a [Vector2].
   ///
   /// The Z and W components are defaulted to 0.0.
   factory Point4.fromVector2(Vector2 vec, [double z = 0.0, double w = 0.0]) =>
-      new Point4(vec.dx, vec.dy, z, w);
+    new Point4(vec.dx, vec.dy, z, w);
 
   /// Constructs a new [Point4] from a [Vector3].
   ///
   /// The W component is defaulted to 0.0.
   factory Point4.fromVector3(Vector3 vec, [double w = 0.0]) =>
-      new Point4(vec.dx, vec.dy, vec.dz, w);
+    new Point4(vec.dx, vec.dy, vec.dz, w);
 
   /// Constructs a new [Point4] from a [Vector4].
   factory Point4.fromVector4(Vector4 vec) =>
-      new Point4(vec.dx, vec.dy, vec.dz, vec.dw);
+    new Point4(vec.dx, vec.dy, vec.dz, vec.dw);
 
   /// Constructs a new [Point4] from a [Point2].
   ///
   /// The Z and W components are defaulted to 0.0.
   factory Point4.fromPoint2(Point2 pnt, [double z = 0.0, double w = 0.0]) =>
-      new Point4(pnt.x, pnt.y, z, w);
+    new Point4(pnt.x, pnt.y, z, w);
 
   /// Constructs a new [Point4] from a [Point3].
   ///
   /// The W component is defaulted to 0.0.
   factory Point4.fromPoint3(Point3 pnt, [double w = 0.0]) =>
-      new Point4(pnt.x, pnt.y, pnt.z, w);
+    new Point4(pnt.x, pnt.y, pnt.z, w);
 
   /// Constructs a new [Point3] instance given a list of 3 doubles.
   ///
@@ -53,40 +58,16 @@ class Point4 {
     return new Point4(values[0], values[1], values[2], values[3]);
   }
 
-  /// The x component of the point.
-  double get x => this._x;
-  set x(double x) => this._x = x;
-
-  /// The y component of the point.
-  double get y => this._y;
-  set y(double y) => this._y = y;
-
-  /// The z component of the point.
-  double get z => this._z;
-  set z(double z) => this._z = z;
-
-  /// The w component of the point.
-  double get w => this._w;
-  set w(double w) => this._w = w;
-
-  /// Sets the point of this instance.
-  void set(double x, double y, double z, double w) {
-    this._x = x;
-    this._y = y;
-    this._z = z;
-    this._w = w;
-  }
-
   /// Gets an list of 3 doubles in the order x, y, z, then w.
   List<double> toList() =>
-      [this._x, this._y, this._z, this._w];
+    [this.x, this.y, this.z, this.w];
 
   /// The distance squared between this point and the [other] point.
   double distance2(Point4 other) {
-    double dx = this._x - other._x;
-    double dy = this._y - other._y;
-    double dz = this._z - other._z;
-    double dw = this._w - other._w;
+    double dx = this.x - other.x;
+    double dy = this.y - other.y;
+    double dz = this.z - other.z;
+    double dw = this.w - other.w;
     return (dx*dx) + (dy*dy) + (dz*dz) + (dw*dw);
   }
 
@@ -95,11 +76,7 @@ class Point4 {
   /// [distance2] is faster since it does not take the [sqrt],
   /// therefore it should be used instead of [distance] where possible.
   double distance(Point4 other) =>
-      math.sqrt(this.distance2(other));
-
-  /// Creates a copy of the point.
-  Point4 copy() =>
-      new Point4(this._x, this._y, this._z, this._w);
+    math.sqrt(this.distance2(other));
 
   /// Creates the linear interpolation between this point and the [other] point.
   ///
@@ -107,31 +84,31 @@ class Point4 {
   /// 1.0 or more will return the [other] point. Between 0.0 and 1.0 will be
   /// a scaled mixure of the two points.
   Point4 lerp(Point4 other, double i) =>
-      new Point4(lerpVal(this._x, other._x, i),
-                 lerpVal(this._y, other._y, i),
-                 lerpVal(this._z, other._z, i),
-                 lerpVal(this._w, other._w, i));
+    new Point4(lerpVal(this.x, other.x, i),
+               lerpVal(this.y, other.y, i),
+               lerpVal(this.z, other.z, i),
+               lerpVal(this.w, other.w, i));
 
   /// Creates a new point as the sum of this point and the [other] point.
   Point4 operator +(Point4 other) =>
-      new Point4(this._x + other._x, this._y + other._y, this._z + other._z, this._w + other._w);
+    new Point4(this.x + other.x, this.y + other.y, this.z + other.z, this.w + other.w);
 
   /// Creates a new point as the difference of this point and the [other] point.
   Point4 operator -(Point4 other) =>
-      new Point4(this._x - other._x, this._y - other._y, this._z - other._z, this._w - other._w);
+    new Point4(this.x - other.x, this.y - other.y, this.z - other.z, this.w - other.w);
 
   /// Creates the negation of this point.
   Point4 operator -() =>
-      new Point4(-this._x, -this._y, -this._z, -this._w);
+    new Point4(-this.x, -this.y, -this.z, -this.w);
 
   /// Creates a new point scaled by the given [scalar].
   Point4 operator *(double scalar) =>
-      new Point4(this._x * scalar, this._y * scalar, this._z * scalar, this._w * scalar);
+    new Point4(this.x * scalar, this.y * scalar, this.z * scalar, this.w * scalar);
 
   /// Creates a new point inversely scaled by the given [scalar].
   Point4 operator /(double scalar) {
     if (Comparer.equals(scalar, 0.0)) return new Point4.zero();
-    return new Point4(this._x / scalar, this._y / scalar, this._z / scalar, this._w / scalar);
+    return new Point4(this.x / scalar, this.y / scalar, this.z / scalar, this.w / scalar);
   }
 
   /// Determines if the given [other] variable is a [Point4] equal to this point.
@@ -141,17 +118,17 @@ class Point4 {
     if (identical(this, other)) return true;
     if (other is! Point4) return false;
     Point4 pnt = other as Point4;
-    if (!Comparer.equals(pnt._x, this._x)) return false;
-    if (!Comparer.equals(pnt._y, this._y)) return false;
-    if (!Comparer.equals(pnt._z, this._z)) return false;
-    if (!Comparer.equals(pnt._w, this._w)) return false;
+    if (!Comparer.equals(pnt.x, this.x)) return false;
+    if (!Comparer.equals(pnt.y, this.y)) return false;
+    if (!Comparer.equals(pnt.z, this.z)) return false;
+    if (!Comparer.equals(pnt.w, this.w)) return false;
     return true;
   }
 
   /// Gets the string for this point.
   String toString([int fraction = 3, int whole = 0]) =>
-    '['+formatDouble(this._x, fraction, whole)+
-    ', '+formatDouble(this._y, fraction, whole)+
-    ', '+formatDouble(this._z, fraction, whole)+
-    ', '+formatDouble(this._w, fraction, whole)+']';
+    '['+ formatDouble(this.x, fraction, whole)+
+    ', '+formatDouble(this.y, fraction, whole)+
+    ', '+formatDouble(this.z, fraction, whole)+
+    ', '+formatDouble(this.w, fraction, whole)+']';
 }

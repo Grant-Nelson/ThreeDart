@@ -1,10 +1,7 @@
 part of ThreeDart.Movers;
 
 /// The interface for a moving an object.
-abstract class Mover {
-
-  /// Emits when the mover has changed.
-  Core.Event get changed;
+abstract class Mover extends Core.Changable {
 
   /// Updates the mover to the new matrix for the given object.
   ///

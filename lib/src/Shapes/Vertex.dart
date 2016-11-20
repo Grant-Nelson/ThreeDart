@@ -44,15 +44,14 @@ class Vertex {
   Vertex copy([Data.VertexType type = null]) {
     return new Vertex(
       type:    type,
-      loc:     this._loc?.copy(),
-      norm:    this._norm?.copy(),
-      binm:    this._binm?.copy(),
-      txt2D:   this._txt2D?.copy(),
-      txtCube: this._txtCube?.copy(),
-      clr:     this._clr?.copy(),
+      loc:     this._loc,
+      norm:    this._norm,
+      binm:    this._binm,
+      txt2D:   this._txt2D,
+      txtCube: this._txtCube,
+      clr:     this._clr,
       weight:  this._weight,
-      bending: this._bending?.copy()
-    );
+      bending: this._bending);
   }
 
   /// Trims the vertex to have just the given vertex type,

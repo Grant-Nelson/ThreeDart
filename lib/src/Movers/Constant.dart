@@ -8,7 +8,7 @@ class Constant extends Mover {
   /// Creates a new constant mover.
   Constant([Math.Matrix4 mat = null]) {
     this.matrix = mat;
-    this._changed = new Core.Event();
+    this._changed = null;
   }
 
   /// The matrix to apply to an entity or group.
@@ -17,12 +17,16 @@ class Constant extends Mover {
     mat = mat ?? new Math.Matrix4.identity();
     if (this._mat != mat) {
       this._mat = mat;
-      this._changed.emit();
+      this._changed?.emit();
     }
   }
 
   /// Emits when the mover has changed.
-  Core.Event get changed => this._changed;
+  Core.Event get changed {
+    if (this._changed == null)
+      this._changed = new Core.Event();
+    return this._changed;
+  }
 
   /// Updates the mover, in this case just returns the current matrix.
   ///

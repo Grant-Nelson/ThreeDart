@@ -25,7 +25,7 @@ class ComponentShift {
 
   /// Handles emitting a change.
   void _onChange() {
-    if (this._changed != null) this._changed.emit();
+    this._changed?.emit();
   }
 
   /// Clamps or wraps the given location to the given minimum and maximum range.
@@ -36,9 +36,8 @@ class ComponentShift {
 
   /// Emits when the component has changed.
   Core.Event get changed {
-    if (this._changed == null) {
+    if (this._changed == null)
       this._changed = new Core.Event();
-    }
     return this._changed;
   }
 

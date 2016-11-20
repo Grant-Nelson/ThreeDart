@@ -53,9 +53,10 @@ void main() {
     if ((baseShape != null) && (textureFile.isNotEmpty)) {
       Textures.Texture2D heightMap = td.textureLoader.load2DFromFile(textureFile);
       heightMap.loadFinished.add((_) {
+        Textures.TextureReader heightReader = td.textureLoader.readAll(heightMap);
         Shapes.Shape shape = new Shapes.Shape.copy(baseShape);
         shape.calculateNormals();
-        shape.applyHeightMap(td.state.gl, heightMap, scalar);
+        shape.applyHeightMap(heightReader, scalar);
         shape.trimVertices(~Data.VertexType.Norm);
         shape.trimFaces(norm: false);
         shape.calculateNormals();
@@ -71,7 +72,8 @@ void main() {
   new common.Texture2DGroup("heightMaps", setTextureFile)
     ..add("../resources/HeightMap1.png", true)
     ..add("../resources/HeightMap2.png")
-    ..add("../resources/HeightMap3.png");
+    ..add("../resources/HeightMap3.png")
+    ..add("../resources/ScrewHeightMap.png");
 
   var setShape = (Shapes.Shape shape) {
     baseShape = shape;
@@ -79,11 +81,13 @@ void main() {
   };
   new common.RadioGroup("shapes")
     ..add("Cuboid",       () { setShape(Shapes.cuboid(widthDiv: 50, heightDiv: 50)); })
-    ..add("Cylinder",     () { setShape(Shapes.cylinder(sides: 50, div: 50, capTop: false, capBottom: false)); })
-    ..add("LatLonSphere", () { setShape(Shapes.latLonSphere(50, 50)); })
-    ..add("Sphere",       () { setShape(Shapes.sphere(widthDiv: 20, heightDiv: 20)); })
+    ..add("Cylinder",     () { setShape(Shapes.cylinder(sides: 100, div: 100, capTop: false, capBottom: false)); })
+    ..add("LatLonSphere", () { setShape(Shapes.latLonSphere(100, 100)); })
+    ..add("Sphere",       () { setShape(Shapes.sphere(widthDiv: 50, heightDiv: 50)); })
     ..add("Toroid",       () { setShape(Shapes.toroid(minorCount: 50, majorCount: 50)); })
-    ..add("Grid",         () { setShape(Shapes.grid(widthDiv: 100, heightDiv: 100)); }, true);
+    ..add("Grid Small",   () { setShape(Shapes.grid(widthDiv: 50, heightDiv: 50)); })
+    ..add("Grid Medium",  () { setShape(Shapes.grid(widthDiv: 100, heightDiv: 100)); }, true)
+    ..add("Grid Large",   () { setShape(Shapes.grid(widthDiv: 150, heightDiv: 150)); });
 
   var setScalar = (double s) {
     scalar = s;

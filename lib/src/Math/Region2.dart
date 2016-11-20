@@ -3,27 +3,45 @@ part of ThreeDart.Math;
 /// A math structure for storing a 2D region, like a rectangle.
 class Region2 {
 
-  double _x;
-  double _y;
-  double _dx;
-  double _dy;
+  /// The left edge component of the region.
+  final double x;
+
+  /// The top edge component of the region.
+  final double y;
+
+  /// The width component of the region.
+  final double dx;
+
+  /// The height component of the region.
+  final double dy;
 
   /// Constructs a new [Region2] instance.
-  Region2(double x, double y, double dx, double dy) {
-    this.set(x, y, dx, dy);
+  Region2._(double this.x, double this.y, double this.dx, double this.dy);
+
+  /// Constructs a new [Region2] instance.
+  factory Region2(double x, double y, double dx, double dy) {
+    if (dx < 0.0) {
+      x = x + dx;
+      dx = -dx;
+    }
+    if (dy < 0.0) {
+      y = y + dy;
+      dy = -dy;
+    }
+    return new Region2._(x, y, dx, dy);
   }
 
   /// Constructs a new [Region2] at the origin.
   factory Region2.zero() =>
-      new Region2(0.0, 0.0, 0.0, 0.0);
+    new Region2(0.0, 0.0, 0.0, 0.0);
 
   /// Constructs a new [Region2] at the given point, [pnt].
-  factory Region2.fromPoint(Point2 pnt) =>
-      new Region2(pnt.x, pnt.y, 0.0, 0.0);
+  factory Region2.fromPoint(Point2 pnt, [double dx = 0.0, double dy = 0.0]) =>
+    new Region2(pnt.x, pnt.y, dx, dy);
 
   /// Constructs a new [Region2] from two opposite corners.
   factory Region2.fromCorners(Point2 a, Point2 b) =>
-      new Region2(a.x, a.y, b.x-a.x, b.y-a.y);
+    new Region2(a.x, a.y, b.x-a.x, b.y-a.y);
 
   /// Constructs a new [Region2] instance given a list of 4 doubles.
   ///
@@ -35,101 +53,52 @@ class Region2 {
 
   /// Constructs the union of the given regions. If both are null, null is returned.
   factory Region2.union(Region2 a, Region2 b) {
-    if (a == null) {
-      if (b == null) return null;
-      return b.copy();
-    }
-    Region2 region = a.copy();
-    if (b == null) return region;
-    region.expand(b._x, b._y);
-    region.expand(b._x + b._dx, b._y + b._dy);
-    return region;
-  }
-
-  /// The left edge component of the region.
-  double get x => this._x;
-  set x(double x) => this._x = x;
-
-  /// The top edge component of the region.
-  double get y => this._y;
-  set y(double y) => this._y = y;
-
-  /// The width component of the region.
-  double get dx => this._dx;
-  set dx(double dx) {
-    if (dx < 0.0) {
-      this._x += dx;
-      this._dx = -dx;
-    } else this._dx = dx;
-  }
-
-  /// The height component of the region.
-  double get dy => this._dy;
-  set dy(double dy) {
-    if (dy < 0.0) {
-      this._y += dy;
-      this._dy = -dy;
-    } else this._dy = dy;
+    if (a == null) return b;
+    if (b == null) return a;
+    double x  = math.min(a.x,      b.x);
+    double y  = math.min(a.y,      b.y);
+    double x2 = math.max(a.x+a.dx, b.x+b.dx);
+    double y2 = math.max(a.y+a.dy, b.y+b.dy);
+    return new Region2._(x, y, x2-x, y2-y);
   }
 
   /// Expands the region to include the given point, [pnt].
-  void expandWithPoint(Point2 pnt) {
+  Region2 expandWithPoint(Point2 pnt) =>
     this.expand(pnt.x, pnt.y);
-  }
 
   /// Expands the region to include the given location components.
-  void expand(double x, double y) {
-    if (x < this._x) {
-      this._dx += (this._x - x);
-      this._x = x;
-    } else if (x > this._x + this._dx) {
-      this._dx = x - this._x;
+  Region2 expand(double x, double y) {
+    double dx;
+    if (x < this.x) dx = this.dx + (this.x - x);
+    else if (x > this.x + this.dx) {
+      dx = x - this.x;
+      x = this.x;
     }
 
-    if (y < this._y) {
-      this._dy += (this._y - y);
-      this._y = y;
-    } else if (y > this._y + this._dy) {
-      this._dy = y - this._y;
+    double dy;
+    if (y < this.y) dy = this.dy + (this.y - y);
+    else if (y > this.y + this.dy) {
+      dy = y - this.y;
+      y = this.y;
     }
-  }
 
-  /// Sets the region of this instance.
-  void set(double x, double y, double dx, double dy) {
-    if (dx < 0.0) {
-      this._x = x + dx;
-      this._dx = -dx;
-    } else {
-      this._x = x;
-      this._dx = dx;
-    }
-    if (dy < 0.0) {
-      this._y = y + dy;
-      this._dy = -dy;
-    } else {
-      this._y = y;
-      this._dy = dy;
-    }
+    return new Region2._(x, y, dx, dy);
   }
 
   /// Gets an list of 4 doubles in the order x, y, dx, then dy.
   List<double> toList() =>
-      [this._x, this._y, this._dx, this._dy];
-
-  /// Creates a copy of the region.
-  Region2 copy() =>
-      new Region2(this._x, this._y, this._dx, this._dy);
+    [this.x, this.y, this.dx, this.dy];
 
   /// The minimum side of the region.
   double get minSide {
-    if (this._dx > this._dy) return this._dy;
-    else return this._dx;
+    if (this.dx > this.dy) return this.dy;
+    else return this.dx;
   }
 
   /// The maximum side of the region.
   double get maxSide {
-    if (this._dx > this._dy) return this._dx;
-    else return this._dy;
+    if (this.dx > this.dy) return this.dx;
+    else return this.dy;
   }
 
   /// Gets the adjusted point of the given [raw] point.
@@ -155,17 +124,17 @@ class Region2 {
     if (identical(this, other)) return true;
     if (other is! Region2) return false;
     Region2 size = other as Region2;
-    if (!Comparer.equals(size._x, this._x)) return false;
-    if (!Comparer.equals(size._y, this._y)) return false;
-    if (!Comparer.equals(size._dx, this._dx)) return false;
-    if (!Comparer.equals(size._dy, this._dy)) return false;
+    if (!Comparer.equals(size.x,  this.x))  return false;
+    if (!Comparer.equals(size.y,  this.y))  return false;
+    if (!Comparer.equals(size.dx, this.dx)) return false;
+    if (!Comparer.equals(size.dy, this.dy)) return false;
     return true;
   }
 
   /// Gets the string for this region.
   String toString([int fraction = 3, int whole = 0]) =>
-    '['+formatDouble(this._x, fraction, whole)+
-    ', '+formatDouble(this._y, fraction, whole)+
-    ', '+formatDouble(this._dx, fraction, whole)+
-    ', '+formatDouble(this._dy, fraction, whole)+']';
+    '['+ formatDouble(this.x,  fraction, whole)+
+    ', '+formatDouble(this.y,  fraction, whole)+
+    ', '+formatDouble(this.dx, fraction, whole)+
+    ', '+formatDouble(this.dy, fraction, whole)+']';
 }

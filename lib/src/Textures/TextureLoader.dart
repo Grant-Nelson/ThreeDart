@@ -117,7 +117,7 @@ class TextureLoader {
     Typed.Uint8List data = new Typed.Uint8List(width*height*4);
     this._gl.readPixels(x, y, width, height, WebGL.RGBA, WebGL.UNSIGNED_BYTE, data);
     this._gl.bindFramebuffer(WebGL.FRAMEBUFFER, null);
-    return new TextureReader(data, width, height);
+    return new TextureReader._(data, width, height);
   }
 
   /// Loads a face from the given path.

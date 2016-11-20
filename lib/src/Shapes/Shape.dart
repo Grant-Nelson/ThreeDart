@@ -1,7 +1,7 @@
 part of ThreeDart.Shapes;
 
 /// A shape defining the renderable shape and collision detection.
-class Shape {
+class Shape implements Core.Changable {
   VertexCollection _vertices;
   ShapePointCollection _points;
   ShapeLineCollection _lines;
