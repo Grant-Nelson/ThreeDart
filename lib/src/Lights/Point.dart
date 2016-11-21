@@ -28,8 +28,7 @@ class Point implements Light {
 
   /// Emits when the light is changed.
   Core.Event get changed {
-    if (this._changed == null)
-      this._changed = new Core.Event();
+    if (this._changed == null) this._changed = new Core.Event();
     return this._changed;
   }
 
@@ -45,7 +44,7 @@ class Point implements Light {
   }
 
   /// Binds the light to the given [state].
-  void bind(Core.RenderState state){
+  void bind(Core.RenderState state) {
     // Do Nothing
   }
 

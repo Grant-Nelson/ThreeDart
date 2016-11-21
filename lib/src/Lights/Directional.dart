@@ -19,8 +19,7 @@ class Directional implements Light {
 
   /// Emits when the light is changed.
   Core.Event get changed {
-    if (this._changed == null)
-      this._changed = new Core.Event();
+    if (this._changed == null) this._changed = new Core.Event();
     return this._changed;
   }
 
@@ -41,7 +40,7 @@ class Directional implements Light {
   }
 
   /// Binds the light to the given [state].
-  void bind(Core.RenderState state){
+  void bind(Core.RenderState state) {
     // Do Nothing
   }
 
@@ -57,8 +56,10 @@ class Directional implements Light {
   Movers.Mover get mover => this._mover;
   void set mover(Movers.Mover mover) {
     if (this._mover != mover) {
+      if (this._mover != null) this._mover.changed.remove(this.onChanged);
+      if (mover != null) this._mover.changed.add(this.onChanged);
       this._mover = mover;
-      this._changed?.emit();
+      this.onChanged();
     }
   }
 
@@ -68,7 +69,7 @@ class Directional implements Light {
     color = color ?? new Math.Color3.white();
     if (this._color != color) {
       this._color = color;
-      this._changed?.emit();
+      this.onChanged();
     }
   }
 }

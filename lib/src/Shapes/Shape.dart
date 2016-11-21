@@ -123,7 +123,7 @@ class Shape implements Core.Changable {
     if (count <= 0) return new Math.Region3.zero();
     Math.Region3 result = new Math.Region3.fromPoint(this._vertices[0].location);
     for (int i = count-1; i >= 1; i--)
-      result.expandWithPoint(this._vertices[i].location);
+      result = result.expandWithPoint(this._vertices[i].location);
     return result;
   }
 
