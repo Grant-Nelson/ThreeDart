@@ -69,7 +69,7 @@ void main() {
     ..specular.shininess = 100.0;
 
   Scenes.EntityPass pass = new Scenes.EntityPass()
-    ..tech = tech
+    ..technique = tech
     ..children.add(room)
     ..children.add(centerObj)
     ..camera.mover = camMover;

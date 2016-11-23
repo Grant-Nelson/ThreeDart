@@ -62,7 +62,7 @@ void main() {
     ..add(new Movers.Rotater(deltaYaw: 0.0, deltaPitch: 0.0, deltaRoll: 1.4));
 
   Scenes.EntityPass pass = new Scenes.EntityPass()
-    ..tech = tech
+    ..technique = tech
     ..children.add(obj)
     ..camera.mover = camMover
     ..onPreUpdate.add((ThreeDart.StateEventArgs args) {

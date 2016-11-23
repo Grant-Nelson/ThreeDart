@@ -61,7 +61,7 @@ void main() {
 
   Scenes.EntityPass pass = new Scenes.EntityPass()
     ..camera = camera
-    ..tech = tech
+    ..technique = tech
     ..target = target
     ..children.add(obj);
   (pass.target as Views.FrontTarget).clearColor = false;

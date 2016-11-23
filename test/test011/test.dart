@@ -43,7 +43,7 @@ void main() {
     ..specular.shininess = 10.0;
 
   td.scene = new Scenes.EntityPass()
-    ..tech = tech
+    ..technique = tech
     ..children.add(obj)
     ..camera.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 3.0));
 

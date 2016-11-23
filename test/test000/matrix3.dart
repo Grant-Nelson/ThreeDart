@@ -199,37 +199,19 @@ void addMatrix3Tests(TestManager tests) {
       "[1.000, 2.000, 3.000,",
       " 4.000, 5.000, 6.000,",
       " 7.000, 8.000, 9.000]");
-    _matrix3String(args, mat.copy(),
-      "[1.000, 2.000, 3.000,",
-      " 4.000, 5.000, 6.000,",
-      " 7.000, 8.000, 9.000]");
     _matrix3String(args, mat.transpose(),
       "[1.000, 4.000, 7.000,",
       " 2.000, 5.000, 8.000,",
       " 3.000, 6.000, 9.000]");
-    mat.set(11.0, 12.0, 13.0,
-            14.0, 15.0, 16.0,
-            17.0, 18.0, 19.0);
-    _matrix3String(args, mat,
-      "[11.000, 12.000, 13.000,",
-      " 14.000, 15.000, 16.000,",
-      " 17.000, 18.000, 19.000]");
-    mat.m11 = 21.0; mat.m21 = 22.0; mat.m31 = 23.0;
-    mat.m12 = 24.0; mat.m22 = 25.0; mat.m32 = 26.0;
-    mat.m13 = 27.0; mat.m23 = 28.0; mat.m33 = 29.0;
-    _matrix3String(args, mat,
-      "[21.000, 22.000, 23.000,",
-      " 24.000, 25.000, 26.000,",
-      " 27.000, 28.000, 29.000]");
-    _doubleCheck(args, mat.m11, 21.0, "m11");
-    _doubleCheck(args, mat.m21, 22.0, "m21");
-    _doubleCheck(args, mat.m31, 23.0, "m31");
-    _doubleCheck(args, mat.m12, 24.0, "m12");
-    _doubleCheck(args, mat.m22, 25.0, "m22");
-    _doubleCheck(args, mat.m32, 26.0, "m32");
-    _doubleCheck(args, mat.m13, 27.0, "m13");
-    _doubleCheck(args, mat.m23, 28.0, "m23");
-    _doubleCheck(args, mat.m33, 29.0, "m33");
+    _doubleCheck(args, mat.m11, 1.0, "m11");
+    _doubleCheck(args, mat.m21, 2.0, "m21");
+    _doubleCheck(args, mat.m31, 3.0, "m31");
+    _doubleCheck(args, mat.m12, 4.0, "m12");
+    _doubleCheck(args, mat.m22, 5.0, "m22");
+    _doubleCheck(args, mat.m32, 6.0, "m32");
+    _doubleCheck(args, mat.m13, 7.0, "m13");
+    _doubleCheck(args, mat.m23, 8.0, "m23");
+    _doubleCheck(args, mat.m33, 9.0, "m33");
     _matrix3String(args, new Math.Matrix3.translate(1.2, 3.4),
       "[1.000, 0.000, 1.200,",
       " 0.000, 1.000, 3.400,",

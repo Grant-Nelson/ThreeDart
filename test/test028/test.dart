@@ -72,18 +72,18 @@ void main() {
   Scenes.EntityPass colorPass = new Scenes.EntityPass()
     ..camera = userCamera
     ..target = colorTarget
-    ..tech = colorTech
+    ..technique = colorTech
     ..children.add(group);
 
   Views.BackTarget depthTarget = new Views.BackTarget(400, 300);
   Scenes.EntityPass depthPass = new Scenes.EntityPass()
     ..camera = userCamera
     ..target = depthTarget
-    ..tech = new Techniques.Depth(fogStart: 3.5, fogStop: 5.5)
+    ..technique = new Techniques.Depth(fogStart: 3.5, fogStop: 5.5)
     ..children.add(group);
 
   Scenes.CoverPass blurPass = new Scenes.CoverPass()
-    ..tech = new Techniques.GaussianBlur(
+    ..technique = new Techniques.GaussianBlur(
       colorTxt: colorTarget.colorTexture,
       depthTxt: depthTarget.colorTexture,
       highOffset: 0.0,
@@ -99,7 +99,7 @@ void main() {
       destination: new Math.Region2(0.0, 0.6, 0.2, 0.2)));
   Scenes.CoverPass layout = new Scenes.CoverPass()
     ..target = new Views.FrontTarget(clearColor: false)
-    ..tech = layoutTech;
+    ..technique = layoutTech;
 
   td.scene = new Scenes.Compound(passes: [skybox, colorPass, depthPass, blurPass, layout]);
 

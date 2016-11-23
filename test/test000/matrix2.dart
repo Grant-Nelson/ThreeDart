@@ -97,25 +97,13 @@ void addMatrix2Tests(TestManager tests) {
     _matrix2String(args, new Math.Matrix2.fromList(mat.toList()),
       "[1.000, 2.000,",
       " 3.000, 4.000]");
-    _matrix2String(args, mat.copy(),
-      "[1.000, 2.000,",
-      " 3.000, 4.000]");
     _matrix2String(args, mat.transpose(),
       "[1.000, 3.000,",
       " 2.000, 4.000]");
-    mat.set(5.0, 6.0, 7.0, 8.0);
-    _matrix2String(args, mat,
-      "[5.000, 6.000,",
-      " 7.000, 8.000]");
-    mat.m11 = 11.0; mat.m21 = 21.0;
-    mat.m12 = 12.0; mat.m22 = 22.0;
-    _matrix2String(args, mat,
-      "[11.000, 21.000,",
-      " 12.000, 22.000]");
-    _doubleCheck(args, mat.m11, 11.0, "m11");
-    _doubleCheck(args, mat.m21, 21.0, "m21");
-    _doubleCheck(args, mat.m12, 12.0, "m12");
-    _doubleCheck(args, mat.m22, 22.0, "m22");
+    _doubleCheck(args, mat.m11, 1.0, "m11");
+    _doubleCheck(args, mat.m21, 2.0, "m21");
+    _doubleCheck(args, mat.m12, 3.0, "m12");
+    _doubleCheck(args, mat.m22, 4.0, "m22");
     _matrix2String(args, new Math.Matrix2.fromMatrix3(
       new Math.Matrix3(1.0, 2.0, 3.0,
                        4.0, 5.0, 6.0,

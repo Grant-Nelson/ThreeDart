@@ -54,7 +54,7 @@ void main() {
 
   Scenes.EntityPass pass = new Scenes.EntityPass()
     ..children.add(obj)
-    ..tech = tech
+    ..technique = tech
     ..target = target
     ..camera = userCamera;
 

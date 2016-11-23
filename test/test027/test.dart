@@ -49,7 +49,7 @@ void main() {
 
   Scenes.EntityPass firstPass = new Scenes.EntityPass()
     ..camera = rotaterCamera
-    ..tech = firstTech
+    ..technique = firstTech
     ..target = backTarget
     ..children.add(firstObj);
 
@@ -68,7 +68,7 @@ void main() {
 
   Scenes.EntityPass secondPass = new Scenes.EntityPass()
     ..camera = userCamera
-    ..tech = secondTech
+    ..technique = secondTech
     ..children.add(secondObj);
 
   td.scene = new Scenes.Compound(passes: [skybox, firstPass, secondPass]);

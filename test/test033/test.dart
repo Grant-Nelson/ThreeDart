@@ -66,7 +66,7 @@ void main() {
     td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg"));
 
   Scenes.EntityPass pass = new Scenes.EntityPass()
-    ..tech = colorTech
+    ..technique = colorTech
     ..children.add(shapeEntity);
 
   td.scene = new Scenes.Sterioscopic(mover: mover, passes: [skybox, pass], target: target);

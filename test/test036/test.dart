@@ -45,7 +45,7 @@ void main() {
 
   Scenes.EntityPass pass = new Scenes.EntityPass()
     ..camera = userCamera
-    ..tech = tech
+    ..technique = tech
     ..target = target
     ..children.add(obj);
 
@@ -66,7 +66,7 @@ void main() {
     ..texture = target.colorTexture);
 
   Scenes.CoverPass layoutCover = new Scenes.CoverPass()
-    ..tech = layout
+    ..technique = layout
     ..target = new Views.FrontTarget(color: new Math.Color4.black());
 
   td.scene = new Scenes.Compound(passes: [pass, layoutCover]);

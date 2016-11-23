@@ -62,7 +62,7 @@ void main() {
   ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
 
   Scenes.EntityPass pass = new Scenes.EntityPass()
-    ..tech = tech
+    ..technique = tech
     ..children.add(room)
     ..children.add(centerObj)
     ..children.add(obj)

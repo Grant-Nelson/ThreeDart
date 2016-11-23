@@ -64,7 +64,7 @@ void main() {
                 ..emission.color = new Math.Color3.white());
 
   td.scene = new Scenes.EntityPass()
-    ..tech = tech
+    ..technique = tech
     ..children.add(centerObj)
     ..children.add(room)
     ..children.add(obj)

@@ -34,7 +34,7 @@ void main() {
     ..color = new Math.Color4(0.5, 0.5, 1.0, 1.0);
 
   Scenes.EntityPass pass = new Scenes.EntityPass()
-    ..tech = tech
+    ..technique = tech
     ..target = target
     ..children.add(obj)
     ..camera.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0));

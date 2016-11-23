@@ -36,14 +36,8 @@ class CoverPass implements RenderPass {
     this._onRender = new Core.Event();
   }
 
-  /// The event emitted when the scene has chagned.
-  Core.Event get changed {
-    if (this._changed == null) this._changed = new Core.Event();
-    return this._changed;
-  }
-
   /// Handles changes to the scene.
-  void onChanged([Core.EventArgs args = null]) {
+  void _onChanged([Core.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
@@ -60,10 +54,10 @@ class CoverPass implements RenderPass {
   void set camera(Views.Camera camera) {
     camera = camera ?? new Views.IdentityCamera();
     if (this._camera != camera) {
-      if (this._camera != null) this._camera.changed.remove(this.onChanged);
-      if (camera != null) camera.changed.add(this.onChanged);
+      if (this._camera != null) this._camera.changed.remove(this._onChanged);
+      if (camera != null) camera.changed.add(this._onChanged);
       this._camera = camera;
-      this.onChanged();
+      this._onChanged();
     }
   }
 
@@ -73,10 +67,10 @@ class CoverPass implements RenderPass {
   void set target(Views.Target target) {
     target = target ?? new Views.FrontTarget();
     if (this._target != target) {
-      if (this._target != null) this._target.changed.remove(this.onChanged);
-      if (target != null) target.changed.add(this.onChanged);
+      if (this._target != null) this._target.changed.remove(this._onChanged);
+      if (target != null) target.changed.add(this._onChanged);
       this._target = target;
-      this.onChanged();
+      this._onChanged();
     }
   }
 
@@ -84,15 +78,21 @@ class CoverPass implements RenderPass {
   Techniques.Technique get technique => this._tech;
   void set technique(Techniques.Technique tech) {
     if (this._tech != tech) {
-      if (this._tech != null) this._tech.changed.remove(this.onChanged);
-      if (tech != null) tech.changed.add(this.onChanged);
+      if (this._tech != null) this._tech.changed.remove(this._onChanged);
+      if (tech != null) tech.changed.add(this._onChanged);
       this._tech = tech;
-      this.onChanged();
+      this._onChanged();
     }
   }
 
   /// Event emitted on an redner for this pass.
   Core.Event get onRender => this._onRender;
+
+  /// The event emitted when the scene has chagned.
+  Core.Event get changed {
+    if (this._changed == null) this._changed = new Core.Event();
+    return this._changed;
+  }
 
   /// Render the scene with the given [state].
   void render(Core.RenderState state) {

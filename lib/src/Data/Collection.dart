@@ -23,6 +23,17 @@ class Collection<T> implements Iterable<T> {
     this._onRemovedHndl = onRemovedHndl;
   }
 
+  /// Sets the handlers for this collection.
+  ///
+  /// This method should be protected (if dart had protected methods).
+  /// Do not call this method unless calling from an inheriting or including
+  /// class otherwise unexpected errors may occur.
+  void setHandlers({CollectionChangeHandle onAddedHndl: null,
+                    CollectionChangeHandle onRemovedHndl: null}) {
+    this._onAddedHndl = onAddedHndl;
+    this._onRemovedHndl = onRemovedHndl;
+  }
+
   /// Is called when one or more items are added to this collection.
   void _onAdded(int index, Iterable<T> added) {
     if (this._onAddedHndl == null) this._onAddedHndl(index, added);
