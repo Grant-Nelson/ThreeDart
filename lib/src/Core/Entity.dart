@@ -34,7 +34,7 @@ class Entity implements Movers.Movable, Changable {
   Math.Matrix4 _matrix;
 
   /// The list of children entities to this entity.
-  EntityCollection _children;
+  Data.Collection<Entity> _children;
 
   /// The event emitted when any part of the entity is changed.
   Event _changed;
@@ -77,7 +77,9 @@ class Entity implements Movers.Movable, Changable {
     this._tech = tech;
     this._mover = mover;
     this._matrix = null;
-    this._children = new EntityCollection._(this);
+    this._children = new Data.Collection<Entity>(
+      onAddedHndl: this.onChildrenAdded,
+      onRemovedHndl: this.onChildrenRemoved);
     this._changed = null;
     this._shapeChanged = null;
     this._techChanged = null;
@@ -118,7 +120,7 @@ class Entity implements Movers.Movable, Changable {
   /// currently use this technique.
   void _cacheUpdateForTech() {
     this.clearCache();
-    for(Entity child in this._children._children) {
+    for(Entity child in this._children) {
       if (child._tech == null) {
         child._cacheUpdateForTech();
       }
@@ -130,7 +132,7 @@ class Entity implements Movers.Movable, Changable {
   Data.TechniqueCache get cache => this._cache;
 
   /// The children Entitys of this Entity.
-  EntityCollection get children => _children;
+  Data.Collection<Entity> get children => _children;
 
   /// The shape to draw at this Entity.
   /// May be null to not draw anything, usefull if this Entity
@@ -182,7 +184,7 @@ class Entity implements Movers.Movable, Changable {
     Math.Region3 region = null;
     if (this._shape != null)
       region = new Math.Region3.union(region, this._shape.calculateAABB());
-    for (Entity child in this._children._children)
+    for (Entity child in this._children)
       region = new Math.Region3.union(region, child.calculateAABB());
     return region;
   }
@@ -209,7 +211,7 @@ class Entity implements Movers.Movable, Changable {
   void applyPositionMatrix(Math.Matrix4 mat) {
     if (this.shape != null)
       this.shape.applyPositionMatrix(mat);
-    for (Entity child in this._children._children)
+    for (Entity child in this._children)
       child.applyPositionMatrix(mat);
   }
 
@@ -218,7 +220,7 @@ class Entity implements Movers.Movable, Changable {
   void applyColorMatrix(Math.Matrix3 mat) {
     if (this.shape != null)
       this.shape.applyColorMatrix(mat);
-    for (Entity child in this._children._children)
+    for (Entity child in this._children)
       child.applyColorMatrix(mat);
   }
 
@@ -227,7 +229,7 @@ class Entity implements Movers.Movable, Changable {
   void applyTexture2DMatrix(Math.Matrix3 mat) {
     if (this.shape != null)
       this.shape.applyTexture2DMatrix(mat);
-    for (Entity child in this._children._children)
+    for (Entity child in this._children)
       child.applyTexture2DMatrix(mat);
   }
 
@@ -236,7 +238,7 @@ class Entity implements Movers.Movable, Changable {
   void applyTextureCubeMatrix(Math.Matrix4 mat) {
     if (this.shape != null)
       this.shape.applyTextureCubeMatrix(mat);
-    for (Entity child in this._children._children)
+    for (Entity child in this._children)
       child.applyTextureCubeMatrix(mat);
   }
 
@@ -256,7 +258,7 @@ class Entity implements Movers.Movable, Changable {
     if (this._tech != null) this._tech.update(state);
 
     // Update all children.
-    for (Entity child in this._children._children) {
+    for (Entity child in this._children) {
       child.update(state);
     }
   }
@@ -276,7 +278,7 @@ class Entity implements Movers.Movable, Changable {
     }
 
     // Render all children.
-    for (Entity child in this._children._children) {
+    for (Entity child in this._children) {
       child.render(state);
     }
 
@@ -443,7 +445,7 @@ class Entity implements Movers.Movable, Changable {
   /// This isn't meant to be called from outside the entity, in other languages this would
   /// be a protected method. This method is exposed to that the entity is extended and
   /// these methods can be overwritten. If overwritten call this super method to still emit events.
-  void onChildrenAdded(List<Entity> entities) {
+  void onChildrenAdded(int index, Iterable<Entity> entities) {
     if (this._childrenAdded != null)
       this._childrenAdded.emit(new EntityEventArgs(this, entities));
     for (Entity entity in entities) {
@@ -459,7 +461,7 @@ class Entity implements Movers.Movable, Changable {
   /// This isn't meant to be called from outside the entity, in other languages this would
   /// be a protected method. This method is exposed to that the entity is extended and
   /// these methods can be overwritten. If overwritten call this super method to still emit events.
-  void onChildrenRemoved(List<Entity> entities) {
+  void onChildrenRemoved(int index, Iterable<Entity> entities) {
     if (this._childrenRemoved != null)
       this._childrenRemoved.emit(new EntityEventArgs(this, entities));
     for (Entity entity in entities) {
