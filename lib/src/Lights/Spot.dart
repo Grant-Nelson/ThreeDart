@@ -57,7 +57,7 @@ class Spot implements Light {
     // Do Nothing
   }
 
-  /// The event emitted when the light has chagned.
+  /// The event emitted when the light has changed.
   Core.Event get changed {
     if (this._changed == null) this._changed = new Core.Event();
     return this._changed;

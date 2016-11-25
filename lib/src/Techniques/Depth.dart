@@ -7,6 +7,7 @@ class Depth extends Technique {
   Math.Color3 _fogClr;
   double _fogStart;
   double _fogStop;
+  Core.Event _changed;
 
   /// Creates a new depth technique with the given initial values.
   Depth({Math.Color3 objClr:   null,
@@ -18,23 +19,55 @@ class Depth extends Technique {
     this._fogClr   = fogClr ?? new Math.Color3.black();
     this._fogStart = fogStart;
     this._fogStop  = fogStop;
+    this._changed  = null;
+  }
+
+  /// Indicates that this technique has changed.
+  Core.Event get changed {
+    if (this._changed == null) this._changed = new Core.Event();
+    return this._changed;
+  }
+
+  /// Handles a change in this technique.
+  void _onChanged([Core.EventArgs args = null]) {
+    this._changed?.emit(args);
   }
 
   /// The color to draw the object with.
   Math.Color3 get objectColor => this._objClr;
-  set objectColor(Math.Color3 clr) => this._objClr = clr;
+  void set objectColor(Math.Color3 clr) {
+    if (this._objClr != clr) {
+      this._objClr = clr;
+      this._onChanged();
+    }
+  }
 
   /// The color to draw the fog with, typically the same color as the background.
   Math.Color3 get fogColor => this._fogClr;
-  set fogColor(Math.Color3 clr) => this._fogClr = clr;
+  void set fogColor(Math.Color3 clr) {
+    if (this._fogClr != clr) {
+      this._fogClr = clr;
+      this._onChanged();
+    }
+  }
 
   /// The depth the fog starts. Closer than this has the object color.
   double get fogStart => this._fogStart;
-  set fogStart(double start) => this._fogStart = start;
+  void set fogStart(double start) {
+    if (!Math.Comparer.equals(this._fogStart, start)) {
+      this._fogStart = start;
+      this._onChanged();
+    }
+  }
 
   /// The depth the fog stops. Farther than this has the fog color.
   double get fogStop => this._fogStop;
-  set fogStop(double stop) => this._fogStop = stop;
+  void set fogStop(double stop) {
+    if (!Math.Comparer.equals(this._fogStop, stop)) {
+      this._fogStop = stop;
+      this._onChanged();
+    }
+  }
 
   /// Updates this technique for the given state.
   void update(Core.RenderState state) {

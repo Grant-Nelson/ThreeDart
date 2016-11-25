@@ -30,8 +30,8 @@ class Sterioscopic implements Scene {
   /// The target defining the storage to render to.
   Views.Target _target;
 
-  /// The passes in the order to render them.
-  List<RenderPass> _passes;
+  /// The set of passes to run on each side.
+  Core.Collection<RenderPass> _passes;
 
   /// The distance between the left and right eye.
   double _eyeSpacing;
@@ -39,8 +39,11 @@ class Sterioscopic implements Scene {
   /// The distance to when the left and right image cross.
   double _focusDistance;
 
-  /// Event emitted on an redner for this pass.
+  /// Event emitted on an render for this pass.
   Core.Event _onRender;
+
+  /// Event emitted when a pass has changed.
+  Core.Event _changed;
 
   /// Creates a new render pass.
   Sterioscopic({
@@ -60,45 +63,87 @@ class Sterioscopic implements Scene {
     this._rightRegion = new Math.Region2(0.5, 0.0, 0.5, 1.0);
     this.cameraMover = mover;
     this.target = target;
-    this._passes = new List<RenderPass>();
+    this._passes = new Core.Collection<RenderPass>();
+    this._passes.setHandlers(
+      onAddedHndl: this._onAddedRenderPass,
+      onRemovedHndl: this._onRemovedRenderPass);
     if (passes != null) this._passes.addAll(passes);
     this._eyeSpacing = eyeSpacing;
     this._focusDistance = focusDistance;
-    this._onRender = new Core.Event();
+    this._onRender = null;
+    this._changed = null;
     this._updateConstMats();
+  }
+
+  /// Handles a change in this pass.
+  void _onChange([Core.EventArgs args = null]) {
+    this._changed?.emit(args);
+  }
+
+  /// Handles render passes being added.
+  void _onAddedRenderPass(int index, Iterable<RenderPass> passes) {
+    for (RenderPass pass in passes) {
+      if (pass == null) pass.changed.add(this._onChange);
+    }
+    this._onChange();
+  }
+
+  /// Handles render passes being removed.
+  void _onRemovedRenderPass(int index, Iterable<RenderPass> passes) {
+    for (RenderPass pass in passes) {
+      if (pass == null) pass.changed.remove(this._onChange);
+    }
+    this._onChange();
   }
 
   /// The camera mover describing the view of the scene.
   Movers.Mover get cameraMover => this._leftMovGroup[0];
   set cameraMover(Movers.Mover camMover) {
-    this._leftMovGroup[0] = camMover;
-    this._rightMovGroup[0] = camMover;
+    if (this._leftMovGroup[0] != camMover) {
+      this._leftMovGroup[0] = camMover;
+      this._rightMovGroup[0] = camMover;
+      this._onChange();
+    }
   }
 
   /// The target defining the storage to render to.
   Views.Target get target => this._target;
-  set target(Views.Target target) =>
-    this._target = target ?? new Views.FrontTarget();
+  set target(Views.Target target) {
+    target = target ?? new Views.FrontTarget();
+    if (this._target != target) {
+      this._target = target;
+      this._onChange();
+    }
+  }
 
   /// The passes in the order to render them.
-  List<RenderPass> get passes => this._passes;
+  Core.Collection<RenderPass> get passes => this._passes;
 
   /// The distance between the left and right eye.
   double get eyeSpacing => this._eyeSpacing;
   set eyeSpacing(double eyeSpacing) {
-    this._eyeSpacing = eyeSpacing;
-    this._updateConstMats();
+    if (!Math.Comparer.equals(this._eyeSpacing, eyeSpacing)) {
+      this._eyeSpacing = eyeSpacing;
+      this._updateConstMats();
+      this._onChange();
+    }
   }
 
   /// The distance to when the left and right image cross.
   double get focusDistance => this._focusDistance;
   set focusDistance(double focusDistance) {
-    this._focusDistance = focusDistance;
-    this._updateConstMats();
+    if (!Math.Comparer.equals(this._focusDistance, focusDistance)) {
+      this._focusDistance = focusDistance;
+      this._updateConstMats();
+      this._onChange();
+    }
   }
 
-  /// Event emitted on an redner for this pass.
+  /// Event emitted on an render for this pass.
   Core.Event get onRender => this._onRender;
+
+  /// Event emitted when the pass or any child is changed.
+  Core.Event get changed => this._changed;
 
   /// Updates the camera offset constant matrices.
   void _updateConstMats() {

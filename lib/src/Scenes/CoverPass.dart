@@ -15,7 +15,7 @@ class CoverPass implements RenderPass {
   /// The box entity to render.
   Core.Entity _box;
 
-  /// Event emitted on an redner for this pass.
+  /// Event emitted on an render for this pass.
   Core.Event _onRender;
 
   /// Emits when the cover changes.
@@ -85,10 +85,10 @@ class CoverPass implements RenderPass {
     }
   }
 
-  /// Event emitted on an redner for this pass.
+  /// Event emitted on an render for this pass.
   Core.Event get onRender => this._onRender;
 
-  /// The event emitted when the scene has chagned.
+  /// The event emitted when the scene has changed.
   Core.Event get changed {
     if (this._changed == null) this._changed = new Core.Event();
     return this._changed;

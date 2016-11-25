@@ -1,6 +1,6 @@
 part of ThreeDart.Techniques;
 
-// TODO: Comment this whole file
+// TODO: Comment this whole file!
 
 abstract class MaterialLightBaseComponent {
   MaterialLight _owner;
@@ -12,6 +12,10 @@ abstract class MaterialLightBaseComponent {
     this._type = Shaders.ColorSourceType.None;
     this._txt2D = null;
     this._txtCube = null;
+  }
+
+  void _onChanged([Core.EventArgs args = null]) {
+    this._owner._onChanged(args);
   }
 
   void _onTypeChanged() {
@@ -26,6 +30,24 @@ abstract class MaterialLightBaseComponent {
     // Do Nothing
   }
 
+  void _setTxt2D(Textures.Texture2D txt2D) {
+    if (this._txt2D != txt2D) {
+      if (this._txt2D != null) this._txt2D.loadFinished.remove(this._onChanged);
+      this._txt2D = txt2D;
+      if (this._txt2D != null) this._txt2D.loadFinished.add(this._onChanged);
+      this._onChanged();
+    }
+  }
+
+  void _setTxtCube(Textures.TextureCube txtCube) {
+    if (this._txtCube != txtCube) {
+      if (this._txtCube != null) this._txtCube.loadFinished.remove(this._onChanged);
+      this._txtCube = txtCube;
+      if (this._txtCube != null) this._txtCube.loadFinished.add(this._onChanged);
+      this._onChanged();
+    }
+  }
+
   Shaders.ColorSourceType get type => this._type;
 
   /// Removes any of this component from the material.
@@ -35,8 +57,9 @@ abstract class MaterialLightBaseComponent {
       this._onTypeChanged();
     }
     this._onClear();
-    this._txt2D = null;
-    this._txtCube = null;
+    this._setTxt2D(null);
+    this._setTxtCube(null);
+    this._onChanged();
   }
 
   /// The 2D texture for the material component.
@@ -51,10 +74,10 @@ abstract class MaterialLightBaseComponent {
       if (this._type == Shaders.ColorSourceType.None)
         this._onComponentSet();
       this._type = Shaders.ColorSourceType.Texture2D;
-      this._txtCube = null;
+      this._setTxtCube(null);
       this._onTypeChanged();
     }
-    this._txt2D = txt;
+    this._setTxt2D(txt);
   }
 
   /// The cube texture for the material component.
@@ -69,10 +92,10 @@ abstract class MaterialLightBaseComponent {
       if (this._type == Shaders.ColorSourceType.None)
         this._onComponentSet();
       this._type = Shaders.ColorSourceType.TextureCube;
-      this._txt2D = null;
+      this._setTxt2D(null);
       this._onTypeChanged();
     }
-    this._txtCube = txt;
+    this._setTxtCube(txt);
   }
 }
 
@@ -83,14 +106,21 @@ class MaterialLightColorComponent extends MaterialLightBaseComponent {
     this._color = new Math.Color3.black();
   }
 
+  void _setColor(Math.Color3 color) {
+    if (this._color != color) {
+      this._color = color;
+      this._onChanged();
+    }
+  }
+
   void _onClear() {
     super._onClear();
-    this._color = new Math.Color3.black();
+    this._setColor(new Math.Color3.black());
   }
 
   void _onComponentSet() {
     super._onComponentSet();
-    this._color = new Math.Color3.white();
+    this._setColor(new Math.Color3.white());
   }
 
   /// The color or scalar on the texture for the material component.
@@ -102,7 +132,7 @@ class MaterialLightColorComponent extends MaterialLightBaseComponent {
       this._onComponentSet();
       this._onTypeChanged();
     }
-    this._color = clr;
+    this._setColor(clr);
   }
 }
 
@@ -113,14 +143,21 @@ class MaterialLightSpecularComponent extends MaterialLightColorComponent {
     this._shininess = 100.0;
   }
 
+  void _setShininess(double shininess) {
+    if (!Math.Comparer.equals(this._shininess, shininess)) {
+      this._shininess = shininess;
+      this._onChanged();
+    }
+  }
+
   void _onClear() {
     super._onClear();
-    this._shininess = 100.0;
+    this._setShininess(100.0);
   }
 
   void _onComponentSet() {
     super._onComponentSet();
-    this._shininess = 100.0;
+    this._setShininess(100.0);
   }
 
   /// The specular color or scalar on the specular texture for the material.
@@ -132,7 +169,7 @@ class MaterialLightSpecularComponent extends MaterialLightColorComponent {
       this._onComponentSet();
       this._onTypeChanged();
     }
-    this._shininess = value;
+    this._setShininess(value);
   }
 }
 
@@ -150,14 +187,21 @@ class MaterialLightRefractionComponent extends MaterialLightColorComponent {
     this._refraction = 1.0;
   }
 
+  void _setRefraction(double refraction) {
+    if (!Math.Comparer.equals(this._refraction, refraction)) {
+      this._refraction = refraction;
+      this._onChanged();
+    }
+  }
+
   void _onClear() {
     super._onClear();
-    this._refraction = 1.0;
+    this._setRefraction(1.0);
   }
 
   void _onComponentSet() {
     super._onComponentSet();
-    this._refraction = 1.0;
+    this._setRefraction(1.0);
   }
 
   /// The refraction scalar for the distortion for the material.
@@ -169,7 +213,7 @@ class MaterialLightRefractionComponent extends MaterialLightColorComponent {
       this._onComponentSet();
       this._onTypeChanged();
     }
-    this._refraction = value;
+    this._setRefraction(value);
   }
 }
 
@@ -180,14 +224,21 @@ class MaterialLightAlphaComponent extends MaterialLightBaseComponent {
     this._alpha = 1.0;
   }
 
+  void _setAlpha(double alpha) {
+    if (!Math.Comparer.equals(this._alpha, alpha)) {
+      this._alpha = alpha;
+      this._onChanged();
+    }
+  }
+
   void _onClear() {
     super._onClear();
-    this._alpha = 1.0;
+    this._setAlpha(1.0);
   }
 
   void _onComponentSet() {
     super._onComponentSet();
-    this._alpha = 1.0;
+    this._setAlpha(1.0);
   }
 
   /// The alpha scalar for the color for the material.
@@ -199,6 +250,6 @@ class MaterialLightAlphaComponent extends MaterialLightBaseComponent {
       this._onComponentSet();
       this._onTypeChanged();
     }
-    this._alpha = value;
+    this._setAlpha(value);
   }
 }

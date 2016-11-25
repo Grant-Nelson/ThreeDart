@@ -18,6 +18,7 @@ import '../Textures/Textures.dart' as Textures;
 
 part 'Bindable.dart';
 part 'Changable.dart';
+part 'Collection.dart';
 part 'Entity.dart';
 part 'Event.dart';
 part 'EventArgs.dart';

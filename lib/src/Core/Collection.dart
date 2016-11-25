@@ -1,6 +1,9 @@
-part of ThreeDart.Data;
+part of ThreeDart.Core;
 
-/// The handler for the call back
+/// The handler for the call back.
+typedef bool CollectionPreaddHandle<T>(Iterable<T> added);
+
+/// The handler for the call back.
 typedef void CollectionChangeHandle<T>(int index, Iterable<T> added);
 
 /// A collection of objects.
@@ -9,6 +12,9 @@ class Collection<T> implements Iterable<T> {
   /// The list of all the items.
   List<T> _list;
 
+  /// The handler method for before adding items to this collection.
+  CollectionPreaddHandle _onPreaddHndl;
+
   /// The handler method for added items to this collection.
   CollectionChangeHandle _onAddedHndl;
 
@@ -16,11 +22,11 @@ class Collection<T> implements Iterable<T> {
   CollectionChangeHandle _onRemovedHndl;
 
   /// Constructs a new collection.
-  Collection({CollectionChangeHandle onAddedHndl: null,
-              CollectionChangeHandle onRemovedHndl: null}) {
+  Collection() {
     this._list = new List<T>();
-    this._onAddedHndl = onAddedHndl;
-    this._onRemovedHndl = onRemovedHndl;
+    this._onPreaddHndl  = null;
+    this._onAddedHndl   = null;
+    this._onRemovedHndl = null;
   }
 
   /// Sets the handlers for this collection.
@@ -28,10 +34,18 @@ class Collection<T> implements Iterable<T> {
   /// This method should be protected (if dart had protected methods).
   /// Do not call this method unless calling from an inheriting or including
   /// class otherwise unexpected errors may occur.
-  void setHandlers({CollectionChangeHandle onAddedHndl: null,
+  void setHandlers({CollectionPreaddHandle onPreaddHndl:  null,
+                    CollectionChangeHandle onAddedHndl:   null,
                     CollectionChangeHandle onRemovedHndl: null}) {
-    this._onAddedHndl = onAddedHndl;
+    this._onPreaddHndl  = onPreaddHndl;
+    this._onAddedHndl   = onAddedHndl;
     this._onRemovedHndl = onRemovedHndl;
+  }
+
+  /// Is called when one or more items are about to be added to this collection.
+  bool _onPreadd(Iterable<T> items) {
+    if (this._onPreaddHndl != null) return true;
+    return this._onPreaddHndl(items);
   }
 
   /// Is called when one or more items are added to this collection.
@@ -138,28 +152,36 @@ class Collection<T> implements Iterable<T> {
 
   /// Adds the given [item] to this collection.
   void add(T item) {
-    int index = this._list.length;
-    this._list.add(item);
-    this._onAdded(index, [item]);
+    if (this._onPreadd([item])) {
+      int index = this._list.length;
+      this._list.add(item);
+      this._onAdded(index, [item]);
+    }
   }
 
   /// Adds the given [items] to this collection.
   void addAll(Iterable<T> items) {
-    int index = this._list.length;
-    this._list.addAll(items);
-    this._onAdded(index, items);
+    if (this._onPreadd(items)) {
+      int index = this._list.length;
+      this._list.addAll(items);
+      this._onAdded(index, items);
+    }
   }
 
   /// Inserts the given [item] into the given [index].
   void insert(int index, T item) {
-    this._list.insert(index, item);
-    this._onAdded(index, [item]);
+    if (this._onPreadd([item])) {
+      this._list.insert(index, item);
+      this._onAdded(index, [item]);
+    }
   }
 
   /// Inserts all the [items] at the given [index].
   void insertAll(int index, Iterable<T> items) {
-    this._list.insertAll(index, items);
-    this._onAdded(index, items);
+    if (this._onPreadd(items)) {
+      this._list.insertAll(index, items);
+      this._onAdded(index, items);
+    }
   }
 
   /// Gets the item at the given [index].
@@ -168,7 +190,7 @@ class Collection<T> implements Iterable<T> {
   /// Sets the item at the at given index.
   void operator[]=(int index, T item) {
     T older = this._list[index];
-    if (older != item) {
+    if ((older != item) && this._onPreadd([item])) {
       this._list[index] = item;
       this._onRemoved(index, [older]);
       this._onAdded(index, [item]);

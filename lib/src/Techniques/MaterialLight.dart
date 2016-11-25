@@ -3,12 +3,10 @@ part of ThreeDart.Techniques;
 /// The material/light rendering technique.
 class MaterialLight extends Technique {
   Shaders.MaterialLight _shader;
-
   Math.Matrix3 _txt2DMat;
   Math.Matrix4 _txtCubeMat;
   Math.Matrix4 _colorMat;
-  MaterialLightBendList _bendMats;
-
+  Core.Collection<Math.Matrix4> _bendMats;
   MaterialLightColorComponent _emission;
   MaterialLightColorComponent _ambient;
   MaterialLightColorComponent _diffuse;
@@ -19,62 +17,95 @@ class MaterialLight extends Technique {
   MaterialLightColorComponent _reflect;
   MaterialLightRefractionComponent _refract;
   MaterialLightAlphaComponent _alpha;
-  LightCollection _lights;
+  Lights.LightCollection _lights;
+  Core.Event _changed;
 
   /// Creates a new material/light technique.
   MaterialLight() {
-    this._shader = null;
-    this._txt2DMat = null;
+    this._shader     = null;
+    this._txt2DMat   = null;
     this._txtCubeMat = null;
-    this._colorMat = null;
-    this._bendMats = new MaterialLightBendList._(this);
-    this._emission = new MaterialLightColorComponent._(this);
-    this._ambient = new MaterialLightColorComponent._(this);
-    this._diffuse = new MaterialLightColorComponent._(this);
+    this._colorMat   = null;
+    this._bendMats   = new Core.Collection<Math.Matrix4>();
+    this._bendMats.setHandlers(
+      onAddedHndl:   this._onBendMatsChanged,
+      onRemovedHndl: this._onBendMatsChanged);
+    this._emission   = new MaterialLightColorComponent._(this);
+    this._ambient    = new MaterialLightColorComponent._(this);
+    this._diffuse    = new MaterialLightColorComponent._(this);
     this._invDiffuse = new MaterialLightColorComponent._(this);
-    this._specular = new MaterialLightSpecularComponent._(this);
-    this._bump = new MaterialLightBumpComponent._(this);
+    this._specular   = new MaterialLightSpecularComponent._(this);
+    this._bump       = new MaterialLightBumpComponent._(this);
     this._envSampler = null;
-    this._reflect = new MaterialLightColorComponent._(this);
-    this._refract = new MaterialLightRefractionComponent._(this);
-    this._alpha = new MaterialLightAlphaComponent._(this);
-    this._lights = new LightCollection._(this);
+    this._reflect    = new MaterialLightColorComponent._(this);
+    this._refract    = new MaterialLightRefractionComponent._(this);
+    this._alpha      = new MaterialLightAlphaComponent._(this);
+    this._lights     = new Lights.LightCollection();
+    this._lights.changed.add(this._resetShader);
+    this._lights.lightChanged.add(this._onChanged);
+    this._changed = null;
+  }
+
+  /// Indicates that this technique has changed.
+  Core.Event get changed {
+    if (this._changed == null) this._changed = new Core.Event();
+    return this._changed;
+  }
+
+  /// Handles a change in this technique.
+  void _onChanged([Core.EventArgs args = null]) {
+    this._changed?.emit(args);
   }
 
   /// Resets the shader when a component has changed.
-  void _resetShader() {
+  void _resetShader([Core.EventArgs args = null]) {
     this._shader = null;
+    this._onChanged(args);
+  }
+
+  /// Handles a change in the bend matrices.
+  void _onBendMatsChanged(int index, Iterable<Math.Matrix4> mats) {
+    this._onChanged();
   }
 
   /// The lights to render with.
-  LightCollection get lights => this._lights;
+  Lights.LightCollection get lights => this._lights;
 
   /// The 2D texture modification matrix.
   Math.Matrix3 get texture2DMatrix => this._txt2DMat;
   set texture2DMatrix(Math.Matrix3 mat) {
-    if (Math.xor(this._txt2DMat == null, mat == null))
-      this._shader = null;
-    this._txt2DMat = mat;
+    if (this._txt2DMat != mat) {
+      if (Math.xor(this._txt2DMat == null, mat == null))
+        this._shader = null;
+      this._txt2DMat = mat;
+      this._onChanged();
+    }
   }
 
   /// The cube texture modification matrix.
   Math.Matrix4 get textureCubeMatrix => this._txtCubeMat;
   set textureCubeMatrix(Math.Matrix4 mat) {
-    if (Math.xor(this._txtCubeMat == null, mat == null))
-      this._shader = null;
-    this._txtCubeMat = mat;
+    if (this._txtCubeMat != mat) {
+      if (Math.xor(this._txtCubeMat == null, mat == null))
+        this._shader = null;
+      this._txtCubeMat = mat;
+      this._onChanged();
+    }
   }
 
   /// The color modification matrix.
   Math.Matrix4 get colorMatrix => this._colorMat;
   set colorMatrix(Math.Matrix4 mat) {
-    if (Math.xor(this._colorMat == null, mat == null))
-      this._shader = null;
-    this._colorMat = mat;
+    if (this._colorMat != mat) {
+      if (Math.xor(this._colorMat == null, mat == null))
+        this._shader = null;
+      this._colorMat = mat;
+      this._onChanged();
+    }
   }
 
   /// The list of matrices for bending the shape by weights.
-  MaterialLightBendList get bendMatrices => this._bendMats;
+  Core.Collection<Math.Matrix4> get bendMatrices => this._bendMats;
 
   /// The emission component of the material.
   MaterialLightColorComponent get emission => this._emission;
@@ -96,7 +127,12 @@ class MaterialLight extends Technique {
 
   /// The environment cube texture for reflective and refractive materials.
   Textures.TextureCube get environment => this._envSampler;
-  set environment(Textures.TextureCube txt) => this._envSampler = txt;
+  set environment(Textures.TextureCube txt) {
+    if (this._envSampler != txt) {
+      this._envSampler = txt;
+      this._onChanged();
+    }
+  }
 
   /// The reflection component of the material.
   MaterialLightColorComponent get reflection => this._reflect;
@@ -116,12 +152,12 @@ class MaterialLight extends Technique {
 
   /// Creates the configuration for this shader.
   Shaders.MaterialLightConfig _config() {
-    int dirLight      = this._lengthLimit(this._lights._dirLights.length);
-    int pointLight    = this._lengthLimit(this._lights._pntLights.length);
-    int spotLight     = this._lengthLimit(this._lights._spotLights.length);
-    int txtDirLight   = this._lengthLimit(this._lights._txtDirLights.length);
-    int txtPointLight = this._lengthLimit(this._lights._txtPntLights.length);
-    int txtSpotLight  = this._lengthLimit(this._lights._txtSpotLights.length);
+    int dirLight      = this._lengthLimit(this._lights.directionalLights.length);
+    int pointLight    = this._lengthLimit(this._lights.pointLights.length);
+    int spotLight     = this._lengthLimit(this._lights.spotLights.length);
+    int txtDirLight   = this._lengthLimit(this._lights.texturedDirectionalLights.length);
+    int txtPointLight = this._lengthLimit(this._lights.texturedPointLights.length);
+    int txtSpotLight  = this._lengthLimit(this._lights.texturedSpotLights.length);
     int bendMats      = this._lengthLimit(this._bendMats.length);
     return new Shaders.MaterialLightConfig(
       this._txt2DMat != null, this._txtCubeMat != null, this._colorMat != null, bendMats,
@@ -142,7 +178,7 @@ class MaterialLight extends Technique {
 
   /// Updates the light and material technique.
   void update(Core.RenderState state) {
-    for (Lights.Light light in this._lights._allLights) {
+    for (Lights.Light light in this._lights) {
       light.update(state);
     }
   }
@@ -282,40 +318,42 @@ class MaterialLight extends Technique {
       }
 
       if (cfg.dirLight > 0) {
-        int count = this._lights._dirLights.length;
+        int count = this._lights.directionalLights.length;
         this._shader.directionalLightCount = count;
         Math.Matrix4 viewMat = state.view.matrix;
-        for (int i = 0; i < count; ++i)  {
-          Lights.Directional light = this._lights._dirLights[i];
-          Shaders.UniformDirectionalLight uniform = this._shader.directionalLights[i];
+        int index = 0;
+        for (Lights.Directional light in this._lights.directionalLights) {
+          Shaders.UniformDirectionalLight uniform = this._shader.directionalLights[index];
           uniform.viewDir = viewMat.transVec3(light.direction).normal();
           uniform.color   = light.color;
+          index++;
         }
       }
 
       if (cfg.pointLight > 0) {
-        int count = this._lights._pntLights.length;
+        int count = this._lights.pointLights.length;
         this._shader.pointLightCount = count;
         Math.Matrix4 viewMat = state.view.matrix;
-        for (int i = 0; i < count; ++i)  {
-          Lights.Point light = this._lights._pntLights[i];
-          Shaders.UniformPointLight uniform = this._shader.pointLights[i];
+        int index = 0;
+        for (Lights.Point light in this._lights.pointLights) {
+          Shaders.UniformPointLight uniform = this._shader.pointLights[index];
           uniform.point        = light.position;
           uniform.viewPoint    = viewMat.transPnt3(light.position);
           uniform.color        = light.color;
           uniform.attenuation0 = light.attenuation0;
           uniform.attenuation1 = light.attenuation1;
           uniform.attenuation2 = light.attenuation2;
+          index++;
         }
       }
 
       if (cfg.spotLight > 0) {
-        int count = this._lights._spotLights.length;
+        int count = this._lights.spotLights.length;
         this._shader.spotLightCount = count;
         Math.Matrix4 viewMat = state.view.matrix;
-        for (int i = 0; i < count; ++i)  {
-          Lights.Spot light = this._lights._spotLights[i];
-          Shaders.UniformSpotLight uniform = this._shader.spotLights[i];
+        int index = 0;
+        for (Lights.Spot light in this._lights.spotLights) {
+          Shaders.UniformSpotLight uniform = this._shader.spotLights[index];
           uniform.objectPoint     = light.position;
           uniform.objectDirection = light.direction.normal();
           uniform.viewPoint       = viewMat.transPnt3(light.position);
@@ -325,16 +363,17 @@ class MaterialLight extends Technique {
           uniform.attenuation0    = light.attenuation0;
           uniform.attenuation1    = light.attenuation1;
           uniform.attenuation2    = light.attenuation2;
+          index++;
         }
       }
 
       if (cfg.txtDirLight > 0) {
-        int count = this._lights._txtDirLights.length;
+        int count = this._lights.texturedDirectionalLights.length;
         this._shader.texturedDirectionalLightCount = count;
         Math.Matrix4 viewMat = state.view.matrix;
-        for (int i = 0; i < count; ++i)  {
-          Lights.TexturedDirectional light = this._lights._txtDirLights[i];
-          Shaders.UniformTexturedDirectionalLight uniform = this._shader.texturedDirectionalLights[i];
+        int index = 0;
+        for (Lights.TexturedDirectional light in this._lights.texturedDirectionalLights) {
+          Shaders.UniformTexturedDirectionalLight uniform = this._shader.texturedDirectionalLights[index];
           this._addToTextureList(textures, light.texture);
           uniform.objectDir   = light.direction;
           uniform.objectUp    = light.up;
@@ -342,16 +381,17 @@ class MaterialLight extends Technique {
           uniform.viewDir     = viewMat.transVec3(light.direction).normal();
           uniform.color       = light.color;
           uniform.texture     = light.texture;
+          index++;
         }
       }
 
       if (cfg.txtPointLight > 0) {
-        int count = this._lights._txtPntLights.length;
+        int count = this._lights.texturedPointLights.length;
         this._shader.texturedPointLightCount = count;
         Math.Matrix4 viewMat = state.view.matrix;
-        for (int i = 0; i < count; ++i)  {
-          Lights.TexturedPoint light = this._lights._txtPntLights[i];
-          Shaders.UniformTexturedPointLight uniform = this._shader.texturedPointLights[i];
+        int index = 0;
+        for (Lights.TexturedPoint light in this._lights.texturedPointLights) {
+          Shaders.UniformTexturedPointLight uniform = this._shader.texturedPointLights[index];
           this._addToTextureList(textures, light.texture);
           Math.Matrix4 viewObjMat = viewMat*light.matrix;
           uniform.point        = light.matrix.transPnt3(new Math.Point3(0.0, 0.0, 0.0));
@@ -362,16 +402,17 @@ class MaterialLight extends Technique {
           uniform.attenuation0 = light.attenuation0;
           uniform.attenuation1 = light.attenuation1;
           uniform.attenuation2 = light.attenuation2;
+          index++;
         }
       }
 
       if (cfg.txtSpotLight > 0) {
-        int count = this._lights._txtSpotLights.length;
+        int count = this._lights.texturedSpotLights.length;
         this._shader.texturedSpotLightCount = count;
         Math.Matrix4 viewMat = state.view.matrix;
-        for (int i = 0; i < count; ++i)  {
-          Lights.TexturedSpot light = this._lights._txtSpotLights[i];
-          Shaders.UniformTexturedSpotLight uniform = this._shader.texturedSpotLights[i];
+        int index = 0;
+        for (Lights.TexturedSpot light in this._lights.texturedSpotLights) {
+          Shaders.UniformTexturedSpotLight uniform = this._shader.texturedSpotLights[index];
           this._addToTextureList(textures, light.texture);
           uniform.objectPoint     = light.position;
           uniform.objectDirection = light.direction;
@@ -385,6 +426,7 @@ class MaterialLight extends Technique {
           uniform.attenuation0    = light.attenuation0;
           uniform.attenuation1    = light.attenuation1;
           uniform.attenuation2    = light.attenuation2;
+          index++;
         }
       }
     }

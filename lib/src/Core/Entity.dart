@@ -34,7 +34,7 @@ class Entity implements Movers.Movable, Changable {
   Math.Matrix4 _matrix;
 
   /// The list of children entities to this entity.
-  Data.Collection<Entity> _children;
+  Collection<Entity> _children;
 
   /// The event emitted when any part of the entity is changed.
   Event _changed;
@@ -77,7 +77,8 @@ class Entity implements Movers.Movable, Changable {
     this._tech = tech;
     this._mover = mover;
     this._matrix = null;
-    this._children = new Data.Collection<Entity>(
+    this._children = new Collection<Entity>();
+    this._children.setHandlers(
       onAddedHndl: this.onChildrenAdded,
       onRemovedHndl: this.onChildrenRemoved);
     this._changed = null;
@@ -132,7 +133,7 @@ class Entity implements Movers.Movable, Changable {
   Data.TechniqueCache get cache => this._cache;
 
   /// The children Entitys of this Entity.
-  Data.Collection<Entity> get children => _children;
+  Collection<Entity> get children => _children;
 
   /// The shape to draw at this Entity.
   /// May be null to not draw anything, usefull if this Entity

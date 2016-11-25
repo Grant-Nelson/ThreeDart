@@ -15,6 +15,6 @@ abstract class RenderPass extends Scene {
   Techniques.Technique get technique;
   set technique(Techniques.Technique tech);
 
-  /// Event emitted on an redner for this pass.
+  /// Event emitted on an render for this pass.
   Core.Event get onRender;
 }

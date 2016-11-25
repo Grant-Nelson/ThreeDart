@@ -13,7 +13,7 @@ class EntityPass implements RenderPass {
   Techniques.Technique _tech;
 
   /// The children entities to render.
-  Data.Collection<Core.Entity> _children;
+  Core.Collection<Core.Entity> _children;
 
   /// Event emitted before an update for this pass.
   Core.Event _onPreUpdate;
@@ -21,10 +21,10 @@ class EntityPass implements RenderPass {
   /// Event emitted after an update for this pass.
   Core.Event _onPostUpdate;
 
-  /// Event emitted on an redner for this pass.
+  /// Event emitted on an render for this pass.
   Core.Event _onRender;
 
-  /// Event emitted on an redner for this pass.
+  /// Event emitted on an render for this pass.
   Core.Event _changed;
 
   /// Creates a new render pass.
@@ -37,7 +37,8 @@ class EntityPass implements RenderPass {
     this.camera = camera;
     this.target = target;
     this.technique = tech;
-    this._children = new Data.Collection<Core.Entity>(
+    this._children = new Core.Collection<Core.Entity>();
+    this._children.setHandlers(
       onAddedHndl: this._onChildrenAdded,
       onRemovedHndl: this._onChildrenRemoved);
     if (children != null)  this._children.addAll(children);
@@ -100,7 +101,7 @@ class EntityPass implements RenderPass {
   }
 
   /// The children entities to render.
-  Data.Collection<Core.Entity> get children => this._children;
+  Core.Collection<Core.Entity> get children => this._children;
 
   /// Event emitted before an update for this pass.
   Core.Event get onPreUpdate {

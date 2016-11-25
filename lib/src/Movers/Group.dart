@@ -1,7 +1,7 @@
 part of ThreeDart.Movers;
 
 /// A mover which groups several movers.
-class Group extends Data.Collection<Mover> implements Mover {
+class Group extends Core.Collection<Mover> implements Mover {
   Core.Event _changed;
 
   /// Creates a new group of movers.

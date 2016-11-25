@@ -15,7 +15,6 @@ part 'BufferBuilder.dart';
 part 'BufferStore.dart';
 part 'BufferStoreList.dart';
 part 'BufferStoreSet.dart';
-part 'Collection.dart';
 part 'IndexObject.dart';
 part 'TechniqueCache.dart';
 part 'VertexType.dart';

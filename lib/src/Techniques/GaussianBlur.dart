@@ -9,46 +9,90 @@ class GaussianBlur extends Technique {
   double _highOffset;
   double _lowOffset;
   double _depthLimit;
+  Core.Event _changed;
 
   /// Creates a new cover Gaussian blur technique with the given initial values.
   GaussianBlur({Textures.Texture2D colorTxt: null,
                 Textures.Texture2D depthTxt: null,
-                Math.Matrix3 txtMat: null,
+                Math.Matrix3       txtMat:   null,
                 double highOffset: 0.0,
-                double lowOffset: 4.0,
+                double lowOffset:  4.0,
                 double depthLimit: 0.001}) {
-    this._shader = null;
-    this.colorTexture = colorTxt;
-    this.depthTexture = depthTxt;
+    this._shader       = null;
+    this.colorTexture  = colorTxt;
+    this.depthTexture  = depthTxt;
     this.textureMatrix = txtMat;
-    this.highOffset = highOffset;
-    this.lowOffset = lowOffset;
-    this.depthLimit = depthLimit;
+    this.highOffset    = highOffset;
+    this.lowOffset     = lowOffset;
+    this.depthLimit    = depthLimit;
+    this._changed      = null;
+  }
+
+  /// Indicates that this technique has changed.
+  Core.Event get changed {
+    if (this._changed == null) this._changed = new Core.Event();
+    return this._changed;
+  }
+
+  /// Handles a change in this technique.
+  void _onChanged([Core.EventArgs args = null]) {
+    this._changed?.emit(args);
   }
 
   /// The offset value for the depth at it's highest value.
   double get highOffset => this._highOffset;
-  set highOffset(double value) => this._highOffset = value;
+  void set highOffset(double value) {
+    if (!Math.Comparer.equals(this._highOffset, value)) {
+      this._highOffset = value;
+      this._onChanged();
+    }
+  }
 
   /// The offset value for the depth at it's lowest value.
   double get lowOffset => this._lowOffset;
-  set lowOffset(double value) => this._lowOffset = value;
+  void set lowOffset(double value) {
+    if (!Math.Comparer.equals(this._lowOffset, value)) {
+      this._lowOffset = value;
+      this._onChanged();
+    }
+  }
 
   /// The limit for higher depth to be excluded from the blur.
   double get depthLimit => this._depthLimit;
-  set depthLimit(double value) => this._depthLimit = value;
+  void set depthLimit(double value) {
+    if (!Math.Comparer.equals(this._depthLimit, value)) {
+      this._depthLimit = value;
+      this._onChanged();
+    }
+  }
 
   /// The color texture.
   Textures.Texture2D get colorTexture => this._colorTxt;
-  set colorTexture(Textures.Texture2D txt) => this._colorTxt = txt;
+  void set colorTexture(Textures.Texture2D txt) {
+    if (this._colorTxt != txt) {
+      this._colorTxt = txt;
+      this._onChanged();
+    }
+  }
 
   /// The depth texture.
   Textures.Texture2D get depthTexture => this._depthTxt;
-  set depthTexture(Textures.Texture2D txt) => this._depthTxt = txt;
+  void set depthTexture(Textures.Texture2D txt) {
+    if (this._depthTxt != txt) {
+      this._depthTxt = txt;
+      this._onChanged();
+    }
+  }
 
   /// The texture modification matrix.
   Math.Matrix3 get textureMatrix => this._txtMat;
-  set textureMatrix(Math.Matrix3 mat) => this._txtMat = mat ?? new Math.Matrix3.identity();
+  void set textureMatrix(Math.Matrix3 mat) {
+    mat = mat ?? new Math.Matrix3.identity();
+    if (this._txtMat != mat) {
+      this._txtMat = mat;
+      this._onChanged();
+    }
+  }
 
   /// Updates this technique for the given state.
   void update(Core.RenderState state) {
