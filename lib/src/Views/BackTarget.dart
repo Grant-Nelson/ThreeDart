@@ -2,7 +2,6 @@ part of ThreeDart.Views;
 
 /// A rendering target which renders to a texture instead of the screen.
 class BackTarget extends Target {
-
   int _width;
   int _height;
   int _actualWidth;
@@ -17,21 +16,34 @@ class BackTarget extends Target {
   double _depth;
   bool _clearDepth;
   Math.Region2 _region;
+  Core.Event _changed;
 
   /// Creates a new back target.
   BackTarget(int this._width, int this._height, {bool hasDepth: true}) {
-    this._actualWidth = this._height;
+    this._actualWidth  = this._height;
     this._actualHeight = this._height;
-    this._hasDepth = hasDepth;
-    this._framebuffer = null;
-    this._colorBuffer = null;
-    this._depthBuffer = null;
-    this._colorTxt = new Textures.Texture2D();
-    this._color = new Math.Color4.black();
-    this._clearColor = true;
-    this._depth = 2000.0;
-    this._clearDepth = true;
-    this._region = new Math.Region2(0.0, 0.0, 1.0, 1.0);
+    this._hasDepth     = hasDepth;
+    this._framebuffer  = null;
+    this._colorBuffer  = null;
+    this._depthBuffer  = null;
+    this._colorTxt     = new Textures.Texture2D();
+    this._color        = new Math.Color4.black();
+    this._clearColor   = true;
+    this._depth        = 2000.0;
+    this._clearDepth   = true;
+    this._region       = new Math.Region2(0.0, 0.0, 1.0, 1.0);
+    this._changed      = null;
+  }
+
+  /// Indicates that this target has changed.
+  Core.Event get changed {
+    if (this._changed == null) this._changed = new Core.Event();
+    return this._changed;
+  }
+
+  /// Handles a change in this target.
+  void _onChanged([Core.EventArgs args = null]) {
+    this._changed?.emit(args);
   }
 
   /// The requested width in pixels of the back buffer.
@@ -55,24 +67,49 @@ class BackTarget extends Target {
 
   /// The clear color to clear the target to before rendering.
   Math.Color4 get color => this._color;
-  set color(Math.Color4 color) => this._color = color;
+  void set color(Math.Color4 color) {
+    if (this._color != color) {
+      this._color = color;
+      this._onChanged();
+    }
+  }
 
   /// Indicates if the color target should be cleared with the clear color.
   bool get clearColor => this._clearColor;
-  set clearColor(bool clearColor) => this._clearColor = clearColor;
+  void set clearColor(bool clearColor) {
+    if (this._clearColor != clearColor) {
+      this._clearColor = clearColor;
+      this._onChanged();
+    }
+  }
 
   /// The clear depth to clear the target to before rendering.
   double get depth => this._depth;
-  set depth(double depth) => this._depth = depth;
+  void set depth(double depth) {
+    if (!Math.Comparer.equals(this._depth, depth)) {
+      this._depth = depth;
+      this._onChanged();
+    }
+  }
 
   /// Indicates if the depth target should be cleared with the clear depth.
   bool get clearDepth => this._clearDepth;
-  set clearDepth(bool clearDepth) => this._clearDepth = clearDepth;
+  void set clearDepth(bool clearDepth) {
+    if (this._clearDepth != clearDepth) {
+      this._clearDepth = clearDepth;
+      this._onChanged();
+    }
+  }
 
   /// The region of the front target to render to.
   /// <0, 0> is top left corner and <1, 1> is botton right.
   Math.Region2 get region => this._region;
-  set region(Math.Region2 region) => this._region = region;
+  void set region(Math.Region2 region) {
+    if (this._region != region) {
+      this._region = region;
+      this._onChanged();
+    }
+  }
 
   /// Initializes the back target.
   void _initialize(WebGL.RenderingContext gl) {

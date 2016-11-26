@@ -1,35 +1,45 @@
 part of ThreeDart.Techniques;
 
-// TODO: Comment this whole file!
-
+/// Base class for a material light component.
+/// A material light component is the color, texture, and values
+/// for a specific setting for the material light technique,
+/// such as ambient, diffuse, specular, etc.
 abstract class MaterialLightBaseComponent {
   MaterialLight _owner;
   Shaders.ColorSourceType _type;
   Textures.Texture2D _txt2D;
   Textures.TextureCube _txtCube;
 
+  /// Creates a new base component for the given [owner].
   MaterialLightBaseComponent._(this._owner) {
     this._type = Shaders.ColorSourceType.None;
     this._txt2D = null;
     this._txtCube = null;
   }
 
+  /// Handles changes in the component.
   void _onChanged([Core.EventArgs args = null]) {
     this._owner._onChanged(args);
   }
 
+  /// Handles type changes to the component.
   void _onTypeChanged() {
     this._owner._resetShader();
   }
 
+  /// Is called when the component is cleared.
   void _onClear() {
     // Do Nothing
   }
 
+  /// Is called when the component is set from the
+  /// source type None to anyother source type.
   void _onComponentSet() {
     // Do Nothing
   }
 
+  /// Sets the 2D texture member if it has changed.
+  /// This will connect the changed events and call changed.
   void _setTxt2D(Textures.Texture2D txt2D) {
     if (this._txt2D != txt2D) {
       if (this._txt2D != null) this._txt2D.loadFinished.remove(this._onChanged);
@@ -39,6 +49,8 @@ abstract class MaterialLightBaseComponent {
     }
   }
 
+  /// Sets the Cube texture member if it has changed.
+  /// This will connect the changed events and call changed.
   void _setTxtCube(Textures.TextureCube txtCube) {
     if (this._txtCube != txtCube) {
       if (this._txtCube != null) this._txtCube.loadFinished.remove(this._onChanged);
@@ -48,6 +60,7 @@ abstract class MaterialLightBaseComponent {
     }
   }
 
+  /// The type of source this component will get it's color from.
   Shaders.ColorSourceType get type => this._type;
 
   /// Removes any of this component from the material.
@@ -99,13 +112,18 @@ abstract class MaterialLightBaseComponent {
   }
 }
 
+//===============================================
+
+/// A material light component which allows a solid color.
 class MaterialLightColorComponent extends MaterialLightBaseComponent {
   Math.Color3 _color;
 
+  /// Creates a new material light color component for the given [owner].
   MaterialLightColorComponent._(MaterialLight owner): super._(owner) {
     this._color = new Math.Color3.black();
   }
 
+  /// Handles setting the color member if it has changed.
   void _setColor(Math.Color3 color) {
     if (this._color != color) {
       this._color = color;
@@ -113,11 +131,13 @@ class MaterialLightColorComponent extends MaterialLightBaseComponent {
     }
   }
 
+  /// Handles clearing the color when the component is being cleared.
   void _onClear() {
     super._onClear();
     this._setColor(new Math.Color3.black());
   }
 
+  /// Handles the component being set from None to some other source type.
   void _onComponentSet() {
     super._onComponentSet();
     this._setColor(new Math.Color3.white());
@@ -136,13 +156,18 @@ class MaterialLightColorComponent extends MaterialLightBaseComponent {
   }
 }
 
+//===============================================
+
+/// A material light color component which allows a specular value to be assigned.
 class MaterialLightSpecularComponent extends MaterialLightColorComponent {
   double _shininess;
 
+  /// Creates a new specular component for the given [owner].
   MaterialLightSpecularComponent._(MaterialLight owner): super._(owner) {
     this._shininess = 100.0;
   }
 
+  /// Handles setting the shininess specular member.
   void _setShininess(double shininess) {
     if (!Math.Comparer.equals(this._shininess, shininess)) {
       this._shininess = shininess;
@@ -150,11 +175,13 @@ class MaterialLightSpecularComponent extends MaterialLightColorComponent {
     }
   }
 
+  /// Handles clearing the shininess when the component is being cleared.
   void _onClear() {
     super._onClear();
     this._setShininess(100.0);
   }
 
+  /// Handles the component being set from None to some other source type.
   void _onComponentSet() {
     super._onComponentSet();
     this._setShininess(100.0);
@@ -173,20 +200,29 @@ class MaterialLightSpecularComponent extends MaterialLightColorComponent {
   }
 }
 
+//===============================================
+
+/// A material light component for assigning a bump map.
 class MaterialLightBumpComponent extends MaterialLightBaseComponent {
 
+  /// Creates a new bump map material light component for the given [owner].
   MaterialLightBumpComponent._(MaterialLight owner): super._(owner) {
     // Do Nothing
   }
 }
 
+//===============================================
+
+/// A material light component which allows refraction to be assigned.
 class MaterialLightRefractionComponent extends MaterialLightColorComponent {
   double _refraction;
 
+  /// Creates a new refraction material light component for the given [owner].
   MaterialLightRefractionComponent._(MaterialLight owner): super._(owner) {
     this._refraction = 1.0;
   }
 
+  /// Handles setting the refraction member if it has changed.
   void _setRefraction(double refraction) {
     if (!Math.Comparer.equals(this._refraction, refraction)) {
       this._refraction = refraction;
@@ -194,11 +230,13 @@ class MaterialLightRefractionComponent extends MaterialLightColorComponent {
     }
   }
 
+  /// Handles clearing the refraction when the component is being cleared.
   void _onClear() {
     super._onClear();
     this._setRefraction(1.0);
   }
 
+  /// Handles the component being set from None to some other source type.
   void _onComponentSet() {
     super._onComponentSet();
     this._setRefraction(1.0);
@@ -217,13 +255,18 @@ class MaterialLightRefractionComponent extends MaterialLightColorComponent {
   }
 }
 
+//===============================================
+
+/// A material light component which allows setting an alpha value.
 class MaterialLightAlphaComponent extends MaterialLightBaseComponent {
   double _alpha;
 
+  /// Creates a new alpha meterial light component for the given [owner].
   MaterialLightAlphaComponent._(MaterialLight owner): super._(owner) {
     this._alpha = 1.0;
   }
 
+  /// Handles setting the alpha member if it has changed.
   void _setAlpha(double alpha) {
     if (!Math.Comparer.equals(this._alpha, alpha)) {
       this._alpha = alpha;
@@ -231,11 +274,13 @@ class MaterialLightAlphaComponent extends MaterialLightBaseComponent {
     }
   }
 
+  /// Handles clearing the alpha when the component is being cleared.
   void _onClear() {
     super._onClear();
     this._setAlpha(1.0);
   }
 
+  /// Handles the component being set from None to some other source type.
   void _onComponentSet() {
     super._onComponentSet();
     this._setAlpha(1.0);

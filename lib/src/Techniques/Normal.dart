@@ -3,13 +3,12 @@ part of ThreeDart.Techniques;
 /// The normal rendering technique.
 class Normal extends Technique {
   Shaders.Normal _shader;
-
   Math.Matrix3 _txt2DMat;
   Math.Matrix4 _txtCubeMat;
-
   Shaders.ColorSourceType _bumpyType;
   Textures.Texture2D _bump2D;
   Textures.TextureCube _bumpCube;
+  Core.Event _changed;
 
   /// Creates a new material/light technique.
   Normal() {
@@ -17,15 +16,57 @@ class Normal extends Technique {
     this._txt2DMat = new Math.Matrix3.identity();
     this._txtCubeMat = new Math.Matrix4.identity();
     this.clearBump();
+    this._changed = null;
+  }
+
+  /// Indicates that this technique has changed.
+  Core.Event get changed {
+    if (this._changed == null) this._changed = new Core.Event();
+    return this._changed;
+  }
+
+  /// Handles a change in this technique.
+  void _onChanged([Core.EventArgs args = null]) {
+    this._changed?.emit(args);
+  }
+
+  void _setBump2D(Textures.Texture2D bump2D) {
+    if (this._bump2D != bump2D) {
+      if (this._bump2D != null) this._bump2D.loadFinished.remove(this._onChanged);
+      this._bump2D = bump2D;
+      if (this._bump2D != null) this._bump2D.loadFinished.add(this._onChanged);
+      this._onChanged();
+    }
+  }
+
+  void _setBumpCube(Textures.TextureCube bumpCube) {
+    if (this._bumpCube != bumpCube) {
+      if (this._bumpCube != null) this._bump2D.loadFinished.remove(this._onChanged);
+      this._bumpCube = bumpCube;
+      if (this._bumpCube != null) this._bump2D.loadFinished.add(this._onChanged);
+      this._onChanged();
+    }
   }
 
   /// The 2D texture modification matrix.
   Math.Matrix3 get texture2DMatrix => this._txt2DMat;
-  set texture2DMatrix(Math.Matrix3 mat) => this._txt2DMat = mat ?? new Math.Matrix3.identity();
+  void set texture2DMatrix(Math.Matrix3 mat) {
+    mat = mat ?? new Math.Matrix3.identity();
+    if (this._txt2DMat != mat) {
+      this._txt2DMat = mat;
+      this._onChanged();
+    }
+  }
 
   /// The cube texture modification matrix.
   Math.Matrix4 get textureCubeMatrix => this._txtCubeMat;
-  set textureCubeMatrix(Math.Matrix4 mat) => this._txtCubeMat = mat ?? new Math.Matrix4.identity();
+  void set textureCubeMatrix(Math.Matrix4 mat) {
+    mat = mat ?? new Math.Matrix4.identity();
+    if (this._txtCubeMat != mat) {
+      this._txtCubeMat = mat;
+      this._onChanged();
+    }
+  }
 
   /// Removes any normal distortion from the material.
   void clearBump() {
@@ -33,8 +74,9 @@ class Normal extends Technique {
       this._shader = null;
       this._bumpyType = Shaders.ColorSourceType.None;
     }
-    this._bump2D = null;
-    this._bumpCube = null;
+    this._setBump2D(null);
+    this._setBumpCube(null);
+    this._onChanged();
   }
 
   /// The normal distortion 2D texture for the material.
@@ -47,10 +89,10 @@ class Normal extends Technique {
       }
     } else if (this._bumpyType != Shaders.ColorSourceType.Texture2D) {
       this._bumpyType = Shaders.ColorSourceType.Texture2D;
-      this._bumpCube = null;
+      this._setBumpCube(null);
       this._shader = null;
     }
-    this._bump2D = txt;
+    this._setBump2D(txt);
   }
 
   /// The normal distortion cube texture for the material.
@@ -63,10 +105,10 @@ class Normal extends Technique {
       }
     } else if (this._bumpyType != Shaders.ColorSourceType.TextureCube) {
       this._bumpyType = Shaders.ColorSourceType.TextureCube;
-      this._bump2D = null;
+      this._setBump2D(null);
       this._shader = null;
     }
-    this._bumpCube = txt;
+    this._setBumpCube(txt);
   }
 
   /// Creates the configuration for this shader.
