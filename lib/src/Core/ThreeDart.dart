@@ -24,6 +24,15 @@ class ThreeDart {
   /// The user input listener.
   UserInput _input;
 
+  /// Event to indicate something attached to this instance has changed.
+  Event _changed;
+
+  /// Indicates the refresh should be automatically
+  bool _autoRefresh;
+
+  /// Indicates that a refresh is pending.
+  bool _pendingRender;
+
   /// Creates a new 3Dart rendering on an element with the given [id].
   ///
   /// [alpha] indicates if the back color target will have an alpha channel or not.
@@ -56,7 +65,7 @@ class ThreeDart {
 
     html.CanvasElement canvas = new html.CanvasElement();
     canvas.style
-      ..width = "100%"
+      ..width  = "100%"
       ..height = "100%";
     elem.children.add(canvas);
     ThreeDart td = new ThreeDart.fromCanvas(canvas,
@@ -81,12 +90,15 @@ class ThreeDart {
       throw new Exception("Failed to get the rendering context for WebGL.");
     }
     this._canvas = canvas;
-    this._elem = canvas;
-    this._gl = gl;
-    this._scene = null;
-    this._state = new RenderState(this._gl, this._canvas);
+    this._elem   = canvas;
+    this._gl     = gl;
+    this._scene  = null;
+    this._state     = new RenderState(this._gl, this._canvas);
     this._txtLoader = new Textures.TextureLoader(this._gl);
-    this._input = new UserInput(this._canvas);
+    this._input     = new UserInput(this._canvas);
+    this._changed       = null;
+    this._autoRefresh   = true;
+    this._pendingRender = false;
     this._resize();
   }
 
@@ -108,11 +120,27 @@ class ThreeDart {
   /// The loader to create textures with.
   Textures.TextureLoader get textureLoader => this._txtLoader;
 
+  /// Indicates that this instance or something attached to is has changed.
+  Event get changed {
+    if (this._changed == null) this._changed = new Event();
+    return this._changed;
+  }
+
+  /// Handles a change in this instance..
+  void _onChanged([EventArgs args = null]) {
+    this._changed?.emit(args);
+    if (this._autoRefresh) this.requestRender();
+  }
+
   /// The scene to render to the canvas.
   Scenes.Scene get scene => this._scene;
   set scene(Scenes.Scene scene) {
-    this._scene = scene;
-    this.render();
+    if (this._scene != scene) {
+      if (this._scene != null) this._scene.changed.remove(this._onChanged);
+      this._scene = scene;
+      if (this._scene != null) this._scene.changed.add(this._onChanged);
+      this._onChanged();
+    }
   }
 
   /// Makes sure the size of the canvas is correctly set.
@@ -131,9 +159,25 @@ class ThreeDart {
     }
   }
 
+  /// Requests a render to start the next time the main message loop
+  /// is retured to. This is debunced so that it can be called many times
+  /// but will
+  void requestRender() {
+    if (!this._pendingRender) {
+      this._pendingRender = true;
+      html.window.requestAnimationFrame((num t) {
+        if (this._pendingRender) {
+          this._pendingRender = false;
+          this.render();
+        }
+      });
+    }
+  }
+
   /// Renders the scene to the canvas.
   void render() {
     try {
+      this._pendingRender = false;
       this._resize();
       if (this._scene != null) {
         this._state.reset();

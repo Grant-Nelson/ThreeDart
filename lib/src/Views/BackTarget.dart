@@ -19,10 +19,12 @@ class BackTarget extends Target {
   Core.Event _changed;
 
   /// Creates a new back target.
-  BackTarget(int this._width, int this._height, {bool hasDepth: true}) {
-    this._actualWidth  = this._height;
+  BackTarget(int width, int height, {bool hasDepth: true}) {
+    this._width        = width ?? 512;
+    this._height       = height ?? 512;
+    this._actualWidth  = this._width;
     this._actualHeight = this._height;
-    this._hasDepth     = hasDepth;
+    this._hasDepth     = hasDepth ?? true;
     this._framebuffer  = null;
     this._colorBuffer  = null;
     this._depthBuffer  = null;

@@ -44,7 +44,7 @@ class Collection<T> implements Iterable<T> {
 
   /// Is called when one or more items are about to be added to this collection.
   bool _onPreadd(Iterable<T> items) {
-    if (this._onPreaddHndl != null) return true;
+    if (this._onPreaddHndl == null) return true;
     return this._onPreaddHndl(items);
   }
 

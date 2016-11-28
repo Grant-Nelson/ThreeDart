@@ -4,7 +4,6 @@
 library ThreeDart.test.test008;
 
 import 'dart:html';
-import 'dart:web_gl' as WebGL;
 
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 import 'package:ThreeDart/Shapes.dart' as Shapes;

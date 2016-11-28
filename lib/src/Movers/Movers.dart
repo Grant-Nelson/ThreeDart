@@ -7,7 +7,6 @@ import 'dart:math' as math;
 
 import '../Math/Math.dart' as Math;
 import '../Core/Core.dart' as Core;
-import '../Data/Data.dart' as Data;
 
 part 'ComponentShift.dart';
 part 'Constant.dart';
