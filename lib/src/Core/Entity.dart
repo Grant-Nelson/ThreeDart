@@ -72,10 +72,10 @@ class Entity implements Movers.Movable, Changable {
           List<Entity> children: null}) {
     this._name = name;
     this._enabled = enabled;
-    this._shape = shape;
+    this._shape = null;
     this._cache = null;
-    this._tech = tech;
-    this._mover = mover;
+    this._tech = null;
+    this._mover = null;
     this._matrix = null;
     this._children = new Collection<Entity>();
     this._children.setHandlers(
@@ -90,6 +90,10 @@ class Entity implements Movers.Movable, Changable {
     this._childrenRemoved = null;
     this._extensionAdded = null;
     this._extensionRemoved = null;
+
+    this.shape = shape;
+    this.technique = tech;
+    this.mover = mover;
     if (children != null)
       this._children.addAll(children);
   }
@@ -450,7 +454,7 @@ class Entity implements Movers.Movable, Changable {
     if (this._childrenAdded != null)
       this._childrenAdded.emit(new EntityEventArgs(this, entities));
     for (Entity entity in entities) {
-      if (entity == null) entity.changed.add(this.onChildrenModified);
+      if (entity != null) entity.changed.add(this.onChildrenModified);
     }
     this.onChanged();
   }
@@ -466,7 +470,7 @@ class Entity implements Movers.Movable, Changable {
     if (this._childrenRemoved != null)
       this._childrenRemoved.emit(new EntityEventArgs(this, entities));
     for (Entity entity in entities) {
-      if (entity == null) entity.changed.remove(this.onChildrenModified);
+      if (entity != null) entity.changed.remove(this.onChildrenModified);
     }
     this.onChanged();
   }

@@ -44,18 +44,18 @@ class Collection<T> implements Iterable<T> {
 
   /// Is called when one or more items are about to be added to this collection.
   bool _onPreadd(Iterable<T> items) {
-    if (this._onPreaddHndl == null) return true;
-    return this._onPreaddHndl(items);
+    if (this._onPreaddHndl != null) return this._onPreaddHndl(items);
+    return true;
   }
 
   /// Is called when one or more items are added to this collection.
   void _onAdded(int index, Iterable<T> added) {
-    if (this._onAddedHndl == null) this._onAddedHndl(index, added);
+    if (this._onAddedHndl != null) this._onAddedHndl(index, added);
   }
 
   /// Is called when one or more items are removed from this collection.
   void _onRemoved(int index, Iterable<T> removed) {
-    if (this._onRemovedHndl == null) this._onRemovedHndl(index, removed);
+    if (this._onRemovedHndl != null) this._onRemovedHndl(index, removed);
   }
 
   /// Gets the first item in the list.

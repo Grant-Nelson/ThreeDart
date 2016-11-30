@@ -33,7 +33,7 @@ class Compound extends Core.Collection<Scene> implements Scene {
   /// Called when one or more scenes are added.
   void _onSceneAdded(int index, Iterable<Scene> scenes) {
     for (Scene scene in scenes) {
-      if (scene == null) scene.changed.add(this._onChanged);
+      if (scene != null) scene.changed.add(this._onChanged);
     }
     this._onChanged();
   }
@@ -41,7 +41,7 @@ class Compound extends Core.Collection<Scene> implements Scene {
   /// Called when scenes are removed.
   void _onSceneRemoved(int index, Iterable<Scene> scenes) {
     for (Scene scene in scenes) {
-      if (scene == null) scene.changed.remove(this._onChanged);
+      if (scene != null) scene.changed.remove(this._onChanged);
     }
     this._onChanged();
   }

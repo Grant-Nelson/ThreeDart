@@ -83,7 +83,7 @@ class Sterioscopic implements Scene {
   /// Handles render passes being added.
   void _onAddedRenderPass(int index, Iterable<RenderPass> passes) {
     for (RenderPass pass in passes) {
-      if (pass == null) pass.changed.add(this._onChange);
+      if (pass != null) pass.changed.add(this._onChange);
     }
     this._onChange();
   }
@@ -91,7 +91,7 @@ class Sterioscopic implements Scene {
   /// Handles render passes being removed.
   void _onRemovedRenderPass(int index, Iterable<RenderPass> passes) {
     for (RenderPass pass in passes) {
-      if (pass == null) pass.changed.remove(this._onChange);
+      if (pass != null) pass.changed.remove(this._onChange);
     }
     this._onChange();
   }

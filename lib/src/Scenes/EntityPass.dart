@@ -34,18 +34,22 @@ class EntityPass implements RenderPass {
       Techniques.Technique tech: null,
       List<Core.Entity> children: null
     }) {
-    this.camera = camera;
-    this.target = target;
-    this.technique = tech;
+    this._camera = null;
+    this._target = null;
+    this._tech = null;
     this._children = new Core.Collection<Core.Entity>();
     this._children.setHandlers(
       onAddedHndl: this._onChildrenAdded,
       onRemovedHndl: this._onChildrenRemoved);
-    if (children != null)  this._children.addAll(children);
     this._onPreUpdate = null;
     this._onPostUpdate = null;
     this._onRender = null;
     this._changed = null;
+
+    this.camera = camera;
+    this.target = target;
+    this.technique = tech;
+    if (children != null)  this._children.addAll(children);
   }
 
   /// Handles a change in this pass.
@@ -56,7 +60,7 @@ class EntityPass implements RenderPass {
   /// Called when one or more child is added.
   void _onChildrenAdded(int index, Iterable<Core.Entity> entities) {
     for (Core.Entity entity in entities) {
-      if (entity == null) entity.changed.add(this._onChange);
+      if (entity != null) entity.changed.add(this._onChange);
     }
     this._onChange();
   }
@@ -64,7 +68,7 @@ class EntityPass implements RenderPass {
   /// Called when a child is removed.
   void _onChildrenRemoved(int index, Iterable<Core.Entity> entities) {
     for (Core.Entity entity in entities) {
-      if (entity == null) entity.changed.remove(this._onChange);
+      if (entity != null) entity.changed.remove(this._onChange);
     }
     this._onChange();
   }

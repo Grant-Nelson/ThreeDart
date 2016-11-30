@@ -68,14 +68,14 @@ class Region2 {
 
   /// Expands the region to include the given location components.
   Region2 expand(double x, double y) {
-    double dx;
+    double dx = this.dx;
     if (x < this.x) dx = this.dx + (this.x - x);
     else if (x > this.x + this.dx) {
       dx = x - this.x;
       x = this.x;
     }
 
-    double dy;
+    double dy = this.dy;
     if (y < this.y) dy = this.dy + (this.y - y);
     else if (y > this.y + this.dy) {
       dy = y - this.y;

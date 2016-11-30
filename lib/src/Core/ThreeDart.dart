@@ -1,7 +1,7 @@
 part of ThreeDart.Core;
 
 /// [TreeDart] (3Dart) is the a tool for rendering WebGL with Dart.
-class ThreeDart {
+class ThreeDart implements Changable {
 
   /// The element the canvas was added to or the canvas being drawn to.
   html.Element _elem;
@@ -119,6 +119,19 @@ class ThreeDart {
 
   /// The loader to create textures with.
   Textures.TextureLoader get textureLoader => this._txtLoader;
+
+  /// Indicates if a refresh is automatically called
+  /// when something internally is changed.
+  bool get autoRefresh => this._autoRefresh;
+  void set autoRefresh(bool autoRefresh) {
+    if (this._autoRefresh == autoRefresh) {
+      this._autoRefresh = autoRefresh;
+      this._onChanged();
+    }
+  }
+
+  /// Indicates a rendering will be started on the next render frame.
+  bool get pendingRender => this._pendingRender;
 
   /// Indicates that this instance or something attached to is has changed.
   Event get changed {
