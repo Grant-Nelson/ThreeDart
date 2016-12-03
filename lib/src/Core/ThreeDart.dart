@@ -33,6 +33,12 @@ class ThreeDart implements Changable {
   /// Indicates that a refresh is pending.
   bool _pendingRender;
 
+  /// The last time that a frames per second were updated.
+  DateTime _frameTime;
+
+  /// The number of times render has been called in the last sec or more.
+  int _frameCount;
+
   /// Creates a new 3Dart rendering on an element with the given [id].
   ///
   /// [alpha] indicates if the back color target will have an alpha channel or not.
@@ -99,6 +105,8 @@ class ThreeDart implements Changable {
     this._changed       = null;
     this._autoRefresh   = true;
     this._pendingRender = false;
+    this._frameTime     = new DateTime.now();
+    this._frameCount    = 0;
     this._resize();
   }
 
@@ -156,6 +164,17 @@ class ThreeDart implements Changable {
     }
   }
 
+  /// The frames per second since the last time this getter is called.
+  double get fps {
+    DateTime time = new DateTime.now();
+    double secs = time.difference(this._frameTime).inMilliseconds/1000.0;
+    if (secs <= 0.0) return 0.0;
+    double fps = this._frameCount/secs;
+    this._frameCount = 0;
+    this._frameTime = time;
+    return fps;
+  }
+
   /// Makes sure the size of the canvas is correctly set.
   void _resize() {
     // Lookup the size the browser is displaying the canvas in CSS pixels and
@@ -174,7 +193,7 @@ class ThreeDart implements Changable {
 
   /// Requests a render to start the next time the main message loop
   /// is retured to. This is debunced so that it can be called many times
-  /// but will
+  /// but will only be run once
   void requestRender() {
     if (!this._pendingRender) {
       this._pendingRender = true;
@@ -190,6 +209,7 @@ class ThreeDart implements Changable {
   /// Renders the scene to the canvas.
   void render() {
     try {
+      this._frameCount++;
       this._pendingRender = false;
       this._resize();
       if (this._scene != null) {
