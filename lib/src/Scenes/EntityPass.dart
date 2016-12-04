@@ -53,24 +53,24 @@ class EntityPass implements RenderPass {
   }
 
   /// Handles a change in this pass.
-  void _onChange([Core.EventArgs args = null]) {
+  void _onChanged([Core.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
   /// Called when one or more child is added.
   void _onChildrenAdded(int index, Iterable<Core.Entity> entities) {
     for (Core.Entity entity in entities) {
-      if (entity != null) entity.changed.add(this._onChange);
+      if (entity != null) entity.changed.add(this._onChanged);
     }
-    this._onChange();
+    this._onChanged();
   }
 
   /// Called when a child is removed.
   void _onChildrenRemoved(int index, Iterable<Core.Entity> entities) {
     for (Core.Entity entity in entities) {
-      if (entity != null) entity.changed.remove(this._onChange);
+      if (entity != null) entity.changed.remove(this._onChanged);
     }
-    this._onChange();
+    this._onChanged();
   }
 
   /// The camera describing the view of the scene.
@@ -79,8 +79,10 @@ class EntityPass implements RenderPass {
   void set camera(Views.Camera camera) {
     camera = camera ?? new Views.Perspective();
     if (this._camera != camera) {
+      if (this._camera != null) this._camera.changed.remove(this._onChanged);
       this._camera = camera;
-      this._onChange();
+      if (this._camera != null) this._camera.changed.add(this._onChanged);
+      this._onChanged();
     }
   }
 
@@ -90,8 +92,10 @@ class EntityPass implements RenderPass {
   void set target(Views.Target target) {
     target = target ?? new Views.FrontTarget();
     if (this._target != target) {
+      if (this._target != null) this._target.changed.remove(this._onChanged);
       this._target = target;
-      this._onChange();
+      if (this._target != null) this._target.changed.add(this._onChanged);
+      this._onChanged();
     }
   }
 
@@ -99,8 +103,10 @@ class EntityPass implements RenderPass {
   Techniques.Technique get technique => this._tech;
   void set technique(Techniques.Technique tech) {
     if (this._tech != tech) {
+      if (this._tech != null) this._tech.changed.remove(this._onChanged);
       this._tech = tech;
-      this._onChange();
+      if (this._tech != null) this._tech.changed.add(this._onChanged);
+      this._onChanged();
     }
   }
 

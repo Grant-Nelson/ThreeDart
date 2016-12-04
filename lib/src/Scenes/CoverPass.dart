@@ -55,8 +55,8 @@ class CoverPass implements RenderPass {
     camera = camera ?? new Views.IdentityCamera();
     if (this._camera != camera) {
       if (this._camera != null) this._camera.changed.remove(this._onChanged);
-      if (camera != null) camera.changed.add(this._onChanged);
       this._camera = camera;
+      if (this._camera != null) this._camera.changed.add(this._onChanged);
       this._onChanged();
     }
   }
@@ -68,8 +68,8 @@ class CoverPass implements RenderPass {
     target = target ?? new Views.FrontTarget();
     if (this._target != target) {
       if (this._target != null) this._target.changed.remove(this._onChanged);
-      if (target != null) target.changed.add(this._onChanged);
       this._target = target;
+      if (this._target != null) this._target.changed.add(this._onChanged);
       this._onChanged();
     }
   }
@@ -79,8 +79,8 @@ class CoverPass implements RenderPass {
   void set technique(Techniques.Technique tech) {
     if (this._tech != tech) {
       if (this._tech != null) this._tech.changed.remove(this._onChanged);
-      if (tech != null) tech.changed.add(this._onChanged);
       this._tech = tech;
+      if (this._tech != null) this._tech.changed.add(this._onChanged);
       this._onChanged();
     }
   }

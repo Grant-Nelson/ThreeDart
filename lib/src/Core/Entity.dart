@@ -159,10 +159,10 @@ class Entity implements Movers.Movable, Changable {
   Techniques.Technique get technique => this._tech;
   set technique(Techniques.Technique technique) {
     if (this._tech != technique) {
+      if (this._tech != null) this._tech.changed.remove(this.onTechModified);
       Techniques.Technique oldTech = this._tech;
-      if (oldTech != null) oldTech.changed.remove(this.onTechModified);
-      if (technique != null) technique.changed.add(this.onTechModified);
       this._tech = technique;
+      if (this._tech != null) this._tech.changed.add(this.onTechModified);
       this._cacheUpdateForTech();
       this.onTechChanged(oldTech, this._tech);
     }
@@ -363,9 +363,9 @@ class Entity implements Movers.Movable, Changable {
   /// This isn't meant to be called from outside the entity, in other languages this would
   /// be a protected method. This method is exposed to that the entity is extended and
   /// these methods can be overwritten. If overwritten call this super method to still emit events.
-  void onShapeModified(EventArgs args) {
+  void onShapeModified([EventArgs args = null]) {
     this.clearCache();
-    this.onChanged();
+    this.onChanged(args);
   }
 
   /// Called when the shape is added or removed.
@@ -386,7 +386,7 @@ class Entity implements Movers.Movable, Changable {
   /// be a protected method. This method is exposed to that the entity is extended and
   /// these methods can be overwritten. If overwritten call this super method to still emit events.
   void onTechModified([EventArgs args = null]) {
-    this.onChanged();
+    this.onChanged(args);
   }
 
   /// Called when the technique is added or removed.

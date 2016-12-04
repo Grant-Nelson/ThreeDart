@@ -76,24 +76,24 @@ class Sterioscopic implements Scene {
   }
 
   /// Handles a change in this pass.
-  void _onChange([Core.EventArgs args = null]) {
+  void _onChanged([Core.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
   /// Handles render passes being added.
   void _onAddedRenderPass(int index, Iterable<RenderPass> passes) {
     for (RenderPass pass in passes) {
-      if (pass != null) pass.changed.add(this._onChange);
+      if (pass != null) pass.changed.add(this._onChanged);
     }
-    this._onChange();
+    this._onChanged();
   }
 
   /// Handles render passes being removed.
   void _onRemovedRenderPass(int index, Iterable<RenderPass> passes) {
     for (RenderPass pass in passes) {
-      if (pass != null) pass.changed.remove(this._onChange);
+      if (pass != null) pass.changed.remove(this._onChanged);
     }
-    this._onChange();
+    this._onChanged();
   }
 
   /// The camera mover describing the view of the scene.
@@ -102,7 +102,7 @@ class Sterioscopic implements Scene {
     if (this._leftMovGroup[0] != camMover) {
       this._leftMovGroup[0] = camMover;
       this._rightMovGroup[0] = camMover;
-      this._onChange();
+      this._onChanged();
     }
   }
 
@@ -111,8 +111,10 @@ class Sterioscopic implements Scene {
   set target(Views.Target target) {
     target = target ?? new Views.FrontTarget();
     if (this._target != target) {
+      if (this._target != null) this._target.changed.remove(this._onChanged);
       this._target = target;
-      this._onChange();
+      if (this._target != null) this._target.changed.add(this._onChanged);
+      this._onChanged();
     }
   }
 
@@ -125,7 +127,7 @@ class Sterioscopic implements Scene {
     if (!Math.Comparer.equals(this._eyeSpacing, eyeSpacing)) {
       this._eyeSpacing = eyeSpacing;
       this._updateConstMats();
-      this._onChange();
+      this._onChanged();
     }
   }
 
@@ -135,7 +137,7 @@ class Sterioscopic implements Scene {
     if (!Math.Comparer.equals(this._focusDistance, focusDistance)) {
       this._focusDistance = focusDistance;
       this._updateConstMats();
-      this._onChange();
+      this._onChanged();
     }
   }
 
