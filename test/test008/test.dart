@@ -3,7 +3,6 @@
 
 library ThreeDart.test.test008;
 
-import 'dart:html';
 import 'dart:web_gl' as WebGL;
 
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
@@ -21,7 +20,7 @@ part 'BumpyShader.dart';
 part 'BumpyTechnique.dart';
 
 void main() {
-  common.shellTest("Test 008", ["bumpMaps"],
+  common.shellTest("Test 008", ["bumpMaps", "scalars"],
     "A custom shader for testing and fixing the normal distortion "+
     "equation used for bump maps. This displays the normal vectors "+
     "across a surface.");
@@ -68,10 +67,17 @@ void main() {
     ..add("../resources/ScrewBumpMap.png")
     ..add("../resources/CtrlPnlBumpMap.png");
 
-  var update;
-  update = (num t) {
-    td.render();
-    window.requestAnimationFrame(update);
-  };
-  window.requestAnimationFrame(update);
+  new common.RadioGroup("scalars")
+    ..add("0.1", () { tech.offsetScalar = 0.1; })
+    ..add("0.2", () { tech.offsetScalar = 0.2; })
+    ..add("0.3", () { tech.offsetScalar = 0.3; })
+    ..add("0.4", () { tech.offsetScalar = 0.4; })
+    ..add("0.5", () { tech.offsetScalar = 0.5; }, true)
+    ..add("0.6", () { tech.offsetScalar = 0.6; })
+    ..add("0.7", () { tech.offsetScalar = 0.7; })
+    ..add("0.8", () { tech.offsetScalar = 0.8; })
+    ..add("0.9", () { tech.offsetScalar = 0.9; })
+    ..add("1.0", () { tech.offsetScalar = 1.0; });
+
+  common.showFPS(td);
 }

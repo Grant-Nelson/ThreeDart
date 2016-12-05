@@ -3,7 +3,6 @@
 
 library ThreeDart.test.test032;
 
-import 'dart:html';
 import 'dart:async';
 
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
@@ -98,10 +97,5 @@ void main() {
     ..add("0.8", () { tech.vectorScale = 0.8; })
     ..add("1.0", () { tech.vectorScale = 1.0; });
 
-  var update;
-  update = (num t) {
-    td.render();
-    window.requestAnimationFrame(update);
-  };
-  window.requestAnimationFrame(update);
+  common.showFPS(td);
 }

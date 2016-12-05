@@ -22,7 +22,7 @@ class BumpyTechnique extends Techniques.Technique {
   }
 
   /// Handles the technique being changed.
-  void _onChange([ThreeDart.EventArgs args = null]) {
+  void _onChanged([ThreeDart.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
@@ -30,8 +30,11 @@ class BumpyTechnique extends Techniques.Technique {
   Textures.Texture2D get bumpyTexture => this._txt;
   void set bumpyTexture(Textures.Texture2D txt) {
     if (this._txt != txt) {
+      if (this._txt != null) this._txt.loadFinished.remove(this._onChanged);
+      Textures.Texture2D prev = this._txt;
       this._txt = txt;
-      this._onChange();
+      if (this._txt != null) this._txt.loadFinished.add(this._onChanged);
+      this._onChanged(new ThreeDart.ValueChangedEventArgs(this, "bumpyTexture", prev, this._txt));
     }
   }
 
@@ -39,8 +42,9 @@ class BumpyTechnique extends Techniques.Technique {
   double get offsetScalar => this._offsetScalar;
   void set offsetScalar(double scalar) {
     if (!Math.Comparer.equals(this._offsetScalar, scalar)) {
+      double prev = this._offsetScalar;
       this._offsetScalar = scalar;
-      this._onChange();
+      this._onChanged(new ThreeDart.ValueChangedEventArgs(this, "offsetScalar", prev, this._offsetScalar));
     }
   }
 

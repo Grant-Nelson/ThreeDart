@@ -3,7 +3,6 @@
 
 library ThreeDart.test.test014;
 
-import 'dart:html';
 import 'dart:math';
 
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
@@ -166,10 +165,5 @@ void main() {
     ..add("Toroid",        () { obj.shape = Shapes.toroid(); }, true)
     ..add("Knot",          () { obj.shape = Shapes.knot(); });
 
-  var update;
-  update = (num t) {
-    td.render();
-    window.requestAnimationFrame(update);
-  };
-  window.requestAnimationFrame(update);
+  common.showFPS(td);
 }

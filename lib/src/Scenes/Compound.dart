@@ -11,11 +11,12 @@ class Compound extends Core.Collection<Scene> implements Scene {
 
   /// Creates a new compound scene.
   Compound({List<Scene> passes: null}) {
-    this.setHandlers(
-      onAddedHndl: this._onSceneAdded,
-      onRemovedHndl: this._onSceneRemoved);
     this._loopProtection = false;
     this._changed        = null;
+
+    this.setHandlers(
+      onAddedHndl:   this._onSceneAdded,
+      onRemovedHndl: this._onSceneRemoved);
     if (passes != null) this.addAll(passes);
   }
 

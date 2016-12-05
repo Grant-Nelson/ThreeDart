@@ -3,8 +3,6 @@
 
 library ThreeDart.test.test008;
 
-import 'dart:html';
-
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 import 'package:ThreeDart/Shapes.dart' as Shapes;
 import 'package:ThreeDart/Movers.dart' as Movers;
@@ -100,10 +98,5 @@ void main() {
     ..add("0.8", () { setScalar(0.8); })
     ..add("1.0", () { setScalar(1.0); });
 
-  var update;
-  update = (num t) {
-    td.render();
-    window.requestAnimationFrame(update);
-  };
-  window.requestAnimationFrame(update);
+  common.showFPS(td);
 }

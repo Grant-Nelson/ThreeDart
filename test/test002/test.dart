@@ -47,8 +47,8 @@ void main() {
     ..add("Face Normals",    (bool show) { tech.showFaceNormals    = show; })
     ..add("Face Binormals",  (bool show) { tech.showFaceBinormals  = show; })
     ..add("Face Tangentals", (bool show) { tech.showFaceTangentals = show; })
-    ..add("Colors",          (bool show) { tech.showColorFill      = show; })
-    ..add("Textures2D",      (bool show) { tech.showTxt2DColor     = show; })
+    ..add("Colors",          (bool show) { tech.showColorFill      = show; }) // TODO: The offsets of the colors needs to be fixed.
+    ..add("Textures2D",      (bool show) { tech.showTxt2DColor     = show; }) // TODO: The offsets of the 2D textures needs to be fixed.
     ..add("TexturesCube",    (bool show) { tech.showTxtCube        = show; })
     ..add("Weight",          (bool show) { tech.showWeight         = show; })
     ..add("Bend",            (bool show) { tech.showBend           = show; })

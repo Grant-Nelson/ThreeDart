@@ -49,7 +49,7 @@ class EntityPass implements RenderPass {
     this.camera = camera;
     this.target = target;
     this.technique = tech;
-    if (children != null)  this._children.addAll(children);
+    if (children != null) this._children.addAll(children);
   }
 
   /// Handles a change in this pass.
@@ -80,9 +80,10 @@ class EntityPass implements RenderPass {
     camera = camera ?? new Views.Perspective();
     if (this._camera != camera) {
       if (this._camera != null) this._camera.changed.remove(this._onChanged);
+      Views.Camera prev = this._camera;
       this._camera = camera;
       if (this._camera != null) this._camera.changed.add(this._onChanged);
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "camera", prev, this._camera));
     }
   }
 
@@ -93,9 +94,10 @@ class EntityPass implements RenderPass {
     target = target ?? new Views.FrontTarget();
     if (this._target != target) {
       if (this._target != null) this._target.changed.remove(this._onChanged);
+      Views.Target prev = this._target;
       this._target = target;
       if (this._target != null) this._target.changed.add(this._onChanged);
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "target", prev, this._target));
     }
   }
 
@@ -104,9 +106,10 @@ class EntityPass implements RenderPass {
   void set technique(Techniques.Technique tech) {
     if (this._tech != tech) {
       if (this._tech != null) this._tech.changed.remove(this._onChanged);
+      Techniques.Technique prev = this._tech;
       this._tech = tech;
       if (this._tech != null) this._tech.changed.add(this._onChanged);
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "technique", prev, this._tech));
     }
   }
 
