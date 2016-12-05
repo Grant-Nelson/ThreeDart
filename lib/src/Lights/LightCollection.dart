@@ -94,68 +94,50 @@ class LightCollection extends Core.Collection<Light> {
 
   /// Checks the given [light] is in the collection.
   bool _contains(Light light) {
-    switch (light.runtimeType) {
-      case Directional:
-        return this._dirLights.contains(light);
-      case Point:
-        return this._pntLights.contains(light);
-      case Spot:
-        return this._spotLights.contains(light);
-      case TexturedDirectional:
-        return this._txtDirLights.contains(light);
-      case TexturedPoint:
-        return this._txtPntLights.contains(light);
-      case TexturedSpot:
-        return this._txtSpotLights.contains(light);
-    }
+    if (light is Directional)
+      return this._dirLights.contains(light);
+    if (light is Point)
+      return this._pntLights.contains(light);
+    if (light is Spot)
+      return this._spotLights.contains(light);
+    if (light is TexturedDirectional)
+      return this._txtDirLights.contains(light);
+    if (light is TexturedPoint)
+      return this._txtPntLights.contains(light);
+    if (light is TexturedSpot)
+      return this._txtSpotLights.contains(light);
     return false;
   }
 
   /// Adds the given [light] to this collection.
   void _addOther(Light light) {
-    switch (light.runtimeType) {
-      case Directional:
-        this._dirLights.add(light);
-        break;
-      case Point:
-        this._pntLights.add(light);
-        break;
-      case Spot:
-        this._spotLights.add(light);
-        break;
-      case TexturedDirectional:
-        this._txtDirLights.add(light);
-        break;
-      case TexturedPoint:
-        this._txtPntLights.add(light);
-        break;
-      case TexturedSpot:
-        this._txtSpotLights.add(light);
-        break;
-    }
+    if (light is Directional)
+      this._dirLights.add(light);
+    else if (light is Point)
+      this._pntLights.add(light);
+    else if (light is Spot)
+      this._spotLights.add(light);
+    else if (light is TexturedDirectional)
+      this._txtDirLights.add(light);
+    else if (light is TexturedPoint)
+      this._txtPntLights.add(light);
+    else if (light is TexturedSpot)
+      this._txtSpotLights.add(light);
   }
 
   /// Removes the light from the specific lists of lights.
   void _removeOther(Light light) {
-    switch (light.runtimeType) {
-      case Directional:
-        this._dirLights.remove(light);
-        break;
-      case Point:
-        this._pntLights.remove(light);
-        break;
-      case Spot:
-        this._spotLights.remove(light);
-        break;
-      case TexturedDirectional:
-        this._txtDirLights.remove(light);
-        break;
-      case TexturedPoint:
-        this._txtPntLights.remove(light);
-        break;
-      case TexturedSpot:
-        this._txtSpotLights.remove(light);
-        break;
-    }
+    if (light is Directional)
+      this._dirLights.remove(light);
+    else if (light is Point)
+      this._pntLights.remove(light);
+    else if (light is Spot)
+      this._spotLights.remove(light);
+    else if (light is TexturedDirectional)
+      this._txtDirLights.remove(light);
+    else if (light is TexturedPoint)
+      this._txtPntLights.remove(light);
+    else if (light is TexturedSpot)
+      this._txtSpotLights.remove(light);
   }
 }

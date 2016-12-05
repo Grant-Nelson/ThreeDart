@@ -24,6 +24,12 @@ part 'Vector4.dart';
 /// Pi constant.
 const double PI = math.PI;
 
+/// Pi / 2 constant.
+const double PI_2 = math.PI/2.0;
+
+/// Pi / 3 constant.
+const double PI_3 = math.PI/3.0;
+
 /// Tau constant, twice Pi.
 const double TAU = math.PI*2.0;
 

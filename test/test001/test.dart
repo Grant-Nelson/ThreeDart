@@ -24,6 +24,8 @@ void main() {
     ..technique = new Techniques.Depth(fogStart: 3.0, fogStop: 6.0)
     ..camera.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0));
 
-  new ThreeDart.ThreeDart.fromId("threeDart")
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart")
     ..scene = pass;
+
+  common.showFPS(td);
 }

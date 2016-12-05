@@ -10,11 +10,14 @@ class Directional implements Light {
   /// Creates a new directional light data.
   Directional({
       Movers.Mover mover: null,
-      Math.Color3 color: null}) {
-    this.mover      = mover;
-    this.color      = color;
+      Math.Color3  color: null}) {
+    this._mover     = null;
+    this._color     = new Math.Color3.white();
     this._direction = new Math.Vector3(0.0, 0.0, 1.0);
     this._changed   = null;
+
+    this.mover = mover;
+    this.color = color;
   }
 
   /// Emits when the light is changed.
@@ -24,7 +27,7 @@ class Directional implements Light {
   }
 
   /// Handles a change in the light.
-  void onChanged([Core.EventArgs args = null]) {
+  void _onChanged([Core.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
@@ -56,10 +59,11 @@ class Directional implements Light {
   Movers.Mover get mover => this._mover;
   void set mover(Movers.Mover mover) {
     if (this._mover != mover) {
-      if (this._mover != null) this._mover.changed.remove(this.onChanged);
-      if (mover != null) this._mover.changed.add(this.onChanged);
+      if (this._mover != null) this._mover.changed.remove(this._onChanged);
+      Movers.Mover prev = this._mover;
       this._mover = mover;
-      this.onChanged();
+      if (this._mover != null) this._mover.changed.add(this._onChanged);
+      this._onChanged(new Core.ValueChangedEventArgs(this, "mover", prev, this._mover));
     }
   }
 
@@ -68,8 +72,9 @@ class Directional implements Light {
   void set color(Math.Color3 color) {
     color = color ?? new Math.Color3.white();
     if (this._color != color) {
+      Math.Color3 prev = this._color;
       this._color = color;
-      this.onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "color", prev, this._color));
     }
   }
 }

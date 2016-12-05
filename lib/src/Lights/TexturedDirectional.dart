@@ -13,15 +13,19 @@ class TexturedDirectional implements Light {
   /// Creates a new directional light data.
   TexturedDirectional({
       Movers.Mover mover: null,
-      Math.Color3 color: null,
+      Math.Color3  color: null,
       Textures.Texture2D texture: null}) {
-    this.mover      = mover;
-    this.color      = color;
-    this.texture    = texture;
+    this._mover     = null;
+    this._color     = new Math.Color3.white();
+    this._texture   = null;
     this._direction = new Math.Vector3(0.0, 0.0, 1.0);
     this._up        = new Math.Vector3(0.0, 1.0, 0.0);
     this._right     = new Math.Vector3(-1.0, 0.0, 0.0);
     this._changed   = null;
+
+    this.mover   = mover;
+    this.color   = color;
+    this.texture = texture;
   }
 
   /// Emits when the light is changed.
@@ -31,7 +35,7 @@ class TexturedDirectional implements Light {
   }
 
   /// Handles a change in the light.
-  void onChanged([Core.EventArgs args = null]) {
+  void _onChanged([Core.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
@@ -73,10 +77,11 @@ class TexturedDirectional implements Light {
   Movers.Mover get mover => this._mover;
   void set mover(Movers.Mover mover) {
     if (this._mover != mover) {
-      if (this._mover != null) this._mover.changed.remove(this.onChanged);
-      if (mover != null) this._mover.changed.add(this.onChanged);
+      if (this._mover != null) this._mover.changed.remove(this._onChanged);
+      Movers.Mover prev = this._mover;
       this._mover = mover;
-      this.onChanged();
+      if (this._mover != null) this._mover.changed.add(this._onChanged);
+      this._onChanged(new Core.ValueChangedEventArgs(this, "mover", prev, this._mover));
     }
   }
 
@@ -85,8 +90,9 @@ class TexturedDirectional implements Light {
   void set color(Math.Color3 color) {
     color = color ?? new Math.Color3.white();
     if (this._color != color) {
+      Math.Color3 prev = this._color;
       this._color = color;
-      this.onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "color", prev, this._color));
     }
   }
 
@@ -94,10 +100,11 @@ class TexturedDirectional implements Light {
   Textures.Texture2D get texture => this._texture;
   void set texture(Textures.Texture2D texture) {
     if (this._texture != texture) {
-      if (this._texture != null) this._texture.loadFinished.remove(this.onChanged);
-      if (texture != null) this._texture.loadFinished.add(this.onChanged);
+      if (this._texture != null) this._texture.loadFinished.remove(this._onChanged);
+      Textures.Texture2D prev = this._texture;
       this._texture = texture;
-      this.onChanged();
+      if (this._texture != null) this._texture.loadFinished.add(this._onChanged);
+      this._onChanged(new Core.ValueChangedEventArgs(this, "texture", prev, this._texture));
     }
   }
 }

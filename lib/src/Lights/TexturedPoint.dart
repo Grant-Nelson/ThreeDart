@@ -14,19 +14,26 @@ class TexturedPoint implements Light {
   /// Creates a new textured point light data.
   TexturedPoint({
       Movers.Mover mover: null,
-      Math.Color3 color: null,
+      Math.Color3  color: null,
       Textures.TextureCube texture: null,
-      double attenuation0: null,
-      double attenuation1: null,
-      double attenuation2: null}) {
+      double attenuation0: 1.0,
+      double attenuation1: 0.0,
+      double attenuation2: 0.0}) {
+    this._mover        = null;
+    this._color        = new Math.Color3.white();
+    this._texture      = null;
+    this._attenuation0 = 1.0;
+    this._attenuation1 = 0.0;
+    this._attenuation2 = 0.0;
+    this._matrix       = new Math.Matrix4.identity();
+    this._changed      = null;
+
     this.mover        = mover;
     this.color        = color;
     this.texture      = texture;
     this.attenuation0 = attenuation0;
     this.attenuation1 = attenuation1;
     this.attenuation2 = attenuation2;
-    this._matrix      = new Math.Matrix4.identity();
-    this._changed     = null;
   }
 
   /// Emits when the light is changed.
@@ -36,7 +43,7 @@ class TexturedPoint implements Light {
   }
 
   /// Handles a change in the light.
-  void onChanged([Core.EventArgs args = null]) {
+  void _onChanged([Core.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
@@ -65,10 +72,11 @@ class TexturedPoint implements Light {
   Movers.Mover get mover => this._mover;
   void set mover(Movers.Mover mover) {
     if (this._mover != mover) {
-      if (this._mover != null) this._mover.changed.remove(this.onChanged);
-      if (mover != null) this._mover.changed.add(this.onChanged);
+      if (this._mover != null) this._mover.changed.remove(this._onChanged);
+      Movers.Mover prev = this._mover;
       this._mover = mover;
-      this.onChanged();
+      if (this._mover != null) this._mover.changed.add(this._onChanged);
+      this._onChanged(new Core.ValueChangedEventArgs(this, "mover", prev, this._mover));
     }
   }
 
@@ -77,8 +85,9 @@ class TexturedPoint implements Light {
   void set color(Math.Color3 color) {
     color = color ?? new Math.Color3.white();
     if (this._color != color) {
+      Math.Color3 prev = this._color;
       this._color = color;
-      this.onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "color", prev, this._color));
     }
   }
 
@@ -86,10 +95,11 @@ class TexturedPoint implements Light {
   Textures.TextureCube get texture => this._texture;
   void set texture(Textures.TextureCube texture) {
     if (this._texture != texture) {
-      if (this._texture != null) this._texture.loadFinished.remove(this.onChanged);
-      if (texture != null) this._texture.loadFinished.add(this.onChanged);
+      if (this._texture != null) this._texture.loadFinished.remove(this._onChanged);
+      Textures.TextureCube prev = this._texture;
       this._texture = texture;
-      this.onChanged();
+      if (this._texture != null) this._texture.loadFinished.add(this._onChanged);
+      this._onChanged(new Core.ValueChangedEventArgs(this, "texture", prev, this._texture));
     }
   }
 
@@ -98,8 +108,9 @@ class TexturedPoint implements Light {
   void set attenuation0(double attenuation0) {
     attenuation0 = attenuation0 ?? 1.0;
     if (!Math.Comparer.equals(this._attenuation0, attenuation0)) {
+      double prev = this._attenuation0;
       this._attenuation0 = attenuation0;
-      this.onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "attenuation0", prev, this._attenuation0));
     }
   }
 
@@ -108,8 +119,9 @@ class TexturedPoint implements Light {
   void set attenuation1(double attenuation1) {
     attenuation1 = attenuation1 ?? 0.0;
     if (!Math.Comparer.equals(this._attenuation1, attenuation1)) {
+      double prev = this._attenuation1;
       this._attenuation1 = attenuation1;
-      this.onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "attenuation1", prev, this._attenuation1));
     }
   }
 
@@ -118,8 +130,9 @@ class TexturedPoint implements Light {
   void set attenuation2(double attenuation2) {
     attenuation2 = attenuation2 ?? 0.0;
     if (!Math.Comparer.equals(this._attenuation2, attenuation2)) {
+      double prev = this._attenuation2;
       this._attenuation2 = attenuation2;
-      this.onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "attenuation2", prev, this._attenuation2));
     }
   }
 }

@@ -139,3 +139,10 @@ void shellTest(String title, List<String> ctrlBoxes, String comment) {
 
   shellPage(title, elem, false, "../resources/SnowTop.png");
 }
+
+void showFPS(ThreeDart.ThreeDart td) {
+  new Timer.periodic(const Duration(milliseconds: 1000), (Timer time) {
+    String fps = td.fps.toStringAsFixed(2);
+    print("${fps} fps");
+  });
+}
