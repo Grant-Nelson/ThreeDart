@@ -1,5 +1,7 @@
 part of ThreeDart.Core;
 
+// TODO: Update all the events for the Entity
+
 /// A renderable entity in a tree of entities for a scene.
 ///
 /// An [Entity] is a [Shape], [Technique], and a [Mover]
@@ -133,8 +135,8 @@ class Entity implements Movers.Movable, Changable {
   }
 
   /// The cache of the current shape in buffers for the current technique.
-  set cache(Data.TechniqueCache cache) => _cache = cache;
   Data.TechniqueCache get cache => this._cache;
+  set cache(Data.TechniqueCache cache) => _cache = cache;
 
   /// The children Entitys of this Entity.
   Collection<Entity> get children => _children;

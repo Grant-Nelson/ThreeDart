@@ -61,17 +61,22 @@ class Sterioscopic implements Scene {
     this._rightCamera = new Views.Perspective(mover: this._rightMovGroup);
     this._leftRegion = new Math.Region2(0.0, 0.0, 0.5, 1.0);
     this._rightRegion = new Math.Region2(0.5, 0.0, 0.5, 1.0);
-    this.cameraMover = mover;
-    this.target = target;
+    this._target = null;
     this._passes = new Core.Collection<RenderPass>();
     this._passes.setHandlers(
       onAddedHndl: this._onAddedRenderPass,
       onRemovedHndl: this._onRemovedRenderPass);
     if (passes != null) this._passes.addAll(passes);
-    this._eyeSpacing = eyeSpacing;
-    this._focusDistance = focusDistance;
+    this._eyeSpacing = 0.1;
+    this._focusDistance = 12.0;
     this._onRender = null;
     this._changed = null;
+
+    this.cameraMover = mover;
+    this.target = target;
+    if (passes != null) this._passes.addAll(passes);
+    this._eyeSpacing = eyeSpacing;
+    this._focusDistance = focusDistance;
     this._updateConstMats();
   }
 
@@ -85,7 +90,7 @@ class Sterioscopic implements Scene {
     for (RenderPass pass in passes) {
       if (pass != null) pass.changed.add(this._onChanged);
     }
-    this._onChanged();
+    this._onChanged(new Core.ItemsAddedEventArgs(this, index, passes));
   }
 
   /// Handles render passes being removed.
@@ -93,16 +98,17 @@ class Sterioscopic implements Scene {
     for (RenderPass pass in passes) {
       if (pass != null) pass.changed.remove(this._onChanged);
     }
-    this._onChanged();
+    this._onChanged(new Core.ItemsRemovedEventArgs(this, index, passes));
   }
 
   /// The camera mover describing the view of the scene.
   Movers.Mover get cameraMover => this._leftMovGroup[0];
   set cameraMover(Movers.Mover camMover) {
     if (this._leftMovGroup[0] != camMover) {
+      Movers.Mover prev = this._leftMovGroup[0];
       this._leftMovGroup[0] = camMover;
       this._rightMovGroup[0] = camMover;
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "cameraMover", prev, camMover));
     }
   }
 
@@ -112,9 +118,10 @@ class Sterioscopic implements Scene {
     target = target ?? new Views.FrontTarget();
     if (this._target != target) {
       if (this._target != null) this._target.changed.remove(this._onChanged);
+      Views.Target prev = this._target;
       this._target = target;
       if (this._target != null) this._target.changed.add(this._onChanged);
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "target", prev, this._target));
     }
   }
 
@@ -124,20 +131,24 @@ class Sterioscopic implements Scene {
   /// The distance between the left and right eye.
   double get eyeSpacing => this._eyeSpacing;
   set eyeSpacing(double eyeSpacing) {
+    eyeSpacing = eyeSpacing ?? 0.1;
     if (!Math.Comparer.equals(this._eyeSpacing, eyeSpacing)) {
+      double prev = this._eyeSpacing;
       this._eyeSpacing = eyeSpacing;
       this._updateConstMats();
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "eyeSpacing", prev, this._eyeSpacing));
     }
   }
 
   /// The distance to when the left and right image cross.
   double get focusDistance => this._focusDistance;
   set focusDistance(double focusDistance) {
+    focusDistance = focusDistance ?? 12.0;
     if (!Math.Comparer.equals(this._focusDistance, focusDistance)) {
+      double prev = this._focusDistance;
       this._focusDistance = focusDistance;
       this._updateConstMats();
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "focusDistance", prev, this._focusDistance));
     }
   }
 

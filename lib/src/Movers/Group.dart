@@ -10,15 +10,18 @@ class Group extends Core.Collection<Mover> implements Mover {
       onAddedHndl:   this._onAdded,
       onRemovedHndl: this._onRemoved);
     if (movers != null) this.addAll(movers);
-    this._changed = new Core.Event();
+    this._changed = null;
   }
 
   /// Emits when the mover has changed.
-  Core.Event get changed => this._changed;
+  Core.Event get changed {
+    if (this._changed == null) this._changed = new Core.Event();
+    return this._changed;
+  }
 
   /// Handles a child mover being changed.
   void _onChanged([Core.EventArgs args = null]) {
-    this._changed.emit(args);
+    this._changed?.emit(args);
   }
 
   /// Is called when one or more items are added to this collection.
@@ -30,7 +33,7 @@ class Group extends Core.Collection<Mover> implements Mover {
     for (Mover mover in added) {
       if (mover != null) mover.changed.add(this._onChanged);
     }
-    this._onChanged();
+    this._onChanged(new Core.ItemsAddedEventArgs(this, index, added));
   }
 
   /// Is called when one or more items are removed from this collection.
@@ -42,7 +45,7 @@ class Group extends Core.Collection<Mover> implements Mover {
     for (Mover mover in removed) {
       if (mover != null) mover.changed.remove(this._onChanged);
     }
-    this._onChanged();
+    this._onChanged(new Core.ItemsRemovedEventArgs(this, index, removed));
   }
 
   /// Updates all of the contained movers then multiply their results in order.

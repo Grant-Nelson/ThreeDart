@@ -26,18 +26,21 @@ class CoverPass implements RenderPass {
       Views.Camera camera: null,
       Views.Target target: null,
       Techniques.Technique tech: null
-    }) {
+  }) {
     this._changed  = null;
     this.camera    = camera;
     this.target    = target;
     this.technique = tech;
     this._box      = new Core.Entity()
       ..shape      = Shapes.square();
-    this._onRender = new Core.Event();
+    this._onRender = null;
   }
 
   /// Event emitted on an render for this pass.
-  Core.Event get onRender => this._onRender;
+  Core.Event get onRender {
+    if (this._onRender == null) this._onRender = new Core.Event();
+    return this._onRender;
+  }
 
   /// The event emitted when the scene has changed.
   Core.Event get changed {

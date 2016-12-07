@@ -36,15 +36,15 @@ class EntityPass implements RenderPass {
     }) {
     this._camera = null;
     this._target = null;
-    this._tech = null;
+    this._tech   = null;
     this._children = new Core.Collection<Core.Entity>();
     this._children.setHandlers(
       onAddedHndl: this._onChildrenAdded,
       onRemovedHndl: this._onChildrenRemoved);
-    this._onPreUpdate = null;
+    this._onPreUpdate  = null;
     this._onPostUpdate = null;
     this._onRender = null;
-    this._changed = null;
+    this._changed  = null;
 
     this.camera = camera;
     this.target = target;
@@ -62,7 +62,7 @@ class EntityPass implements RenderPass {
     for (Core.Entity entity in entities) {
       if (entity != null) entity.changed.add(this._onChanged);
     }
-    this._onChanged();
+    this._onChanged(new Core.ItemsAddedEventArgs(this, index, entities));
   }
 
   /// Called when a child is removed.
@@ -70,7 +70,7 @@ class EntityPass implements RenderPass {
     for (Core.Entity entity in entities) {
       if (entity != null) entity.changed.remove(this._onChanged);
     }
-    this._onChanged();
+    this._onChanged(new Core.ItemsRemovedEventArgs(this, index, entities));
   }
 
   /// The camera describing the view of the scene.

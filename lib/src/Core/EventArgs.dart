@@ -138,7 +138,35 @@ class ValueChangedEventArgs extends EventArgs {
   /// The current value that the value was just changed to.
   final Object value;
 
-  /// Creates a entity event argument.
+  /// Creates an entity event argument.
   ValueChangedEventArgs(Object sender, this.name, this.previous, this.value):
+    super(sender);
+}
+
+/// The event argument for event's when items are added to a collection.
+class ItemsAddedEventArgs<T> extends EventArgs {
+
+  /// The index that the items were inserted at.
+  final int index;
+
+  /// The list of items which were added.
+  final Iterable<T> added;
+
+  /// Creates an items added event argument.
+  ItemsAddedEventArgs(Object sender, this.index, this.added):
+    super(sender);
+}
+
+/// The event argument for event's when items removed from a collection.
+class ItemsRemovedEventArgs<T> extends EventArgs {
+
+  /// The index that the items were taken from.
+  final int index;
+
+  /// The list of items which were removed.
+  final Iterable<T> removed;
+
+  /// Creates an items removed event argument.
+  ItemsRemovedEventArgs(Object sender, this.index, this.removed):
     super(sender);
 }

@@ -62,7 +62,7 @@ class LightCollection extends Core.Collection<Light> {
       this._addOther(light);
       light.changed.add(this._onLightChanged);
     }
-    this._onChanged();
+    this._onChanged(new Core.ItemsAddedEventArgs(this, index, added));
   }
 
   /// Handles a light being removed.
@@ -71,7 +71,7 @@ class LightCollection extends Core.Collection<Light> {
       this._removeOther(light);
       light.changed.remove(this._onLightChanged);
     }
-    this._onChanged();
+    this._onChanged(new Core.ItemsRemovedEventArgs(this, index, removed));
   }
 
   /// Gets the set of directional lights in this collection.

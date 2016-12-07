@@ -3,6 +3,8 @@
 
 library ThreeDart.test.test001;
 
+import 'dart:html';
+
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 import 'package:ThreeDart/Shapes.dart' as Shapes;
 import 'package:ThreeDart/Movers.dart' as Movers;

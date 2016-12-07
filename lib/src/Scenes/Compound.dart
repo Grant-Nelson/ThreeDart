@@ -36,7 +36,7 @@ class Compound extends Core.Collection<Scene> implements Scene {
     for (Scene scene in scenes) {
       if (scene != null) scene.changed.add(this._onChanged);
     }
-    this._onChanged();
+    this._onChanged(new Core.ItemsAddedEventArgs(this, index, scenes));
   }
 
   /// Called when scenes are removed.
@@ -44,7 +44,7 @@ class Compound extends Core.Collection<Scene> implements Scene {
     for (Scene scene in scenes) {
       if (scene != null) scene.changed.remove(this._onChanged);
     }
-    this._onChanged();
+    this._onChanged(new Core.ItemsRemovedEventArgs(this, index, scenes));
   }
 
   /// Renders the scenes with the given [state].

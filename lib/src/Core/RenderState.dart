@@ -79,19 +79,19 @@ class RenderState {
     this._projViewObjMat = null;
     this._viewObjMat = null;
     this._projStack = new Matrix4Stack()
-      ..onChanged.add((EventArgs e) {
+      ..changed.add((EventArgs e) {
         this._projViewMat = null;
         this._projViewObjMat = null;
       });
     this._viewStack = new Matrix4Stack()
-      ..onChanged.add((EventArgs e) {
+      ..changed.add((EventArgs e) {
         this._projViewMat = null;
         this._invViewMat = null;
         this._projViewObjMat = null;
         this._viewObjMat = null;
       });
     this._objStack = new Matrix4Stack()
-      ..onChanged.add((EventArgs e) {
+      ..changed.add((EventArgs e) {
         this._projViewObjMat = null;
         this._viewObjMat = null;
       });

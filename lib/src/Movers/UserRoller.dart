@@ -53,10 +53,10 @@ class UserRoller implements Mover, Core.UserInteractable {
 
   /// Creates a new user rotater instance.
   UserRoller({
-    bool ctrl: false,
-    bool alt: false,
-    bool shift: false,
-    Core.UserInput input: null}) {
+      bool ctrl:  false,
+      bool alt:   false,
+      bool shift: false,
+      Core.UserInput input: null}) {
     this._input = null;
     this._roll = new ComponentShift()
       ..wrap = true
@@ -64,29 +64,39 @@ class UserRoller implements Mover, Core.UserInteractable {
       ..minimumLocation = 0.0
       ..location = 0.0
       ..maximumVelocity = 100.0
-      ..velocity = 0.0
+      ..velocity  = 0.0
       ..dampening = 0.2;
     this._roll.changed.add(this._onChanged);
-    this._ctrlPressed = ctrl;
-    this._altPressed = alt;
-    this._shiftPressed = shift;
+    this._ctrlPressed  = false;
+    this._altPressed   = false;
+    this._shiftPressed = false;
     this._cumulative = false;
     this._rollScalar = 2.5;
-    this._deadBand = 2.0;
-    this._deadBand2 = 4.0;
-    this._pressed = false;
+    this._deadBand   = 2.0;
+    this._deadBand2  = 4.0;
+    this._pressed    = false;
     this._inDeadBand = false;
-    this._lastRoll = 0.0;
-    this._prevVal = null;
-    this._frameNum = 0;
-    this._mat = null;
-    this._changed = new Core.Event();
+    this._lastRoll   = 0.0;
+    this._prevVal    = null;
+    this._frameNum   = 0;
+    this._mat        = null;
+    this._changed    = null;
+
+    this.ctrlPressed  = ctrl;
+    this.altPressed   = alt;
+    this.shiftPressed = shift;
     this.attach(input);
   }
 
-  /// Handles emitting a change for this Mover.
+  /// Emits when the mover has changed.
+  Core.Event get changed {
+    if (this._changed == null) this._changed = new Core.Event();
+    return this._changed;
+  }
+
+  /// Handles a child mover being changed.
   void _onChanged([Core.EventArgs args = null]) {
-    this._changed.emit(args);
+    this._changed?.emit(args);
   }
 
   /// Attaches this mover to the user input.
@@ -112,8 +122,8 @@ class UserRoller implements Mover, Core.UserInteractable {
 
   /// Handles the mouse down event.
   void _mouseDownHandle(Core.MouseEventArgs args) {
-    if (this._ctrlPressed != this._input.ctrlPressed) return;
-    if (this._altPressed != this._input.altPressed) return;
+    if (this._ctrlPressed  != this._input.ctrlPressed)  return;
+    if (this._altPressed   != this._input.altPressed)   return;
     if (this._shiftPressed != this._input.shiftPressed) return;
     this._pressed = true;
     this._inDeadBand = true;
@@ -155,33 +165,70 @@ class UserRoller implements Mover, Core.UserInteractable {
 
   /// Indicates if the control/meta key must be pressed or released.
   bool get ctrlPressed => this._ctrlPressed;
-  void set ctrlPressed(bool enable) { this._ctrlPressed = enable; }
+  void set ctrlPressed(bool enable) {
+    enable = enable ?? false;
+    if (this._ctrlPressed != enable) {
+      bool prev = this._ctrlPressed;
+      this._ctrlPressed = enable;
+      this._onChanged(new Core.ValueChangedEventArgs(this, "ctrlPressed", prev, this._ctrlPressed));
+    }
+  }
 
   /// Indicates if the alt key must be pressed or released.
   bool get altPressed => this._altPressed;
-  void set altPressed(bool enable) { this._altPressed = enable; }
+  void set altPressed(bool enable) {
+    enable = enable ?? false;
+    if (this._altPressed != enable) {
+      bool prev = this._altPressed;
+      this._altPressed = enable;
+      this._onChanged(new Core.ValueChangedEventArgs(this, "altPressed", prev, this._altPressed));
+    }
+  }
 
   /// Indicates if the shift key must be pressed or released.
   bool get shiftPressed => this._shiftPressed;
-  void set shiftPressed(bool enable) { this._shiftPressed = enable; }
+  void set shiftPressed(bool enable) {
+    enable = enable ?? false;
+    if (this._shiftPressed != enable) {
+      bool prev = this._shiftPressed;
+      this._shiftPressed = enable;
+      this._onChanged(new Core.ValueChangedEventArgs(this, "shiftPressed", prev, this._shiftPressed));
+    }
+  }
 
   /// Indicates if the rotations should be continuous or not.
   bool get cumulative => this._cumulative;
-  void set cumulative(bool enable) { this._cumulative = enable; }
+  void set cumulative(bool enable) {
+    enable = enable ?? false;
+    if (this._cumulative != enable) {
+      bool prev = this._cumulative;
+      this._cumulative = enable;
+      this._onChanged(new Core.ValueChangedEventArgs(this, "cumulative", prev, this._cumulative));
+    }
+  }
 
   /// The scalar to apply to the mouse movements roll.
   double get rollScalar => this._rollScalar;
-  void set rollScalar(double value) { this._rollScalar = value; }
+  void set rollScalar(double value) {
+    value = value ?? 0.0;
+    if (!Math.Comparer.equals(this._rollScalar, value)) {
+      double prev = this._rollScalar;
+      this._rollScalar = value;
+      this._onChanged(new Core.ValueChangedEventArgs(this, "rollScalar", prev, this._rollScalar));
+    }
+  }
 
   /// The dead-band, in pixels, before any movement is made.
   double get deadBand => this._deadBand;
   void set deadBand(double value) {
-    this._deadBand = value;
-    this._deadBand2 = this._deadBand * this._deadBand;
+    value = value ?? 0.0;
+    if (!Math.Comparer.equals(this._deadBand, value)) {
+      double prev = this._deadBand;
+      this._deadBand = value;
+      this._deadBand2 = this._deadBand * this._deadBand;
+      this._onChanged(new Core.ValueChangedEventArgs(this, "deadBand", prev, this._deadBand));
+    }
   }
-
-  /// Emits when the mover has changed.
-  Core.Event get changed => this._changed;
 
   /// Updates this mover and returns the matrix for the given object.
   Math.Matrix4 update(Core.RenderState state, Movable obj) {

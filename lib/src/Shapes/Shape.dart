@@ -14,7 +14,7 @@ class Shape implements Core.Changable {
     this._points = new ShapePointCollection._(this);
     this._lines = new ShapeLineCollection._(this);
     this._faces = new ShapeFaceCollection._(this);
-    this._changed = new Core.Event();
+    this._changed = null;
   }
 
   /// Creates a copy of the given [other] shape.
@@ -35,13 +35,16 @@ class Shape implements Core.Changable {
   ShapeFaceCollection get faces => this._faces;
 
   /// The changed event to signal when ever the shape is modified.
-  Core.Event get changed => this._changed;
+  Core.Event get changed {
+    if (this._changed == null) this._changed = new Core.Event();
+    return this._changed;
+  }
 
   /// Merges the given shape into this shape.
   /// No vertices nor seams are joined, this is a simple copy
   /// of all the given shape's information into this shape.
   void merge(Shape other) {
-    this._changed.suspend();
+    this._changed?.suspend();
     other._vertices._updateIndices();
     int offset = this._vertices.length;
     for (Vertex vertex in other._vertices._vertices) {
@@ -63,17 +66,17 @@ class Shape implements Core.Changable {
       Vertex ver3 = this._vertices[face.vertex3.index + offset];
       this._faces.add(ver1, ver2, ver3);
     }
-    this._changed.resume();
+    this._changed?.resume();
   }
 
   /// Calculates the normals for the vertices and favces.
   /// True if successful, false on error.
   bool calculateNormals() {
     bool success = true;
-    this._changed.suspend();
+    this._changed?.suspend();
     if (!this._faces.calculateNormals()) success = false;
     if (!this._vertices.calculateNormals()) success = false;
-    this._changed.resume();
+    this._changed?.resume();
     return success;
   }
 
@@ -82,10 +85,10 @@ class Shape implements Core.Changable {
   /// True if successful, false on error.
   bool calculateBinormals() {
     bool success = true;
-    this._changed.suspend();
+    this._changed?.suspend();
     if (!this._faces.calculateBinormals()) success = false;
     if (!this._vertices.calculateBinormals()) success = false;
-    this._changed.resume();
+    this._changed?.resume();
     return success;
   }
 
@@ -94,9 +97,9 @@ class Shape implements Core.Changable {
   /// True if successful, false on error.
   bool calculateCubeTextures() {
     bool success = true;
-    this._changed.suspend();
+    this._changed?.suspend();
     if (!this._vertices.calculateCubeTextures()) success = false;
-    this._changed.resume();
+    this._changed?.resume();
     return success;
   }
 
@@ -132,7 +135,7 @@ class Shape implements Core.Changable {
   /// The height is pulled from the map using the texture 2D values of the vertices and
   /// the offset is applied in the direction of the normal vector.
   void applyHeightMap(Textures.TextureReader height, [double scalar = 1.0]) {
-    this._changed.suspend();
+    this._changed?.suspend();
     for (int i = this._vertices.length-1; i >= 0; --i) {
       Vertex ver = this._vertices[i];
       if ((ver != null) || (ver.location != null) ||
@@ -142,29 +145,29 @@ class Shape implements Core.Changable {
         ver.location += new Math.Point3.fromVector3(ver.normal*length);
       }
     }
-    this._changed.resume();
+    this._changed?.resume();
   }
 
   /// Trims all the vertices down to the given vertex types,
   /// everything else is nulled out.
   void trimVertices(Data.VertexType type) {
-    this._changed.suspend();
+    this._changed?.suspend();
     for (int i = this._vertices.length-1; i >= 0; --i) {
       Vertex ver = this._vertices[i];
       if (ver != null) ver.trim(type);
     }
-    this._changed.resume();
+    this._changed?.resume();
   }
 
   /// Trims all the faces down have the true values,
   /// everything else is nulled out.
   void trimFaces({bool norm: true, bool binm: true}) {
-    this._changed.suspend();
+    this._changed?.suspend();
     for (int i = this._faces.length-1; i >= 0; --i) {
       Face face = this._faces[i];
       if (face != null) face.trim(norm: norm, binm: binm);
     }
-    this._changed.resume();
+    this._changed?.resume();
   }
 
   /// Finds the first index of the vertex which matches the given vertex.
@@ -255,7 +258,7 @@ class Shape implements Core.Changable {
   /// After merger collapsed lines and faces are removed and
   /// repeat points, lines, and faces are removed.
   void mergeVertices(VertexMatcher matcher, VertexMerger merger) {
-    this._changed.suspend();
+    this._changed?.suspend();
     for (int i = this._vertices.length-1; i >= 0; --i) {
       Vertex ver = this._vertices[i];
       if (ver != null) {
@@ -277,7 +280,7 @@ class Shape implements Core.Changable {
     this._points.removeRepeats();
     this._lines.removeVertexRepeats(new UndirectedLineMatcher());
     this._faces.removeVertexRepeats(new SimilarFaceMatcher());
-    this._changed.resume();
+    this._changed?.resume();
   }
 
   /// Joins seams in the shape by joining vertices.
@@ -309,7 +312,7 @@ class Shape implements Core.Changable {
 
   /// Flips the shape insize out.
   void flip() {
-    this._changed.suspend();
+    this._changed?.suspend();
     this._faces.flip();
     for (int i = this._vertices.length-1; i >= 0; --i) {
       Vertex ver = this._vertices[i];
@@ -318,7 +321,7 @@ class Shape implements Core.Changable {
         if (ver.binormal != null) ver.binormal = -ver.binormal;
       }
     }
-    this._changed.resume();
+    this._changed?.resume();
   }
 
   /// Scales the AABB so that the longest size the given [size],
@@ -463,13 +466,12 @@ class Shape implements Core.Changable {
     return parts.join('\n');
   }
 
-  /// Called when any change has occurred.
-  /// This emits the [changed] event.
+  /// Handles any change to this shape.
   /// This isn't meant to be called from outside the entity, in other languages this would
   /// be a protected method. This method is exposed to that the shape is extended and
   /// these methods can be overwritten. If overwritten call this super method to still emit events.
-  void onChanged() {
-    this._changed.emit(new Core.EventArgs(this));
+  void onChanged([Core.EventArgs args = null]) {
+    this._changed?.emit(args);
   }
 
   /// Called when the given [vertex] has been added.

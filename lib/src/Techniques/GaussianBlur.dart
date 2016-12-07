@@ -18,14 +18,21 @@ class GaussianBlur extends Technique {
                 double highOffset: 0.0,
                 double lowOffset:  4.0,
                 double depthLimit: 0.001}) {
-    this._shader       = null;
+    this._shader     = null;
+    this._txtMat     = null;
+    this._colorTxt   = null;
+    this._depthTxt   = null;
+    this._highOffset = 0.0;
+    this._lowOffset  = 4.0;
+    this._depthLimit = 0.001;
+    this._changed    = null;
+
+    this.textureMatrix = txtMat;
     this.colorTexture  = colorTxt;
     this.depthTexture  = depthTxt;
-    this.textureMatrix = txtMat;
     this.highOffset    = highOffset;
     this.lowOffset     = lowOffset;
     this.depthLimit    = depthLimit;
-    this._changed      = null;
   }
 
   /// Indicates that this technique has changed.
@@ -42,27 +49,33 @@ class GaussianBlur extends Technique {
   /// The offset value for the depth at it's highest value.
   double get highOffset => this._highOffset;
   void set highOffset(double value) {
+    value = value ?? 0.0;
     if (!Math.Comparer.equals(this._highOffset, value)) {
+      double prev = this._highOffset;
       this._highOffset = value;
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "highOffset", prev, this._highOffset));
     }
   }
 
   /// The offset value for the depth at it's lowest value.
   double get lowOffset => this._lowOffset;
   void set lowOffset(double value) {
+    value = value ?? 4.0;
     if (!Math.Comparer.equals(this._lowOffset, value)) {
+      double prev = this._lowOffset;
       this._lowOffset = value;
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "lowOffset", prev, this._lowOffset));
     }
   }
 
   /// The limit for higher depth to be excluded from the blur.
   double get depthLimit => this._depthLimit;
   void set depthLimit(double value) {
+    value = value ?? 0.001;
     if (!Math.Comparer.equals(this._depthLimit, value)) {
+      double prev = this._depthLimit;
       this._depthLimit = value;
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "depthLimit", prev, this._depthLimit));
     }
   }
 
@@ -70,8 +83,11 @@ class GaussianBlur extends Technique {
   Textures.Texture2D get colorTexture => this._colorTxt;
   void set colorTexture(Textures.Texture2D txt) {
     if (this._colorTxt != txt) {
+      if (this._colorTxt != null) this._colorTxt.loadFinished.remove(this._onChanged);
+      Textures.Texture2D prev = this._colorTxt;
       this._colorTxt = txt;
-      this._onChanged();
+      if (this._colorTxt != null) this._colorTxt.loadFinished.add(this._onChanged);
+      this._onChanged(new Core.ValueChangedEventArgs(this, "colorTexture", prev, this._colorTxt));
     }
   }
 
@@ -79,8 +95,11 @@ class GaussianBlur extends Technique {
   Textures.Texture2D get depthTexture => this._depthTxt;
   void set depthTexture(Textures.Texture2D txt) {
     if (this._depthTxt != txt) {
+      if (this._depthTxt != null) this._depthTxt.loadFinished.remove(this._onChanged);
+      Textures.Texture2D prev = this._depthTxt;
       this._depthTxt = txt;
-      this._onChanged();
+      if (this._depthTxt != null) this._depthTxt.loadFinished.add(this._onChanged);
+      this._onChanged(new Core.ValueChangedEventArgs(this, "depthTexture", prev, this._depthTxt));
     }
   }
 
@@ -89,8 +108,9 @@ class GaussianBlur extends Technique {
   void set textureMatrix(Math.Matrix3 mat) {
     mat = mat ?? new Math.Matrix3.identity();
     if (this._txtMat != mat) {
+      Math.Matrix3 prev = this._txtMat;
       this._txtMat = mat;
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "textureMatrix", prev, this._depthTxt));
     }
   }
 

@@ -13,78 +13,107 @@ class Rotater extends Mover {
   Core.Event _changed;
 
   /// Creates a new rotater.
-  Rotater({double yaw: 0.0, double pitch: 0.0, double roll: 0.0,
-    double deltaYaw: 0.1, double deltaPitch: 0.21, double deltaRoll: 0.32 }) {
-    this._yaw   = yaw;
-    this._pitch = pitch;
-    this._roll  = roll;
-    this._deltaYaw   = deltaYaw;
-    this._deltaPitch = deltaPitch;
-    this._deltaRoll  = deltaRoll;
+  Rotater({
+      double yaw:        0.0,
+      double pitch:      0.0,
+      double roll:       0.0,
+      double deltaYaw:   0.1,
+      double deltaPitch: 0.21,
+      double deltaRoll:  0.32}) {
+    this._yaw   = 0.0;
+    this._pitch = 0.0;
+    this._roll  = 0.0;
+    this._deltaYaw   = 0.0;
+    this._deltaPitch = 0.0;
+    this._deltaRoll  = 0.0;
     this._frameNum   = 0;
-    this._mat = null;
-    this._changed = new Core.Event();
+    this._mat     = null;
+    this._changed = null;
+
+    this.yaw   = yaw;
+    this.pitch = pitch;
+    this.roll  = roll;
+    this.deltaYaw   = deltaYaw;
+    this.deltaPitch = deltaPitch;
+    this.deltaRoll  = deltaRoll;
+  }
+
+  /// Emits when the mover has changed.
+  Core.Event get changed {
+    if (this._changed == null) this._changed = new Core.Event();
+    return this._changed;
+  }
+
+  /// Handles a child mover being changed.
+  void _onChanged([Core.EventArgs args = null]) {
+    this._changed?.emit(args);
   }
 
   /// The yaw rotation, in radians.
   double get yaw => this._yaw;
   void set yaw(double value) {
-    value = Math.wrapVal(value, 0.0, Math.TAU);
+    value = Math.wrapVal(value ?? 0.0, 0.0, Math.TAU);
     if (!Math.Comparer.equals(this._yaw, value)) {
+      double prev = this._yaw;
       this._yaw = value;
-      this._changed.emit();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "yaw", prev, this._yaw));
     }
   }
 
   /// The pitch rotation, in radians.
   double get pitch => this._pitch;
   void set pitch(double value) {
-    value = Math.wrapVal(value, 0.0, Math.TAU);
+    value = Math.wrapVal(value ?? 0.0, 0.0, Math.TAU);
     if (!Math.Comparer.equals(this._pitch, value)) {
+      double prev = this._pitch;
       this._pitch = value;
-      this._changed.emit();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "pitch", prev, this._pitch));
     }
   }
 
   /// The roll rotation, in radians.
   double get roll => this._roll;
   void set roll(double value) {
-    value = Math.wrapVal(value, 0.0, Math.TAU);
+    value = Math.wrapVal(value ?? 0.0, 0.0, Math.TAU);
     if (!Math.Comparer.equals(this._roll, value)) {
+      double prev = this._roll;
       this._roll = value;
-      this._changed.emit();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "roll", prev, this._roll));
     }
   }
 
   /// The change in yaw, in radians per second.
   double get deltaYaw => this._deltaYaw;
   void set deltaYaw(double value) {
+    value = value ?? 0.0;
     if (!Math.Comparer.equals(this._deltaYaw, value)) {
+      double prev = this._deltaYaw;
       this._deltaYaw = value;
-      this._changed.emit();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "deltaYaw", prev, this._deltaYaw));
     }
   }
 
   /// The change in pitch, in radians per second.
   double get deltaPitch => this._deltaPitch;
   void set deltaPitch(double value) {
+    value = value ?? 0.0;
     if (!Math.Comparer.equals(this._deltaPitch, value)) {
+      double prev = this._deltaPitch;
       this._deltaPitch = value;
-      this._changed.emit();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "deltaPitch", prev, this._deltaPitch));
     }
   }
 
   /// The change in roll, in radians per second.
   double get deltaRoll => this._deltaRoll;
   void set deltaRoll(double value) {
+    value = value ?? 0.0;
     if (!Math.Comparer.equals(this._deltaRoll, value)) {
+      double prev = this._deltaRoll;
       this._deltaRoll = value;
-      this._changed.emit();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "deltaRoll", prev, this._deltaRoll));
     }
   }
-
-  /// Emits when the mover has changed.
-  Core.Event get changed => this._changed;
 
   /// Updates the rotation mover.
   ///
