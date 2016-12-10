@@ -33,8 +33,9 @@ class Skybox extends Technique {
   double get fov => this._fov;
   void set fov(double fov) {
     if (!Math.Comparer.equals(this._fov, fov)) {
+      double prev = this._fov;
       this._fov = fov;
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "fov", prev, this._fov));
     }
   }
 
@@ -43,9 +44,10 @@ class Skybox extends Technique {
   void set boxTexture(Textures.TextureCube boxTxt) {
     if (this._boxTxt != boxTxt) {
       if (this._boxTxt != null) this._boxTxt.loadFinished.remove(this._onChanged);
+      Textures.TextureCube prev = this._boxTxt;
       this._boxTxt = boxTxt;
       if (this._boxTxt != null) this._boxTxt.loadFinished.add(this._onChanged);
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "boxTexture", prev, this._boxTxt));
     }
   }
 
@@ -54,8 +56,9 @@ class Skybox extends Technique {
   void set boxColor(Math.Color3 color) {
     color = color ?? new Math.Color3.white();
     if (this._boxClr != color) {
+      Math.Color3 prev = this._boxClr;
       this._boxClr = color;
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "boxColor", prev, this._boxClr));
     }
   }
 

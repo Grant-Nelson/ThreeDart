@@ -33,18 +33,20 @@ class Normal extends Technique {
   void _setBump2D(Textures.Texture2D bump2D) {
     if (this._bump2D != bump2D) {
       if (this._bump2D != null) this._bump2D.loadFinished.remove(this._onChanged);
+      Textures.Texture2D prev = this._bump2D;
       this._bump2D = bump2D;
       if (this._bump2D != null) this._bump2D.loadFinished.add(this._onChanged);
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "bumpyTexture2D", prev, this._bump2D));
     }
   }
 
   void _setBumpCube(Textures.TextureCube bumpCube) {
     if (this._bumpCube != bumpCube) {
       if (this._bumpCube != null) this._bump2D.loadFinished.remove(this._onChanged);
+      Textures.TextureCube prev = this._bumpCube;
       this._bumpCube = bumpCube;
       if (this._bumpCube != null) this._bump2D.loadFinished.add(this._onChanged);
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "bumpyTextureCube", prev, this._bumpCube));
     }
   }
 
@@ -53,8 +55,9 @@ class Normal extends Technique {
   void set texture2DMatrix(Math.Matrix3 mat) {
     mat = mat ?? new Math.Matrix3.identity();
     if (this._txt2DMat != mat) {
+      Math.Matrix3 prev = this._txt2DMat;
       this._txt2DMat = mat;
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "texture2DMatrix", prev, this._txt2DMat));
     }
   }
 
@@ -63,8 +66,9 @@ class Normal extends Technique {
   void set textureCubeMatrix(Math.Matrix4 mat) {
     mat = mat ?? new Math.Matrix4.identity();
     if (this._txtCubeMat != mat) {
+      Math.Matrix4 prev = this._txtCubeMat;
       this._txtCubeMat = mat;
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "textureCubeMatrix", prev, this._txtCubeMat));
     }
   }
 

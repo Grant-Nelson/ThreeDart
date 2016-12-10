@@ -27,9 +27,10 @@ class IdentityCamera implements Camera {
   void set mover(Movers.Mover mover) {
     if (this._mover != mover) {
       if (this._mover != null) this._mover.changed.remove(this._onChanged);
+      Movers.Mover prev = this._mover;
       this._mover = mover;
       if (this._mover != null) this._mover.changed.add(this._onChanged);
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "mover", prev, this._mover));
     }
   }
 

@@ -40,13 +40,19 @@ class FrontTarget extends Target {
     this._changed?.emit(args);
   }
 
+  /// Handles a change of a boolean value.
+  void _onBoolChanged(String name, bool value) {
+    this._onChanged(new Core.ValueChangedEventArgs(this, name, !value, value));
+  }
+
   /// The clear color to clear the target to before rendering.
   Math.Color4 get color => this._color;
   void set color(Math.Color4 color) {
     color = color ?? new Math.Color4.black();
     if (this._color != color) {
+      Math.Color4 prev = this._color;
       this._color = color;
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "color", prev, this._color));
     }
   }
 
@@ -56,7 +62,7 @@ class FrontTarget extends Target {
     clearColor = clearColor ?? true;
     if (this._clearColor != clearColor) {
       this._clearColor = clearColor;
-      this._onChanged();
+      this._onBoolChanged("clearColor", this._clearColor);
     }
   }
 
@@ -65,8 +71,9 @@ class FrontTarget extends Target {
   void set depth(double depth) {
     depth = depth ?? 2000.0;
     if (!Math.Comparer.equals(this._depth, depth)) {
+      double prev = this._depth;
       this._depth = depth;
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "depth", prev, this._depth));
     }
   }
 
@@ -76,7 +83,7 @@ class FrontTarget extends Target {
     clearDepth = clearDepth ?? true;
     if (this._clearDepth = clearDepth) {
       this._clearDepth = clearDepth;
-      this._onChanged();
+      this._onBoolChanged("clearDepth", this._clearDepth);
     }
   }
 
@@ -85,8 +92,9 @@ class FrontTarget extends Target {
   void set stencil(int stencil) {
     stencil = stencil ?? 0;
     if (this._stencil != stencil) {
+      int prev = this._stencil;
       this._stencil = stencil;
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "stencil", prev, this._stencil));
     }
   }
 
@@ -95,7 +103,7 @@ class FrontTarget extends Target {
   void set clearStencil(bool clearStencil) {
     if (this._clearStencil != clearStencil) {
       this._clearStencil = clearStencil;
-      this._onChanged();
+      this._onBoolChanged("clearStencil", this._clearStencil);
     }
   }
 
@@ -105,8 +113,9 @@ class FrontTarget extends Target {
   set region(Math.Region2 region) {
     region = region ?? new Math.Region2(0.0, 0.0, 1.0, 1.0);
     if (this._region != region) {
+      Math.Region2 prev = this._region;
       this._region = region;
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "region", prev, this._region));
     }
   }
 

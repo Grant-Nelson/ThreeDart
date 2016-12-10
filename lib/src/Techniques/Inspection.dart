@@ -78,6 +78,7 @@ class Inspection extends Technique {
     this._changed?.emit(args);
   }
 
+  /// Handles a change to a boolean value.
   void _onBoolChanged(String name, bool value) {
     this._onChanged(new Core.ValueChangedEventArgs(this, name, !value, value));
   }
@@ -85,6 +86,7 @@ class Inspection extends Technique {
   /// Indicates if the filled shape should be showed.
   bool get showFilled => this._showFilled;
   void set showFilled(bool show) {
+    show = show ?? false;
     if (this._showFilled != show) {
       this._showFilled = show;
       this._onBoolChanged("showFilled", show);
@@ -94,6 +96,7 @@ class Inspection extends Technique {
   /// Indicates if the wire frame of the shape should be showed.
   bool get showWireFrame => this._showWireFrame;
   void set showWireFrame(bool show) {
+    show = show ?? false;
     if (this._showWireFrame != show) {
       this._showWireFrame = show;
       this._onBoolChanged("showWireFrame", show);
@@ -103,6 +106,7 @@ class Inspection extends Technique {
   /// Indicates if the vertices of the shape should be showed.
   bool get showVertices => this._showVertices;
   void set showVertices(bool show) {
+    show = show ?? false;
     if (this._showVertices != show) {
       this._showVertices = show;
       this._onBoolChanged("showVertices", show);
@@ -112,6 +116,7 @@ class Inspection extends Technique {
   /// Indicates if the normals of the shape should be showed.
   bool get showNormals => this._showNormals;
   void set showNormals(bool show) {
+    show = show ?? false;
     if (this._showNormals != show) {
       this._showNormals = show;
       this._onBoolChanged("showNormals", show);
@@ -121,6 +126,7 @@ class Inspection extends Technique {
   /// Indicates if the binormals of the shape should be showed.
   bool get showBinormals => this._showBinormals;
   void set showBinormals(bool show) {
+    show = show ?? false;
     if (this._showBinormals != show) {
       this._showBinormals = show;
       this._onBoolChanged("showBinormals", show);
@@ -130,6 +136,7 @@ class Inspection extends Technique {
   /// Indicates if the tangentals of the shape should be showed.
   bool get showTangentals => this._showTangentals;
   void set showTangentals(bool show) {
+    show = show ?? false;
     if (this._showTangentals != show) {
       this._showTangentals = show;
       this._onBoolChanged("showTangentals", show);
@@ -139,6 +146,7 @@ class Inspection extends Technique {
   /// Indicates if the texture cube vectors of the shape should be showed.
   bool get showTxtCube => this._showTxtCube;
   void set showTxtCube(bool show) {
+    show = show ?? false;
     if (this._showTxtCube != show) {
       this._showTxtCube = show;
       this._onBoolChanged("showTxtCube", show);
@@ -148,6 +156,7 @@ class Inspection extends Technique {
   /// Indicates if the face center points of the shape should be showed.
   bool get showFaceCenters => this._showFaceCenters;
   void set showFaceCenters(bool show) {
+    show = show ?? false;
     if (this._showFaceCenters != show) {
       this._showFaceCenters = show;
       this._onBoolChanged("showFaceCenters", show);
@@ -157,6 +166,7 @@ class Inspection extends Technique {
   /// Indicates if the face normals of the shape should be showed.
   bool get showFaceNormals => this._showFaceNormals;
   void set showFaceNormals(bool show) {
+    show = show ?? false;
     if (this._showFaceNormals != show) {
       this._showFaceNormals = show;
       this._onBoolChanged("showFaceNormals", show);
@@ -166,6 +176,7 @@ class Inspection extends Technique {
   /// Indicates if the face binormals of the shape should be showed.
   bool get showFaceBinormals => this._showFaceBinormals;
   void set showFaceBinormals(bool show) {
+    show = show ?? false;
     if (this._showFaceBinormals != show) {
       this._showFaceBinormals = show;
       this._onBoolChanged("showFaceBinormals", show);
@@ -175,6 +186,7 @@ class Inspection extends Technique {
   /// Indicates if the face tangentals of the shape should be showed.
   bool get showFaceTangentals => this._showFaceTangentals;
   void set showFaceTangentals(bool show) {
+    show = show ?? false;
     if (this._showFaceTangentals != show) {
       this._showFaceTangentals = show;
       this._onBoolChanged("showFaceTangentals", show);
@@ -184,6 +196,7 @@ class Inspection extends Technique {
   /// Indicates if the colors of the shape should be showed.
   bool get showColorFill => this._showColorFill;
   void set showColorFill(bool show) {
+    show = show ?? false;
     if (this._showColorFill != show) {
       this._showColorFill = show;
       this._onBoolChanged("showColorFill", show);
@@ -193,6 +206,7 @@ class Inspection extends Technique {
   /// Indicates if the texture 2D colors of the shape should be showed.
   bool get showTxt2DColor => this._showTxt2DColor;
   void set showTxt2DColor(bool show) {
+    show = show ?? false;
     if (this._showTxt2DColor != show) {
       this._showTxt2DColor = show;
       this._onBoolChanged("showTxt2DColor", show);
@@ -202,6 +216,7 @@ class Inspection extends Technique {
   /// Indicates if the weights of the shape should be showed.
   bool get showWeight => this._showWeight;
   void set showWeight(bool show) {
+    show = show ?? false;
     if (this._showWeight != show) {
       this._showWeight = show;
       this._onBoolChanged("showWeight", show);
@@ -211,6 +226,7 @@ class Inspection extends Technique {
   /// Indicates if the axis should be showed.
   bool get showAxis => this._showAxis;
   void set showAxis(bool show) {
+    show = show ?? false;
     if (this._showAxis != show) {
       this._showAxis = show;
       this._onBoolChanged("showAxis", show);
@@ -220,6 +236,7 @@ class Inspection extends Technique {
   /// Indicates if the axlal alligned bounding box of the shape should be showed.
   bool get showAABB => this._showAABB;
   void set showAABB(bool show) {
+    show = show ?? false;
     if (this._showAABB != show) {
       this._showAABB = show;
       this._onBoolChanged("showAABB", show);
@@ -229,6 +246,7 @@ class Inspection extends Technique {
   /// Indicates if the first bend should be showed.
   bool get showBend => this._showBend;
   void set showBend(bool show) {
+    show = show ?? false;
     if (this._showBend != show) {
       this._showBend = show;
       this._onBoolChanged("showBend", show);
@@ -239,6 +257,7 @@ class Inspection extends Technique {
   /// To make the vectors change length the cache also has to be cleared.
   double get vectorScale => this._vectorScale;
   set vectorScale(double scale) {
+    scale = scale ?? 1.0;
     if (!Math.Comparer.equals(this._vectorScale, scale)) {
       double prevScale = this._vectorScale;
       this._vectorScale = scale;

@@ -28,18 +28,18 @@ class MaterialLight extends Technique {
     this._colorMat   = null;
     this._bendMats   = new Core.Collection<Math.Matrix4>();
     this._bendMats.setHandlers(
-      onAddedHndl:   this._onBendMatsChanged,
-      onRemovedHndl: this._onBendMatsChanged);
-    this._emission   = new MaterialLightColorComponent._(this);
-    this._ambient    = new MaterialLightColorComponent._(this);
-    this._diffuse    = new MaterialLightColorComponent._(this);
-    this._invDiffuse = new MaterialLightColorComponent._(this);
-    this._specular   = new MaterialLightSpecularComponent._(this);
-    this._bump       = new MaterialLightBumpComponent._(this);
+      onAddedHndl:   this._onBendMatsAdded,
+      onRemovedHndl: this._onBendMatsRemoved);
+    this._emission   = new MaterialLightColorComponent._(this, "emission");
+    this._ambient    = new MaterialLightColorComponent._(this, "ambient");
+    this._diffuse    = new MaterialLightColorComponent._(this, "diffuse");
+    this._invDiffuse = new MaterialLightColorComponent._(this, "invDiffuse");
+    this._specular   = new MaterialLightSpecularComponent._(this, "specular");
+    this._bump       = new MaterialLightBumpComponent._(this, "bump");
     this._envSampler = null;
-    this._reflect    = new MaterialLightColorComponent._(this);
-    this._refract    = new MaterialLightRefractionComponent._(this);
-    this._alpha      = new MaterialLightAlphaComponent._(this);
+    this._reflect    = new MaterialLightColorComponent._(this, "reflect");
+    this._refract    = new MaterialLightRefractionComponent._(this, "refract");
+    this._alpha      = new MaterialLightAlphaComponent._(this, "alpha");
     this._lights     = new Lights.LightCollection();
     this._lights.changed.add(this._resetShader);
     this._lights.lightChanged.add(this._onChanged);
@@ -63,9 +63,14 @@ class MaterialLight extends Technique {
     this._onChanged(args);
   }
 
-  /// Handles a change in the bend matrices.
-  void _onBendMatsChanged(int index, Iterable<Math.Matrix4> mats) {
-    this._onChanged();
+  /// Handles added matrices to the bend matrices.
+  void _onBendMatsAdded(int index, Iterable<Math.Matrix4> mats) {
+    this._onChanged(new Core.ItemsAddedEventArgs(this, index, mats));
+  }
+
+  /// Handles removed matrices from the bend matrices.
+  void _onBendMatsRemoved(int index, Iterable<Math.Matrix4> mats) {
+    this._onChanged(new Core.ItemsRemovedEventArgs(this, index, mats));
   }
 
   /// The lights to render with.
@@ -74,22 +79,24 @@ class MaterialLight extends Technique {
   /// The 2D texture modification matrix.
   Math.Matrix3 get texture2DMatrix => this._txt2DMat;
   set texture2DMatrix(Math.Matrix3 mat) {
+    mat = mat ?? new Math.Matrix3.identity();
     if (this._txt2DMat != mat) {
-      if (Math.xor(this._txt2DMat == null, mat == null))
-        this._shader = null;
+      if (Math.xor(this._txt2DMat == null, mat == null)) this._shader = null;
+      Math.Matrix3 prev = this._txt2DMat;
       this._txt2DMat = mat;
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "texture2DMatrix", prev, this._txt2DMat));
     }
   }
 
   /// The cube texture modification matrix.
   Math.Matrix4 get textureCubeMatrix => this._txtCubeMat;
   set textureCubeMatrix(Math.Matrix4 mat) {
+    mat = mat ?? new Math.Matrix4.identity();
     if (this._txtCubeMat != mat) {
-      if (Math.xor(this._txtCubeMat == null, mat == null))
-        this._shader = null;
+      if (Math.xor(this._txtCubeMat == null, mat == null)) this._shader = null;
+      Math.Matrix4 prev = this._txtCubeMat;
       this._txtCubeMat = mat;
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "textureCubeMatrix", prev, this._txtCubeMat));
     }
   }
 
@@ -97,10 +104,10 @@ class MaterialLight extends Technique {
   Math.Matrix4 get colorMatrix => this._colorMat;
   set colorMatrix(Math.Matrix4 mat) {
     if (this._colorMat != mat) {
-      if (Math.xor(this._colorMat == null, mat == null))
-        this._shader = null;
+      if (Math.xor(this._colorMat == null, mat == null)) this._shader = null;
+      Math.Matrix4 prev = this._colorMat;
       this._colorMat = mat;
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "colorMatrix", prev, this._colorMat));
     }
   }
 
@@ -130,9 +137,10 @@ class MaterialLight extends Technique {
   set environment(Textures.TextureCube txt) {
     if (this._envSampler != txt) {
       if (this._envSampler != null) this._envSampler.loadFinished.remove(this._onChanged);
+      Textures.TextureCube prev = this._envSampler;
       this._envSampler = txt;
       if (this._envSampler != null) this._envSampler.loadFinished.add(this._onChanged);
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "environment", prev, this._envSampler));
     }
   }
 

@@ -29,18 +29,22 @@ class Orthogonal implements Camera {
   /// The near depth, distance from the camera, to start rendering at.
   double get near => this._near;
   void set near(double near) {
+    near = near ?? 1.0;
     if (!Math.Comparer.equals(this._near, near)) {
+      double prev = this._near;
       this._near = near;
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "near", prev, this._near));
     }
   }
 
   /// The far depth, distance from the camera, to stop rendering at.
   double get far => this._far;
   void set far(double far) {
+    far = far ?? 100.0;
     if (!Math.Comparer.equals(this._far, far)) {
+      double prev = this._far;
       this._far = far;
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "far", prev, this._far));
     }
   }
 
@@ -49,9 +53,10 @@ class Orthogonal implements Camera {
   void set mover(Movers.Mover mover) {
     if (this._mover != mover) {
       if (this._mover != null) this._mover.changed.remove(this._onChanged);
+      Movers.Mover prev = this._mover;
       this._mover = mover;
       if (this._mover != null) this._mover.changed.add(this._onChanged);
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "mover", prev, this._mover));
     }
   }
 

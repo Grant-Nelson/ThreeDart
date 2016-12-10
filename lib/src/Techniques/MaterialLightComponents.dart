@@ -6,12 +6,13 @@ part of ThreeDart.Techniques;
 /// such as ambient, diffuse, specular, etc.
 abstract class MaterialLightBaseComponent {
   MaterialLight _owner;
+  String _name;
   Shaders.ColorSourceType _type;
   Textures.Texture2D _txt2D;
   Textures.TextureCube _txtCube;
 
-  /// Creates a new base component for the given [owner].
-  MaterialLightBaseComponent._(this._owner) {
+  /// Creates a new base component for the given [owner] and [name].
+  MaterialLightBaseComponent._(this._owner, this._name) {
     this._type = Shaders.ColorSourceType.None;
     this._txt2D = null;
     this._txtCube = null;
@@ -43,9 +44,10 @@ abstract class MaterialLightBaseComponent {
   void _setTxt2D(Textures.Texture2D txt2D) {
     if (this._txt2D != txt2D) {
       if (this._txt2D != null) this._txt2D.loadFinished.remove(this._onChanged);
+      Textures.Texture2D prev = this._txt2D;
       this._txt2D = txt2D;
       if (this._txt2D != null) this._txt2D.loadFinished.add(this._onChanged);
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "${this._name}.texture2D", prev, this._txt2D));
     }
   }
 
@@ -54,9 +56,10 @@ abstract class MaterialLightBaseComponent {
   void _setTxtCube(Textures.TextureCube txtCube) {
     if (this._txtCube != txtCube) {
       if (this._txtCube != null) this._txtCube.loadFinished.remove(this._onChanged);
+      Textures.TextureCube prev = this._txtCube;
       this._txtCube = txtCube;
       if (this._txtCube != null) this._txtCube.loadFinished.add(this._onChanged);
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "${this._name}.textureCube", prev, this._txtCube));
     }
   }
 
@@ -119,15 +122,16 @@ class MaterialLightColorComponent extends MaterialLightBaseComponent {
   Math.Color3 _color;
 
   /// Creates a new material light color component for the given [owner].
-  MaterialLightColorComponent._(MaterialLight owner): super._(owner) {
+  MaterialLightColorComponent._(MaterialLight owner, String name): super._(owner, name) {
     this._color = new Math.Color3.black();
   }
 
   /// Handles setting the color member if it has changed.
   void _setColor(Math.Color3 color) {
     if (this._color != color) {
+      Math.Color3 prev = this._color;
       this._color = color;
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "${this._name}.color", prev, this._color));
     }
   }
 
@@ -163,15 +167,16 @@ class MaterialLightSpecularComponent extends MaterialLightColorComponent {
   double _shininess;
 
   /// Creates a new specular component for the given [owner].
-  MaterialLightSpecularComponent._(MaterialLight owner): super._(owner) {
+  MaterialLightSpecularComponent._(MaterialLight owner, String name): super._(owner, name) {
     this._shininess = 100.0;
   }
 
   /// Handles setting the shininess specular member.
   void _setShininess(double shininess) {
     if (!Math.Comparer.equals(this._shininess, shininess)) {
+      double prev = this._shininess;
       this._shininess = shininess;
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "${this._name}.shininess", prev, this._shininess));
     }
   }
 
@@ -190,6 +195,7 @@ class MaterialLightSpecularComponent extends MaterialLightColorComponent {
   /// The specular color or scalar on the specular texture for the material.
   double get shininess => this._shininess;
   set shininess(double value) {
+    value = value ?? 100.0;
     if (value <= 0.0) this.clear();
     else if (this._type == Shaders.ColorSourceType.None) {
       this._type = Shaders.ColorSourceType.Solid;
@@ -206,7 +212,7 @@ class MaterialLightSpecularComponent extends MaterialLightColorComponent {
 class MaterialLightBumpComponent extends MaterialLightBaseComponent {
 
   /// Creates a new bump map material light component for the given [owner].
-  MaterialLightBumpComponent._(MaterialLight owner): super._(owner) {
+  MaterialLightBumpComponent._(MaterialLight owner, String name): super._(owner, name) {
     // Do Nothing
   }
 }
@@ -218,15 +224,16 @@ class MaterialLightRefractionComponent extends MaterialLightColorComponent {
   double _refraction;
 
   /// Creates a new refraction material light component for the given [owner].
-  MaterialLightRefractionComponent._(MaterialLight owner): super._(owner) {
+  MaterialLightRefractionComponent._(MaterialLight owner, String name): super._(owner, name) {
     this._refraction = 1.0;
   }
 
   /// Handles setting the refraction member if it has changed.
   void _setRefraction(double refraction) {
     if (!Math.Comparer.equals(this._refraction, refraction)) {
+      double prev = this._refraction;
       this._refraction = refraction;
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "${this._name}.refraction", prev, this._refraction));
     }
   }
 
@@ -245,6 +252,7 @@ class MaterialLightRefractionComponent extends MaterialLightColorComponent {
   /// The refraction scalar for the distortion for the material.
   double get deflection => this._refraction;
   set deflection(double value) {
+    value = value ?? 1.0;
     if (value <= 0.0) this.clear();
     else if (this._type == Shaders.ColorSourceType.None) {
       this._type = Shaders.ColorSourceType.Solid;
@@ -262,15 +270,16 @@ class MaterialLightAlphaComponent extends MaterialLightBaseComponent {
   double _alpha;
 
   /// Creates a new alpha meterial light component for the given [owner].
-  MaterialLightAlphaComponent._(MaterialLight owner): super._(owner) {
+  MaterialLightAlphaComponent._(MaterialLight owner, String name): super._(owner, name) {
     this._alpha = 1.0;
   }
 
   /// Handles setting the alpha member if it has changed.
   void _setAlpha(double alpha) {
     if (!Math.Comparer.equals(this._alpha, alpha)) {
+      double prev = this._alpha;
       this._alpha = alpha;
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, this._name, prev, this._alpha));
     }
   }
 
@@ -289,6 +298,7 @@ class MaterialLightAlphaComponent extends MaterialLightBaseComponent {
   /// The alpha scalar for the color for the material.
   double get value => this._alpha;
   set value(double value) {
+    value = value ?? 1.0;
     if (value <= 0.0) this.clear();
     else if (this._type == Shaders.ColorSourceType.None) {
       this._type = Shaders.ColorSourceType.Solid;

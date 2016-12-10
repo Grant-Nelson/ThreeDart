@@ -39,9 +39,10 @@ class TextureLayoutEntry implements Core.Changable {
   void set texture(Textures.Texture2D txt) {
     if (this._txt != txt) {
       if (this._txt != null) this._txt.loadFinished.remove(this._onChanged);
+      Textures.Texture2D prev = this._txt;
       this._txt = txt;
       if (this._txt != null) this._txt.loadFinished.add(this._onChanged);
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "texture", prev, this._txt));
     }
   }
 
@@ -50,8 +51,9 @@ class TextureLayoutEntry implements Core.Changable {
   void set colorMatrix(Math.Matrix4 mat) {
     mat = mat ?? new Math.Matrix4.identity();
     if (this._clrMat != mat) {
+      Math.Matrix4 prev = this._clrMat;
       this._clrMat = mat;
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "colorMatrix", prev, this._clrMat));
     }
   }
 
@@ -60,8 +62,9 @@ class TextureLayoutEntry implements Core.Changable {
   void set source(Math.Region2 src) {
     src = src ?? new Math.Region2(0.0, 0.0, 1.0, 1.0);
     if (this._src != src) {
+      Math.Region2 prev = this._src;
       this._src = src;
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "source", prev, this._src));
     }
   }
 
@@ -70,8 +73,9 @@ class TextureLayoutEntry implements Core.Changable {
   void set destination(Math.Region2 dest) {
     dest = dest ?? new Math.Region2(0.0, 0.0, 1.0, 1.0);
     if (this._dest != dest) {
+      Math.Region2 prev = this._dest;
       this._dest = dest;
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "destination", prev, this._dest));
     }
   }
 
@@ -80,7 +84,7 @@ class TextureLayoutEntry implements Core.Changable {
   void set flip(bool flip) {
     if (this._flip != flip) {
       this._flip = flip;
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "flip", !flip, this._flip));
     }
   }
 }
@@ -142,8 +146,9 @@ class TextureLayout extends Technique {
   set backColor(Math.Color4 clr) {
     clr = clr ?? new Math.Color4.transparent();
     if (this._backClr != clr) {
+      Math.Color4 prev = this._backClr;
       this._backClr = clr;
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "backColor", prev, this._backClr));
     }
   }
 

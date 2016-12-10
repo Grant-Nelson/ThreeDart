@@ -48,6 +48,11 @@ class BackTarget extends Target {
     this._changed?.emit(args);
   }
 
+  /// Handles a change of a boolean value.
+  void _onBoolChanged(String name, bool value) {
+    this._onChanged(new Core.ValueChangedEventArgs(this, name, !value, value));
+  }
+
   /// The requested width in pixels of the back buffer.
   int get width => this._width;
 
@@ -71,8 +76,9 @@ class BackTarget extends Target {
   Math.Color4 get color => this._color;
   void set color(Math.Color4 color) {
     if (this._color != color) {
+      Math.Color4 prev = this._color;
       this._color = color;
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "color", prev, this._color));
     }
   }
 
@@ -81,7 +87,7 @@ class BackTarget extends Target {
   void set clearColor(bool clearColor) {
     if (this._clearColor != clearColor) {
       this._clearColor = clearColor;
-      this._onChanged();
+      this._onBoolChanged("clearColor", this._clearColor);
     }
   }
 
@@ -89,8 +95,9 @@ class BackTarget extends Target {
   double get depth => this._depth;
   void set depth(double depth) {
     if (!Math.Comparer.equals(this._depth, depth)) {
+      double prev = this._depth;
       this._depth = depth;
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "depth", prev, this._depth));
     }
   }
 
@@ -99,7 +106,7 @@ class BackTarget extends Target {
   void set clearDepth(bool clearDepth) {
     if (this._clearDepth != clearDepth) {
       this._clearDepth = clearDepth;
-      this._onChanged();
+      this._onBoolChanged("clearDepth", this._clearDepth);
     }
   }
 
@@ -108,8 +115,9 @@ class BackTarget extends Target {
   Math.Region2 get region => this._region;
   void set region(Math.Region2 region) {
     if (this._region != region) {
+      Math.Region2 prev = this._region;
       this._region = region;
-      this._onChanged();
+      this._onChanged(new Core.ValueChangedEventArgs(this, "region", prev, this._region));
     }
   }
 
