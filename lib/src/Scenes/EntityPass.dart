@@ -13,7 +13,7 @@ class EntityPass implements RenderPass {
   Techniques.Technique _tech;
 
   /// The children entities to render.
-  List<Core.Entity> _children;
+  Core.Collection<Core.Entity> _children;
 
   /// Event emitted before an update for this pass.
   Core.Event _onPreUpdate;
@@ -21,8 +21,11 @@ class EntityPass implements RenderPass {
   /// Event emitted after an update for this pass.
   Core.Event _onPostUpdate;
 
-  /// Event emitted on an redner for this pass.
+  /// Event emitted on an render for this pass.
   Core.Event _onRender;
+
+  /// Event emitted on an render for this pass.
+  Core.Event _changed;
 
   /// Creates a new render pass.
   EntityPass({
@@ -31,46 +34,116 @@ class EntityPass implements RenderPass {
       Techniques.Technique tech: null,
       List<Core.Entity> children: null
     }) {
+    this._camera = null;
+    this._target = null;
+    this._tech   = null;
+    this._children = new Core.Collection<Core.Entity>();
+    this._children.setHandlers(
+      onAddedHndl: this._onChildrenAdded,
+      onRemovedHndl: this._onChildrenRemoved);
+    this._onPreUpdate  = null;
+    this._onPostUpdate = null;
+    this._onRender = null;
+    this._changed  = null;
+
     this.camera = camera;
     this.target = target;
-    this.tech = tech;
-    this._children = new List<Core.Entity>();
-    if (children != null)  this._children.addAll(children);
-    this._onPreUpdate = new Core.Event();
-    this._onPostUpdate = new Core.Event();
-    this._onRender = new Core.Event();
+    this.technique = tech;
+    if (children != null) this._children.addAll(children);
+  }
+
+  /// Handles a change in this pass.
+  void _onChanged([Core.EventArgs args = null]) {
+    this._changed?.emit(args);
+  }
+
+  /// Called when one or more child is added.
+  void _onChildrenAdded(int index, Iterable<Core.Entity> entities) {
+    for (Core.Entity entity in entities) {
+      if (entity != null) entity.changed.add(this._onChanged);
+    }
+    this._onChanged(new Core.ItemsAddedEventArgs(this, index, entities));
+  }
+
+  /// Called when a child is removed.
+  void _onChildrenRemoved(int index, Iterable<Core.Entity> entities) {
+    for (Core.Entity entity in entities) {
+      if (entity != null) entity.changed.remove(this._onChanged);
+    }
+    this._onChanged(new Core.ItemsRemovedEventArgs(this, index, entities));
   }
 
   /// The camera describing the view of the scene.
   /// If null is set, the camera is set to a Perspective.
   Views.Camera get camera => this._camera;
-  set camera(Views.Camera camera) => this._camera = camera ?? new Views.Perspective();
+  void set camera(Views.Camera camera) {
+    camera = camera ?? new Views.Perspective();
+    if (this._camera != camera) {
+      if (this._camera != null) this._camera.changed.remove(this._onChanged);
+      Views.Camera prev = this._camera;
+      this._camera = camera;
+      if (this._camera != null) this._camera.changed.add(this._onChanged);
+      this._onChanged(new Core.ValueChangedEventArgs(this, "camera", prev, this._camera));
+    }
+  }
 
   /// The target defining the storage to render to.
   /// If null is set, the target is set to an FrontTarget.
   Views.Target get target => this._target;
-  set target(Views.Target target) => this._target = target ?? new Views.FrontTarget();
+  void set target(Views.Target target) {
+    target = target ?? new Views.FrontTarget();
+    if (this._target != target) {
+      if (this._target != null) this._target.changed.remove(this._onChanged);
+      Views.Target prev = this._target;
+      this._target = target;
+      if (this._target != null) this._target.changed.add(this._onChanged);
+      this._onChanged(new Core.ValueChangedEventArgs(this, "target", prev, this._target));
+    }
+  }
 
   /// The default technique to render with.
-  Techniques.Technique get tech => this._tech;
-  set tech(Techniques.Technique tech) => this._tech = tech;
+  Techniques.Technique get technique => this._tech;
+  void set technique(Techniques.Technique tech) {
+    if (this._tech != tech) {
+      if (this._tech != null) this._tech.changed.remove(this._onChanged);
+      Techniques.Technique prev = this._tech;
+      this._tech = tech;
+      if (this._tech != null) this._tech.changed.add(this._onChanged);
+      this._onChanged(new Core.ValueChangedEventArgs(this, "technique", prev, this._tech));
+    }
+  }
 
   /// The children entities to render.
-  List<Core.Entity> get children => this._children;
+  Core.Collection<Core.Entity> get children => this._children;
 
   /// Event emitted before an update for this pass.
-  Core.Event get onPreUpdate => this._onPreUpdate;
+  Core.Event get onPreUpdate {
+    if (this._onPreUpdate == null) this._onPreUpdate = new Core.Event();
+    return this._onPreUpdate;
+  }
 
   /// Event emitted after an update for this pass.
-  Core.Event get onPostUpdate => this._onPostUpdate;
+  Core.Event get onPostUpdate {
+    if (this._onPostUpdate == null) this._onPostUpdate = new Core.Event();
+    return this._onPostUpdate;
+  }
 
-  /// Event emitted on an redner for this pass.
-  Core.Event get onRender => this._onRender;
+  /// Event emitted on an render for this pass.
+  Core.Event get onRender {
+    if (this._onRender == null) this._onRender = new Core.Event();
+    return this._onRender;
+  }
+
+  /// Event emitted on a the pass or a child entity has changed.
+  Core.Event get changed {
+    if (this._changed == null) this._changed = new Core.Event();
+    return this._changed;
+  }
 
   /// Render the scene with the given [state].
   void render(Core.RenderState state) {
     Core.StateEventArgs args = new Core.StateEventArgs(this, state);
-    this._onPreUpdate.emit(args);
+    this._onPreUpdate?.emit(args);
 
     state.pushTechnique(this._tech);
     this._target.bind(state);
@@ -80,12 +153,12 @@ class EntityPass implements RenderPass {
     for (Core.Entity child in this._children) {
       child.update(state);
     }
-    this._onPostUpdate.emit(args);
+    this._onPostUpdate?.emit(args);
 
     for (Core.Entity child in this._children) {
       child.render(state);
     }
-    this._onRender.emit(args);
+    this._onRender?.emit(args);
 
     this._camera.unbind(state);
     this._target.unbind(state);

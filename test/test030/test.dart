@@ -3,8 +3,6 @@
 
 library ThreeDart.test.test030;
 
-import 'dart:html';
-
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 import 'package:ThreeDart/Shapes.dart' as Shapes;
 import 'package:ThreeDart/Movers.dart' as Movers;
@@ -34,16 +32,11 @@ void main() {
     ..color = new Math.Color4(0.5, 0.5, 1.0, 1.0);
 
   Scenes.EntityPass pass = new Scenes.EntityPass()
-    ..tech = tech
+    ..technique = tech
     ..target = target
     ..children.add(obj)
     ..camera.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0));
   td.scene = pass;
 
-  var update;
-  update = (num t) {
-    td.render();
-    window.requestAnimationFrame(update);
-  };
-  window.requestAnimationFrame(update);
+  common.showFPS(td);
 }

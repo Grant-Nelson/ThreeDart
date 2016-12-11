@@ -1,6 +1,10 @@
 TODO
 --------------------------------------------------
 
+# Fixes
+ - Run "^\s+set\s+" and make sure all setters are formatted correctly.
+ - Set limits to Perspective and Skybox FOV.
+
 # Future Features
 The following is a list of features that may or will be added to 3Dart.
 These are not small or in-progress features. These are features which

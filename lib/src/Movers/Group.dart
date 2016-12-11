@@ -1,31 +1,60 @@
 part of ThreeDart.Movers;
 
 /// A mover which groups several movers.
-class Group extends Mover {
-
-  /// The list of movers.
-  List<Mover> _movers;
+class Group extends Core.Collection<Mover> implements Mover {
+  Core.Event _changed;
 
   /// Creates a new group of movers.
   Group([List<Mover> movers = null]) {
-    this._movers = new List<Mover>();
-    if (movers != null) this._movers.addAll(movers);
+    this.setHandlers(
+      onAddedHndl:   this._onAdded,
+      onRemovedHndl: this._onRemoved);
+    if (movers != null) this.addAll(movers);
+    this._changed = null;
   }
 
-  /// The list of movers in the group.
-  List<Mover> get list => this._movers;
+  /// Emits when the mover has changed.
+  Core.Event get changed {
+    if (this._changed == null) this._changed = new Core.Event();
+    return this._changed;
+  }
 
-  /// Adds a new mover to this group.
-  void add(Mover mover) {
-    this._movers.add(mover);
+  /// Handles a child mover being changed.
+  void _onChanged([Core.EventArgs args = null]) {
+    this._changed?.emit(args);
+  }
+
+  /// Is called when one or more items are added to this collection.
+  ///
+  /// This isn't meant to be called from outside the entity, in other languages this would
+  /// be a protected method. This method is exposed to that the entity is extended and
+  /// these methods can be overwritten. If overwritten call this super method to still emit events.
+  void _onAdded(int index, Iterable<Mover> added) {
+    for (Mover mover in added) {
+      if (mover != null) mover.changed.add(this._onChanged);
+    }
+    this._onChanged(new Core.ItemsAddedEventArgs(this, index, added));
+  }
+
+  /// Is called when one or more items are removed from this collection.
+  ///
+  /// This isn't meant to be called from outside the entity, in other languages this would
+  /// be a protected method. This method is exposed to that the entity is extended and
+  /// these methods can be overwritten. If overwritten call this super method to still emit events.
+  void _onRemoved(int index, Iterable<Mover> removed) {
+    for (Mover mover in removed) {
+      if (mover != null) mover.changed.remove(this._onChanged);
+    }
+    this._onChanged(new Core.ItemsRemovedEventArgs(this, index, removed));
   }
 
   /// Updates all of the contained movers then multiply their results in order.
   ///
   /// This updates with the given [state] and the [obj] this mover is attached to.
   Math.Matrix4 update(Core.RenderState state, Movable obj) {
+    this._changed?.suspend();
     Math.Matrix4 mat = null;
-    for (Mover mover in this._movers) {
+    for (Mover mover in this) {
       if (mover != null) {
         Math.Matrix4 next = mover.update(state, obj);
         if (next != null) {
@@ -40,6 +69,24 @@ class Group extends Mover {
     if (mat == null) {
       mat = new Math.Matrix4.identity();
     }
+    this._changed?.resume();
     return mat;
+  }
+
+  /// Determines if the given [other] variable is a [Group] equal to this one.
+  bool operator ==(var other) {
+    if (identical(this, other)) return true;
+    if (other is! Group) return false;
+    Group grp = other as Group;
+    int length = this.length;
+    for (int i = 0; i < length; ++i) {
+      if (this[i] != grp[i]) return false;
+    }
+    return true;
+  }
+
+  /// The string for this constant mover.
+  String toString() {
+    return "Group";
   }
 }

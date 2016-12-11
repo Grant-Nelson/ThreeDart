@@ -2,7 +2,6 @@ part of ThreeDart.Views;
 
 /// A rendering target which renders to a texture instead of the screen.
 class BackTarget extends Target {
-
   int _width;
   int _height;
   int _actualWidth;
@@ -17,21 +16,41 @@ class BackTarget extends Target {
   double _depth;
   bool _clearDepth;
   Math.Region2 _region;
+  Core.Event _changed;
 
   /// Creates a new back target.
-  BackTarget(int this._width, int this._height, {bool hasDepth: true}) {
-    this._actualWidth = this._height;
+  BackTarget(int width, int height, {bool hasDepth: true}) {
+    this._width        = width ?? 512;
+    this._height       = height ?? 512;
+    this._actualWidth  = this._width;
     this._actualHeight = this._height;
-    this._hasDepth = hasDepth;
-    this._framebuffer = null;
-    this._colorBuffer = null;
-    this._depthBuffer = null;
-    this._colorTxt = new Textures.Texture2D();
-    this._color = new Math.Color4.black();
-    this._clearColor = true;
-    this._depth = 2000.0;
-    this._clearDepth = true;
-    this._region = new Math.Region2(0.0, 0.0, 1.0, 1.0);
+    this._hasDepth     = hasDepth ?? true;
+    this._framebuffer  = null;
+    this._colorBuffer  = null;
+    this._depthBuffer  = null;
+    this._colorTxt     = new Textures.Texture2D();
+    this._color        = new Math.Color4.black();
+    this._clearColor   = true;
+    this._depth        = 2000.0;
+    this._clearDepth   = true;
+    this._region       = new Math.Region2(0.0, 0.0, 1.0, 1.0);
+    this._changed      = null;
+  }
+
+  /// Indicates that this target has changed.
+  Core.Event get changed {
+    if (this._changed == null) this._changed = new Core.Event();
+    return this._changed;
+  }
+
+  /// Handles a change in this target.
+  void _onChanged([Core.EventArgs args = null]) {
+    this._changed?.emit(args);
+  }
+
+  /// Handles a change of a boolean value.
+  void _onBoolChanged(String name, bool value) {
+    this._onChanged(new Core.ValueChangedEventArgs(this, name, !value, value));
   }
 
   /// The requested width in pixels of the back buffer.
@@ -55,24 +74,52 @@ class BackTarget extends Target {
 
   /// The clear color to clear the target to before rendering.
   Math.Color4 get color => this._color;
-  set color(Math.Color4 color) => this._color = color;
+  void set color(Math.Color4 color) {
+    if (this._color != color) {
+      Math.Color4 prev = this._color;
+      this._color = color;
+      this._onChanged(new Core.ValueChangedEventArgs(this, "color", prev, this._color));
+    }
+  }
 
   /// Indicates if the color target should be cleared with the clear color.
   bool get clearColor => this._clearColor;
-  set clearColor(bool clearColor) => this._clearColor = clearColor;
+  void set clearColor(bool clearColor) {
+    if (this._clearColor != clearColor) {
+      this._clearColor = clearColor;
+      this._onBoolChanged("clearColor", this._clearColor);
+    }
+  }
 
   /// The clear depth to clear the target to before rendering.
   double get depth => this._depth;
-  set depth(double depth) => this._depth = depth;
+  void set depth(double depth) {
+    if (!Math.Comparer.equals(this._depth, depth)) {
+      double prev = this._depth;
+      this._depth = depth;
+      this._onChanged(new Core.ValueChangedEventArgs(this, "depth", prev, this._depth));
+    }
+  }
 
   /// Indicates if the depth target should be cleared with the clear depth.
   bool get clearDepth => this._clearDepth;
-  set clearDepth(bool clearDepth) => this._clearDepth = clearDepth;
+  void set clearDepth(bool clearDepth) {
+    if (this._clearDepth != clearDepth) {
+      this._clearDepth = clearDepth;
+      this._onBoolChanged("clearDepth", this._clearDepth);
+    }
+  }
 
   /// The region of the front target to render to.
   /// <0, 0> is top left corner and <1, 1> is botton right.
   Math.Region2 get region => this._region;
-  set region(Math.Region2 region) => this._region = region;
+  void set region(Math.Region2 region) {
+    if (this._region != region) {
+      Math.Region2 prev = this._region;
+      this._region = region;
+      this._onChanged(new Core.ValueChangedEventArgs(this, "region", prev, this._region));
+    }
+  }
 
   /// Initializes the back target.
   void _initialize(WebGL.RenderingContext gl) {

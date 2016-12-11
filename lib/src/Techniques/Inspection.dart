@@ -31,6 +31,7 @@ class Inspection extends Technique {
   bool _showAABB;
   bool _showBend;
   double _vectorScale;
+  Core.Event _changed;
 
   /// Creates a new inspection techinque.
   Inspection() {
@@ -63,80 +64,206 @@ class Inspection extends Technique {
     this._showAABB           = false;
     this._showBend           = false;
     this._vectorScale        = 1.0;
+    this._changed            = null;
+  }
+
+  /// Indicates that this technique has changed.
+  Core.Event get changed {
+    if (this._changed == null) this._changed = new Core.Event();
+    return this._changed;
+  }
+
+  /// Handles a change in this technique.
+  void _onChanged([Core.EventArgs args = null]) {
+    this._changed?.emit(args);
+  }
+
+  /// Handles a change to a boolean value.
+  void _onBoolChanged(String name, bool value) {
+    this._onChanged(new Core.ValueChangedEventArgs(this, name, !value, value));
   }
 
   /// Indicates if the filled shape should be showed.
-  set showFilled(bool show) => this._showFilled = show;
   bool get showFilled => this._showFilled;
+  void set showFilled(bool show) {
+    show = show ?? false;
+    if (this._showFilled != show) {
+      this._showFilled = show;
+      this._onBoolChanged("showFilled", show);
+    }
+  }
 
   /// Indicates if the wire frame of the shape should be showed.
-  set showWireFrame(bool show) => this._showWireFrame = show;
   bool get showWireFrame => this._showWireFrame;
+  void set showWireFrame(bool show) {
+    show = show ?? false;
+    if (this._showWireFrame != show) {
+      this._showWireFrame = show;
+      this._onBoolChanged("showWireFrame", show);
+    }
+  }
 
   /// Indicates if the vertices of the shape should be showed.
-  set showVertices(bool show) => this._showVertices = show;
   bool get showVertices => this._showVertices;
+  void set showVertices(bool show) {
+    show = show ?? false;
+    if (this._showVertices != show) {
+      this._showVertices = show;
+      this._onBoolChanged("showVertices", show);
+    }
+  }
 
   /// Indicates if the normals of the shape should be showed.
-  set showNormals(bool show) => this._showNormals = show;
   bool get showNormals => this._showNormals;
+  void set showNormals(bool show) {
+    show = show ?? false;
+    if (this._showNormals != show) {
+      this._showNormals = show;
+      this._onBoolChanged("showNormals", show);
+    }
+  }
 
   /// Indicates if the binormals of the shape should be showed.
-  set showBinormals(bool show) => this._showBinormals = show;
   bool get showBinormals => this._showBinormals;
+  void set showBinormals(bool show) {
+    show = show ?? false;
+    if (this._showBinormals != show) {
+      this._showBinormals = show;
+      this._onBoolChanged("showBinormals", show);
+    }
+  }
 
   /// Indicates if the tangentals of the shape should be showed.
-  set showTangentals(bool show) => this._showTangentals = show;
   bool get showTangentals => this._showTangentals;
+  void set showTangentals(bool show) {
+    show = show ?? false;
+    if (this._showTangentals != show) {
+      this._showTangentals = show;
+      this._onBoolChanged("showTangentals", show);
+    }
+  }
 
   /// Indicates if the texture cube vectors of the shape should be showed.
-  set showTxtCube(bool show) => this._showTxtCube = show;
   bool get showTxtCube => this._showTxtCube;
+  void set showTxtCube(bool show) {
+    show = show ?? false;
+    if (this._showTxtCube != show) {
+      this._showTxtCube = show;
+      this._onBoolChanged("showTxtCube", show);
+    }
+  }
 
   /// Indicates if the face center points of the shape should be showed.
-  set showFaceCenters(bool show) => this._showFaceCenters = show;
   bool get showFaceCenters => this._showFaceCenters;
+  void set showFaceCenters(bool show) {
+    show = show ?? false;
+    if (this._showFaceCenters != show) {
+      this._showFaceCenters = show;
+      this._onBoolChanged("showFaceCenters", show);
+    }
+  }
 
   /// Indicates if the face normals of the shape should be showed.
-  set showFaceNormals(bool show) => this._showFaceNormals = show;
   bool get showFaceNormals => this._showFaceNormals;
+  void set showFaceNormals(bool show) {
+    show = show ?? false;
+    if (this._showFaceNormals != show) {
+      this._showFaceNormals = show;
+      this._onBoolChanged("showFaceNormals", show);
+    }
+  }
 
   /// Indicates if the face binormals of the shape should be showed.
-  set showFaceBinormals(bool show) => this._showFaceBinormals = show;
   bool get showFaceBinormals => this._showFaceBinormals;
+  void set showFaceBinormals(bool show) {
+    show = show ?? false;
+    if (this._showFaceBinormals != show) {
+      this._showFaceBinormals = show;
+      this._onBoolChanged("showFaceBinormals", show);
+    }
+  }
 
   /// Indicates if the face tangentals of the shape should be showed.
-  set showFaceTangentals(bool show) => this._showFaceTangentals = show;
   bool get showFaceTangentals => this._showFaceTangentals;
+  void set showFaceTangentals(bool show) {
+    show = show ?? false;
+    if (this._showFaceTangentals != show) {
+      this._showFaceTangentals = show;
+      this._onBoolChanged("showFaceTangentals", show);
+    }
+  }
 
   /// Indicates if the colors of the shape should be showed.
-  set showColorFill(bool show) => this._showColorFill = show;
   bool get showColorFill => this._showColorFill;
+  void set showColorFill(bool show) {
+    show = show ?? false;
+    if (this._showColorFill != show) {
+      this._showColorFill = show;
+      this._onBoolChanged("showColorFill", show);
+    }
+  }
 
   /// Indicates if the texture 2D colors of the shape should be showed.
-  set showTxt2DColor(bool show) => this._showTxt2DColor = show;
   bool get showTxt2DColor => this._showTxt2DColor;
+  void set showTxt2DColor(bool show) {
+    show = show ?? false;
+    if (this._showTxt2DColor != show) {
+      this._showTxt2DColor = show;
+      this._onBoolChanged("showTxt2DColor", show);
+    }
+  }
 
   /// Indicates if the weights of the shape should be showed.
-  set showWeight(bool show) => this._showWeight = show;
   bool get showWeight => this._showWeight;
+  void set showWeight(bool show) {
+    show = show ?? false;
+    if (this._showWeight != show) {
+      this._showWeight = show;
+      this._onBoolChanged("showWeight", show);
+    }
+  }
 
   /// Indicates if the axis should be showed.
-  set showAxis(bool show) => this._showAxis = show;
   bool get showAxis => this._showAxis;
+  void set showAxis(bool show) {
+    show = show ?? false;
+    if (this._showAxis != show) {
+      this._showAxis = show;
+      this._onBoolChanged("showAxis", show);
+    }
+  }
 
   /// Indicates if the axlal alligned bounding box of the shape should be showed.
-  set showAABB(bool show) => this._showAABB = show;
   bool get showAABB => this._showAABB;
+  void set showAABB(bool show) {
+    show = show ?? false;
+    if (this._showAABB != show) {
+      this._showAABB = show;
+      this._onBoolChanged("showAABB", show);
+    }
+  }
 
   /// Indicates if the first bend should be showed.
-  set showBend(bool show) => this._showBend = show;
   bool get showBend => this._showBend;
+  void set showBend(bool show) {
+    show = show ?? false;
+    if (this._showBend != show) {
+      this._showBend = show;
+      this._onBoolChanged("showBend", show);
+    }
+  }
 
   /// The scalar to apply to vectors lengths.
   /// To make the vectors change length the cache also has to be cleared.
-  set vectorScale(double scale) => this._vectorScale = scale;
   double get vectorScale => this._vectorScale;
+  set vectorScale(double scale) {
+    scale = scale ?? 1.0;
+    if (!Math.Comparer.equals(this._vectorScale, scale)) {
+      double prevScale = this._vectorScale;
+      this._vectorScale = scale;
+      this._onChanged(new Core.ValueChangedEventArgs(this, "vectorScale", prevScale, scale));
+    }
+  }
 
   /// Updates this technique for the given state.
   void update(Core.RenderState state) {

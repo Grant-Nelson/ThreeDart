@@ -251,50 +251,27 @@ void addMatrix4Tests(TestManager tests) {
       "  5.000,  6.000,  7.000,  8.000,",
       "  9.000, 10.000, 11.000, 12.000,",
       " 13.000, 14.000, 15.000, 16.000]");
-    _matrix4String(args, mat.copy(),
-      "[ 1.000,  2.000,  3.000,  4.000,",
-      "  5.000,  6.000,  7.000,  8.000,",
-      "  9.000, 10.000, 11.000, 12.000,",
-      " 13.000, 14.000, 15.000, 16.000]");
     _matrix4String(args, mat.transpose(),
       "[1.000, 5.000,  9.000, 13.000,",
       " 2.000, 6.000, 10.000, 14.000,",
       " 3.000, 7.000, 11.000, 15.000,",
       " 4.000, 8.000, 12.000, 16.000]");
-    mat.set(21.0, 22.0, 23.0, 24.0,
-            25.0, 26.0, 27.0, 28.0,
-            29.0, 30.0, 31.0, 32.0,
-            33.0, 34.0, 35.0, 36.0);
-    _matrix4String(args, mat,
-      "[21.000, 22.000, 23.000, 24.000,",
-      " 25.000, 26.000, 27.000, 28.000,",
-      " 29.000, 30.000, 31.000, 32.000,",
-      " 33.000, 34.000, 35.000, 36.000]");
-    mat.m11 = 41.0; mat.m21 = 42.0; mat.m31 = 43.0; mat.m41 = 44.0;
-    mat.m12 = 45.0; mat.m22 = 46.0; mat.m32 = 47.0; mat.m42 = 48.0;
-    mat.m13 = 49.0; mat.m23 = 50.0; mat.m33 = 51.0; mat.m43 = 52.0;
-    mat.m14 = 53.0; mat.m24 = 54.0; mat.m34 = 55.0; mat.m44 = 56.0;
-    _matrix4String(args, mat,
-      "[41.000, 42.000, 43.000, 44.000,",
-      " 45.000, 46.000, 47.000, 48.000,",
-      " 49.000, 50.000, 51.000, 52.000,",
-      " 53.000, 54.000, 55.000, 56.000]");
-    _doubleCheck(args, mat.m11, 41.0, "m11");
-    _doubleCheck(args, mat.m21, 42.0, "m21");
-    _doubleCheck(args, mat.m31, 43.0, "m31");
-    _doubleCheck(args, mat.m41, 44.0, "m41");
-    _doubleCheck(args, mat.m12, 45.0, "m12");
-    _doubleCheck(args, mat.m22, 46.0, "m22");
-    _doubleCheck(args, mat.m32, 47.0, "m32");
-    _doubleCheck(args, mat.m42, 48.0, "m42");
-    _doubleCheck(args, mat.m13, 49.0, "m13");
-    _doubleCheck(args, mat.m23, 50.0, "m23");
-    _doubleCheck(args, mat.m33, 51.0, "m33");
-    _doubleCheck(args, mat.m43, 52.0, "m43");
-    _doubleCheck(args, mat.m14, 53.0, "m14");
-    _doubleCheck(args, mat.m24, 54.0, "m24");
-    _doubleCheck(args, mat.m34, 55.0, "m34");
-    _doubleCheck(args, mat.m44, 56.0, "m44");
+    _doubleCheck(args, mat.m11, 1.0, "m11");
+    _doubleCheck(args, mat.m21, 2.0, "m21");
+    _doubleCheck(args, mat.m31, 3.0, "m31");
+    _doubleCheck(args, mat.m41, 4.0, "m41");
+    _doubleCheck(args, mat.m12, 5.0, "m12");
+    _doubleCheck(args, mat.m22, 6.0, "m22");
+    _doubleCheck(args, mat.m32, 7.0, "m32");
+    _doubleCheck(args, mat.m42, 8.0, "m42");
+    _doubleCheck(args, mat.m13, 9.0, "m13");
+    _doubleCheck(args, mat.m23, 10.0, "m23");
+    _doubleCheck(args, mat.m33, 11.0, "m33");
+    _doubleCheck(args, mat.m43, 12.0, "m43");
+    _doubleCheck(args, mat.m14, 13.0, "m14");
+    _doubleCheck(args, mat.m24, 14.0, "m24");
+    _doubleCheck(args, mat.m34, 15.0, "m34");
+    _doubleCheck(args, mat.m44, 16.0, "m44");
     _matrix4String(args, new Math.Matrix4.translate(1.2, 3.4, 5.6),
       "[1.000, 0.000, 0.000, 1.200,",
       " 0.000, 1.000, 0.000, 3.400,",

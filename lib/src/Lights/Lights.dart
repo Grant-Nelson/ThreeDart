@@ -12,6 +12,7 @@ import '../Textures/Textures.dart' as Textures;
 
 part 'Directional.dart';
 part 'Light.dart';
+part 'LightCollection.dart';
 part 'Point.dart';
 part 'Spot.dart';
 part 'TexturedDirectional.dart';

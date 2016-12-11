@@ -2,14 +2,33 @@ part of ThreeDart.Lights;
 
 /// Storage for directional light data.
 class Directional implements Light {
+  Math.Vector3 _direction;
+  Movers.Mover _mover;
+  Math.Color3 _color;
+  Core.Event _changed;
 
   /// Creates a new directional light data.
   Directional({
       Movers.Mover mover: null,
-      Math.Color3 color: null}) {
-    this.mover      = mover;
-    this.color      = color;
+      Math.Color3  color: null}) {
+    this._mover     = null;
+    this._color     = new Math.Color3.white();
     this._direction = new Math.Vector3(0.0, 0.0, 1.0);
+    this._changed   = null;
+
+    this.mover = mover;
+    this.color = color;
+  }
+
+  /// Emits when the light is changed.
+  Core.Event get changed {
+    if (this._changed == null) this._changed = new Core.Event();
+    return this._changed;
+  }
+
+  /// Handles a change in the light.
+  void _onChanged([Core.EventArgs args = null]) {
+    this._changed?.emit(args);
   }
 
   /// Updates the light with the current state.
@@ -24,7 +43,7 @@ class Directional implements Light {
   }
 
   /// Binds the light to the given [state].
-  void bind(Core.RenderState state){
+  void bind(Core.RenderState state) {
     // Do Nothing
   }
 
@@ -35,16 +54,27 @@ class Directional implements Light {
 
   /// The direction the light is pointing.
   Math.Vector3 get direction => this._direction;
-  Math.Vector3 _direction;
 
   /// The mover to position this light.
   Movers.Mover get mover => this._mover;
-  set mover(Movers.Mover mover) => this._mover = mover;
-  Movers.Mover _mover;
+  void set mover(Movers.Mover mover) {
+    if (this._mover != mover) {
+      if (this._mover != null) this._mover.changed.remove(this._onChanged);
+      Movers.Mover prev = this._mover;
+      this._mover = mover;
+      if (this._mover != null) this._mover.changed.add(this._onChanged);
+      this._onChanged(new Core.ValueChangedEventArgs(this, "mover", prev, this._mover));
+    }
+  }
 
   /// The color of the light.
   Math.Color3 get color => this._color;
-  set color(Math.Color3 color) =>
-    this._color = color ?? new Math.Color3.white();
-  Math.Color3 _color;
+  void set color(Math.Color3 color) {
+    color = color ?? new Math.Color3.white();
+    if (this._color != color) {
+      Math.Color3 prev = this._color;
+      this._color = color;
+      this._onChanged(new Core.ValueChangedEventArgs(this, "color", prev, this._color));
+    }
+  }
 }

@@ -3,8 +3,6 @@
 
 library ThreeDart.test.test031;
 
-import 'dart:html';
-
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 import 'package:ThreeDart/Shapes.dart' as Shapes;
 import 'package:ThreeDart/Movers.dart' as Movers;
@@ -39,7 +37,7 @@ void main() {
     ..color = new Math.Color4(0.5, 0.5, 1.0, 1.0);
 
   Scenes.EntityPass normalPass = new Scenes.EntityPass()
-    ..tech = normalTech
+    ..technique = normalTech
     ..target = normalTarget
     ..children.add(normalObj)
     ..camera.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0));
@@ -72,7 +70,7 @@ void main() {
 
   Scenes.EntityPass colorPass = new Scenes.EntityPass()
     ..camera = userCamera
-    ..tech = colorTech
+    ..technique = colorTech
     ..target = colorTarget
     ..children.add(colorObj);
 
@@ -81,7 +79,7 @@ void main() {
     ..bumpTexture = normalTarget.colorTexture
     ..bumpMatrix = new Math.Matrix4.scale(0.05, 0.05, 0.05);
   Scenes.CoverPass distortPass = new Scenes.CoverPass()
-    ..tech = distortTech;
+    ..technique = distortTech;
 
   Techniques.TextureLayout layoutTech = new Techniques.TextureLayout()
     ..entries.add(new Techniques.TextureLayoutEntry(
@@ -93,14 +91,9 @@ void main() {
       destination: new Math.Region2(0.0, 0.6, 0.2, 0.2)));
   Scenes.CoverPass layout = new Scenes.CoverPass()
     ..target = new Views.FrontTarget(clearColor: false)
-    ..tech = layoutTech;
+    ..technique = layoutTech;
 
   td.scene = new Scenes.Compound(passes: [skybox, colorPass, normalPass, distortPass, layout]);
 
-  var update;
-  update = (num t) {
-    td.render();
-    window.requestAnimationFrame(update);
-  };
-  window.requestAnimationFrame(update);
+  common.showFPS(td);
 }

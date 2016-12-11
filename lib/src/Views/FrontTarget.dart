@@ -9,6 +9,7 @@ class FrontTarget extends Target {
   int _stencil;
   bool _clearStencil;
   Math.Region2 _region;
+  Core.Event _changed;
 
   /// Constructs a new front target.
   FrontTarget({Math.Color4  color:        null,
@@ -18,43 +19,105 @@ class FrontTarget extends Target {
                int          stencil:      0,
                bool         clearStencil: false,
                Math.Region2 region:       null}) {
-    this.color = color;
-    this.clearColor = clearColor;
-    this.depth = depth;
-    this.clearDepth = clearDepth;
-    this.stencil = stencil;
-    this.clearStencil = clearStencil;
-    this.region = region;
+    this._color        = color ?? new Math.Color4.black();
+    this._clearColor   = clearColor ?? true;
+    this._depth        = depth ?? 2000.0;
+    this._clearDepth   = clearDepth ?? true;
+    this._stencil      = stencil ?? 0;
+    this._clearStencil = clearStencil ?? false;
+    this._region       = region ?? new Math.Region2(0.0, 0.0, 1.0, 1.0);
+    this._changed      = null;
+  }
+
+  /// Indicates that this target has changed.
+  Core.Event get changed {
+    if (this._changed == null) this._changed = new Core.Event();
+    return this._changed;
+  }
+
+  /// Handles a change in this target.
+  void _onChanged([Core.EventArgs args = null]) {
+    this._changed?.emit(args);
+  }
+
+  /// Handles a change of a boolean value.
+  void _onBoolChanged(String name, bool value) {
+    this._onChanged(new Core.ValueChangedEventArgs(this, name, !value, value));
   }
 
   /// The clear color to clear the target to before rendering.
   Math.Color4 get color => this._color;
-  set color(Math.Color4 color) => this._color = color ?? new Math.Color4.black();
+  void set color(Math.Color4 color) {
+    color = color ?? new Math.Color4.black();
+    if (this._color != color) {
+      Math.Color4 prev = this._color;
+      this._color = color;
+      this._onChanged(new Core.ValueChangedEventArgs(this, "color", prev, this._color));
+    }
+  }
 
   /// Indicates if the color target should be cleared with the clear color.
   bool get clearColor => this._clearColor;
-  set clearColor(bool clearColor) => this._clearColor = clearColor;
+  void set clearColor(bool clearColor) {
+    clearColor = clearColor ?? true;
+    if (this._clearColor != clearColor) {
+      this._clearColor = clearColor;
+      this._onBoolChanged("clearColor", this._clearColor);
+    }
+  }
 
   /// The clear depth to clear the target to before rendering.
   double get depth => this._depth;
-  set depth(double depth) => this._depth = depth;
+  void set depth(double depth) {
+    depth = depth ?? 2000.0;
+    if (!Math.Comparer.equals(this._depth, depth)) {
+      double prev = this._depth;
+      this._depth = depth;
+      this._onChanged(new Core.ValueChangedEventArgs(this, "depth", prev, this._depth));
+    }
+  }
 
   /// Indicates if the depth target should be cleared with the clear depth.
   bool get clearDepth => this._clearDepth;
-  set clearDepth(bool clearDepth) => this._clearDepth = clearDepth;
+  void set clearDepth(bool clearDepth) {
+    clearDepth = clearDepth ?? true;
+    if (this._clearDepth = clearDepth) {
+      this._clearDepth = clearDepth;
+      this._onBoolChanged("clearDepth", this._clearDepth);
+    }
+  }
 
   /// The clear stencil value to clear the stencil target to before rendering.
   int get stencil => this._stencil;
-  set stencil(int stencil) => this._stencil = stencil;
+  void set stencil(int stencil) {
+    stencil = stencil ?? 0;
+    if (this._stencil != stencil) {
+      int prev = this._stencil;
+      this._stencil = stencil;
+      this._onChanged(new Core.ValueChangedEventArgs(this, "stencil", prev, this._stencil));
+    }
+  }
 
   /// Indicates if the stencil target should be cleared with the clear stencil.
   bool get clearStencil => this._clearStencil;
-  set clearStencil(bool clearStencil) => this._clearStencil = clearStencil;
+  void set clearStencil(bool clearStencil) {
+    if (this._clearStencil != clearStencil) {
+      this._clearStencil = clearStencil;
+      this._onBoolChanged("clearStencil", this._clearStencil);
+    }
+  }
 
   /// The region of the front target to render to.
   /// <0, 0> is top left corner and <1, 1> is botton right.
   Math.Region2 get region => this._region;
-  set region(Math.Region2 region) => this._region = region ?? new Math.Region2(0.0, 0.0, 1.0, 1.0);
+  set region(Math.Region2 region) {
+    region = region ?? new Math.Region2(0.0, 0.0, 1.0, 1.0);
+    if (this._region != region) {
+      Math.Region2 prev = this._region;
+      this._region = region;
+      this._onChanged(new Core.ValueChangedEventArgs(this, "region", prev, this._region));
+    }
+  }
 
   /// Binds this target to the given state so that the following render
   /// will target the front target.

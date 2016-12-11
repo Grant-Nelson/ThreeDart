@@ -15,46 +15,90 @@ class CoverPass implements RenderPass {
   /// The box entity to render.
   Core.Entity _box;
 
-  /// Event emitted on an redner for this pass.
+  /// Event emitted on an render for this pass.
   Core.Event _onRender;
+
+  /// Emits when the cover changes.
+  Core.Event _changed;
 
   /// Creates a new cover render pass.
   CoverPass({
       Views.Camera camera: null,
       Views.Target target: null,
       Techniques.Technique tech: null
-    }) {
-    this.camera = camera;
-    this.target = target;
-    this.tech = tech;
-    this._box = new Core.Entity()
-      ..shape = Shapes.square();
-    this._onRender = new Core.Event();
+  }) {
+    this._changed  = null;
+    this.camera    = camera;
+    this.target    = target;
+    this.technique = tech;
+    this._box      = new Core.Entity()
+      ..shape      = Shapes.square();
+    this._onRender = null;
+  }
+
+  /// Event emitted on an render for this pass.
+  Core.Event get onRender {
+    if (this._onRender == null) this._onRender = new Core.Event();
+    return this._onRender;
+  }
+
+  /// The event emitted when the scene has changed.
+  Core.Event get changed {
+    if (this._changed == null) this._changed = new Core.Event();
+    return this._changed;
+  }
+
+  /// Handles changes to the scene.
+  void _onChanged([Core.EventArgs args = null]) {
+    this._changed?.emit(args);
   }
 
   /// Creates a new cover render pass preset with a skybox technique.
   /// The given [boxTexture] is the cube texture of the skybox.
   factory CoverPass.skybox(Textures.TextureCube boxTexture) {
     return new CoverPass()
-      ..tech = new Techniques.Skybox(boxTexture: boxTexture);
+      ..technique = new Techniques.Skybox(boxTexture: boxTexture);
   }
 
   /// The camera describing the view of the scene.
   /// If null is set, the camera is set to an IdentityCamera.
   Views.Camera get camera => this._camera;
-  set camera(Views.Camera camera) => this._camera = camera ?? new Views.IdentityCamera();
+  void set camera(Views.Camera camera) {
+    camera = camera ?? new Views.IdentityCamera();
+    if (this._camera != camera) {
+      if (this._camera != null) this._camera.changed.remove(this._onChanged);
+      Views.Camera prev = this._camera;
+      this._camera = camera;
+      if (this._camera != null) this._camera.changed.add(this._onChanged);
+      this._onChanged(new Core.ValueChangedEventArgs(this, "camera", prev, this._camera));
+    }
+  }
 
   /// The target defining the storage to render to.
   /// If null is set, the target is set to an FrontTarget.
   Views.Target get target => this._target;
-  set target(Views.Target target) => this._target = target ?? new Views.FrontTarget();
+  void set target(Views.Target target) {
+    target = target ?? new Views.FrontTarget();
+    if (this._target != target) {
+      if (this._target != null) this._target.changed.remove(this._onChanged);
+      Views.Target prev = this._target;
+      this._target = target;
+      if (this._target != null) this._target.changed.add(this._onChanged);
+      this._onChanged(new Core.ValueChangedEventArgs(this, "target", prev, this._target));
+    }
+  }
 
   /// The default technique to render with.
-  Techniques.Technique get tech => this._tech;
-  set tech(Techniques.Technique tech) => this._tech = tech;
-
-  /// Event emitted on an redner for this pass.
-  Core.Event get onRender => this._onRender;
+  Techniques.Technique get technique => this._tech;
+  void set technique(Techniques.Technique tech) {
+    if (this._tech != tech) {
+      if (this._tech != null) this._tech.changed.remove(this._onChanged);
+      Techniques.Technique prev = this._tech;
+      this._tech = tech;
+      if (this._tech != null) this._tech.changed.add(this._onChanged);
+      this._onChanged(new Core.ValueChangedEventArgs(this, "technique", prev, this._tech));
+    }
+  }
 
   /// Render the scene with the given [state].
   void render(Core.RenderState state) {
@@ -67,7 +111,7 @@ class CoverPass implements RenderPass {
     this._box.render(state);
 
     Core.StateEventArgs args = new Core.StateEventArgs(this, state);
-    this._onRender.emit(args);
+    this._onRender?.emit(args);
 
     this._camera.unbind(state);
     this._target.unbind(state);

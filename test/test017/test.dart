@@ -3,8 +3,6 @@
 
 library ThreeDart.test.test017;
 
-import 'dart:html';
-
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 import 'package:ThreeDart/Shapes.dart' as Shapes;
 import 'package:ThreeDart/Movers.dart' as Movers;
@@ -62,7 +60,7 @@ void main() {
 
   Scenes.EntityPass pass = new Scenes.EntityPass()
     ..camera = camera
-    ..tech = tech
+    ..technique = tech
     ..target = target
     ..children.add(obj);
 
@@ -79,10 +77,5 @@ void main() {
     ..add("Toroid",       () { obj.shape = Shapes.toroid(); })
     ..add("Knot",         () { obj.shape = Shapes.knot(); });
 
-  var update;
-  update = (num t) {
-    td.render();
-    window.requestAnimationFrame(update);
-  };
-  window.requestAnimationFrame(update);
+  common.showFPS(td);
 }

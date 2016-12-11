@@ -1,10 +1,12 @@
 part of ThreeDart.Core;
 
+// TODO: Update all the events for the Entity
+
 /// A renderable entity in a tree of entities for a scene.
 ///
 /// An [Entity] is a [Shape], [Technique], and a [Mover]
 /// to create an output when rendered.
-class Entity implements Movers.Movable {
+class Entity implements Movers.Movable, Changable {
 
   /// The name for this entity.
   String _name;
@@ -34,7 +36,7 @@ class Entity implements Movers.Movable {
   Math.Matrix4 _matrix;
 
   /// The list of children entities to this entity.
-  EntityCollection _children;
+  Collection<Entity> _children;
 
   /// The event emitted when any part of the entity is changed.
   Event _changed;
@@ -72,12 +74,15 @@ class Entity implements Movers.Movable {
           List<Entity> children: null}) {
     this._name = name;
     this._enabled = enabled;
-    this._shape = shape;
+    this._shape = null;
     this._cache = null;
-    this._tech = tech;
-    this._mover = mover;
+    this._tech = null;
+    this._mover = null;
     this._matrix = null;
-    this._children = new EntityCollection._(this);
+    this._children = new Collection<Entity>();
+    this._children.setHandlers(
+      onAddedHndl: this.onChildrenAdded,
+      onRemovedHndl: this.onChildrenRemoved);
     this._changed = null;
     this._shapeChanged = null;
     this._techChanged = null;
@@ -87,18 +92,22 @@ class Entity implements Movers.Movable {
     this._childrenRemoved = null;
     this._extensionAdded = null;
     this._extensionRemoved = null;
+
+    this.shape = shape;
+    this.technique = tech;
+    this.mover = mover;
     if (children != null)
       this._children.addAll(children);
   }
 
   /// The name for this entity.
   String get name => this._name;
-  set name(String name) => this._name = name;
+  void set name(String name) { this._name = name; }
 
   /// Indicates if this entity and its children
   /// will be rendered or not.
   bool get enabled => this._enabled;
-  set enabled(bool enabled) => this._enabled = enabled;
+  void set enabled(bool enabled) { this._enabled = enabled; }
 
   /// Indicates if the shape cashe needs to be updated.
   bool get cacheNeedsUpdate => this._cache == null;
@@ -118,7 +127,7 @@ class Entity implements Movers.Movable {
   /// currently use this technique.
   void _cacheUpdateForTech() {
     this.clearCache();
-    for(Entity child in this._children._children) {
+    for(Entity child in this._children) {
       if (child._tech == null) {
         child._cacheUpdateForTech();
       }
@@ -126,11 +135,11 @@ class Entity implements Movers.Movable {
   }
 
   /// The cache of the current shape in buffers for the current technique.
-  set cache(Data.TechniqueCache cache) => _cache = cache;
   Data.TechniqueCache get cache => this._cache;
+  set cache(Data.TechniqueCache cache) => _cache = cache;
 
   /// The children Entitys of this Entity.
-  EntityCollection get children => _children;
+  Collection<Entity> get children => _children;
 
   /// The shape to draw at this Entity.
   /// May be null to not draw anything, usefull if this Entity
@@ -152,8 +161,10 @@ class Entity implements Movers.Movable {
   Techniques.Technique get technique => this._tech;
   set technique(Techniques.Technique technique) {
     if (this._tech != technique) {
+      if (this._tech != null) this._tech.changed.remove(this.onTechModified);
       Techniques.Technique oldTech = this._tech;
       this._tech = technique;
+      if (this._tech != null) this._tech.changed.add(this.onTechModified);
       this._cacheUpdateForTech();
       this.onTechChanged(oldTech, this._tech);
     }
@@ -165,6 +176,8 @@ class Entity implements Movers.Movable {
   void set mover(Movers.Mover mover) {
     if (this._mover != mover) {
       Movers.Mover oldMover = this._mover;
+      if (oldMover != null) oldMover.changed.remove(this.onMoverModified);
+      if (mover != null) mover.changed.add(this.onMoverModified);
       this._mover = mover;
       this.onMoverChanged(oldMover, this._mover);
     }
@@ -178,7 +191,7 @@ class Entity implements Movers.Movable {
     Math.Region3 region = null;
     if (this._shape != null)
       region = new Math.Region3.union(region, this._shape.calculateAABB());
-    for (Entity child in this._children._children)
+    for (Entity child in this._children)
       region = new Math.Region3.union(region, child.calculateAABB());
     return region;
   }
@@ -205,7 +218,7 @@ class Entity implements Movers.Movable {
   void applyPositionMatrix(Math.Matrix4 mat) {
     if (this.shape != null)
       this.shape.applyPositionMatrix(mat);
-    for (Entity child in this._children._children)
+    for (Entity child in this._children)
       child.applyPositionMatrix(mat);
   }
 
@@ -214,7 +227,7 @@ class Entity implements Movers.Movable {
   void applyColorMatrix(Math.Matrix3 mat) {
     if (this.shape != null)
       this.shape.applyColorMatrix(mat);
-    for (Entity child in this._children._children)
+    for (Entity child in this._children)
       child.applyColorMatrix(mat);
   }
 
@@ -223,7 +236,7 @@ class Entity implements Movers.Movable {
   void applyTexture2DMatrix(Math.Matrix3 mat) {
     if (this.shape != null)
       this.shape.applyTexture2DMatrix(mat);
-    for (Entity child in this._children._children)
+    for (Entity child in this._children)
       child.applyTexture2DMatrix(mat);
   }
 
@@ -232,7 +245,7 @@ class Entity implements Movers.Movable {
   void applyTextureCubeMatrix(Math.Matrix4 mat) {
     if (this.shape != null)
       this.shape.applyTextureCubeMatrix(mat);
-    for (Entity child in this._children._children)
+    for (Entity child in this._children)
       child.applyTextureCubeMatrix(mat);
   }
 
@@ -252,7 +265,7 @@ class Entity implements Movers.Movable {
     if (this._tech != null) this._tech.update(state);
 
     // Update all children.
-    for (Entity child in this._children._children) {
+    for (Entity child in this._children) {
       child.update(state);
     }
   }
@@ -272,7 +285,7 @@ class Entity implements Movers.Movable {
     }
 
     // Render all children.
-    for (Entity child in this._children._children) {
+    for (Entity child in this._children) {
       child.render(state);
     }
 
@@ -336,12 +349,13 @@ class Entity implements Movers.Movable {
   }
 
   /// Called when any change has occurred.
+  ///
   /// This emits the [changed] event.
   /// This isn't meant to be called from outside the entity, in other languages this would
   /// be a protected method. This method is exposed to that the entity is extended and
   /// these methods can be overwritten. If overwritten call this super method to still emit events.
-  void onChanged() {
-    this._changed?.emit();
+  void onChanged([EventArgs args = null]) {
+    this._changed?.emit(args);
   }
 
   /// Called when the shape is modified.
@@ -351,8 +365,9 @@ class Entity implements Movers.Movable {
   /// This isn't meant to be called from outside the entity, in other languages this would
   /// be a protected method. This method is exposed to that the entity is extended and
   /// these methods can be overwritten. If overwritten call this super method to still emit events.
-  void onShapeModified(EventArgs args) {
+  void onShapeModified([EventArgs args = null]) {
     this.clearCache();
+    this.onChanged(args);
   }
 
   /// Called when the shape is added or removed.
@@ -367,6 +382,15 @@ class Entity implements Movers.Movable {
     this.onChanged();
   }
 
+  /// Handles a change in the technique.
+  ///
+  /// This isn't meant to be called from outside the entity, in other languages this would
+  /// be a protected method. This method is exposed to that the entity is extended and
+  /// these methods can be overwritten. If overwritten call this super method to still emit events.
+  void onTechModified([EventArgs args = null]) {
+    this.onChanged(args);
+  }
+
   /// Called when the technique is added or removed.
   ///
   /// This emits the [techChanged] event and calls [onChanged].
@@ -377,6 +401,15 @@ class Entity implements Movers.Movable {
   void onTechChanged(Techniques.Technique oldTech, Techniques.Technique newTech) {
     this._techChanged?.emit();
     this.onChanged();
+  }
+
+  /// Handles a change in the mover.
+  ///
+  /// This isn't meant to be called from outside the entity, in other languages this would
+  /// be a protected method. This method is exposed to that the entity is extended and
+  /// these methods can be overwritten. If overwritten call this super method to still emit events.
+  void onMoverModified([EventArgs args = null]) {
+    this.onChanged(args);
   }
 
   /// Called when the mover is added or removed is removed.
@@ -403,6 +436,15 @@ class Entity implements Movers.Movable {
     this.onChanged();
   }
 
+  /// Handles a change in the child.
+  ///
+  /// This isn't meant to be called from outside the entity, in other languages this would
+  /// be a protected method. This method is exposed to that the entity is extended and
+  /// these methods can be overwritten. If overwritten call this super method to still emit events.
+  void onChildrenModified([EventArgs args = null]) {
+    this.onChanged(args);
+  }
+
   /// Called when one or more child is added.
   ///
   /// This emits the [onChildrenAdded] event and calls [onChanged].
@@ -410,9 +452,12 @@ class Entity implements Movers.Movable {
   /// This isn't meant to be called from outside the entity, in other languages this would
   /// be a protected method. This method is exposed to that the entity is extended and
   /// these methods can be overwritten. If overwritten call this super method to still emit events.
-  void onChildrenAdded(List<Entity> entities) {
+  void onChildrenAdded(int index, Iterable<Entity> entities) {
     if (this._childrenAdded != null)
       this._childrenAdded.emit(new EntityEventArgs(this, entities));
+    for (Entity entity in entities) {
+      if (entity != null) entity.changed.add(this.onChildrenModified);
+    }
     this.onChanged();
   }
 
@@ -423,14 +468,12 @@ class Entity implements Movers.Movable {
   /// This isn't meant to be called from outside the entity, in other languages this would
   /// be a protected method. This method is exposed to that the entity is extended and
   /// these methods can be overwritten. If overwritten call this super method to still emit events.
-  void onChildrenRemoved(List<Entity> entities) {
+  void onChildrenRemoved(int index, Iterable<Entity> entities) {
     if (this._childrenRemoved != null)
       this._childrenRemoved.emit(new EntityEventArgs(this, entities));
-    this.onChanged();
-  }
-
-  /// Called when all the children are removed.
-  void onChildrenCleared() {
+    for (Entity entity in entities) {
+      if (entity != null) entity.changed.remove(this.onChildrenModified);
+    }
     this.onChanged();
   }
 }
