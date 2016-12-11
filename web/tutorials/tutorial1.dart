@@ -32,7 +32,6 @@ void tutorial1() {
     ..addCode("main.dart", "dart", 0, [
       "library threeDartTutorial1;",
       "",
-      "import 'dart:html';",
       "import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;",
       "import 'package:ThreeDart/Shapes.dart' as Shapes;",
       "import 'package:ThreeDart/Movers.dart' as Movers;",
