@@ -51,8 +51,10 @@ void testTechnique(TestArgs args, Math.Matrix4 objMat, Math.Matrix4 camMat, List
     ..children.add(obj)
     ..camera.mover = new Movers.Constant(camMat);
 
-  new ThreeDart.ThreeDart.fromCanvas(new html.CanvasElement())
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromCanvas(new html.CanvasElement())
+    ..autoRefresh = false
     ..scene = pass;
+  td.render();
 
   args.info(buf.toString());
 

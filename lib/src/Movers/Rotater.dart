@@ -121,14 +121,14 @@ class Rotater extends Mover {
   Math.Matrix4 update(Core.RenderState state, Movable obj) {
     if (this._frameNum < state.frameNumber) {
       this._frameNum = state.frameNumber;
-      this._changed.suspend();
+      this._changed?.suspend();
       this.yaw   += this._deltaYaw  *state.dt;
       this.pitch += this._deltaPitch*state.dt;
       this.roll  += this._deltaRoll *state.dt;
       this._mat = new Math.Matrix4.rotateZ(this._roll)*
                   new Math.Matrix4.rotateY(this._pitch)*
                   new Math.Matrix4.rotateX(this._yaw);
-      this._changed.resume();
+      this._changed?.resume();
     }
     return this._mat;
   }

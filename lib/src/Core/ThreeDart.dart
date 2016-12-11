@@ -175,6 +175,8 @@ class ThreeDart implements Changable {
     return fps;
   }
 
+  /// TODO: Somehow need to detect the size change of the canvas and call a render.
+
   /// Makes sure the size of the canvas is correctly set.
   void _resize() {
     // Lookup the size the browser is displaying the canvas in CSS pixels and

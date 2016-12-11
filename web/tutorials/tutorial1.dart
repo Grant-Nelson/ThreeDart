@@ -50,23 +50,15 @@ void tutorial1() {
       "    ..children.add(obj)",
       "    ..camera.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0));",
       "",
-      "  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId(\"tutorial1\")",
+      "  new ThreeDart.ThreeDart.fromId(\"tutorial1\")",
       "    ..scene = pass;",
-      "",
-      "  var update;",
-      "  update = (num t) {",
-      "    td.render();",
-      "    window.requestAnimationFrame(update);",
-      "  };",
-      "  window.requestAnimationFrame(update);",
       "}"])
     ..addHeader(4, "ThreeDart")
     ..addPar(["ThreeDart must have a ",
       "[HTML canvas element|http://www.w3schools.com/graphics/canvas_intro.asp] to ",
       "render graphics to. In this example the canvas is provided by [index.html|#index.html] ",
       "and labelled `tutorial1`. On line 21 of [main.dart|#main.dart] the main ThreeDart class ",
-      "is created an attached to that canvas using its identifier. Below that is ",
-      "the render loop using the browser's `requestAnimationFrame`."])
+      "is created an attached to that canvas using its identifier."])
     ..addHeader(4, "Scene")
     ..addPar(["To make the image, the rendering has to have something to render. ",
       "A scene is set to ThreeDart to provide the content to render. A scene ",
@@ -113,13 +105,6 @@ void tutorial1() {
     ..children.add(obj)
     ..camera.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0));
 
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("tutorial1")
+  new ThreeDart.ThreeDart.fromId("tutorial1")
     ..scene = pass;
-
-  var update;
-  update = (num t) {
-    td.render();
-    html.window.requestAnimationFrame(update);
-  };
-  html.window.requestAnimationFrame(update);
 }

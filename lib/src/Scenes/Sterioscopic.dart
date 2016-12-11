@@ -80,6 +80,18 @@ class Sterioscopic implements Scene {
     this._updateConstMats();
   }
 
+  /// Event emitted on an render for this pass.
+  Core.Event get onRender {
+    if (this._onRender == null) this._onRender = new Core.Event();
+    return this._onRender;
+  }
+
+  /// The event emitted when the scene has changed.
+  Core.Event get changed {
+    if (this._changed == null) this._changed = new Core.Event();
+    return this._changed;
+  }
+
   /// Handles a change in this pass.
   void _onChanged([Core.EventArgs args = null]) {
     this._changed?.emit(args);
@@ -151,12 +163,6 @@ class Sterioscopic implements Scene {
       this._onChanged(new Core.ValueChangedEventArgs(this, "focusDistance", prev, this._focusDistance));
     }
   }
-
-  /// Event emitted on an render for this pass.
-  Core.Event get onRender => this._onRender;
-
-  /// Event emitted when the pass or any child is changed.
-  Core.Event get changed => this._changed;
 
   /// Updates the camera offset constant matrices.
   void _updateConstMats() {

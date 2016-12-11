@@ -111,7 +111,7 @@ class CoverPass implements RenderPass {
     this._box.render(state);
 
     Core.StateEventArgs args = new Core.StateEventArgs(this, state);
-    this._onRender.emit(args);
+    this._onRender?.emit(args);
 
     this._camera.unbind(state);
     this._target.unbind(state);

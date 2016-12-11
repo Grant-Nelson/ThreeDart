@@ -52,7 +52,7 @@ class Group extends Core.Collection<Mover> implements Mover {
   ///
   /// This updates with the given [state] and the [obj] this mover is attached to.
   Math.Matrix4 update(Core.RenderState state, Movable obj) {
-    this._changed.suspend();
+    this._changed?.suspend();
     Math.Matrix4 mat = null;
     for (Mover mover in this) {
       if (mover != null) {
@@ -69,7 +69,7 @@ class Group extends Core.Collection<Mover> implements Mover {
     if (mat == null) {
       mat = new Math.Matrix4.identity();
     }
-    this._changed.resume();
+    this._changed?.resume();
     return mat;
   }
 
