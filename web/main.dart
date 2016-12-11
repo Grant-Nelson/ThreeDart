@@ -12,7 +12,6 @@ void main() {
   try {
     if (tutorialNum == "1") {
       tutorials.tutorial1();
-      print("FLAG 1");
     }
     else mainPage();
   } catch (ex) {

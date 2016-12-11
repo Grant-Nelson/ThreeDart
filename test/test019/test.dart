@@ -3,8 +3,6 @@
 
 library ThreeDart.test.test019;
 
-import 'dart:html';
-
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 import 'package:ThreeDart/Shapes.dart' as Shapes;
 import 'package:ThreeDart/Movers.dart' as Movers;
@@ -55,16 +53,11 @@ void main() {
 
   Scenes.EntityPass pass = new Scenes.EntityPass()
     ..camera = camera
-    ..tech = tech
+    ..technique = tech
     ..target = target
     ..children.add(obj);
 
   td.scene = new Scenes.Compound(passes: [skybox, pass]);
 
-  var update;
-  update = (num t) {
-    td.render();
-    window.requestAnimationFrame(update);
-  };
-  window.requestAnimationFrame(update);
+  common.showFPS(td);
 }

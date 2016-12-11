@@ -3,8 +3,6 @@
 
 library ThreeDart.test.test013;
 
-import 'dart:html';
-
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 import 'package:ThreeDart/Shapes.dart' as Shapes;
 import 'package:ThreeDart/Movers.dart' as Movers;
@@ -38,8 +36,8 @@ void main() {
     ..lights.add(new Lights.Directional(
           mover: new Movers.Constant(new Math.Matrix4.vectorTowards(0.0, -1.0, -1.0)),
           color: new Math.Color3.white()))
-    ..ambient.color = new Math.Color3(0.0, 0.0, 1.0)
-    ..diffuse.color = new Math.Color3(0.0, 1.0, 0.0)
+    ..ambient.color  = new Math.Color3(0.0, 0.0, 1.0)
+    ..diffuse.color  = new Math.Color3(0.0, 1.0, 0.0)
     ..specular.color = new Math.Color3(1.0, 0.0, 0.0)
     ..specular.shininess = 10.0;
 
@@ -49,17 +47,12 @@ void main() {
     ..camera = userCamera;
 
   Scenes.EntityPass pass = new Scenes.EntityPass()
-    ..camera = userCamera
-    ..tech = tech
-    ..target = target
+    ..camera    = userCamera
+    ..technique = tech
+    ..target    = target
     ..children.add(obj);
 
   td.scene = new Scenes.Compound(passes: [skybox, pass]);
 
-  var update;
-  update = (num t) {
-    td.render();
-    window.requestAnimationFrame(update);
-  };
-  window.requestAnimationFrame(update);
+  common.showFPS(td);
 }

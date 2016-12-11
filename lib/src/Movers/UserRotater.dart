@@ -57,12 +57,15 @@ class UserRotater implements Mover, Core.UserInteractable {
   /// The matrix describing the mover's rotation.
   Math.Matrix4 _mat;
 
+  /// Event for handling changes to this mover.
+  Core.Event _changed;
+
   /// Creates a new user rotater instance.
   UserRotater({
-    bool ctrl: false,
-    bool alt: false,
-    bool shift: false,
-    Core.UserInput input: null}) {
+      bool ctrl:  false,
+      bool alt:   false,
+      bool shift: false,
+      Core.UserInput input: null}) {
     this._input = null;
     this._pitch = new ComponentShift()
       ..wrap = true
@@ -70,32 +73,50 @@ class UserRotater implements Mover, Core.UserInteractable {
       ..minimumLocation = 0.0
       ..location = 0.0
       ..maximumVelocity = 100.0
-      ..velocity = 0.0
+      ..velocity  = 0.0
       ..dampening = 0.2;
+    this._pitch.changed.add(this._onChanged);
     this._yaw = new ComponentShift()
       ..wrap = true
       ..maximumLocation = math.PI * 2.0
       ..minimumLocation = 0.0
       ..location = 0.0
       ..maximumVelocity = 100.0
-      ..velocity = 0.0
+      ..velocity  = 0.0
       ..dampening = 0.2;
-    this._ctrlPressed = ctrl;
-    this._altPressed = alt;
-    this._shiftPressed = shift;
-    this._cumulative = false;
-    this._pitchScalar = 2.5;
-    this._yawScalar = 2.5;
-    this._deadBand = 2.0;
-    this._deadBand2 = 4.0;
-    this._pressed = false;
-    this._inDeadBand = false;
-    this._lastYaw = 0.0;
-    this._lastPitch = 0.0;
-    this._prevVal = null;
-    this._frameNum = 0;
-    this._mat = null;
+    this._yaw.changed.add(this._onChanged);
+    this._ctrlPressed  = false;
+    this._altPressed   = false;
+    this._shiftPressed = false;
+    this._cumulative   = false;
+    this._pitchScalar  = 2.5;
+    this._yawScalar    = 2.5;
+    this._deadBand     = 2.0;
+    this._deadBand2    = 4.0;
+    this._pressed      = false;
+    this._inDeadBand   = false;
+    this._lastYaw      = 0.0;
+    this._lastPitch    = 0.0;
+    this._prevVal      = null;
+    this._frameNum     = 0;
+    this._mat          = null;
+    this._changed      = null;
+
+    this.ctrlPressed  = ctrl;
+    this.altPressed   = alt;
+    this.shiftPressed = shift;
     this.attach(input);
+  }
+
+  /// Emits when the mover has changed.
+  Core.Event get changed {
+    if (this._changed == null) this._changed = new Core.Event();
+    return this._changed;
+  }
+
+  /// Handles a child mover being changed.
+  void _onChanged([Core.EventArgs args = null]) {
+    this._changed?.emit(args);
   }
 
   /// Attaches this mover to the user input.
@@ -149,6 +170,7 @@ class UserRotater implements Mover, Core.UserInteractable {
       this._yaw.velocity = 0.0;
       this._prevVal = args.adjustedDelta;
     }
+    this._onChanged();
   }
 
   /// Handle the mouse up event.
@@ -159,6 +181,7 @@ class UserRotater implements Mover, Core.UserInteractable {
     if (this._prevVal.length2() > 0.0001) {
       this._pitch.velocity = this._prevVal.dx*10.0*this._pitchScalar;
       this._yaw.velocity = this._prevVal.dy*10.0*this._yawScalar;
+      this._onChanged();
     }
   }
 
@@ -170,49 +193,92 @@ class UserRotater implements Mover, Core.UserInteractable {
 
   /// Indicates if the control/meta key must be pressed or released.
   bool get ctrlPressed => this._ctrlPressed;
-  void set ctrlPressed(bool enable) { this._ctrlPressed = enable; }
+  void set ctrlPressed(bool enable) {
+    enable = enable ?? false;
+    if (this._ctrlPressed != enable) {
+      bool prev = this._ctrlPressed;
+      this._ctrlPressed = enable;
+      this._onChanged(new Core.ValueChangedEventArgs(this, "ctrlPressed", prev, this._ctrlPressed));
+    }
+  }
 
   /// Indicates if the alt key must be pressed or released.
   bool get altPressed => this._altPressed;
-  void set altPressed(bool enable) { this._altPressed = enable; }
+  void set altPressed(bool enable) {
+    enable = enable ?? false;
+    if (this._altPressed != enable) {
+      bool prev = this._altPressed;
+      this._altPressed = enable;
+      this._onChanged(new Core.ValueChangedEventArgs(this, "altPressed", prev, this._altPressed));
+    }
+  }
 
   /// Indicates if the shift key must be pressed or released.
   bool get shiftPressed => this._shiftPressed;
-  void set shiftPressed(bool enable) { this._shiftPressed = enable; }
+  void set shiftPressed(bool enable) {
+    enable = enable ?? false;
+    if (this._shiftPressed != enable) {
+      bool prev = this._shiftPressed;
+      this._shiftPressed = enable;
+      this._onChanged(new Core.ValueChangedEventArgs(this, "shiftPressed", prev, this._shiftPressed));
+    }
+  }
 
   /// Indicates if the rotations should be continuous or not.
   bool get cumulative => this._cumulative;
-  void set cumulative(bool enable) { this._cumulative = enable; }
+  void set cumulative(bool enable) {
+    enable = enable ?? false;
+    if (this._cumulative != enable) {
+      bool prev = this._cumulative;
+      this._cumulative = enable;
+      this._onChanged(new Core.ValueChangedEventArgs(this, "cumulative", prev, this._cumulative));
+    }
+  }
 
   /// The scalar to apply to the mouse movements pitch.
   double get pitchScalar => this._pitchScalar;
-  void set pitchScalar(double value) { this._pitchScalar = value; }
+  void set pitchScalar(double value) {
+    value = value ?? 0.0;
+    if (!Math.Comparer.equals(this._pitchScalar, value)) {
+      double prev = this._pitchScalar;
+      this._pitchScalar = value;
+      this._onChanged(new Core.ValueChangedEventArgs(this, "pitchScalar", prev, this._pitchScalar));
+    }
+  }
 
   /// The scalar to apply to the mouse movements yaw.
   double get yawScalar => this._yawScalar;
-  void set yawScalar(double value) { this._yawScalar = value; }
+  void set yawScalar(double value) {
+    value = value ?? 0.0;
+    if (!Math.Comparer.equals(this._yawScalar, value)) {
+      double prev = this._yawScalar;
+      this._yawScalar = value;
+      this._onChanged(new Core.ValueChangedEventArgs(this, "yawScalar", prev, this._yawScalar));
+    }
+  }
 
   /// The dead-band, in pixels, before any movement is made.
   double get deadBand => this._deadBand;
   void set deadBand(double value) {
-    this._deadBand = value;
-    this._deadBand2 = this._deadBand * this._deadBand;
-  }
-
-  /// Updates the matrix for this mover.
-  /// This is only called once per frame.
-  void _update(Core.RenderState state) {
-    this._frameNum = state.frameNumber;
-    final double dt = state.dt;
-    this._yaw.update(dt);
-    this._pitch.update(dt);
-    this._mat = new Math.Matrix4.rotateX(this._yaw.location)*
-                new Math.Matrix4.rotateY(this._pitch.location);
+    value = value ?? 0.0;
+    if (!Math.Comparer.equals(this._deadBand, value)) {
+      double prev = this._deadBand;
+      this._deadBand = value;
+      this._deadBand2 = this._deadBand * this._deadBand;
+      this._onChanged(new Core.ValueChangedEventArgs(this, "deadBand", prev, this._deadBand));
+    }
   }
 
   /// Updates this mover and returns the matrix for the given object.
   Math.Matrix4 update(Core.RenderState state, Movable obj) {
-    if (this._frameNum < state.frameNumber) this._update(state);
+    if (this._frameNum < state.frameNumber) {
+      this._frameNum = state.frameNumber;
+      final double dt = state.dt;
+      this._yaw.update(dt);
+      this._pitch.update(dt);
+      this._mat = new Math.Matrix4.rotateX(this._yaw.location)*
+                  new Math.Matrix4.rotateY(this._pitch.location);
+    }
     return this._mat;
   }
 }

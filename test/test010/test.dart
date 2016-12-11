@@ -3,8 +3,6 @@
 
 library ThreeDart.test.test010;
 
-import 'dart:html';
-
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 import 'package:ThreeDart/Shapes.dart' as Shapes;
 import 'package:ThreeDart/Movers.dart' as Movers;
@@ -39,14 +37,9 @@ void main() {
     ..bump.textureCube = td.textureLoader.loadCubeFromPath("../resources/diceBumpMap");
 
   td.scene = new Scenes.EntityPass()
-    ..tech = tech
+    ..technique = tech
     ..children.add(obj)
     ..camera.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0));
 
-  var update;
-  update = (num t) {
-    td.render();
-    window.requestAnimationFrame(update);
-  };
-  window.requestAnimationFrame(update);
+  common.showFPS(td);
 }

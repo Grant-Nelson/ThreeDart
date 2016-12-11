@@ -3,7 +3,6 @@
 
 library ThreeDart.test.test002;
 
-import 'dart:html';
 import 'dart:math';
 
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
@@ -33,7 +32,7 @@ void main() {
     ..vectorScale = 0.4;
 
   td.scene = new Scenes.EntityPass()
-    ..tech = tech
+    ..technique = tech
     ..children.add(obj)
     ..camera.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0));
 
@@ -48,8 +47,8 @@ void main() {
     ..add("Face Normals",    (bool show) { tech.showFaceNormals    = show; })
     ..add("Face Binormals",  (bool show) { tech.showFaceBinormals  = show; })
     ..add("Face Tangentals", (bool show) { tech.showFaceTangentals = show; })
-    ..add("Colors",          (bool show) { tech.showColorFill      = show; })
-    ..add("Textures2D",      (bool show) { tech.showTxt2DColor     = show; })
+    ..add("Colors",          (bool show) { tech.showColorFill      = show; }) // TODO: The offsets of the colors needs to be fixed.
+    ..add("Textures2D",      (bool show) { tech.showTxt2DColor     = show; }) // TODO: The offsets of the 2D textures needs to be fixed.
     ..add("TexturesCube",    (bool show) { tech.showTxtCube        = show; })
     ..add("Weight",          (bool show) { tech.showWeight         = show; })
     ..add("Bend",            (bool show) { tech.showBend           = show; })
@@ -106,10 +105,5 @@ void main() {
     ..add("0.8", () { tech.vectorScale = 0.8; })
     ..add("1.0", () { tech.vectorScale = 1.0; });
 
-  var update;
-  update = (num t) {
-    td.render();
-    window.requestAnimationFrame(update);
-  };
-  window.requestAnimationFrame(update);
+  common.showFPS(td);
 }

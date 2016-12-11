@@ -17,7 +17,7 @@ class EntityEventArgs extends EventArgs {
   /// Typically this will be entities added or removed.
   final List<Entity> entities;
 
-  /// Creates a entity event argument.
+  /// Creates an entity event argument.
   EntityEventArgs(Object sender, this.entities):
     super(sender);
 }
@@ -123,5 +123,50 @@ class StateEventArgs extends EventArgs {
 
   /// Creates a new state event argument.
   StateEventArgs(Object sender, this.state):
+    super(sender);
+}
+
+/// The event argument for event's with information about entities changing.
+class ValueChangedEventArgs extends EventArgs {
+
+  /// The name of the value which was changed in the sender.
+  final String name;
+
+  /// The previous value (or nil) of the value before it was changed.
+  final Object previous;
+
+  /// The current value that the value was just changed to.
+  final Object value;
+
+  /// Creates an entity event argument.
+  ValueChangedEventArgs(Object sender, this.name, this.previous, this.value):
+    super(sender);
+}
+
+/// The event argument for event's when items are added to a collection.
+class ItemsAddedEventArgs<T> extends EventArgs {
+
+  /// The index that the items were inserted at.
+  final int index;
+
+  /// The list of items which were added.
+  final Iterable<T> added;
+
+  /// Creates an items added event argument.
+  ItemsAddedEventArgs(Object sender, this.index, this.added):
+    super(sender);
+}
+
+/// The event argument for event's when items removed from a collection.
+class ItemsRemovedEventArgs<T> extends EventArgs {
+
+  /// The index that the items were taken from.
+  final int index;
+
+  /// The list of items which were removed.
+  final Iterable<T> removed;
+
+  /// Creates an items removed event argument.
+  ItemsRemovedEventArgs(Object sender, this.index, this.removed):
     super(sender);
 }

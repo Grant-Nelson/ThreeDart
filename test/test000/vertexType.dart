@@ -12,13 +12,13 @@ void vertexTypeTests(TestManager tests) {
     _checkVertexType(args, Data.VertexType.Clr3,    "Clr3",    0x0020, 1, 3);
     _checkVertexType(args, Data.VertexType.Clr4,    "Clr4",    0x0040, 1, 4);
     _checkVertexType(args, Data.VertexType.Weight,  "Weight",  0x0080, 1, 1);
-    _checkVertexType(args, Data.VertexType.Bending, "Bending", 0x0100, 1, 1);
+    _checkVertexType(args, Data.VertexType.Bending, "Bending", 0x0100, 1, 4);
     _checkVertexType(args, Data.VertexType.Pos|Data.VertexType.Norm,  "Pos|Norm",  0x0003, 2, 6);
     _checkVertexType(args, Data.VertexType.Pos|Data.VertexType.Txt2D, "Pos|Txt2D", 0x0009, 2, 5);
     _checkVertexType(args, Data.VertexType.Pos|Data.VertexType.Norm|
       Data.VertexType.Binm|Data.VertexType.Txt2D|Data.VertexType.Clr3, "Pos|Norm|Binm|Txt2D|Clr3", 0x002F, 5, 14);
     _checkVertexType(args, Data.VertexType.Txt2D|Data.VertexType.Weight, "Txt2D|Weight", 0x0088, 2, 3);
-    _checkVertexType(args, Data.VertexType.TxtCube|Data.VertexType.Bending, "TxtCube|Bending", 0x0110, 2, 4);
+    _checkVertexType(args, Data.VertexType.TxtCube|Data.VertexType.Bending, "TxtCube|Bending", 0x0110, 2, 7);
   });
 
   tests.add("VertexTypes from Type Groups 1", (TestArgs args) {

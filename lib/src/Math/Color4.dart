@@ -6,40 +6,44 @@ part of ThreeDart.Math;
 /// 0.0 it completely transparent. 1.0 is completely opaque.
 class Color4 {
 
-  /// The red component of the color.
-  double _red;
+  /// The red component between 0.0 and 1.0 inclusively.
+  final double red;
 
-  /// The green component of the color.
-  double _green;
+  /// The green component between 0.0 and 1.0 inclusively.
+  final double green;
 
-  /// The blue component of the color.
-  double _blue;
+  /// The blue component between 0.0 and 1.0 inclusively.
+  final double blue;
 
-  /// The alpha component of the color.
-  double _alpha;
+  /// The alpha component between 0.0 and 1.0 inclusively.
+  final double alpha;
+
+  /// Constructs a new [Color4] instance.
+  Color4._(double this.red, double this.green, double this.blue, double this.alpha);
 
   /// Constructs a new [Color4] instance.
   ///
   /// [red], [green], [blue], and [alpha] are the initial color components between 0.0 and 1.0 inclusively.
-  Color4(double red, double green, double blue, [double alpha = 1.0]) {
-    this.set(red, green, blue, alpha);
-  }
+  factory Color4(double red, double green, double blue, [double alpha = 1.0]) =>
+    new Color4._(clampVal(red), clampVal(green), clampVal(blue), clampVal(alpha));
 
   /// Constructs a new [Color4] instance with no color, opaque black.
   factory Color4.black([double alpha = 1.0]) =>
-    new Color4(0.0, 0.0, 0.0, alpha);
+    new Color4._(0.0, 0.0, 0.0, clampVal(alpha));
 
   /// Constructs a new [Color4] instance with a gray color from the optional [value].
-  factory Color4.gray([double value = 0.5, double alpha = 1.0]) =>
-    new Color4(value, value, value, alpha);
+  factory Color4.gray([double value = 0.5, double alpha = 1.0]) {
+    value = clampVal(value);
+    new Color4._(value, value, value, clampVal(alpha));
+  }
 
   /// Constructs a new [Color4] instance with full color, white.
   factory Color4.white([double alpha = 1.0]) =>
-    new Color4(1.0, 1.0, 1.0, alpha);
+    new Color4._(1.0, 1.0, 1.0, clampVal(alpha));
 
   /// Constructs a new transpanent [Color4] instance, transparent black.
   factory Color4.transparent() =>
-    new Color4(0.0, 0.0, 0.0, 0.0);
+    new Color4._(0.0, 0.0, 0.0, 0.0);
 
   /// Constructs a new [Color4] instance from a [Color3] instance.
   ///
@@ -47,7 +51,7 @@ class Color4 {
   /// [alpha] is the transparent component of the new color.
   /// If [alpha] is not provided the color will be completely opaque.
   factory Color4.fromColor3(Color3 clr, [double alpha = 1.0]) =>
-    new Color4(clr._red, clr._green, clr._blue, alpha);
+    new Color4._(clr.red, clr.green, clr.blue, clampVal(alpha));
 
   /// Constructs a new [Color3] instance given a list of 4 doubles.
   ///
@@ -65,43 +69,13 @@ class Color4 {
   	return new Color4.fromColor3(new Color3.fromHVS(hue, value, saturation), alpha);
   }
 
-  /// The red component between 0.0 and 1.0 inclusively.
-  double get red => this._red;
-  set red(double red) => this._red = clampVal(red);
-
-  /// The green component between 0.0 and 1.0 inclusively.
-  double get green => this._green;
-  set green(double green) => this._green = clampVal(green);
-
-  /// The blue component between 0.0 and 1.0 inclusively.
-  double get blue => this._blue;
-  set blue(double blue) => this._blue = clampVal(blue);
-
-  /// The alpha component between 0.0 and 1.0 inclusively.
-  double get alpha => this._alpha;
-  set alpha(double alpha) => this._alpha = clampVal(alpha);
-
-  /// Sets the color of this instance.
-  ///
-  /// [red], [green], [blue], and [alpha] are the new color components between 0.0 and 1.0 inclusively.
-  void set(double red, double green, double blue, double alpha) {
-    this._red   = clampVal(red);
-    this._green = clampVal(green);
-    this._blue  = clampVal(blue);
-    this._alpha = clampVal(alpha);
-  }
-
   /// Gets an list of 4 doubles in the order red, green, blue, then alpha.
   List<double> toList() =>
-      [this._red, this._green, this._blue, this._alpha];
-
-  /// Creates a copy of the color.
-  Color4 copy() =>
-      new Color4(this._red, this._green, this._blue, this._alpha);
+      [this.red, this.green, this.blue, this.alpha];
 
   /// Inverts the color, creating the complement color and inverted translucency.
   Color4 invert() =>
-    new Color4(1.0 - this._red, 1.0 - this._green, 1.0 - this._blue, 1.0 - this._alpha);
+    new Color4._(1.0 - this.red, 1.0 - this.green, 1.0 - this.blue, 1.0 - this.alpha);
 
   /// Creates the linear interpolation between this color and the [other] color.
   ///
@@ -109,35 +83,35 @@ class Color4 {
   /// 1.0 or more will return the [other] color. Between 0.0 and 1.0 will be
   /// a scaled mixure of the two colors.
   Color4 lerp(Color4 other, double i) =>
-    new Color4(lerpVal(this._red,  other._red,  i), lerpVal(this._green, other._green, i),
-               lerpVal(this._blue, other._blue, i), lerpVal(this._alpha, other._alpha, i));
+    new Color4(lerpVal(this.red,  other.red,  i), lerpVal(this.green, other.green, i),
+               lerpVal(this.blue, other.blue, i), lerpVal(this.alpha, other.alpha, i));
 
   /// Creates a new color as the sum of this color and the [other] color.
   ///
   /// The color components will saturate at 1.0 so are limited to 1.0.
   Color4 operator +(Color4 other) =>
-      new Color4(this._red  + other._red,  this._green + other._green,
-                 this._blue + other._blue, this._alpha + other._alpha);
+    new Color4(this.red  + other.red,  this.green + other.green,
+               this.blue + other.blue, this.alpha + other.alpha);
 
   /// Creates a new color as the difference of this color and the [other] color.
   ///
   /// The color components will deplete at 0.0 so are limited to 0.0.
   Color4 operator -(Color4 other) =>
-      new Color4(this._red  - other._red,  this._green - other._green,
-                 this._blue - other._blue, this._alpha - other._alpha);
+    new Color4(this.red  - other.red,  this.green - other.green,
+               this.blue - other.blue, this.alpha - other.alpha);
 
   /// Creates a new color scaled by the given [scalar].
   Color4 operator *(double scalar) =>
-      new Color4(scalar * this._red,  scalar * this._green,
-                 scalar * this._blue, scalar * this._alpha);
+    new Color4(scalar * this.red,  scalar * this.green,
+               scalar * this.blue, scalar * this.alpha);
 
   /// Creates a new color inversely scaled by the given [scalar].
   Color4 operator /(double scalar) {
     if (Comparer.equals(scalar, 0.0)) {
       return new Color4.transparent();
     }
-    return new Color4(this._red  / scalar, this._green / scalar,
-                      this._blue / scalar, this._alpha / scalar);
+    return new Color4(this.red  / scalar, this.green / scalar,
+                      this.blue / scalar, this.alpha / scalar);
   }
 
   /// Determines if the given [other] variable is a [Color4] equal to this color.
@@ -147,17 +121,17 @@ class Color4 {
     if (identical(this, other)) return true;
     if (other is! Color4) return false;
     Color4 clr = other as Color4;
-    if (!Comparer.equals(clr._red,   this._red))   return false;
-    if (!Comparer.equals(clr._green, this._green)) return false;
-    if (!Comparer.equals(clr._blue,  this._blue))  return false;
-    if (!Comparer.equals(clr._alpha, this._alpha)) return false;
+    if (!Comparer.equals(clr.red,   this.red))   return false;
+    if (!Comparer.equals(clr.green, this.green)) return false;
+    if (!Comparer.equals(clr.blue,  this.blue))  return false;
+    if (!Comparer.equals(clr.alpha, this.alpha)) return false;
     return true;
   }
 
   /// Gets the string for this color.
   String toString([int fraction = 3, int whole = 0]) => '['+
-      formatDouble(this._red, fraction, whole)+', '+
-      formatDouble(this._green, fraction, whole)+', '+
-      formatDouble(this._blue, fraction, whole)+', '+
-      formatDouble(this._alpha, fraction, whole)+']';
+    formatDouble(this.red,   fraction, whole)+', '+
+    formatDouble(this.green, fraction, whole)+', '+
+    formatDouble(this.blue,  fraction, whole)+', '+
+    formatDouble(this.alpha, fraction, whole)+']';
 }

@@ -54,7 +54,7 @@ void main() {
 
   Scenes.EntityPass pass = new Scenes.EntityPass()
     ..children.add(obj)
-    ..tech = tech
+    ..technique = tech
     ..target = target
     ..camera = userCamera;
 
@@ -65,10 +65,5 @@ void main() {
 
   td.scene = new Scenes.Compound(passes: [skybox, pass]);
 
-  var update;
-  update = (num t) {
-    td.render();
-    window.requestAnimationFrame(update);
-  };
-  window.requestAnimationFrame(update);
+  common.showFPS(td);
 }

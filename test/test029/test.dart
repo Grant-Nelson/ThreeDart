@@ -3,8 +3,6 @@
 
 library ThreeDart.test.test029;
 
-import 'dart:html';
-
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 import 'package:ThreeDart/Shapes.dart' as Shapes;
 import 'package:ThreeDart/Movers.dart' as Movers;
@@ -51,7 +49,7 @@ void main() {
 
   Scenes.EntityPass pass = new Scenes.EntityPass()
     ..camera = userCamera
-    ..tech = tech
+    ..technique = tech
     ..target = colorTarget
     ..children.add(obj);
 
@@ -59,7 +57,7 @@ void main() {
     ..colorTexture = colorTarget.colorTexture
     ..bumpMatrix = new Math.Matrix4.scale(0.05, 0.05, 0.05);
   Scenes.CoverPass distortPass = new Scenes.CoverPass()
-    ..tech = distortTech;
+    ..technique = distortTech;
 
   td.scene = new Scenes.Compound(passes: [skybox, pass, distortPass]);
 
@@ -74,10 +72,5 @@ void main() {
     ..add("../resources/ScrewBumpMap.png")
     ..add("../resources/CtrlPnlBumpMap.png");
 
-  var update;
-  update = (num t) {
-    td.render();
-    window.requestAnimationFrame(update);
-  };
-  window.requestAnimationFrame(update);
+  common.showFPS(td);
 }

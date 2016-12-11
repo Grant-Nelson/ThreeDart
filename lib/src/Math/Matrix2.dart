@@ -3,15 +3,21 @@ part of ThreeDart.Math;
 /// A math structure for storing and manipulating a Matrix 2x2.
 class Matrix2 {
 
-  double _m11, _m21;
-  double _m12, _m22;
+  /// The 1st row and 1st column of the matrix, XX.
+  final double m11;
+
+  /// The 1st row and 2nd column of the matrix, XY.
+  final double m21;
+
+  /// The 2nd row and 1st column of the matrix, YX.
+  final double m12;
+
+  /// The 2nd row and 2nd column of the matrix, YY.
+  final double m22;
 
   /// Constructs a new [Matrix2] with the given initial values.
-  Matrix2(double m11, double m21,
-          double m12, double m22) {
-    this.set(m11, m21,
-             m12, m22);
-  }
+  Matrix2(double this.m11, double this.m21,
+          double this.m12, double this.m22);
 
   /// Constructs a 2x2 identity matrix.
   factory Matrix2.identity() =>
@@ -40,15 +46,15 @@ class Matrix2 {
   ///
   /// The 3rd row and column are ignored from [mat].
   factory Matrix2.fromMatrix3(Matrix3 mat) =>
-    new Matrix2(mat._m11, mat._m21,
-                mat._m12, mat._m22);
+    new Matrix2(mat.m11, mat.m21,
+                mat.m12, mat.m22);
 
   /// Constructs a 2x2 matrix from a trimmed 4x4 matrix.
   ///
   /// The 3rd and 4th row and column are ignored from [mat].
   factory Matrix2.fromMatrix4(Matrix4 mat) =>
-    new Matrix2(mat._m11, mat._m21,
-                mat._m12, mat._m22);
+    new Matrix2(mat.m11, mat.m21,
+                mat.m12, mat.m22);
 
   /// Constructs a new [Matrix2] instance given a list of 4 doubles.
   /// By default the list is in row major order.
@@ -63,80 +69,52 @@ class Matrix2 {
     }
   }
 
-  /// Sets the [Matrix2] with the given values.
-  void set(double m11, double m21,
-           double m12, double m22) {
-    this._m11 = m11; this._m21 = m21;
-    this._m12 = m12; this._m22 = m22;
-  }
-
   /// Gets the list of 4 doubles for the matrix.
   /// By default the list is in row major order.
   List<double> toList([bool columnMajor = false]) {
     if (columnMajor) {
-      return [this._m11, this._m12,
-              this._m21, this._m22];
+      return [this.m11, this.m12,
+              this.m21, this.m22];
     } else {
-      return [this._m11, this._m21,
-              this._m12, this._m22];
+      return [this.m11, this.m21,
+              this.m12, this.m22];
     }
   }
 
-  /// The 1st row and 1st column of the matrix, XX.
-  double get m11 => this._m11;
-  set m11(double m11) => this._m11 = m11;
-
-  /// The 1st row and 2nd column of the matrix, XY.
-  double get m21 => this._m21;
-  set m21(double m21) => this._m21 = m21;
-
-  /// The 2nd row and 1st column of the matrix, YX.
-  double get m12 => this._m12;
-  set m12(double m12) => this._m12 = m12;
-
-  /// The 2nd row and 2nd column of the matrix, YY.
-  double get m22 => this._m22;
-  set m22(double m22) => this._m22 = m22;
-
   /// Gets the determinant of this matrix.
   double det() =>
-    this._m11 * this._m22 - this._m21 * this._m12;
-
-  /// Gets a copy of this matrix.
-  Matrix2 copy() =>
-      new Matrix2(this._m11, this._m21,
-                  this._m12, this._m22);
+    this.m11 * this.m22 - this.m21 * this.m12;
 
   /// Gets the transposition of this matrix.
   Matrix2 transpose() =>
-    new Matrix2(this._m11, this._m12,
-                this._m21, this._m22);
+    new Matrix2(this.m11, this.m12,
+                this.m21, this.m22);
 
   /// Gets the inverse of this matrix.
   Matrix2 inverse() {
     double det = this.det();
     if (Comparer.equals(det, 0.0)) return new Matrix2.identity();
     double q = 1.0 / det;
-    return new Matrix2( this._m22 * q, -this._m12 * q,
-                       -this._m21 * q,  this._m11 * q);
+    return new Matrix2( this.m22 * q, -this.m12 * q,
+                       -this.m21 * q,  this.m11 * q);
   }
 
   /// Multiplies this matrix by the [other] matrix.
   Matrix2 operator *(Matrix2 other) => new Matrix2(
-      this._m11 * other._m11 + this._m21 * other._m12,
-      this._m11 * other._m21 + this._m21 * other._m22,
-      this._m12 * other._m11 + this._m22 * other._m12,
-      this._m12 * other._m21 + this._m22 * other._m22);
+    this.m11 * other.m11 + this.m21 * other.m12,
+    this.m11 * other.m21 + this.m21 * other.m22,
+    this.m12 * other.m11 + this.m22 * other.m12,
+    this.m12 * other.m21 + this.m22 * other.m22);
 
   /// Transposes the given [vec] with this matrix.
   Vector2 transVec2(Vector2 vec) => new Vector2(
-      this._m11 * vec.dx + this._m21 * vec.dy,
-      this._m12 * vec.dx + this._m22 * vec.dy);
+    this.m11 * vec.dx + this.m21 * vec.dy,
+    this.m12 * vec.dx + this.m22 * vec.dy);
 
   /// Transposes the given [pnt] with this matrix.
   Point2 transPnt2(Point2 pnt) => new Point2(
-      this._m11 * pnt.x + this._m21 * pnt.y,
-      this._m12 * pnt.x + this._m22 * pnt.y);
+    this.m11 * pnt.x + this.m21 * pnt.y,
+    this.m12 * pnt.x + this.m22 * pnt.y);
 
   /// Determines if the given [other] variable is a [Matrix2] equal to this metrix.
   ///
@@ -145,18 +123,17 @@ class Matrix2 {
     if (identical(this, other)) return true;
     if (other is! Matrix2) return false;
     Matrix2 mat = other as Matrix2;
-    if (!Comparer.equals(mat._m11, this._m11)) return false;
-    if (!Comparer.equals(mat._m21, this._m21)) return false;
-    if (!Comparer.equals(mat._m12, this._m12)) return false;
-    if (!Comparer.equals(mat._m22, this._m22)) return false;
+    if (!Comparer.equals(mat.m11, this.m11)) return false;
+    if (!Comparer.equals(mat.m21, this.m21)) return false;
+    if (!Comparer.equals(mat.m12, this.m12)) return false;
+    if (!Comparer.equals(mat.m22, this.m22)) return false;
     return true;
   }
 
   /// Gets the string for this matrix.
   String toString([String indent = "", int fraction = 3, int whole = 0]) {
-    List<String> col1 = formatColumn([this._m11, this._m12], fraction, whole);
-    List<String> col2 = formatColumn([this._m21, this._m22], fraction, whole);
-    return '[${col1[0]}, ${col2[0]},\n' +
-      '$indent ${col1[1]}, ${col2[1]}]';
+    List<String> col1 = formatColumn([this.m11, this.m12], fraction, whole);
+    List<String> col2 = formatColumn([this.m21, this.m22], fraction, whole);
+    return '[${col1[0]}, ${col2[0]},\n$indent ${col1[1]}, ${col2[1]}]';
   }
 }

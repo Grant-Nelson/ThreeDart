@@ -10,13 +10,23 @@ class Debugger extends Technique {
   /// The list of resulting points from a render.
   List<Math.Point3> _results;
 
+  /// An event to indicate when this technique has been changed.
+  Core.Event _changed;
+
   /// Creates a new debugging technique.
   Debugger([StringBuffer this._buf = null]) {
     this._results = new List<Math.Point3>();
+    this._changed = null;
   }
 
   /// The list of resulting points from a render.
   List<Math.Point3> get results => this._results;
+
+  /// Since there are no setting, this is currently never emitted.
+  Core.Event get changed {
+    if (this._changed == null) this._changed = new Core.Event();
+    return this._changed;
+  }
 
   /// Updates this technique for the given state.
   void update(Core.RenderState state) {

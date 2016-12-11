@@ -12,9 +12,9 @@ abstract class RenderPass extends Scene {
   set target(Views.Target target);
 
   /// The default technique to render with.
-  Techniques.Technique get tech;
-  set tech(Techniques.Technique tech);
+  Techniques.Technique get technique;
+  set technique(Techniques.Technique tech);
 
-  /// Event emitted on an redner for this pass.
+  /// Event emitted on an render for this pass.
   Core.Event get onRender;
 }

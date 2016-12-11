@@ -3,8 +3,6 @@
 
 library ThreeDart.test.test036;
 
-import 'dart:html';
-
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 import 'package:ThreeDart/Shapes.dart' as Shapes;
 import 'package:ThreeDart/Movers.dart' as Movers;
@@ -45,7 +43,7 @@ void main() {
 
   Scenes.EntityPass pass = new Scenes.EntityPass()
     ..camera = userCamera
-    ..tech = tech
+    ..technique = tech
     ..target = target
     ..children.add(obj);
 
@@ -66,15 +64,10 @@ void main() {
     ..texture = target.colorTexture);
 
   Scenes.CoverPass layoutCover = new Scenes.CoverPass()
-    ..tech = layout
+    ..technique = layout
     ..target = new Views.FrontTarget(color: new Math.Color4.black());
 
   td.scene = new Scenes.Compound(passes: [pass, layoutCover]);
 
-  var update;
-  update = (num t) {
-    td.render();
-    window.requestAnimationFrame(update);
-  };
-  window.requestAnimationFrame(update);
+  common.showFPS(td);
 }

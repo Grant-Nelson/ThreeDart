@@ -3,7 +3,6 @@
 
 library ThreeDart.test.test026;
 
-import 'dart:html';
 import 'dart:math';
 
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
@@ -57,7 +56,7 @@ void main() {
   Movers.Rotater colorMover = new Movers.Rotater(deltaYaw: 0.3, deltaPitch: 0.5, deltaRoll: 0.7);
   Movers.Rotater txtMover   = new Movers.Rotater(deltaYaw: 0.0, deltaPitch: 0.0, deltaRoll: 0.1);
   td.scene = new Scenes.EntityPass()
-    ..tech = tech
+    ..technique = tech
     ..children.add(centerObj)
     ..children.add(room)
     ..camera.mover = camMover
@@ -74,10 +73,5 @@ void main() {
     ..add("Toroid",   () { centerObj.shape = Shapes.toroid(); }, true)
     ..add("Knot",     () { centerObj.shape = Shapes.knot(); });
 
-  var update;
-  update = (num t) {
-    td.render();
-    window.requestAnimationFrame(update);
-  };
-  window.requestAnimationFrame(update);
+  common.showFPS(td);
 }

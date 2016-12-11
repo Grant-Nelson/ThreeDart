@@ -21,6 +21,18 @@ part 'Vector2.dart';
 part 'Vector3.dart';
 part 'Vector4.dart';
 
+/// Pi constant.
+const double PI = math.PI;
+
+/// Pi / 2 constant.
+const double PI_2 = math.PI/2.0;
+
+/// Pi / 3 constant.
+const double PI_3 = math.PI/3.0;
+
+/// Tau constant, twice Pi.
+const double TAU = math.PI*2.0;
+
 /// Gets the linear interpolation between the two given doubles.
 ///
 /// The [i] is interpolation factor. 0.0 or less will return [a].
@@ -61,6 +73,7 @@ double diffInSecs(DateTime a, DateTime b) {
 /// [fraction] is the length of the fractional part.
 /// [whole] is the padding to put to the left of the number.
 String formatDouble(double v, [int fraction = 3, int whole = 0]) {
+  if (v == null) return "null".padLeft(whole);
   if (Comparer.currentEquality(v, 0.0)) v = 0.0;
   return v.toStringAsFixed(fraction).padLeft(whole + fraction + 1);
 }

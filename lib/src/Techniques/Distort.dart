@@ -10,6 +10,7 @@ class Distort extends Technique {
   Math.Matrix3 _colorTxt2DMat;
   Math.Matrix3 _bumpTxt2DMat;
   Math.Matrix4 _bumpMat;
+  Core.Event _changed;
 
   /// Creates a new distort cover technique with the given initial values.
   Distort({Textures.Texture2D colorTxt: null,
@@ -25,25 +26,64 @@ class Distort extends Technique {
     this.bumpMatrix = bumpMat;
   }
 
+  /// Indicates that this technique has changed.
+  Core.Event get changed {
+    if (this._changed == null) this._changed = new Core.Event();
+    return this._changed;
+  }
+
+  /// Handles a change in this technique.
+  void _onChanged([Core.EventArgs args = null]) {
+    this._changed?.emit(args);
+  }
+
   /// The color texture.
   Textures.Texture2D get colorTexture => this._colorTxt;
-  set colorTexture(Textures.Texture2D txt) => this._colorTxt = txt;
+  void set colorTexture(Textures.Texture2D txt) {
+    if (this._colorTxt != txt) {
+      this._colorTxt = txt;
+      this._onChanged();
+    }
+  }
 
   /// The bump texture.
   Textures.Texture2D get bumpTexture => this._bumpTxt;
-  set bumpTexture(Textures.Texture2D txt) => this._bumpTxt = txt;
+  void set bumpTexture(Textures.Texture2D txt) {
+    if (this._bumpTxt != txt) {
+      this._bumpTxt = txt;
+      this._onChanged();
+    }
+  }
 
   /// The color texture modification matrix.
   Math.Matrix3 get colorTexture2DMatrix => this._colorTxt2DMat;
-  set colorTexture2DMatrix(Math.Matrix3 mat) => this._colorTxt2DMat = mat ?? new Math.Matrix3.identity();
+  void set colorTexture2DMatrix(Math.Matrix3 mat) {
+    mat = mat ?? new Math.Matrix3.identity();
+    if (this._colorTxt2DMat != mat) {
+      this._colorTxt2DMat = mat;
+      this._onChanged();
+    }
+  }
 
   /// The bump texture modification matrix.
   Math.Matrix3 get bumpTexture2DMatrix => this._bumpTxt2DMat;
-  set bumpTexture2DMatrix(Math.Matrix3 mat) => this._bumpTxt2DMat = mat ?? new Math.Matrix3.identity();
+  void set bumpTexture2DMatrix(Math.Matrix3 mat) {
+    mat = mat ?? new Math.Matrix3.identity();
+    if (this._bumpTxt2DMat != mat) {
+      this._bumpTxt2DMat = mat;
+      this._onChanged();
+    }
+  }
 
   /// The matrix to modify the bump normal with.
   Math.Matrix4 get bumpMatrix => this._bumpMat;
-  set bumpMatrix(Math.Matrix4 mat) => this._bumpMat = mat ?? new Math.Matrix4.identity();
+  void set bumpMatrix(Math.Matrix4 mat) {
+    this._bumpMat = mat ?? new Math.Matrix4.identity();
+    if (this._bumpMat != mat) {
+      this._bumpMat = mat;
+      this._onChanged();
+    }
+  }
 
   /// Updates this technique for the given state.
   void update(Core.RenderState state) {

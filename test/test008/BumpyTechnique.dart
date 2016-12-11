@@ -5,21 +5,48 @@ class BumpyTechnique extends Techniques.Technique {
   Shaders.Shader _shader;
   Textures.Texture2D _txt;
   double _offsetScalar;
+  ThreeDart.Event _changed;
 
   /// Creates a new bumpy test techinque technique.
   BumpyTechnique() {
     this._shader = null;
     this._txt = null;
     this._offsetScalar = 1.0;
+    this._changed = null;
+  }
+
+  /// Emits an event whem the technique being changed.
+  ThreeDart.Event get changed {
+    if (this._changed == null) this._changed = new ThreeDart.Event();
+    return this._changed;
+  }
+
+  /// Handles the technique being changed.
+  void _onChanged([ThreeDart.EventArgs args = null]) {
+    this._changed?.emit(args);
   }
 
   /// The bumpy texture to render with.
   Textures.Texture2D get bumpyTexture => this._txt;
-  set bumpyTexture(Textures.Texture2D txt) => this._txt = txt;
+  void set bumpyTexture(Textures.Texture2D txt) {
+    if (this._txt != txt) {
+      if (this._txt != null) this._txt.loadFinished.remove(this._onChanged);
+      Textures.Texture2D prev = this._txt;
+      this._txt = txt;
+      if (this._txt != null) this._txt.loadFinished.add(this._onChanged);
+      this._onChanged(new ThreeDart.ValueChangedEventArgs(this, "bumpyTexture", prev, this._txt));
+    }
+  }
 
   /// The offset scalar for the size of the normal vectors.
   double get offsetScalar => this._offsetScalar;
-  set offsetScalar(double scalar) => this._offsetScalar = scalar;
+  void set offsetScalar(double scalar) {
+    if (!Math.Comparer.equals(this._offsetScalar, scalar)) {
+      double prev = this._offsetScalar;
+      this._offsetScalar = scalar;
+      this._onChanged(new ThreeDart.ValueChangedEventArgs(this, "offsetScalar", prev, this._offsetScalar));
+    }
+  }
 
   /// Updates this technique for the given state.
   void update(ThreeDart.RenderState state) {

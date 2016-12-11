@@ -47,12 +47,14 @@ void testTechnique(TestArgs args, Math.Matrix4 objMat, Math.Matrix4 camMat, List
   StringBuffer buf = new StringBuffer();
   Techniques.Debugger tech = new Techniques.Debugger(buf);
   Scenes.EntityPass pass = new Scenes.EntityPass()
-    ..tech = tech
+    ..technique = tech
     ..children.add(obj)
     ..camera.mover = new Movers.Constant(camMat);
 
-  new ThreeDart.ThreeDart.fromCanvas(new html.CanvasElement())
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromCanvas(new html.CanvasElement())
+    ..autoRefresh = false
     ..scene = pass;
+  td.render();
 
   args.info(buf.toString());
 

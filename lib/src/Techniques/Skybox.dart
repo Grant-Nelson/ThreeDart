@@ -6,27 +6,61 @@ class Skybox extends Technique {
   double _fov;
   Textures.TextureCube _boxTxt;
   Math.Color3 _boxClr;
+  Core.Event _changed;
 
   /// Creates a new sky box technique with the given initial values.
   Skybox({double fov: math.PI/3.0, Textures.TextureCube boxTexture: null,
           Math.Color3 boxColor: null}) {
-    this._shader = null;
-    this._fov = fov;
+    this._shader    = null;
+    this._fov       = fov;
     this.boxTexture = boxTexture;
-    this.boxColor = boxColor;
+    this.boxColor   = boxColor;
+    this._changed   = null;
+  }
+
+  /// Indicates that this technique has changed.
+  Core.Event get changed {
+    if (this._changed == null) this._changed = new Core.Event();
+    return this._changed;
+  }
+
+  /// Handles a change in this technique.
+  void _onChanged([Core.EventArgs args = null]) {
+    this._changed?.emit(args);
   }
 
   /// Feild of view vertically in radians of the camera.
   double get fov => this._fov;
-  set fov(double fov) => this._fov = fov;
+  void set fov(double fov) {
+    if (!Math.Comparer.equals(this._fov, fov)) {
+      double prev = this._fov;
+      this._fov = fov;
+      this._onChanged(new Core.ValueChangedEventArgs(this, "fov", prev, this._fov));
+    }
+  }
 
   /// The sky box texture.
   Textures.TextureCube get boxTexture => this._boxTxt;
-  set boxTexture(Textures.TextureCube boxTxt) => this._boxTxt = boxTxt;
+  void set boxTexture(Textures.TextureCube boxTxt) {
+    if (this._boxTxt != boxTxt) {
+      if (this._boxTxt != null) this._boxTxt.loadFinished.remove(this._onChanged);
+      Textures.TextureCube prev = this._boxTxt;
+      this._boxTxt = boxTxt;
+      if (this._boxTxt != null) this._boxTxt.loadFinished.add(this._onChanged);
+      this._onChanged(new Core.ValueChangedEventArgs(this, "boxTexture", prev, this._boxTxt));
+    }
+  }
 
   /// The sky box color scalar.
   Math.Color3 get boxColor => this._boxClr;
-  set boxColor(Math.Color3 color) => this._boxClr = color ?? new Math.Color3.white();
+  void set boxColor(Math.Color3 color) {
+    color = color ?? new Math.Color3.white();
+    if (this._boxClr != color) {
+      Math.Color3 prev = this._boxClr;
+      this._boxClr = color;
+      this._onChanged(new Core.ValueChangedEventArgs(this, "boxColor", prev, this._boxClr));
+    }
+  }
 
   /// Updates this technique for the given state.
   void update(Core.RenderState state) {
