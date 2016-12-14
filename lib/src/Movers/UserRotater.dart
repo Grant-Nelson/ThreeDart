@@ -24,6 +24,12 @@ class UserRotater implements Mover, Core.UserInteractable {
   /// Indicates if the rotations should be continuous or not.
   bool _cumulative;
 
+  /// The invert the X mouse axis.
+  bool _invertX;
+
+  /// The invert the Y mouse axis.
+  bool _invertY;
+
   /// The value to scale the pitch by.
   double _pitchScalar;
 
@@ -62,9 +68,11 @@ class UserRotater implements Mover, Core.UserInteractable {
 
   /// Creates a new user rotater instance.
   UserRotater({
-      bool ctrl:  false,
-      bool alt:   false,
-      bool shift: false,
+      bool ctrl:    false,
+      bool alt:     false,
+      bool shift:   false,
+      bool invertX: false,
+      bool invertY: false,
       Core.UserInput input: null}) {
     this._input = null;
     this._pitch = new ComponentShift()
@@ -89,6 +97,8 @@ class UserRotater implements Mover, Core.UserInteractable {
     this._altPressed   = false;
     this._shiftPressed = false;
     this._cumulative   = false;
+    this._invertX      = false;
+    this._invertY      = false;
     this._pitchScalar  = 2.5;
     this._yawScalar    = 2.5;
     this._deadBand     = 2.0;
@@ -105,6 +115,8 @@ class UserRotater implements Mover, Core.UserInteractable {
     this.ctrlPressed  = ctrl;
     this.altPressed   = alt;
     this.shiftPressed = shift;
+    this.invertX      = invertX;
+    this.invertY      = invertY;
     this.attach(input);
   }
 
@@ -140,10 +152,19 @@ class UserRotater implements Mover, Core.UserInteractable {
     }
   }
 
+  /// Gets the given [vec] inverted based on settings.
+  Math.Vector2 _getInverses(Math.Vector2 vec) {
+    double dx = vec.dx;
+    double dy = vec.dy;
+    if (this._invertX) dx = -dx;
+    if (this._invertY) dy = -dy;
+    return new Math.Vector2(dx, dy);
+  }
+
   /// Handles the mouse down event.
   void _mouseDownHandle(Core.MouseEventArgs args) {
-    if (this._ctrlPressed != this._input.ctrlPressed) return;
-    if (this._altPressed != this._input.altPressed) return;
+    if (this._ctrlPressed  != this._input.ctrlPressed)  return;
+    if (this._altPressed   != this._input.altPressed)   return;
     if (this._shiftPressed != this._input.shiftPressed) return;
     this._pressed = true;
     this._inDeadBand = true;
@@ -159,16 +180,16 @@ class UserRotater implements Mover, Core.UserInteractable {
       this._inDeadBand = false;
     }
     if (this._cumulative) {
-      this._prevVal = args.adjustedOffset;
-      this._pitch.velocity = this._prevVal.dx*10.0*this._pitchScalar;
-      this._yaw.velocity = this._prevVal.dy*10.0*this._yawScalar;
+      this._prevVal = this._getInverses(args.adjustedOffset);
+      this._yaw.velocity   = this._prevVal.dx*10.0*this._yawScalar;
+      this._pitch.velocity = this._prevVal.dy*10.0*this._pitchScalar;
     } else {
-      Math.Vector2 off = args.adjustedOffset;
-      this._pitch.location = -off.dx*this._pitchScalar + this._lastPitch;
-      this._yaw.location = -off.dy*this._yawScalar + this._lastYaw;
+      Math.Vector2 off = this._getInverses(args.adjustedOffset);
+      this._yaw.location   = -off.dx*this._yawScalar + this._lastYaw;
+      this._pitch.location = -off.dy*this._pitchScalar + this._lastPitch;
       this._pitch.velocity = 0.0;
-      this._yaw.velocity = 0.0;
-      this._prevVal = args.adjustedDelta;
+      this._yaw.velocity   = 0.0;
+      this._prevVal = this._getInverses(args.adjustedDelta);
     }
     this._onChanged();
   }
@@ -179,8 +200,8 @@ class UserRotater implements Mover, Core.UserInteractable {
     this._pressed = false;
     if (this._inDeadBand) return;
     if (this._prevVal.length2() > 0.0001) {
-      this._pitch.velocity = this._prevVal.dx*10.0*this._pitchScalar;
-      this._yaw.velocity = this._prevVal.dy*10.0*this._yawScalar;
+      this._yaw.velocity   = this._prevVal.dx*10.0*this._yawScalar;
+      this._pitch.velocity = this._prevVal.dy*10.0*this._pitchScalar;
       this._onChanged();
     }
   }
@@ -235,6 +256,28 @@ class UserRotater implements Mover, Core.UserInteractable {
     }
   }
 
+  /// Inverts the X mouse axis.
+  bool get invertX => this._invertX;
+  void set invertX(bool invert) {
+    invert = invert ?? false;
+    if (this._invertX != invert) {
+      bool prev = this._invertX;
+      this._invertX = invert;
+      this._onChanged(new Core.ValueChangedEventArgs(this, "invertX", prev, this._invertX));
+    }
+  }
+
+  /// Inverts the Y mouse axis.
+  bool get invertY => this._invertY;
+  void set invertY(bool invert) {
+    invert = invert ?? false;
+    if (this._invertY != invert) {
+      bool prev = this._invertY;
+      this._invertY = invert;
+      this._onChanged(new Core.ValueChangedEventArgs(this, "invertY", prev, this._invertY));
+    }
+  }
+
   /// The scalar to apply to the mouse movements pitch.
   double get pitchScalar => this._pitchScalar;
   void set pitchScalar(double value) {
@@ -276,8 +319,8 @@ class UserRotater implements Mover, Core.UserInteractable {
       final double dt = state.dt;
       this._yaw.update(dt);
       this._pitch.update(dt);
-      this._mat = new Math.Matrix4.rotateX(this._yaw.location)*
-                  new Math.Matrix4.rotateY(this._pitch.location);
+      this._mat = new Math.Matrix4.rotateX(this._pitch.location)*
+                  new Math.Matrix4.rotateY(this._yaw.location);
     }
     return this._mat;
   }
