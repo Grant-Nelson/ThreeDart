@@ -166,21 +166,23 @@ class UserInput {
   }
 
   /// Handles a keyboard key being released.
-  void _onKeyUp(html.KeyboardEvent msEvent) {
-    this._ctrlPressed = msEvent.ctrlKey||msEvent.metaKey;
-    this._altPressed = msEvent.altKey;
-    this._shiftPressed = msEvent.shiftKey;
-    this._keyUp.emit(new KeyEventArgs(this, msEvent.keyCode));
-    msEvent.preventDefault();
+  void _onKeyUp(html.KeyboardEvent kEvent) {
+    this._ctrlPressed = kEvent.ctrlKey||kEvent.metaKey;
+    this._altPressed = kEvent.altKey;
+    this._shiftPressed = kEvent.shiftKey;
+    this._keyUp.emit(new KeyEventArgs(this, new UserKey(kEvent.keyCode,
+      ctrl: this._ctrlPressed, alt: this._altPressed, shift: this._shiftPressed)));
+    kEvent.preventDefault();
   }
 
   /// Handles a keyboard key being pressed.
-  void _onKeyDown(html.KeyboardEvent msEvent) {
-    this._ctrlPressed = msEvent.ctrlKey||msEvent.metaKey;
-    this._altPressed = msEvent.altKey;
-    this._shiftPressed = msEvent.shiftKey;
-    this._keyDown.emit(new KeyEventArgs(this, msEvent.keyCode));
-    msEvent.preventDefault();
+  void _onKeyDown(html.KeyboardEvent kEvent) {
+    this._ctrlPressed = kEvent.ctrlKey||kEvent.metaKey;
+    this._altPressed = kEvent.altKey;
+    this._shiftPressed = kEvent.shiftKey;
+    this._keyDown.emit(new KeyEventArgs(this, new UserKey(kEvent.keyCode,
+      ctrl: this._ctrlPressed, alt: this._altPressed, shift: this._shiftPressed)));
+    kEvent.preventDefault();
   }
 
   /// The mouse down event.

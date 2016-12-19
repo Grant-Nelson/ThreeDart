@@ -27,4 +27,5 @@ part 'RenderState.dart';
 part 'ThreeDart.dart';
 part 'UserInput.dart';
 part 'UserInteractable.dart';
+part 'UserKey.dart';
 part 'UserKeyGroup.dart';

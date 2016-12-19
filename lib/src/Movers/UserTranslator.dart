@@ -4,16 +4,12 @@ part of ThreeDart.Movers;
 /// A zoom mover which zooms on an object in response to user input.
 class UserTranslator implements Mover, Core.UserInteractable {
 
-  /// The user input this zoomer is attached to.
-  Core.UserInput _input;
+  Core.UserKeyGroup _xKey;
+  Core.UserKeyGroup _zKey;
+  Core.UserKeyGroup _yKey;
 
-  /// TODO: Comment
   ComponentShift _offsetX;
-
-  /// TODO: Comment
   ComponentShift _offsetY;
-
-  /// TODO: Comment
   ComponentShift _offsetZ;
 
   /// The last frame the mover was updated for.
@@ -27,7 +23,9 @@ class UserTranslator implements Mover, Core.UserInteractable {
 
   /// Creates an instance of [UserZoom].
   UserTranslator({Core.UserInput input: null}) {
-    this._input    = null;
+    this._xKey     = new Core.UserKeyGroup();
+    this._yKey     = new Core.UserKeyGroup();
+    this._zKey     = new Core.UserKeyGroup();
     this._offsetX  = new ComponentShift();
     this._offsetY  = new ComponentShift();
     this._offsetZ  = new ComponentShift();
