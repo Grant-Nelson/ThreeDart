@@ -141,6 +141,9 @@ class ValueChangedEventArgs extends EventArgs {
   /// Creates an entity event argument.
   ValueChangedEventArgs(Object sender, this.name, this.previous, this.value):
     super(sender);
+
+  /// The string for this event argument.
+  String toString() => "ValueChanged: $name, $previous => $value";
 }
 
 /// The event argument for event's when items are added to a collection.

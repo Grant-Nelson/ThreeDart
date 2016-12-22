@@ -54,12 +54,12 @@ class UserInput {
 
   /// Creates a new user input for the given [_elem].
   UserInput(this._elem) {
-    this._mouseDown = new Event();
-    this._mouseUp = new Event();
-    this._mouseMove = new Event();
-    this._mouseWheel = new Event();
-    this._keyUp = new Event();
-    this._keyDown = new Event();
+    this._mouseDown = null;
+    this._mouseUp = null;
+    this._mouseMove = null;
+    this._mouseWheel = null;
+    this._keyUp = null;
+    this._keyDown = null;
 
     this._mousePressed = false;
     this._startTime = null;
@@ -77,8 +77,8 @@ class UserInput {
     this._eventStreams.add(this._elem.onMouseWheel.listen(this._onMouseWheel));
     this._eventStreams.add(html.document.onMouseMove.listen(this._onDocMouseMove));
     this._eventStreams.add(html.document.onMouseUp.listen(this._onDocMouseUp));
-    this._eventStreams.add(this._elem.onKeyUp.listen(this._onKeyUp));
-    this._eventStreams.add(this._elem.onKeyDown.listen(this._onKeyDown));
+    this._eventStreams.add(html.document.onKeyUp.listen(this._onKeyUp));
+    this._eventStreams.add(html.document.onKeyDown.listen(this._onKeyDown));
 
     // TODO: Implement touch as a mouse event.
     //this._elem.onTouchStart
@@ -117,16 +117,21 @@ class UserInput {
 
   /// Handles the mouse down in canvas event.
   void _onMouseDown(html.MouseEvent msEvent) {
+    this._elem.focus();
     this._mousePressed = true;
-    this._mouseDown.emit(this._getMouseArgs(msEvent, true));
-    msEvent.preventDefault();
+    if (this._mouseDown != null) {
+      this._mouseDown.emit(this._getMouseArgs(msEvent, true));
+      msEvent.preventDefault();
+    }
   }
 
   /// Handles the mouse up in canvas event.
   void _onMouseUp(html.MouseEvent msEvent) {
     this._mousePressed = false;
-    this._mouseUp.emit(this._getMouseArgs(msEvent, true));
-    msEvent.preventDefault();
+    if (this._mouseUp != null) {
+      this._mouseUp.emit(this._getMouseArgs(msEvent, true));
+      msEvent.preventDefault();
+    }
   }
 
   /// Handles the mouse up ouside the canvas event
@@ -134,35 +139,45 @@ class UserInput {
   void _onDocMouseUp(html.MouseEvent msEvent) {
     if (this._mousePressed && !this._elem.client.containsPoint(msEvent.client)) {
       this._mousePressed = false;
-      this._mouseUp.emit(this._getMouseArgs(msEvent, true));
+      if (this._mouseUp != null) {
+        this._mouseUp.emit(this._getMouseArgs(msEvent, true));
+        msEvent.preventDefault();
+      }
     }
   }
 
   /// Handles the mouse move on the canvas event.
   void _onMouseMove(html.MouseEvent msEvent) {
-    this._mouseMove.emit(this._getMouseArgs(msEvent, false));
-    msEvent.preventDefault();
+    if (this._mouseMove != null) {
+      this._mouseMove.emit(this._getMouseArgs(msEvent, false));
+      msEvent.preventDefault();
+    }
   }
 
   /// Handles the mouse move off the canvas event
   /// when the mouse was pressed while over the canvas.
   void _onDocMouseMove(html.MouseEvent msEvent) {
     if (this._mousePressed && !this._elem.client.containsPoint(msEvent.client)) {
-      this._mouseMove.emit(this._getMouseArgs(msEvent, false));
+      if (this._mouseMove != null) {
+        this._mouseMove.emit(this._getMouseArgs(msEvent, false));
+        msEvent.preventDefault();
+      }
     }
   }
 
   /// Handles the mouse wheel being moved over the canvas.
   void _onMouseWheel(html.WheelEvent msEvent) {
-    final Math.Point2 pnt = new Math.Point2(msEvent.offset.x, msEvent.offset.y);
-    final DateTime curTime = new DateTime.now();
-    final Math.Region2 size = new Math.Region2(0.0, 0.0, this._elem.client.width, this._elem.client.height);
-    final Math.Vector2 wheel = new Math.Vector2(msEvent.deltaX, msEvent.deltaY)/180.0;
     this._ctrlPressed = msEvent.ctrlKey||msEvent.metaKey;
     this._altPressed = msEvent.altKey;
     this._shiftPressed = msEvent.shiftKey;
-    this._mouseWheel.emit(new MouseWheelEventArgs(this, size, pnt, curTime, wheel));
-    msEvent.preventDefault();
+    if (this._mouseWheel != null) {
+      final Math.Point2 pnt = new Math.Point2(msEvent.offset.x, msEvent.offset.y);
+      final DateTime curTime = new DateTime.now();
+      final Math.Region2 size = new Math.Region2(0.0, 0.0, this._elem.client.width, this._elem.client.height);
+      final Math.Vector2 wheel = new Math.Vector2(msEvent.deltaX, msEvent.deltaY)/180.0;
+      this._mouseWheel.emit(new MouseWheelEventArgs(this, size, pnt, curTime, wheel));
+      msEvent.preventDefault();
+    }
   }
 
   /// Handles a keyboard key being released.
@@ -170,9 +185,11 @@ class UserInput {
     this._ctrlPressed = kEvent.ctrlKey||kEvent.metaKey;
     this._altPressed = kEvent.altKey;
     this._shiftPressed = kEvent.shiftKey;
-    this._keyUp.emit(new KeyEventArgs(this, new UserKey(kEvent.keyCode,
-      ctrl: this._ctrlPressed, alt: this._altPressed, shift: this._shiftPressed)));
-    kEvent.preventDefault();
+    if (this._keyUp != null) {
+      this._keyUp.emit(new KeyEventArgs(this, new UserKey(kEvent.keyCode,
+        ctrl: this._ctrlPressed, alt: this._altPressed, shift: this._shiftPressed)));
+      kEvent.preventDefault();
+    }
   }
 
   /// Handles a keyboard key being pressed.
@@ -180,28 +197,48 @@ class UserInput {
     this._ctrlPressed = kEvent.ctrlKey||kEvent.metaKey;
     this._altPressed = kEvent.altKey;
     this._shiftPressed = kEvent.shiftKey;
-    this._keyDown.emit(new KeyEventArgs(this, new UserKey(kEvent.keyCode,
-      ctrl: this._ctrlPressed, alt: this._altPressed, shift: this._shiftPressed)));
-    kEvent.preventDefault();
+    if (this._keyDown != null) {
+      this._keyDown.emit(new KeyEventArgs(this, new UserKey(kEvent.keyCode,
+        ctrl: this._ctrlPressed, alt: this._altPressed, shift: this._shiftPressed)));
+      kEvent.preventDefault();
+    }
   }
 
   /// The mouse down event.
-  Event get mouseDown => this._mouseDown;
+  Event get mouseDown {
+    if (this._mouseDown == null) this._mouseDown = new Event();
+    return this._mouseDown;
+  }
 
   /// The mouse up event.
-  Event get mouseUp => this._mouseUp;
+  Event get mouseUp {
+    if (this._mouseUp == null) this._mouseUp = new Event();
+    return this._mouseUp;
+  }
 
   /// The mouse move event.
-  Event get mouseMove => this._mouseMove;
+  Event get mouseMove {
+    if (this._mouseMove == null) this._mouseMove = new Event();
+    return this._mouseMove;
+  }
 
   /// The mouse wheel move event.
-  Event get mouseWheel => this._mouseWheel;
+  Event get mouseWheel {
+    if (this._mouseWheel == null) this._mouseWheel = new Event();
+    return this._mouseWheel;
+  }
 
   /// The keyboard key released event.
-  Event get keyUp => this._keyUp;
+  Event get keyUp {
+    if (this._keyUp == null) this._keyUp = new Event();
+    return this._keyUp;
+  }
 
   /// The keyboard key pressed event.
-  Event get keyDown => this._keyDown;
+  Event get keyDown {
+    if (this._keyDown == null) this._keyDown = new Event();
+    return this._keyDown;
+  }
 
   /// Indicates if the mouse button is currently pressed.
   bool get mousePressed => this._mousePressed;

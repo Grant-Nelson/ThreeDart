@@ -144,8 +144,8 @@ class ComponentShift {
       double act = this._vel*(1.0-this._velDamp)*dt;
       if (this._vel < 0.0) act = Math.clampVal(act, 0.0, -this._vel);
       else                 act = Math.clampVal(act, -this._vel, 0.0);
-      this._vel = Math.clampVal(this._vel + act, -this._maxVel, this._maxVel);
-      this._loc = this._clapWrap(this._loc + this._vel*dt);
+      this.velocity = Math.clampVal(this._vel + act, -this._maxVel, this._maxVel);
+      this.location = this._clapWrap(this._loc + this._vel*dt);
     }
   }
 }

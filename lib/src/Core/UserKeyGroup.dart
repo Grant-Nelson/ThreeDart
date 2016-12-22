@@ -13,7 +13,7 @@ class UserKeyGroup extends Collection<UserKey> implements UserInteractable, Chan
     this._changed = null;
     this._input   = null;
     this._pressed = false;
-    this._keyUp = null;
+    this._keyUp   = null;
     this._keyDown = null;
     this.setHandlers(onPreaddHndl:  this._onPreadd,
                      onAddedHndl:   this._onAdded,
@@ -36,6 +36,11 @@ class UserKeyGroup extends Collection<UserKey> implements UserInteractable, Chan
   Event get keyDown {
     if (this._keyDown == null) this._keyDown = new Event();
     return this._keyDown;
+  }
+
+  /// Adds a key to this collection.
+  void addKey(int key, {bool ctrl: false, bool alt: false, bool shift: false}) {
+    this.add(new UserKey(key, ctrl: ctrl, alt: alt, shift: shift));
   }
 
   /// Handles emitting a change.
@@ -86,7 +91,7 @@ class UserKeyGroup extends Collection<UserKey> implements UserInteractable, Chan
   /// Handles a key bring released.
   void _onKeyUp(EventArgs args) {
     if (this._pressed && (args is KeyEventArgs)) {
-      if (!this.contains(args.key)) {
+      if (this.contains(args.key)) {
         this._pressed = false;
         this._keyUp?.emit(args);
       }

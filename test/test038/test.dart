@@ -66,6 +66,7 @@ void main() {
 
   Movers.Group camera =
     new Movers.Group()
+      ..add(new Movers.UserTranslator(input: td.userInput))
       ..add(new Movers.UserRotater(input: td.userInput)
         ..pitch.maximumLocation = Math.PI_2
         ..pitch.minimumLocation = -Math.PI_2
