@@ -36,7 +36,7 @@ class ComponentShift {
   }
 
   /// Handles emitting a change.
-  void _onChange([Core.EventArgs args = null]) {
+  void _onChanged([Core.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
@@ -48,7 +48,7 @@ class ComponentShift {
     if (this._wrap != wrap) {
       bool prev = this._wrap;
       this._wrap = wrap;
-      this._onChange(new Core.ValueChangedEventArgs(this, "warp", prev, this._wrap));
+      this._onChanged(new Core.ValueChangedEventArgs(this, "warp", prev, this._wrap));
     }
   }
 
@@ -64,7 +64,7 @@ class ComponentShift {
         this._loc = this._maxLoc;
       } else if (this._maxLoc < this._loc)
         this._loc = this._clapWrap(this._loc);
-      this._onChange(new Core.ValueChangedEventArgs(this, "maximumLocation", prev, this._maxLoc));
+      this._onChanged(new Core.ValueChangedEventArgs(this, "maximumLocation", prev, this._maxLoc));
     }
   }
 
@@ -80,7 +80,7 @@ class ComponentShift {
         this._loc = this._minLoc;
       } else if (this._minLoc > this._loc)
         this._loc = this._clapWrap(this._loc);
-      this._onChange(new Core.ValueChangedEventArgs(this, "minimumLocation", prev, this._minLoc));
+      this._onChanged(new Core.ValueChangedEventArgs(this, "minimumLocation", prev, this._minLoc));
     }
   }
 
@@ -91,7 +91,7 @@ class ComponentShift {
     if (!Math.Comparer.equals(this._loc, loc)) {
       double prev = this._loc;
       this._loc = loc;
-      this._onChange(new Core.ValueChangedEventArgs(this, "location", prev, this._loc));
+      this._onChanged(new Core.ValueChangedEventArgs(this, "location", prev, this._loc));
     }
   }
 
@@ -107,7 +107,7 @@ class ComponentShift {
         this._maxVel = 0.0;
         this._vel = 0.0;
       } else this._vel = Math.clampVal(this._vel, -this._maxVel, this._maxVel);
-      this._onChange(new Core.ValueChangedEventArgs(this, "maximumVelocity", prev, this._maxVel));
+      this._onChanged(new Core.ValueChangedEventArgs(this, "maximumVelocity", prev, this._maxVel));
     }
   }
 
@@ -118,7 +118,7 @@ class ComponentShift {
     if (!Math.Comparer.equals(this._vel, vel)) {
       double prev = this._vel;
       this._vel = vel;
-      this._onChange(new Core.ValueChangedEventArgs(this, "velocity", prev, this._vel));
+      this._onChanged(new Core.ValueChangedEventArgs(this, "velocity", prev, this._vel));
     }
   }
 
@@ -132,7 +132,7 @@ class ComponentShift {
     if (!Math.Comparer.equals(this._velDamp, dampening)) {
       double prev = this._velDamp;
       this._velDamp = dampening;
-      this._onChange(new Core.ValueChangedEventArgs(this, "dampening", prev, this._velDamp));
+      this._onChanged(new Core.ValueChangedEventArgs(this, "dampening", prev, this._velDamp));
     }
   }
 

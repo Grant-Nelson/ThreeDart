@@ -20,7 +20,7 @@ class Constant extends Mover {
   }
 
   /// Handles emitting a change.
-  void _onChange([Core.EventArgs args = null]) {
+  void _onChanged([Core.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
@@ -31,7 +31,7 @@ class Constant extends Mover {
     if (this._mat != mat) {
       Math.Matrix4 prev = this._mat;
       this._mat = mat;
-      this._onChange(new Core.ValueChangedEventArgs(this, "matrix", prev, this._mat));
+      this._onChanged(new Core.ValueChangedEventArgs(this, "matrix", prev, this._mat));
     }
   }
 

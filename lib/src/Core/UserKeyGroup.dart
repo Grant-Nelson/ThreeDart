@@ -44,7 +44,7 @@ class UserKeyGroup extends Collection<UserKey> implements UserInteractable, Chan
   }
 
   /// Handles emitting a change.
-  void _onChange([EventArgs args = null]) {
+  void _onChanged([EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
@@ -70,12 +70,12 @@ class UserKeyGroup extends Collection<UserKey> implements UserInteractable, Chan
 
   /// Handles a new key being added.
   void _onAdded(int index, Iterable<UserKey> items) {
-    this._onChange(new ItemsAddedEventArgs<UserKey>(this, index, items));
+    this._onChanged(new ItemsAddedEventArgs<UserKey>(this, index, items));
   }
 
   /// Handles a key bring removed.
   void _onRemoved(int index, Iterable<UserKey> items) {
-    this._onChange(new ItemsRemovedEventArgs<UserKey>(this, index, items));
+    this._onChanged(new ItemsRemovedEventArgs<UserKey>(this, index, items));
   }
 
   /// Handles a key bring pressed.

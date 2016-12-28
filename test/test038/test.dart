@@ -64,15 +64,17 @@ void main() {
     ..children.add(createFloor(td))
     ..children.add(obj1);
 
-  Movers.Group camera =
-    new Movers.Group()
-      ..add(new Movers.UserTranslator(input: td.userInput))
-      ..add(new Movers.UserRotater(input: td.userInput)
-        ..pitch.maximumLocation = Math.PI_2
-        ..pitch.minimumLocation = -Math.PI_2
-        ..pitch.dampening = 1.0
-        ..yaw.dampening   = 1.0
-        ..pitch.wrap = false);
+  Movers.UserTranslator trans = new Movers.UserTranslator(input: td.userInput);
+  Movers.UserRotater rot = new Movers.UserRotater(input: td.userInput)
+    ..pitch.maximumLocation = Math.PI_2
+    ..pitch.minimumLocation = -Math.PI_2
+    ..pitch.dampening = 1.0
+    ..yaw.dampening   = 1.0
+    ..pitch.wrap = false;
+  rot.changed.add((ThreeDart.EventArgs args) {
+    trans.velocityRotation = new Math.Matrix3.rotateY(-rot.yaw.location);
+  });
+  Movers.Group camera = new Movers.Group([trans, rot]);
 
   td.scene = new Scenes.EntityPass()
     ..children.add(group)

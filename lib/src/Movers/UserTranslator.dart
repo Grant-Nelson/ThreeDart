@@ -15,6 +15,8 @@ class UserTranslator implements Mover, Core.UserInteractable {
   ComponentShift _offsetY;
   ComponentShift _offsetZ;
 
+  Math.Matrix3 _velRot;
+
   /// The last frame the mover was updated for.
   int _frameNum;
 
@@ -50,7 +52,7 @@ class UserTranslator implements Mover, Core.UserInteractable {
       ..keyDown.add(this._onKeyDown);
 
     final double maxVel = 100.0;
-    final double dampening = 0.99;
+    final double dampening = 0.9;
     this._offsetX = new ComponentShift()
       ..maximumVelocity = maxVel
       ..dampening = dampening
@@ -63,6 +65,7 @@ class UserTranslator implements Mover, Core.UserInteractable {
       ..maximumVelocity = maxVel
       ..dampening = dampening
       ..changed.add(this._onChanged);
+    this._velRot   = null;
     this._frameNum = 0;
     this._mat      = null;
     this._changed  = null;
@@ -73,6 +76,11 @@ class UserTranslator implements Mover, Core.UserInteractable {
   Core.Event get changed {
     if (this._changed == null) this._changed = new Core.Event();
     return this._changed;
+  }
+
+  /// Handles a child mover being changed.
+  void _onChanged([Core.EventArgs args = null]) {
+    this._changed?.emit(args);
   }
 
   Core.UserKeyGroup get negitiveXKey => this._xNegKey;
@@ -86,29 +94,32 @@ class UserTranslator implements Mover, Core.UserInteractable {
   ComponentShift get offsetY => this._offsetY;
   ComponentShift get offsetZ => this._offsetZ;
 
+  Math.Matrix3 get velocityRotation => this._velRot;
+  void set velocityRotation(Math.Matrix3 velRot) {
+    if (this._velRot != velRot) {
+      Math.Matrix3 prev = this._velRot;
+      this._velRot = velRot;
+      this._onChanged(new Core.ValueChangedEventArgs(this, "velocityRotation", prev, this._velRot));
+    }
+  }
+
   /// Handles a key pressed.
   void _onKeyDown(Core.EventArgs args) {
     this._onChanged(args);
   }
 
   void _updateMovement(double dt) {
-
-    // Vector rotate it.
-
+    if (dt > 0.1) dt = 0.1;
     Math.Vector3 vec = new Math.Vector3(
       (this._xNegKey.pressed?1.0:0.0) + (this._xPosKey.pressed?-1.0:0.0),
       (this._yNegKey.pressed?1.0:0.0) + (this._yPosKey.pressed?-1.0:0.0),
       (this._zNegKey.pressed?1.0:0.0) + (this._zPosKey.pressed?-1.0:0.0));
     final double speed = 30.0; // TODO: Make a public value.
     vec = vec*dt*speed;
+    if (this._velRot != null) vec = this._velRot.transVec3(vec);
     this._offsetX.velocity += vec.dx;
     this._offsetY.velocity += vec.dy;
     this._offsetZ.velocity += vec.dz;
-  }
-
-  /// Handles a child mover being changed.
-  void _onChanged([Core.EventArgs args = null]) {
-    this._changed?.emit(args);
   }
 
   /// Attaches this mover to the user input.
@@ -138,10 +149,10 @@ class UserTranslator implements Mover, Core.UserInteractable {
     if (this._frameNum < state.frameNumber) {
       this._frameNum = state.frameNumber;
       final double dt = state.dt;
-      this._updateMovement(dt);
       this._offsetX.update(dt);
       this._offsetY.update(dt);
       this._offsetZ.update(dt);
+      this._updateMovement(dt);
       this._mat = new Math.Matrix4.translate(
         this._offsetX.location,
         this._offsetY.location,
