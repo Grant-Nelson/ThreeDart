@@ -49,17 +49,19 @@ class UserTranslator implements Mover, Core.UserInteractable {
       ..addKey(Core.UserKey.keyW)
       ..keyDown.add(this._onKeyDown);
 
+    final double maxVel = 100.0;
+    final double dampening = 0.99;
     this._offsetX = new ComponentShift()
-      ..maximumVelocity = 10.0
-      ..dampening = 0.01
+      ..maximumVelocity = maxVel
+      ..dampening = dampening
       ..changed.add(this._onChanged);
     this._offsetY = new ComponentShift()
-      ..maximumVelocity = 10.0
-      ..dampening = 0.01
+      ..maximumVelocity = maxVel
+      ..dampening = dampening
       ..changed.add(this._onChanged);
     this._offsetZ = new ComponentShift()
-      ..maximumVelocity = 10.0
-      ..dampening = 0.01
+      ..maximumVelocity = maxVel
+      ..dampening = dampening
       ..changed.add(this._onChanged);
     this._frameNum = 0;
     this._mat      = null;
@@ -73,19 +75,35 @@ class UserTranslator implements Mover, Core.UserInteractable {
     return this._changed;
   }
 
+  Core.UserKeyGroup get negitiveXKey => this._xNegKey;
+  Core.UserKeyGroup get positiveXKey => this._xPosKey;
+  Core.UserKeyGroup get negitiveYKey => this._yNegKey;
+  Core.UserKeyGroup get positiveYKey => this._yPosKey;
+  Core.UserKeyGroup get negitiveZKey => this._zNegKey;
+  Core.UserKeyGroup get positiveZKey => this._zPosKey;
+
+  ComponentShift get offsetX => this._offsetX;
+  ComponentShift get offsetY => this._offsetY;
+  ComponentShift get offsetZ => this._offsetZ;
+
   /// Handles a key pressed.
   void _onKeyDown(Core.EventArgs args) {
     this._onChanged(args);
   }
 
   void _updateMovement(double dt) {
-    double step = dt*3.3;
-    if (this._xNegKey.pressed) this._offsetX.velocity += step;
-    if (this._xPosKey.pressed) this._offsetX.velocity -= step;
-    if (this._yNegKey.pressed) this._offsetY.velocity += step;
-    if (this._yPosKey.pressed) this._offsetY.velocity -= step;
-    if (this._zNegKey.pressed) this._offsetZ.velocity += step;
-    if (this._zPosKey.pressed) this._offsetZ.velocity -= step;
+
+    // Vector rotate it.
+
+    Math.Vector3 vec = new Math.Vector3(
+      (this._xNegKey.pressed?1.0:0.0) + (this._xPosKey.pressed?-1.0:0.0),
+      (this._yNegKey.pressed?1.0:0.0) + (this._yPosKey.pressed?-1.0:0.0),
+      (this._zNegKey.pressed?1.0:0.0) + (this._zPosKey.pressed?-1.0:0.0));
+    final double speed = 30.0; // TODO: Make a public value.
+    vec = vec*dt*speed;
+    this._offsetX.velocity += vec.dx;
+    this._offsetY.velocity += vec.dy;
+    this._offsetZ.velocity += vec.dz;
   }
 
   /// Handles a child mover being changed.

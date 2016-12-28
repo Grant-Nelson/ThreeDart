@@ -18,8 +18,8 @@ class ComponentShift {
     this._minLoc  = -1.0e12;
     this._loc     = 0.0;
     this._maxVel  = 100.0;
-    this._velDamp = 0.0;
     this._vel     = 0.0;
+    this._velDamp = 0.0;
     this._changed = null;
   }
 
@@ -91,8 +91,6 @@ class ComponentShift {
     if (!Math.Comparer.equals(this._loc, loc)) {
       double prev = this._loc;
       this._loc = loc;
-      if (this._wrap) this._loc = Math.wrapVal(loc, this._minLoc, this._maxLoc);
-      else this._loc = Math.clampVal(loc, this._minLoc, this._maxLoc);
       this._onChange(new Core.ValueChangedEventArgs(this, "location", prev, this._loc));
     }
   }
@@ -126,8 +124,8 @@ class ComponentShift {
 
   /// The amount of dampening applied to the velocity.
   ///
-  /// 0 means no dampening to slow down the velocity.
-  /// 1 means total dampening so no velocity will be applied.
+  /// 0 means no dampening to slow down the velocity,
+  /// 1 means total dampening to apply no velocity.
   double get dampening => this._velDamp;
   void set dampening(double dampening) {
     dampening = Math.clampVal(dampening ?? 0.0);
@@ -141,11 +139,13 @@ class ComponentShift {
   /// Update the component with the given change in time, [dt].
   void update(double dt) {
     if (!Math.Comparer.equals(this._vel, 0.0)) {
-      double act = this._vel*(1.0-this._velDamp)*dt;
-      if (this._vel < 0.0) act = Math.clampVal(act, 0.0, -this._vel);
-      else                 act = Math.clampVal(act, -this._vel, 0.0);
-      this.velocity = Math.clampVal(this._vel + act, -this._maxVel, this._maxVel);
-      this.location = this._clapWrap(this._loc + this._vel*dt);
+      this.location = this._loc + this._vel*dt;
+      double act = this._vel;
+      if (!Math.Comparer.equals(this._velDamp, 0.0))
+        act *= math.pow(1.0 - this._velDamp, dt);
+      if (this._vel < 0.0) act = Math.clampVal(act, this._vel, 0.0);
+      else                 act = Math.clampVal(act, 0.0, this._vel);
+      this.velocity = act;
     }
   }
 }

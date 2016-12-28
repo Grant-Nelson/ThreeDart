@@ -82,7 +82,7 @@ class UserRotater implements Mover, Core.UserInteractable {
       ..location = 0.0
       ..maximumVelocity = 100.0
       ..velocity  = 0.0
-      ..dampening = 0.2;
+      ..dampening = 0.5;
     this._pitch.changed.add(this._onChanged);
     this._yaw = new ComponentShift()
       ..wrap = true
@@ -91,7 +91,7 @@ class UserRotater implements Mover, Core.UserInteractable {
       ..location = 0.0
       ..maximumVelocity = 100.0
       ..velocity  = 0.0
-      ..dampening = 0.2;
+      ..dampening = 0.5;
     this._yaw.changed.add(this._onChanged);
     this._ctrlPressed  = false;
     this._altPressed   = false;
@@ -181,8 +181,8 @@ class UserRotater implements Mover, Core.UserInteractable {
     }
     if (this._cumulative) {
       this._prevVal = this._getInverses(args.adjustedOffset);
-      this._yaw.velocity   = this._prevVal.dx*10.0*this._yawScalar;
-      this._pitch.velocity = this._prevVal.dy*10.0*this._pitchScalar;
+      this._yaw.velocity   = -this._prevVal.dx*10.0*this._yawScalar;
+      this._pitch.velocity = -this._prevVal.dy*10.0*this._pitchScalar;
     } else {
       Math.Vector2 off = this._getInverses(args.adjustedOffset);
       this._yaw.location   = -off.dx*this._yawScalar + this._lastYaw;
@@ -200,8 +200,8 @@ class UserRotater implements Mover, Core.UserInteractable {
     this._pressed = false;
     if (this._inDeadBand) return;
     if (this._prevVal.length2() > 0.0001) {
-      this._yaw.velocity   = this._prevVal.dx*10.0*this._yawScalar;
-      this._pitch.velocity = this._prevVal.dy*10.0*this._pitchScalar;
+      this._yaw.velocity   = -this._prevVal.dx*10.0*this._yawScalar;
+      this._pitch.velocity = -this._prevVal.dy*10.0*this._pitchScalar;
       this._onChanged();
     }
   }

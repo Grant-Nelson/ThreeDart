@@ -106,7 +106,7 @@ class RenderState {
     this._frameNum++;
     this._lastTime = this._curTime;
     this._curTime = new DateTime.now();
-    this._dt = Math.diffInSecs(this._curTime, this._lastTime);
+    this._dt = Math.diffInSecs(this._lastTime, this._curTime);
     this._projStack.clear();
     this._viewStack.clear();
     this._objStack.clear();

@@ -15,7 +15,7 @@ import '../common/common.dart' as common;
 
 ThreeDart.Entity createFloor(ThreeDart.ThreeDart td) {
   Textures.Texture2D floorTxt =
-    td.textureLoader.load2DFromFile("../resources/Grass.png", wrapEdges: true);
+    td.textureLoader.load2DFromFile("../resources/Grass.png", wrapEdges: true, mipMap: true);
 
   Movers.Mover floorMover =
     new Movers.Constant(
@@ -70,6 +70,8 @@ void main() {
       ..add(new Movers.UserRotater(input: td.userInput)
         ..pitch.maximumLocation = Math.PI_2
         ..pitch.minimumLocation = -Math.PI_2
+        ..pitch.dampening = 1.0
+        ..yaw.dampening   = 1.0
         ..pitch.wrap = false);
 
   td.scene = new Scenes.EntityPass()
