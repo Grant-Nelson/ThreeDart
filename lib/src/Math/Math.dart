@@ -54,6 +54,7 @@ double clampVal(double v, [double min = 0.0, double max = 1.0]) =>
 /// If [v] is out of the [min] and [max] range,
 /// [v] will we wrapped until inside the range.
 double wrapVal(double v, [double min = 0.0, double max = 1.0]) {
+  if (max <= min) return min;
   final double w = max - min;
   v = (v - min) % w;
   if (v < 0.0) v += w;

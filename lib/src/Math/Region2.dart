@@ -70,15 +70,15 @@ class Region2 {
   Region2 expand(double x, double y) {
     double dx = this.dx;
     if (x < this.x) dx = this.dx + (this.x - x);
-    else if (x > this.x + this.dx) {
-      dx = x - this.x;
+    else {
+      if (x > this.x + this.dx) dx = x - this.x;
       x = this.x;
     }
 
     double dy = this.dy;
     if (y < this.y) dy = this.dy + (this.y - y);
-    else if (y > this.y + this.dy) {
-      dy = y - this.y;
+    else {
+      if (y > this.y + this.dy) dy = y - this.y;
       y = this.y;
     }
 

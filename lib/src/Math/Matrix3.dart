@@ -159,15 +159,15 @@ class Matrix3 {
     double det = this.det();
     if (Comparer.equals(det, 0.0)) return new Matrix3.identity();
     double q = 1.0 / det;
-    return new Matrix3((this.m22 * this.m33 - this.m32 * this.m23) * q,
-                       (this.m13 * this.m32 - this.m12 * this.m33) * q,
-                       (this.m12 * this.m23 - this.m13 * this.m22) * q,
+    return new Matrix3((this.m22 * this.m33 - this.m23 * this.m32) * q,
                        (this.m23 * this.m31 - this.m21 * this.m33) * q,
+                       (this.m21 * this.m32 - this.m22 * this.m31) * q,
+                       (this.m13 * this.m32 - this.m12 * this.m33) * q,
                        (this.m11 * this.m33 - this.m13 * this.m31) * q,
-                       (this.m21 * this.m13 - this.m11 * this.m23) * q,
-                       (this.m21 * this.m32 - this.m31 * this.m22) * q,
-                       (this.m31 * this.m12 - this.m11 * this.m32) * q,
-                       (this.m11 * this.m22 - this.m21 * this.m12) * q);
+                       (this.m12 * this.m31 - this.m11 * this.m32) * q,
+                       (this.m12 * this.m23 - this.m13 * this.m22) * q,
+                       (this.m13 * this.m21 - this.m11 * this.m23) * q,
+                       (this.m11 * this.m22 - this.m12 * this.m21) * q);
   }
 
   /// Multiplies this matrix by the [other] matrix.

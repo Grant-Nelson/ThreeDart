@@ -16,4 +16,5 @@ part 'Mover.dart';
 part 'Rotater.dart';
 part 'UserRoller.dart';
 part 'UserRotater.dart';
+part 'UserTranslator.dart';
 part 'UserZoom.dart';

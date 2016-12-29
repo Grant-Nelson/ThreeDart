@@ -21,6 +21,7 @@ part 'testTools.dart';
 part 'matrix2.dart';
 part 'matrix3.dart';
 part 'matrix4.dart';
+part 'region3.dart';
 part 'technique.dart';
 part 'vertexType.dart';
 
@@ -32,6 +33,7 @@ void main() {
   addMatrix2Tests(tests);
   addMatrix3Tests(tests);
   addMatrix4Tests(tests);
+  addRegion3Tests(tests);
   addTechniqueTests(tests);
 
   common.shellPage("Unit-tests", elem, false, "../resources/SnowTop.png");
