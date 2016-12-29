@@ -453,6 +453,24 @@ void _invsMatrix4(TestArgs args, Math.Matrix4 mat, String exp1, String exp2, Str
       "\n   Gotten:   " + result.toString("             ") + "\n");
     args.fail();
   }
+  Math.Matrix4 ident1 = mat*inv;
+  if (ident1 != new Math.Matrix4.identity()) {
+    args.error("Unexpected result from Matrix4*Matrix4.inverse(): "+
+      "\n   Matrix:   " + mat.toString("             ") +
+      "\n   Inverted: " + inv.toString("             ") +
+      "\n   Expected: " + new Math.Matrix4.identity().toString("             ") +
+      "\n   Gotten:   " + ident1.toString("             ") + "\n");
+    args.fail();
+  }
+  Math.Matrix4 ident2 = mat*inv;
+  if (ident2 != new Math.Matrix4.identity()) {
+    args.error("Unexpected result from Matrix4*Matrix4.inverse(): "+
+      "\n   Matrix:   " + mat.toString("             ") +
+      "\n   Inverted: " + inv.toString("             ") +
+      "\n   Expected: " + new Math.Matrix4.identity().toString("             ") +
+      "\n   Gotten:   " + ident2.toString("             ") + "\n");
+    args.fail();
+  }
 }
 
 void _transPnt4Matrix4(TestArgs args, Math.Matrix4 mat,

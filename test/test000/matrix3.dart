@@ -242,17 +242,17 @@ void addMatrix3Tests(TestManager tests) {
       " 0.000, 0.333, 0.000,",
       " 0.000, 0.000, 0.250]");
     _invsMatrix3(args, new Math.Matrix3.rotateX(math.PI/4.0),
-      "[1.000, 0.000,  0.000,",
-      " 0.000, 0.707, -0.707,",
-      " 0.000, 0.707,  0.707]");
+      "[1.000,  0.000, 0.000,",
+      " 0.000,  0.707, 0.707,",
+      " 0.000, -0.707, 0.707]");
     _invsMatrix3(args, new Math.Matrix3.rotateY(math.PI/4.0),
-      "[0.707, 0.000, -0.707,",
-      " 0.000, 1.000,  0.000,",
-      " 0.707, 0.000,  0.707]");
+      "[ 0.707, 0.000, 0.707,",
+      "  0.000, 1.000, 0.000,",
+      " -0.707, 0.000, 0.707]");
     _invsMatrix3(args, new Math.Matrix3.rotateZ(math.PI/4.0),
-      "[0.707, -0.707, 0.000,",
-      " 0.707,  0.707, 0.000,",
-      " 0.000,  0.000, 1.000]");
+      "[ 0.707, 0.707, 0.000,",
+      " -0.707, 0.707, 0.000,",
+      "  0.000, 0.000, 1.000]");
     _matrix3String(args, new Math.Matrix3(0.0, 0.0, 0.0,
                                           0.0, 0.0, 0.0,
                                           0.0, 0.0, 0.0).inverse(),
@@ -336,6 +336,24 @@ void _invsMatrix3(TestArgs args, Math.Matrix3 mat, String exp1, String exp2, Str
     args.error("Unexpected result from Matrix3.inverse().inverse(): "+
       "\n   Expected: " + mat.toString("             ") +
       "\n   Gotten:   " + result.toString("             ") + "\n");
+    args.fail();
+  }
+  Math.Matrix3 ident1 = mat*inv;
+  if (ident1 != new Math.Matrix3.identity()) {
+    args.error("Unexpected result from Matrix3*Matrix3.inverse(): "+
+      "\n   Matrix:   " + mat.toString("             ") +
+      "\n   Inverted: " + inv.toString("             ") +
+      "\n   Expected: " + new Math.Matrix3.identity().toString("             ") +
+      "\n   Gotten:   " + ident1.toString("             ") + "\n");
+    args.fail();
+  }
+  Math.Matrix3 ident2 = mat*inv;
+  if (ident2 != new Math.Matrix3.identity()) {
+    args.error("Unexpected result from Matrix3*Matrix3.inverse(): "+
+      "\n   Matrix:   " + mat.toString("             ") +
+      "\n   Inverted: " + inv.toString("             ") +
+      "\n   Expected: " + new Math.Matrix3.identity().toString("             ") +
+      "\n   Gotten:   " + ident2.toString("             ") + "\n");
     args.fail();
   }
 }

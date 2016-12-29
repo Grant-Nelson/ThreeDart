@@ -27,7 +27,7 @@ ThreeDart.Entity createFloor(ThreeDart.ThreeDart td) {
     new Techniques.MaterialLight()
       ..texture2DMatrix = new Math.Matrix3.scale(1000.0, 1000.0, 1.0)
       ..lights.add(new Lights.Directional(
-          mover: new Movers.Constant(new Math.Matrix4.vectorTowards(0.0, -3.0, 0.0)),
+          mover: new Movers.Constant(new Math.Matrix4.vectorTowards(1.0, -3.0, -1.0)),
           color: new Math.Color3.white()))
       ..ambient.color = new Math.Color3(0.5, 0.5, 0.5)
       ..diffuse.color = new Math.Color3(0.5, 0.5, 0.5)
@@ -40,30 +40,56 @@ ThreeDart.Entity createFloor(ThreeDart.ThreeDart td) {
     ..technique = tech;
 }
 
+ThreeDart.Entity createObjects(ThreeDart.ThreeDart td) {
+  Techniques.MaterialLight tech = new Techniques.MaterialLight()
+    ..lights.add(new Lights.Directional(
+          mover: new Movers.Constant(new Math.Matrix4.vectorTowards(1.0, -3.0, -1.0)),
+          color: new Math.Color3(0.4, 0.4, 1.0)))
+    ..lights.add(new Lights.Directional(
+          mover: new Movers.Constant(new Math.Matrix4.vectorTowards(0.0, 1.0, 0.0)),
+          color: new Math.Color3(0.0, 0.2, 0.1)))
+    ..ambient.color = new Math.Color3.gray(0.2)
+    ..diffuse.color = new Math.Color3.gray(0.7)
+    ..specular.color = new Math.Color3.white()
+    ..specular.shininess = 10.0;
+
+  ThreeDart.Entity group = new ThreeDart.Entity()
+    ..technique = tech
+    ..children.add(createFloor(td));
+
+  Shapes.Shape shape = Shapes.cube();
+  final double range = 30.0;
+  final double spacing = 12.0;
+  for (double x = -range; x <= range; x += spacing) {
+    for (double z = -range; z <= range; z += spacing) {
+      ThreeDart.Entity obj = new ThreeDart.Entity()
+        ..shape = shape
+        ..mover = new Movers.Group([
+          new Movers.Rotater(yaw: x/10.0, pitch: z/10.0, deltaYaw: x/10.0, deltaPitch: z/10.0),
+          new Movers.Constant(new Math.Matrix4.translate(x, 0.0, z))
+        ]);
+      group.children.add(obj);
+    }
+  }
+  print("Count: ${group.children.length}");
+
+  return group;
+}
+
 void main() {
   common.shellTest("Test 038", [],
-    "A test of basic 3D movement around a room.");
+    "A test of basic 3D movement around a room similar to a first person view. "+
+    "A and D (left and right arrow keys) strifes left and right. "+
+    "W and S (up and down arrow keys) moves forward and backward. "+
+    "Q and E moves up and down. Mouse looks around with left mouse button pressed.");
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
 
-  Techniques.MaterialLight tech = new Techniques.MaterialLight()
-    ..lights.add(new Lights.Directional(
-          mover: new Movers.Constant(new Math.Matrix4.vectorTowards(1.0, 1.0, -3.0)),
-          color: new Math.Color3.white()))
-    ..ambient.color = new Math.Color3(0.0, 0.0, 1.0)
-    ..diffuse.color = new Math.Color3(0.0, 1.0, 0.0)
-    ..specular.color = new Math.Color3(1.0, 0.0, 0.0)
-    ..specular.shininess = 10.0;
-
-  ThreeDart.Entity obj1 = new ThreeDart.Entity()
-    ..shape = Shapes.cube()
-    ..technique = tech
-    ..mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, -10.0));
-
   ThreeDart.Entity group = new ThreeDart.Entity()
     ..children.add(createFloor(td))
-    ..children.add(obj1);
+    ..children.add(createObjects(td));
 
+  // Setup the First person camera
   Movers.UserTranslator trans = new Movers.UserTranslator(input: td.userInput);
   Movers.UserRotater rot = new Movers.UserRotater(input: td.userInput)
     ..pitch.maximumLocation = Math.PI_2
