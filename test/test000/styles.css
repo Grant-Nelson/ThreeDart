@@ -71,6 +71,7 @@
   border: 1px solid black;
   margin: 0px 0px 0px 20px;
   width: 100%-25px;
+  text-align: left;
   font-family: "Lucida Console";
   font-size: .75em;
   white-space: nowrap;

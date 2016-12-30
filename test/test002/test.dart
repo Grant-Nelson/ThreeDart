@@ -24,7 +24,7 @@ void main() {
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..mover = (new Movers.Group()
-      ..add(new Movers.UserRotater(input: td.userInput))
+      ..add(new Movers.UserRotater(input: td.userInput, invertY: true))
       ..add(new Movers.UserRoller(input: td.userInput, ctrl: true))
       ..add(new Movers.UserZoom(input: td.userInput)));
 
@@ -47,8 +47,8 @@ void main() {
     ..add("Face Normals",    (bool show) { tech.showFaceNormals    = show; })
     ..add("Face Binormals",  (bool show) { tech.showFaceBinormals  = show; })
     ..add("Face Tangentals", (bool show) { tech.showFaceTangentals = show; })
-    ..add("Colors",          (bool show) { tech.showColorFill      = show; }) // TODO: The offsets of the colors needs to be fixed.
-    ..add("Textures2D",      (bool show) { tech.showTxt2DColor     = show; }) // TODO: The offsets of the 2D textures needs to be fixed.
+    ..add("Colors",          (bool show) { tech.showColorFill      = show; })
+    ..add("Textures2D",      (bool show) { tech.showTxt2DColor     = show; })
     ..add("TexturesCube",    (bool show) { tech.showTxtCube        = show; })
     ..add("Weight",          (bool show) { tech.showWeight         = show; })
     ..add("Bend",            (bool show) { tech.showBend           = show; })

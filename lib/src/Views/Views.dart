@@ -4,7 +4,6 @@
 library ThreeDart.Views;
 
 import 'dart:web_gl' as WebGL;
-import 'dart:math' as math;
 
 import '../Core/Core.dart' as Core;
 import '../Textures/Textures.dart' as Textures;

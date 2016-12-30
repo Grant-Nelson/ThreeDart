@@ -576,7 +576,8 @@ class Inspection extends Technique {
   Shapes.Shape _colorFill(Shapes.Shape shape) {
     Shapes.Shape result = new Shapes.Shape();
     shape.vertices.forEach((Shapes.Vertex vertex) {
-      result.vertices.add(vertex.copy());
+      result.vertices.add(vertex.copy()
+        ..binormal = new Math.Vector3.zero());
     });
     shape.faces.forEach((Shapes.Face face) {
       Shapes.Vertex ver1 = result.vertices[face.vertex1.index];
@@ -593,7 +594,8 @@ class Inspection extends Technique {
     shape.vertices.forEach((Shapes.Vertex vertex) {
       Math.Point2 txt = vertex.texture2D;
       result.vertices.add(vertex.copy()
-        ..color = new Math.Color4(txt.x, txt.y, txt.y));
+        ..color = new Math.Color4(txt.x, txt.y, txt.y)
+        ..binormal = new Math.Vector3.zero());
     });
     shape.faces.forEach((Shapes.Face face) {
       Shapes.Vertex ver1 = result.vertices[face.vertex1.index];

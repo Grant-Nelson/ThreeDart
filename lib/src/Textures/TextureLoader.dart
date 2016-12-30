@@ -33,7 +33,7 @@ class TextureLoader {
 
   /// Loads a file from the given [path].
   /// The image will load asynchronously.
-  Texture2D load2DFromFile(String path, {bool flipY: false, bool wrapEdges: false}) {
+  Texture2D load2DFromFile(String path, {bool flipY: false, bool wrapEdges: false, bool mipMap: false}) {
     WebGL.Texture texture = this._gl.createTexture();
     this._gl.bindTexture(WebGL.TEXTURE_2D, texture);
     if (wrapEdges) {
@@ -43,7 +43,7 @@ class TextureLoader {
       this._gl.texParameteri(WebGL.TEXTURE_2D, WebGL.TEXTURE_WRAP_S, WebGL.CLAMP_TO_EDGE);
       this._gl.texParameteri(WebGL.TEXTURE_2D, WebGL.TEXTURE_WRAP_T, WebGL.CLAMP_TO_EDGE);
     }
-    this._gl.texParameteri(WebGL.TEXTURE_2D, WebGL.TEXTURE_MIN_FILTER, WebGL.LINEAR);
+    this._gl.texParameteri(WebGL.TEXTURE_2D, WebGL.TEXTURE_MIN_FILTER, mipMap?WebGL.LINEAR_MIPMAP_LINEAR:WebGL.LINEAR);
     this._gl.texParameteri(WebGL.TEXTURE_2D, WebGL.TEXTURE_MAG_FILTER, WebGL.LINEAR);
     this._gl.bindTexture(WebGL.TEXTURE_2D, null);
 
@@ -60,6 +60,7 @@ class TextureLoader {
       this._gl.bindTexture(WebGL.TEXTURE_2D, texture);
       this._gl.pixelStorei(WebGL.UNPACK_FLIP_Y_WEBGL, flipY? 1: 0);
       this._gl.texImage2D(WebGL.TEXTURE_2D, 0, WebGL.RGBA, WebGL.RGBA, WebGL.UNSIGNED_BYTE, image);
+      if (mipMap) this._gl.generateMipmap(WebGL.TEXTURE_2D);
       this._gl.bindTexture(WebGL.TEXTURE_2D, null);
       result._setLoaded();
       this._decLoading();

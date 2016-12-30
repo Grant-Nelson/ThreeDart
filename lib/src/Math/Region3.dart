@@ -89,22 +89,22 @@ class Region3 {
   Region3 expand(double x, double y, double z) {
     double dx = this.dx;
     if (x < this.x) dx = this.dx + (this.x - x);
-    else if (x > this.x + this.dx) {
-      dx = x - this.x;
+    else {
+      if (x > this.x + this.dx) dx = x - this.x;
       x = this.x;
     }
 
     double dy = this.dy;
     if (y < this.y) dy = this.dy + (this.y - y);
-    else if (y > this.y + this.dy) {
-      dy = y - this.y;
+    else {
+      if (y > this.y + this.dy) dy = y - this.y;
       y = this.y;
     }
 
     double dz = this.dz;
     if (z < this.z) dz = this.dz + (this.z - z);
-    else if (z > this.z + this.dz) {
-      dz = z - this.z;
+    else {
+      if (z > this.z + this.dz) dz = z - this.z;
       z = this.z;
     }
 

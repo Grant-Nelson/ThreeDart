@@ -95,8 +95,8 @@ class Matrix2 {
     double det = this.det();
     if (Comparer.equals(det, 0.0)) return new Matrix2.identity();
     double q = 1.0 / det;
-    return new Matrix2( this.m22 * q, -this.m12 * q,
-                       -this.m21 * q,  this.m11 * q);
+    return new Matrix2( this.m22 * q, -this.m21 * q,
+                       -this.m12 * q,  this.m11 * q);
   }
 
   /// Multiplies this matrix by the [other] matrix.

@@ -107,11 +107,11 @@ class MouseWheelEventArgs extends PointEventArgs {
 /// The key event arguments for events from the keyboard.
 class KeyEventArgs extends EventArgs {
 
-  /// The code for the key which was pressed.
-  final int keyCode;
+  /// The key which was pressed or released.
+  final UserKey key;
 
   /// Creates a new key event argument.
-  KeyEventArgs(Object sender, this.keyCode):
+  KeyEventArgs(Object sender, UserKey this.key):
     super(sender);
 }
 
@@ -141,6 +141,9 @@ class ValueChangedEventArgs extends EventArgs {
   /// Creates an entity event argument.
   ValueChangedEventArgs(Object sender, this.name, this.previous, this.value):
     super(sender);
+
+  /// The string for this event argument.
+  String toString() => "ValueChanged: $name, $previous => $value";
 }
 
 /// The event argument for event's when items are added to a collection.

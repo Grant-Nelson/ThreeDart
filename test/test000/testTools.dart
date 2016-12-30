@@ -121,8 +121,9 @@ class TestBlock extends TestArgs {
   }
 
   void _addLog(String text, String type) {
-    String log = this._man._escape.convert(text).replaceAll(" ", "&nbsp;").
-      replaceAll("\n", "</dir><br class=\"$type\"><dir class=\"$type\">");
+    String log = this._man._escape.convert(text)
+      .replaceAll(" ", "&nbsp;")
+      .replaceAll("\n", "</dir><br class=\"$type\"><dir class=\"$type\">");
     this._body.innerHtml += "<dir class=\"$type\">$log</dir>";
   }
 
