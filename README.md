@@ -1,6 +1,6 @@
 [![ThreeDart](resources/ThreeDart.png)](https://github.com/Grant-Nelson/ThreeDart/blob/master/)
 
-A [SnowGremlin](http://www.snowgremlin.com) Project
+A SnowGremlin LLC Project
 
 ### Work in Progress
 
