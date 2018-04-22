@@ -270,6 +270,15 @@ class ShellPage {
     this._page.append(canvas);
   }
 
+  /// Adds a large canvas to the page with the given [id]
+  /// which can be used to host a ThreeDart
+  void addLargeCanvas(String id) {
+    html.CanvasElement canvas = new html.CanvasElement()
+      ..className = "pageLargeCanvas"
+      ..id = id;
+    this._page.append(canvas);
+  }
+
   /// Constructs the paragraph tokenizer if the tokenizer hasn't been setup yet.
   /// The paragraph tokenizer breaks up a paragraph to label tokens for
   /// bold, italic, code, links, and normal.

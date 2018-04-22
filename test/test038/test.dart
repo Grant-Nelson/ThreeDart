@@ -54,11 +54,10 @@ ThreeDart.Entity createObjects(ThreeDart.ThreeDart td) {
     ..specular.shininess = 10.0;
 
   ThreeDart.Entity group = new ThreeDart.Entity()
-    ..technique = tech
-    ..children.add(createFloor(td));
+    ..technique = tech;
 
   Shapes.Shape shape = Shapes.cube();
-  final double range = 30.0;
+  final double range = 60.0;
   final double spacing = 12.0;
   for (double x = -range; x <= range; x += spacing) {
     for (double z = -range; z <= range; z += spacing) {
