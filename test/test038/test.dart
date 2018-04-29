@@ -90,12 +90,7 @@ void main() {
 
   // Setup the First person camera
   Movers.UserTranslator trans = new Movers.UserTranslator(input: td.userInput);
-  Movers.UserRotater rot = new Movers.UserRotater(input: td.userInput)
-    ..pitch.maximumLocation = Math.PI_2
-    ..pitch.minimumLocation = -Math.PI_2
-    ..pitch.dampening = 1.0
-    ..yaw.dampening   = 1.0
-    ..pitch.wrap = false;
+  Movers.UserRotater rot = new Movers.UserRotater.flat(input: td.userInput);
   rot.changed.add((ThreeDart.EventArgs args) {
     trans.velocityRotation = new Math.Matrix3.rotateY(-rot.yaw.location);
   });

@@ -28,7 +28,7 @@ void mainPage() {
       "were you can download and play with 3Dart right now. Please feel free to help ",
       "develop and contribute to the 3Dart code and community."])
     ..addHeader(2, "Examples")
-    ..addPar(["[Peaceful|./?example=1]"])
+    ..addPar(["[3Dart Craft|./?example=1]"])
     ..addHeader(2, "Tutorials")
     ..addPar(["[Getting Started|./?tutorial=1]"])
     ..addHeader(6, "Tutorials still need to be written", "")

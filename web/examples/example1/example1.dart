@@ -8,53 +8,44 @@ import 'package:ThreeDart/Shapes.dart' as Shapes;
 import 'package:ThreeDart/Movers.dart' as Movers;
 import 'package:ThreeDart/Data.dart' as Data;
 import 'package:ThreeDart/Math.dart' as Math;
-import 'package:ThreeDart/Lights.dart' as Lights;
 import 'package:ThreeDart/Textures.dart' as Textures;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
+import 'package:ThreeDart/Views.dart' as Views;
+
 import 'dart:math' as math;
+import 'dart:typed_data' as data;
+import 'dart:async';
+
 import '../../common/common.dart' as common;
 
+part 'blockInfo.dart';
 part 'blockType.dart';
 part 'chunk.dart';
+part 'player.dart';
+part 'world.dart';
 
 void show() {
-  new common.ShellPage("Example 1")
-    ..addLargeCanvas("example1")
+  new common.ShellPage("3Dart Craft")
+    ..addLargeCanvas("targetCanvas")
     ..addPar(["WIP"]);
 
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("example1");
-  Textures.Texture2D blockTxt =
-    td.textureLoader.load2DFromFile("./examples/example1/blocks.png", wrapEdges: false, nearest: true);
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("targetCanvas");
+  World world = new World(td);
+  Player player = new Player(td, world);
+  player.goHome();
 
-  Techniques.MaterialLight matLit = new Techniques.MaterialLight()
-    ..emission.texture2D = blockTxt;
+  Scenes.EntityPass scene = new Scenes.EntityPass()
+    ..onPreUpdate.add(world.update)
+    ..onPreUpdate.add(player.update)
+    ..children.add(world.group)
+    ..camera.mover = player.camera;
+  // Set background color to sky blue
+  (scene.target as Views.FrontTarget).color = new Math.Color4(0.576, 0.784, 0.929);
+  td.scene = scene;
 
-  ThreeDart.Entity group = new ThreeDart.Entity();
-
-  for (int x = -32; x <= 32; x+=Chunk.chunkXSize) {
-    for (int z = -32; z <= 32; z+=Chunk.chunkZSize) {
-      Chunk chunk = new Chunk(x, -8, z)
-        ..updateShape()
-        ..entity.technique = matLit;
-      group.children.add(chunk.entity);
-    }
-  }
-
-  // Setup the First person camera
-  Movers.UserTranslator trans = new Movers.UserTranslator(input: td.userInput);
-  Movers.UserRotater rot = new Movers.UserRotater(input: td.userInput)
-    ..pitch.maximumLocation = Math.PI_2
-    ..pitch.minimumLocation = -Math.PI_2
-    ..pitch.dampening = 1.0
-    ..yaw.dampening   = 1.0
-    ..pitch.wrap = false;
-  rot.changed.add((ThreeDart.EventArgs args) {
-    trans.velocityRotation = new Math.Matrix3.rotateY(-rot.yaw.location);
+  new Timer.periodic(const Duration(milliseconds: 5000), (Timer time) {
+    String fps = td.fps.toStringAsFixed(2);
+    print("${fps} fps");
   });
-  Movers.Group camera = new Movers.Group([trans, rot]);
-
-  td.scene = new Scenes.EntityPass()
-    ..children.add(group)
-    ..camera.mover = camera;
 }

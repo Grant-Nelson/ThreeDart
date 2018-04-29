@@ -25,6 +25,9 @@ class UserTranslator implements Mover, Core.UserInteractable {
   /// Event for handling changes to this mover.
   Core.Event _changed;
 
+  /// Event for handling when an update changes the location.
+  Core.Event _locationUpdated;
+
   /// Creates an instance of [UserTranslator].
   UserTranslator({Core.UserInput input: null}) {
     this._xNegKey = new Core.UserKeyGroup()
@@ -71,6 +74,7 @@ class UserTranslator implements Mover, Core.UserInteractable {
     this._frameNum  = 0;
     this._mat       = null;
     this._changed   = null;
+    this._locationUpdated = null;
     this.attach(input);
   }
 
@@ -83,6 +87,17 @@ class UserTranslator implements Mover, Core.UserInteractable {
   /// Handles a child mover being changed.
   void _onChanged([Core.EventArgs args = null]) {
     this._changed?.emit(args);
+  }
+
+  /// Emits when the update changes the location.
+  Core.Event get locationUpdated {
+    if (this._locationUpdated == null) this._locationUpdated = new Core.Event();
+    return this._locationUpdated;
+  }
+
+  /// Handles an update changes the location.
+  void _onLocationUpdated([Core.EventArgs args = null]) {
+    this._locationUpdated?.emit(args);
   }
 
   /// The group of keys which will cause movement down a negitive X vector.
@@ -143,7 +158,36 @@ class UserTranslator implements Mover, Core.UserInteractable {
       this._onChanged(new Core.ValueChangedEventArgs(this, "velocityRotation", prev, this._velRot));
     }
   }
+  
+  /// Velocity is the velocity vector relative to the world.
+  Math.Vector3 get velocity => new Math.Vector3(
+      this._offsetX.velocity, this._offsetY.velocity, this._offsetZ.velocity);
+  set velocity(Math.Vector3 vec) {
+    this._offsetX.velocity = vec.dx;
+    this._offsetY.velocity = vec.dy;
+    this._offsetZ.velocity = vec.dz;
+  }
+  
+  /// Direction is the velocity vector relative to the users rotation.
+  Math.Vector3 get direction {
+    Math.Vector3 vec = this.velocity;
+    if (this._velRotInv != null) vec = this._velRotInv.transVec3(vec);
+    return vec;
+  }
+  set direction(Math.Vector3 vec) {
+    if (this._velRot != null) vec = this._velRot.transVec3(vec);
+    this.velocity = vec;
+  }
 
+  /// Location is the position of the user in the world.
+  Math.Point3 get location => new Math.Point3(
+    this._offsetX.location, this._offsetY.location, this._offsetZ.location); 
+  set location(Math.Point3 loc) {
+    this._offsetX.location = loc.x;
+    this._offsetY.location = loc.y;
+    this._offsetZ.location = loc.z;
+  }
+  
   /// Handles a key pressed.
   void _onKeyDown(Core.EventArgs args) {
     this._onChanged(args);
@@ -166,22 +210,26 @@ class UserTranslator implements Mover, Core.UserInteractable {
 
   /// Updates the movement of the translation.
   void _updateMovement(double dt) {
-    // Limits initial speed caused by a large dt from lower than 1 second updates.
+    // Limits initial speed caused by a large dt from lower than 0.1 second updates.
     if (dt > 0.1) dt = 0.1;
     final double deccel = this._deccel*dt;
     final double accel = this._accel*dt;
 
-    Math.Vector3 vec = new Math.Vector3(
-      this._offsetX.velocity, this._offsetY.velocity, this._offsetZ.velocity);
-    if (this._velRotInv != null) vec = this._velRotInv.transVec3(vec);
-    double x = this._updateComponent(this._xNegKey, this._xPosKey, deccel, accel, vec.dx);
-    double y = this._updateComponent(this._yNegKey, this._yPosKey, deccel, accel, vec.dy);
-    double z = this._updateComponent(this._zNegKey, this._zPosKey, deccel, accel, vec.dz);
-    vec = new Math.Vector3(x, y, z);
-    if (this._velRot != null) vec = this._velRot.transVec3(vec);
-    this._offsetX.velocity = vec.dx;
-    this._offsetY.velocity = vec.dy;
-    this._offsetZ.velocity = vec.dz;
+    Math.Point3 pnt0 = this.location;
+    this._offsetX.update(dt);
+    this._offsetY.update(dt);
+    this._offsetZ.update(dt);
+    Math.Point3 pnt1 = this.location;
+
+    Math.Vector3 dir = this.direction;
+    double x = this._updateComponent(this._xNegKey, this._xPosKey, deccel, accel, dir.dx);
+    double y = this._updateComponent(this._yNegKey, this._yPosKey, deccel, accel, dir.dy);
+    double z = this._updateComponent(this._zNegKey, this._zPosKey, deccel, accel, dir.dz);
+    this.direction = new Math.Vector3(x, y, z);
+
+    if (pnt0 != pnt1) {
+      this._onLocationUpdated(new Core.ValueChangedEventArgs(this, "locationUpdated", pnt0, pnt1));
+    }
   }
 
   /// Attaches this mover to the user input.
@@ -210,14 +258,10 @@ class UserTranslator implements Mover, Core.UserInteractable {
   Math.Matrix4 update(Core.RenderState state, Movable obj) {
     if (this._frameNum < state.frameNumber) {
       this._frameNum = state.frameNumber;
-      final double dt = state.dt;
-      this._offsetX.update(dt);
-      this._offsetY.update(dt);
-      this._offsetZ.update(dt);
-      this._updateMovement(dt);
+      this._updateMovement(state.dt);
       this._mat = new Math.Matrix4.translate(
         this._offsetX.location,
-        this._offsetY.location,
+        -this._offsetY.location,
         this._offsetZ.location);
     }
     return this._mat;

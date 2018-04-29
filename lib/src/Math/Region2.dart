@@ -43,6 +43,10 @@ class Region2 {
   factory Region2.fromCorners(Point2 a, Point2 b) =>
     new Region2(a.x, a.y, b.x-a.x, b.y-a.y);
 
+  /// Constructs a new [Region2] at the given ray.
+  factory Region2.fromRay(Ray2 ray) =>
+    new Region2(ray.x, ray.y, ray.dx, ray.dy);
+
   /// Constructs a new [Region2] instance given a list of 4 doubles.
   ///
   /// [values] is a list of doubles are in the order x, y, dx, then dy.
@@ -117,7 +121,7 @@ class Region2 {
     return raw*2.0/this.minSide;
   }
 
-  /// Determines if the given [other] variable is a [Region2] equal to this point.
+  /// Determines if the given [other] variable is a [Region2] equal to this region.
   ///
   /// The equality of the doubles is tested with the current [Comparer] method.
   bool operator ==(var other) {

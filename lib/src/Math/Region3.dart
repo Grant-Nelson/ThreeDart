@@ -53,6 +53,10 @@ class Region3 {
   /// Constructs a new [Region3] from two opposite corners.
   factory Region3.fromCorners(Point3 a, Point3 b) =>
     new Region3(a.x, a.y, a.z, b.x-a.x, b.y-a.y, b.z-a.z);
+    
+  /// Constructs a new [Region3] at the given ray.
+  factory Region3.fromRay(Ray3 ray) =>
+    new Region3(ray.x, ray.y, ray.z, ray.dx, ray.dy, ray.dz);
 
   /// Constructs a new [Region3] instance given a list of 6 doubles.
   ///
@@ -111,7 +115,7 @@ class Region3 {
     return new Region3._(x, y, z, dx, dy, dz);
   }
 
-  /// Gets an list of 4 doubles in the order x, y, z, dx, dy, then dz.
+  /// Gets an list of 6 doubles in the order x, y, z, dx, dy, then dz.
   List<double> toList() =>
     [this.x, this.y, this.z, this.dx, this.dy, this.dz];
 
@@ -145,11 +149,10 @@ class Region3 {
 
   /// Gets the adjusted vector of the given [raw] vector.
   /// This vector is normalized into the region.
-  Vector3 adjustVector(Vector3 raw) {
-    return raw*2.0/this.minSide;
-  }
+  Vector3 adjustVector(Vector3 raw) =>
+    raw*2.0/this.minSide;
 
-  /// Determines if the given [other] variable is a [Region3] equal to this point.
+  /// Determines if the given [other] variable is a [Region3] equal to this region.
   ///
   /// The equality of the doubles is tested with the current [Comparer] method.
   bool operator ==(var other) {

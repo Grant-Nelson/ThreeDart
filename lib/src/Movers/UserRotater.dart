@@ -120,6 +120,27 @@ class UserRotater implements Mover, Core.UserInteractable {
     this.attach(input);
   }
 
+  /// Creates a new flat movement like a typical first person view rotater.
+  factory UserRotater.flat({
+      bool ctrl:    false,
+      bool alt:     false,
+      bool shift:   false,
+      bool invertX: false,
+      bool invertY: false,
+      Core.UserInput input: null}) =>
+    new UserRotater(
+      ctrl:    ctrl,
+      alt:     alt,
+      shift:   shift,
+      invertX: invertX,
+      invertY: invertY,
+      input: input)
+      ..pitch.maximumLocation = Math.PI_2
+      ..pitch.minimumLocation = -Math.PI_2
+      ..pitch.dampening = 1.0
+      ..yaw.dampening = 1.0
+      ..pitch.wrap = false;
+
   /// Emits when the mover has changed.
   Core.Event get changed {
     if (this._changed == null) this._changed = new Core.Event();
