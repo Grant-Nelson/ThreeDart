@@ -1,6 +1,7 @@
 part of ThreeDart.Math;
 
 /// A math structure for storing a 2D region, like a rectangle.
+/// This is also used for AABBs (axial alligned bounding boxes).
 class Region2 {
 
   /// The left edge component of the region.
@@ -48,7 +49,6 @@ class Region2 {
     new Region2(ray.x, ray.y, ray.dx, ray.dy);
 
   /// Constructs a new [Region2] instance given a list of 4 doubles.
-  ///
   /// [values] is a list of doubles are in the order x, y, dx, then dy.
   factory Region2.fromList(List<double> values) {
     assert(values.length == 4);
@@ -121,8 +121,106 @@ class Region2 {
     return raw*2.0/this.minSide;
   }
 
+  /// Determines the location the given point is in relation to the region.
+  HitRegion hit(Point2 a) {
+    HitRegion region = HitRegion.None;
+
+    if (a.x < this.x) region |= HitRegion.XNeg;
+    else if (a.x >= this.x+this.dx) region |= HitRegion.XPos;
+    else region |= HitRegion.XCenter;
+
+    if (a.y < this.y) region |= HitRegion.YNeg;
+    else if (a.y >= this.y+this.dy) region |= HitRegion.YPos;
+    else region |= HitRegion.YCenter;
+
+    return region;
+  }
+
+  /// Determines if the given point is contained inside this region.
+  bool contains(Point2 a) {
+    if (a.x < this.x) return false;
+    else if (a.x >= this.x+this.dx) return false;
+
+    if (a.y < this.y) return false;
+    else if (a.y >= this.y+this.dy) return false;
+
+    return true;
+  }
+  
+  /// Determines if the two regions overlap even partually.
+  bool overlap(Region2 a) =>
+    (a.x <= this.x + this.dx) &&
+    (a.y <= this.y + this.dy) &&
+    (a.x + a.dx >= this.x) &&
+    (a.y + a.dy >= this.y);
+
+  /// Adjusts the ray's intersection for the region.
+  Intersect2D _ray2Adjust(Intersect2D pi) {
+    if (pi == null) return null;
+    Intersect2DType iType = pi.intersection;
+    if (iType == Intersect2DType.HorizontalEdge) {
+      if ((pi.point.x < this.x) || (pi.point.x >= this.x + this.dx)) 
+        iType = Intersect2DType.None;
+    } else if (iType == Intersect2DType.VerticalEdge) {
+      if ((pi.point.y < this.y) || (pi.point.y >= this.y + this.dy)) 
+        iType = Intersect2DType.None;
+    }
+    return new Intersect2D(pi.point, pi.depth, iType);
+  }
+
+  /// Determines the ray intersection with the corner of the region.
+  /// If the ray does not hit this region the null is returned.
+  Intersect2D _ray2CornerIntersect(Ray2 ray, double x, double y) {
+    Intersect2D pi1 = ray.verticalIntersect(x);
+    Intersect2D pi2 = ray.horizontalIntersect(y);
+    if (pi1 == null) return pi2;
+    if (pi2 == null) return pi1;
+    return this._ray2Adjust((pi1.depth > pi2.depth) ? pi1 : pi2);
+  }
+
+  /// Determines the first point on the given ray to touch this region.
+  /// If the ray does not hit this region then null is returned.
+  Intersect2D ray2Intersect(Ray2 ray) {
+    HitRegion startHit = this.hit(ray.start);
+    HitRegion endHit = this.hit(ray.end);
+    if (startHit == endHit) {
+      if (startHit == HitRegion.XCenter|HitRegion.YCenter)
+        return new Intersect2D(ray.start, 0.0, Intersect2DType.Inside);
+      return null;
+    }
+
+    HitRegion joinHit = startHit&endHit;
+    if (joinHit.has(HitRegion.XPos) || joinHit.has(HitRegion.XNeg) ||
+      joinHit.has(HitRegion.YPos) || joinHit.has(HitRegion.YNeg)) return null;
+
+    if (startHit.has(HitRegion.XNeg)) {
+      if (startHit.has(HitRegion.YNeg))
+        return this._ray2CornerIntersect(ray, this.x, this.y);
+      if (startHit.has(HitRegion.YCenter))
+        return this._ray2Adjust(ray.verticalIntersect(this.x));
+      // if(startHit.has(HitRegion.YPos)
+      return this._ray2CornerIntersect(ray, this.x, this.y+this.dy);
+    }
+    
+    if (startHit.has(HitRegion.XCenter)) {
+      if (startHit.has(HitRegion.YNeg))
+        return this._ray2Adjust(ray.horizontalIntersect(this.y));
+      if (startHit.has(HitRegion.YCenter))
+        return new Intersect2D(ray.start, 0.0, Intersect2DType.Inside);
+      // if(startHit.has(HitRegion.YPos)
+      return this._ray2Adjust(ray.horizontalIntersect(this.y+this.dy));
+    }
+    
+    // startHit.has(HitRegion.XPos)
+    if (startHit.has(HitRegion.YNeg))
+      return this._ray2CornerIntersect(ray, this.x+this.dx, this.y);
+    if (startHit.has(HitRegion.YCenter))
+      return this._ray2Adjust(ray.verticalIntersect(this.x+this.dx));
+    // if (startHit.has(HitRegion.YPos)
+    return this._ray2CornerIntersect(ray, this.x+this.dx, this.y+this.dy);
+  }
+
   /// Determines if the given [other] variable is a [Region2] equal to this region.
-  ///
   /// The equality of the doubles is tested with the current [Comparer] method.
   bool operator ==(var other) {
     if (identical(this, other)) return true;

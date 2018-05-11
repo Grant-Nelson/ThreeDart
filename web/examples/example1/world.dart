@@ -13,12 +13,11 @@ class World {
     this._group = new ThreeDart.Entity();
     this._chunks = new List<Chunk>();
 
-    // for (int x = -32; x <= 32; x += Chunk.chunkXSize) {
-    //   for (int z = -32; z <= 32; z += Chunk.chunkZSize) {
-    //     this.insertChunk(x, z);
-    //   }
-    // }
-    this.insertChunk(0, 0);
+    for (int x = -32; x <= 32; x += Chunk.chunkXSize) {
+      for (int z = -32; z <= 32; z += Chunk.chunkZSize) {
+        this.insertChunk(x, z);
+      }
+    }
   }
 
   ThreeDart.Entity get group => _group;
@@ -33,8 +32,8 @@ class World {
   BlockInfo getBlock(double x, double y, double z) {
     int cx = (x.truncate() ~/ Chunk.chunkXSize) * Chunk.chunkXSize;
     int cz = (z.truncate() ~/ Chunk.chunkXSize) * Chunk.chunkXSize;
-    if (x < 0.0) cx--;
-    if (z < 0.0) cz--;
+    if (x < 0.0) cx -= Chunk.chunkXSize;
+    if (z < 0.0) cz -= Chunk.chunkXSize;
     Chunk chunk = this.findChunk(cx, cz);
 
     int bx = x.floor() - cx;

@@ -9,6 +9,7 @@ part 'Color3.dart';
 part 'Color4.dart';
 part 'Comparer.dart';
 part 'HitRegion.dart';
+part 'Intersection.dart';
 part 'Matrix2.dart';
 part 'Matrix3.dart';
 part 'Matrix4.dart';
@@ -20,6 +21,7 @@ part 'Ray2.dart';
 part 'Ray3.dart';
 part 'Region2.dart';
 part 'Region3.dart';
+part 'Side.dart';
 part 'Vector2.dart';
 part 'Vector3.dart';
 part 'Vector4.dart';
@@ -67,9 +69,8 @@ double wrapVal(double v, [double min = 0.0, double max = 1.0]) {
 /// Determines the difference between the two times in seconds.
 ///
 /// [a] is the older time and [b] is the newer time.
-double diffInSecs(DateTime a, DateTime b) {
-  return  b.difference(a).inMicroseconds*1.0e-6;
-}
+double diffInSecs(DateTime a, DateTime b) =>
+  b.difference(a).inMicroseconds*1.0e-6;
 
 /// Formats the given double value into a string.
 ///
@@ -105,15 +106,11 @@ List<String> formatColumn(List<double> vals, [int fraction = 3, int whole = 0]) 
 ///
 /// [v] is the number to get a string for.
 /// [whole] is the padding to put to the left of the number.
-String formatInt(int v, [int whole = 0]) {
-  return v.toString().padLeft(whole);
-}
+String formatInt(int v, [int whole = 0]) => v.toString().padLeft(whole);
 
 /// Gets the nearest (lower) power of the [radix] to the given [value].
 int nearestPower(int value, [int radix = 2]) =>
   math.pow(radix, (math.log(value)/math.log(radix)).floor()).toInt();
 
 /// Gets the exclusive OR for booleans.
-bool xor(bool a, bool b) {
-  return (!a&&b)||(a&&!b);
-}
+bool xor(bool a, bool b) => (!a&&b)||(a&&!b);

@@ -1,6 +1,7 @@
 part of ThreeDart.Math;
 
-/// A math structure for storing a 3D region, like a rectangular cube
+/// A math structure for storing a 3D region, like a rectangular cube.
+/// This is also used for AABBs (axial alligned bounding boxes).
 class Region3 {
 
   /// The left edge component of the region.
@@ -151,6 +152,49 @@ class Region3 {
   /// This vector is normalized into the region.
   Vector3 adjustVector(Vector3 raw) =>
     raw*2.0/this.minSide;
+    
+
+  /// Determines the location the given point is in relation to the region.
+  HitRegion hit(Point3 a) {
+    HitRegion region = HitRegion.None;
+
+    if (a.x < this.x) region |= HitRegion.XNeg;
+    else if (a.x >= this.x+this.dx) region |= HitRegion.XPos;
+    else region |= HitRegion.XCenter;
+
+    if (a.y < this.y) region |= HitRegion.YNeg;
+    else if (a.y >= this.y+this.dy) region |= HitRegion.YPos;
+    else region |= HitRegion.YCenter;
+
+    if (a.z < this.z) region |= HitRegion.ZNeg;
+    else if (a.z >= this.z+this.dz) region |= HitRegion.ZPos;
+    else region |= HitRegion.ZCenter;
+
+    return region;
+  }
+
+  /// Determines if the given point is contained inside this region.
+  bool contains(Point3 a) {
+    if (a.x < this.x) return false;
+    else if (a.x >= this.x+this.dx) return false;
+
+    if (a.y < this.y) return false;
+    else if (a.y >= this.y+this.dy) return false;
+
+    if (a.z < this.z) return false;
+    else if (a.z >= this.z+this.dz) return false;
+
+    return true;
+  }
+  
+  /// Determines if the two regions overlap even partually.
+  bool overlap(Region3 a) =>
+    (a.x <= this.x + this.dx) &&
+    (a.y <= this.y + this.dy) &&
+    (a.z <= this.z + this.dz) &&
+    (a.x + a.dx >= this.x) &&
+    (a.y + a.dy >= this.y) &&
+    (a.z + a.dz >= this.z);
 
   /// Determines if the given [other] variable is a [Region3] equal to this region.
   ///

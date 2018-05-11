@@ -21,21 +21,10 @@ class Chunk {
     this._needUpdate = true;
 
     // Default random land
-    // for (int x = 0; x < chunkXSize; x++) {
-    //   for (int z = 0; z < chunkZSize; z++) {
-    //     int maxy = ((math.cos((x + this.x) / 50 * 6.24 + 2.0) *
-    //                  math.sin((z + this.z) / 50 * 6.24 + 2.0)) * 5.0 + 5.0).floor();
-    //     for (int y = 0; y <= maxy; y++) {
-    //       this.setBlock(x, y, z, (maxy == y) ? BlockType.Grass : (maxy - 1 == y) ? BlockType.Dirt : BlockType.Rock);
-    //     }
-    //   }
-    // }
-    
     for (int x = 0; x < chunkXSize; x++) {
       for (int z = 0; z < chunkZSize; z++) {
-        double shape = math.cos((x + this.x) / chunkXSize * 6.24 + chunkXSize*0.5) *
-                       math.sin((z + this.z) / chunkZSize * 6.24 + chunkZSize*0.5);
-        int maxy = shape < 0.0? 0 : 1;
+        int maxy = ((math.cos((x + this.x) / 50 * 6.24 + 2.0) *
+                     math.sin((z + this.z) / 50 * 6.24 + 2.0)) * 5.0 + 5.0).floor();
         for (int y = 0; y <= maxy; y++) {
           this.setBlock(x, y, z, (maxy == y) ? BlockType.Grass : (maxy - 1 == y) ? BlockType.Dirt : BlockType.Rock);
         }

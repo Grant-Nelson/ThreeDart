@@ -9,10 +9,10 @@ class Ray2 {
   /// The y component of the ray.
   final double y;
 
-  /// The dX component of the ray.
+  /// The delta X component of the ray.
   final double dx;
 
-  /// The dY component of the ray.
+  /// The delta Y component of the ray.
   final double dy;
 
   /// Constructs a new [Ray2].
@@ -42,9 +42,40 @@ class Ray2 {
     return new Ray2(values[0], values[1], values[2], values[3]);
   }
 
+  /// Gets the point at the start of this ray.
+  Point2 get start => new Point2(this.x, this.y);
+
+  /// Gets the point at the end of this ray.
+  Point2 get end => new Point2(this.x+this.dx, this.y+this.dy);
+
+  /// Gets the vector of this ray.
+  Vector2 get vector => new Vector2(this.dx, this.dy);
+
   /// Gets an list of 4 doubles in the order x, y, dx, then dy.
   List<double> toList() =>
     [this.x, this.y, this.dx, this.dy];
+
+  /// Determines the horizontal location the ray intersects the given [y] location.
+  /// Returns a null point if the point is outside of the ray's range.
+  Intersect2D horizontalIntersect(double y) {
+    if (Comparer.equals(this.dy, 0.0)) return null;
+    final double t = (y - this.y) / this.dy;
+    final Point2 pnt = new Point2(x + this.dx*t, y);
+    final bool intersects = (t >= 0.0) && (t <= 1.0);
+    final Intersect2DType iType = intersects ? Intersect2DType.HorizontalEdge : Intersect2DType.None;
+    return new Intersect2D(pnt, t, iType);
+  } 
+
+  /// Determines the vertical location the ray intersects the given [x] location.
+  /// Returns a null point if the point is outside of the ray's range.
+  Intersect2D verticalIntersect(double x) {
+    if (Comparer.equals(this.dx, 0.0)) return null;
+    final double t = (x - this.x) / this.dx;
+    final Point2 pnt = new Point2(x, this.y + this.dy*t);
+    final bool intersects = (t >= 0.0) && (t <= 1.0);
+    final Intersect2DType iType = intersects ? Intersect2DType.VerticalEdge : Intersect2DType.None;
+    return new Intersect2D(pnt, t, iType);
+  } 
 
   /// Determines if the given [other] variable is a [Ray2] equal to this ray.
   ///

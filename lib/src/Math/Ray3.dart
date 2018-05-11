@@ -12,13 +12,13 @@ class Ray3 {
   /// The z component of the ray.
   final double z;
 
-  /// The dX component of the ray.
+  /// The delta X component of the ray.
   final double dx;
 
-  /// The dY component of the ray.
+  /// The delta Y component of the ray.
   final double dy;
 
-  /// The dZ component of the ray.
+  /// The delta Z component of the ray.
   final double dz;
 
   /// Constructs a new [Ray3].
@@ -51,6 +51,15 @@ class Ray3 {
   /// Gets an list of 6 doubles in the order x, y, z, dx, dy, then dz.
   List<double> toList() =>
     [this.x, this.y, this.z, this.dx, this.dy, this.dz];
+
+  /// Gets the point at the start of this ray.
+  Point3 get start => new Point3(this.x, this.y, this.z);
+
+  /// Gets the point at the end of this ray.
+  Point3 get end => new Point3(this.x+this.dx, this.y+this.dy, this.z+this.dz);
+
+  /// Gets the vector of this ray.
+  Vector3 get vector => new Vector3(this.dx, this.dy, this.dz);
 
   /// Determines if the given [other] variable is a [Ray3] equal to this ray.
   ///
