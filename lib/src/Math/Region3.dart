@@ -152,8 +152,7 @@ class Region3 {
   /// This vector is normalized into the region.
   Vector3 adjustVector(Vector3 raw) =>
     raw*2.0/this.minSide;
-    
-
+  
   /// Determines the location the given point is in relation to the region.
   HitRegion hit(Point3 a) {
     HitRegion region = HitRegion.None;

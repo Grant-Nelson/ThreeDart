@@ -14,13 +14,15 @@ class Player {
   World _world;
   Movers.Group _camera;
   ThreeDart.UserKeyGroup _jump;
-  double _jumpVel;
+  bool _inJump;
 
   Player(ThreeDart.ThreeDart td, this._world) {
     this._trans = new Movers.UserTranslator(input: td.userInput)
       ..offsetX.maximumVelocity = _speed
       ..offsetY.maximumVelocity = _fallSpeed
-      ..offsetZ.maximumVelocity = _speed;
+      ..offsetY.acceleration = _gravity
+      ..offsetZ.maximumVelocity = _speed
+      ..collisionHandle = this._handleCollide;
     this._rot = new Movers.UserRotater.flat(input: td.userInput);
     this._rot.changed.add((ThreeDart.EventArgs args) {
       this._trans.velocityRotation = new Math.Matrix3.rotateY(-this._rot.yaw.location);
@@ -30,7 +32,7 @@ class Player {
       ..addKey(ThreeDart.UserKey.spacebar)
       ..attach(td.userInput)
       ..keyDown.add(this._onJump);
-    this._jumpVel = 0.0;
+    this._inJump = false;
   }
   
   Movers.Group get camera => this._camera;
@@ -50,14 +52,13 @@ class Player {
   }
 
   void _onJump(ThreeDart.EventArgs args) {
-    this._jumpVel = _jumpSpeed;
+    if (!this._inJump) {
+      this._trans.offsetY.velocity = _jumpSpeed;
+      this._inJump = true;
+    }
   }
 
-  void update(ThreeDart.EventArgs args) {
-      ThreeDart.RenderState state = (args as ThreeDart.StateEventArgs).state;
-
-    // Check for collisions
-    Math.Point3 loc = this._trans.location;
+  Math.Point3 _handleCollide(Math.Point3 prev, Math.Point3 loc) {
     double x = loc.x, y = loc.y, z = loc.z;
     double nx = x.floor()+0.5, ny = y.floor()+0.5, nz = z.floor()+0.5;
     bool stopFall = false;
@@ -78,9 +79,15 @@ class Player {
     if (_isSolid(x, y-_pad, z))     { y = ny - _pad; stopFall = true; }
     if (_isSolid(x, y-2.0+_pad, z)) { y = ny + _pad; stopFall = true; }
 
-    this._trans.location = new Math.Point3(x, y, z);
-    if (stopFall) this._trans.offsetY.velocity = 0.0;
-    this._trans.offsetY.velocity += state.dt*_gravity + this._jumpVel;
-    this._jumpVel = 0.0;
+    if (stopFall) {
+      this._trans.offsetY.velocity = 0.0;
+      this._inJump = false;
+    }
+    
+    return new Math.Point3(x, y, z);
+  }
+
+  void update(ThreeDart.EventArgs args) {
+    // TODO:
   }
 }

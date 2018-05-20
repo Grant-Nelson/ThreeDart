@@ -1,5 +1,8 @@
 part of ThreeDart.Movers;
 
+/// The handler for handling colisions during the movement.
+typedef Math.Point3 CollisionHandle(Math.Point3 prev, Math.Point3 next);
+
 /// A translation mover which translates on an object in response to user input.
 class UserTranslator implements Mover, Core.UserInteractable {
   Core.UserKeyGroup _xNegKey;
@@ -19,14 +22,13 @@ class UserTranslator implements Mover, Core.UserInteractable {
   /// The last frame the mover was updated for.
   int _frameNum;
 
-  /// The matrix describing the zoom.
+  /// The matrix describing the translation.
   Math.Matrix4 _mat;
 
   /// Event for handling changes to this mover.
   Core.Event _changed;
 
-  /// Event for handling when an update changes the location.
-  Core.Event _locationUpdated;
+  CollisionHandle _collision;
 
   /// Creates an instance of [UserTranslator].
   UserTranslator({Core.UserInput input: null}) {
@@ -74,7 +76,7 @@ class UserTranslator implements Mover, Core.UserInteractable {
     this._frameNum  = 0;
     this._mat       = null;
     this._changed   = null;
-    this._locationUpdated = null;
+    this._collision = null;
     this.attach(input);
   }
 
@@ -87,17 +89,6 @@ class UserTranslator implements Mover, Core.UserInteractable {
   /// Handles a child mover being changed.
   void _onChanged([Core.EventArgs args = null]) {
     this._changed?.emit(args);
-  }
-
-  /// Emits when the update changes the location.
-  Core.Event get locationUpdated {
-    if (this._locationUpdated == null) this._locationUpdated = new Core.Event();
-    return this._locationUpdated;
-  }
-
-  /// Handles an update changes the location.
-  void _onLocationUpdated([Core.EventArgs args = null]) {
-    this._locationUpdated?.emit(args);
   }
 
   /// The group of keys which will cause movement down a negitive X vector.
@@ -188,6 +179,12 @@ class UserTranslator implements Mover, Core.UserInteractable {
     this._offsetZ.location = loc.z;
   }
   
+  /// The amount to add to the velocity when a key in a direction is being pressed.
+  CollisionHandle get collisionHandle => this._collision;
+  void set collisionHandle(CollisionHandle collision) {
+    this._collision = collision;
+  }
+  
   /// Handles a key pressed.
   void _onKeyDown(Core.EventArgs args) {
     this._onChanged(args);
@@ -195,16 +192,10 @@ class UserTranslator implements Mover, Core.UserInteractable {
 
   /// Updates a single component of the movement for the given keys.
   double _updateComponent(Core.UserKeyGroup negKey, Core.UserKeyGroup posKey, double deccel, double accel, double value) {
-    if (negKey.pressed) {
-      if (value < 0.0) value += deccel;
-      value += accel;
-    } else if (posKey.pressed) {
-      if (value > 0.0) value -= deccel;
-      value -= accel;
-    } else {
-      if (value > 0.0) value -= math.min( value, deccel);
-      else             value += math.min(-value, deccel);
-    }
+    if      (negKey.pressed) value += accel;
+    else if (posKey.pressed) value -= accel;
+    else if (value > 0.0) value -= math.min( value, deccel);
+    else                  value += math.min(-value, deccel);
     return value;
   }
 
@@ -215,21 +206,15 @@ class UserTranslator implements Mover, Core.UserInteractable {
     final double deccel = this._deccel*dt;
     final double accel = this._accel*dt;
 
-    Math.Point3 pnt0 = this.location;
-    this._offsetX.update(dt);
-    this._offsetY.update(dt);
-    this._offsetZ.update(dt);
-    Math.Point3 pnt1 = this.location;
-
     Math.Vector3 dir = this.direction;
     double x = this._updateComponent(this._xNegKey, this._xPosKey, deccel, accel, dir.dx);
     double y = this._updateComponent(this._yNegKey, this._yPosKey, deccel, accel, dir.dy);
     double z = this._updateComponent(this._zNegKey, this._zPosKey, deccel, accel, dir.dz);
     this.direction = new Math.Vector3(x, y, z);
 
-    if (pnt0 != pnt1) {
-      this._onLocationUpdated(new Core.ValueChangedEventArgs(this, "locationUpdated", pnt0, pnt1));
-    }
+    this._offsetX.update(dt);
+    this._offsetY.update(dt);
+    this._offsetZ.update(dt);
   }
 
   /// Attaches this mover to the user input.
@@ -258,7 +243,12 @@ class UserTranslator implements Mover, Core.UserInteractable {
   Math.Matrix4 update(Core.RenderState state, Movable obj) {
     if (this._frameNum < state.frameNumber) {
       this._frameNum = state.frameNumber;
+
+      Math.Point3 prev = this.location;
       this._updateMovement(state.dt);
+      if (this._collision != null)
+        this.location = this._collision(prev, this.location);
+
       this._mat = new Math.Matrix4.translate(
         this._offsetX.location,
         -this._offsetY.location,

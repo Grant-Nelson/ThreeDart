@@ -8,7 +8,8 @@ class World {
   World(ThreeDart.ThreeDart td) {
     Textures.Texture2D blockTxt = td.textureLoader.load2DFromFile("./examples/example1/blocks.png", wrapEdges: false, nearest: true, mipMap: false);
 
-    this._matLit = new Techniques.MaterialLight()..emission.texture2D = blockTxt;
+    this._matLit = new Techniques.MaterialLight()
+      ..emission.texture2D = blockTxt;
 
     this._group = new ThreeDart.Entity();
     this._chunks = new List<Chunk>();

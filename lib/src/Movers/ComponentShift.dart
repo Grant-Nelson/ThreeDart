@@ -1,13 +1,14 @@
 part of ThreeDart.Movers;
 
 /// A simple single component for shifting and smoothing movement.
-class ComponentShift {
+class ComponentShift extends Core.Changable {
   bool _wrap;
   double _maxLoc;
   double _minLoc;
   double _loc;
   double _maxVel;
   double _vel;
+  double _acc;
   double _velDamp;
   Core.Event _changed;
 
@@ -20,6 +21,7 @@ class ComponentShift {
     this._maxVel  = 100.0;
     this._vel     = 0.0;
     this._velDamp = 0.0;
+    this._acc     = 0.0;
     this._changed = null;
   }
 
@@ -122,6 +124,16 @@ class ComponentShift {
     }
   }
 
+  /// The acceleration of the component.
+  double get acceleration => this._acc;
+  void set acceleration(double acc) {
+    if (!Math.Comparer.equals(this._acc, acc)) {
+      double prev = this._acc;
+      this._acc = acc;
+      this._onChanged(new Core.ValueChangedEventArgs(this, "acceleration", prev, this._acc));
+    }
+  }
+
   /// The amount of dampening applied to the velocity.
   ///
   /// 0 means no dampening to slow down the velocity,
@@ -138,14 +150,17 @@ class ComponentShift {
 
   /// Update the component with the given change in time, [dt].
   void update(double dt) {
-    if (!Math.Comparer.equals(this._vel, 0.0)) {
-      this.location = this._loc + this._vel*dt;
-      double act = this._vel;
-      if (!Math.Comparer.equals(this._velDamp, 0.0))
-        act *= math.pow(1.0 - this._velDamp, dt);
-      if (this._vel < 0.0) act = Math.clampVal(act, this._vel, 0.0);
-      else                 act = Math.clampVal(act, 0.0, this._vel);
-      this.velocity = act;
+    if (!Math.Comparer.equals(this._vel, 0.0) || !Math.Comparer.equals(this._acc, 0.0)) {
+      double vel = this._vel + this._acc*dt;
+      vel = Math.clampVal(vel, -this._maxVel, this._maxVel);
+      this.location = this._loc + vel*dt;
+      if (!Math.Comparer.equals(this._velDamp, 0.0)) {
+        double act = vel * math.pow(1.0 - this._velDamp, dt);
+        if (vel < 0.0) act = Math.clampVal(act, vel, 0.0);
+        else           act = Math.clampVal(act, 0.0, vel);
+        vel = act;
+      }
+      this.velocity = vel;
     }
   }
 }
