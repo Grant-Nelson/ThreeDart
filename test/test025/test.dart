@@ -22,7 +22,7 @@ void main() {
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
 
   Movers.Group lightMover = new Movers.Group()
-    ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, -2.5)))
+    ..add(new Movers.Constant.translate(0.0, 0.0, -2.5))
     ..add(new Movers.UserRotater(input: td.userInput, ctrl: true));
 
   Lights.TexturedSpot spot = new Lights.TexturedSpot(
@@ -46,17 +46,17 @@ void main() {
     ..shape = Shapes.toroid();
 
   ThreeDart.Entity room = new ThreeDart.Entity()
-    ..mover = new Movers.Constant(new Math.Matrix4.scale(3.0, 3.0, 3.0))
+    ..mover = new Movers.Constant.scale(3.0, 3.0, 3.0)
     ..shape = (Shapes.cube()..flip());
 
   Movers.Group camMover = new Movers.Group()
   ..add(new Movers.UserRotater(input: td.userInput))
-  ..add(new Movers.Constant(new Math.Matrix4.rotateX(PI)))
-  ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
+  ..add(new Movers.Constant.rotateX(PI))
+  ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..mover = (new Movers.Group()
-                ..add(new Movers.Constant(new Math.Matrix4.scale(0.1, 0.1, 0.1)))
+                ..add(new Movers.Constant.scale(0.1, 0.1, 0.1))
                 ..add(lightMover))
     ..shape = Shapes.cylinder(bottomRadius: 0.0, sides: 40, capBottom: false)
     ..technique = (new Techniques.MaterialLight()

@@ -35,7 +35,7 @@ void main() {
     ..technique = tech
     ..target = target
     ..children.add(obj)
-    ..camera.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0));
+    ..camera.mover = new Movers.Constant.translate(0.0, 0.0, 5.0);
   td.scene = pass;
 
   common.showFPS(td);

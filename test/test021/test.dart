@@ -17,12 +17,12 @@ void addLightBall(Techniques.MaterialLight tech, Scenes.EntityPass pass,
   Math.Color3 clr = new Math.Color3(r, g, b);
 
   Movers.Group mover = new Movers.Group()
-    ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 2.0)))
+    ..add(new Movers.Constant.translate(0.0, 0.0, 2.0))
     ..add(new Movers.Rotater(deltaYaw: yaw, deltaPitch: pitch, deltaRoll: roll));
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..mover = (new Movers.Group()
-                ..add(new Movers.Constant(new Math.Matrix4.scale(0.1, 0.1, 0.1)))
+                ..add(new Movers.Constant.scale(0.1, 0.1, 0.1))
                 ..add(mover))
     ..shape = Shapes.sphere()
     ..technique = (new Techniques.MaterialLight()
@@ -47,18 +47,18 @@ void main() {
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
 
   ThreeDart.Entity centerObj = new ThreeDart.Entity()
-    ..mover = new Movers.Constant(new Math.Matrix4.scale(1.0, 1.0, 1.0))
+    ..mover = new Movers.Constant.scale(1.0, 1.0, 1.0)
     ..shape = Shapes.toroid();
 
   ThreeDart.Entity room = new ThreeDart.Entity()
-    ..mover = new Movers.Constant(new Math.Matrix4.scale(3.0, 3.0, 3.0))
+    ..mover = new Movers.Constant.scale(3.0, 3.0, 3.0)
     ..shape = (Shapes.cube()..flip());
 
   Movers.Group camMover = new Movers.Group()
     ..add(new Movers.UserRotater(input: td.userInput))
     ..add(new Movers.UserRoller(input: td.userInput, ctrl: true))
     ..add(new Movers.UserZoom(input: td.userInput))
-    ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
+    ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));
 
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
     ..ambient.color = new Math.Color3.gray(0.4)

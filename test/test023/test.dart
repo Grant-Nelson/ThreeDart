@@ -41,13 +41,13 @@ void main() {
     ..shape = Shapes.toroid();
 
   ThreeDart.Entity room = new ThreeDart.Entity()
-    ..mover = new Movers.Constant(new Math.Matrix4.scale(3.0, 3.0, 3.0))
+    ..mover = new Movers.Constant.scale(3.0, 3.0, 3.0)
     ..shape = (Shapes.cube()..flip());
 
   Movers.Group camMover = new Movers.Group()
   ..add(viewRotater)
-  ..add(new Movers.Constant(new Math.Matrix4.rotateX(PI)))
-  ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
+  ..add(new Movers.Constant.rotateX(PI))
+  ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));
 
   td.scene = new Scenes.EntityPass()
     ..technique = tech

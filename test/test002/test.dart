@@ -34,7 +34,7 @@ void main() {
   td.scene = new Scenes.EntityPass()
     ..technique = tech
     ..children.add(obj)
-    ..camera.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0));
+    ..camera.mover = new Movers.Constant.translate(0.0, 0.0, 5.0);
 
   new common.CheckGroup("controls")
     ..add("Filled",          (bool show) { tech.showFilled         = show; }, true)

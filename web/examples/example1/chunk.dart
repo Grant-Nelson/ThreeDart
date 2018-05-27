@@ -7,6 +7,7 @@ class Chunk {
   static const int _dataLength = chunkXSize * chunkYSize * chunkZSize;
   static const double _tmin = 0.05;
   static const double _tmax = 0.95;
+  static const double _maxDrawDist = 60.0;
 
   final int x;
   final int z;
@@ -67,6 +68,23 @@ class Chunk {
       }
     }
     this._entity.shape = shape;
+  }
+
+  void updateVisiblity(Math.Point2 loc, Math.Point2 front) {
+    Math.Region2 aabb = new Math.Region2(this.x.toDouble(), this.z.toDouble(), chunkXSize.toDouble(), chunkZSize.toDouble());
+    Math.Point2 near = aabb.nearestPoint(front);
+    Math.Vector2 forward = new Math.Vector2(front.x - loc.x, front.y - loc.y).normal();
+    Math.Vector2 toNear = new Math.Vector2(near.x - loc.x, near.y - loc.y);
+
+    double length = toNear.length();
+    if (length > _maxDrawDist) {
+      this.entity.enabled = false;
+      return;
+    }
+
+    toNear = toNear/length;
+    double dot = forward.dot(toNear);
+    this.entity.enabled = dot > 0.0;
   }
 
   bool _addFace(int x, int y, int z, Chunk left, Chunk right, Chunk front, Chunk back) {

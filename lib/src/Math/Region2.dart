@@ -125,15 +125,25 @@ class Region2 {
   HitRegion hit(Point2 a) {
     HitRegion region = HitRegion.None;
 
-    if (a.x < this.x) region |= HitRegion.XNeg;
+    if (a.x < this.x)               region |= HitRegion.XNeg;
     else if (a.x >= this.x+this.dx) region |= HitRegion.XPos;
-    else region |= HitRegion.XCenter;
+    else                            region |= HitRegion.XCenter;
 
-    if (a.y < this.y) region |= HitRegion.YNeg;
+    if (a.y < this.y)               region |= HitRegion.YNeg;
     else if (a.y >= this.y+this.dy) region |= HitRegion.YPos;
-    else region |= HitRegion.YCenter;
+    else                            region |= HitRegion.YCenter;
 
     return region;
+  }
+
+  /// nearestPoint finds the closest point in or on the edge of this region to the given point.
+  Point2 nearestPoint(Point2 a) {
+    HitRegion reg = this.hit(a);
+    double x = reg.has(HitRegion.XNeg)? this.x:
+               reg.has(HitRegion.XPos)? this.x+this.dx: a.x;
+    double y = reg.has(HitRegion.YNeg)? this.y:
+               reg.has(HitRegion.YPos)? this.y+this.dy: a.y;
+    return new Point2(x, y);
   }
 
   /// Determines if the given point is contained inside this region.

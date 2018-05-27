@@ -25,7 +25,7 @@ void main() {
     ..add(new Movers.UserRotater(input: td.userInput))
     ..add(new Movers.UserRoller(ctrl: true, input: td.userInput))
     ..add(new Movers.UserZoom(input: td.userInput))
-    ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
+    ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));
   Views.Perspective userCamera = new Views.Perspective(mover: secondMover);
 
   ThreeDart.Entity cubeEntity = new ThreeDart.Entity(shape: Shapes.cube());
@@ -46,10 +46,10 @@ void main() {
   Textures.TextureCube color = td.textureLoader.loadCubeFromPath("../resources/diceColor");
   Techniques.MaterialLight colorTech = new Techniques.MaterialLight()
     ..lights.add(new Lights.Directional(
-          mover: new Movers.Constant(new Math.Matrix4.vectorTowards(-1.0, -1.0, -1.0)),
+          mover: new Movers.Constant.vectorTowards(-1.0, -1.0, -1.0),
           color: new Math.Color3(1.0, 0.9, 0.9)))
     ..lights.add(new Lights.Directional(
-          mover: new Movers.Constant(new Math.Matrix4.vectorTowards(1.0, 1.0, 2.0)),
+          mover: new Movers.Constant.vectorTowards(1.0, 1.0, 2.0),
           color: new Math.Color3(0.2, 0.2, 0.35)))
     ..ambient.color = new Math.Color3(0.2, 0.2, 0.2)
     ..ambient.textureCube = color

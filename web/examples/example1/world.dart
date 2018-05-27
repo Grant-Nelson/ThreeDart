@@ -4,6 +4,7 @@ class World {
   Techniques.MaterialLight _matLit;
   ThreeDart.Entity _group;
   List<Chunk> _chunks;
+  Player _player;
 
   World(ThreeDart.ThreeDart td) {
     Textures.Texture2D blockTxt = td.textureLoader.load2DFromFile("./examples/example1/blocks.png", wrapEdges: false, nearest: true, mipMap: false);
@@ -14,14 +15,18 @@ class World {
     this._group = new ThreeDart.Entity();
     this._chunks = new List<Chunk>();
 
-    for (int x = -32; x <= 32; x += Chunk.chunkXSize) {
-      for (int z = -32; z <= 32; z += Chunk.chunkZSize) {
+    int maxSize = 256;
+    for (int x = -maxSize; x < maxSize; x += Chunk.chunkXSize) {
+      for (int z = -maxSize; z < maxSize; z += Chunk.chunkZSize) {
         this.insertChunk(x, z);
       }
     }
   }
 
-  ThreeDart.Entity get group => _group;
+  Player get player => this._player;
+  set player(Player player) => this._player = player;
+
+  ThreeDart.Entity get group => this._group;
 
   Chunk findChunk(int x, int z) {
     for (Chunk chunk in this._chunks) {
@@ -58,6 +63,15 @@ class World {
   }
 
   void update(ThreeDart.EventArgs args) {
-    for (Chunk chunk in this._chunks) chunk.updateShape(this);
+    Math.Matrix4 mat = this.player.location.matrix;
+    Math.Point3 loc3 = mat.transPnt3(new Math.Point3(0.0, 0.0, 0.0));
+    Math.Point3 front3 = mat.transPnt3(new Math.Point3(0.0, 0.0, -Chunk.chunkZSize.toDouble()));
+    Math.Point2 loc = new Math.Point2(loc3.x, loc3.z);
+    Math.Point2 front = new Math.Point2(front3.x, front3.z);
+
+    for (Chunk chunk in this._chunks) {
+      chunk.updateShape(this);
+      chunk.updateVisiblity(loc, front);
+    }
   }
 }

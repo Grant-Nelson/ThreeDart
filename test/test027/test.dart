@@ -22,7 +22,7 @@ void main() {
 
   Movers.Group firstMover =new Movers.Group()
     ..add(new Movers.Rotater())
-    ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
+    ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));
   Views.Perspective rotaterCamera = new Views.Perspective(mover: firstMover);
 
   Views.BackTarget backTarget = new Views.BackTarget(512, 512)
@@ -38,7 +38,7 @@ void main() {
 
   Techniques.MaterialLight firstTech = new Techniques.MaterialLight()
     ..lights.add(new Lights.Directional(
-          mover: new Movers.Constant(new Math.Matrix4.vectorTowards(0.0, -1.0, -1.0)),
+          mover: new Movers.Constant.vectorTowards(0.0, -1.0, -1.0),
           color: new Math.Color3.white()))
     ..ambient.color = new Math.Color3(0.0, 0.0, 1.0)
     ..diffuse.color = new Math.Color3(0.0, 1.0, 0.0)
@@ -55,7 +55,7 @@ void main() {
     ..add(new Movers.UserRotater(input: td.userInput))
     ..add(new Movers.UserRoller(ctrl: true, input: td.userInput))
     ..add(new Movers.UserZoom(input: td.userInput))
-    ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
+    ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));
   Views.Perspective userCamera = new Views.Perspective(mover: secondMover);
 
   ThreeDart.Entity secondObj = new ThreeDart.Entity()

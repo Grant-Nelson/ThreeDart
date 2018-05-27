@@ -32,7 +32,7 @@ void main() {
   Textures.TextureCube color = td.textureLoader.loadCubeFromPath("../resources/diceColor");
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
     ..lights.add(new Lights.Directional(
-          mover: new Movers.Constant(new Math.Matrix4.vectorTowards(1.0, -1.0, -3.0)),
+          mover: new Movers.Constant.vectorTowards(1.0, -1.0, -3.0),
           color: new Math.Color3.white()))
     ..ambient.color = new Math.Color3(0.2, 0.2, 0.2)
     ..diffuse.color = new Math.Color3(0.7, 0.7, 0.7)
@@ -49,7 +49,7 @@ void main() {
     ..add(new Movers.UserRotater(input: td.userInput))
     ..add(new Movers.UserRoller(input: td.userInput, ctrl: true))
     ..add(new Movers.UserZoom(input: td.userInput))
-    ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
+    ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));
 
   Views.Perspective camera = new Views.Perspective(mover: mover);
 

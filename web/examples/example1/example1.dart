@@ -37,9 +37,11 @@ void show() {
 
   Scenes.EntityPass scene = new Scenes.EntityPass()
     ..onPreUpdate.add(world.update)
-    ..onPreUpdate.add(player.update)
     ..children.add(world.group)
+    ..children.add(player.entity)
     ..camera.mover = player.camera;
+    //..camera.mover = new Movers.Constant(new Math.Matrix4.rotateX(-Math.PI_2)*new Math.Matrix4.translate(0.0, -50.0, 0.0));
+  world.player = player;
   // Set background color to sky blue
   (scene.target as Views.FrontTarget).color = new Math.Color4(0.576, 0.784, 0.929);
   td.scene = scene;

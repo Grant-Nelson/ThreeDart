@@ -13,8 +13,12 @@ class Player {
   Movers.UserRotater _rot;
   World _world;
   Movers.Group _camera;
+  Movers.Group _mat;
   ThreeDart.UserKeyGroup _jump;
-  bool _inJump;
+  bool _touchingGround;
+
+  Techniques.Inspection _tech;
+  ThreeDart.Entity _entity;
 
   Player(ThreeDart.ThreeDart td, this._world) {
     this._trans = new Movers.UserTranslator(input: td.userInput)
@@ -27,15 +31,27 @@ class Player {
     this._rot.changed.add((ThreeDart.EventArgs args) {
       this._trans.velocityRotation = new Math.Matrix3.rotateY(-this._rot.yaw.location);
     });
+
     this._camera = new Movers.Group([this._trans, this._rot]);
+    this._mat = new Movers.Group([new Movers.Invert(this._rot),
+      this._trans, new Movers.Constant.scale(1.0, -1.0, 1.0)]);
     this._jump = new ThreeDart.UserKeyGroup()
       ..addKey(ThreeDart.UserKey.spacebar)
       ..attach(td.userInput)
       ..keyDown.add(this._onJump);
-    this._inJump = false;
+    this._touchingGround = true;
+
+    this._tech = new Techniques.Inspection()
+      ..showAxis = true
+      ..showWireFrame = true
+      ..vectorScale = 1.0;
+    this._entity = new ThreeDart.Entity(shape: Shapes.cube(), tech: this._tech, mover: this._mat)
+      ..enabled = false;
   }
   
   Movers.Group get camera => this._camera;
+  Movers.Group get location => this._mat;
+  ThreeDart.Entity get entity => this._entity;
 
   void goHome() {
     Chunk chunk = this._world.findChunk(_startX, _startZ);
@@ -52,42 +68,46 @@ class Player {
   }
 
   void _onJump(ThreeDart.EventArgs args) {
-    if (!this._inJump) {
+    if (this._touchingGround)
       this._trans.offsetY.velocity = _jumpSpeed;
-      this._inJump = true;
-    }
   }
 
   Math.Point3 _handleCollide(Math.Point3 prev, Math.Point3 loc) {
     double x = loc.x, y = loc.y, z = loc.z;
-    double nx = x.floor()+0.5, ny = y.floor()+0.5, nz = z.floor()+0.5;
-    bool stopFall = false;
+    final double nx = prev.x.floor()+0.5, ny = prev.y.floor()+0.5, nz = prev.z.floor()+0.5;
+    final double headY = y - 1.5;
+    final double footY = y - 0.5;
+    this._touchingGround = false;
 
-    // Check XZ lower body
-    if (_isSolid(x-_pad, y-1.5, z)) x = nx - _pad;
-		if (_isSolid(x+_pad, y-1.5, z)) x = nx + _pad;
-    if (_isSolid(x, y-1.5, z-_pad)) z = nz - _pad;
-		if (_isSolid(x, y-1.5, z+_pad)) z = nz + _pad;
-    
-    // Check XZ upper body
-    if (_isSolid(x-_pad, y-0.5, z)) x = nx - _pad;
-		if (_isSolid(x+_pad, y-0.5, z)) x = nx + _pad;
-    if (_isSolid(x, y-0.5, z-_pad)) z = nz - _pad;
-		if (_isSolid(x, y-0.5, z+_pad)) z = nz + _pad;
+    if (_isSolid(x-_pad, headY, z) ||
+        _isSolid(x-_pad, footY, z)) {
+      x = nx - _pad;
+      this._trans.offsetX.velocity = 0.0;
+    } else if (_isSolid(x+_pad, headY, z) ||
+               _isSolid(x+_pad, footY, z)) {
+      x = nx + _pad;
+      this._trans.offsetX.velocity = 0.0;
+    }
 
-    // Check Y up and down
-    if (_isSolid(x, y-_pad, z))     { y = ny - _pad; stopFall = true; }
-    if (_isSolid(x, y-2.0+_pad, z)) { y = ny + _pad; stopFall = true; }
+    if (_isSolid(x, headY, z-_pad) ||
+        _isSolid(x, footY, z-_pad)) {
+      z = nz - _pad;
+      this._trans.offsetZ.velocity = 0.0;
+    } else if (_isSolid(x, headY, z+_pad) ||
+               _isSolid(x, footY, z+_pad)) {
+      z = nz + _pad;
+      this._trans.offsetZ.velocity = 0.0;
+    }
 
-    if (stopFall) {
+    if (_isSolid(x, y-_pad, z)) {
+      y = ny - _pad;
       this._trans.offsetY.velocity = 0.0;
-      this._inJump = false;
+    } else if (_isSolid(x, y-2.0+_pad, z)) {
+      y = ny + _pad;
+      this._trans.offsetY.velocity = 0.0;
+      this._touchingGround = true;
     }
     
     return new Math.Point3(x, y, z);
-  }
-
-  void update(ThreeDart.EventArgs args) {
-    // TODO:
   }
 }

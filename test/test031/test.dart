@@ -40,12 +40,12 @@ void main() {
     ..technique = normalTech
     ..target = normalTarget
     ..children.add(normalObj)
-    ..camera.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0));
+    ..camera.mover = new Movers.Constant.translate(0.0, 0.0, 5.0);
 
   Movers.Group secondMover = new Movers.Group()
   ..add(new Movers.UserRotater(ctrl: true, input: td.userInput))
   ..add(new Movers.UserZoom(ctrl: true, input: td.userInput))
-  ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
+  ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));
   Views.Perspective userCamera = new Views.Perspective(mover: secondMover);
 
   Views.BackTarget colorTarget = new Views.BackTarget(800, 600)
@@ -56,7 +56,7 @@ void main() {
 
   Techniques.MaterialLight colorTech = new Techniques.MaterialLight()
     ..lights.add(new Lights.Directional(
-          mover: new Movers.Constant(new Math.Matrix4.vectorTowards(0.0, -1.0, -1.0)),
+          mover: new Movers.Constant.vectorTowards(0.0, -1.0, -1.0),
           color: new Math.Color3.white()))
     ..ambient.color = new Math.Color3(0.0, 0.0, 1.0)
     ..diffuse.color = new Math.Color3(0.0, 1.0, 0.0)

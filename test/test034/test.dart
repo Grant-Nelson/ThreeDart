@@ -38,7 +38,7 @@ void main() {
     ..add(new Movers.UserRotater(input: td.userInput))
     ..add(new Movers.UserRoller(ctrl: true, input: td.userInput))
     ..add(new Movers.UserZoom(input: td.userInput))
-    ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
+    ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));
   Views.Perspective userCamera = new Views.Perspective(mover: mover);
 
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
