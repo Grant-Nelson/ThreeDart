@@ -12,6 +12,7 @@ import 'package:ThreeDart/Textures.dart' as Textures;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Views.dart' as Views;
+import 'package:OpenSimplexNoiseDart/OpenSimplexNoise.dart' as simplex;
 
 import 'dart:math' as math;
 import 'dart:typed_data' as data;

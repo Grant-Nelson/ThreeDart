@@ -5,6 +5,7 @@ class World {
   ThreeDart.Entity _group;
   List<Chunk> _chunks;
   Player _player;
+  simplex.OpenSimplexNoise _noise;
 
   World(ThreeDart.ThreeDart td) {
     Textures.Texture2D blockTxt = td.textureLoader.load2DFromFile("./examples/example1/blocks.png", wrapEdges: false, nearest: true, mipMap: false);
@@ -14,8 +15,9 @@ class World {
 
     this._group = new ThreeDart.Entity();
     this._chunks = new List<Chunk>();
+    this._noise = new simplex.OpenSimplexNoise();
 
-    int maxSize = 256;
+    int maxSize = 128;//256;
     for (int x = -maxSize; x < maxSize; x += Chunk.chunkXSize) {
       for (int z = -maxSize; z < maxSize; z += Chunk.chunkZSize) {
         this.insertChunk(x, z);
@@ -57,7 +59,7 @@ class World {
   }
 
   void insertChunk(int x, int z) {
-    Chunk chunk = new Chunk(x, z)..entity.technique = this._matLit;
+    Chunk chunk = new Chunk(x, z, _noise)..entity.technique = this._matLit;
     this._chunks.add(chunk);
     this._group.children.add(chunk.entity);
   }

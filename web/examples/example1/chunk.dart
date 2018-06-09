@@ -2,7 +2,7 @@ part of example1;
 
 class Chunk {
   static const int chunkXSize = 16;
-  static const int chunkYSize = 16;
+  static const int chunkYSize = 64;
   static const int chunkZSize = 16;
   static const int _dataLength = chunkXSize * chunkYSize * chunkZSize;
   static const double _tmin = 0.05;
@@ -15,19 +15,37 @@ class Chunk {
   ThreeDart.Entity _entity;
   bool _needUpdate;
 
-  Chunk(this.x, this.z) {
+  Chunk(this.x, this.z, simplex.OpenSimplexNoise noise) {
     this._data = new data.Uint8List(_dataLength);
     this._data.fillRange(0, _dataLength, BlockType.Air);
     this._entity = new ThreeDart.Entity();
     this._needUpdate = true;
 
-    // Default random land
+    // Generate random land
     for (int x = 0; x < chunkXSize; x++) {
       for (int z = 0; z < chunkZSize; z++) {
-        int maxy = ((math.cos((x + this.x) / 50 * 6.24 + 2.0) *
-                     math.sin((z + this.z) / 50 * 6.24 + 2.0)) * 5.0 + 5.0).floor();
+        double dx = (x + this.x) *0.01;
+        double dz = (z + this.z) *0.01;
+
+        double val = 0.6 * (noise.eval2D(dx* 0.1, dz* 0.1)*0.5 + 0.5) +
+                     0.3 * (noise.eval2D(dx,      dz     )*0.5 + 0.5) +
+                     0.1 * (noise.eval2D(dx*10.0, dz*10.0)*0.5 + 0.5);
+
+        int maxy = (math.pow(val, 2.0)*chunkYSize).toInt();
+        maxy = (maxy >= chunkYSize)? chunkYSize-1: maxy;
         for (int y = 0; y <= maxy; y++) {
-          this.setBlock(x, y, z, (maxy == y) ? BlockType.Grass : (maxy - 1 == y) ? BlockType.Dirt : BlockType.Rock);
+          int block = BlockType.Air;
+          if (maxy == y) {
+            if (maxy <= 8) block = BlockType.Sand;
+            else block = BlockType.Grass;
+          } else if (maxy - 1 == y) {
+            if (maxy <= 8) block = BlockType.Sand;
+            else block = BlockType.Dirt;
+          } else {
+            block = BlockType.Rock;
+          }
+
+          this.setBlock(x, y, z, block);
         }
       }
     }
@@ -72,9 +90,15 @@ class Chunk {
 
   void updateVisiblity(Math.Point2 loc, Math.Point2 front) {
     Math.Region2 aabb = new Math.Region2(this.x.toDouble(), this.z.toDouble(), chunkXSize.toDouble(), chunkZSize.toDouble());
-    Math.Point2 near = aabb.nearestPoint(front);
+    Math.Point2 nearLoc = aabb.nearestPoint(loc);
+    if (nearLoc.distance2(loc) < 100.0) {
+      this.entity.enabled = true;
+      return;
+    }
+
+    Math.Point2 nearFront = aabb.nearestPoint(front);
     Math.Vector2 forward = new Math.Vector2(front.x - loc.x, front.y - loc.y).normal();
-    Math.Vector2 toNear = new Math.Vector2(near.x - loc.x, near.y - loc.y);
+    Math.Vector2 toNear = new Math.Vector2(nearFront.x - loc.x, nearFront.y - loc.y);
 
     double length = toNear.length();
     if (length > _maxDrawDist) {

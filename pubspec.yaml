@@ -5,3 +5,5 @@ environment:
   sdk: '>=1.0.0 <2.0.0'
 dependencies:
   browser: any
+  OpenSimplexNoiseDart:
+    git: git://github.com/Grant-Nelson/OpenSimplexNoiseDart.git
