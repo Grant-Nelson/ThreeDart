@@ -33,16 +33,15 @@ class Chunk {
 
         int maxy = (math.pow(val, 2.0)*chunkYSize).toInt();
         maxy = (maxy >= chunkYSize)? chunkYSize-1: maxy;
+
         for (int y = 0; y <= maxy; y++) {
-          int block = BlockType.Air;
+          int block = BlockType.Rock;
           if (maxy == y) {
             if (maxy <= 8) block = BlockType.Sand;
-            else block = BlockType.Grass;
+            else block = BlockType.Turf;
           } else if (maxy - 1 == y) {
             if (maxy <= 8) block = BlockType.Sand;
             else block = BlockType.Dirt;
-          } else {
-            block = BlockType.Rock;
           }
 
           this.setBlock(x, y, z, block);
@@ -111,25 +110,30 @@ class Chunk {
     this.entity.enabled = dot > 0.0;
   }
 
-  bool _addFace(int x, int y, int z, Chunk left, Chunk right, Chunk front, Chunk back) {
+  bool _addFace(int value, int x, int y, int z, Chunk left, Chunk right, Chunk front, Chunk back) {
     if (y < 0) return false;
     if (y >= chunkYSize) return true;
     if (x < 0) return (left != null) ? !BlockType.solid(left.getBlock(chunkXSize - 1, y, z)) : true;
     if (x >= chunkXSize) return (right != null) ? !BlockType.solid(right.getBlock(0, y, z)) : true;
     if (z < 0) return (back != null) ? !BlockType.solid(back.getBlock(x, y, chunkZSize - 1)) : true;
     if (z >= chunkZSize) return (front != null) ? !BlockType.solid(front.getBlock(x, y, 0)) : true;
-    return !BlockType.solid(getBlock(x, y, z));
+    return BlockType.drawSide(value, getBlock(x, y, z));
   }
 
   void _addInnerBlockToShape(Shapes.Shape shape, int x, int y, int z, Chunk left, Chunk right, Chunk front, Chunk back) {
     int value = this.getBlock(x, y, z);
     if (value == BlockType.Air) return;
-    if (this._addFace(x, y + 1, z, left, right, front, back)) this._addTopToShape(shape, x, y, z, value);
-    if (this._addFace(x, y - 1, z, left, right, front, back)) this._addBottomToShape(shape, x, y, z, value);
-    if (this._addFace(x - 1, y, z, left, right, front, back)) this._addLeftToShape(shape, x, y, z, value);
-    if (this._addFace(x + 1, y, z, left, right, front, back)) this._addRightToShape(shape, x, y, z, value);
-    if (this._addFace(x, y, z + 1, left, right, front, back)) this._addFrontToShape(shape, x, y, z, value);
-    if (this._addFace(x, y, z - 1, left, right, front, back)) this._addBackToShape(shape, x, y, z, value);
+    if (BlockType.open(value)) {
+      // TODO:
+    }
+    if (BlockType.solid(value)) {
+      if (this._addFace(value, x, y + 1, z, left, right, front, back)) this._addTopToShape(shape, x, y, z, value);
+      if (this._addFace(value, x, y - 1, z, left, right, front, back)) this._addBottomToShape(shape, x, y, z, value);
+      if (this._addFace(value, x - 1, y, z, left, right, front, back)) this._addLeftToShape(shape, x, y, z, value);
+      if (this._addFace(value, x + 1, y, z, left, right, front, back)) this._addRightToShape(shape, x, y, z, value);
+      if (this._addFace(value, x, y, z + 1, left, right, front, back)) this._addFrontToShape(shape, x, y, z, value);
+      if (this._addFace(value, x, y, z - 1, left, right, front, back)) this._addBackToShape(shape, x, y, z, value);
+    }
   }
 
   Shapes.Vertex _addVertex(Shapes.Shape shape, int x, int y, int z, double u, double v) {
