@@ -20,6 +20,11 @@ class Entity implements Movers.Movable, Changable {
   /// when grouping other Entitys.
   Shapes.Shape _shape;
 
+  /// The shape builder used to build the rendering data.
+  /// When using a shape this will be a shape.
+  /// May be null to not when not rendering.
+  Data.ShapeBuilder _shapeBuilder;
+
   /// The cache of the shape transformed into the buffers required
   /// by the shader in the currently set technique.
   /// TODO: Need to make the cache work for two techinques when there are parents.
@@ -43,6 +48,9 @@ class Entity implements Movers.Movable, Changable {
 
   /// The event emitted when the shape has been changed.
   Event _shapeChanged;
+
+  /// The event emitted when the shape builder has been changed.
+  Event _shapeBuilderChanged;
 
   /// The event emitted when the technique has been changed.
   Event _techChanged;
@@ -75,6 +83,7 @@ class Entity implements Movers.Movable, Changable {
     this._name = name;
     this._enabled = enabled;
     this._shape = null;
+    this._shapeBuilder = null;
     this._cache = null;
     this._tech = null;
     this._mover = null;
@@ -85,6 +94,7 @@ class Entity implements Movers.Movable, Changable {
       onRemovedHndl: this.onChildrenRemoved);
     this._changed = null;
     this._shapeChanged = null;
+    this._shapeBuilderChanged = null;
     this._techChanged = null;
     this._moverChanged = null;
     this._matrixChanged = null;
@@ -148,11 +158,31 @@ class Entity implements Movers.Movable, Changable {
   set shape(Shapes.Shape shape) {
     if (this._shape != shape) {
       Shapes.Shape oldShape = this._shape;
+      Data.ShapeBuilder oldBuilder = this._shapeBuilder;
       this._shape = shape;
+      this._shapeBuilder = shape;
       this.clearCache();
       if (oldShape != null) oldShape.changed.remove(this.onShapeModified);
       if (this._shape != null) this._shape.changed.add(this.onShapeModified);
       this.onShapeChanged(oldShape, this._shape);
+    }
+  }
+
+  /// The shape builder to draw at this Entity.
+  /// A shape builder is a predetermined shape drawing instructions.
+  /// Typically this is set through [shape] but is exposed so that
+  /// renders with higher requirements can precalculate shapes or provide
+  /// custom shapes to the entity.
+  Data.ShapeBuilder get shapeBuilder => this._shapeBuilder;
+  set shapeBuilder(Data.ShapeBuilder builder) {
+    if (this._shapeBuilder != builder) {
+      Data.ShapeBuilder oldBuilder = this._shapeBuilder;
+      this._shape = null;
+      this._shapeBuilder = builder;
+      this.clearCache();
+      if (oldBuilder != null) oldBuilder.changed.remove(this.onShapeModified);
+      if (this._shapeBuilder != null) this._shapeBuilder.changed.add(this.onShapeModified);
+      this.onShapeBuilderChanged(oldBuilder, this._shapeBuilder);
     }
   }
 
@@ -189,8 +219,8 @@ class Entity implements Movers.Movable, Changable {
   /// Calculates the axial aligned bounding box of this entity and its children.
   Math.Region3 calculateAABB() {
     Math.Region3 region = null;
-    if (this._shape != null)
-      region = new Math.Region3.union(region, this._shape.calculateAABB());
+    if (this._shapeBuilder != null)
+      region = new Math.Region3.union(region, this._shapeBuilder.calculateAABB());
     for (Entity child in this._children)
       region = new Math.Region3.union(region, child.calculateAABB());
     return region;
@@ -280,7 +310,7 @@ class Entity implements Movers.Movable, Changable {
 
     // Render this entity.
     Techniques.Technique tech = state.technique;
-    if ((tech != null) && (this._shape != null)) {
+    if ((tech != null) && (this._shapeBuilder != null)) {
       tech.render(state, this);
     }
 
@@ -358,7 +388,7 @@ class Entity implements Movers.Movable, Changable {
     this._changed?.emit(args);
   }
 
-  /// Called when the shape is modified.
+  /// Called when the shape or shape builder is modified.
   ///
   /// This will clear the shape cache.
   /// The [args] are the arguments of the change.
@@ -372,13 +402,26 @@ class Entity implements Movers.Movable, Changable {
 
   /// Called when the shape is added or removed.
   ///
-  /// This emits the [shapeChanged] event and calls [onChanged].
+  /// This emits the [shapeChanged] event, the [shapeBuilderChanged] event, and calls [onChanged].
   /// The [oldShape] that was removed (may be null), and the [newShape] that was added (may be null).
   /// This isn't meant to be called from outside the entity, in other languages this would
   /// be a protected method. This method is exposed to that the entity is extended and
   /// these methods can be overwritten. If overwritten call this super method to still emit events.
   void onShapeChanged(Shapes.Shape oldShape, Shapes.Shape newShape) {
     this._shapeChanged?.emit();
+    this._shapeBuilderChanged?.emit();
+    this.onChanged();
+  }
+
+  /// Called when the shape builder is added or removed.
+  ///
+  /// This emits the [shapeBuilderChanged] event and calls [onChanged].
+  /// The [oldShape] that was removed (may be null), and the [newShape] that was added (may be null).
+  /// This isn't meant to be called from outside the entity, in other languages this would
+  /// be a protected method. This method is exposed to that the entity is extended and
+  /// these methods can be overwritten. If overwritten call this super method to still emit events.
+  void onShapeBuilderChanged(Data.ShapeBuilder oldShape, Data.ShapeBuilder newShape) {
+    this._shapeBuilderChanged?.emit();
     this.onChanged();
   }
 

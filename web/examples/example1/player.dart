@@ -79,6 +79,8 @@ class Player {
     final double footY = y - 0.5;
     this._touchingGround = false;
 
+    // TODO: Determine if underwater so that the water can be flipped inside out.
+
     if (_isSolid(x-_pad, headY, z) ||
         _isSolid(x-_pad, footY, z)) {
       x = nx - _pad;

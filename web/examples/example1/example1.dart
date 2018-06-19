@@ -23,6 +23,7 @@ import '../../common/common.dart' as common;
 part 'blockInfo.dart';
 part 'blockType.dart';
 part 'chunk.dart';
+part 'generator.dart';
 part 'player.dart';
 part 'world.dart';
 
@@ -38,10 +39,10 @@ void show() {
 
   Scenes.EntityPass scene = new Scenes.EntityPass()
     ..onPreUpdate.add(world.update)
-    ..children.add(world.group)
+    ..children.add(world.terrainGroup)
+    ..children.add(world.waterGroup)
     ..children.add(player.entity)
     ..camera.mover = player.camera;
-    //..camera.mover = new Movers.Constant(new Math.Matrix4.rotateX(-Math.PI_2)*new Math.Matrix4.translate(0.0, -50.0, 0.0));
   world.player = player;
   // Set background color to sky blue
   (scene.target as Views.FrontTarget).color = new Math.Color4(0.576, 0.784, 0.929);

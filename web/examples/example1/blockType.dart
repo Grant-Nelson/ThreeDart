@@ -127,7 +127,7 @@ class BlockType {
   static bool drawSide(int value, int neighbor) {
     if (value == neighbor) return false;
     if (neighbor == Air) return true;
-    if (value == Water) return !hard(neighbor);
-    return !open(value) && open(neighbor);
+    if (value == Water) return open(neighbor);
+    return !open(value) && ((neighbor == Water) || open(neighbor));
   }
 }

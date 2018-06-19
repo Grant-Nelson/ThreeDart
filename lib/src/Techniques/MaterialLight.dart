@@ -203,11 +203,11 @@ class MaterialLight extends Technique {
     Data.VertexType vertexType = cfg.vertexType;
     if (obj.cache is! Data.BufferStore) obj.clearCache();
     if (obj.cacheNeedsUpdate || (obj.cache as Data.BufferStore).vertexType != vertexType) {
-      if (cfg.norm) obj.shape.calculateNormals();
-      if (cfg.binm) obj.shape.calculateBinormals();
-      if (cfg.txtCube) obj.shape.calculateCubeTextures();
+      if (cfg.norm) obj.shapeBuilder.calculateNormals();
+      if (cfg.binm) obj.shapeBuilder.calculateBinormals();
+      if (cfg.txtCube) obj.shapeBuilder.calculateCubeTextures();
 
-      Data.BufferStore cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl), vertexType);
+      Data.BufferStore cache = obj.shapeBuilder.build(new Data.WebGLBufferBuilder(state.gl), vertexType);
       cache.findAttribute(Data.VertexType.Pos).attr = this._shader.posAttr.loc;
       if (cfg.norm)    cache.findAttribute(Data.VertexType.Norm).attr    = this._shader.normAttr.loc;
       if (cfg.binm)    cache.findAttribute(Data.VertexType.Binm).attr    = this._shader.binmAttr.loc;

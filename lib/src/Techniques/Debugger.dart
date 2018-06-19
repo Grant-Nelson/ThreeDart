@@ -46,24 +46,27 @@ class Debugger extends Technique {
     }
 
     this._results.clear();
-    int length = obj.shape.vertices.length;
-    for (int i = 0; i < length; ++i) {
-      Math.Point3 pnt0 = obj.shape.vertices[i].location;
-      Math.Point4 pnt1 = new Math.Point4.fromPoint3(pnt0, 1.0);
-      Math.Point4 pnt2 = objMat.transPnt4(pnt1);
-      Math.Point4 pnt3 = viewMat.transPnt4(pnt2);
-      Math.Point4 pnt4 = projMat.transPnt4(pnt3);
-      Math.Point3 pnt5 = new Math.Point3.fromPoint4(pnt4)/pnt4.w;
+    if (obj.shape != null) {
+      Shapes.VertexCollection vertices = obj.shape.vertices;
+      int length = vertices.length;
+      for (int i = 0; i < length; ++i) {
+        Math.Point3 pnt0 = vertices[i].location;
+        Math.Point4 pnt1 = new Math.Point4.fromPoint3(pnt0, 1.0);
+        Math.Point4 pnt2 = objMat.transPnt4(pnt1);
+        Math.Point4 pnt3 = viewMat.transPnt4(pnt2);
+        Math.Point4 pnt4 = projMat.transPnt4(pnt3);
+        Math.Point3 pnt5 = new Math.Point3.fromPoint4(pnt4)/pnt4.w;
 
-      if (this._buf != null) {
-        this._buf.write(pnt1.toString(3, 2) + " => " +
-                        pnt2.toString(3, 2) + " => " +
-                        pnt3.toString(3, 2) + " => " +
-                        pnt4.toString(3, 2) + " => " +
-                        pnt5.toString(3, 2) + "\n");
+        if (this._buf != null) {
+          this._buf.write(pnt1.toString(3, 2) + " => " +
+                          pnt2.toString(3, 2) + " => " +
+                          pnt3.toString(3, 2) + " => " +
+                          pnt4.toString(3, 2) + " => " +
+                          pnt5.toString(3, 2) + "\n");
+        }
+
+        this._results.add(pnt5);
       }
-
-      this._results.add(pnt5);
     }
   }
 }
