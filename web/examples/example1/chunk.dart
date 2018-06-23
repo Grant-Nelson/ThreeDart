@@ -2,12 +2,12 @@ part of example1;
 
 class Chunk {
   static const int xSize = 16;
-  static const int ySize = 64;
+  static const int ySize = 48;
   static const int zSize = 16;
   static const int _dataLength = xSize * ySize * zSize;
   static const double _tmin = 0.05;
   static const double _tmax = 0.95;
-  static const double _maxDrawDist = 60.0;
+  static const double _maxDrawDist = 120.0;
 
   final int x;
   final int z;
@@ -15,6 +15,7 @@ class Chunk {
   data.Uint8List _data;
   ThreeDart.Entity _terrain;
   ThreeDart.Entity _water;
+  ThreeDart.Entity _plants;
   bool _needUpdate;
 
   Chunk(this.x, this.z, World world) {
@@ -23,6 +24,7 @@ class Chunk {
     
     this._terrain = new ThreeDart.Entity();
     this._water = new ThreeDart.Entity();
+    this._plants = new ThreeDart.Entity();
 
     this._needUpdate = true;
     this._world = world;
@@ -31,13 +33,32 @@ class Chunk {
   String toString() => "chunk(${x}, ${z})";
   ThreeDart.Entity get terrainEntity => this._terrain;
   ThreeDart.Entity get waterEntity => this._water;
+  ThreeDart.Entity get plantsEntity => this._plants;
 
   bool get needUpdate => this._needUpdate;
   set needUpdate(bool update) => this._needUpdate = update;
 
   int _index(int x, int y, int z) => (x * ySize + y) * zSize + z;
-  int getBlock(int x, int y, int z) => this._data[this._index(x, y, z)];
-  void setBlock(int x, int y, int z, int value) => this._data[this._index(x, y, z)] = value;
+  
+  int getBlock(int x, int y, int z) {
+    if (y < 0)      return BlockType.Boundary;
+    if (y >= ySize) return BlockType.Air;
+    if (x < 0)      return left?. getBlock(x + xSize, y, z) ?? BlockType.Air;
+    if (x >= xSize) return right?.getBlock(x - xSize, y, z) ?? BlockType.Air;
+    if (z < 0)      return back?. getBlock(x, y, z + zSize) ?? BlockType.Air;
+    if (z >= zSize) return front?.getBlock(x, y, z - zSize) ?? BlockType.Air;
+    return this._data[this._index(x, y, z)];
+  }
+
+  bool setBlock(int x, int y, int z, int value) {
+    if (y < 0 || y >= ySize) return false;
+    if (x < 0)      return left?. setBlock(x + xSize, y, z, value) ?? false;
+    if (x >= xSize) return right?.setBlock(x - xSize, y, z, value) ?? false;
+    if (z < 0)      return back?. setBlock(x, y, z + zSize, value) ?? false;
+    if (z >= zSize) return front?.setBlock(x, y, z - zSize, value) ?? false;
+    this._data[this._index(x, y, z)] = value;
+    return true;
+  }
 
   Chunk get left       => this._world.findChunk(this.x - xSize, this.z);
   Chunk get frontLeft  => this._world.findChunk(this.x - xSize, this.z + zSize);
@@ -58,24 +79,20 @@ class Chunk {
   void updateShape() {
     if (!this._needUpdate) return;
     this._needUpdate = false;
-
-    Chunk left = this.left;
-    Chunk right = this.right;
-    Chunk front = this.front;
-    Chunk back = this.back;
-
     Shapes.Shape terrain = new Shapes.Shape();
     Shapes.Shape water = new Shapes.Shape();
+    Shapes.Shape plants = new Shapes.Shape();
     for (int x = xSize - 1; x >= 0; x--) {
       for (int y = ySize - 1; y >= 0; y--) {
         for (int z = zSize - 1; z >= 0; z--) {
-          this._addInnerBlockToShape(terrain, water, x, y, z, left, right, front, back);
+          this._addInnerBlockToShape(terrain, water, plants, x, y, z);
         }
       }
     }
 
     this._terrain.shape = terrain;
     this._water.shape = water;
+    this._plants.shape = plants;
   }
 
   void updateVisiblity(Math.Point2 loc, Math.Point2 front) {
@@ -84,6 +101,7 @@ class Chunk {
     if (nearLoc.distance2(loc) < 100.0) {
       this._terrain.enabled = true;
       this._water.enabled = true;
+      this._plants.enabled = true;
       return;
     }
 
@@ -95,6 +113,7 @@ class Chunk {
     if (length > _maxDrawDist) {
       this._terrain.enabled = false;
       this._water.enabled = false;
+      this._plants.enabled = false;
       return;
     }
 
@@ -103,41 +122,31 @@ class Chunk {
     bool enabled = dot > 0.0;
     this._terrain.enabled = enabled;
     this._water.enabled = enabled;
+    this._plants.enabled = enabled;
   }
 
-  void _addInnerBlockToShape(Shapes.Shape terrain, Shapes.Shape water, int x, int y, int z, Chunk left, Chunk right, Chunk front, Chunk back) {
+  void _addInnerBlockToShape(Shapes.Shape terrain, Shapes.Shape water, Shapes.Shape plants, int x, int y, int z) {
     int value = this.getBlock(x, y, z);
     if (value == BlockType.Air) return;
-    if (value == BlockType.Water) {
-      if (this._addFace(value, x, y + 1, z, left, right, front, back)) this._addTopToShape(water, x, y, z, value);
-      if (this._addFace(value, x, y - 1, z, left, right, front, back)) this._addBottomToShape(water, x, y, z, value);
-      if (this._addFace(value, x - 1, y, z, left, right, front, back)) this._addLeftToShape(water, x, y, z, value);
-      if (this._addFace(value, x + 1, y, z, left, right, front, back)) this._addRightToShape(water, x, y, z, value);
-      if (this._addFace(value, x, y, z + 1, left, right, front, back)) this._addFrontToShape(water, x, y, z, value);
-      if (this._addFace(value, x, y, z - 1, left, right, front, back)) this._addBackToShape(water, x, y, z, value);
-    }
-    if (BlockType.open(value)) {
-      // TODO:
-    }
-    if (BlockType.solid(value)) {
-      if (this._addFace(value, x, y + 1, z, left, right, front, back)) this._addTopToShape(terrain, x, y, z, value);
-      if (this._addFace(value, x, y - 1, z, left, right, front, back)) this._addBottomToShape(terrain, x, y, z, value);
-      if (this._addFace(value, x - 1, y, z, left, right, front, back)) this._addLeftToShape(terrain, x, y, z, value);
-      if (this._addFace(value, x + 1, y, z, left, right, front, back)) this._addRightToShape(terrain, x, y, z, value);
-      if (this._addFace(value, x, y, z + 1, left, right, front, back)) this._addFrontToShape(terrain, x, y, z, value);
-      if (this._addFace(value, x, y, z - 1, left, right, front, back)) this._addBackToShape(terrain, x, y, z, value);
-    }
+    else if (value == BlockType.Water) this._addCubeToShape(water, x, y, z, value);
+    else if (BlockType.open(value)) {
+      if (value == BlockType.Leaves) this._addCubeToShape(plants, x, y, z, value);
+    } else if (BlockType.solid(value)) this._addCubeToShape(terrain, x, y, z, value);    
   }
 
-  bool _addFace(int value, int x, int y, int z, Chunk left, Chunk right, Chunk front, Chunk back) {
+  void _addCubeToShape(Shapes.Shape shape, int x, int y, int z, int value) {
+    if (this._addFace(value, x, y + 1, z)) this._addTopToShape(shape, x, y, z, value);
+    if (this._addFace(value, x, y - 1, z)) this._addBottomToShape(shape, x, y, z, value);
+    if (this._addFace(value, x - 1, y, z)) this._addLeftToShape(shape, x, y, z, value);
+    if (this._addFace(value, x + 1, y, z)) this._addRightToShape(shape, x, y, z, value);
+    if (this._addFace(value, x, y, z + 1)) this._addFrontToShape(shape, x, y, z, value);
+    if (this._addFace(value, x, y, z - 1)) this._addBackToShape(shape, x, y, z, value);
+  }
+
+  bool _addFace(int value, int x, int y, int z) {
     if (y < 0) return false;
     if (y >= ySize) return true;
-    int neighbor = BlockType.Air;
-    if      (x < 0)      neighbor = (left  != null) ? left.getBlock(xSize - 1, y, z) : neighbor;
-    else if (x >= xSize) neighbor = (right != null) ? right.getBlock(0, y, z) : neighbor;
-    else if (z < 0)      neighbor = (back  != null) ? back.getBlock(x, y, zSize - 1) : neighbor;
-    else if (z >= zSize) neighbor = (front != null) ? front.getBlock(x, y, 0) : neighbor;
-    else                 neighbor = getBlock(x, y, z);
+    int neighbor = this.getBlock(x, y, z);
     return BlockType.drawSide(value, neighbor);
   }
 

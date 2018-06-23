@@ -7,6 +7,7 @@ class World {
   Techniques.MaterialLight _matLit;
   ThreeDart.Entity _terrainGroup;
   ThreeDart.Entity _waterGroup;
+  ThreeDart.Entity _plantsGroup;
   Generator _gen;
   List<Chunk> _chunks;
   Player _player;
@@ -23,8 +24,11 @@ class World {
 
     this._waterGroup = new ThreeDart.Entity()
       ..technique = this._matLit;
+      
+    this._plantsGroup = new ThreeDart.Entity()
+      ..technique = this._matLit;
 
-    this._gen = new Generator();
+    this._gen = new Generator(this);
     this._chunks = new List<Chunk>();
 
     for (int x = -maxSize; x < maxSize; x += Chunk.xSize) {
@@ -32,6 +36,7 @@ class World {
         this.insertChunk(x, z);
       }
     }
+    this._gen.fillWorld();
   }
 
   Generator get generator => this._gen;
@@ -40,6 +45,7 @@ class World {
 
   ThreeDart.Entity get terrainGroup => this._terrainGroup;
   ThreeDart.Entity get waterGroup => this._waterGroup;
+  ThreeDart.Entity get plantsGroup => this._plantsGroup;
 
   Chunk findChunk(int x, int z) {
     for (Chunk chunk in this._chunks) {
@@ -61,20 +67,15 @@ class World {
     if (bx < 0) bx += Chunk.xSize;
     if (bz < 0) bz += Chunk.zSize;
 
-    int value = BlockType.Air;
-    if (y <= 0.0) value = BlockType.Rock;
-    else if (y >= Chunk.ySize) value = BlockType.Air;
-    else if (chunk != null) value = chunk.getBlock(bx, by, bz);
-
-    return new BlockInfo(bx, by, bz, chunk, value);
+    return new BlockInfo(bx, by, bz, chunk);
   }
 
   void insertChunk(int x, int z) {
     Chunk chunk = new Chunk(x, z, this);
     this._chunks.add(chunk);
-    this._gen.fillChunk(chunk);
     this._terrainGroup.children.add(chunk.terrainEntity);
     this._waterGroup.children.add(chunk.waterEntity);
+    this._plantsGroup.children.add(chunk.plantsEntity);
   }
 
   void update(ThreeDart.EventArgs args) {

@@ -51,6 +51,9 @@ class BlockType {
   /// Transparent water block
   static const int Water = 12;
   
+  /// Invisible wall used to block players from leaving the island
+  static const int Boundary = 20;
+  
   //====================================
   // Open blocks
   //====================================
@@ -71,10 +74,10 @@ class BlockType {
   static const int BlueFlower = 17;
 
   /// Flowers is an alpha textured plant the red flower
-  static const int RedFlower = 17;
+  static const int RedFlower = 18;
 
   /// Mushroom is a special model for the mushrooms
-  static const int Mushroom = 18;
+  static const int Mushroom = 19;
 
   //====================================
 
@@ -108,9 +111,9 @@ class BlockType {
     return "undefined";
   }
 
-  /// hard determines if the given block type can be walked through.
+  /// hard determines if the given block type can not be walked through.
   static bool hard(int value) {
-    return solid(value) || (value == Leaves);
+    return solid(value) || (value == Leaves) || (value == Boundary);
   }
 
   /// solid determines if the given block type can not be seen through.

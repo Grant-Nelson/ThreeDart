@@ -61,10 +61,10 @@ class Player {
     this._trans.velocity = new Math.Vector3.zero();
   }
 
-  bool _isSolid(double x, double y, double z) {
+  bool _isHard(double x, double y, double z) {
     BlockInfo info = this._world.getBlock(x, y, z);
-    bool solid = BlockType.solid(info.value);
-    return solid;
+    bool hard = BlockType.hard(info.value);
+    return hard;
   }
 
   void _onJump(ThreeDart.EventArgs args) {
@@ -81,30 +81,30 @@ class Player {
 
     // TODO: Determine if underwater so that the water can be flipped inside out.
 
-    if (_isSolid(x-_pad, headY, z) ||
-        _isSolid(x-_pad, footY, z)) {
+    if (_isHard(x-_pad, headY, z) ||
+        _isHard(x-_pad, footY, z)) {
       x = nx - _pad;
       this._trans.offsetX.velocity = 0.0;
-    } else if (_isSolid(x+_pad, headY, z) ||
-               _isSolid(x+_pad, footY, z)) {
+    } else if (_isHard(x+_pad, headY, z) ||
+               _isHard(x+_pad, footY, z)) {
       x = nx + _pad;
       this._trans.offsetX.velocity = 0.0;
     }
 
-    if (_isSolid(x, headY, z-_pad) ||
-        _isSolid(x, footY, z-_pad)) {
+    if (_isHard(x, headY, z-_pad) ||
+        _isHard(x, footY, z-_pad)) {
       z = nz - _pad;
       this._trans.offsetZ.velocity = 0.0;
-    } else if (_isSolid(x, headY, z+_pad) ||
-               _isSolid(x, footY, z+_pad)) {
+    } else if (_isHard(x, headY, z+_pad) ||
+               _isHard(x, footY, z+_pad)) {
       z = nz + _pad;
       this._trans.offsetZ.velocity = 0.0;
     }
 
-    if (_isSolid(x, y-_pad, z)) {
+    if (_isHard(x, y-_pad, z)) {
       y = ny - _pad;
       this._trans.offsetY.velocity = 0.0;
-    } else if (_isSolid(x, y-2.0+_pad, z)) {
+    } else if (_isHard(x, y-2.0+_pad, z)) {
       y = ny + _pad;
       this._trans.offsetY.velocity = 0.0;
       this._touchingGround = true;

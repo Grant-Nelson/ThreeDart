@@ -41,6 +41,7 @@ void show() {
     ..onPreUpdate.add(world.update)
     ..children.add(world.terrainGroup)
     ..children.add(world.waterGroup)
+    ..children.add(world.plantsGroup)
     ..children.add(player.entity)
     ..camera.mover = player.camera;
   world.player = player;
