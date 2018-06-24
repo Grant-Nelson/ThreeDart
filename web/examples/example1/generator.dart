@@ -2,10 +2,10 @@ part of example1;
 
 class Generator {
   World _world;
-  simplex.OpenSimplexNoise _noise;
+  simplex.OpenSimplexNoise _simplex;
 
   Generator(this._world) {
-    this._noise = new simplex.OpenSimplexNoise();
+    this._simplex = new simplex.OpenSimplexNoise();
   }
 
   void fillWorld() {
@@ -19,16 +19,23 @@ class Generator {
     for (Chunk chunk in this._world._chunks) {
       this._trees(chunk);
     }
-    this._add3Dart(-10, 30, -20);
+    for (Chunk chunk in this._world._chunks) {
+      this._plants(chunk);
+    }
+    this._add3Dart(-12, 40, -15);
   }
 
-  double eval2D(Chunk chunk, int x, int z, double scale) => 
-    this._noise.eval2D((x + chunk.x)*scale, (z + chunk.z)*scale)*0.5 + 0.5;
+  void _set(int x, int y, int z, int value) {
+    this._world.getBlock(x.toDouble(), y.toDouble(), z.toDouble()).value = value;
+  }
+
+  double _noise(Chunk chunk, int x, int z, double scale) => 
+    this._simplex.eval2D((x + chunk.x)*scale, (z + chunk.z)*scale)*0.5 + 0.5;
 
   int _findGround(Chunk chunk, int x, int z) {
     for (int y = Chunk.ySize-1; y >= 0; y--) {
       int value = chunk.getBlock(x, y, z);
-      if (value == BlockType.Turf || value == BlockType.DryLeaves || value == BlockType.Sand) {
+      if (BlockType.solid(value)) {
         return y;
       }
     }
@@ -44,9 +51,9 @@ class Generator {
   }
 
   void _turrainBlock(Chunk chunk, int x, int z) {
-    double terrain = 0.6 * this.eval2D(chunk, x, z, 0.001) +
-                     0.3 * this.eval2D(chunk, x, z, 0.01) +
-                     0.1 * this.eval2D(chunk, x, z, 0.1);
+    double terrain = 0.6 * this._noise(chunk, x, z, 0.001) +
+                     0.3 * this._noise(chunk, x, z, 0.01) +
+                     0.1 * this._noise(chunk, x, z, 0.1);
     int maxy = (math.pow(terrain, 2.0)*Chunk.ySize).toInt();
     maxy = (maxy >= Chunk.ySize)? Chunk.ySize-1: maxy;
 
@@ -95,7 +102,7 @@ class Generator {
   void _trees(Chunk chunk) {
     for (int x = 0; x < Chunk.xSize; x++) {
       for (int z = 0; z < Chunk.zSize; z++) {
-        if (this.eval2D(chunk, x, z, 1.5) < 0.1)
+        if (this._noise(chunk, x, z, 1.5) < 0.1)
           this._addTree(chunk, x, z);
       }
     }
@@ -143,22 +150,87 @@ class Generator {
     }
   }
 
+  void _plants(Chunk chunk) {
+    for (int x = 0; x < Chunk.xSize; x++) {
+      for (int z = 0; z < Chunk.zSize; z++) {
+        if (this._noise(chunk, x, z, 12.5) < 0.1)
+          this._addPlant(chunk, x, z, BlockType.RedFlower);
+        else if (this._noise(chunk, x+400, z, 12.5) < 0.1)
+          this._addPlant(chunk, x, z, BlockType.BlueFlower);
+        else if (this._noise(chunk, x, z+400, 12.5) < 0.1)
+          this._addPlant(chunk, x, z, BlockType.WhiteFlower);
+        else if (this._noise(chunk, x+400, z+400, 12.5) < 0.1)
+          this._addPlant(chunk, x, z, BlockType.Grass);
+        else if (this._noise(chunk, x-400, z, 12.5) < 0.1)
+          this._addPlant(chunk, x, z, BlockType.Fern);
+        else if (this._noise(chunk, x, z-400, 12.5) < 0.1)
+          this._addPlant(chunk, x, z, BlockType.Mushroom);
+      }
+    }
+  }
+    
+  void _addPlant(Chunk chunk, int x, int z, int value) {
+    int maxy = this._findGround(chunk, x, z);
+    int oldValue = chunk.getBlock(x, maxy, z);
+    if (oldValue != BlockType.Turf && oldValue != BlockType.DryLeaves) return;
+    chunk.setBlock(x, maxy+1, z, value);
+  }
+
   void _addPyramid() {
     int height = 30;
-    for (int py = height; py >= 0; py--) {
+    for (int py = height; py >= 0; py-=2) {
       int width = (height-py)+3;
       for (int px = -width; px <= width; px++) {
         for (int pz = -width; pz <= width; pz++) {
-          this._world.getBlock(px.toDouble(), py.toDouble(), pz.toDouble()).value = BlockType.Brick;
+          this._set(px, py, pz, BlockType.WhiteShine);
+          this._set(px, py-1, pz, BlockType.WhiteShine);
         }
       }
+      
+      for (int pw = -2; pw <= 2; pw++) {
+          this._set(-width-1, py, pw, BlockType.Brick);
+          this._set(-width-1, py-1, pw, BlockType.Brick);
+          this._set(-width-2, py-1, pw, BlockType.Brick);
+
+          this._set(width+1, py, pw, BlockType.Brick);
+          this._set(width+1, py-1, pw, BlockType.Brick);
+          this._set(width+2, py-1, pw, BlockType.Brick);
+
+          this._set(pw, py, -width-1, BlockType.Brick);
+          this._set(pw, py-1, -width-1, BlockType.Brick);
+          this._set(pw, py-1, -width-2, BlockType.Brick);
+
+          this._set(pw, py, width+1, BlockType.Brick);
+          this._set(pw, py-1, width+1, BlockType.Brick);
+          this._set(pw, py-1, width+2, BlockType.Brick);
+      }
+      
+      this._set(-width-1, py+1, 2, BlockType.Brick);
+      this._set(-width-2, py, 2, BlockType.Brick);
+      this._set(-width-1, py+1, -2, BlockType.Brick);
+      this._set(-width-2, py, -2, BlockType.Brick);
+
+      this._set(width+1, py+1, 2, BlockType.Brick);
+      this._set(width+2, py, 2, BlockType.Brick);
+      this._set(width+1, py+1, -2, BlockType.Brick);
+      this._set(width+2, py, -2, BlockType.Brick);
+
+      this._set(2, py+1, -width-1, BlockType.Brick);
+      this._set(2, py, -width-2, BlockType.Brick);
+      this._set(-2, py+1, -width-1, BlockType.Brick);
+      this._set(-2, py, -width-2, BlockType.Brick);
+
+      this._set(2, py+1, width+1, BlockType.Brick);
+      this._set(2, py, width+2, BlockType.Brick);
+      this._set(-2, py+1, width+1, BlockType.Brick);
+      this._set(-2, py, width+2, BlockType.Brick);
     }
   }
 
   void _add3Dart(int x, int y, int z) {
     var put = (int value, int dx, int dy, List<int> px, List<int> py) {
       for (int i = px.length -1; i >= 0; i--) {
-        this._world.getBlock((x+dx+px[i]).toDouble(), (y+dy-py[i]).toDouble(), z.toDouble()).value = value;
+        this._set(x+dx+px[i], y+dy-py[i], z, value);
       }
     };
 
