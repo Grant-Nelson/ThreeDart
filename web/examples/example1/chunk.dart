@@ -201,44 +201,64 @@ class Chunk {
   
   void _addPlantToShape(Shapes.Shape shape, int x, int y, int z, int value) {
     Math.Point3 loc = new Math.Point3(x.toDouble(), y.toDouble(), z.toDouble());
-    this._addQuadToShape(shape, loc, math.PI*0.0/4.0, value, 2);
+    this._addQuadToShape(shape, loc, math.PI*0.5/4.0, value, 2);
     //this._addQuadToShape(shape, loc, math.PI*1.0/4.0, value, 3);
-    this._addQuadToShape(shape, loc, math.PI*2.0/4.0, value, 4);
+    this._addQuadToShape(shape, loc, math.PI*2.5/4.0, value, 4);
     //this._addQuadToShape(shape, loc, math.PI*3.0/4.0, value, 5);
   }
   
-  void _addFernToShape(Shapes.Shape shape, int x, int y, int z) {
-    double cx = x.toDouble()+0.5, dy = y.toDouble(), cz = z.toDouble()+0.5;
-    Shapes.Vertex ver1 = this._addVertex(shape, new Math.Point3(cx + 0.4, dy + 0.4, cz - 0.4), BlockType.Fern + _tmax, _tmax);
-    Shapes.Vertex ver2 = this._addVertex(shape, new Math.Point3(cx,       dy,       cz),       BlockType.Fern + _tmin, _tmax);
-    Shapes.Vertex ver3 = this._addVertex(shape, new Math.Point3(cx + 0.4, dy + 0.4, cz + 0.4), BlockType.Fern + _tmin, _tmin);
-    Shapes.Vertex ver4 = this._addVertex(shape, new Math.Point3(cx + 0.8, dy + 0.5, cz),       BlockType.Fern + _tmax, _tmin);
+  void _addFernLeaf(Shapes.Shape shape, Math.Point3 loc, double angle) {
+    Math.Matrix3 mat = new Math.Matrix3.rotateY(angle);
+    Shapes.Vertex ver1 = this._addVertex(shape, loc + mat.transPnt3(new Math.Point3(0.4, 0.4, -0.4)), BlockType.Fern + _tmax, _tmax);
+    Shapes.Vertex ver2 = this._addVertex(shape, loc + mat.transPnt3(new Math.Point3(0.0, 0.0,  0.0)), BlockType.Fern + _tmin, _tmax);
+    Shapes.Vertex ver3 = this._addVertex(shape, loc + mat.transPnt3(new Math.Point3(0.4, 0.4,  0.4)), BlockType.Fern + _tmin, _tmin);
+    Shapes.Vertex ver4 = this._addVertex(shape, loc + mat.transPnt3(new Math.Point3(0.8, 0.5,  0.0)), BlockType.Fern + _tmax, _tmin);
     shape.faces.addFan([ver1, ver2, ver3, ver4]);
     shape.faces.addFan([ver1, ver4, ver3, ver2]);
-    
-    Shapes.Vertex ver5 = this._addVertex(shape, new Math.Point3(cx - 0.4, dy + 0.4, cz + 0.4), BlockType.Fern + _tmax, 1 + _tmax);
-    Shapes.Vertex ver6 = this._addVertex(shape, new Math.Point3(cx,       dy,       cz),       BlockType.Fern + _tmin, 1 + _tmax);
-    Shapes.Vertex ver7 = this._addVertex(shape, new Math.Point3(cx - 0.4, dy + 0.4, cz - 0.4), BlockType.Fern + _tmin, 1 + _tmin);
-    Shapes.Vertex ver8 = this._addVertex(shape, new Math.Point3(cx - 0.8, dy + 0.5, cz),       BlockType.Fern + _tmax, 1 + _tmin);
-    shape.faces.addFan([ver5, ver6, ver7, ver8]);
-    shape.faces.addFan([ver5, ver8, ver7, ver6]);
-
-    Shapes.Vertex ver9  = this._addVertex(shape, new Math.Point3(cx - 0.4, dy + 0.4, cz + 0.4), BlockType.Fern + _tmax, 2 + _tmax);
-    Shapes.Vertex ver10 = this._addVertex(shape, new Math.Point3(cx,       dy,       cz),       BlockType.Fern + _tmin, 2 + _tmax);
-    Shapes.Vertex ver11 = this._addVertex(shape, new Math.Point3(cx + 0.4, dy + 0.4, cz + 0.4), BlockType.Fern + _tmin, 2 + _tmin);
-    Shapes.Vertex ver12 = this._addVertex(shape, new Math.Point3(cx,       dy + 0.5, cz + 0.8), BlockType.Fern + _tmax, 2 + _tmin);
-    shape.faces.addFan([ver9, ver10, ver11, ver12]);
-    shape.faces.addFan([ver9, ver12, ver11, ver10]);
-    
-    Shapes.Vertex ver13 = this._addVertex(shape, new Math.Point3(cx + 0.4, dy + 0.4, cz - 0.4), BlockType.Fern + _tmax, 3 + _tmax);
-    Shapes.Vertex ver14 = this._addVertex(shape, new Math.Point3(cx,       dy,       cz),       BlockType.Fern + _tmin, 3 + _tmax);
-    Shapes.Vertex ver15 = this._addVertex(shape, new Math.Point3(cx - 0.4, dy + 0.4, cz - 0.4), BlockType.Fern + _tmin, 3 + _tmin);
-    Shapes.Vertex ver16 = this._addVertex(shape, new Math.Point3(cx,       dy + 0.5, cz - 0.8), BlockType.Fern + _tmax, 3 + _tmin);
-    shape.faces.addFan([ver13, ver14, ver15, ver16]);
-    shape.faces.addFan([ver13, ver16, ver15, ver14]);
+  }
+  
+  void _addFernToShape(Shapes.Shape shape, int x, int y, int z) {
+    Math.Point3 loc = new Math.Point3(x.toDouble()+0.5, y.toDouble(), z.toDouble()+0.5);
+    _addFernLeaf(shape, loc, math.PI*0.2/2.0);
+    _addFernLeaf(shape, loc, math.PI*1.1/2.0);
+    _addFernLeaf(shape, loc, math.PI*2.3/2.0);
+    _addFernLeaf(shape, loc, math.PI*3.2/2.0);
   }
 
   void _addMushroomToShape(Shapes.Shape shape, int x, int y, int z) {
-    // TODO: Create mushroom shape
+    Math.Point3 loc = new Math.Point3(x.toDouble()+0.5, y.toDouble(), z.toDouble()+0.5);
+    
+    List<Shapes.Vertex> side1 = [];
+    List<Shapes.Vertex> side2 = [];
+    for (double d = 0.0; d <= 1.0; d += 0.25) {
+      double tu = BlockType.Mushroom + _tmin + (_tmax - _tmin)*d;
+      Math.Matrix3 mat = new Math.Matrix3.rotateY(math.PI*d);
+      side1.add(this._addVertex(shape, loc + mat.transPnt3(new Math.Point3(0.11, 0.4, 0.0)), tu, 2 + _tmin));
+      side1.add(this._addVertex(shape, loc + mat.transPnt3(new Math.Point3(0.1, 0.0, 0.0)), tu, 2 + _tmax));
+      side2.add(this._addVertex(shape, loc + mat.transPnt3(new Math.Point3(-0.11, 0.4, 0.0)), tu, 3 + _tmin));
+      side2.add(this._addVertex(shape, loc + mat.transPnt3(new Math.Point3(-0.1, 0.0, 0.0)), tu, 3 + _tmax));
+    }
+    shape.faces.addStrip(side1);
+    shape.faces.addStrip(side2);
+    
+    List<Shapes.Vertex> top = [];
+    List<Shapes.Vertex> bottom = [];
+    double thalf = (_tmax - _tmin)*0.5, tmid = _tmin + thalf;
+    top.add(this._addVertex(shape, loc + new Math.Point3(0.0, 0.6, 0.0), BlockType.Mushroom + tmid, tmid));
+    bottom.add(this._addVertex(shape, loc + new Math.Point3(0.0, 0.4, 0.0), BlockType.Mushroom + tmid, 1 + tmid));
+
+    for (double d = 0.0; d <= 1.0; d += 0.1) {
+      Math.Matrix3 topMat = new Math.Matrix3.rotateY(-math.PI*2.0*d);
+      Math.Point3 topTxt = topMat.transPnt3(new Math.Point3(thalf, 0.0, 0.0));
+      top.add(this._addVertex(shape, loc + topMat.transPnt3(new Math.Point3(0.4, 0.4, 0.0)),
+        BlockType.Mushroom + tmid + topTxt.x, tmid + topTxt.z));
+        
+      Math.Matrix3 botMat = new Math.Matrix3.rotateY(math.PI*2.0*d);
+      Math.Point3 botTxt = botMat.transPnt3(new Math.Point3(thalf, 0.0, 0.0));
+      bottom.add(this._addVertex(shape, loc + botMat.transPnt3(new Math.Point3(0.4, 0.4, 0.0)),
+        BlockType.Mushroom + tmid + botTxt.x, 1 + tmid + botTxt.z));
+    }
+    shape.faces.addFan(top);
+    shape.faces.addFan(bottom);
   }
 }
