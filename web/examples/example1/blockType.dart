@@ -81,7 +81,7 @@ class BlockType {
 
   //====================================
 
-  /// Maximum block type value, also the width*64 of texture.
+  /// Maximum block type value
   static const int Max = 20;
 
   /// string gets the string for the given block type value.
@@ -113,12 +113,12 @@ class BlockType {
 
   /// hard determines if the given block type can not be walked through.
   static bool hard(int value) {
-    return solid(value) || (value == Leaves) || (value == Boundary);
+    return solid(value) || (value == Boundary);
   }
 
   /// solid determines if the given block type can not be seen through.
   static bool solid(int value) {
-    return (value >= Dirt) && (value <= BlackShine);
+    return ((value >= Dirt) && (value <= BlackShine)) || (value == Leaves);
   }
 
   /// open determines if the given block type can be seen through.

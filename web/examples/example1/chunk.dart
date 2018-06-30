@@ -1,12 +1,12 @@
 part of example1;
 
 class Chunk {
-  static const int xSize = 16;
+  static const int xSize = 24;
   static const int ySize = 48;
-  static const int zSize = 16;
+  static const int zSize = 24;
   static const int _dataLength = xSize * ySize * zSize;
-  static const double _tmin = 0.05;
-  static const double _tmax = 0.95;
+  static const double _tmin = 15.0/93.0; // texture edge adjustment for mipmap padding
+  static const double _tmax = 78.0/93.0;
   static const double _maxDrawDist = 120.0;
   static final Math.Point3 xAxis = new Math.Point3(1.0, 0.0, 0.0);
   static final Math.Point3 yAxis = new Math.Point3(0.0, 1.0, 0.0);
@@ -227,15 +227,15 @@ class Chunk {
 
   void _addMushroomToShape(Shapes.Shape shape, int x, int y, int z) {
     Math.Point3 loc = new Math.Point3(x.toDouble()+0.5, y.toDouble(), z.toDouble()+0.5);
-    
+
     List<Shapes.Vertex> side1 = [];
     List<Shapes.Vertex> side2 = [];
     for (double d = 0.0; d <= 1.0; d += 0.25) {
       double tu = BlockType.Mushroom + _tmin + (_tmax - _tmin)*d;
       Math.Matrix3 mat = new Math.Matrix3.rotateY(math.PI*d);
-      side1.add(this._addVertex(shape, loc + mat.transPnt3(new Math.Point3(0.11, 0.4, 0.0)), tu, 2 + _tmin));
+      side1.add(this._addVertex(shape, loc + mat.transPnt3(new Math.Point3(0.07, 0.4, 0.0)), tu, 2 + _tmin));
       side1.add(this._addVertex(shape, loc + mat.transPnt3(new Math.Point3(0.1, 0.0, 0.0)), tu, 2 + _tmax));
-      side2.add(this._addVertex(shape, loc + mat.transPnt3(new Math.Point3(-0.11, 0.4, 0.0)), tu, 3 + _tmin));
+      side2.add(this._addVertex(shape, loc + mat.transPnt3(new Math.Point3(-0.07, 0.4, 0.0)), tu, 3 + _tmin));
       side2.add(this._addVertex(shape, loc + mat.transPnt3(new Math.Point3(-0.1, 0.0, 0.0)), tu, 3 + _tmax));
     }
     shape.faces.addStrip(side1);

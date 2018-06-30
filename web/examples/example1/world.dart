@@ -2,7 +2,7 @@ part of example1;
 
 class World {
   static const imgFile = "./examples/example1/blocks.png";
-  static const maxSize = 128;//256;
+  static const maxSize = 192;
   
   Techniques.MaterialLight _matLit;
   ThreeDart.Entity _terrainGroup;
@@ -13,7 +13,7 @@ class World {
   Player _player;
 
   World(ThreeDart.ThreeDart td) {
-    Textures.Texture2D blockTxt = td.textureLoader.load2DFromFile(imgFile, wrapEdges: false, nearest: true, mipMap: false);
+    Textures.Texture2D blockTxt = td.textureLoader.load2DFromFile(imgFile, wrapEdges: false, nearest: false, mipMap: true);
 
     this._matLit = new Techniques.MaterialLight()
       ..emission.texture2D = blockTxt
