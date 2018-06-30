@@ -21,12 +21,12 @@ void main() {
   Textures.TextureCube texture = td.textureLoader.loadCubeFromPath("../resources/earthColor");
 
   Movers.Group mover = new Movers.Group()
-    ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 2.0)))
+    ..add(new Movers.Constant.translate(0.0, 0.0, 2.0))
     ..add(new Movers.Rotater(deltaYaw: 0.5, deltaPitch: 0.5, deltaRoll: 0.0));
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..mover = (new Movers.Group()
-                ..add(new Movers.Constant(new Math.Matrix4.scale(0.2, 0.2, 0.2)))
+                ..add(new Movers.Constant.scale(0.2, 0.2, 0.2))
                 ..add(mover))
     ..shape = Shapes.sphere()
     ..technique = (new Techniques.MaterialLight()
@@ -47,7 +47,7 @@ void main() {
     ..specular.shininess = 100.0;
 
   ThreeDart.Entity room = new ThreeDart.Entity()
-    ..mover = new Movers.Constant(new Math.Matrix4.scale(3.0, 3.0, 3.0))
+    ..mover = new Movers.Constant.scale(3.0, 3.0, 3.0)
     ..shape = (Shapes.cube()..flip());
 
   ThreeDart.Entity centerObj = new ThreeDart.Entity()
@@ -57,7 +57,7 @@ void main() {
   ..add(new Movers.UserRotater(input: td.userInput))
   ..add(new Movers.UserRoller(input: td.userInput, ctrl: true))
   ..add(new Movers.UserZoom(input: td.userInput))
-  ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
+  ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));
 
   Scenes.EntityPass pass = new Scenes.EntityPass()
     ..technique = tech

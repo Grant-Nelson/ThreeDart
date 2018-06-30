@@ -3,6 +3,8 @@ part of ThreeDart.Movers;
 /// A mover which groups several movers.
 class Group extends Core.Collection<Mover> implements Mover {
   Core.Event _changed;
+  Math.Matrix4 _mat;
+  int _frameNum;
 
   /// Creates a new group of movers.
   Group([List<Mover> movers = null]) {
@@ -11,6 +13,8 @@ class Group extends Core.Collection<Mover> implements Mover {
       onRemovedHndl: this._onRemoved);
     if (movers != null) this.addAll(movers);
     this._changed = null;
+    this._mat = new Math.Matrix4.identity();
+    this._frameNum = 0;
   }
 
   /// Emits when the mover has changed.
@@ -18,6 +22,9 @@ class Group extends Core.Collection<Mover> implements Mover {
     if (this._changed == null) this._changed = new Core.Event();
     return this._changed;
   }
+
+  /// Matrix from the last update.
+  Math.Matrix4 get matrix => this._mat;
 
   /// Handles a child mover being changed.
   void _onChanged([Core.EventArgs args = null]) {
@@ -52,25 +59,26 @@ class Group extends Core.Collection<Mover> implements Mover {
   ///
   /// This updates with the given [state] and the [obj] this mover is attached to.
   Math.Matrix4 update(Core.RenderState state, Movable obj) {
-    this._changed?.suspend();
-    Math.Matrix4 mat = null;
-    for (Mover mover in this) {
-      if (mover != null) {
-        Math.Matrix4 next = mover.update(state, obj);
-        if (next != null) {
-          if (mat == null) {
-            mat = next;
-          } else {
-            mat = next*mat;
+    if (this._frameNum < state.frameNumber) {
+      this._frameNum = state.frameNumber;
+      this._changed?.suspend();
+      Math.Matrix4 mat = null;
+      for (Mover mover in this) {
+        if (mover != null) {
+          Math.Matrix4 next = mover.update(state, obj);
+          if (next != null) {
+            if (mat == null) {
+              mat = next;
+            } else {
+              mat = next*mat;
+            }
           }
         }
       }
+      this._mat = mat ?? new Math.Matrix4.identity();
+      this._changed?.resume();
     }
-    if (mat == null) {
-      mat = new Math.Matrix4.identity();
-    }
-    this._changed?.resume();
-    return mat;
+    return this._mat;
   }
 
   /// Determines if the given [other] variable is a [Group] equal to this one.
@@ -85,7 +93,7 @@ class Group extends Core.Collection<Mover> implements Mover {
     return true;
   }
 
-  /// The string for this constant mover.
+  /// The string for this group mover.
   String toString() {
     return "Group";
   }

@@ -1,6 +1,7 @@
 part of ThreeDart.Math;
 
-/// A math structure for storing a 3D region, like a rectangular cube
+/// A math structure for storing a 3D region, like a rectangular cube.
+/// This is also used for AABBs (axial alligned bounding boxes).
 class Region3 {
 
   /// The left edge component of the region.
@@ -53,6 +54,10 @@ class Region3 {
   /// Constructs a new [Region3] from two opposite corners.
   factory Region3.fromCorners(Point3 a, Point3 b) =>
     new Region3(a.x, a.y, a.z, b.x-a.x, b.y-a.y, b.z-a.z);
+    
+  /// Constructs a new [Region3] at the given ray.
+  factory Region3.fromRay(Ray3 ray) =>
+    new Region3(ray.x, ray.y, ray.z, ray.dx, ray.dy, ray.dz);
 
   /// Constructs a new [Region3] instance given a list of 6 doubles.
   ///
@@ -111,7 +116,7 @@ class Region3 {
     return new Region3._(x, y, z, dx, dy, dz);
   }
 
-  /// Gets an list of 4 doubles in the order x, y, z, dx, dy, then dz.
+  /// Gets an list of 6 doubles in the order x, y, z, dx, dy, then dz.
   List<double> toList() =>
     [this.x, this.y, this.z, this.dx, this.dy, this.dz];
 
@@ -145,11 +150,52 @@ class Region3 {
 
   /// Gets the adjusted vector of the given [raw] vector.
   /// This vector is normalized into the region.
-  Vector3 adjustVector(Vector3 raw) {
-    return raw*2.0/this.minSide;
+  Vector3 adjustVector(Vector3 raw) =>
+    raw*2.0/this.minSide;
+  
+  /// Determines the location the given point is in relation to the region.
+  HitRegion hit(Point3 a) {
+    HitRegion region = HitRegion.None;
+
+    if (a.x < this.x) region |= HitRegion.XNeg;
+    else if (a.x >= this.x+this.dx) region |= HitRegion.XPos;
+    else region |= HitRegion.XCenter;
+
+    if (a.y < this.y) region |= HitRegion.YNeg;
+    else if (a.y >= this.y+this.dy) region |= HitRegion.YPos;
+    else region |= HitRegion.YCenter;
+
+    if (a.z < this.z) region |= HitRegion.ZNeg;
+    else if (a.z >= this.z+this.dz) region |= HitRegion.ZPos;
+    else region |= HitRegion.ZCenter;
+
+    return region;
   }
 
-  /// Determines if the given [other] variable is a [Region3] equal to this point.
+  /// Determines if the given point is contained inside this region.
+  bool contains(Point3 a) {
+    if (a.x < this.x) return false;
+    else if (a.x >= this.x+this.dx) return false;
+
+    if (a.y < this.y) return false;
+    else if (a.y >= this.y+this.dy) return false;
+
+    if (a.z < this.z) return false;
+    else if (a.z >= this.z+this.dz) return false;
+
+    return true;
+  }
+  
+  /// Determines if the two regions overlap even partually.
+  bool overlap(Region3 a) =>
+    (a.x <= this.x + this.dx) &&
+    (a.y <= this.y + this.dy) &&
+    (a.z <= this.z + this.dz) &&
+    (a.x + a.dx >= this.x) &&
+    (a.y + a.dy >= this.y) &&
+    (a.z + a.dz >= this.z);
+
+  /// Determines if the given [other] variable is a [Region3] equal to this region.
   ///
   /// The equality of the doubles is tested with the current [Comparer] method.
   bool operator ==(var other) {

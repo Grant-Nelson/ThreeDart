@@ -67,6 +67,26 @@ class Vector2 {
   /// Gets the dot product of this vector and the [other] vector.
   double dot(Vector2 other) =>
     this.dx*other.dx + this.dy*other.dy;
+    
+  /// Finds the origin based cross product for this vector and the [other] vector.
+  double cross(Vector2 other) =>
+    this.dx*other.dy - this.dy*other.dx;
+  
+  /// Determines if the two vectors are acute or not.
+  /// Returns true if the two vectors are acute (<90), false if not.
+  bool acute(Vector2 other) => this.dot(other) > 0.0;
+
+  /// Determines if the two vectors are obtuse or not.
+  /// Returns true if the two vectors are obtuse (>90), false if not.
+  bool obtuse(Vector2 other) => this.dot(other) < 0.0;
+
+  /// Gets the side of the edge the given point is on.
+  Side side(Point2 point) {
+    double value = this.dx*point.y - this.dy*point.x;
+    if (Comparer.currentEquality(value, 0.0)) return Side.Inside;
+    if (value < 0.0) return Side.Right;
+    return Side.Left;
+  }
 
   /// Gets a linear interpolation between this vector and the [other] vector.
   ///

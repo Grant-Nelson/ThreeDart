@@ -186,7 +186,7 @@ class TextureLayout extends Technique {
       this._shader = new Shaders.TextureLayout.cached(newCount, state);
 
     if (obj.cacheNeedsUpdate) {
-      obj.cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl), Data.VertexType.Pos)
+      obj.cache = obj.shapeBuilder.build(new Data.WebGLBufferBuilder(state.gl), Data.VertexType.Pos)
         ..findAttribute(Data.VertexType.Pos).attr = this._shader.posAttr.loc;
     }
 

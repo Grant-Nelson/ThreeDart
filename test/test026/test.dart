@@ -24,10 +24,10 @@ void main() {
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
 
   Lights.Directional dir1 = new Lights.Directional()
-    ..mover = new Movers.Constant(new Math.Matrix4.vectorTowards(0.3, 0.4, 1.0));
+    ..mover = new Movers.Constant.vectorTowards(0.3, 0.4, 1.0);
 
   Lights.Directional dir2 = new Lights.Directional()
-    ..mover = new Movers.Constant(new Math.Matrix4.vectorTowards(-0.3, -0.4, -1.0))
+    ..mover = new Movers.Constant.vectorTowards(-0.3, -0.4, -1.0)
     ..color = new Math.Color3(0.125, 0.125, 0.125);
 
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
@@ -45,13 +45,13 @@ void main() {
     ..shape = Shapes.toroid();
 
   ThreeDart.Entity room = new ThreeDart.Entity()
-    ..mover = new Movers.Constant(new Math.Matrix4.scale(3.0, 3.0, 3.0))
+    ..mover = new Movers.Constant.scale(3.0, 3.0, 3.0)
     ..shape = (Shapes.cube()..flip());
 
   Movers.Group camMover = new Movers.Group()
   ..add(new Movers.UserRotater(input: td.userInput))
-  ..add(new Movers.Constant(new Math.Matrix4.rotateX(PI)))
-  ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
+  ..add(new Movers.Constant.rotateX(PI))
+  ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));
 
   Movers.Rotater colorMover = new Movers.Rotater(deltaYaw: 0.3, deltaPitch: 0.5, deltaRoll: 0.7);
   Movers.Rotater txtMover   = new Movers.Rotater(deltaYaw: 0.0, deltaPitch: 0.0, deltaRoll: 0.1);

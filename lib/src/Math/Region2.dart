@@ -1,6 +1,7 @@
 part of ThreeDart.Math;
 
 /// A math structure for storing a 2D region, like a rectangle.
+/// This is also used for AABBs (axial alligned bounding boxes).
 class Region2 {
 
   /// The left edge component of the region.
@@ -43,8 +44,11 @@ class Region2 {
   factory Region2.fromCorners(Point2 a, Point2 b) =>
     new Region2(a.x, a.y, b.x-a.x, b.y-a.y);
 
+  /// Constructs a new [Region2] at the given ray.
+  factory Region2.fromRay(Ray2 ray) =>
+    new Region2(ray.x, ray.y, ray.dx, ray.dy);
+
   /// Constructs a new [Region2] instance given a list of 4 doubles.
-  ///
   /// [values] is a list of doubles are in the order x, y, dx, then dy.
   factory Region2.fromList(List<double> values) {
     assert(values.length == 4);
@@ -117,8 +121,50 @@ class Region2 {
     return raw*2.0/this.minSide;
   }
 
-  /// Determines if the given [other] variable is a [Region2] equal to this point.
-  ///
+  /// Determines the location the given point is in relation to the region.
+  HitRegion hit(Point2 a) {
+    HitRegion region = HitRegion.None;
+
+    if (a.x < this.x)               region |= HitRegion.XNeg;
+    else if (a.x >= this.x+this.dx) region |= HitRegion.XPos;
+    else                            region |= HitRegion.XCenter;
+
+    if (a.y < this.y)               region |= HitRegion.YNeg;
+    else if (a.y >= this.y+this.dy) region |= HitRegion.YPos;
+    else                            region |= HitRegion.YCenter;
+
+    return region;
+  }
+
+  /// nearestPoint finds the closest point in or on the edge of this region to the given point.
+  Point2 nearestPoint(Point2 a) {
+    HitRegion reg = this.hit(a);
+    double x = reg.has(HitRegion.XNeg)? this.x:
+               reg.has(HitRegion.XPos)? this.x+this.dx: a.x;
+    double y = reg.has(HitRegion.YNeg)? this.y:
+               reg.has(HitRegion.YPos)? this.y+this.dy: a.y;
+    return new Point2(x, y);
+  }
+
+  /// Determines if the given point is contained inside this region.
+  bool contains(Point2 a) {
+    if (a.x < this.x) return false;
+    else if (a.x >= this.x+this.dx) return false;
+
+    if (a.y < this.y) return false;
+    else if (a.y >= this.y+this.dy) return false;
+
+    return true;
+  }
+  
+  /// Determines if the two regions overlap even partually.
+  bool overlap(Region2 a) =>
+    (a.x <= this.x + this.dx) &&
+    (a.y <= this.y + this.dy) &&
+    (a.x + a.dx >= this.x) &&
+    (a.y + a.dy >= this.y);
+
+  /// Determines if the given [other] variable is a [Region2] equal to this region.
   /// The equality of the doubles is tested with the current [Comparer] method.
   bool operator ==(var other) {
     if (identical(this, other)) return true;

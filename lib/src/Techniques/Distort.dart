@@ -106,7 +106,7 @@ class Distort extends Technique {
       this._shader = new Shaders.Distort.cached(state);
 
     if (obj.cacheNeedsUpdate) {
-      obj.cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl), Data.VertexType.Pos|Data.VertexType.Txt2D)
+      obj.cache = obj.shapeBuilder.build(new Data.WebGLBufferBuilder(state.gl), Data.VertexType.Pos|Data.VertexType.Txt2D)
         ..findAttribute(Data.VertexType.Pos).attr = this._shader.posAttr.loc
         ..findAttribute(Data.VertexType.Txt2D).attr = this._shader.txtAttr.loc;
     }

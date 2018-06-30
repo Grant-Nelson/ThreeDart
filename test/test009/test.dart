@@ -25,7 +25,7 @@ void main() {
 
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
     ..lights.add(new Lights.Directional(
-          mover: new Movers.Constant(new Math.Matrix4.vectorTowards(-1.0, -1.0, -1.0)),
+          mover: new Movers.Constant.vectorTowards(-1.0, -1.0, -1.0),
           color: new Math.Color3.white()))
     ..emission.color = new Math.Color3.black()
     ..ambient.color = new Math.Color3(0.0, 0.0, 1.0)
@@ -37,7 +37,7 @@ void main() {
     ..add(new Movers.UserRotater(input: td.userInput, invertY: true))
     ..add(new Movers.UserRoller(input: td.userInput, ctrl: true))
     ..add(new Movers.UserZoom(input: td.userInput))
-    ..add(new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0)));
+    ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));
 
   td.scene = new Scenes.EntityPass()
     ..technique = tech

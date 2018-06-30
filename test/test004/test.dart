@@ -23,7 +23,7 @@ void main() {
     ..deltaRoll = 0.92;
 
   Movers.Group mover = new Movers.Group()
-    ..add(new Movers.Constant(new Math.Matrix4.scale(0.8, 0.8, 0.8)))
+    ..add(new Movers.Constant.scale(0.8, 0.8, 0.8))
     ..add(rotater);
 
   Shapes.Shape shape = Shapes.toroid(minorRadius: 0.2, majorRadius: 2.0);
@@ -41,7 +41,7 @@ void main() {
   Scenes.EntityPass pass = new Scenes.EntityPass()
     ..technique = new Techniques.Depth(fogStart: 3.0, fogStop: 6.0)
     ..children.add(obj8)
-    ..camera.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0));
+    ..camera.mover = new Movers.Constant.translate(0.0, 0.0, 5.0);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart")
     ..scene = pass;

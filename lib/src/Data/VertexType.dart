@@ -6,8 +6,8 @@ class VertexType {
   /// [None] indicates no vertex type at all.
   static VertexType None = new VertexType._(0x0000);
 
-  /// [None] indicates all vertex types.
-  static VertexType All = new VertexType._(0xFFFF);
+  /// [All] indicates all vertex types.
+  static VertexType All = new VertexType._(0x01FF);
 
   /// [Pos] indicates 3D positional data.
   static VertexType Pos = new VertexType._(0x0001);
@@ -46,27 +46,23 @@ class VertexType {
   VertexType._(this._value);
 
   /// Combines two vertex types into one.
-  VertexType operator|(VertexType right) {
-    return new VertexType._(this._value|right._value);
-  }
+  VertexType operator|(VertexType right) =>
+    new VertexType._(this._value|right._value);
 
   /// Unions two vertex types.
-  VertexType operator&(VertexType right) {
-    return new VertexType._(this._value&right._value);
-  }
+  VertexType operator&(VertexType right) =>
+    new VertexType._(this._value&right._value);
 
   /// Gets the opposite of this type.
-  VertexType operator ~() {
-    return new VertexType._(All._value & ~this._value);
-  }
+  VertexType operator ~() =>
+    new VertexType._(All._value & ~this._value);
 
   /// The interal value of the vertex type.
   int get value => this._value;
 
   /// Determines if this vertex type contains the given type.
-  bool has(VertexType type) {
-    return (this._value  & type._value) != 0x00;
-  }
+  bool has(VertexType type) =>
+    (this._value  & type._value) != 0x00;
 
   /// The number of vertex types combined into this type.
   int get count {
@@ -222,6 +218,12 @@ class VertexType {
       result += 4;
     }
     return -1;
+  }
+
+  /// Determines if the given [other] variable is a [VertexType] equal to this value.
+  bool operator ==(var other) {
+    if (other is! VertexType) return false;
+    return this._value == other._value;
   }
 
   /// The string for this vertex type.

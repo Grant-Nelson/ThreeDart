@@ -4,15 +4,16 @@
 library ThreeDart.web;
 
 import 'common/common.dart' as common;
+import 'examples/example1/example1.dart' as example1;
 import 'tutorials/tutorials.dart' as tutorials;
 
+String get exampleNum => Uri.base.queryParameters['example']??"";
 String get tutorialNum => Uri.base.queryParameters['tutorial']??"";
 
 void main() {
   try {
-    if (tutorialNum == "1") {
-      tutorials.tutorial1();
-    }
+    if (exampleNum == "1") example1.show();
+    else if (tutorialNum == "1") tutorials.tutorial1();
     else mainPage();
   } catch (ex) {
     print(ex);
@@ -24,11 +25,10 @@ void mainPage() {
     ..addImage("3Dart", "resources/ThreeDart.png")
     ..addPar(["Currently 3Dart is still in beta."])
     ..addPar(["Please visit the [3Dart GitHub repository|https://github.com/Grant-Nelson/ThreeDart] ",
-      "were you can download and play with 3Dart right now. Feel free to help ",
+      "were you can download and play with 3Dart right now. Please feel free to help ",
       "develop and contribute to the 3Dart code and community."])
     ..addHeader(2, "Examples")
-    ..addPar(["Currently there are no examples written. ",
-      "To see 3Dart in action see tests in repository."])
+    ..addPar(["[3Dart Craft|./?example=1]"])
     ..addHeader(2, "Tutorials")
     ..addPar(["[Getting Started|./?tutorial=1]"])
     ..addHeader(6, "Tutorials still need to be written", "")

@@ -276,9 +276,9 @@ class Inspection extends Technique {
       this._shader = new Shaders.Inspection.cached(state);
 
     if (obj.cacheNeedsUpdate) {
-      obj.shape.calculateNormals();
-      obj.shape.calculateBinormals();
-      obj.shape.calculateCubeTextures();
+      obj.shapeBuilder.calculateNormals();
+      obj.shapeBuilder.calculateBinormals();
+      obj.shapeBuilder.calculateCubeTextures();
       obj.cache = new Data.BufferStoreSet();
     }
 
@@ -293,56 +293,79 @@ class Inspection extends Technique {
     if (obj.cache is Data.BufferStoreSet) {
       Data.BufferStoreSet store = obj.cache as Data.BufferStoreSet;
       state.gl.blendFunc(WebGL.ONE, WebGL.ONE);
-      state.gl.enable(WebGL.DEPTH_TEST);
-      state.gl.disable(WebGL.BLEND);
 
-      // TODO: Why does POINTS not respect depth tests?
-      // Once they do move these two below with the other DEPTH_TEST disabled.
-      if (this._showVertices)
-        this._render(state, store, obj.shape, 'vertices', this._vertices, this._ambient2, this._diffuse2);
-      if (this._showFaceCenters)
-        this._render(state, store, obj.shape, 'faceCenters', this._faceCenters, this._ambient2, this._diffuse2);
+      if (obj.shape == null) this._renderAllBuilderParts(store, state, obj);
+      else                   this._renderAllShapeParts(store, state, obj);
 
-      if (this._showFilled)
-        this._render(state, store, obj.shape, 'shapeFill', this._shapeFill, this._ambient1, this._diffuse1);
-      if (this._showColorFill)
-        this._render(state, store, obj.shape, 'colorFill', this._colorFill, this._ambient3, this._diffuse3);
-      if (this._showTxt2DColor)
-        this._render(state, store, obj.shape, 'txt2DColor', this._txt2DColor, this._ambient3, this._diffuse3);
-      if (this._showWeight)
-        this._render(state, store, obj.shape, 'weight', this._weight, this._ambient3, this._diffuse3);
-      if (this._showBend)
-        this._render(state, store, obj.shape, 'bend1', this._bendFill, this._ambient3, this._diffuse3);
-
-      state.gl.disable(WebGL.DEPTH_TEST);
-      state.gl.enable(WebGL.BLEND);
-
-      if (this._showWireFrame)
-        this._render(state, store, obj.shape, 'wireFrame', this._wireFrame, this._ambient2, this._diffuse2);
-      if (this._showNormals)
-        this._render(state, store, obj.shape, 'normals', this._normals, this._ambient2, this._diffuse2);
-      if (this._showBinormals)
-        this._render(state, store, obj.shape, 'binormals', this._binormals, this._ambient2, this._diffuse2);
-      if (this._showTangentals)
-        this._render(state, store, obj.shape, 'tangentals', this._tangentals, this._ambient2, this._diffuse2);
-      if (this._showTxtCube)
-        this._render(state, store, obj.shape, 'textureCube', this._txtCube, this._ambient2, this._diffuse2);
-      if (this._showFaceNormals)
-        this._render(state, store, obj.shape, 'faceNormals', this._faceNormals, this._ambient2, this._diffuse2);
-      if (this._showFaceBinormals)
-        this._render(state, store, obj.shape, 'faceBinormals', this._faceBinormals, this._ambient3, this._diffuse3);
-      if (this._showFaceTangentals)
-        this._render(state, store, obj.shape, 'faceTangentals', this._faceTangentals, this._ambient3, this._diffuse3);
-      if (this._showAxis)
-        this._render(state, store, obj.shape, 'Axis', this._axis, this._ambient4, this._diffuse4);
-      if (this._showAABB)
-        this._render(state, store, obj.shape, 'AABB', this._aabb, this._ambient4, this._diffuse4);
-
-      state.gl.enable(WebGL.DEPTH_TEST);
-      state.gl.disable(WebGL.BLEND);
     } else obj.clearCache();
 
     this._shader.unbind(state);
+  }
+
+  /// Renders the current [obj] with the current [state].
+  /// Must have a shape, not just a shape builder, to do a full inspection.
+  void _renderAllBuilderParts(Data.BufferStoreSet store, Core.RenderState state, Core.Entity obj) {
+    state.gl.disable(WebGL.DEPTH_TEST);
+    state.gl.enable(WebGL.BLEND);
+
+    if (this._showAxis)
+      this._renderBuilder(state, store, obj.shapeBuilder, 'Axis', this._axis, this._ambient4, this._diffuse4);
+    if (this._showAABB)
+      this._renderBuilder(state, store, obj.shapeBuilder, 'AABB', this._aabb, this._ambient4, this._diffuse4);
+      
+    state.gl.enable(WebGL.DEPTH_TEST);
+    state.gl.disable(WebGL.BLEND);
+  }
+
+  /// Renders the current [obj] with the current [state].
+  void _renderAllShapeParts(Data.BufferStoreSet store, Core.RenderState state, Core.Entity obj) {
+    state.gl.enable(WebGL.DEPTH_TEST);
+    state.gl.disable(WebGL.BLEND);
+
+    // TODO: Why does POINTS not respect depth tests?
+    // Once they do move these two below with the other DEPTH_TEST disabled.
+    if (this._showVertices)
+      this._render(state, store, obj.shape, 'vertices', this._vertices, this._ambient2, this._diffuse2);
+    if (this._showFaceCenters)
+      this._render(state, store, obj.shape, 'faceCenters', this._faceCenters, this._ambient2, this._diffuse2);
+
+    if (this._showFilled)
+      this._render(state, store, obj.shape, 'shapeFill', this._shapeFill, this._ambient1, this._diffuse1);
+    if (this._showColorFill)
+      this._render(state, store, obj.shape, 'colorFill', this._colorFill, this._ambient3, this._diffuse3);
+    if (this._showTxt2DColor)
+      this._render(state, store, obj.shape, 'txt2DColor', this._txt2DColor, this._ambient3, this._diffuse3);
+    if (this._showWeight)
+      this._render(state, store, obj.shape, 'weight', this._weight, this._ambient3, this._diffuse3);
+    if (this._showBend)
+      this._render(state, store, obj.shape, 'bend1', this._bendFill, this._ambient3, this._diffuse3);
+
+    state.gl.disable(WebGL.DEPTH_TEST);
+    state.gl.enable(WebGL.BLEND);
+
+    if (this._showWireFrame)
+      this._render(state, store, obj.shape, 'wireFrame', this._wireFrame, this._ambient2, this._diffuse2);
+    if (this._showNormals)
+      this._render(state, store, obj.shape, 'normals', this._normals, this._ambient2, this._diffuse2);
+    if (this._showBinormals)
+      this._render(state, store, obj.shape, 'binormals', this._binormals, this._ambient2, this._diffuse2);
+    if (this._showTangentals)
+      this._render(state, store, obj.shape, 'tangentals', this._tangentals, this._ambient2, this._diffuse2);
+    if (this._showTxtCube)
+      this._render(state, store, obj.shape, 'textureCube', this._txtCube, this._ambient2, this._diffuse2);
+    if (this._showFaceNormals)
+      this._render(state, store, obj.shape, 'faceNormals', this._faceNormals, this._ambient2, this._diffuse2);
+    if (this._showFaceBinormals)
+      this._render(state, store, obj.shape, 'faceBinormals', this._faceBinormals, this._ambient3, this._diffuse3);
+    if (this._showFaceTangentals)
+      this._render(state, store, obj.shape, 'faceTangentals', this._faceTangentals, this._ambient3, this._diffuse3);
+    if (this._showAxis)
+      this._render(state, store, obj.shape, 'Axis', this._axis, this._ambient4, this._diffuse4);
+    if (this._showAABB)
+      this._render(state, store, obj.shape, 'AABB', this._aabb, this._ambient4, this._diffuse4);
+
+    state.gl.enable(WebGL.DEPTH_TEST);
+    state.gl.disable(WebGL.BLEND);
   }
 
   /// Renderes one of the shape components to inspect.
@@ -352,6 +375,19 @@ class Inspection extends Technique {
     Data.BufferStore store = storeSet.map[name];
     if (store == null) {
       store = this._buildShape(state, shapeModHndl(shape));
+      storeSet.map[name] = store;
+    }
+    this._shader.setColors(ambient, diffuse);
+    store.oneRender(state);
+  }
+
+  /// Renderes one of the shape builder components to inspect.
+  /// If the component of the shape isn't cached it will be created and cached.
+  void _renderBuilder(Core.RenderState state, Data.BufferStoreSet storeSet, Data.ShapeBuilder builder,
+      String name, Shapes.Shape shapeBuilderModHndl(Data.ShapeBuilder builder), Math.Color3 ambient, Math.Color3 diffuse) {
+    Data.BufferStore store = storeSet.map[name];
+    if (store == null) {
+      store = this._buildShape(state, shapeBuilderModHndl(builder));
       storeSet.map[name] = store;
     }
     this._shader.setColors(ambient, diffuse);
@@ -372,7 +408,7 @@ class Inspection extends Technique {
   /// Convertes the given [shape] into the filled shape.
   Shapes.Shape _shapeFill(Shapes.Shape shape) {
     Shapes.Shape result = new Shapes.Shape();
-    Math.Color4 color =  new Math.Color4.white();
+    Math.Color4 color = new Math.Color4.white();
     shape.vertices.forEach((Shapes.Vertex vertex) {
       result.vertices.add(vertex.copy()
         ..color = color
@@ -686,6 +722,11 @@ class Inspection extends Technique {
 
   /// Creates the axii shape.
   Shapes.Shape _axis(Shapes.Shape shape) {
+    return this._axisBuilder(shape);
+  }
+    
+  /// Creates the axii shape for a shape builder.
+  Shapes.Shape _axisBuilder(Data.ShapeBuilder builder) {
     Shapes.Shape result = new Shapes.Shape();
     var add = (double dx, double dy, double dz) {
       Math.Color4 clr = new Math.Color4(dx, dy, dz);
@@ -707,7 +748,13 @@ class Inspection extends Technique {
 
   /// Convertes the given [shape] into the axial alligned bounding box shape.
   Shapes.Shape _aabb(Shapes.Shape shape) {
-    Math.Region3 aabb = shape.calculateAABB();
+    return this._aabbBuilder(shape);
+  }
+  
+  /// Convertes the given [shape] into the axial alligned bounding box
+  /// shape for a shape builder.
+  Shapes.Shape _aabbBuilder(Data.ShapeBuilder builder) {
+    Math.Region3 aabb = builder.calculateAABB();
     Shapes.Shape result = new Shapes.Shape();
     var add = (double dx, double dy, double dz) {
       return result.vertices.addNewLoc(dx, dy, dz)

@@ -166,6 +166,7 @@ class TestBlock extends TestArgs {
   void fail() {
     if (!this._failed) {
       this._failed = true;
+      this._body.className = "test_body body_shown";
       this._update();
     }
   }
@@ -180,6 +181,7 @@ class TestManager {
     List<TestBlock> _tests;
     int _finished;
     int _failed;
+    String _prefix;
 
     /// Creates new test manager attached to the given element.
     TestManager(this._elem) {
@@ -197,7 +199,13 @@ class TestManager {
       this._tests = new List<TestBlock>();
       this._finished = 0;
       this._failed = 0;
+      this._prefix = "";
     }
+
+    /// The filter to only let tests with the given prefix to be run.
+    /// Set to empty to run all tests.
+    String get testPrefixFilter => this._prefix;
+    set testPrefixFilter(String prefix) => this._prefix = prefix;
 
     /// Creates a check box for changing the visibility of logs with the given [type].
     void _createLogSwitch(html.DivElement checkBoxes, String text, String type) {
@@ -262,6 +270,7 @@ class TestManager {
     /// Adds a new test to be run.
     void add(String testName, TestHandler test) {
       if (testName.length <= 0) testName = "$test";
+      if (!testName.startsWith(this._prefix)) return;
       this._tests.add(new TestBlock(this, test, testName));
       this._update();
 

@@ -27,7 +27,7 @@ ThreeDart.Entity createFloor(ThreeDart.ThreeDart td) {
     new Techniques.MaterialLight()
       ..texture2DMatrix = new Math.Matrix3.scale(1000.0, 1000.0, 1.0)
       ..lights.add(new Lights.Directional(
-          mover: new Movers.Constant(new Math.Matrix4.vectorTowards(1.0, -3.0, -1.0)),
+          mover: new Movers.Constant.vectorTowards(1.0, -3.0, -1.0),
           color: new Math.Color3.white()))
       ..ambient.color = new Math.Color3(0.5, 0.5, 0.5)
       ..diffuse.color = new Math.Color3(0.5, 0.5, 0.5)
@@ -43,10 +43,10 @@ ThreeDart.Entity createFloor(ThreeDart.ThreeDart td) {
 ThreeDart.Entity createObjects(ThreeDart.ThreeDart td) {
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
     ..lights.add(new Lights.Directional(
-          mover: new Movers.Constant(new Math.Matrix4.vectorTowards(1.0, -3.0, -1.0)),
+          mover: new Movers.Constant.vectorTowards(1.0, -3.0, -1.0),
           color: new Math.Color3(0.4, 0.4, 1.0)))
     ..lights.add(new Lights.Directional(
-          mover: new Movers.Constant(new Math.Matrix4.vectorTowards(0.0, 1.0, 0.0)),
+          mover: new Movers.Constant.vectorTowards(0.0, 1.0, 0.0),
           color: new Math.Color3(0.0, 0.2, 0.1)))
     ..ambient.color = new Math.Color3.gray(0.2)
     ..diffuse.color = new Math.Color3.gray(0.7)
@@ -54,11 +54,10 @@ ThreeDart.Entity createObjects(ThreeDart.ThreeDart td) {
     ..specular.shininess = 10.0;
 
   ThreeDart.Entity group = new ThreeDart.Entity()
-    ..technique = tech
-    ..children.add(createFloor(td));
+    ..technique = tech;
 
   Shapes.Shape shape = Shapes.cube();
-  final double range = 30.0;
+  final double range = 60.0;
   final double spacing = 12.0;
   for (double x = -range; x <= range; x += spacing) {
     for (double z = -range; z <= range; z += spacing) {
@@ -66,7 +65,7 @@ ThreeDart.Entity createObjects(ThreeDart.ThreeDart td) {
         ..shape = shape
         ..mover = new Movers.Group([
           new Movers.Rotater(yaw: x/10.0, pitch: z/10.0, deltaYaw: x/10.0, deltaPitch: z/10.0),
-          new Movers.Constant(new Math.Matrix4.translate(x, 0.0, z))
+          new Movers.Constant.translate(x, 0.0, z)
         ]);
       group.children.add(obj);
     }
@@ -91,12 +90,7 @@ void main() {
 
   // Setup the First person camera
   Movers.UserTranslator trans = new Movers.UserTranslator(input: td.userInput);
-  Movers.UserRotater rot = new Movers.UserRotater(input: td.userInput)
-    ..pitch.maximumLocation = Math.PI_2
-    ..pitch.minimumLocation = -Math.PI_2
-    ..pitch.dampening = 1.0
-    ..yaw.dampening   = 1.0
-    ..pitch.wrap = false;
+  Movers.UserRotater rot = new Movers.UserRotater.flat(input: td.userInput);
   rot.changed.add((ThreeDart.EventArgs args) {
     trans.velocityRotation = new Math.Matrix3.rotateY(-rot.yaw.location);
   });

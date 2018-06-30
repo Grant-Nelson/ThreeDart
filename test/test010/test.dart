@@ -28,7 +28,7 @@ void main() {
 
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
     ..lights.add(new Lights.Directional(
-          mover: new Movers.Constant(new Math.Matrix4.vectorTowards(1.0, 1.0, -3.0)),
+          mover: new Movers.Constant.vectorTowards(1.0, 1.0, -3.0),
           color: new Math.Color3.white()))
     ..ambient.color = new Math.Color3(0.0, 0.0, 1.0)
     ..diffuse.color = new Math.Color3(0.0, 1.0, 0.0)
@@ -39,7 +39,7 @@ void main() {
   td.scene = new Scenes.EntityPass()
     ..technique = tech
     ..children.add(obj)
-    ..camera.mover = new Movers.Constant(new Math.Matrix4.translate(0.0, 0.0, 5.0));
+    ..camera.mover = new Movers.Constant.translate(0.0, 0.0, 5.0);
 
   common.showFPS(td);
 }
