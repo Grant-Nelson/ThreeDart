@@ -1,7 +1,7 @@
-part of example1;
+part of craft;
 
 class World {
-  static const imgFile = "./examples/example1/blocks.png";
+  static const imgFile = "./examples/craft/blocks.png";
   static const maxSize = 192;
   
   Techniques.MaterialLight _matLit;

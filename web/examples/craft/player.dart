@@ -1,4 +1,4 @@
-part of example1;
+part of craft;
 
 class Player {
   static const int _startX = 0;
@@ -16,6 +16,7 @@ class Player {
   Movers.Group _mat;
   ThreeDart.UserKeyGroup _jump;
   bool _touchingGround;
+  int _selectedBlock;
 
   Techniques.Inspection _tech;
   ThreeDart.Entity _entity;
@@ -45,8 +46,8 @@ class Player {
       ..showAxis = true
       ..showWireFrame = true
       ..vectorScale = 1.0;
-    this._entity = new ThreeDart.Entity(shape: Shapes.cube(), tech: this._tech, mover: this._mat)
-      ..enabled = false;
+    this._entity = new ThreeDart.Entity(tech: this._tech, mover: this._mat);
+    this._selectedBlock = BlockType.Dirt;
   }
   
   Movers.Group get camera => this._camera;

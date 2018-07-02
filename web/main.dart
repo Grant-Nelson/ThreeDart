@@ -4,7 +4,7 @@
 library ThreeDart.web;
 
 import 'common/common.dart' as common;
-import 'examples/example1/example1.dart' as example1;
+import 'examples/craft/craft.dart' as craft;
 import 'tutorials/tutorials.dart' as tutorials;
 
 String get exampleNum => Uri.base.queryParameters['example']??"";
@@ -12,7 +12,7 @@ String get tutorialNum => Uri.base.queryParameters['tutorial']??"";
 
 void main() {
   try {
-    if (exampleNum == "1") example1.show();
+    if (exampleNum == "1") craft.show();
     else if (tutorialNum == "1") tutorials.tutorial1();
     else mainPage();
   } catch (ex) {

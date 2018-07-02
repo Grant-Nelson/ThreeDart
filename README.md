@@ -30,10 +30,6 @@ A SnowGremlin LLC Project
 
 ### Built With
 
-[![atom.io](resources/Atom.png)](https://atom.io/)
-
 [![www.dartlang.org](resources/Dart.png)](https://www.dartlang.org/)
-
-[![github.com](resources/GitHub.png)](https://github.com/)
 
 [![www.khronos.org/webgl](resources/WebGL.png)](https://www.khronos.org/webgl/)
