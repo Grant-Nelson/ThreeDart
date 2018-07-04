@@ -13,12 +13,12 @@ class Player {
   Movers.UserRotater _rot;
   World _world;
   Movers.Group _camera;
-  Movers.Group _mat;
-  ThreeDart.UserKeyGroup _jump;
+  Movers.Group _playerLoc;
+  Movers.Group _handLoc;
   bool _touchingGround;
   int _selectedBlock;
 
-  Techniques.Inspection _tech;
+  ThreeDart.Entity _blockHand;
   ThreeDart.Entity _entity;
 
   Player(ThreeDart.ThreeDart td, this._world) {
@@ -34,24 +34,37 @@ class Player {
     });
 
     this._camera = new Movers.Group([this._trans, this._rot]);
-    this._mat = new Movers.Group([new Movers.Invert(this._rot),
+    this._playerLoc = new Movers.Group([
+      new Movers.Invert(this._rot),
       this._trans, new Movers.Constant.scale(1.0, -1.0, 1.0)]);
-    this._jump = new ThreeDart.UserKeyGroup()
+    this._handLoc = new Movers.Group([
+      new Movers.Constant.translate(-0.5, -0.5, -0.5),
+      new Movers.Rotater(yaw: -0.1, deltaYaw: 0.0, deltaPitch: 0.1, deltaRoll: 0.0),
+      new Movers.Constant.translate(0.5, 0.5, 0.5),
+      new Movers.Constant.scale(1.0, -1.0, 1.0),
+      new Movers.Constant.scale(0.04, 0.04, 0.04),
+      new Movers.Constant.translate(-0.15, 0.06, -0.2),
+      this._playerLoc]);
+    
+    new ThreeDart.UserKeyGroup()
       ..addKey(ThreeDart.UserKey.spacebar)
       ..attach(td.userInput)
       ..keyDown.add(this._onJump);
     this._touchingGround = true;
 
-    this._tech = new Techniques.Inspection()
-      ..showAxis = true
-      ..showWireFrame = true
-      ..vectorScale = 1.0;
-    this._entity = new ThreeDart.Entity(tech: this._tech, mover: this._mat);
+    new ThreeDart.UserKeyGroup()
+      ..addKey(ThreeDart.UserKey.keyE)
+      ..addKey(ThreeDart.UserKey.keyQ)
+      ..attach(td.userInput)
+      ..keyDown.add(this._onBlockCycle);
+    this._blockHand = new ThreeDart.Entity(mover: this._handLoc);
+    this._entity = new ThreeDart.Entity(children: [this._blockHand]);
     this._selectedBlock = BlockType.Dirt;
+    this._updateHand();
   }
   
   Movers.Group get camera => this._camera;
-  Movers.Group get location => this._mat;
+  Movers.Group get location => this._playerLoc;
   ThreeDart.Entity get entity => this._entity;
 
   void goHome() {
@@ -71,6 +84,20 @@ class Player {
   void _onJump(ThreeDart.EventArgs args) {
     if (this._touchingGround)
       this._trans.offsetY.velocity = _jumpSpeed;
+  }
+
+  void _onBlockCycle(ThreeDart.EventArgs args) {
+    ThreeDart.KeyEventArgs keyArgs = args as ThreeDart.KeyEventArgs;
+    if (keyArgs.key.key == ThreeDart.UserKey.keyE) {
+      this._selectedBlock++;
+      if (this._selectedBlock > BlockType.Mushroom)
+        this._selectedBlock = BlockType.Dirt;
+    } else {
+      this._selectedBlock--;
+      if (this._selectedBlock < BlockType.Dirt)
+        this._selectedBlock = BlockType.Mushroom;
+    }
+    this._updateHand();
   }
 
   Math.Point3 _handleCollide(Math.Point3 prev, Math.Point3 loc) {
@@ -112,5 +139,11 @@ class Player {
     }
     
     return new Math.Point3(x, y, z);
+  }
+
+  void _updateHand() {
+    Shapes.Shape shape = new Shapes.Shape();
+    new Shaper(null).buildSingleBlock(shape, this._selectedBlock);
+    this._blockHand.shape = shape;
   }
 }

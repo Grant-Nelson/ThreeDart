@@ -79,11 +79,6 @@ class BlockType {
   /// Mushroom is a special model for the mushrooms
   static const int Mushroom = 19;
 
-  //====================================
-
-  /// Maximum block type value
-  static const int Max = 20;
-
   /// string gets the string for the given block type value.
   static String string(int value) {
     switch(value) {

@@ -41,7 +41,10 @@ class World {
 
   Generator get generator => this._gen;
   Player get player => this._player;
-  set player(Player player) => this._player = player;
+  set player(Player player) {
+    this._player = player;
+    this._player._entity.technique = this._matLit;
+  }
 
   ThreeDart.Entity get terrainGroup => this._terrainGroup;
   ThreeDart.Entity get waterGroup => this._waterGroup;

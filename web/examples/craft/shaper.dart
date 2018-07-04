@@ -3,27 +3,38 @@ part of craft;
 class Shaper {
   static const double _tmin = 15.0/93.0; // texture edge adjustment for mipmap padding
   static const double _tmax = 78.0/93.0;
+  static const int _maxBlock = 20; // number of columns in the texture
+  static const int _maxSides = 6; // number of rows in the texture
 
   static final Math.Point3 xAxis = new Math.Point3(1.0, 0.0, 0.0);
   static final Math.Point3 yAxis = new Math.Point3(0.0, 1.0, 0.0);
   static final Math.Point3 zAxis = new Math.Point3(0.0, 0.0, 1.0);
 
   Chunk _chunk;
+  double _offsetX;
+  double _offsetZ;
   
-  Shaper(this._chunk);
+  Shaper(this._chunk) {
+    this._offsetX = this._chunk?.x?.toDouble() ?? 0.0;
+    this._offsetZ = this._chunk?.z?.toDouble() ?? 0.0;
+  }
 
-  void _buildShapes(Shapes.Shape terrain, Shapes.Shape water, Shapes.Shape plants) {
+  void buildShapes(Shapes.Shape terrain, Shapes.Shape water, Shapes.Shape plants) {
     for (int x = Chunk.xSize - 1; x >= 0; x--) {
       for (int y = Chunk.ySize - 1; y >= 0; y--) {
         for (int z = Chunk.zSize - 1; z >= 0; z--) {
-          this._addInnerBlockToShape(terrain, water, plants, x, y, z);
+          int value = this._chunk.getBlock(x, y, z);
+          this._addInnerBlockToShape(terrain, water, plants, x, y, z, value);
         }
       }
     }
   }
 
-  void _addInnerBlockToShape(Shapes.Shape terrain, Shapes.Shape water, Shapes.Shape plants, int x, int y, int z) {
-    int value = this._chunk.getBlock(x, y, z);
+  void buildSingleBlock(Shapes.Shape shape, int value) {
+    this._addInnerBlockToShape(shape, shape, shape, 0, 0, 0, value);
+  }
+
+  void _addInnerBlockToShape(Shapes.Shape terrain, Shapes.Shape water, Shapes.Shape plants, int x, int y, int z, int value) {
     if (value == BlockType.Air) return;
     else if (value == BlockType.Water) this._addCubeToShape(water, x, y, z, value);
     else if (BlockType.open(value)) {
@@ -45,6 +56,7 @@ class Shaper {
   }
 
   bool _addFace(int value, int x, int y, int z) {
+    if (this._chunk == null) return true;
     if (y < 0) return false;
     if (y >= Chunk.ySize) return true;
     int neighbor = this._chunk.getBlock(x, y, z);
@@ -54,8 +66,8 @@ class Shaper {
   Shapes.Vertex _addVertex(Shapes.Shape shape, Math.Point3 loc, double tu, double tv) {
     return shape.vertices.addNew(
         type: Data.VertexType.Pos | Data.VertexType.Txt2D,
-        loc: new Math.Point3(loc.x + this._chunk.x.toDouble(), loc.y, loc.z + this._chunk.z.toDouble()),
-        txt2D: new Math.Point2((tu - 1.0)/BlockType.Max, tv/7.0));
+        loc: new Math.Point3(loc.x + this._offsetX, loc.y, loc.z + this._offsetZ),
+        txt2D: new Math.Point2((tu - 1.0)/_maxBlock, tv/_maxSides));
   }
 
   void _addQuad(Shapes.Shape shape, Math.Point3 loc, Math.Point3 left, Math.Point3 up, int value, int side, [bool twoSided = false]) {

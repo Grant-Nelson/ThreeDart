@@ -81,8 +81,7 @@ class Chunk {
     Shapes.Shape terrain = new Shapes.Shape();
     Shapes.Shape water = new Shapes.Shape();
     Shapes.Shape plants = new Shapes.Shape();
-    new Shaper(this)._buildShapes(terrain, water, plants);
-
+    new Shaper(this).buildShapes(terrain, water, plants);
     this._terrain.shape = terrain;
     this._water.shape = water;
     this._plants.shape = plants;
