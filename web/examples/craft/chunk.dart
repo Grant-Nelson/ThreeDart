@@ -58,14 +58,10 @@ class Chunk {
     return true;
   }
 
-  Chunk get left       => this._world.findChunk(this.x - xSize, this.z);
-  Chunk get frontLeft  => this._world.findChunk(this.x - xSize, this.z + zSize);
-  Chunk get front      => this._world.findChunk(this.x,         this.z + zSize);
-  Chunk get frontRight => this._world.findChunk(this.x + xSize, this.z + zSize);
-  Chunk get right      => this._world.findChunk(this.x + xSize, this.z);
-  Chunk get backRight  => this._world.findChunk(this.x + xSize, this.z - zSize);
-  Chunk get back       => this._world.findChunk(this.x,         this.z - zSize);
-  Chunk get backLeft   => this._world.findChunk(this.x - xSize, this.z - zSize);
+  Chunk get left  => this._world.findChunk(this.x - xSize, this.z);
+  Chunk get front => this._world.findChunk(this.x,         this.z + zSize);
+  Chunk get right => this._world.findChunk(this.x + xSize, this.z);
+  Chunk get back  => this._world.findChunk(this.x,         this.z - zSize);
 
   int topHit(int x, int z) {
     for (int y = ySize-1; y >= 0; y--) {

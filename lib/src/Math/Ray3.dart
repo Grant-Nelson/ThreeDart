@@ -61,6 +61,9 @@ class Ray3 {
   /// Gets the vector of this ray.
   Vector3 get vector => new Vector3(this.dx, this.dy, this.dz);
 
+  /// Creates a ray heading from the tip of this ray backwards to the origin.
+  Ray3 get reverse => new Ray3.fromVertex(this.end, -this.vector);
+
   /// Determines if the given [other] variable is a [Ray3] equal to this ray.
   ///
   /// The equality of the doubles is tested with the current [Comparer] method.

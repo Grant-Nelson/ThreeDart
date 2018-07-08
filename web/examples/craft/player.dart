@@ -17,8 +17,10 @@ class Player {
   Movers.Group _handLoc;
   bool _touchingGround;
   int _selectedBlock;
+  BlockInfo _highlight;
 
   ThreeDart.Entity _blockHand;
+  ThreeDart.Entity _blockHighlight;
   ThreeDart.Entity _entity;
 
   Player(ThreeDart.ThreeDart td, this._world) {
@@ -33,10 +35,12 @@ class Player {
       this._trans.velocityRotation = new Math.Matrix3.rotateY(-this._rot.yaw.location);
     });
 
-    this._camera = new Movers.Group([this._trans, this._rot]);
+    this._camera = new Movers.Group([this._trans, this._rot])
+      ..changed.add(this._updateHighlight);
     this._playerLoc = new Movers.Group([
       new Movers.Invert(this._rot),
       this._trans, new Movers.Constant.scale(1.0, -1.0, 1.0)]);
+    
     this._handLoc = new Movers.Group([
       new Movers.Constant.translate(-0.5, -0.5, -0.5),
       new Movers.Rotater(yaw: -0.1, deltaYaw: 0.0, deltaPitch: 0.1, deltaRoll: 0.0),
@@ -57,9 +61,12 @@ class Player {
       ..addKey(ThreeDart.UserKey.keyQ)
       ..attach(td.userInput)
       ..keyDown.add(this._onBlockCycle);
+    
     this._blockHand = new ThreeDart.Entity(mover: this._handLoc);
-    this._entity = new ThreeDart.Entity(children: [this._blockHand]);
+    this._blockHighlight = new ThreeDart.Entity();
+    this._entity = new ThreeDart.Entity(children: [this._blockHand, this._blockHighlight]);
     this._selectedBlock = BlockType.Dirt;
+    this._highlight = null;
     this._updateHand();
   }
   
@@ -139,6 +146,62 @@ class Player {
     }
     
     return new Math.Point3(x, y, z);
+  }
+
+  void _updateHighlight(ThreeDart.EventArgs _) {
+    Math.Matrix4 mat = this._playerLoc.matrix;
+    Math.Ray3 ray = new Math.Ray3.fromVertex(
+      mat.transPnt3(new Math.Point3.zero()),
+      mat.transVec3(new Math.Vector3(0.0, 0.0, -10.0)));
+    Math.Ray3 back = ray.reverse;
+
+    BlockInfo info = this._world.getBlock(ray.x, ray.y, ray.z);
+    while ((info != null) && (info.value == BlockType.Air)) {
+      
+      double x = info.x.toDouble()+info.chunk.x;
+      double y = info.y.toDouble();
+      double z = info.z.toDouble()+info.chunk.z;
+      Math.Region3 region = new Math.Region3(x, y, z, 1.0, 1.0, 1.0);
+
+      Math.IntersectionRayRegion3 inter = region.rayIntersection(back);
+      if (inter == null) break;
+      else if (inter.region == Math.HitRegion.XNeg) x -= 0.9;
+      else if (inter.region == Math.HitRegion.XPos) x += 1.1;
+      else if (inter.region == Math.HitRegion.YNeg) y -= 0.9;
+      else if (inter.region == Math.HitRegion.YPos) y += 1.1; 
+      else if (inter.region == Math.HitRegion.ZNeg) z -= 0.9;
+      else if (inter.region == Math.HitRegion.ZPos) z += 1.1;
+      else break;
+
+      info = this._world.getBlock(x, y, z);
+    }
+    if ((info != null) && (info.value == BlockType.Air)) info = null;
+    this._highlight = info;
+
+    if (this._highlight == null) {
+      this._blockHighlight.enabled = false;
+    } else {
+      double x = this._highlight.x.toDouble()+this._highlight.chunk.x;
+      double y = this._highlight.y.toDouble();
+      double z = this._highlight.z.toDouble()+this._highlight.chunk.z;
+
+      Shapes.Shape shape = new Shapes.Shape();
+      Shapes.Vertex pnt0 = shape.vertices.addNewLoc(x,     y,     z);
+      Shapes.Vertex pnt1 = shape.vertices.addNewLoc(x+1.0, y,     z);
+      Shapes.Vertex pnt2 = shape.vertices.addNewLoc(x+1.0, y+1.0, z);
+      Shapes.Vertex pnt3 = shape.vertices.addNewLoc(x,     y+1.0, z);
+      Shapes.Vertex pnt4 = shape.vertices.addNewLoc(x,     y,     z+1.0);
+      Shapes.Vertex pnt5 = shape.vertices.addNewLoc(x+1.0, y,     z+1.0);
+      Shapes.Vertex pnt6 = shape.vertices.addNewLoc(x+1.0, y+1.0, z+1.0);
+      Shapes.Vertex pnt7 = shape.vertices.addNewLoc(x,     y+1.0, z+1.0);
+
+      shape.lines.addLines([
+        pnt0, pnt1, pnt1, pnt2, pnt2, pnt3, pnt3, pnt0,
+        pnt4, pnt5, pnt5, pnt6, pnt6, pnt7, pnt7, pnt4,
+        pnt0, pnt4, pnt1, pnt5, pnt2, pnt6, pnt3, pnt7]);
+      this._blockHighlight.shape = shape;
+      this._blockHighlight.enabled = true;
+    }
   }
 
   void _updateHand() {

@@ -9,6 +9,7 @@ part 'Color3.dart';
 part 'Color4.dart';
 part 'Comparer.dart';
 part 'HitRegion.dart';
+part 'Intersection.dart';
 part 'Matrix2.dart';
 part 'Matrix3.dart';
 part 'Matrix4.dart';
