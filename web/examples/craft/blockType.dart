@@ -50,9 +50,12 @@ class BlockType {
   
   /// Transparent water block
   static const int Water = 12;
+
+  /// Selection is the boarder to put around a highlighted block
+  static const int Selection = 20;
   
   /// Invisible wall used to block players from leaving the island
-  static const int Boundary = 20;
+  static const int Boundary = 21;
   
   //====================================
   // Open blocks
@@ -102,6 +105,8 @@ class BlockType {
       case BlueFlower:  return "blueFlower";
       case RedFlower:   return "redFlower";
       case Mushroom:    return "mushroom";
+      case Boundary:    return "boundary";
+      case Selection:   return "selection";
     }
     return "undefined";
   }

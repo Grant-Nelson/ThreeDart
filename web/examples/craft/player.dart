@@ -8,6 +8,7 @@ class Player {
   static const double _fallSpeed = 60.0;
   static const double _pad = 0.25;
   static const double _jumpSpeed = 30.0;
+  static const double _highlightDistance = 4.0;
 
   Movers.UserTranslator _trans;
   Movers.UserRotater _rot;
@@ -152,7 +153,7 @@ class Player {
     Math.Matrix4 mat = this._playerLoc.matrix;
     Math.Ray3 ray = new Math.Ray3.fromVertex(
       mat.transPnt3(new Math.Point3.zero()),
-      mat.transVec3(new Math.Vector3(0.0, 0.0, -10.0)));
+      mat.transVec3(new Math.Vector3(0.0, 0.0, -_highlightDistance)));
     Math.Ray3 back = ray.reverse;
 
     BlockInfo info = this._world.getBlock(ray.x, ray.y, ray.z);
@@ -186,6 +187,9 @@ class Player {
       double z = this._highlight.z.toDouble()+this._highlight.chunk.z;
 
       Shapes.Shape shape = new Shapes.Shape();
+      new Shaper(null, this._highlight.chunk.x, this._highlight.chunk.z)
+        .buildSingleBlock(shape, BlockType.Selection, this._highlight.x, this._highlight.y, this._highlight.z);
+
       Shapes.Vertex pnt0 = shape.vertices.addNewLoc(x,     y,     z);
       Shapes.Vertex pnt1 = shape.vertices.addNewLoc(x+1.0, y,     z);
       Shapes.Vertex pnt2 = shape.vertices.addNewLoc(x+1.0, y+1.0, z);
@@ -195,10 +199,13 @@ class Player {
       Shapes.Vertex pnt6 = shape.vertices.addNewLoc(x+1.0, y+1.0, z+1.0);
       Shapes.Vertex pnt7 = shape.vertices.addNewLoc(x,     y+1.0, z+1.0);
 
+      // TODO: Fix rendering and fix null when out-of-bounds
+
       shape.lines.addLines([
         pnt0, pnt1, pnt1, pnt2, pnt2, pnt3, pnt3, pnt0,
         pnt4, pnt5, pnt5, pnt6, pnt6, pnt7, pnt7, pnt4,
         pnt0, pnt4, pnt1, pnt5, pnt2, pnt6, pnt3, pnt7]);
+        
       this._blockHighlight.shape = shape;
       this._blockHighlight.enabled = true;
     }

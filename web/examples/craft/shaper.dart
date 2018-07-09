@@ -14,9 +14,9 @@ class Shaper {
   double _offsetX;
   double _offsetZ;
   
-  Shaper(this._chunk) {
-    this._offsetX = this._chunk?.x?.toDouble() ?? 0.0;
-    this._offsetZ = this._chunk?.z?.toDouble() ?? 0.0;
+  Shaper(this._chunk, [int offsetX = 0, int offsetZ = 0]) {
+    this._offsetX = (this._chunk?.x ?? offsetX).toDouble();
+    this._offsetZ = (this._chunk?.z ?? offsetZ).toDouble();
   }
 
   void buildShapes(Shapes.Shape terrain, Shapes.Shape water, Shapes.Shape plants) {
@@ -30,8 +30,8 @@ class Shaper {
     }
   }
 
-  void buildSingleBlock(Shapes.Shape shape, int value) {
-    this._addInnerBlockToShape(shape, shape, shape, 0, 0, 0, value);
+  void buildSingleBlock(Shapes.Shape shape, int value, [int x = 0, int y = 0, int z = 0]) {
+    this._addInnerBlockToShape(shape, shape, shape, x, y, z, value);
   }
 
   void _addInnerBlockToShape(Shapes.Shape terrain, Shapes.Shape water, Shapes.Shape plants, int x, int y, int z, int value) {
@@ -42,7 +42,8 @@ class Shaper {
       else if (value == BlockType.Fern) this._addFernToShape(plants, x, y, z);
       else if (value == BlockType.Mushroom) this._addMushroomToShape(plants, x, y, z);
       else this._addPlantToShape(plants, x, y, z, value);
-    } else if (BlockType.solid(value)) this._addCubeToShape(terrain, x, y, z, value);    
+    } else if (BlockType.solid(value)) this._addCubeToShape(terrain, x, y, z, value);
+    else if (value == BlockType.Selection) this._addCubeToShape(terrain, x, y, z, value);
   }
 
   void _addCubeToShape(Shapes.Shape shape, int x, int y, int z, int value) {
