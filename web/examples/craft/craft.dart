@@ -1,7 +1,7 @@
 // Copyright (c) 2016, SnowGremlin. All rights reserved. Use of this source code
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
-library example1;
+library craft;
 
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 import 'package:ThreeDart/Shapes.dart' as Shapes;
@@ -25,6 +25,7 @@ part 'blockType.dart';
 part 'chunk.dart';
 part 'generator.dart';
 part 'player.dart';
+part 'shaper.dart';
 part 'world.dart';
 
 void show() {

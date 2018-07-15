@@ -1,4 +1,4 @@
-part of example1;
+part of craft;
 
 /// BlockType is the enums for all the voxel block types
 class BlockType {
@@ -50,9 +50,12 @@ class BlockType {
   
   /// Transparent water block
   static const int Water = 12;
+
+  /// Selection is the boarder to put around a highlighted block
+  static const int Selection = 20;
   
   /// Invisible wall used to block players from leaving the island
-  static const int Boundary = 20;
+  static const int Boundary = 21;
   
   //====================================
   // Open blocks
@@ -79,11 +82,6 @@ class BlockType {
   /// Mushroom is a special model for the mushrooms
   static const int Mushroom = 19;
 
-  //====================================
-
-  /// Maximum block type value
-  static const int Max = 20;
-
   /// string gets the string for the given block type value.
   static String string(int value) {
     switch(value) {
@@ -107,6 +105,8 @@ class BlockType {
       case BlueFlower:  return "blueFlower";
       case RedFlower:   return "redFlower";
       case Mushroom:    return "mushroom";
+      case Boundary:    return "boundary";
+      case Selection:   return "selection";
     }
     return "undefined";
   }

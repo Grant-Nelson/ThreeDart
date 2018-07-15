@@ -146,6 +146,82 @@ class Region2 {
     return new Point2(x, y);
   }
 
+  /// Determines the intersection between the given [ray] and this region.
+  /// Will return nil if there is no intersection.
+  IntersectionRayRegion2 rayIntersection(Ray2 ray) {
+    final double maxx = this.x + this.dx;
+    final double maxy = this.y + this.dy;
+
+    // Check for point inside box, trivial reject, and determine
+    // parametric distance to each front face
+    bool inside = true;
+    double xt, xn, xp;
+    HitRegion xregion;
+    if (ray.x < this.x) {
+      xt = this.x - ray.x;
+      if (xt > ray.dx) return null;
+      xt /= ray.dx;
+      inside = false;
+      xn = -1.0;
+      xp = this.x;
+      xregion = HitRegion.XNeg;
+    } else {
+      if (ray.x > maxx) {
+        xt = maxx - ray.x;
+        if (xt < ray.dx) return null;
+        xt /= ray.dx;
+        inside = false;
+        xn = 1.0;
+        xp = maxx;
+        xregion = HitRegion.XPos;
+      } else {
+        xt = -1.0;
+      }
+    }
+
+    double yt, yn, yp;
+    HitRegion yregion;
+    if (ray.y < this.y) {
+      yt = this.y - ray.y;
+      if (yt > ray.dy) return null;
+      yt /= ray.dy;
+      inside = false;
+      yn = -1.0;
+      yp = this.y;
+      yregion = HitRegion.YNeg;
+    } else {
+      if (ray.y > maxy) {
+        yt = maxy - ray.y;
+        if (yt < ray.dy) return null;
+        yt /= ray.dy;
+        inside = false;
+        yn = 1.0;
+        yp = maxy;
+        yregion = HitRegion.YPos;
+      } else {
+        yt = -1.0;
+      }
+    }
+
+    if (inside) {
+      return new IntersectionRayRegion2(ray.start, -ray.vector.normal(), 0.0, HitRegion.Inside);
+    }
+
+    // The farthest plane is the plane of intersection.
+    if (yt > xt) {
+      // intersect with xz plane
+      double x = ray.x + ray.dx*yt;
+      if (x < this.x || x > maxx) return null;
+      return new IntersectionRayRegion2(new Point2(x, yp), new Vector2(0.0, yn), yt, yregion);
+
+    } else {
+      // intersect with yz plane
+      double y = ray.y + ray.dy*xt;
+      if (y < this.y || y > maxy) return null;
+      return new IntersectionRayRegion2(new Point2(xp, y), new Vector2(xn, 0.0), xt, xregion);
+    }
+  }
+
   /// Determines if the given point is contained inside this region.
   bool contains(Point2 a) {
     if (a.x < this.x) return false;

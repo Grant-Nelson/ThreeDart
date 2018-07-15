@@ -172,6 +172,118 @@ class Region3 {
     return region;
   }
 
+  /// Determines the intersection between the given [ray] and this region.
+  /// Will return nil if there is no intersection.
+  IntersectionRayRegion3 rayIntersection(Ray3 ray) {
+    final double maxx = this.x + this.dx;
+    final double maxy = this.y + this.dy;
+    final double maxz = this.z + this.dz;
+
+    // Check for point inside box, trivial reject, and determine
+    // parametric distance to each front face
+    bool inside = true;
+    double xt, xn, xp;
+    HitRegion xregion;
+    if (ray.x < this.x) {
+      xt = this.x - ray.x;
+      if (xt > ray.dx) return null;
+      xt /= ray.dx;
+      inside = false;
+      xn = -1.0;
+      xp = this.x;
+      xregion = HitRegion.XNeg;
+    } else {
+      if (ray.x > maxx) {
+        xt = maxx - ray.x;
+        if (xt < ray.dx) return null;
+        xt /= ray.dx;
+        inside = false;
+        xn = 1.0;
+        xp = maxx;
+        xregion = HitRegion.XPos;
+      } else {
+        xt = -1.0;
+      }
+    }
+
+    double yt, yn, yp;
+    HitRegion yregion;
+    if (ray.y < this.y) {
+      yt = this.y - ray.y;
+      if (yt > ray.dy) return null;
+      yt /= ray.dy;
+      inside = false;
+      yn = -1.0;
+      yp = this.y;
+      yregion = HitRegion.YNeg;
+    } else {
+      if (ray.y > maxy) {
+        yt = maxy - ray.y;
+        if (yt < ray.dy) return null;
+        yt /= ray.dy;
+        inside = false;
+        yn = 1.0;
+        yp = maxy;
+        yregion = HitRegion.YPos;
+      } else {
+        yt = -1.0;
+      }
+    }
+
+    double zt, zn, zp;
+    HitRegion zregion;
+    if (ray.z < this.z) {
+      zt = this.z - ray.z;
+      if (zt > ray.dz) return null;
+      zt /= ray.dz;
+      inside = false;
+      zn = -1.0;
+      zp = this.z;
+      zregion = HitRegion.ZNeg;
+    } else {
+      if (ray.z > maxz) {
+        zt = maxz - ray.z;
+        if (zt < ray.dz) return null;
+        zt /= ray.dz;
+        inside = false;
+        zn = 1.0;
+        zp = maxz;
+        zregion = HitRegion.ZPos;
+      } else {
+        zt = -1.0;
+      }
+    }
+
+    if (inside) {
+      return new IntersectionRayRegion3(ray.start, -ray.vector.normal(), 0.0, HitRegion.Inside);
+    }
+
+    // The farthest plane is the plane of intersection.
+    int which = (yt > xt)? ((zt > yt)? 2: 1): ((zt > xt)? 2: 0);
+    switch (which) {
+    case 0: // intersect with yz plane
+      double y = ray.y + ray.dy*xt;
+      if (y < this.y || y > maxy) return null;
+      double z = ray.z + ray.dz*xt;
+      if (z < this.z || z > maxz) return null;
+      return new IntersectionRayRegion3(new Point3(xp, y, z), new Vector3(xn, 0.0, 0.0), xt, xregion);
+
+    case 1: // intersect with xz plane
+      double x = ray.x + ray.dx*yt;
+      if (x < this.x || x > maxx) return null;
+      double z = ray.z + ray.dz*yt;
+      if (z < this.z || z > maxz) return null;
+      return new IntersectionRayRegion3(new Point3(x, yp, z), new Vector3(0.0, yn, 0.0), yt, yregion);
+
+    default: // 2, intersect with xy plane
+      double x = ray.x + ray.dx*zt;
+      if (x < this.x || x > maxx) return null;
+      double y = ray.y + ray.dy*zt;
+      if (y < this.y || y > maxy) return null;
+      return new IntersectionRayRegion3(new Point3(x, y, zp), new Vector3(0.0, 0.0, zn), zt, zregion);
+    }
+  }
+
   /// Determines if the given point is contained inside this region.
   bool contains(Point3 a) {
     if (a.x < this.x) return false;

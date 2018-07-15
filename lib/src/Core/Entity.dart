@@ -158,7 +158,6 @@ class Entity implements Movers.Movable, Changable {
   set shape(Shapes.Shape shape) {
     if (this._shape != shape) {
       Shapes.Shape oldShape = this._shape;
-      Data.ShapeBuilder oldBuilder = this._shapeBuilder;
       this._shape = shape;
       this._shapeBuilder = shape;
       this.clearCache();

@@ -1,4 +1,4 @@
-part of example1;
+part of craft;
 
 class Generator {
   World _world;

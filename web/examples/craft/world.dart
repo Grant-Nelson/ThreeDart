@@ -1,8 +1,9 @@
-part of example1;
+part of craft;
 
 class World {
-  static const imgFile = "./examples/example1/blocks.png";
-  static const maxSize = 192;
+  static const imgFile = "./examples/craft/blocks.png";
+  static const maxXSize = Chunk.xSize*5;
+  static const maxZSize = Chunk.zSize*5;
   
   Techniques.MaterialLight _matLit;
   ThreeDart.Entity _terrainGroup;
@@ -31,8 +32,8 @@ class World {
     this._gen = new Generator(this);
     this._chunks = new List<Chunk>();
 
-    for (int x = -maxSize; x < maxSize; x += Chunk.xSize) {
-      for (int z = -maxSize; z < maxSize; z += Chunk.zSize) {
+    for (int x = -maxXSize; x < maxXSize; x += Chunk.xSize) {
+      for (int z = -maxZSize; z < maxZSize; z += Chunk.zSize) {
         this.insertChunk(x, z);
       }
     }
@@ -41,7 +42,10 @@ class World {
 
   Generator get generator => this._gen;
   Player get player => this._player;
-  set player(Player player) => this._player = player;
+  set player(Player player) {
+    this._player = player;
+    this._player._entity.technique = this._matLit;
+  }
 
   ThreeDart.Entity get terrainGroup => this._terrainGroup;
   ThreeDart.Entity get waterGroup => this._waterGroup;
@@ -67,7 +71,7 @@ class World {
     if (bx < 0) bx += Chunk.xSize;
     if (bz < 0) bz += Chunk.zSize;
 
-    return new BlockInfo(bx, by, bz, chunk);
+    return new BlockInfo(bx, by, bz, cx, cz, chunk);
   }
 
   void insertChunk(int x, int z) {
