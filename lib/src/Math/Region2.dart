@@ -204,7 +204,7 @@ class Region2 {
     }
 
     if (inside) {
-      return new IntertectionRayRegion2(ray.start, -ray.vector.normal(), 0.0, HitRegion.Inside);
+      return new IntersectionRayRegion2(ray.start, -ray.vector.normal(), 0.0, HitRegion.Inside);
     }
 
     // The farthest plane is the plane of intersection.
@@ -212,13 +212,13 @@ class Region2 {
       // intersect with xz plane
       double x = ray.x + ray.dx*yt;
       if (x < this.x || x > maxx) return null;
-      return new IntertectionRayRegion2(new Point2(x, yp), new Vector2(0.0, yn), yt, yregion);
+      return new IntersectionRayRegion2(new Point2(x, yp), new Vector2(0.0, yn), yt, yregion);
 
     } else {
       // intersect with yz plane
       double y = ray.y + ray.dy*xt;
       if (y < this.y || y > maxy) return null;
-      return new IntertectionRayRegion2(new Point2(xp, y), new Vector2(xn, 0.0), xt, xregion);
+      return new IntersectionRayRegion2(new Point2(xp, y), new Vector2(xn, 0.0), xt, xregion);
     }
   }
 

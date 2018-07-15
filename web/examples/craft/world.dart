@@ -2,7 +2,7 @@ part of craft;
 
 class World {
   static const imgFile = "./examples/craft/blocks.png";
-  static const maxSize = 192;
+  static const maxSize = 96;//192;
   
   Techniques.MaterialLight _matLit;
   ThreeDart.Entity _terrainGroup;
@@ -70,7 +70,7 @@ class World {
     if (bx < 0) bx += Chunk.xSize;
     if (bz < 0) bz += Chunk.zSize;
 
-    return new BlockInfo(bx, by, bz, chunk);
+    return new BlockInfo(bx, by, bz, cx, cz, chunk);
   }
 
   void insertChunk(int x, int z) {

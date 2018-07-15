@@ -2,11 +2,38 @@ part of ThreeDart.Core;
 
 /// A keyboard key press or release value with modifiers.
 class UserKey {
-  static const int leftArrow  = 37;
-  static const int upArrow    = 38;
-  static const int rightArrow = 39;
-  static const int downArrow  = 40;
-  static const int spacebar   = 32;
+  static const int backspace    = 8;
+  static const int tab          = 9;
+  static const int enter        = 13;
+  static const int spacebar     = 32;
+  static const int leftArrow    = 37;
+  static const int upArrow      = 38;
+  static const int rightArrow   = 39;
+  static const int downArrow    = 40;
+  static const int backSlash    = 120;
+  static const int semicolon    = 186;
+  static const int equal        = 187;
+  static const int comma        = 188;
+  static const int minus        = 189;
+  static const int period       = 190;
+  static const int slash        = 191;
+  static const int backQuote    = 192;
+  static const int bracketLeft  = 219;
+  static const int bracketRight = 221;
+  static const int quote        = 222;
+
+  static const int keyF1  = 112;
+  static const int keyF2  = 113;
+  static const int keyF3  = 114;
+  static const int keyF4  = 115;
+  static const int keyF5  = 116;
+  static const int keyF6  = 117;
+  static const int keyF7  = 118;
+  static const int keyF8  = 119;
+  static const int keyF9  = 120;
+  static const int keyF10 = 121;
+  static const int keyF11 = 122;
+  static const int keyF12 = 123;
 
   static const int keyA = 65;
   static const int keyB = 66;
