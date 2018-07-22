@@ -6,12 +6,12 @@ library craft;
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 import 'package:ThreeDart/Shapes.dart' as Shapes;
 import 'package:ThreeDart/Movers.dart' as Movers;
-import 'package:ThreeDart/Data.dart' as Data;
 import 'package:ThreeDart/Math.dart' as Math;
 import 'package:ThreeDart/Textures.dart' as Textures;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Views.dart' as Views;
+import 'package:ThreeDart/Data.dart' as Data;
 import 'package:OpenSimplexNoiseDart/OpenSimplexNoise.dart' as simplex;
 
 import 'dart:math' as math;
