@@ -206,37 +206,37 @@ class UserInput {
 
   /// The mouse down event.
   Event get mouseDown {
-    if (this._mouseDown == null) this._mouseDown = new Event();
+    this._mouseDown ??= new Event();
     return this._mouseDown;
   }
 
   /// The mouse up event.
   Event get mouseUp {
-    if (this._mouseUp == null) this._mouseUp = new Event();
+    this._mouseUp ??= new Event();
     return this._mouseUp;
   }
 
   /// The mouse move event.
   Event get mouseMove {
-    if (this._mouseMove == null) this._mouseMove = new Event();
+    this._mouseMove ??= new Event();
     return this._mouseMove;
   }
 
   /// The mouse wheel move event.
   Event get mouseWheel {
-    if (this._mouseWheel == null) this._mouseWheel = new Event();
+    this._mouseWheel ??= new Event();
     return this._mouseWheel;
   }
 
   /// The keyboard key released event.
   Event get keyUp {
-    if (this._keyUp == null) this._keyUp = new Event();
+    this._keyUp ??= new Event();
     return this._keyUp;
   }
 
   /// The keyboard key pressed event.
   Event get keyDown {
-    if (this._keyDown == null) this._keyDown = new Event();
+    this._keyDown ??= new Event();
     return this._keyDown;
   }
 

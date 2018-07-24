@@ -26,7 +26,7 @@ class Matrix4Stack implements Changable {
 
   /// The event emitted when the stack has changed.
   Event get changed {
-    if (this._changed == null) this._changed = new Event();
+    this._changed ??= new Event();
     return this._changed;
   }
 

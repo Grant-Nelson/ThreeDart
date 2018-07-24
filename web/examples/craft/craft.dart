@@ -24,6 +24,7 @@ part 'blockInfo.dart';
 part 'blockType.dart';
 part 'chunk.dart';
 part 'generator.dart';
+part 'materials.dart';
 part 'player.dart';
 part 'shaper.dart';
 part 'world.dart';
@@ -40,11 +41,10 @@ void show() {
 
   Scenes.EntityPass scene = new Scenes.EntityPass()
     ..onPreUpdate.add(world.update)
-    ..children.add(world.terrainGroup)
-    ..children.add(world.waterGroup)
-    ..children.add(world.plantsGroup)
+    ..children.add(world.entity)
     ..children.add(player.entity)
     ..camera.mover = player.camera;
+
   world.player = player;
   // Set background color to sky blue
   (scene.target as Views.FrontTarget).color = new Math.Color4(0.576, 0.784, 0.929);

@@ -13,13 +13,14 @@ class Player {
   Movers.UserTranslator _trans;
   Movers.UserRotater _rot;
   World _world;
+  bool _touchingGround;
+  int _selectedBlock;
+  BlockInfo _highlight;
+
   Movers.Group _camera;
   Movers.Group _playerLoc;
   Movers.Group _handLoc;
   Movers.Group _crossHairLoc;
-  bool _touchingGround;
-  int _selectedBlock;
-  BlockInfo _highlight;
 
   ThreeDart.Entity _crossHairs;
   ThreeDart.Entity _blockHand;
@@ -239,8 +240,8 @@ class Player {
       this._blockHighlight.enabled = false;
     } else {
       Shapes.Shape shape = new Shapes.Shape();
-      new Shaper(null, this._highlight.chunkX, this._highlight.chunkZ, 1.1, true)
-        .buildSingleBlock(shape, BlockType.Selection, this._highlight.x, this._highlight.y, this._highlight.z);
+      // new Shaper(null, this._highlight.chunkX, this._highlight.chunkZ, 1.1, true)
+      //   .buildSingleBlock(shape, BlockType.Selection, this._highlight.x, this._highlight.y, this._highlight.z);
       this._blockHighlight.shape = shape;
       this._blockHighlight.enabled = true;
     }
@@ -248,7 +249,7 @@ class Player {
 
   void _updateHand() {
     Shapes.Shape shape = new Shapes.Shape();
-    new Shaper(null).buildSingleBlock(shape, this._selectedBlock);
+    //new Shaper(null).buildSingleBlock(shape, this._selectedBlock);
     this._blockHand.shape = shape;
   }
 }

@@ -43,7 +43,7 @@ class Event {
   /// The event will not be emitted if it is currently suspended.
   /// The method will return after each event handler has returned.
   void emit([EventArgs args = null]) {
-    if (args == null) args = new EventArgs(null);
+    args ??= new EventArgs(null);
     if (this.suspended) {
       if (!this.pending) this._pendingArgs = args;
     } else {
