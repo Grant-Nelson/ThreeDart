@@ -11,19 +11,19 @@ class Chunk {
   final int z;
   World _world;
   data.Uint8List _data;
-  Shaper _shaper;
+  BlockShaper _shaper;
   bool _needUpdate;
 
   Chunk(this.x, this.z, World world) {
     this._world = world;
     this._data = new data.Uint8List(_dataLength)
       ..fillRange(0, _dataLength, BlockType.Air);
-    this._shaper = new Shaper(this._world.materials);
+    this._shaper = new BlockShaper(this._world.shaper);
     this._needUpdate = true;
   }
     
   String toString() => "chunk(${x}, ${z})";
-  Shaper get shaper => this._shaper;
+  BlockShaper get shaper => this._shaper;
 
   bool get needUpdate => this._needUpdate;
   set needUpdate(bool update) => this._needUpdate = update;
@@ -72,7 +72,7 @@ class Chunk {
     Math.Region2 aabb = new Math.Region2(this.x.toDouble(), this.z.toDouble(), xSize.toDouble(), zSize.toDouble());
     Math.Point2 nearLoc = aabb.nearestPoint(loc);
     if (nearLoc.distance2(loc) < 100.0) {
-      this._shaper.entity.enabled = true;
+      this._shaper.enabled = true;
       return;
     }
 
@@ -82,13 +82,13 @@ class Chunk {
 
     double length = toNear.length();
     if (length > _maxDrawDist) {
-      this._shaper.entity.enabled = false;
+      this._shaper.enabled = false;
       return;
     }
 
     toNear = toNear/length;
     double dot = forward.dot(toNear);
     bool enabled = dot > 0.0;
-    this._shaper.entity.enabled = enabled;
+    this._shaper.enabled = enabled;
   }
 }

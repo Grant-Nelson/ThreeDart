@@ -1,27 +1,23 @@
 part of craft;
 
 class World {
-  static const maxXSize = Chunk.xSize;
-  static const maxZSize = Chunk.zSize;
+  static const maxXSize = Chunk.xSize*8;
+  static const maxZSize = Chunk.zSize*8;
   
   Techniques.MaterialLight _matLit;
-  Materials _mats;
+  WorldShaper _shaper;
   Generator _gen;
   List<Chunk> _chunks;
   Player _player;
-  ThreeDart.Entity _entity;
 
   World(ThreeDart.ThreeDart td) {
-    this._mats = new Materials(td);
+    this._shaper = new WorldShaper(td);
     this._gen = new Generator(this);
     this._chunks = new List<Chunk>();
-    this._entity = new ThreeDart.Entity(name: "world");
 
     for (int x = -maxXSize; x < maxXSize; x += Chunk.xSize) {
       for (int z = -maxZSize; z < maxZSize; z += Chunk.zSize) {
-        Chunk chunk = new Chunk(x, z, this);
-        this._chunks.add(chunk);
-        this.entity.children.add(chunk.shaper.entity);
+        this._chunks.add(new Chunk(x, z, this));
       }
     }
     this._gen.fillWorld();
@@ -34,9 +30,7 @@ class World {
     this._player._entity.technique = this._matLit;
   }
 
-
-  ThreeDart.Entity get entity => this._entity;
-  Materials get materials => this._mats;
+  WorldShaper get shaper => this._shaper;
 
   Chunk findChunk(int x, int z) {
     for (Chunk chunk in this._chunks) {

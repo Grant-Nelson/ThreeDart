@@ -5,6 +5,7 @@ library craft;
 
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 import 'package:ThreeDart/Shapes.dart' as Shapes;
+import 'package:ThreeDart/Lights.dart' as Lights;
 import 'package:ThreeDart/Movers.dart' as Movers;
 import 'package:ThreeDart/Math.dart' as Math;
 import 'package:ThreeDart/Textures.dart' as Textures;
@@ -21,13 +22,13 @@ import 'dart:async';
 import '../../common/common.dart' as common;
 
 part 'blockInfo.dart';
+part 'blockShaper.dart';
 part 'blockType.dart';
 part 'chunk.dart';
 part 'generator.dart';
-part 'materials.dart';
 part 'player.dart';
-part 'shaper.dart';
 part 'world.dart';
+part 'worldShaper.dart';
 
 void show() {
   new common.ShellPage("3Dart Craft")
@@ -41,9 +42,11 @@ void show() {
 
   Scenes.EntityPass scene = new Scenes.EntityPass()
     ..onPreUpdate.add(world.update)
-    ..children.add(world.entity)
     ..children.add(player.entity)
     ..camera.mover = player.camera;
+
+  for (ThreeDart.Entity entity in world.shaper.entities)
+    scene.children.add(entity);
 
   world.player = player;
   // Set background color to sky blue

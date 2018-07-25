@@ -13,77 +13,71 @@ class BlockType {
   
   /// Transparent water block
   static const int Water = 1;
-
-  /// Selection is the boarder to put around a highlighted block
-  static const int Selection = 2;
   
   /// Invisible wall used to block players from leaving the island
-  static const int Boundary = 3;
+  static const int Boundary = 2;
 
   //====================================
   // Solid blocks
   //====================================
   
-  /// Test block used for debugging texturing
-  static const int Test = 4;
-
   /// Brown on all sides dirt block
-  static const int Dirt = 5;
+  static const int Dirt = 100;
 
   /// Turf block has grass turf on the top of dirt
-  static const int Turf = 6;
+  static const int Turf = 101;
 
   /// Basic grey rock block
-  static const int Rock = 7;
+  static const int Rock = 102;
 
   /// Off-white sand block beside water
-  static const int Sand = 8;
+  static const int Sand = 103;
   
   /// Dry leaves is turf with some leaves on it
-  static const int DryLeaves = 9;
+  static const int DryLeaves = 104;
 
   /// Trunk block of a tree
-  static const int Trunk = 10;
+  static const int Trunk = 105;
   
   /// Block of grey bricks
-  static const int Brick = 11;
+  static const int Brick = 106;
   
   /// Red reflective solid block, like ruby
-  static const int RedShine = 12;
+  static const int RedShine = 107;
   
   /// White reflective solid block, like silver
-  static const int WhiteShine = 13;
+  static const int WhiteShine = 108;
 
   /// Yellow reflective solid block, like gold
-  static const int YellowShine = 14;
+  static const int YellowShine = 109;
 
   /// Black reflective solid block, like obsidian
-  static const int BlackShine = 15;
+  static const int BlackShine = 110;
+
+  /// A block of leaves on the top of the tree
+  static const int Leaves = 111;
   
   //====================================
   // Open blocks
   //====================================
 
-  /// A block of leaves on the top of the tree
-  static const int Leaves = 16;
-
   /// Grass is an alpha textured plant for grass
-  static const int Grass = 17;
+  static const int Grass = 200;
   
   /// Fern is an alpha textured plant for a fern
-  static const int Fern = 18;
+  static const int Fern = 201;
   
   /// Flowers is an alpha textured plant the small white flower
-  static const int WhiteFlower = 19;
+  static const int WhiteFlower = 202;
   
   /// Flowers is an alpha textured plant the blue tuffs flower 
-  static const int BlueFlower = 20;
+  static const int BlueFlower = 203;
 
   /// Flowers is an alpha textured plant the red flower
-  static const int RedFlower = 21;
+  static const int RedFlower = 204;
 
   /// Mushroom is a special model for the mushrooms
-  static const int Mushroom = 22;
+  static const int Mushroom = 205;
 
   /// string gets the string for the given block type value.
   static String string(int value) {
@@ -91,8 +85,7 @@ class BlockType {
       case Air:         return "air";
       case Water:       return "water";
       case Boundary:    return "boundary";
-      case Selection:   return "selection";
-      case Test:        return "test";
+      
       case Dirt:        return "dirt";
       case Turf:        return "turf";
       case Rock:        return "rock";
@@ -105,6 +98,7 @@ class BlockType {
       case YellowShine: return "yellowShine";
       case BlackShine:  return "blackShine";
       case Leaves:      return "leaves";
+
       case Grass:       return "grass";
       case Fern:        return "fern";
       case WhiteFlower: return "whiteFlower";
@@ -122,12 +116,12 @@ class BlockType {
 
   /// solid determines if the given block type can not be seen through.
   static bool solid(int value) {
-    return ((value >= Test) && (value <= BlackShine)) || (value == Leaves);
+    return (value >= Dirt) && (value <= Leaves);
   }
 
   /// open determines if the given block type can be seen through.
   static bool open(int value) {
-    return (value >= Leaves) && (value <= Mushroom);
+    return ((value >= Grass) && (value <= Mushroom)) || (value == Boundary);
   }
 
   /// Determines if the side of the block should be drawn.
