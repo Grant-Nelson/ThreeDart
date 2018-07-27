@@ -22,13 +22,13 @@ import 'dart:async';
 import '../../common/common.dart' as common;
 
 part 'blockInfo.dart';
-part 'blockShaper.dart';
 part 'blockType.dart';
 part 'chunk.dart';
 part 'generator.dart';
+part 'materials.dart';
 part 'player.dart';
+part 'shaper.dart';
 part 'world.dart';
-part 'worldShaper.dart';
 
 void show() {
   new common.ShellPage("3Dart Craft")
@@ -36,7 +36,8 @@ void show() {
     ..addPar(["WIP"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("targetCanvas");
-  World world = new World(td);
+  Materials mats = new Materials(td);
+  World world = new World(mats);
   Player player = new Player(td, world);
   player.goHome();
 
@@ -45,7 +46,7 @@ void show() {
     ..children.add(player.entity)
     ..camera.mover = player.camera;
 
-  for (ThreeDart.Entity entity in world.shaper.entities)
+  for (ThreeDart.Entity entity in world.entities)
     scene.children.add(entity);
 
   world.player = player;

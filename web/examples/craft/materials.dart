@@ -11,23 +11,25 @@ class CubeData {
   CubeData(int this.topIndex, int this.bottomIndex, int this.leftIndex, int this.rightIndex, int this.frontIndex, int this.backIndex);
 }
 
-class WorldShaper {
+class Materials {
   static const String imgFolder = "./examples/craft/resources/";
   static const String fileExt = ".png";
 
   ThreeDart.ThreeDart _td;
   Map<int, CubeData> _cubeData;
   Map<int, List<int>> _matData;
-  List<ThreeDart.Entity> _entities;
+  List<Techniques.MaterialLight> _mats;
   Lights.Directional _light;
+  CubeData _selection;
+  int _crosshair;
 
-  WorldShaper(this._td) {
+  Materials(this._td) {
     this._cubeData = new Map<int, CubeData>();
     this._matData = new Map<int, List<int>>();
-    this._entities = new List<ThreeDart.Entity>();
+    this._mats = new List<Techniques.MaterialLight>();
     this._light = new Lights.Directional(color: new Math.Color3.white(),
       mover: new Movers.Constant.lookAtTarget(new Math.Point3.zero(),
-      new Math.Vector3(0.0, 0.0, 1.0), new Math.Point3(0.0, -1.0, 0.2)));
+      new Math.Vector3(0.0, 0.0, 1.0), new Math.Point3(0.5, -1.0, 0.2)));
 
     int brick          = this._addMat("brick");
     int dirt           = this._addMat("dirt");
@@ -52,17 +54,17 @@ class WorldShaper {
 
     // Load alpha materials (done later so that the entities made in shaper are drawn later)
     int grass          = this._addMat("grass");
-    int fern         = this._addMat("fern");
-    int blueFlowers  = this._addMat("blueFlowers");
-    int redFlowers   = this._addMat("redFlowers");
-    int whiteFlowers = this._addMat("whiteFlowers");
-    int water        = this._addMat("water1", true); // TODO: Animate the water
+    int fern           = this._addMat("fern");
+    int blueFlowers    = this._addMat("blueFlowers");
+    int redFlowers     = this._addMat("redFlowers");
+    int whiteFlowers   = this._addMat("whiteFlowers");
+    int water          = this._addMat("water1", true); // TODO: Animate the water
 
     // Special materials not used in blocks
-    // int selection = this._addMat("selection");
-    // int crosshair = this._addMat("crosshair");
+    int selection = this._addMat("selection");
+    int crosshair = this._addMat("crosshair");
 
-    //                                       top,           bottom,        left,          right,         front,         back
+    //                value,                 top,           bottom,        left,          right,         front,         back
     this._addCubeData(BlockType.Dirt,        dirt,          dirt,          dirt,          dirt,          dirt,          dirt);
     this._addCubeData(BlockType.Turf,        turfTop,       dirt,          turfSide,      turfSide,      turfSide,      turfSide);
     this._addCubeData(BlockType.Rock,        rock,          rock,          rock,          rock,          rock,          rock);
@@ -83,11 +85,16 @@ class WorldShaper {
     this._addMatData(BlockType.BlueFlower,  [blueFlowers]);
     this._addMatData(BlockType.RedFlower,   [redFlowers]);
     this._addMatData(BlockType.Mushroom,    [mushroomTop, mushroomBottom, mushroomSide]);
+
+    this._selection = new CubeData(selection, selection, selection, selection, selection, selection);
+    this._crosshair = crosshair;
   }
   
   CubeData cubeData(int value) => this._cubeData[value];
   List<int> matData(int value) => this._matData[value];
-  List<ThreeDart.Entity> get entities => this._entities;
+  List<Techniques.MaterialLight> get materials => this._mats;
+  CubeData get selection => this._selection;
+  int get crosshair => this._crosshair;
 
   int _addMat(String fileName, [bool shiny = false]) {
     String path = imgFolder + fileName + fileExt;
@@ -96,17 +103,20 @@ class WorldShaper {
 
     Techniques.MaterialLight tech = new Techniques.MaterialLight()
       ..lights.add(this._light)
-      ..emission.texture2D = blockTxt
+      ..ambient.color = new Math.Color3.gray(0.8)
+      ..diffuse.color = new Math.Color3.gray(0.4)
+      ..ambient.texture2D = blockTxt
+      ..diffuse.texture2D = blockTxt
       ..alpha.texture2D = blockTxt;
 
     if (shiny) {
       tech.specular
-        ..color = new Math.Color3.white()
-        ..shininess = 40.0;
+        ..color = new Math.Color3.gray(0.5)
+        ..shininess = 3.0;
     }
 
-    this._entities.add(new ThreeDart.Entity(tech: tech));
-    return this._entities.length - 1;
+    this._mats.add(tech);
+    return this._mats.length - 1;
   }
 
   void _addCubeData(int value, int topIndex, int bottomIndex, int leftIndex, int rightIndex, int frontIndex, int backIndex) {
