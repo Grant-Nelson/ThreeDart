@@ -13,18 +13,20 @@ class Player {
   Movers.UserTranslator _trans;
   Movers.UserRotater _rot;
   World _world;
+  bool _touchingGround;
+  int _selectedBlockIndex;
+  BlockInfo _highlight;
+
   Movers.Group _camera;
   Movers.Group _playerLoc;
   Movers.Group _handLoc;
   Movers.Group _crossHairLoc;
-  bool _touchingGround;
-  int _selectedBlock;
-  BlockInfo _highlight;
 
   ThreeDart.Entity _crossHairs;
   ThreeDart.Entity _blockHand;
   ThreeDart.Entity _blockHighlight;
   ThreeDart.Entity _entity;
+  List<ThreeDart.Entity> _blockHandEntities;
 
   Player(ThreeDart.ThreeDart td, this._world) {
     this._trans = new Movers.UserTranslator(input: td.userInput)
@@ -78,23 +80,33 @@ class Player {
     Shapes.Shape crossHairShape = new Shapes.Shape();
     Shapes.Vertex ver1 = crossHairShape.vertices.addNew(
       loc:   new Math.Point3(-1.0, -1.0, 0.0),
-      txt2D: new Math.Point2(19.0/20.0, 1.0/6.0));
+      txt2D: new Math.Point2(0.0, 1.0));
     Shapes.Vertex ver2 = crossHairShape.vertices.addNew(
       loc:   new Math.Point3(1.0, -1.0, 0.0),
-      txt2D: new Math.Point2(20.0/20.0, 1.0/6.0));
+      txt2D: new Math.Point2(1.0, 1.0));
     Shapes.Vertex ver3 = crossHairShape.vertices.addNew(
       loc:   new Math.Point3(1.0, 1.0, 0.0),
-      txt2D: new Math.Point2(20.0/20.0, 0.0/6.0));
+      txt2D: new Math.Point2(1.0, 0.0));
     Shapes.Vertex ver4 = crossHairShape.vertices.addNew(
       loc:   new Math.Point3(-1.0, 1.0, 0.0),
-      txt2D: new Math.Point2(19.0/20.0, 0.0/6.0));
+      txt2D: new Math.Point2(0.0, 0.0));
     crossHairShape.faces.addFan([ver1, ver2, ver3, ver4]);
-    this._crossHairs = new ThreeDart.Entity(mover: this._crossHairLoc, shape: crossHairShape);
+    this._crossHairs = new ThreeDart.Entity(
+      mover: this._crossHairLoc,
+      shape: crossHairShape,
+      tech: this._world.materials.crosshair);
 
     this._blockHand = new ThreeDart.Entity(mover: this._handLoc);
-    this._blockHighlight = new ThreeDart.Entity();
+    this._blockHandEntities = new List<ThreeDart.Entity>();
+    for (Techniques.MaterialLight mat in this._world.materials.materials) {
+      ThreeDart.Entity entity = new ThreeDart.Entity(tech: mat);
+      this._blockHand.children.add(entity);
+      this._blockHandEntities.add(entity);
+    }
+
+    this._blockHighlight = new ThreeDart.Entity(tech: this._world.materials.selection);
     this._entity = new ThreeDart.Entity(children: [this._crossHairs, this._blockHand, this._blockHighlight]);
-    this._selectedBlock = BlockType.Dirt;
+    this._selectedBlockIndex = 0;
     this._highlight = null;
     this._updateHand();
   }
@@ -124,14 +136,15 @@ class Player {
 
   void _onBlockCycle(ThreeDart.EventArgs args) {
     ThreeDart.KeyEventArgs keyArgs = args as ThreeDart.KeyEventArgs;
+    int length = BlockType.PlaceableBlocks.length;
     if (keyArgs.key.shift) {
-      this._selectedBlock--;
-      if (this._selectedBlock < BlockType.Dirt)
-        this._selectedBlock = BlockType.Mushroom;
+      this._selectedBlockIndex--;
+      if (this._selectedBlockIndex < 0)
+        this._selectedBlockIndex = length-1;
     } else {
-      this._selectedBlock++;
-      if (this._selectedBlock > BlockType.Mushroom)
-        this._selectedBlock = BlockType.Dirt;
+      this._selectedBlockIndex++;
+      if (this._selectedBlockIndex >= length)
+        this._selectedBlockIndex = 0;
     }
     this._updateHand();
   }
@@ -142,7 +155,7 @@ class Player {
     int blockType = BlockType.Air;
     if ((args as ThreeDart.KeyEventArgs).key.key == ThreeDart.UserKey.keyE) {
       this._highlight = this._getNeighborBlock(this._highlight, this._playerViewTarget());
-      blockType = this._selectedBlock;
+      blockType = BlockType.PlaceableBlocks[this._selectedBlockIndex];
     }
 
     Chunk chunk = this._highlight.chunk;
@@ -238,17 +251,16 @@ class Player {
     if (this._highlight == null) {
       this._blockHighlight.enabled = false;
     } else {
-      Shapes.Shape shape = new Shapes.Shape();
-      new Shaper(null, this._highlight.chunkX, this._highlight.chunkZ, 1.1, true)
-        .buildSingleBlock(shape, BlockType.Selection, this._highlight.x, this._highlight.y, this._highlight.z);
-      this._blockHighlight.shape = shape;
-      this._blockHighlight.enabled = true;
+      Shaper shaper = new Shaper(null);
+      shaper.addCubeToOneShape(this._highlight.chunkX+this._highlight.x, this._highlight.y, 
+        this._highlight.chunkZ+this._highlight.z, true, 1.1);
+      shaper.finish([this._blockHighlight]);
     }
   }
 
   void _updateHand() {
-    Shapes.Shape shape = new Shapes.Shape();
-    new Shaper(null).buildSingleBlock(shape, this._selectedBlock);
-    this._blockHand.shape = shape;
+    Shaper shaper = new Shaper(this._world.materials);
+    shaper.buildSingleBlock(BlockType.PlaceableBlocks[this._selectedBlockIndex]);
+    shaper.finish(this._blockHandEntities);
   }
 }

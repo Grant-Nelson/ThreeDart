@@ -143,7 +143,7 @@ class ThreeDart implements Changable {
 
   /// Indicates that this instance or something attached to is has changed.
   Event get changed {
-    if (this._changed == null) this._changed = new Event();
+    if (this._changed == null) this._changed ??= new Event();
     return this._changed;
   }
 

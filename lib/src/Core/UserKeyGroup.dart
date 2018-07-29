@@ -22,19 +22,19 @@ class UserKeyGroup extends Collection<UserKey> implements UserInteractable, Chan
 
   /// Emits when the group has changed.
   Event get changed {
-    if (this._changed == null) this._changed = new Event();
+    this._changed ??= new Event();
     return this._changed;
   }
 
   /// Emits when one of the contained keys is pressed.
   Event get keyUp {
-    if (this._keyUp == null) this._keyUp = new Event();
+    this._keyUp ??= new Event();
     return this._keyUp;
   }
 
   /// Emits when one of the contained keys is released.
   Event get keyDown {
-    if (this._keyDown == null) this._keyDown = new Event();
+    this._keyDown ??= new Event();
     return this._keyDown;
   }
 

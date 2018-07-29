@@ -325,55 +325,55 @@ class Entity implements Movers.Movable, Changable {
 
   /// The event emitted when any part of the entity is changed.
   Event get changed {
-    if (this._changed == null) this._changed = new Event();
+    this._changed ??= new Event();
     return this._changed;
   }
 
   /// The event emitted when the shape has been changed.
   Event get shapeChanged {
-    if (this._shapeChanged == null) this._shapeChanged = new Event();
+    this._shapeChanged ??= new Event();
     return this._shapeChanged;
   }
 
   /// The event emitted when the technique has been changed.
   Event get techChanged {
-    if (this._techChanged == null) this._techChanged = new Event();
+    this._techChanged ??= new Event();
     return this._techChanged;
   }
 
   /// The event emitted when the mover has been changed.
   Event get moverChanged {
-    if (this._moverChanged == null) this._moverChanged = new Event();
+    this._moverChanged ??= new Event();
     return this._moverChanged;
   }
 
   /// The event emitted when the matrix has been changed.
   Event get matrixChanged {
-    if (this._matrixChanged == null) this._matrixChanged = new Event();
+    this._matrixChanged ??= new Event();
     return this._matrixChanged;
   }
 
   /// The event emitted when one or more child is added.
   Event get childrenAdded {
-    if (this._childrenAdded == null) this._childrenAdded = new Event();
+    this._childrenAdded ??= new Event();
     return this._childrenAdded;
   }
 
   /// The event emitted when one or more child is removed.
   Event get childrenRemoved {
-    if (this._childrenRemoved == null) this._childrenRemoved = new Event();
+    this._childrenRemoved ??= new Event();
     return this._childrenRemoved;
   }
 
   /// The event emitted when an extension is added.
   Event get extensionAdded {
-    if (this._extensionAdded == null) this._extensionAdded = new Event();
+    this._extensionAdded ??= new Event();
     return this._extensionAdded;
   }
 
   /// The event emitted when an extension is removed.
   Event get extensionRemoved {
-    if (this._extensionRemoved == null) this._extensionRemoved = new Event();
+    this._extensionRemoved ??= new Event();
     return this._extensionRemoved;
   }
 

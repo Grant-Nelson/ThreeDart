@@ -1,55 +1,36 @@
 part of craft;
 
 class World {
-  static const imgFile = "./examples/craft/blocks.png";
-  static const maxXSize = Chunk.xSize*5;
-  static const maxZSize = Chunk.zSize*5;
+  static const maxXSize = Chunk.xSize*8;
+  static const maxZSize = Chunk.zSize*8;
   
-  Techniques.MaterialLight _matLit;
-  ThreeDart.Entity _terrainGroup;
-  ThreeDart.Entity _waterGroup;
-  ThreeDart.Entity _plantsGroup;
+  Materials _mats;
   Generator _gen;
   List<Chunk> _chunks;
+  List<ThreeDart.Entity> _entities;
   Player _player;
 
-  World(ThreeDart.ThreeDart td) {
-    Textures.Texture2D blockTxt = td.textureLoader.load2DFromFile(imgFile, wrapEdges: false, nearest: false, mipMap: true);
-
-    this._matLit = new Techniques.MaterialLight()
-      ..emission.texture2D = blockTxt
-      ..alpha.texture2D = blockTxt;
-
-    this._terrainGroup = new ThreeDart.Entity()
-      ..technique = this._matLit;
-
-    this._waterGroup = new ThreeDart.Entity()
-      ..technique = this._matLit;
-      
-    this._plantsGroup = new ThreeDart.Entity()
-      ..technique = this._matLit;
-
+  World(this._mats) {
     this._gen = new Generator(this);
     this._chunks = new List<Chunk>();
+    this._entities = new List<ThreeDart.Entity>();
+    for (Techniques.MaterialLight tech in this._mats.materials)
+      this.entities.add(new ThreeDart.Entity(tech: tech));
 
     for (int x = -maxXSize; x < maxXSize; x += Chunk.xSize) {
       for (int z = -maxZSize; z < maxZSize; z += Chunk.zSize) {
-        this.insertChunk(x, z);
+        this._chunks.add(new Chunk(x, z, this));
       }
     }
     this._gen.fillWorld();
   }
 
   Generator get generator => this._gen;
-  Player get player => this._player;
-  set player(Player player) {
-    this._player = player;
-    this._player._entity.technique = this._matLit;
-  }
+  Materials get materials => this._mats;
+  List<ThreeDart.Entity> get entities => this._entities;
 
-  ThreeDart.Entity get terrainGroup => this._terrainGroup;
-  ThreeDart.Entity get waterGroup => this._waterGroup;
-  ThreeDart.Entity get plantsGroup => this._plantsGroup;
+  Player get player => this._player;
+  set player(Player player) => this._player = player;
 
   Chunk findChunk(int x, int z) {
     for (Chunk chunk in this._chunks) {
@@ -72,14 +53,6 @@ class World {
     if (bz < 0) bz += Chunk.zSize;
 
     return new BlockInfo(bx, by, bz, cx, cz, chunk);
-  }
-
-  void insertChunk(int x, int z) {
-    Chunk chunk = new Chunk(x, z, this);
-    this._chunks.add(chunk);
-    this._terrainGroup.children.add(chunk.terrainEntity);
-    this._waterGroup.children.add(chunk.waterEntity);
-    this._plantsGroup.children.add(chunk.plantsEntity);
   }
 
   void update(ThreeDart.EventArgs args) {

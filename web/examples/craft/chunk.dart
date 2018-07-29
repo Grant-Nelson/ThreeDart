@@ -11,27 +11,25 @@ class Chunk {
   final int z;
   World _world;
   data.Uint8List _data;
-  ThreeDart.Entity _terrain;
-  ThreeDart.Entity _water;
-  ThreeDart.Entity _plants;
+  List<ThreeDart.Entity> _entities;
   bool _needUpdate;
 
-  Chunk(this.x, this.z, World world) {
-    this._data = new data.Uint8List(_dataLength);
-    this._data.fillRange(0, _dataLength, BlockType.Air);
+  Chunk(this.x, this.z, this._world) {
+    this._data = new data.Uint8List(_dataLength)
+      ..fillRange(0, _dataLength, BlockType.Air);
     
-    this._terrain = new ThreeDart.Entity();
-    this._water = new ThreeDart.Entity();
-    this._plants = new ThreeDart.Entity();
+    this._entities = new List<ThreeDart.Entity>();
+    for (ThreeDart.Entity parent in this._world.entities) {
+      ThreeDart.Entity entity = new ThreeDart.Entity();
+      parent.children.add(entity);
+      this._entities.add(entity);
+    }
 
     this._needUpdate = true;
-    this._world = world;
   }
     
   String toString() => "chunk(${x}, ${z})";
-  ThreeDart.Entity get terrainEntity => this._terrain;
-  ThreeDart.Entity get waterEntity => this._water;
-  ThreeDart.Entity get plantsEntity => this._plants;
+  List<ThreeDart.Entity> get entities => this._entities;
 
   bool get needUpdate => this._needUpdate;
   set needUpdate(bool update) => this._needUpdate = update;
@@ -73,23 +71,21 @@ class Chunk {
   void updateShape() {
     if (!this._needUpdate) return;
     this._needUpdate = false;
-    
-    Shapes.Shape terrain = new Shapes.Shape();
-    Shapes.Shape water = new Shapes.Shape();
-    Shapes.Shape plants = new Shapes.Shape();
-    new Shaper(this).buildShapes(terrain, water, plants);
-    this._terrain.shape = terrain;
-    this._water.shape = water;
-    this._plants.shape = plants;
+    Shaper shape = new Shaper(this._world.materials);
+    shape.buildChunkShapes(this);
+    shape.finish(this.entities);
+  }
+
+  void set _enabled(bool enabled) {
+    for (ThreeDart.Entity entity in this._entities)
+      entity.enabled = enabled;
   }
 
   void updateVisiblity(Math.Point2 loc, Math.Point2 front) {
     Math.Region2 aabb = new Math.Region2(this.x.toDouble(), this.z.toDouble(), xSize.toDouble(), zSize.toDouble());
     Math.Point2 nearLoc = aabb.nearestPoint(loc);
     if (nearLoc.distance2(loc) < 100.0) {
-      this._terrain.enabled = true;
-      this._water.enabled = true;
-      this._plants.enabled = true;
+      this._enabled = true;
       return;
     }
 
@@ -99,17 +95,13 @@ class Chunk {
 
     double length = toNear.length();
     if (length > _maxDrawDist) {
-      this._terrain.enabled = false;
-      this._water.enabled = false;
-      this._plants.enabled = false;
+      this._enabled = false;
       return;
     }
 
     toNear = toNear/length;
     double dot = forward.dot(toNear);
     bool enabled = dot > 0.0;
-    this._terrain.enabled = enabled;
-    this._water.enabled = enabled;
-    this._plants.enabled = enabled;
+    this._enabled = enabled;
   }
 }
