@@ -79,6 +79,30 @@ class BlockType {
   /// Mushroom is a special model for the mushrooms
   static const int Mushroom = 205;
 
+  //====================================
+
+  /// Placeable blocks in the order to show in the hand.
+  static final List<int> PlaceableBlocks = [
+    Water,
+    Dirt,
+    Turf,
+    Rock,
+    Sand ,
+    DryLeaves,
+    Trunk,
+    Brick,
+    RedShine,
+    WhiteShine,
+    YellowShine,
+    BlackShine,
+    Leaves,
+    Grass,
+    Fern,
+    WhiteFlower,
+    BlueFlower,
+    RedFlower,
+    Mushroom];
+
   /// string gets the string for the given block type value.
   static String string(int value) {
     switch(value) {

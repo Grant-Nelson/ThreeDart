@@ -20,8 +20,8 @@ class Materials {
   Map<int, List<int>> _matData;
   List<Techniques.MaterialLight> _mats;
   Lights.Directional _light;
-  CubeData _selection;
-  int _crosshair;
+  Techniques.MaterialLight _selection;
+  Techniques.MaterialLight _crosshair;
 
   Materials(this._td) {
     this._cubeData = new Map<int, CubeData>();
@@ -58,11 +58,7 @@ class Materials {
     int blueFlowers    = this._addMat("blueFlowers");
     int redFlowers     = this._addMat("redFlowers");
     int whiteFlowers   = this._addMat("whiteFlowers");
-    int water          = this._addMat("water1", true); // TODO: Animate the water
-
-    // Special materials not used in blocks
-    int selection = this._addMat("selection");
-    int crosshair = this._addMat("crosshair");
+    int water          = this._addMat("water1", true);
 
     //                value,                 top,           bottom,        left,          right,         front,         back
     this._addCubeData(BlockType.Dirt,        dirt,          dirt,          dirt,          dirt,          dirt,          dirt);
@@ -86,15 +82,16 @@ class Materials {
     this._addMatData(BlockType.RedFlower,   [redFlowers]);
     this._addMatData(BlockType.Mushroom,    [mushroomTop, mushroomBottom, mushroomSide]);
 
-    this._selection = new CubeData(selection, selection, selection, selection, selection, selection);
-    this._crosshair = crosshair;
+    // Special materials not used in blocks
+    this._selection = this._addEmissionMat("selection");
+    this._crosshair = this._addEmissionMat("crosshair");
   }
   
   CubeData cubeData(int value) => this._cubeData[value];
   List<int> matData(int value) => this._matData[value];
   List<Techniques.MaterialLight> get materials => this._mats;
-  CubeData get selection => this._selection;
-  int get crosshair => this._crosshair;
+  Techniques.MaterialLight get selection => this._selection;
+  Techniques.MaterialLight get crosshair => this._crosshair;
 
   int _addMat(String fileName, [bool shiny = false]) {
     String path = imgFolder + fileName + fileExt;
@@ -117,6 +114,18 @@ class Materials {
 
     this._mats.add(tech);
     return this._mats.length - 1;
+  }
+  
+  Techniques.MaterialLight _addEmissionMat(String fileName) {
+     String path = imgFolder + fileName + fileExt;
+    Textures.Texture2D blockTxt = this._td.textureLoader.
+      load2DFromFile(path, wrapEdges: false, nearest: false, mipMap: true);
+
+    Techniques.MaterialLight tech = new Techniques.MaterialLight()
+      ..emission.texture2D = blockTxt
+      ..alpha.texture2D = blockTxt;
+
+    return tech;
   }
 
   void _addCubeData(int value, int topIndex, int bottomIndex, int leftIndex, int rightIndex, int frontIndex, int backIndex) {

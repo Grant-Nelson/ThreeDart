@@ -13,8 +13,8 @@ class Shaper {
   Materials _mats;
   List<Shapes.Shape> _shapes;
 
-  Shaper(Materials this._mats) {
-    this._shapes = new List<Shapes.Shape>(this._mats.materials.length);
+  Shaper(this._mats) {
+    this._shapes = new List<Shapes.Shape>(this._mats?.materials?.length ?? 1);
   }
   
   void buildChunkShapes(Chunk chunk) {
@@ -22,14 +22,25 @@ class Shaper {
       for (int y = Chunk.ySize - 1; y >= 0; y--) {
         for (int z = Chunk.zSize - 1; z >= 0; z--) {
           int value = chunk.getBlock(x, y, z);
-          this._addBlockToShapes(chunk, x, y, z, value, false);
+          this._addBlockToShapes(chunk, x, y, z, value, false, 1.0);
         }
       }
     }
   }
 
-  void buildSingleBlock(int value, [int x = 0, int y = 0, int z = 0]) {
-    this._addBlockToShapes(null, x, y, z, value, false);
+  void buildSingleBlock(int value) {
+    this._addBlockToShapes(null, 0, 0, 0, value, false, 1.0);
+  }
+  
+  void addCubeToOneShape(int x, int y, int z, bool twoSided, double scalar) {
+    Math.Point3 loc = new Math.Point3(x.toDouble() + 0.5, y.toDouble() + 0.5, z.toDouble() + 0.5);
+    Shapes.Shape shape = this._getShape(0);
+    this._addTopToShape(   shape, loc, twoSided, scalar);
+    this._addBottomToShape(shape, loc, twoSided, scalar);
+    this._addLeftToShape(  shape, loc, twoSided, scalar);
+    this._addRightToShape( shape, loc, twoSided, scalar);
+    this._addFrontToShape( shape, loc, twoSided, scalar);
+    this._addBackToShape(  shape, loc, twoSided, scalar);
   }
   
   void finish(List<ThreeDart.Entity> entities) {
@@ -56,7 +67,7 @@ class Shaper {
     return shape; 
   }
   
-  void _addBlockToShapes(Chunk chunk, int x, int y, int z, int value, bool twoSided) {
+  void _addBlockToShapes(Chunk chunk, int x, int y, int z, int value, bool twoSided, double scalar) {
     Math.Point3 chunkLoc = new Math.Point3(x.toDouble(), y.toDouble(), z.toDouble());
     if (chunk != null) {
       x += chunk.x;
@@ -65,12 +76,12 @@ class Shaper {
     Math.Point3 loc = new Math.Point3(x.toDouble() + 0.5, y.toDouble() + 0.5, z.toDouble() + 0.5);
 
     if (value == BlockType.Air) return;
-    else if (value == BlockType.Water) this._addCubeToShapes(chunk, loc, chunkLoc, value, twoSided);
+    else if (value == BlockType.Water) this._addCubeToShapes(chunk, loc, chunkLoc, value, twoSided, scalar);
     else if (BlockType.open(value)) {
       if (value == BlockType.Fern) this._addFernToShapes(loc);
       else if (value == BlockType.Mushroom) this._addMushroomToShapes(loc);
       else this._addPlantToShapes(loc, value);
-    } else if (BlockType.solid(value)) this._addCubeToShapes(chunk, loc, chunkLoc, value, twoSided);
+    } else if (BlockType.solid(value)) this._addCubeToShapes(chunk, loc, chunkLoc, value, twoSided, scalar);
   }
   
   Shapes.Vertex _addVertex(Shapes.Shape shape, Math.Point3 loc, Math.Vector3 norm, double tu, double tv) {
@@ -81,80 +92,74 @@ class Shaper {
         txt2D: new Math.Point2(tu, tv));
   }
 
-  void _addTopToShape(CubeData data, Math.Point3 loc, bool twoSided) {
-    Shapes.Shape shape = this._getShape(data.topIndex);
+  void _addTopToShape(Shapes.Shape shape, Math.Point3 loc, bool twoSided, double scalar) {
     Math.Vector3 norm = new Math.Vector3(0.0, 1.0, 0.0);
-    Shapes.Vertex ver1 = this._addVertex(shape, loc + backTopLeft,   norm, 0.0, 0.0);
-    Shapes.Vertex ver2 = this._addVertex(shape, loc + frontTopLeft,  norm, 0.0, 1.0);
-    Shapes.Vertex ver3 = this._addVertex(shape, loc + frontTopRight, norm, 1.0, 1.0);
-    Shapes.Vertex ver4 = this._addVertex(shape, loc + backTopRight,  norm, 1.0, 0.0);
+    Shapes.Vertex ver1 = this._addVertex(shape, loc + backTopLeft  *scalar, norm, 0.0, 0.0);
+    Shapes.Vertex ver2 = this._addVertex(shape, loc + frontTopLeft *scalar, norm, 0.0, 1.0);
+    Shapes.Vertex ver3 = this._addVertex(shape, loc + frontTopRight*scalar, norm, 1.0, 1.0);
+    Shapes.Vertex ver4 = this._addVertex(shape, loc + backTopRight *scalar, norm, 1.0, 0.0);
     shape.faces.addFan([ver1, ver2, ver3, ver4]);
     if (twoSided) shape.faces.addFan([ver4, ver3, ver2, ver1]);
   }
 
-  void _addBottomToShape(CubeData data, Math.Point3 loc, bool twoSided) {
-    Shapes.Shape shape = this._getShape(data.bottomIndex);
+  void _addBottomToShape(Shapes.Shape shape, Math.Point3 loc, bool twoSided, double scalar) {
     Math.Vector3 norm = new Math.Vector3(0.0, -1.0, 0.0);
-    Shapes.Vertex ver1 = this._addVertex(shape, loc + frontBottomLeft,  norm, 0.0, 0.0);
-    Shapes.Vertex ver2 = this._addVertex(shape, loc + backBottomLeft,   norm, 0.0, 1.0);
-    Shapes.Vertex ver3 = this._addVertex(shape, loc + backBottomRight,  norm, 1.0, 1.0);
-    Shapes.Vertex ver4 = this._addVertex(shape, loc + frontBottomRight, norm, 1.0, 0.0);
+    Shapes.Vertex ver1 = this._addVertex(shape, loc + frontBottomLeft *scalar, norm, 0.0, 0.0);
+    Shapes.Vertex ver2 = this._addVertex(shape, loc + backBottomLeft  *scalar, norm, 0.0, 1.0);
+    Shapes.Vertex ver3 = this._addVertex(shape, loc + backBottomRight *scalar, norm, 1.0, 1.0);
+    Shapes.Vertex ver4 = this._addVertex(shape, loc + frontBottomRight*scalar, norm, 1.0, 0.0);
     shape.faces.addFan([ver1, ver2, ver3, ver4]);
     if (twoSided) shape.faces.addFan([ver4, ver3, ver2, ver1]);
   }
 
-  void _addLeftToShape(CubeData data, Math.Point3 loc, bool twoSided) {
-    Shapes.Shape shape = this._getShape(data.leftIndex);
+  void _addLeftToShape(Shapes.Shape shape, Math.Point3 loc, bool twoSided, double scalar) {
     Math.Vector3 norm = new Math.Vector3(1.0, 0.0, 0.0);
-    Shapes.Vertex ver1 = this._addVertex(shape, loc + backTopLeft,     norm, 0.0, 0.0);
-    Shapes.Vertex ver2 = this._addVertex(shape, loc + backBottomLeft,  norm, 0.0, 1.0);
-    Shapes.Vertex ver3 = this._addVertex(shape, loc + frontBottomLeft, norm, 1.0, 1.0);
-    Shapes.Vertex ver4 = this._addVertex(shape, loc + frontTopLeft,    norm, 1.0, 0.0);
+    Shapes.Vertex ver1 = this._addVertex(shape, loc + backTopLeft    *scalar, norm, 0.0, 0.0);
+    Shapes.Vertex ver2 = this._addVertex(shape, loc + backBottomLeft *scalar, norm, 0.0, 1.0);
+    Shapes.Vertex ver3 = this._addVertex(shape, loc + frontBottomLeft*scalar, norm, 1.0, 1.0);
+    Shapes.Vertex ver4 = this._addVertex(shape, loc + frontTopLeft   *scalar, norm, 1.0, 0.0);
     shape.faces.addFan([ver1, ver2, ver3, ver4]);
     if (twoSided) shape.faces.addFan([ver4, ver3, ver2, ver1]);
   }
 
-  void _addRightToShape(CubeData data, Math.Point3 loc, bool twoSided) {
-    Shapes.Shape shape = this._getShape(data.rightIndex);
+  void _addRightToShape(Shapes.Shape shape, Math.Point3 loc, bool twoSided, double scalar) {
     Math.Vector3 norm = new Math.Vector3(-1.0, 0.0, 0.0);
-    Shapes.Vertex ver1 = this._addVertex(shape, loc + frontTopRight,    norm, 0.0, 0.0);
-    Shapes.Vertex ver2 = this._addVertex(shape, loc + frontBottomRight, norm, 0.0, 1.0);
-    Shapes.Vertex ver3 = this._addVertex(shape, loc + backBottomRight,  norm, 1.0, 1.0);
-    Shapes.Vertex ver4 = this._addVertex(shape, loc + backTopRight,     norm, 1.0, 0.0);
+    Shapes.Vertex ver1 = this._addVertex(shape, loc + frontTopRight   *scalar, norm, 0.0, 0.0);
+    Shapes.Vertex ver2 = this._addVertex(shape, loc + frontBottomRight*scalar, norm, 0.0, 1.0);
+    Shapes.Vertex ver3 = this._addVertex(shape, loc + backBottomRight *scalar, norm, 1.0, 1.0);
+    Shapes.Vertex ver4 = this._addVertex(shape, loc + backTopRight    *scalar, norm, 1.0, 0.0);
     shape.faces.addFan([ver1, ver2, ver3, ver4]);
     if (twoSided) shape.faces.addFan([ver4, ver3, ver2, ver1]);
   }
 
-  void _addFrontToShape(CubeData data, Math.Point3 loc, bool twoSided) {
-    Shapes.Shape shape = this._getShape(data.frontIndex);
+  void _addFrontToShape(Shapes.Shape shape, Math.Point3 loc, bool twoSided, double scalar) {
     Math.Vector3 norm = new Math.Vector3(0.0, 0.0, 1.0);
-    Shapes.Vertex ver1 = this._addVertex(shape, loc + frontTopLeft,     norm, 0.0, 0.0);
-    Shapes.Vertex ver2 = this._addVertex(shape, loc + frontBottomLeft,  norm, 0.0, 1.0);
-    Shapes.Vertex ver3 = this._addVertex(shape, loc + frontBottomRight, norm, 1.0, 1.0);
-    Shapes.Vertex ver4 = this._addVertex(shape, loc + frontTopRight,    norm, 1.0, 0.0);
+    Shapes.Vertex ver1 = this._addVertex(shape, loc + frontTopLeft    *scalar, norm, 0.0, 0.0);
+    Shapes.Vertex ver2 = this._addVertex(shape, loc + frontBottomLeft *scalar, norm, 0.0, 1.0);
+    Shapes.Vertex ver3 = this._addVertex(shape, loc + frontBottomRight*scalar, norm, 1.0, 1.0);
+    Shapes.Vertex ver4 = this._addVertex(shape, loc + frontTopRight   *scalar, norm, 1.0, 0.0);
     shape.faces.addFan([ver1, ver2, ver3, ver4]);
     if (twoSided) shape.faces.addFan([ver4, ver3, ver2, ver1]);
   }
 
-  void _addBackToShape(CubeData data, Math.Point3 loc, bool twoSided) {
-    Shapes.Shape shape = this._getShape(data.backIndex);
+  void _addBackToShape(Shapes.Shape shape, Math.Point3 loc, bool twoSided, double scalar) {
     Math.Vector3 norm = new Math.Vector3(0.0, 0.0, -1.0);
-    Shapes.Vertex ver1 = this._addVertex(shape, loc + backTopRight,    norm, 0.0, 0.0);
-    Shapes.Vertex ver2 = this._addVertex(shape, loc + backBottomRight, norm, 0.0, 1.0);
-    Shapes.Vertex ver3 = this._addVertex(shape, loc + backBottomLeft,  norm, 1.0, 1.0);
-    Shapes.Vertex ver4 = this._addVertex(shape, loc + backTopLeft,     norm, 1.0, 0.0);
+    Shapes.Vertex ver1 = this._addVertex(shape, loc + backTopRight   *scalar, norm, 0.0, 0.0);
+    Shapes.Vertex ver2 = this._addVertex(shape, loc + backBottomRight*scalar, norm, 0.0, 1.0);
+    Shapes.Vertex ver3 = this._addVertex(shape, loc + backBottomLeft *scalar, norm, 1.0, 1.0);
+    Shapes.Vertex ver4 = this._addVertex(shape, loc + backTopLeft    *scalar, norm, 1.0, 0.0);
     shape.faces.addFan([ver1, ver2, ver3, ver4]);
     if (twoSided) shape.faces.addFan([ver4, ver3, ver2, ver1]);
   }
 
-  void _addCubeToShapes(Chunk chunk, Math.Point3 loc, Math.Point3 chunkLoc, int value, bool twoSided) {  
+  void _addCubeToShapes(Chunk chunk, Math.Point3 loc, Math.Point3 chunkLoc, int value, bool twoSided, double scalar) {  
     CubeData data = this._mats.cubeData(value);
-    if (this._addFace(chunk, value, chunkLoc,  0,  1,  0)) this._addTopToShape(   data, loc, twoSided);
-    if (this._addFace(chunk, value, chunkLoc,  0, -1,  0)) this._addBottomToShape(data, loc, twoSided);
-    if (this._addFace(chunk, value, chunkLoc, -1,  0,  0)) this._addLeftToShape(  data, loc, twoSided);
-    if (this._addFace(chunk, value, chunkLoc,  1,  0,  0)) this._addRightToShape( data, loc, twoSided);
-    if (this._addFace(chunk, value, chunkLoc,  0,  0,  1)) this._addFrontToShape( data, loc, twoSided);
-    if (this._addFace(chunk, value, chunkLoc,  0,  0, -1)) this._addBackToShape(  data, loc, twoSided);
+    if (this._addFace(chunk, value, chunkLoc,  0,  1,  0)) this._addTopToShape(   this._getShape(data.topIndex),    loc, twoSided, scalar);
+    if (this._addFace(chunk, value, chunkLoc,  0, -1,  0)) this._addBottomToShape(this._getShape(data.bottomIndex), loc, twoSided, scalar);
+    if (this._addFace(chunk, value, chunkLoc, -1,  0,  0)) this._addLeftToShape(  this._getShape(data.leftIndex),   loc, twoSided, scalar);
+    if (this._addFace(chunk, value, chunkLoc,  1,  0,  0)) this._addRightToShape( this._getShape(data.rightIndex),  loc, twoSided, scalar);
+    if (this._addFace(chunk, value, chunkLoc,  0,  0,  1)) this._addFrontToShape( this._getShape(data.frontIndex),  loc, twoSided, scalar);
+    if (this._addFace(chunk, value, chunkLoc,  0,  0, -1)) this._addBackToShape(  this._getShape(data.backIndex),   loc, twoSided, scalar);
   }
 
   bool _addFace(Chunk chunk, int value, Math.Point3 chunkLoc, int x, int y, int z) {

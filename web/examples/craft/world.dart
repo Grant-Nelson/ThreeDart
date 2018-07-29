@@ -10,7 +10,7 @@ class World {
   List<ThreeDart.Entity> _entities;
   Player _player;
 
-  World(Materials this._mats) {
+  World(this._mats) {
     this._gen = new Generator(this);
     this._chunks = new List<Chunk>();
     this._entities = new List<ThreeDart.Entity>();

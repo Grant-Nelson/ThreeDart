@@ -43,11 +43,11 @@ void show() {
 
   Scenes.EntityPass scene = new Scenes.EntityPass()
     ..onPreUpdate.add(world.update)
-    ..children.add(player.entity)
     ..camera.mover = player.camera;
 
   for (ThreeDart.Entity entity in world.entities)
-    scene.children.add(entity);
+    scene.children.add(entity);  
+  scene.children.add(player.entity);
 
   world.player = player;
   // Set background color to sky blue

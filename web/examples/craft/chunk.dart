@@ -14,8 +14,7 @@ class Chunk {
   List<ThreeDart.Entity> _entities;
   bool _needUpdate;
 
-  Chunk(this.x, this.z, World world) {
-    this._world = world;
+  Chunk(this.x, this.z, this._world) {
     this._data = new data.Uint8List(_dataLength)
       ..fillRange(0, _dataLength, BlockType.Air);
     
