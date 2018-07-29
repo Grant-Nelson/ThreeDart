@@ -30,8 +30,8 @@
    PR's can also be create prior to needed review to help view the changes while
    in progress, these should also be labelled with `WIP`
 
-8. Regarless of the number of external contributions this project is owned by
-   SnowGremlin. External contibutions are strongly encouraged and desired.
+8. Regardless of the number of external contributions this project is owned by
+   SnowGremlin. External contributions are strongly encouraged and desired.
    The protection of SnowGremlin LLC is extended to any contributor who has
    had code properly reviewed and merged into it
 
