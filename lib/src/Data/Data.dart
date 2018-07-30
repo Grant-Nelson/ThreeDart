@@ -16,6 +16,5 @@ part 'BufferStore.dart';
 part 'BufferStoreList.dart';
 part 'BufferStoreSet.dart';
 part 'IndexObject.dart';
-part 'ShapeBuilder.dart';
 part 'TechniqueCache.dart';
 part 'VertexType.dart';

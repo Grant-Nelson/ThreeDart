@@ -1,7 +1,7 @@
 part of ThreeDart.Shapes;
 
 /// A shape defining the renderable shape and collision detection.
-class Shape implements Data.ShapeBuilder {
+class Shape implements ShapeBuilder {
   VertexCollection _vertices;
   ShapePointCollection _points;
   ShapeLineCollection _lines;
@@ -69,7 +69,7 @@ class Shape implements Data.ShapeBuilder {
     this._changed?.resume();
   }
 
-  /// Calculates the normals for the vertices and favces.
+  /// Calculates the normals for the vertices and faces.
   /// True if successful, false on error.
   bool calculateNormals() {
     bool success = true;
@@ -80,7 +80,7 @@ class Shape implements Data.ShapeBuilder {
     return success;
   }
 
-  /// Calculates the binormals for the vertices and favces.
+  /// Calculates the binormals for the vertices and faces.
   /// Typically the normals should be calculated first.
   /// True if successful, false on error.
   bool calculateBinormals() {
@@ -92,7 +92,7 @@ class Shape implements Data.ShapeBuilder {
     return success;
   }
 
-  /// Calculates the cube texture coordinate for the vertices and favces.
+  /// Calculates the cube texture coordinate for the vertices and faces.
   /// The normals should be calculated first.
   /// True if successful, false on error.
   bool calculateCubeTextures() {
@@ -159,7 +159,7 @@ class Shape implements Data.ShapeBuilder {
     this._changed?.resume();
   }
 
-  /// Trims all the faces down have the true values,
+  /// Trims all the faces down to have the given true values,
   /// everything else is nulled out.
   void trimFaces({bool norm: true, bool binm: true}) {
     this._changed?.suspend();
@@ -385,18 +385,18 @@ class Shape implements Data.ShapeBuilder {
   /// This requires the buffer [builder] for WebGL or testing,
   /// and the vertex [type] required for technique.
   Data.BufferStore build(Data.BufferBuilder builder, Data.VertexType type) {
-    int length = this._vertices.length;
-    int count = type.count;
-    int stride = type.size;
-    int offset = 0;
+    final int length = this._vertices.length;
+    final int count = type.count;
+    final int stride = type.size;
+    final int byteStride = stride*Typed.Float32List.BYTES_PER_ELEMENT;
     List<double> vertices = new List<double>(length*stride);
     List<Data.BufferAttr> attrs = new List<Data.BufferAttr>(count);
+    int offset = 0;
     for (int i = 0; i < count; ++i) {
       Data.VertexType local = type.at(i);
-      int size = local.size;
+      final int size = local.size;
       attrs[i] = new Data.BufferAttr(local, size,
-        offset*Typed.Float32List.BYTES_PER_ELEMENT,
-        stride*Typed.Float32List.BYTES_PER_ELEMENT);
+        offset*Typed.Float32List.BYTES_PER_ELEMENT, byteStride);
       for (int j = 0; j < length; ++j) {
         Vertex ver = this._vertices[j];
         List<double> list = ver.listFor(local);

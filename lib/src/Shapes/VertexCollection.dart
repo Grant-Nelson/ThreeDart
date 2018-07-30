@@ -132,7 +132,7 @@ class VertexCollection {
     return success;
   }
 
-  /// Calculates the cube texture coordinate for the vertices and favces.
+  /// Calculates the cube texture coordinate for the vertices and faces.
   /// True if successful, false on error.
   bool calculateCubeTextures() {
     for (Vertex vertex in this._vertices) {

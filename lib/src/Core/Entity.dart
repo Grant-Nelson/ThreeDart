@@ -23,7 +23,7 @@ class Entity implements Movers.Movable, Changable {
   /// The shape builder used to build the rendering data.
   /// When using a shape this will be a shape.
   /// May be null to not when not rendering.
-  Data.ShapeBuilder _shapeBuilder;
+  Shapes.ShapeBuilder _shapeBuilder;
 
   /// The cache of the shape transformed into the buffers required
   /// by the shader in the currently set technique.
@@ -172,10 +172,10 @@ class Entity implements Movers.Movable, Changable {
   /// Typically this is set through [shape] but is exposed so that
   /// renders with higher requirements can precalculate shapes or provide
   /// custom shapes to the entity.
-  Data.ShapeBuilder get shapeBuilder => this._shapeBuilder;
-  set shapeBuilder(Data.ShapeBuilder builder) {
+  Shapes.ShapeBuilder get shapeBuilder => this._shapeBuilder;
+  set shapeBuilder(Shapes.ShapeBuilder builder) {
     if (this._shapeBuilder != builder) {
-      Data.ShapeBuilder oldBuilder = this._shapeBuilder;
+      Shapes.ShapeBuilder oldBuilder = this._shapeBuilder;
       this._shape = null;
       this._shapeBuilder = builder;
       this.clearCache();
@@ -419,7 +419,7 @@ class Entity implements Movers.Movable, Changable {
   /// This isn't meant to be called from outside the entity, in other languages this would
   /// be a protected method. This method is exposed to that the entity is extended and
   /// these methods can be overwritten. If overwritten call this super method to still emit events.
-  void onShapeBuilderChanged(Data.ShapeBuilder oldShape, Data.ShapeBuilder newShape) {
+  void onShapeBuilderChanged(Shapes.ShapeBuilder oldShape, Shapes.ShapeBuilder newShape) {
     this._shapeBuilderChanged?.emit();
     this.onChanged();
   }

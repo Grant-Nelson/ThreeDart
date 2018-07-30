@@ -383,8 +383,8 @@ class Inspection extends Technique {
 
   /// Renderes one of the shape builder components to inspect.
   /// If the component of the shape isn't cached it will be created and cached.
-  void _renderBuilder(Core.RenderState state, Data.BufferStoreSet storeSet, Data.ShapeBuilder builder,
-      String name, Shapes.Shape shapeBuilderModHndl(Data.ShapeBuilder builder), Math.Color3 ambient, Math.Color3 diffuse) {
+  void _renderBuilder(Core.RenderState state, Data.BufferStoreSet storeSet, Shapes.ShapeBuilder builder,
+      String name, Shapes.Shape shapeBuilderModHndl(Shapes.ShapeBuilder builder), Math.Color3 ambient, Math.Color3 diffuse) {
     Data.BufferStore store = storeSet.map[name];
     if (store == null) {
       store = this._buildShape(state, shapeBuilderModHndl(builder));
@@ -726,7 +726,7 @@ class Inspection extends Technique {
   }
     
   /// Creates the axii shape for a shape builder.
-  Shapes.Shape _axisBuilder(Data.ShapeBuilder builder) {
+  Shapes.Shape _axisBuilder(Shapes.ShapeBuilder builder) {
     Shapes.Shape result = new Shapes.Shape();
     var add = (double dx, double dy, double dz) {
       Math.Color4 clr = new Math.Color4(dx, dy, dz);
@@ -753,7 +753,7 @@ class Inspection extends Technique {
   
   /// Convertes the given [shape] into the axial alligned bounding box
   /// shape for a shape builder.
-  Shapes.Shape _aabbBuilder(Data.ShapeBuilder builder) {
+  Shapes.Shape _aabbBuilder(Shapes.ShapeBuilder builder) {
     Math.Region3 aabb = builder.calculateAABB();
     Shapes.Shape result = new Shapes.Shape();
     var add = (double dx, double dy, double dz) {
