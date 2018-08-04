@@ -23,6 +23,7 @@ class Generator {
       this._plants(chunk);
     }
     this._add3Dart(-12, 40, -15);
+    this._towerOfPips(0, 2, 0);
   }
 
   void _set(int x, int y, int z, int value) {
@@ -251,4 +252,19 @@ class Generator {
       [1, 1, 1, 2, 3, 4, 5, 6]);
   }
 
+  void _towerOfPips(int x, int y, int z) {
+    final int width = 3, height = 7;
+    for (int px = -width; px <= width; px++) {
+      for (int py = 0; py <= height; py++) {
+        for (int pz = -width; pz <= width; pz++) {
+          this._set(x + px, y + py, z + pz, BlockType.Air);
+        }
+      }
+    }
+
+    this._set(x, y+3, z, BlockType.YellowShine);
+    this._set(x, y+2, z, BlockType.YellowShine);
+    this._set(x, y+1, z, BlockType.YellowShine);
+    this._set(x, y,   z, BlockType.BlackShine);
+  }
 }

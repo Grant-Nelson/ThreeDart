@@ -251,10 +251,11 @@ class Player {
     if (this._highlight == null) {
       this._blockHighlight.enabled = false;
     } else {
-      Shaper shaper = new Shaper(null);
+      Shaper shaper = new Shaper(null, Data.VertexType.Pos | Data.VertexType.Txt2D);
       shaper.addCubeToOneShape(this._highlight.chunkX+this._highlight.x, this._highlight.y, 
         this._highlight.chunkZ+this._highlight.z, true, 1.1);
       shaper.finish([this._blockHighlight]);
+      this._blockHighlight.enabled = true;
     }
   }
 
