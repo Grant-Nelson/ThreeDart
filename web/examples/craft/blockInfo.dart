@@ -17,3 +17,10 @@ class BlockInfo {
     this.chunk?.getBlock(x, y, z) ?? ((y < 0)? BlockType.Boundary: BlockType.Air);
   void set value(int value) { this.chunk?.setBlock(x, y, z, value); }
 }
+
+class NeighborBlockInfo {
+  final BlockInfo info;
+  final Math.HitRegion region;
+
+  NeighborBlockInfo(this.info, this.region);
+}

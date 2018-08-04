@@ -9,36 +9,21 @@ class Generator {
   }
 
   void fillWorld() {
-    // this._addPyramid();
-    // for (Chunk chunk in this._world._chunks) {
-    //   this._turrainChunk(chunk);
-    // }
-    // for (Chunk chunk in this._world._chunks) {
-    //   this._applyWaterChunk(chunk);
-    // }
-    // for (Chunk chunk in this._world._chunks) {
-    //   this._trees(chunk);
-    // }
-    // for (Chunk chunk in this._world._chunks) {
-    //   this._plants(chunk);
-    // }
-    // this._add3Dart(-12, 40, -15);
-    // this._towerOfPips(0, 2, 0);
-
+    this._addPyramid();
     for (Chunk chunk in this._world._chunks) {
-      for (int x = 0; x < Chunk.xSize; x++) {
-        for (int z = 0; z < Chunk.zSize; z++) {
-          int value;
-          if ((x%8 == 0) || (z%8 == 0)) {
-            value = ((x%8 == 0) && (z%8 == 0)) ? BlockType.YellowShine : BlockType.RedShine;
-          } else {
-            value = ((x+z)%2 == 0) ? BlockType.BlackShine : BlockType.WhiteShine;
-          }
-          chunk.setBlock(x, 0, z, value);
-        }
-      }
+      this._turrainChunk(chunk);
     }
-    this._set(0, 0, 0, BlockType.Turf);
+    for (Chunk chunk in this._world._chunks) {
+      this._applyWaterChunk(chunk);
+    }
+    for (Chunk chunk in this._world._chunks) {
+      this._trees(chunk);
+    }
+    for (Chunk chunk in this._world._chunks) {
+      this._plants(chunk);
+    }
+    this._add3Dart(-12, 40, -15);
+    this._towerOfPips(0, 2, 0);
   }
 
   void _set(int x, int y, int z, int value) {
@@ -130,7 +115,7 @@ class Generator {
     if (value != BlockType.Turf && value != BlockType.DryLeaves) return;
 
     for (int y = 1; y < 8; y++) {
-      chunk.setBlock(x, maxy + y, z, BlockType.Trunk);
+      chunk.setBlock(x, maxy + y, z, BlockType.TrunkUD);
     }
 
     _addTreeBase(chunk, x, z);
