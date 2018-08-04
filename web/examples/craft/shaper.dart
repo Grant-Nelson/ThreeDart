@@ -1,6 +1,13 @@
 part of craft;
 
 class Shaper {
+  final Math.Vector3 topNorm    = new Math.Vector3( 0.0,  1.0,  0.0);
+  final Math.Vector3 bottomNorm = new Math.Vector3( 0.0, -1.0,  0.0);
+  final Math.Vector3 leftNorm   = new Math.Vector3( 1.0,  0.0,  0.0);
+  final Math.Vector3 rightNorm  = new Math.Vector3(-1.0,  0.0,  0.0);
+  final Math.Vector3 frontNorm  = new Math.Vector3( 0.0,  0.0,  1.0);
+  final Math.Vector3 backNorm   = new Math.Vector3( 0.0,  0.0, -1.0);
+
   final Math.Point3 frontTopLeft     = new Math.Point3(-0.5,  0.5,  0.5);
   final Math.Point3 frontTopRight    = new Math.Point3( 0.5,  0.5,  0.5);
   final Math.Point3 frontBottomLeft  = new Math.Point3(-0.5, -0.5,  0.5);
@@ -11,10 +18,12 @@ class Shaper {
   final Math.Point3 backBottomRight  = new Math.Point3( 0.5, -0.5, -0.5);
 
   Materials _mats;
-  List<Shapes.Shape> _shapes;
+  Data.VertexType _vertexType;
+  List<Shapes.ReducedShape> _shapes;
 
-  Shaper(this._mats) {
-    this._shapes = new List<Shapes.Shape>(this._mats?.materials?.length ?? 1);
+  Shaper(this._mats, [this._vertexType = null]) {
+    this._vertexType ??= Data.VertexType.Pos | Data.VertexType.Txt2D | Data.VertexType.Norm;
+    this._shapes = new List<Shapes.ReducedShape>(this._mats?.materials?.length ?? 1);
   }
   
   void buildChunkShapes(Chunk chunk) {
@@ -34,7 +43,7 @@ class Shaper {
   
   void addCubeToOneShape(int x, int y, int z, bool twoSided, double scalar) {
     Math.Point3 loc = new Math.Point3(x.toDouble() + 0.5, y.toDouble() + 0.5, z.toDouble() + 0.5);
-    Shapes.Shape shape = this._getShape(0);
+    Shapes.ReducedShape shape = this._getShape(0);
     this._addTopToShape(   shape, loc, twoSided, scalar);
     this._addBottomToShape(shape, loc, twoSided, scalar);
     this._addLeftToShape(  shape, loc, twoSided, scalar);
@@ -46,22 +55,22 @@ class Shaper {
   void finish(List<ThreeDart.Entity> entities) {
     for (int i = entities.length-1; i >= 0; i--) {
       ThreeDart.Entity entity = entities[i];
-      Shapes.Shape shape = this._shapes[i];
+      Shapes.ReducedShape shape = this._shapes[i];
       if (shape != null) {
-        entity.shape = shape;
+        entity.shapeBuilder = shape;
         entity.enabled = !shape.vertices.isEmpty;
       } else {
-        entity.shape = null;
+        entity.shapeBuilder = null;
         entity.enabled = false;
       }
     }
     this._shapes = null;
   }
 
-  Shapes.Shape _getShape(int index) {
-    Shapes.Shape shape = this._shapes[index];
+  Shapes.ReducedShape _getShape(int index) {
+    Shapes.ReducedShape shape = this._shapes[index];
     if (shape == null) {
-      shape = new Shapes.Shape();
+      shape = new Shapes.ReducedShape(this._vertexType);
       this._shapes[index] = shape;
     }
     return shape; 
@@ -84,73 +93,43 @@ class Shaper {
     } else if (BlockType.solid(value)) this._addCubeToShapes(chunk, loc, chunkLoc, value, twoSided, scalar);
   }
   
-  Shapes.Vertex _addVertex(Shapes.Shape shape, Math.Point3 loc, Math.Vector3 norm, double tu, double tv) {
-    return shape.vertices.addNew(
+  Shapes.Vertex _addVertex(Math.Point3 loc, Math.Vector3 norm, double tu, double tv) {
+    return new Shapes.Vertex(
         type: Data.VertexType.Pos | Data.VertexType.Txt2D | Data.VertexType.Norm,
         loc: loc,
         norm: norm,
         txt2D: new Math.Point2(tu, tv));
   }
 
-  void _addTopToShape(Shapes.Shape shape, Math.Point3 loc, bool twoSided, double scalar) {
-    Math.Vector3 norm = new Math.Vector3(0.0, 1.0, 0.0);
-    Shapes.Vertex ver1 = this._addVertex(shape, loc + backTopLeft  *scalar, norm, 0.0, 0.0);
-    Shapes.Vertex ver2 = this._addVertex(shape, loc + frontTopLeft *scalar, norm, 0.0, 1.0);
-    Shapes.Vertex ver3 = this._addVertex(shape, loc + frontTopRight*scalar, norm, 1.0, 1.0);
-    Shapes.Vertex ver4 = this._addVertex(shape, loc + backTopRight *scalar, norm, 1.0, 0.0);
-    shape.faces.addFan([ver1, ver2, ver3, ver4]);
-    if (twoSided) shape.faces.addFan([ver4, ver3, ver2, ver1]);
+  void _addQuad(Shapes.ReducedShape shape, Math.Point3 loc, Math.Point3 off1, Math.Point3 off2,
+    Math.Point3 off3, Math.Point3 off4, Math.Vector3 norm, bool twoSided, double scalar) {
+    Shapes.Vertex ver1 = this._addVertex(loc + off1*scalar, norm, 0.0, 0.0);
+    Shapes.Vertex ver2 = this._addVertex(loc + off2*scalar, norm, 0.0, 1.0);
+    Shapes.Vertex ver3 = this._addVertex(loc + off3*scalar, norm, 1.0, 1.0);
+    Shapes.Vertex ver4 = this._addVertex(loc + off4*scalar, norm, 1.0, 0.0);
+    int i = shape.addVertices([ver1, ver2, ver3, ver4]);
+    // shape.addLines([i, i+1, i+1, i+2, i+2, i+3, i+3, i, i, i+2]); // wireframe
+    shape.addTriangleFan([i, i+1, i+2, i+3]);
+    if (twoSided) shape.addTriangleFan([i+3, i+2, i+1, i]);
   }
 
-  void _addBottomToShape(Shapes.Shape shape, Math.Point3 loc, bool twoSided, double scalar) {
-    Math.Vector3 norm = new Math.Vector3(0.0, -1.0, 0.0);
-    Shapes.Vertex ver1 = this._addVertex(shape, loc + frontBottomLeft *scalar, norm, 0.0, 0.0);
-    Shapes.Vertex ver2 = this._addVertex(shape, loc + backBottomLeft  *scalar, norm, 0.0, 1.0);
-    Shapes.Vertex ver3 = this._addVertex(shape, loc + backBottomRight *scalar, norm, 1.0, 1.0);
-    Shapes.Vertex ver4 = this._addVertex(shape, loc + frontBottomRight*scalar, norm, 1.0, 0.0);
-    shape.faces.addFan([ver1, ver2, ver3, ver4]);
-    if (twoSided) shape.faces.addFan([ver4, ver3, ver2, ver1]);
-  }
+  void _addTopToShape(Shapes.ReducedShape shape, Math.Point3 loc, bool twoSided, double scalar) =>
+    _addQuad(shape, loc, backTopLeft, frontTopLeft, frontTopRight, backTopRight, topNorm, twoSided, scalar);
 
-  void _addLeftToShape(Shapes.Shape shape, Math.Point3 loc, bool twoSided, double scalar) {
-    Math.Vector3 norm = new Math.Vector3(1.0, 0.0, 0.0);
-    Shapes.Vertex ver1 = this._addVertex(shape, loc + backTopLeft    *scalar, norm, 0.0, 0.0);
-    Shapes.Vertex ver2 = this._addVertex(shape, loc + backBottomLeft *scalar, norm, 0.0, 1.0);
-    Shapes.Vertex ver3 = this._addVertex(shape, loc + frontBottomLeft*scalar, norm, 1.0, 1.0);
-    Shapes.Vertex ver4 = this._addVertex(shape, loc + frontTopLeft   *scalar, norm, 1.0, 0.0);
-    shape.faces.addFan([ver1, ver2, ver3, ver4]);
-    if (twoSided) shape.faces.addFan([ver4, ver3, ver2, ver1]);
-  }
+  void _addBottomToShape(Shapes.ReducedShape shape, Math.Point3 loc, bool twoSided, double scalar) =>
+    _addQuad(shape, loc, frontBottomLeft, backBottomLeft, backBottomRight, frontBottomRight, bottomNorm, twoSided, scalar);
 
-  void _addRightToShape(Shapes.Shape shape, Math.Point3 loc, bool twoSided, double scalar) {
-    Math.Vector3 norm = new Math.Vector3(-1.0, 0.0, 0.0);
-    Shapes.Vertex ver1 = this._addVertex(shape, loc + frontTopRight   *scalar, norm, 0.0, 0.0);
-    Shapes.Vertex ver2 = this._addVertex(shape, loc + frontBottomRight*scalar, norm, 0.0, 1.0);
-    Shapes.Vertex ver3 = this._addVertex(shape, loc + backBottomRight *scalar, norm, 1.0, 1.0);
-    Shapes.Vertex ver4 = this._addVertex(shape, loc + backTopRight    *scalar, norm, 1.0, 0.0);
-    shape.faces.addFan([ver1, ver2, ver3, ver4]);
-    if (twoSided) shape.faces.addFan([ver4, ver3, ver2, ver1]);
-  }
+  void _addLeftToShape(Shapes.ReducedShape shape, Math.Point3 loc, bool twoSided, double scalar) =>
+    _addQuad(shape, loc, backTopLeft, backBottomLeft, frontBottomLeft, frontTopLeft, leftNorm, twoSided, scalar);
 
-  void _addFrontToShape(Shapes.Shape shape, Math.Point3 loc, bool twoSided, double scalar) {
-    Math.Vector3 norm = new Math.Vector3(0.0, 0.0, 1.0);
-    Shapes.Vertex ver1 = this._addVertex(shape, loc + frontTopLeft    *scalar, norm, 0.0, 0.0);
-    Shapes.Vertex ver2 = this._addVertex(shape, loc + frontBottomLeft *scalar, norm, 0.0, 1.0);
-    Shapes.Vertex ver3 = this._addVertex(shape, loc + frontBottomRight*scalar, norm, 1.0, 1.0);
-    Shapes.Vertex ver4 = this._addVertex(shape, loc + frontTopRight   *scalar, norm, 1.0, 0.0);
-    shape.faces.addFan([ver1, ver2, ver3, ver4]);
-    if (twoSided) shape.faces.addFan([ver4, ver3, ver2, ver1]);
-  }
+  void _addRightToShape(Shapes.ReducedShape shape, Math.Point3 loc, bool twoSided, double scalar) =>
+    _addQuad(shape, loc, frontTopRight, frontBottomRight, backBottomRight, backTopRight, rightNorm, twoSided, scalar);
 
-  void _addBackToShape(Shapes.Shape shape, Math.Point3 loc, bool twoSided, double scalar) {
-    Math.Vector3 norm = new Math.Vector3(0.0, 0.0, -1.0);
-    Shapes.Vertex ver1 = this._addVertex(shape, loc + backTopRight   *scalar, norm, 0.0, 0.0);
-    Shapes.Vertex ver2 = this._addVertex(shape, loc + backBottomRight*scalar, norm, 0.0, 1.0);
-    Shapes.Vertex ver3 = this._addVertex(shape, loc + backBottomLeft *scalar, norm, 1.0, 1.0);
-    Shapes.Vertex ver4 = this._addVertex(shape, loc + backTopLeft    *scalar, norm, 1.0, 0.0);
-    shape.faces.addFan([ver1, ver2, ver3, ver4]);
-    if (twoSided) shape.faces.addFan([ver4, ver3, ver2, ver1]);
-  }
+  void _addFrontToShape(Shapes.ReducedShape shape, Math.Point3 loc, bool twoSided, double scalar) =>
+    _addQuad(shape, loc, frontTopLeft, frontBottomLeft, frontBottomRight, frontTopRight, frontNorm, twoSided, scalar);
+
+  void _addBackToShape(Shapes.ReducedShape shape, Math.Point3 loc, bool twoSided, double scalar) =>
+    _addQuad(shape, loc, backTopRight, backBottomRight, backBottomLeft, backTopLeft, backNorm, twoSided, scalar);
 
   void _addCubeToShapes(Chunk chunk, Math.Point3 loc, Math.Point3 chunkLoc, int value, bool twoSided, double scalar) {  
     CubeData data = this._mats.cubeData(value);
@@ -173,32 +152,30 @@ class Shaper {
     return BlockType.drawSide(value, neighbor);
   }
   
-  void _addQuadRotToShape(Shapes.Shape shape, Math.Point3 loc, double angle, [bool twoSided = false]) {
+  void _addQuadRotToShape(Shapes.ReducedShape shape, Math.Point3 loc, double angle, [bool twoSided = false]) {
     double c = math.cos(angle)*0.5, s = math.sin(angle)*0.5;
-    Shapes.Vertex ver1 = this._addVertex(shape, loc + new Math.Point3( c,  0.0, -s), null, 0.0, 0.0);
-    Shapes.Vertex ver2 = this._addVertex(shape, loc + new Math.Point3( c, -0.5, -s), null, 0.0, 1.0);
-    Shapes.Vertex ver3 = this._addVertex(shape, loc + new Math.Point3(-c, -0.5,  s), null, 1.0, 1.0);
-    Shapes.Vertex ver4 = this._addVertex(shape, loc + new Math.Point3(-c,  0.0,  s), null, 1.0, 0.0);
-    shape.faces.addFan([ver1, ver2, ver3, ver4]);
-    if (twoSided) shape.faces.addFan([ver4, ver3, ver2, ver1]);
+    _addQuad(shape, loc,
+      new Math.Point3( c,  0.0, -s),
+      new Math.Point3( c, -0.5, -s),
+      new Math.Point3(-c, -0.5,  s),
+      new Math.Point3(-c,  0.0,  s),
+      new Math.Vector3(s,  0.0,  c), twoSided, 1.0);
   }
 
   void _addPlantToShapes(Math.Point3 loc, int value) {
     List<int> offset = this._mats.matData(value);
     this._addQuadRotToShape(this._getShape(offset[0]),   loc, math.PI*0.5/4.0, true);
-    //this._addQuadRotToShape(this._getShape(offset[0]), loc, math.PI*1.0/4.0, true);
     this._addQuadRotToShape(this._getShape(offset[0]), loc, math.PI*2.5/4.0, true);
-    //this._addQuadRotToShape(this._getShape(offset[0]), loc, math.PI*3.0/4.0, true);
   }
   
-  void _addFernLeaf(Shapes.Shape shape, Math.Point3 loc, double angle) {
+  void _addFernLeaf(Shapes.ReducedShape shape, Math.Point3 loc, double angle) {
     Math.Matrix3 mat = new Math.Matrix3.rotateY(angle);
-    Shapes.Vertex ver1 = this._addVertex(shape, loc + mat.transPnt3(new Math.Point3(0.4, -0.1, -0.4)), null, 1.0, 1.0);
-    Shapes.Vertex ver2 = this._addVertex(shape, loc + mat.transPnt3(new Math.Point3(0.0, -0.5,  0.0)), null, 0.0, 1.0);
-    Shapes.Vertex ver3 = this._addVertex(shape, loc + mat.transPnt3(new Math.Point3(0.4, -0.1,  0.4)), null, 0.0, 0.0);
-    Shapes.Vertex ver4 = this._addVertex(shape, loc + mat.transPnt3(new Math.Point3(0.8,  0.0,  0.0)), null, 1.0, 0.0);
-    shape.faces.addFan([ver1, ver2, ver3, ver4]);
-    shape.faces.addFan([ver1, ver4, ver3, ver2]);
+    _addQuad(shape, loc,
+      mat.transPnt3(new Math.Point3(0.4, -0.1, -0.4)),
+      mat.transPnt3(new Math.Point3(0.0, -0.5,  0.0)),
+      mat.transPnt3(new Math.Point3(0.4, -0.1,  0.4)),
+      mat.transPnt3(new Math.Point3(0.8,  0.0,  0.0)),
+      topNorm, true, 1.0);
   }
   
   void _addFernToShapes(Math.Point3 loc) {
@@ -211,39 +188,46 @@ class Shaper {
 
   void _addMushroomToShapes(Math.Point3 loc) {
     List<int> offset = this._mats.matData(BlockType.Mushroom);
-    Shapes.Shape topShape    = this._getShape(offset[0]);
-    Shapes.Shape bottomShape = this._getShape(offset[1]);
-    Shapes.Shape sideShape   = this._getShape(offset[2]);
+    Shapes.ReducedShape topShape    = this._getShape(offset[0]);
+    Shapes.ReducedShape bottomShape = this._getShape(offset[1]);
+    Shapes.ReducedShape sideShape   = this._getShape(offset[2]);
 
-    List<Shapes.Vertex> side1 = [];
-    List<Shapes.Vertex> side2 = [];
-    for (double d = 0.0; d <= 1.0; d += 0.25) {
+    List<Shapes.Vertex> side = [];
+    List<Shapes.Vertex> botcap = [];
+    for (double d = 0.0; d <= 2.0; d += 0.25) {
       Math.Matrix3 mat = new Math.Matrix3.rotateY(math.PI*d);
-      side1.add(this._addVertex(sideShape, loc + mat.transPnt3(new Math.Point3( 0.07, -0.1, 0.0)), null, d, 0.0));
-      side1.add(this._addVertex(sideShape, loc + mat.transPnt3(new Math.Point3( 0.1,  -0.5, 0.0)), null, d, 1.0));
-      side2.add(this._addVertex(sideShape, loc + mat.transPnt3(new Math.Point3(-0.07, -0.1, 0.0)), null, d, 0.0));
-      side2.add(this._addVertex(sideShape, loc + mat.transPnt3(new Math.Point3(-0.1,  -0.5, 0.0)), null, d, 1.0));
+      side.add(this._addVertex(loc + mat.transPnt3(new Math.Point3( 0.07, -0.1, 0.0)), mat.transVec3(frontNorm), (d-1.0).abs(), 0.0));
+      side.add(this._addVertex(loc + mat.transPnt3(new Math.Point3( 0.1,  -0.5, 0.0)), mat.transVec3(frontNorm), (d-1.0).abs(), 1.0));
+      Math.Point3 topLoc = mat.transPnt3(new Math.Point3(0.1, -0.5, 0.0));
+      Math.Point3 topTxt = mat.transPnt3(new Math.Point3(0.1,  0.0, 0.0));
+      botcap.add(this._addVertex(loc + topLoc, bottomNorm, topTxt.x+0.5, topTxt.z+0.5));
     }
-    sideShape.faces.addStrip(side1);
-    sideShape.faces.addStrip(side2);
-    
+
+    int side1Index = sideShape.addVertices(side);
+    int botcapIndex = bottomShape.addVertices(botcap);
+    sideShape.addTriangleStrip(new List<int>.generate(side.length, (int i) => side1Index+i));
+    bottomShape.addTriangleFan(new List<int>.generate(botcap.length, (int i) => botcapIndex+i));
+
     List<Shapes.Vertex> top = [];
     List<Shapes.Vertex> bottom = [];
-    top.add(   this._addVertex(topShape,    loc + new Math.Point3(0.0,  0.05, 0.0), null, 0.5, 0.5));
-    bottom.add(this._addVertex(bottomShape, loc + new Math.Point3(0.0, -0.1,  0.0), null, 0.5, 0.5));
+    top.add(   this._addVertex(loc + new Math.Point3(0.0,  0.05, 0.0), topNorm,    0.5, 0.5));
+    bottom.add(this._addVertex(loc + new Math.Point3(0.0, -0.1,  0.0), bottomNorm, 0.5, 0.5));
 
     for (double d = 0.0; d <= 1.0; d += 0.1) {
       Math.Matrix3 topMat = new Math.Matrix3.rotateY(-math.PI*2.0*d);
-      Math.Point3 topTxt = topMat.transPnt3(new Math.Point3(0.5,  0.0,  0.0));
       Math.Point3 topLoc = topMat.transPnt3(new Math.Point3(0.4, -0.15, 0.0));
-      top.add(this._addVertex(topShape, loc + topLoc, null, topTxt.x+0.5, topTxt.z+0.5));
-        
+      Math.Point3 topTxt = topMat.transPnt3(new Math.Point3(0.5,  0.0,  0.0));
+      top.add(this._addVertex(loc + topLoc, null, topTxt.x+0.5, topTxt.z+0.5));
+
       Math.Matrix3 botMat = new Math.Matrix3.rotateY(math.PI*2.0*d);
-      Math.Point3 botTxt = botMat.transPnt3(new Math.Point3(0.5,  0.0,  0.0));
       Math.Point3 botLoc = botMat.transPnt3(new Math.Point3(0.4, -0.15, 0.0));
-      bottom.add(this._addVertex(bottomShape, loc + botLoc, null, botTxt.x+0.5, botTxt.z+0.5));
+      Math.Point3 botTxt = botMat.transPnt3(new Math.Point3(0.5,  0.0,  0.0));
+      bottom.add(this._addVertex(loc + botLoc, null, botTxt.x+0.5, botTxt.z+0.5));
     }
-    topShape.faces.addFan(top);
-    bottomShape.faces.addFan(bottom);
+
+    int topIndex = topShape.addVertices(top);
+    int bottomIndex = bottomShape.addVertices(bottom);
+    topShape.addTriangleFan(new List<int>.generate(top.length, (int i) => topIndex+i));
+    bottomShape.addTriangleFan(new List<int>.generate(bottom.length, (int i) => bottomIndex+i));
   }
 }

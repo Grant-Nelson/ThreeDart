@@ -58,6 +58,18 @@ class ReducedShape implements ShapeBuilder {
     return this._changed;
   }
 
+  /// The set of vertex data for the shape.
+  List<double> get vertices => this._vertices;
+
+  /// The set of indices for the points to render.
+  List<int> get points => this._points;
+
+  /// The set of indices to vertices in sets of two for each line to render.
+  List<int> get lines => this._lines;
+
+  /// The set of indices to vertices in sets of three for each face to render.
+  List<int> get faces => this._faces;
+
   /// Adds the given vertices to the shape and returns the index
   /// to the first vertex added.
   int addVertices(List<Vertex> vertices) {
@@ -66,7 +78,6 @@ class ReducedShape implements ShapeBuilder {
     int offset = 0;
     for (int i = 0; i < this._typeCount; ++i) {
       Data.VertexType local = this._type.at(i);
-      final int size = local.size;
       for (int j = 0; j < length; ++j) {
         Vertex ver = vertices[j];
         List<double> list = ver.listFor(local);
@@ -76,7 +87,7 @@ class ReducedShape implements ShapeBuilder {
           index++;
         }
       }
-      offset += size;
+      offset += local.size;
     }
     
     if (this._type.has(Data.VertexType.Pos)) {
@@ -102,7 +113,7 @@ class ReducedShape implements ShapeBuilder {
   /// Adds a new strip of lines to the given indices for vertices.
   void addLineStrip(List<int> indices) {
     final int count = indices.length;
-    if (count > 0) {
+    if (count >= 2) {
       List<int> lines = new List<int>(count*2-1);
       for (int i = 1, j = 0; i < count; i++, j+=2) {
         lines[j  ] = indices[i-1];
@@ -116,7 +127,7 @@ class ReducedShape implements ShapeBuilder {
   /// Adds a new loop of lines to the given indices for vertices.
   void addLineLoop(List<int> indices) {
     final int count = indices.length;
-    if (count > 0) {
+    if (count >= 2) {
       List<int> lines = new List<int>(count*2);
       lines[0] = indices[count-1];
       lines[1] = indices[0];
@@ -138,8 +149,8 @@ class ReducedShape implements ShapeBuilder {
   /// Adds a fan of faces with the given indices for vertices.
   void addTriangleFan(List<int> indices) {
     final int count = indices.length;
-    if (count > 0) {
-      List<int> tris = new List<int>(count*3-2);
+    if (count >= 3) {
+      List<int> tris = new List<int>((count-2)*3);
       int ver0 = indices[0];
       for (int i = 2, j = 0; i < count; i++, j+=3) {
         tris[j  ] = ver0;
@@ -154,8 +165,8 @@ class ReducedShape implements ShapeBuilder {
   /// Adds a strip of faces with the given indices for vertices.
   void addTriangleStrip(List<int> indices) {
     final int count = indices.length;
-    if (count > 0) {
-      List<int> tris = new List<int>(count*3-2);
+    if (count >= 3) {
+      List<int> tris = new List<int>((count-2)*3);
       bool flip = false;
       for (int i = 2, j = 0; i < count; i++, j+=3) {
         if (flip) {
@@ -178,8 +189,8 @@ class ReducedShape implements ShapeBuilder {
   /// Adds a looped strip of faces with the given indices for vertices.
   void addTriangleLoop(List<int> indices) {
     final int count = indices.length;
-    if (count > 0) {
-      List<int> tris = new List<int>(count*3+1);
+    if (count >= 3) {
+      List<int> tris = new List<int>(count*3);
       bool flip = false;
       for (int i = 2, j = 0; i < count+2; i++, j+=3) {
         int k = i % count;
@@ -238,7 +249,7 @@ class ReducedShape implements ShapeBuilder {
   /// and the vertex [type] required for technique.
   Data.BufferStore build(Data.BufferBuilder builder, Data.VertexType type) {
     if (type != this._type) throw new Exception("Shape was reduced to ${this._type} so can not build for $type.");
-    
+
     if (this._attrs == null) {
       final int byteStride = this._stride*Typed.Float32List.BYTES_PER_ELEMENT;
       this._attrs = new List<Data.BufferAttr>(this._typeCount);
@@ -254,6 +265,7 @@ class ReducedShape implements ShapeBuilder {
 
     Data.Buffer vertexBuf = builder.fromDoubleList(WebGL.ARRAY_BUFFER, this._vertices);
     Data.BufferStore store = new Data.BufferStore(vertexBuf, this._attrs, this._type);
+
     if (this._points.isNotEmpty) {
       Data.Buffer indexBuf = builder.fromIntList(WebGL.ELEMENT_ARRAY_BUFFER, this._points);
       store.indexObjects.add(new Data.IndexObject(WebGL.POINTS, this._points.length, indexBuf));
