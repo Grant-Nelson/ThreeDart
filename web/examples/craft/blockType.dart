@@ -36,26 +36,32 @@ class BlockType {
   /// Dry leaves is turf with some leaves on it
   static const int DryLeaves = 104;
 
-  /// Trunk block of a tree
-  static const int Trunk = 105;
+  /// Trunk block of a tree placed up right (up/down)
+  static const int TrunkUD = 105;
+
+  /// Trunk block of a tree placed on its side, facing north/south
+  static const int TrunkNS = 106;
+
+  /// Trunk block of a tree placed on its side, facing east/west
+  static const int TrunkEW = 107;
   
   /// Block of grey bricks
-  static const int Brick = 106;
+  static const int Brick = 108;
   
   /// Red reflective solid block, like ruby
-  static const int RedShine = 107;
+  static const int RedShine = 109;
   
   /// White reflective solid block, like silver
-  static const int WhiteShine = 108;
+  static const int WhiteShine = 110;
 
   /// Yellow reflective solid block, like gold
-  static const int YellowShine = 109;
+  static const int YellowShine = 111;
 
   /// Black reflective solid block, like obsidian
-  static const int BlackShine = 110;
+  static const int BlackShine = 112;
 
   /// A block of leaves on the top of the tree
-  static const int Leaves = 111;
+  static const int Leaves = 113;
   
   //====================================
   // Open blocks
@@ -89,7 +95,7 @@ class BlockType {
     Rock,
     Sand ,
     DryLeaves,
-    Trunk,
+    TrunkUD,
     Brick,
     RedShine,
     WhiteShine,
@@ -115,7 +121,9 @@ class BlockType {
       case Rock:        return "rock";
       case Sand:        return "sand"; 
       case DryLeaves:   return "dryLeaves";
-      case Trunk:       return "trunk";
+      case TrunkUD:     return "trunk-ud";
+      case TrunkNS:     return "trunk-ns";
+      case TrunkEW:     return "trunk-ew";
       case Brick:       return "brick";
       case RedShine:    return "redShine";
       case WhiteShine:  return "whiteShine";

@@ -9,6 +9,9 @@ class Player {
   static const double _pad = 0.25;
   static const double _jumpSpeed = 30.0;
   static const double _highlightDistance = 6.0;
+  static const double _playerHeight = -2.0;
+  static const double _headOffset = -1.5;
+  static const double _footOffset = -0.5;
 
   Movers.UserTranslator _trans;
   Movers.UserRotater _rot;
@@ -154,8 +157,17 @@ class Player {
 
     int blockType = BlockType.Air;
     if ((args as ThreeDart.KeyEventArgs).key.key == ThreeDart.UserKey.keyE) {
-      this._highlight = this._getNeighborBlock(this._highlight, this._playerViewTarget());
+      NeighborBlockInfo neighbor = this._getNeighborBlock(this._highlight, this._playerViewTarget());
+      this._highlight = neighbor.info;
       blockType = BlockType.PlaceableBlocks[this._selectedBlockIndex];
+
+      if (blockType == BlockType.TrunkUD) {
+        if (neighbor.region.overlaps(Math.HitRegion.XPos|Math.HitRegion.XNeg)) {
+          blockType = BlockType.TrunkEW;
+        } else if (neighbor.region.overlaps(Math.HitRegion.ZPos|Math.HitRegion.ZNeg)) {
+          blockType = BlockType.TrunkNS;
+        }
+      }
     }
 
     Chunk chunk = this._highlight.chunk;
@@ -172,40 +184,38 @@ class Player {
   Math.Point3 _handleCollide(Math.Point3 prev, Math.Point3 loc) {
     double x = loc.x, y = loc.y, z = loc.z;
     final double nx = prev.x.floor()+0.5, ny = prev.y.floor()+0.5, nz = prev.z.floor()+0.5;
-    final double headY = y - 1.5;
-    final double footY = y - 0.5;
     this._touchingGround = false;
 
     // TODO: Determine if underwater so that the water can be flipped inside out.
     // TODO: If inside a block, push towards nearest wall.
 
-    if (_isHard(x-_pad, headY, z) ||
-        _isHard(x-_pad, footY, z)) {
+    if (_isHard(x, y-_pad, z)) {
+      y = ny - _pad;
+      this._trans.offsetY.velocity = 0.0;
+    } else if (_isHard(x, y+_playerHeight+_pad, z)) {
+      y = ny + _pad;
+      this._trans.offsetY.velocity = 0.0;
+      this._touchingGround = true;
+    }
+
+    if (_isHard(x-_pad, y+_headOffset, z) ||
+        _isHard(x-_pad, y+_footOffset, z)) {
       x = nx - _pad;
       this._trans.offsetX.velocity = 0.0;
-    } else if (_isHard(x+_pad, headY, z) ||
-               _isHard(x+_pad, footY, z)) {
+    } else if (_isHard(x+_pad, y+_headOffset, z) ||
+               _isHard(x+_pad, y+_footOffset, z)) {
       x = nx + _pad;
       this._trans.offsetX.velocity = 0.0;
     }
 
-    if (_isHard(x, headY, z-_pad) ||
-        _isHard(x, footY, z-_pad)) {
+    if (_isHard(x, y+_headOffset, z-_pad) ||
+        _isHard(x, y+_footOffset, z-_pad)) {
       z = nz - _pad;
       this._trans.offsetZ.velocity = 0.0;
-    } else if (_isHard(x, headY, z+_pad) ||
-               _isHard(x, footY, z+_pad)) {
+    } else if (_isHard(x, y+_headOffset, z+_pad) ||
+               _isHard(x, y+_footOffset, z+_pad)) {
       z = nz + _pad;
       this._trans.offsetZ.velocity = 0.0;
-    }
-
-    if (_isHard(x, y-_pad, z)) {
-      y = ny - _pad;
-      this._trans.offsetY.velocity = 0.0;
-    } else if (_isHard(x, y-2.0+_pad, z)) {
-      y = ny + _pad;
-      this._trans.offsetY.velocity = 0.0;
-      this._touchingGround = true;
     }
     
     return new Math.Point3(x, y, z);
@@ -218,7 +228,7 @@ class Player {
       mat.transVec3(new Math.Vector3(0.0, 0.0, -_highlightDistance)));
   }
 
-  BlockInfo _getNeighborBlock(BlockInfo info, Math.Ray3 ray) {
+  NeighborBlockInfo _getNeighborBlock(BlockInfo info, Math.Ray3 ray) {
     double x = info.x.toDouble()+info.chunkX.toDouble();
     double y = info.y.toDouble();
     double z = info.z.toDouble()+info.chunkZ.toDouble();
@@ -234,7 +244,7 @@ class Player {
     else if (inter.region == Math.HitRegion.ZPos) z += 1.1;
     else return null;
 
-    return this._world.getBlock(x, y, z);
+    return new NeighborBlockInfo(this._world.getBlock(x, y, z), inter.region);
   }
 
   void _updateHighlight(ThreeDart.EventArgs _) {
@@ -242,8 +252,9 @@ class Player {
     Math.Ray3 back = ray.reverse;
 
     BlockInfo info = this._world.getBlock(ray.x, ray.y, ray.z);
-    while ((info != null) && (info.value == BlockType.Air))
-      info = this._getNeighborBlock(info, back);
+    while ((info != null) && (info.value == BlockType.Air)) {
+      info = this._getNeighborBlock(info, back)?.info;
+    }
 
     if ((info != null) && (info.value == BlockType.Air)) info = null;
     this._highlight = info;

@@ -66,7 +66,9 @@ class Materials {
     this._addCubeData(BlockType.Rock,        rock,          rock,          rock,          rock,          rock,          rock);
     this._addCubeData(BlockType.Sand,        sand,          sand,          sand,          sand,          sand,          sand);
     this._addCubeData(BlockType.DryLeaves,   dryLeavesTop,  dirt,          dryLeavesSide, dryLeavesSide, dryLeavesSide, dryLeavesSide);
-    this._addCubeData(BlockType.Trunk,       trunkEnd,      trunkEnd,      trunkSide,     trunkSide,     trunkSide,     trunkSide);
+    this._addCubeData(BlockType.TrunkUD,     trunkEnd,      trunkEnd,      trunkSide,     trunkSide,     trunkSide,     trunkSide);
+    this._addCubeData(BlockType.TrunkNS,     trunkSide,     trunkSide,     trunkSide,     trunkSide,     trunkEnd,      trunkEnd);
+    this._addCubeData(BlockType.TrunkEW,     trunkSide,     trunkSide,     trunkEnd,      trunkEnd,      trunkSide,     trunkSide);
     this._addCubeData(BlockType.Brick,       brick,         brick,         brick,         brick,         brick,         brick);
     this._addCubeData(BlockType.RedShine,    redShine,      redShine,      redShine,      redShine,      redShine,      redShine);
     this._addCubeData(BlockType.WhiteShine,  whiteShine,    whiteShine,    whiteShine,    whiteShine,    whiteShine,    whiteShine);

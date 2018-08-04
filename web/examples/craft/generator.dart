@@ -115,7 +115,7 @@ class Generator {
     if (value != BlockType.Turf && value != BlockType.DryLeaves) return;
 
     for (int y = 1; y < 8; y++) {
-      chunk.setBlock(x, maxy + y, z, BlockType.Trunk);
+      chunk.setBlock(x, maxy + y, z, BlockType.TrunkUD);
     }
 
     _addTreeBase(chunk, x, z);

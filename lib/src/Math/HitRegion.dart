@@ -62,7 +62,7 @@ class HitRegion {
 
   /// Determines if any part of the given hit region value is contained in this hit region value.
   bool overlaps(HitRegion region) =>
-    (this._value & region._value) != 0x00;
+    (this._value & region._value) != 0x0000;
 
   /// Determines if this hit region value contains the all of the given hit region value.
   bool has(HitRegion region) =>
