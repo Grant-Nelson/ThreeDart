@@ -27,6 +27,7 @@ part 'player.dart';
 part 'shaper.dart';
 part 'world.dart';
 
+/// Starts up the 3Dart Craft example
 void show() {
   new common.ShellPage("3Dart Craft")
     ..addLargeCanvas("targetCanvas")
@@ -36,21 +37,23 @@ void show() {
   Materials mats = new Materials(td);
   World world = new World(mats);
   Player player = new Player(td, world);
-  player.goHome();
 
   Scenes.EntityPass scene = new Scenes.EntityPass()
     ..onPreUpdate.add(world.update)
     ..camera.mover = player.camera;
 
   for (ThreeDart.Entity entity in world.entities)
-    scene.children.add(entity);  
+    scene.children.add(entity);
   scene.children.add(player.entity);
 
   world.player = player;
+  td.scene = scene;
+  player.goHome();
+
   // Set background color to sky blue
   (scene.target as Views.FrontTarget).color = new Math.Color4(0.576, 0.784, 0.929);
-  td.scene = scene;
 
+  // Start fps output
   new Timer.periodic(const Duration(milliseconds: 5000), (Timer time) {
     String fps = td.fps.toStringAsFixed(2);
     print("${fps} fps");

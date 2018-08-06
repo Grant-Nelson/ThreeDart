@@ -10,17 +10,17 @@ class BlockType {
 
   /// Default nothing block, works as air
   static const int Air = 0;
-  
+
   /// Transparent water block
   static const int Water = 1;
-  
+
   /// Invisible wall used to block players from leaving the island
   static const int Boundary = 2;
 
   //====================================
   // Solid blocks
   //====================================
-  
+
   /// Brown on all sides dirt block
   static const int Dirt = 100;
 
@@ -32,7 +32,7 @@ class BlockType {
 
   /// Off-white sand block beside water
   static const int Sand = 103;
-  
+
   /// Dry leaves is turf with some leaves on it
   static const int DryLeaves = 104;
 
@@ -44,13 +44,13 @@ class BlockType {
 
   /// Trunk block of a tree placed on its side, facing east/west
   static const int TrunkEW = 107;
-  
+
   /// Block of grey bricks
   static const int Brick = 108;
-  
+
   /// Red reflective solid block, like ruby
   static const int RedShine = 109;
-  
+
   /// White reflective solid block, like silver
   static const int WhiteShine = 110;
 
@@ -62,21 +62,21 @@ class BlockType {
 
   /// A block of leaves on the top of the tree
   static const int Leaves = 113;
-  
+
   //====================================
   // Open blocks
   //====================================
 
   /// Grass is an alpha textured plant for grass
   static const int Grass = 200;
-  
+
   /// Fern is an alpha textured plant for a fern
   static const int Fern = 201;
-  
+
   /// Flowers is an alpha textured plant the small white flower
   static const int WhiteFlower = 202;
-  
-  /// Flowers is an alpha textured plant the blue tuffs flower 
+
+  /// Flowers is an alpha textured plant the blue tuffs flower
   static const int BlueFlower = 203;
 
   /// Flowers is an alpha textured plant the red flower
@@ -89,7 +89,6 @@ class BlockType {
 
   /// Placeable blocks in the order to show in the hand.
   static final List<int> PlaceableBlocks = [
-    Water,
     Dirt,
     Turf,
     Rock,
@@ -101,6 +100,7 @@ class BlockType {
     WhiteShine,
     YellowShine,
     BlackShine,
+    Water,
     Leaves,
     Grass,
     Fern,
@@ -115,11 +115,11 @@ class BlockType {
       case Air:         return "air";
       case Water:       return "water";
       case Boundary:    return "boundary";
-      
+
       case Dirt:        return "dirt";
       case Turf:        return "turf";
       case Rock:        return "rock";
-      case Sand:        return "sand"; 
+      case Sand:        return "sand";
       case DryLeaves:   return "dryLeaves";
       case TrunkUD:     return "trunk-ud";
       case TrunkNS:     return "trunk-ns";

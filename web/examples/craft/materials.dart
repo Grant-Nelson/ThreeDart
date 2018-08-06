@@ -1,16 +1,33 @@
 part of craft;
 
+/// This defines which materials to use on which side of a block.
+/// This will be associated with a block value in a map so that the chunk can pick
+/// the correct materials when rendering.
 class CubeData {
+
+  /// The index of the material to apply to the top of the block.
   final int topIndex;
+
+  /// The index of the material to apply to the bottom of the block.
   final int bottomIndex;
+
+  /// The index of the material to apply to the left of the block.
   final int leftIndex;
+
+  /// The index of the material to apply to the right of the block.
   final int rightIndex;
+
+  /// The index of the material to apply to the front of the block.
   final int frontIndex;
+
+  /// The index of the material to apply to the back of the block.
   final int backIndex;
 
+  /// Creates a new cube data with the given values.
   CubeData(int this.topIndex, int this.bottomIndex, int this.leftIndex, int this.rightIndex, int this.frontIndex, int this.backIndex);
 }
 
+/// This loads and prepares all the materials (colors and textures) used for rendering.
 class Materials {
   static const String imgFolder = "./examples/craft/resources/";
   static const String fileExt = ".png";
@@ -23,10 +40,13 @@ class Materials {
   Techniques.MaterialLight _selection;
   Techniques.MaterialLight _crosshair;
 
+  /// Creates a new material collection and starts loading the materials.
   Materials(this._td) {
     this._cubeData = new Map<int, CubeData>();
     this._matData = new Map<int, List<int>>();
     this._mats = new List<Techniques.MaterialLight>();
+
+    // Create the light source attached to most of the textures a used for the world being created.
     this._light = new Lights.Directional(color: new Math.Color3.white(),
       mover: new Movers.Constant.lookAtTarget(new Math.Point3.zero(),
       new Math.Vector3(0.0, 0.0, 1.0), new Math.Point3(0.5, -1.0, 0.2)));
@@ -88,13 +108,24 @@ class Materials {
     this._selection = this._addEmissionMat("selection");
     this._crosshair = this._addEmissionMat("crosshair");
   }
-  
+
+  /// The block value to cube data map to define which materials to apply to which sides.
   CubeData cubeData(int value) => this._cubeData[value];
+
+  /// The materials to use for non-cube block values such as flowers.
   List<int> matData(int value) => this._matData[value];
+
+  /// This full set of all the materials used by craft.
   List<Techniques.MaterialLight> get materials => this._mats;
+
+  /// The meterial used for all the sides of the selection box.
   Techniques.MaterialLight get selection => this._selection;
+
+  /// The material used for the cross hair in the center of the screen.
   Techniques.MaterialLight get crosshair => this._crosshair;
 
+  /// Loads a material with lighting information and adds it to the material list.
+  /// Returns the index for the new material.
   int _addMat(String fileName, [bool shiny = false]) {
     String path = imgFolder + fileName + fileExt;
     Textures.Texture2D blockTxt = this._td.textureLoader.
@@ -117,7 +148,9 @@ class Materials {
     this._mats.add(tech);
     return this._mats.length - 1;
   }
-  
+
+  /// Loads a material with no lighting information and adds it to the material list.
+  /// Returns the material which was loaded.
   Techniques.MaterialLight _addEmissionMat(String fileName) {
      String path = imgFolder + fileName + fileExt;
     Textures.Texture2D blockTxt = this._td.textureLoader.
@@ -130,10 +163,12 @@ class Materials {
     return tech;
   }
 
+  /// Adds a cube data entry for the given block value.
   void _addCubeData(int value, int topIndex, int bottomIndex, int leftIndex, int rightIndex, int frontIndex, int backIndex) {
     this._cubeData[value] = new CubeData(topIndex, bottomIndex, leftIndex, rightIndex, frontIndex, backIndex);
   }
 
+  /// Adds the materials for non-cube values.
   void _addMatData(int value, List<int> indices) {
     this._matData[value] = indices;
   }

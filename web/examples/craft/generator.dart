@@ -1,49 +1,49 @@
 part of craft;
 
+/// The generator will initialize chunks to create the world.
 class Generator {
+
+  /// The world to generate.
   World _world;
+
+  /// The noise generator for the world.
   simplex.OpenSimplexNoise _simplex;
 
-  Generator(this._world) {
-    this._simplex = new simplex.OpenSimplexNoise();
+  /// Creates a new generator for the given world.
+  Generator(this._world, [int seed = 0]) {
+    this._simplex = new simplex.OpenSimplexNoise(seed);
   }
 
-  void fillWorld() {
+  /// Fills all the current chunks with data.
+  Future fillWorld() async {
     this._addPyramid();
     for (Chunk chunk in this._world._chunks) {
-      this._turrainChunk(chunk);
+      await this._turrainChunk(chunk);
     }
     for (Chunk chunk in this._world._chunks) {
-      this._applyWaterChunk(chunk);
+      await this._applyWaterChunk(chunk);
     }
     for (Chunk chunk in this._world._chunks) {
-      this._trees(chunk);
+      await this._trees(chunk);
     }
     for (Chunk chunk in this._world._chunks) {
-      this._plants(chunk);
+      await this._plants(chunk);
     }
-    this._add3Dart(-12, 40, -15);
-    this._towerOfPips(0, 2, 0);
+    await this._add3Dart(-12, 40, -15);
+    await this._towerOfPips(0, 2, 0);
   }
 
+  /// Sets a location anywhere in the world with the given block value.
   void _set(int x, int y, int z, int value) {
     this._world.getBlock(x.toDouble(), y.toDouble(), z.toDouble()).value = value;
   }
 
-  double _noise(Chunk chunk, int x, int z, double scale) => 
+  /// Get the scaled 2D noise offset for the given chunk.
+  double _noise(Chunk chunk, int x, int z, double scale) =>
     this._simplex.eval2D((x + chunk.x)*scale, (z + chunk.z)*scale)*0.5 + 0.5;
 
-  int _findGround(Chunk chunk, int x, int z) {
-    for (int y = Chunk.ySize-1; y >= 0; y--) {
-      int value = chunk.getBlock(x, y, z);
-      if (BlockType.solid(value)) {
-        return y;
-      }
-    }
-    return 0;
-  }
-
-  void _turrainChunk(Chunk chunk) {
+  /// Applies the turrain (turf, dirt, and rock) to the given chunk.
+  Future _turrainChunk(Chunk chunk) async {
     for (int x = 0; x < Chunk.xSize; x++) {
       for (int z = 0; z < Chunk.zSize; z++) {
         this._turrainBlock(chunk, x, z);
@@ -51,6 +51,7 @@ class Generator {
     }
   }
 
+  /// Determines the turrain blocks for the column in the current chunk.
   void _turrainBlock(Chunk chunk, int x, int z) {
     double terrain = 0.6 * this._noise(chunk, x, z, 0.001) +
                      0.3 * this._noise(chunk, x, z, 0.01) +
@@ -71,7 +72,8 @@ class Generator {
     }
   }
 
-  void _applyWaterChunk(Chunk chunk) {
+  /// Applies the water and sand for the given chunk.
+  Future _applyWaterChunk(Chunk chunk) async {
     for (int x = 0; x < Chunk.xSize; x++) {
       for (int z = 0; z < Chunk.zSize; z++) {
         this._applyWaterBlock(chunk, x, z);
@@ -79,14 +81,15 @@ class Generator {
     }
   }
 
+  /// Determines the water blocks for a column and any surrounding sand blocks.
   void _applyWaterBlock(Chunk chunk, int x, int z) {
     const int depth = 8;
-    int maxy = this._findGround(chunk, x, z);
+    int maxy = chunk.topHit(x, z, 0);
     if (maxy < depth) {
       for (int y = depth; y > maxy; y--) {
         chunk.setBlock(x, y, z, BlockType.Water);
       }
-      
+
       for (int y = depth+2; y > maxy-2; y--) {
         for (int dx = -1; dx <= 1; dx++) {
           for (int dz = -1; dz <= 1; dz++) {
@@ -100,7 +103,9 @@ class Generator {
     }
   }
 
-  void _trees(Chunk chunk) {
+  /// Determines the trees for the given chunk.
+  /// The leaves will hang over into neighbor chunks.
+  Future _trees(Chunk chunk) async {
     for (int x = 0; x < Chunk.xSize; x++) {
       for (int z = 0; z < Chunk.zSize; z++) {
         if (this._noise(chunk, x, z, 1.5) < 0.1)
@@ -108,9 +113,10 @@ class Generator {
       }
     }
   }
-    
+
+  /// Adds a tree at the given [x] and [z] to this chunk.
   void _addTree(Chunk chunk, int x, int z) {
-    int maxy = this._findGround(chunk, x, z);
+    int maxy = chunk.topHit(x, z, 0);
     int value = chunk.getBlock(x, maxy, z);
     if (value != BlockType.Turf && value != BlockType.DryLeaves) return;
 
@@ -122,6 +128,7 @@ class Generator {
     _addTreeLeaves(chunk, x, maxy + 8, z);
   }
 
+  /// Adds the base of a tree to the given [x] and [z] to this chunk.
   void _addTreeBase(Chunk chunk, int x, int z) {
     for (int px = -3; px <= 3; px++) {
       for (int pz = -3; pz <= 3; pz++) {
@@ -137,6 +144,7 @@ class Generator {
     }
   }
 
+  /// Adds the leaves of a tree to the given [x] and [z] to this chunk.
   void _addTreeLeaves(Chunk chunk, int x, int y, int z) {
     for (int px = -3; px <= 3; px++) {
       for (int py = -3; py <= 3; py++) {
@@ -151,7 +159,8 @@ class Generator {
     }
   }
 
-  void _plants(Chunk chunk) {
+  /// Adds plants to the given chunk.
+  Future _plants(Chunk chunk) async {
     for (int x = 0; x < Chunk.xSize; x++) {
       for (int z = 0; z < Chunk.zSize; z++) {
         if (this._noise(chunk, x, z, 12.5) < 0.1)
@@ -160,24 +169,26 @@ class Generator {
           this._addPlant(chunk, x, z, BlockType.BlueFlower);
         else if (this._noise(chunk, x, z+400, 12.5) < 0.1)
           this._addPlant(chunk, x, z, BlockType.WhiteFlower);
-        else if (this._noise(chunk, x+400, z+400, 12.5) < 0.1)
+        else if (this._noise(chunk, x+400, z+400, 12.5) < 0.15)
           this._addPlant(chunk, x, z, BlockType.Grass);
         else if (this._noise(chunk, x-400, z, 12.5) < 0.1)
           this._addPlant(chunk, x, z, BlockType.Fern);
-        else if (this._noise(chunk, x, z-400, 12.5) < 0.1)
+        else if (this._noise(chunk, x, z-400, 12.5) < 0.08)
           this._addPlant(chunk, x, z, BlockType.Mushroom);
       }
     }
   }
-    
+
+  /// Adds a plant to the given chain.
   void _addPlant(Chunk chunk, int x, int z, int value) {
-    int maxy = this._findGround(chunk, x, z);
+    int maxy = chunk.topHit(x, z, 0);
     int oldValue = chunk.getBlock(x, maxy, z);
     if (oldValue != BlockType.Turf && oldValue != BlockType.DryLeaves) return;
     chunk.setBlock(x, maxy+1, z, value);
   }
 
-  void _addPyramid() {
+  /// Adds the pyramid to the center of the world.
+  Future _addPyramid() async {
     int height = 30;
     for (int py = height; py >= 0; py-=2) {
       int width = (height-py)+3;
@@ -187,7 +198,7 @@ class Generator {
           this._set(px, py-1, pz, BlockType.WhiteShine);
         }
       }
-      
+
       for (int pw = -2; pw <= 2; pw++) {
           this._set(-width-1, py, pw, BlockType.Brick);
           this._set(-width-1, py-1, pw, BlockType.Brick);
@@ -205,7 +216,7 @@ class Generator {
           this._set(pw, py-1, width+1, BlockType.Brick);
           this._set(pw, py-1, width+2, BlockType.Brick);
       }
-      
+
       this._set(-width-1, py+1, 2, BlockType.Brick);
       this._set(-width-2, py, 2, BlockType.Brick);
       this._set(-width-1, py+1, -2, BlockType.Brick);
@@ -228,7 +239,9 @@ class Generator {
     }
   }
 
-  void _add3Dart(int x, int y, int z) {
+
+  /// Adds the 3Dart text to the world.
+  Future _add3Dart(int x, int y, int z) async {
     var put = (int value, int dx, int dy, List<int> px, List<int> py) {
       for (int i = px.length -1; i >= 0; i--) {
         this._set(x+dx+px[i], y+dy-py[i], z, value);
@@ -252,7 +265,8 @@ class Generator {
       [1, 1, 1, 2, 3, 4, 5, 6]);
   }
 
-  void _towerOfPips(int x, int y, int z) {
+  /// Adds the RT tribute tower of "pips" to the world.
+  Future _towerOfPips(int x, int y, int z) async {
     final int width = 3, height = 7;
     for (int px = -width; px <= width; px++) {
       for (int py = 0; py <= height; py++) {
