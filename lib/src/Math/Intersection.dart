@@ -3,7 +3,7 @@ part of ThreeDart.Math;
 /// Results from an intersection between a 2D ray and region.
 class IntersectionRayRegion2 {
 
-  /// The point in or on the region which the ray intersects. 
+  /// The point in or on the region which the ray intersects.
   final Point2 point;
 
   /// The normal of the surface on the region that the ray intersects.
@@ -26,7 +26,7 @@ class IntersectionRayRegion2 {
 /// Results from an intersection between a 3D ray and region.
 class IntersectionRayRegion3 {
 
-  /// The point in or on the region which the ray intersects. 
+  /// The point in or on the region which the ray intersects.
   final Point3 point;
 
   /// The normal of the surface on the region that the ray intersects.
@@ -40,7 +40,7 @@ class IntersectionRayRegion3 {
 
   /// Creates a new intersection result.
   IntersectionRayRegion3(this.point, this.normal, this.parametric, this.region);
-  
+
   /// Gets the string for this intersection.
   @override
   String toString() => "$point <$normal> $parametric $region";

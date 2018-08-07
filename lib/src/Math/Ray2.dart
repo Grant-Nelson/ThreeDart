@@ -33,7 +33,7 @@ class Ray2 {
   /// Constructs a new [Ray2] by using only the x and y components of a [Ray3].
   factory Ray2.fromRay3(Ray3 a) =>
     new Ray2(a.x, a.y, a.dx, a.dy);
-    
+
   /// Constructs a new [Ray2] instance given a list of 4 doubles.
   ///
   /// [values] is a list of doubles are in the order x, y, dx, then dy.

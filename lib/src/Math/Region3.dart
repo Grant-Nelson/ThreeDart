@@ -54,7 +54,7 @@ class Region3 {
   /// Constructs a new [Region3] from two opposite corners.
   factory Region3.fromCorners(Point3 a, Point3 b) =>
     new Region3(a.x, a.y, a.z, b.x-a.x, b.y-a.y, b.z-a.z);
-    
+
   /// Constructs a new [Region3] at the given ray.
   factory Region3.fromRay(Ray3 ray) =>
     new Region3(ray.x, ray.y, ray.z, ray.dx, ray.dy, ray.dz);
@@ -152,7 +152,7 @@ class Region3 {
   /// This vector is normalized into the region.
   Vector3 adjustVector(Vector3 raw) =>
     raw*2.0/this.minSide;
-  
+
   /// Determines the location the given point is in relation to the region.
   HitRegion hit(Point3 a) {
     HitRegion region = HitRegion.None;
@@ -297,7 +297,7 @@ class Region3 {
 
     return true;
   }
-  
+
   /// Determines if the two regions overlap even partually.
   bool overlap(Region3 a) =>
     (a.x <= this.x + this.dx) &&

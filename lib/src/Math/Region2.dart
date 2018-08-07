@@ -232,7 +232,7 @@ class Region2 {
 
     return true;
   }
-  
+
   /// Determines if the two regions overlap even partually.
   bool overlap(Region2 a) =>
     (a.x <= this.x + this.dx) &&

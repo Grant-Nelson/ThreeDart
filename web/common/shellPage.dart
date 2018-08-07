@@ -282,6 +282,13 @@ class ShellPage {
   /// Constructs the paragraph tokenizer if the tokenizer hasn't been setup yet.
   /// The paragraph tokenizer breaks up a paragraph to label tokens for
   /// bold, italic, code, links, and normal.
+  ///
+  /// - For bold text use: `*Bold Text*`
+  /// - For italic text use: `_Italic Text_`
+  /// - For a link use: `[Title|URL]`
+  ///   (The URL is optional for links internal to the page)
+  /// - For code use: "`Code`"
+  ///   (This code is not color coded and for short snippets like identifiers)
   void _setupParTokenizer() {
     if (this._parTokenizer != null) return;
     Tokenizer.Tokenizer tok = new Tokenizer.Tokenizer();

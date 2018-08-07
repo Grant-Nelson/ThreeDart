@@ -67,11 +67,11 @@ class Vector2 {
   /// Gets the dot product of this vector and the [other] vector.
   double dot(Vector2 other) =>
     this.dx*other.dx + this.dy*other.dy;
-    
+
   /// Finds the origin based cross product for this vector and the [other] vector.
   double cross(Vector2 other) =>
     this.dx*other.dy - this.dy*other.dx;
-  
+
   /// Determines if the two vectors are acute or not.
   /// Returns true if the two vectors are acute (<90), false if not.
   bool acute(Vector2 other) => this.dot(other) > 0.0;

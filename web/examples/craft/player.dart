@@ -232,7 +232,7 @@ class Player {
     }
 
     // Check if stuck in the ground and push up until out of the ground.
-    while (_isHard(x, y-_playerHeight+_pad, z)) {
+    while (_isHard(x, y-_playerHeight+_pad, z) || _isHard(x, y-_pad, z)) {
       y = ny + _pad;
       ny += 1.0;
       this._trans.offsetY.velocity = 0.0;
