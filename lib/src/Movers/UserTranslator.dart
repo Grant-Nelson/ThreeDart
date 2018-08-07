@@ -149,7 +149,7 @@ class UserTranslator implements Mover, Core.UserInteractable {
       this._onChanged(new Core.ValueChangedEventArgs(this, "velocityRotation", prev, this._velRot));
     }
   }
-  
+
   /// Velocity is the velocity vector relative to the world.
   Math.Vector3 get velocity => new Math.Vector3(
       this._offsetX.velocity, this._offsetY.velocity, this._offsetZ.velocity);
@@ -158,7 +158,7 @@ class UserTranslator implements Mover, Core.UserInteractable {
     this._offsetY.velocity = vec.dy;
     this._offsetZ.velocity = vec.dz;
   }
-  
+
   /// Direction is the velocity vector relative to the users rotation.
   Math.Vector3 get direction {
     Math.Vector3 vec = this.velocity;
@@ -172,19 +172,19 @@ class UserTranslator implements Mover, Core.UserInteractable {
 
   /// Location is the position of the user in the world.
   Math.Point3 get location => new Math.Point3(
-    this._offsetX.location, this._offsetY.location, this._offsetZ.location); 
+    this._offsetX.location, this._offsetY.location, this._offsetZ.location);
   set location(Math.Point3 loc) {
     this._offsetX.location = loc.x;
     this._offsetY.location = loc.y;
     this._offsetZ.location = loc.z;
   }
-  
+
   /// The amount to add to the velocity when a key in a direction is being pressed.
   CollisionHandle get collisionHandle => this._collision;
   void set collisionHandle(CollisionHandle collision) {
     this._collision = collision;
   }
-  
+
   /// Handles a key pressed.
   void _onKeyDown(Core.EventArgs args) {
     this._onChanged(args);

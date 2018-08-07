@@ -13,7 +13,7 @@ class Invert implements Mover {
     this._changed = null;
     this._mat = new Math.Matrix4.identity();
     this._frameNum = 0;
-    
+
     this.mover = mover;
   }
 

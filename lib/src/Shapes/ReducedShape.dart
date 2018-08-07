@@ -35,7 +35,7 @@ class ReducedShape implements ShapeBuilder {
 
   /// The event emitted when the shape has been changed.
   Core.Event _changed;
-  
+
   /// Creates a new reduced shape with a specific vertex type.
   /// This isn't nearly as flexible as [Shape] and doesn't provides
   /// the ability to calculate values and change vertex types.
@@ -43,7 +43,7 @@ class ReducedShape implements ShapeBuilder {
   ReducedShape(Data.VertexType this._type) {
     this._typeCount = this._type.count;
     this._stride = this._type.size;
-    this._vertexCount = 0;    
+    this._vertexCount = 0;
     this._vertices = new List<double>();
     this._points = new List<int>();
     this._lines = new List<int>();
@@ -89,7 +89,7 @@ class ReducedShape implements ShapeBuilder {
       }
       offset += local.size;
     }
-    
+
     if (this._type.has(Data.VertexType.Pos)) {
       if (this._aabb == null)
         this._aabb = new Math.Region3.fromPoint(vertices[0].location);
@@ -238,7 +238,7 @@ class ReducedShape implements ShapeBuilder {
   /// Calculates the cube texture coordinate for the vertices and faces.
   /// The normals should be calculated first.
   /// True if successful, false on error.
-  /// This always returns false because the reduces shape can't calculate cube textures. 
+  /// This always returns false because the reduces shape can't calculate cube textures.
   bool calculateCubeTextures() => false;
 
   /// Calculates the axial alligned bounding box of the shape.

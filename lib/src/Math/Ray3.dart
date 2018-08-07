@@ -39,7 +39,7 @@ class Ray3 {
   /// Constructs a new [Ray3] from a [Ray2] with the optional z components.
   factory Ray3.fromRay3(Ray2 a, [double z = 0.0, double dz = 0.0]) =>
     new Ray3(a.x, a.y, z, a.dx, a.dy, dz);
-    
+
   /// Constructs a new [Ray3] instance given a list of 6 doubles.
   ///
   /// [values] is a list of doubles are in the order x, y, z, dx, dy, then dz.

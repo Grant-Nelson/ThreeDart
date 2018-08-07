@@ -2,7 +2,7 @@ part of ThreeDart.Math;
 
 /// The hit region is a location relative to a Region2 or Region3 for fast intesection.
 class HitRegion {
-  
+
   /// [None] indicates no hit region values at all.
   static HitRegion None = new HitRegion._(0x0000);
 
@@ -20,7 +20,7 @@ class HitRegion {
 
   /// [YPos] indicates the positive Y hit region.
   static HitRegion YPos = new HitRegion._(0x0008);
-  
+
   /// [YCenter] indicates the center Y hit region.
   static HitRegion YCenter = new HitRegion._(0x0010);
 
@@ -38,7 +38,7 @@ class HitRegion {
 
   /// [Inside] indicates the inside hit region, XCenter|YCenter|ZCenter
   static HitRegion Inside = new HitRegion._(0x0092);
-  
+
   /// The combined hit region value.
   final int _value;
 

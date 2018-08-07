@@ -312,7 +312,7 @@ class Inspection extends Technique {
       this._renderBuilder(state, store, obj.shapeBuilder, 'Axis', this._axis, this._ambient4, this._diffuse4);
     if (this._showAABB)
       this._renderBuilder(state, store, obj.shapeBuilder, 'AABB', this._aabb, this._ambient4, this._diffuse4);
-      
+
     state.gl.enable(WebGL.DEPTH_TEST);
     state.gl.disable(WebGL.BLEND);
   }
@@ -724,7 +724,7 @@ class Inspection extends Technique {
   Shapes.Shape _axis(Shapes.Shape shape) {
     return this._axisBuilder(shape);
   }
-    
+
   /// Creates the axii shape for a shape builder.
   Shapes.Shape _axisBuilder(Shapes.ShapeBuilder builder) {
     Shapes.Shape result = new Shapes.Shape();
@@ -750,7 +750,7 @@ class Inspection extends Technique {
   Shapes.Shape _aabb(Shapes.Shape shape) {
     return this._aabbBuilder(shape);
   }
-  
+
   /// Convertes the given [shape] into the axial alligned bounding box
   /// shape for a shape builder.
   Shapes.Shape _aabbBuilder(Shapes.ShapeBuilder builder) {
