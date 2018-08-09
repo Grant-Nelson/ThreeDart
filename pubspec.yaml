@@ -2,8 +2,9 @@ name: ThreeDart
 version: 0.0.1
 description: 3D graphical rendering tool for websites written in Dart.
 environment:
-  sdk: '>=1.0.0 <2.0.0'
+  sdk: '>=2.0.0'
 dependencies:
-  browser: any
+  build_runner: ^0.10.0
+  build_web_compilers: ^0.4.0
   OpenSimplexNoiseDart:
     git: git://github.com/Grant-Nelson/OpenSimplexNoiseDart.git

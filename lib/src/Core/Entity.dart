@@ -1,7 +1,5 @@
 part of ThreeDart.Core;
 
-// TODO: Update all the events for the Entity
-
 /// A renderable entity in a tree of entities for a scene.
 ///
 /// An [Entity] is a [Shape], [Technique], and a [Mover]

@@ -12,6 +12,9 @@ class UserRotater implements Mover, Core.UserInteractable {
   /// The yaw component for this rotater.
   ComponentShift _yaw;
 
+  /// Indicates the user rotater works for locking.
+  bool _locking;
+
   /// Indicates if the control/meta key must be pressed or released.
   bool _ctrlPressed;
 
@@ -68,6 +71,7 @@ class UserRotater implements Mover, Core.UserInteractable {
 
   /// Creates a new user rotater instance.
   UserRotater({
+      bool locking: false,
       bool ctrl:    false,
       bool alt:     false,
       bool shift:   false,
@@ -93,6 +97,7 @@ class UserRotater implements Mover, Core.UserInteractable {
       ..velocity  = 0.0
       ..dampening = 0.5;
     this._yaw.changed.add(this._onChanged);
+    this._locking      = locking;
     this._ctrlPressed  = false;
     this._altPressed   = false;
     this._shiftPressed = false;
@@ -122,6 +127,7 @@ class UserRotater implements Mover, Core.UserInteractable {
 
   /// Creates a new flat movement like a typical first person view rotater.
   factory UserRotater.flat({
+      bool locking: false,
       bool ctrl:    false,
       bool alt:     false,
       bool shift:   false,
@@ -129,6 +135,7 @@ class UserRotater implements Mover, Core.UserInteractable {
       bool invertY: false,
       Core.UserInput input: null}) =>
     new UserRotater(
+      locking: locking,
       ctrl:    ctrl,
       alt:     alt,
       shift:   shift,
@@ -157,6 +164,8 @@ class UserRotater implements Mover, Core.UserInteractable {
     if (input == null) return false;
     if (this._input != null) return false;
     this._input = input;
+    this._input.lockOnClick = this._locking;
+    this._input.pointerLockChanged.add(this._lockChangedHandle);
     this._input.mouseDown.add(this._mouseDownHandle);
     this._input.mouseMove.add(this._mouseMoveHandle);
     this._input.mouseUp.add(this._mouseUpHandle);
@@ -166,6 +175,7 @@ class UserRotater implements Mover, Core.UserInteractable {
   /// Detaches this mover from the user input.
   void detach() {
     if (this._input != null) {
+    this._input.pointerLockChanged.remove(this._lockChangedHandle);
       this._input.mouseDown.remove(this._mouseDownHandle);
       this._input.mouseMove.remove(this._mouseMoveHandle);
       this._input.mouseUp.remove(this._mouseUpHandle);
@@ -182,24 +192,41 @@ class UserRotater implements Mover, Core.UserInteractable {
     return new Math.Vector2(dx, dy);
   }
 
+  void _lockChangedHandle(Core.MouseEventArgs args) {
+    if (this._input.pointerLocked) {
+      this._inDeadBand = true;
+      this._lastYaw = this._yaw.location;
+      this._lastPitch = this._pitch.location;
+    }
+  }
+
   /// Handles the mouse down event.
   void _mouseDownHandle(Core.MouseEventArgs args) {
-    if (this._ctrlPressed  != this._input.ctrlPressed)  return;
-    if (this._altPressed   != this._input.altPressed)   return;
-    if (this._shiftPressed != this._input.shiftPressed) return;
-    this._pressed = true;
-    this._inDeadBand = true;
-    this._lastYaw = this._yaw.location;
-    this._lastPitch = this._pitch.location;
+    if (!this._locking) {
+      if (this._ctrlPressed  != this._input.ctrlPressed)  return;
+      if (this._altPressed   != this._input.altPressed)   return;
+      if (this._shiftPressed != this._input.shiftPressed) return;
+      this._pressed = true;
+      this._inDeadBand = true;
+      this._lastYaw = this._yaw.location;
+      this._lastPitch = this._pitch.location;
+    }
   }
 
   /// Handles the mouse move event.
   void _mouseMoveHandle(Core.MouseEventArgs args) {
-    if (!this._pressed) return;
+    if (this._locking) {
+      if (!this._input.pointerLocked) return;
+      if (this._ctrlPressed  != this._input.ctrlPressed)  return;
+      if (this._altPressed   != this._input.altPressed)   return;
+      if (this._shiftPressed != this._input.shiftPressed) return;
+    } else if (!this._pressed) return;
+
     if (this._inDeadBand) {
       if (args.rawOffset.length2() < this._deadBand2) return;
       this._inDeadBand = false;
     }
+
     if (this._cumulative) {
       this._prevVal = this._getInverses(args.adjustedOffset);
       this._yaw.velocity   = -this._prevVal.dx*10.0*this._yawScalar;
@@ -212,6 +239,7 @@ class UserRotater implements Mover, Core.UserInteractable {
       this._yaw.velocity   = 0.0;
       this._prevVal = this._getInverses(args.adjustedDelta);
     }
+
     this._onChanged();
   }
 

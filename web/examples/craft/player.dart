@@ -11,8 +11,8 @@ class Player {
   static const double _jumpSpeed = 30.0; // The velocity to apply when the player jumps.
   static const double _highlightDistance = 6.0; /// The maximum distance to set a highlight selection from the player.
   static const double _playerHeight = 2.0; /// The player's height.
-  static const double _headOffset = 1.5; /// The player's head collision offset.
-  static const double _footOffset = 0.5; /// The player's foot collision offset.
+  static const double _headOffset = 0.5; /// The player's head collision offset.
+  static const double _footOffset = 1.5; /// The player's foot collision offset.
 
   Movers.UserTranslator _trans;
   Movers.UserRotater _rot;
@@ -40,7 +40,7 @@ class Player {
       ..offsetY.acceleration = _gravity
       ..offsetZ.maximumVelocity = _speed
       ..collisionHandle = this._handleCollide;
-    this._rot = new Movers.UserRotater.flat(input: td.userInput);
+    this._rot = new Movers.UserRotater.flat(input: td.userInput, locking: true);
     this._rot.changed.add((ThreeDart.EventArgs args) {
       this._trans.velocityRotation = new Math.Matrix3.rotateY(-this._rot.yaw.location);
     });
@@ -232,7 +232,7 @@ class Player {
     }
 
     // Check if stuck in the ground and push up until out of the ground.
-    while (_isHard(x, y-_playerHeight+_pad, z) || _isHard(x, y-_pad, z)) {
+    while (_isHard(x, y-_playerHeight+_pad, z) || _isHard(x, y, z)) {
       y = ny + _pad;
       ny += 1.0;
       this._trans.offsetY.velocity = 0.0;

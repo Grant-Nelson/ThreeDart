@@ -2,8 +2,8 @@ part of craft;
 
 /// Defines the world shown in 3Dart craft.
 class World {
-  static const maxXSize = Chunk.xSize*12;
-  static const maxZSize = Chunk.zSize*12;
+  static const maxXSize = Chunk.xSize*8;
+  static const maxZSize = Chunk.zSize*8;
 
   Materials _mats;
   Generator _gen;

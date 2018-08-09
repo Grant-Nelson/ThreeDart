@@ -19,6 +19,9 @@ class UserInput {
   /// The event to emit when the mouse wheel is moved.
   Event _mouseWheel;
 
+  /// The event to emit when the mouse is locked or unlocked.
+  Event _pointerLockChanged;
+
   /// The event to emit when a key is released.
   Event _keyUp;
 
@@ -27,6 +30,9 @@ class UserInput {
 
   /// Indicates if the mouse button is pressed or not.
   bool _mousePressed;
+
+  /// Indicates if the mouse should lock on click.
+  bool _lockOnClick;
 
   /// The point, in pixels, in which the mouse button was last pressed or released.
   Math.Point2 _startPnt;
@@ -49,6 +55,12 @@ class UserInput {
   /// Indicates the shift key has been pressed.
   bool _shiftPressed;
 
+  /// Indicates the mouse is currently locked.
+  bool _pointerLocked;
+
+  /// The mouse event when the lock request is made.
+  html.MouseEvent _msEventOnLock;
+
   /// The event streams being listened to.
   List<async.StreamSubscription<Object>> _eventStreams;
 
@@ -58,10 +70,12 @@ class UserInput {
     this._mouseUp = null;
     this._mouseMove = null;
     this._mouseWheel = null;
+    this._pointerLockChanged = null;
     this._keyUp = null;
     this._keyDown = null;
 
     this._mousePressed = false;
+    this._lockOnClick = false;
     this._startTime = null;
     this._startPnt = null;
     this._prevTime = null;
@@ -69,6 +83,8 @@ class UserInput {
     this._ctrlPressed = false;
     this._altPressed = false;
     this._shiftPressed = false;
+    this._pointerLocked = false;
+    this._msEventOnLock = null;
     this._eventStreams = new List<async.StreamSubscription<Object>>();
 
     this._eventStreams.add(this._elem.onMouseDown.listen(this._onMouseDown));
@@ -79,6 +95,7 @@ class UserInput {
     this._eventStreams.add(html.document.onMouseUp.listen(this._onDocMouseUp));
     this._eventStreams.add(html.document.onKeyUp.listen(this._onKeyUp));
     this._eventStreams.add(html.document.onKeyDown.listen(this._onKeyDown));
+    this._eventStreams.add(html.document.onPointerLockChange.listen(this._onPointerLockChanged));
 
     // TODO: Implement touch as a mouse event.
     //this._elem.onTouchStart
@@ -92,13 +109,24 @@ class UserInput {
       stream.cancel();
     }
     this._eventStreams.clear();
+
+    if (this._pointerLocked) {
+      this._pointerLocked = false;
+      html.document.exitPointerLock();
+    }
   }
+
+  /// Gets or sets if the mouse should lock the pointer on click.
+  bool get lockOnClick => this._lockOnClick;
+  void set lockOnClick(bool enable) { this._lockOnClick = enable; }
 
   /// Gets the mouse arguments for the given [msEvent].
   /// If [setStart] is true then the start point and time are set.
   MouseEventArgs _getMouseArgs(html.MouseEvent msEvent, bool setStart) {
     html.Rectangle rect = this._elem.getBoundingClientRect();
-    final Math.Point2 pnt = new Math.Point2(msEvent.page.x-rect.left, msEvent.page.y-rect.top);
+    final Math.Point2 pnt = this._pointerLocked?
+      new Math.Point2(msEvent.movement.x, msEvent.movement.y):
+      new Math.Point2(msEvent.page.x-rect.left, msEvent.page.y-rect.top);
     final DateTime curTime = new DateTime.now();
     final Math.Region2 size = new Math.Region2(0.0, 0.0, this._elem.client.width, this._elem.client.height);
     this._ctrlPressed = msEvent.ctrlKey||msEvent.metaKey;
@@ -117,6 +145,12 @@ class UserInput {
 
   /// Handles the mouse down in canvas event.
   void _onMouseDown(html.MouseEvent msEvent) {
+    if (this._lockOnClick && !this._pointerLocked) {
+      this._msEventOnLock = msEvent;
+      this._elem.requestPointerLock();
+      return;
+    }
+
     this._elem.focus();
     this._mousePressed = true;
     if (this._mouseDown != null) {
@@ -157,7 +191,7 @@ class UserInput {
   /// Handles the mouse move off the canvas event
   /// when the mouse was pressed while over the canvas.
   void _onDocMouseMove(html.MouseEvent msEvent) {
-    if (this._mousePressed && !this._elem.client.containsPoint(msEvent.client)) {
+    if (this._pointerLocked || (this._mousePressed && !this._elem.client.containsPoint(msEvent.client))) {
       if (this._mouseMove != null) {
         this._mouseMove.emit(this._getMouseArgs(msEvent, false));
         msEvent.preventDefault();
@@ -177,6 +211,17 @@ class UserInput {
       final Math.Vector2 wheel = new Math.Vector2(msEvent.deltaX, msEvent.deltaY)/180.0;
       this._mouseWheel.emit(new MouseWheelEventArgs(this, size, pnt, curTime, wheel));
       msEvent.preventDefault();
+    }
+  }
+
+  /// Handles the mouse lock and unlock on the canvas.
+  void _onPointerLockChanged(html.Event event) {
+    bool locked = (html.document.pointerLockElement == this._elem);
+    if (locked != this._pointerLocked) {
+      this._pointerLocked = locked;
+      if (this._pointerLockChanged != null) {
+        this._pointerLockChanged.emit(this._getMouseArgs(this._msEventOnLock, true));
+      }
     }
   }
 
@@ -228,6 +273,12 @@ class UserInput {
     return this._mouseWheel;
   }
 
+  /// The mouse has been locked or unlocked.
+  Event get pointerLockChanged {
+    this._pointerLockChanged ??= new Event();
+    return this._pointerLockChanged;
+  }
+
   /// The keyboard key released event.
   Event get keyUp {
     this._keyUp ??= new Event();
@@ -251,4 +302,7 @@ class UserInput {
 
   /// Indicates if the shift key is currently pressed.
   bool get shiftPressed => this._shiftPressed;
+
+  /// Indicates if the mouse is currently locked.
+  bool get pointerLocked => this._pointerLocked;
 }
