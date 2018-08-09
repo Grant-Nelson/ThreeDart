@@ -251,34 +251,34 @@ class ReducedShape implements ShapeBuilder {
     if (type != this._type) throw new Exception("Shape was reduced to ${this._type} so can not build for $type.");
 
     if (this._attrs == null) {
-      final int byteStride = this._stride*Typed.Float32List.BYTES_PER_ELEMENT;
+      final int byteStride = this._stride*Typed.Float32List.bytesPerElement;
       this._attrs = new List<Data.BufferAttr>(this._typeCount);
       int offset = 0;
       for (int i = 0; i < this._typeCount; ++i) {
         Data.VertexType local = this._type.at(i);
         final int size = local.size;
         this._attrs[i] = new Data.BufferAttr(local, size,
-          offset*Typed.Float32List.BYTES_PER_ELEMENT, byteStride);
+          offset*Typed.Float32List.bytesPerElement, byteStride);
         offset += size;
       }
     }
 
-    Data.Buffer vertexBuf = builder.fromDoubleList(WebGL.ARRAY_BUFFER, this._vertices);
+    Data.Buffer vertexBuf = builder.fromDoubleList(WebGL.WebGL.ARRAY_BUFFER, this._vertices);
     Data.BufferStore store = new Data.BufferStore(vertexBuf, this._attrs, this._type);
 
     if (this._points.isNotEmpty) {
-      Data.Buffer indexBuf = builder.fromIntList(WebGL.ELEMENT_ARRAY_BUFFER, this._points);
-      store.indexObjects.add(new Data.IndexObject(WebGL.POINTS, this._points.length, indexBuf));
+      Data.Buffer indexBuf = builder.fromIntList(WebGL.WebGL.ELEMENT_ARRAY_BUFFER, this._points);
+      store.indexObjects.add(new Data.IndexObject(WebGL.WebGL.POINTS, this._points.length, indexBuf));
     }
 
     if (this._lines.isNotEmpty) {
-      Data.Buffer indexBuf = builder.fromIntList(WebGL.ELEMENT_ARRAY_BUFFER, this._lines);
-      store.indexObjects.add(new Data.IndexObject(WebGL.LINES, this._lines.length, indexBuf));
+      Data.Buffer indexBuf = builder.fromIntList(WebGL.WebGL.ELEMENT_ARRAY_BUFFER, this._lines);
+      store.indexObjects.add(new Data.IndexObject(WebGL.WebGL.LINES, this._lines.length, indexBuf));
     }
 
     if (this._faces.isNotEmpty) {
-      Data.Buffer indexBuf = builder.fromIntList(WebGL.ELEMENT_ARRAY_BUFFER, this._faces);
-      store.indexObjects.add(new Data.IndexObject(WebGL.TRIANGLES, this._faces.length, indexBuf));
+      Data.Buffer indexBuf = builder.fromIntList(WebGL.WebGL.ELEMENT_ARRAY_BUFFER, this._faces);
+      store.indexObjects.add(new Data.IndexObject(WebGL.WebGL.TRIANGLES, this._faces.length, indexBuf));
     }
 
     return store;

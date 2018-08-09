@@ -292,7 +292,7 @@ class Inspection extends Technique {
 
     if (obj.cache is Data.BufferStoreSet) {
       Data.BufferStoreSet store = obj.cache as Data.BufferStoreSet;
-      state.gl.blendFunc(WebGL.ONE, WebGL.ONE);
+      state.gl.blendFunc(WebGL.WebGL.ONE, WebGL.WebGL.ONE);
 
       if (obj.shape == null) this._renderAllBuilderParts(store, state, obj);
       else                   this._renderAllShapeParts(store, state, obj);
@@ -305,22 +305,22 @@ class Inspection extends Technique {
   /// Renders the current [obj] with the current [state].
   /// Must have a shape, not just a shape builder, to do a full inspection.
   void _renderAllBuilderParts(Data.BufferStoreSet store, Core.RenderState state, Core.Entity obj) {
-    state.gl.disable(WebGL.DEPTH_TEST);
-    state.gl.enable(WebGL.BLEND);
+    state.gl.disable(WebGL.WebGL.DEPTH_TEST);
+    state.gl.enable(WebGL.WebGL.BLEND);
 
     if (this._showAxis)
       this._renderBuilder(state, store, obj.shapeBuilder, 'Axis', this._axis, this._ambient4, this._diffuse4);
     if (this._showAABB)
       this._renderBuilder(state, store, obj.shapeBuilder, 'AABB', this._aabb, this._ambient4, this._diffuse4);
 
-    state.gl.enable(WebGL.DEPTH_TEST);
-    state.gl.disable(WebGL.BLEND);
+    state.gl.enable(WebGL.WebGL.DEPTH_TEST);
+    state.gl.disable(WebGL.WebGL.BLEND);
   }
 
   /// Renders the current [obj] with the current [state].
   void _renderAllShapeParts(Data.BufferStoreSet store, Core.RenderState state, Core.Entity obj) {
-    state.gl.enable(WebGL.DEPTH_TEST);
-    state.gl.disable(WebGL.BLEND);
+    state.gl.enable(WebGL.WebGL.DEPTH_TEST);
+    state.gl.disable(WebGL.WebGL.BLEND);
 
     // TODO: Why does POINTS not respect depth tests?
     // Once they do move these two below with the other DEPTH_TEST disabled.
@@ -340,8 +340,8 @@ class Inspection extends Technique {
     if (this._showBend)
       this._render(state, store, obj.shape, 'bend1', this._bendFill, this._ambient3, this._diffuse3);
 
-    state.gl.disable(WebGL.DEPTH_TEST);
-    state.gl.enable(WebGL.BLEND);
+    state.gl.disable(WebGL.WebGL.DEPTH_TEST);
+    state.gl.enable(WebGL.WebGL.BLEND);
 
     if (this._showWireFrame)
       this._render(state, store, obj.shape, 'wireFrame', this._wireFrame, this._ambient2, this._diffuse2);
@@ -364,8 +364,8 @@ class Inspection extends Technique {
     if (this._showAABB)
       this._render(state, store, obj.shape, 'AABB', this._aabb, this._ambient4, this._diffuse4);
 
-    state.gl.enable(WebGL.DEPTH_TEST);
-    state.gl.disable(WebGL.BLEND);
+    state.gl.enable(WebGL.WebGL.DEPTH_TEST);
+    state.gl.disable(WebGL.WebGL.BLEND);
   }
 
   /// Renderes one of the shape components to inspect.

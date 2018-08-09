@@ -517,8 +517,8 @@ class MaterialLight extends Technique {
           this._shader.alpha = this._alpha.value;
           break;
       }
-      state.gl.enable(WebGL.BLEND);
-      state.gl.blendFunc(WebGL.SRC_ALPHA, WebGL.ONE_MINUS_SRC_ALPHA);
+      state.gl.enable(WebGL.WebGL.BLEND);
+      state.gl.blendFunc(WebGL.WebGL.SRC_ALPHA, WebGL.WebGL.ONE_MINUS_SRC_ALPHA);
     }
 
     for (int i = 0; i < textures.length; i++) {
@@ -531,7 +531,7 @@ class MaterialLight extends Technique {
         ..unbind(state);
 
     if (cfg.alpha != Shaders.ColorSourceType.None) {
-      state.gl.disable(WebGL.BLEND);
+      state.gl.disable(WebGL.WebGL.BLEND);
     }
 
     for (int i = 0; i < textures.length; i++) {

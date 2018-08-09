@@ -23,8 +23,8 @@ abstract class Shader extends Core.Bindable {
 
   /// initializes and compiles the shader with the given vertex and fragment sources.
   void initialize(String vertexSource, String fragmentSource) {
-    this._vertexShader = this._createShader(vertexSource, WebGL.RenderingContext.VERTEX_SHADER);
-    this._fragmentShader = this._createShader(fragmentSource, WebGL.RenderingContext.FRAGMENT_SHADER);
+    this._vertexShader = this._createShader(vertexSource, WebGL.WebGL.VERTEX_SHADER);
+    this._fragmentShader = this._createShader(fragmentSource, WebGL.WebGL.FRAGMENT_SHADER);
     this._createProgram();
     this._setupAttributes();
     this._setupUniform();
@@ -58,7 +58,7 @@ abstract class Shader extends Core.Bindable {
     WebGL.Shader shader = this._gl.createShader(shaderType);
     this._gl.shaderSource(shader, shaderSource);
     this._gl.compileShader(shader);
-    if(!this._gl.getShaderParameter(shader, WebGL.RenderingContext.COMPILE_STATUS)) {
+    if(!this._gl.getShaderParameter(shader, WebGL.WebGL.COMPILE_STATUS)) {
       String errorInfo = this._gl.getShaderInfoLog(shader);
       this._gl.deleteShader(shader);
       throw new Exception("Error compiling shader '$shader': $errorInfo");
@@ -73,7 +73,7 @@ abstract class Shader extends Core.Bindable {
     this._gl.attachShader(this._program, this._fragmentShader);
     this._gl.linkProgram(this._program);
 
-    bool linkStatus = this._gl.getProgramParameter(this._program, WebGL.RenderingContext.LINK_STATUS);
+    bool linkStatus = this._gl.getProgramParameter(this._program, WebGL.WebGL.LINK_STATUS);
     if(!linkStatus) {
       String errorInfo = this._gl.getProgramInfoLog(this._program);
       this._gl.deleteProgram(this._program);
@@ -84,7 +84,7 @@ abstract class Shader extends Core.Bindable {
   /// Sets up all the attribute list.
   void _setupAttributes() {
     List<Attribute> attrs = new List<Attribute>();
-    int count = this._gl.getProgramParameter(this._program, WebGL.RenderingContext.ACTIVE_ATTRIBUTES);
+    int count = this._gl.getProgramParameter(this._program, WebGL.WebGL.ACTIVE_ATTRIBUTES);
     for (int i = 0; i < count; ++i) {
       WebGL.ActiveInfo info = this._gl.getActiveAttrib(this._program, i);
       int loc = this._gl.getAttribLocation(this._program, info.name);
@@ -96,7 +96,7 @@ abstract class Shader extends Core.Bindable {
   /// Sets up all the uniform list.
   void _setupUniform() {
     List<Uniform> uniforms = new List<Uniform>();
-    int count = this._gl.getProgramParameter(this._program, WebGL.RenderingContext.ACTIVE_UNIFORMS);
+    int count = this._gl.getProgramParameter(this._program, WebGL.WebGL.ACTIVE_UNIFORMS);
     for (int i = 0; i < count; ++i) {
       WebGL.ActiveInfo info = this._gl.getActiveUniform(this._program, i);
       WebGL.UniformLocation loc = this._gl.getUniformLocation(this._program, info.name);
@@ -132,28 +132,28 @@ abstract class Shader extends Core.Bindable {
   /// Creates a new uniform for the given [type] information, [size], [name], and uniform location.
   Uniform createUniform(int type, int size, String name, WebGL.UniformLocation loc) {
     switch(type) {
-      case WebGL.RenderingContext.BYTE:           return this._createUniform1i(size, name, loc);
-      case WebGL.RenderingContext.UNSIGNED_BYTE:  return this._createUniform1i(size, name, loc);
-      case WebGL.RenderingContext.SHORT:          return this._createUniform1i(size, name, loc);
-      case WebGL.RenderingContext.UNSIGNED_SHORT: return this._createUniform1i(size, name, loc);
-      case WebGL.RenderingContext.INT:            return this._createUniform1i(size, name, loc);
-      case WebGL.RenderingContext.UNSIGNED_INT:   return this._createUniform1i(size, name, loc);
-      case WebGL.RenderingContext.FLOAT:          return new Uniform1f._(this._gl, this._program, name, loc);
-      case WebGL.RenderingContext.FLOAT_VEC2:     return new Uniform2f._(this._gl, this._program, name, loc);
-      case WebGL.RenderingContext.FLOAT_VEC3:     return new Uniform3f._(this._gl, this._program, name, loc);
-      case WebGL.RenderingContext.FLOAT_VEC4:     return new Uniform4f._(this._gl, this._program, name, loc);
-      case WebGL.RenderingContext.INT_VEC2:       return new Uniform2i._(this._gl, this._program, name, loc);
-      case WebGL.RenderingContext.INT_VEC3:       return new Uniform3i._(this._gl, this._program, name, loc);
-      case WebGL.RenderingContext.INT_VEC4:       return new Uniform4i._(this._gl, this._program, name, loc);
-      case WebGL.RenderingContext.FLOAT_MAT2:     return new UniformMat2._(this._gl, this._program, name, loc);
-      case WebGL.RenderingContext.FLOAT_MAT3:     return new UniformMat3._(this._gl, this._program, name, loc);
-      case WebGL.RenderingContext.FLOAT_MAT4:     return new UniformMat4._(this._gl, this._program, name, loc);
-      case WebGL.RenderingContext.SAMPLER_2D:     return this._createUniformSampler2D(size, name, loc);
-      case WebGL.RenderingContext.SAMPLER_CUBE:   return this._createUniformSamplerCube(size, name, loc);
-      case WebGL.RenderingContext.BOOL:           throw this._unsupportedException("BOOL", name);
-      case WebGL.RenderingContext.BOOL_VEC2:      throw this._unsupportedException("BOOL_VEC2", name);
-      case WebGL.RenderingContext.BOOL_VEC3:      throw this._unsupportedException("BOOL_VEC3", name);
-      case WebGL.RenderingContext.BOOL_VEC4:      throw this._unsupportedException("BOOL_VEC4", name);
+      case WebGL.WebGL.BYTE:           return this._createUniform1i(size, name, loc);
+      case WebGL.WebGL.UNSIGNED_BYTE:  return this._createUniform1i(size, name, loc);
+      case WebGL.WebGL.SHORT:          return this._createUniform1i(size, name, loc);
+      case WebGL.WebGL.UNSIGNED_SHORT: return this._createUniform1i(size, name, loc);
+      case WebGL.WebGL.INT:            return this._createUniform1i(size, name, loc);
+      case WebGL.WebGL.UNSIGNED_INT:   return this._createUniform1i(size, name, loc);
+      case WebGL.WebGL.FLOAT:          return new Uniform1f._(this._gl, this._program, name, loc);
+      case WebGL.WebGL.FLOAT_VEC2:     return new Uniform2f._(this._gl, this._program, name, loc);
+      case WebGL.WebGL.FLOAT_VEC3:     return new Uniform3f._(this._gl, this._program, name, loc);
+      case WebGL.WebGL.FLOAT_VEC4:     return new Uniform4f._(this._gl, this._program, name, loc);
+      case WebGL.WebGL.INT_VEC2:       return new Uniform2i._(this._gl, this._program, name, loc);
+      case WebGL.WebGL.INT_VEC3:       return new Uniform3i._(this._gl, this._program, name, loc);
+      case WebGL.WebGL.INT_VEC4:       return new Uniform4i._(this._gl, this._program, name, loc);
+      case WebGL.WebGL.FLOAT_MAT2:     return new UniformMat2._(this._gl, this._program, name, loc);
+      case WebGL.WebGL.FLOAT_MAT3:     return new UniformMat3._(this._gl, this._program, name, loc);
+      case WebGL.WebGL.FLOAT_MAT4:     return new UniformMat4._(this._gl, this._program, name, loc);
+      case WebGL.WebGL.SAMPLER_2D:     return this._createUniformSampler2D(size, name, loc);
+      case WebGL.WebGL.SAMPLER_CUBE:   return this._createUniformSamplerCube(size, name, loc);
+      case WebGL.WebGL.BOOL:           throw this._unsupportedException("BOOL", name);
+      case WebGL.WebGL.BOOL_VEC2:      throw this._unsupportedException("BOOL_VEC2", name);
+      case WebGL.WebGL.BOOL_VEC3:      throw this._unsupportedException("BOOL_VEC3", name);
+      case WebGL.WebGL.BOOL_VEC4:      throw this._unsupportedException("BOOL_VEC4", name);
       default: throw new Exception("Unknown uniform variable type $type for $name.");
     }
   }

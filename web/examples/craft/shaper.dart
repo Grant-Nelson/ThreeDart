@@ -200,8 +200,8 @@ class Shaper {
   /// It selects the correct shape to add to from the materials and given block [value].
   void _addPlantToShapes(Math.Point3 loc, int value) {
     List<int> offset = this._mats.matData(value);
-    this._addQuadRotToShape(this._getShape(offset[0]),   loc, math.PI*0.5/4.0, true);
-    this._addQuadRotToShape(this._getShape(offset[0]), loc, math.PI*2.5/4.0, true);
+    this._addQuadRotToShape(this._getShape(offset[0]), loc, Math.PI*0.5/4.0, true);
+    this._addQuadRotToShape(this._getShape(offset[0]), loc, Math.PI*2.5/4.0, true);
   }
 
   /// Adds a single fern leaf to the given [shape] at the given [angle] in radians.
@@ -218,10 +218,10 @@ class Shaper {
   /// Adds a fern to the shapes at the given [loc].
   void _addFernToShapes(Math.Point3 loc) {
     List<int> offset = this._mats.matData(BlockType.Fern);
-    _addFernLeaf(this._getShape(offset[0]), loc, math.PI*0.2/2.0);
-    _addFernLeaf(this._getShape(offset[0]), loc, math.PI*1.1/2.0);
-    _addFernLeaf(this._getShape(offset[0]), loc, math.PI*2.3/2.0);
-    _addFernLeaf(this._getShape(offset[0]), loc, math.PI*3.2/2.0);
+    _addFernLeaf(this._getShape(offset[0]), loc, Math.PI*0.2/2.0);
+    _addFernLeaf(this._getShape(offset[0]), loc, Math.PI*1.1/2.0);
+    _addFernLeaf(this._getShape(offset[0]), loc, Math.PI*2.3/2.0);
+    _addFernLeaf(this._getShape(offset[0]), loc, Math.PI*3.2/2.0);
   }
 
   /// Adds a mushroom to the shapes at the given [loc].
@@ -234,7 +234,7 @@ class Shaper {
     List<Shapes.Vertex> side = [];
     List<Shapes.Vertex> botcap = [];
     for (double d = 0.0; d <= 2.0; d += 0.25) {
-      Math.Matrix3 mat = new Math.Matrix3.rotateY(math.PI*d);
+      Math.Matrix3 mat = new Math.Matrix3.rotateY(Math.PI*d);
       side.add(this._getVertex(loc + mat.transPnt3(new Math.Point3( 0.07, -0.1, 0.0)), mat.transVec3(_frontNorm), (d-1.0).abs(), 0.0));
       side.add(this._getVertex(loc + mat.transPnt3(new Math.Point3( 0.1,  -0.5, 0.0)), mat.transVec3(_frontNorm), (d-1.0).abs(), 1.0));
       Math.Point3 topLoc = mat.transPnt3(new Math.Point3(0.1, -0.5, 0.0));
@@ -253,12 +253,12 @@ class Shaper {
     bottom.add(this._getVertex(loc + new Math.Point3(0.0, -0.1,  0.0), _bottomNorm, 0.5, 0.5));
 
     for (double d = 0.0; d <= 1.0; d += 0.1) {
-      Math.Matrix3 topMat = new Math.Matrix3.rotateY(-math.PI*2.0*d);
+      Math.Matrix3 topMat = new Math.Matrix3.rotateY(-Math.PI*2.0*d);
       Math.Point3 topLoc = topMat.transPnt3(new Math.Point3(0.4, -0.15, 0.0));
       Math.Point3 topTxt = topMat.transPnt3(new Math.Point3(0.5,  0.0,  0.0));
       top.add(this._getVertex(loc + topLoc, null, topTxt.x+0.5, topTxt.z+0.5));
 
-      Math.Matrix3 botMat = new Math.Matrix3.rotateY(math.PI*2.0*d);
+      Math.Matrix3 botMat = new Math.Matrix3.rotateY(Math.PI*2.0*d);
       Math.Point3 botLoc = botMat.transPnt3(new Math.Point3(0.4, -0.15, 0.0));
       Math.Point3 botTxt = botMat.transPnt3(new Math.Point3(0.5,  0.0,  0.0));
       bottom.add(this._getVertex(loc + botLoc, null, botTxt.x+0.5, botTxt.z+0.5));

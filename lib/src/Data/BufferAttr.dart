@@ -39,7 +39,7 @@ class BufferAttr extends Core.Bindable {
   void bind(Core.RenderState state) {
     try {
       state.gl.enableVertexAttribArray(this._attr);
-      state.gl.vertexAttribPointer(this._attr, this._size, WebGL.FLOAT, false, this._stride, this._offset);
+      state.gl.vertexAttribPointer(this._attr, this._size, WebGL.WebGL.FLOAT, false, this._stride, this._offset);
     } catch(e) {
       throw new Exception("Failed to bind buffer attribute \"${this._type.toString()}\": $e");
     }

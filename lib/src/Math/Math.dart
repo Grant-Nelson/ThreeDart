@@ -24,16 +24,16 @@ part 'Vector3.dart';
 part 'Vector4.dart';
 
 /// Pi constant.
-const double PI = math.PI;
+const double PI = math.pi;
 
 /// Pi / 2 constant.
-const double PI_2 = math.PI/2.0;
+const double PI_2 = PI/2.0;
 
 /// Pi / 3 constant.
-const double PI_3 = math.PI/3.0;
+const double PI_3 = PI/3.0;
 
 /// Tau constant, twice Pi.
-const double TAU = math.PI*2.0;
+const double TAU = PI*2.0;
 
 /// Gets the linear interpolation between the two given doubles.
 ///

@@ -68,7 +68,7 @@ void addMatrix3Tests(TestManager tests) {
   });
 
   tests.add("Matrix3 Basic Rotate X Test", (TestArgs args) {
-    Math.Matrix3 mat = new Math.Matrix3.rotateX(math.PI/4.0);
+    Math.Matrix3 mat = new Math.Matrix3.rotateX(Math.PI/4.0);
     _matrix3String(args, mat, "[1.000, 0.000,  0.000,",
                               " 0.000, 0.707, -0.707,",
                               " 0.000, 0.707,  0.707]");
@@ -85,30 +85,30 @@ void addMatrix3Tests(TestManager tests) {
   });
 
   tests.add("Matrix3 Rotate X Test", (TestArgs args) {
-    _matrix3String(args, new Math.Matrix3.rotateX(-math.PI/4.0),
+    _matrix3String(args, new Math.Matrix3.rotateX(-Math.PI/4.0),
       "[1.000,  0.000, 0.000,",
       " 0.000,  0.707, 0.707,",
       " 0.000, -0.707, 0.707]");
-    _matrix3String(args, new Math.Matrix3.rotateX(math.PI/2.0),
+    _matrix3String(args, new Math.Matrix3.rotateX(Math.PI/2.0),
       "[1.000, 0.000,  0.000,",
       " 0.000, 0.000, -1.000,",
       " 0.000, 1.000,  0.000]");
-    _matrix3String(args, new Math.Matrix3.rotateX(-math.PI),
+    _matrix3String(args, new Math.Matrix3.rotateX(-Math.PI),
       "[1.000,  0.000,  0.000,",
       " 0.000, -1.000,  0.000,",
       " 0.000,  0.000, -1.000]");
-    _matrix3String(args, new Math.Matrix3.rotateX(math.PI),
+    _matrix3String(args, new Math.Matrix3.rotateX(Math.PI),
       "[1.000,  0.000,  0.000,",
       " 0.000, -1.000,  0.000,",
       " 0.000,  0.000, -1.000]");
-    _matrix3String(args, new Math.Matrix3.rotateX(math.PI*3.0/8.0),
+    _matrix3String(args, new Math.Matrix3.rotateX(Math.PI*3.0/8.0),
       "[1.000, 0.000,  0.000,",
       " 0.000, 0.383, -0.924,",
       " 0.000, 0.924,  0.383]");
   });
 
   tests.add("Matrix3 Basic Rotate Y Test", (TestArgs args) {
-    Math.Matrix3 mat = new Math.Matrix3.rotateY(math.PI/4.0);
+    Math.Matrix3 mat = new Math.Matrix3.rotateY(Math.PI/4.0);
     _matrix3String(args, mat, "[0.707, 0.000, -0.707,",
                               " 0.000, 1.000,  0.000,",
                               " 0.707, 0.000,  0.707]");
@@ -125,30 +125,30 @@ void addMatrix3Tests(TestManager tests) {
   });
 
   tests.add("Matrix3 Rotate Y Test", (TestArgs args) {
-    _matrix3String(args, new Math.Matrix3.rotateY(-math.PI/4.0),
+    _matrix3String(args, new Math.Matrix3.rotateY(-Math.PI/4.0),
       "[ 0.707, 0.000, 0.707,",
       "  0.000, 1.000, 0.000,",
       " -0.707, 0.000, 0.707]");
-    _matrix3String(args, new Math.Matrix3.rotateY(math.PI/2.0),
+    _matrix3String(args, new Math.Matrix3.rotateY(Math.PI/2.0),
       "[0.000, 0.000, -1.000,",
       " 0.000, 1.000,  0.000,",
       " 1.000, 0.000,  0.000]");
-    _matrix3String(args, new Math.Matrix3.rotateY(-math.PI),
+    _matrix3String(args, new Math.Matrix3.rotateY(-Math.PI),
       "[-1.000, 0.000,  0.000,",
       "  0.000, 1.000,  0.000,",
       "  0.000, 0.000, -1.000]");
-    _matrix3String(args, new Math.Matrix3.rotateY(math.PI),
+    _matrix3String(args, new Math.Matrix3.rotateY(Math.PI),
       "[-1.000, 0.000,  0.000,",
       "  0.000, 1.000,  0.000,",
       "  0.000, 0.000, -1.000]");
-    _matrix3String(args, new Math.Matrix3.rotateY(math.PI*3.0/8.0),
+    _matrix3String(args, new Math.Matrix3.rotateY(Math.PI*3.0/8.0),
       "[0.383, 0.000, -0.924,",
       " 0.000, 1.000,  0.000,",
       " 0.924, 0.000,  0.383]");
   });
 
   tests.add("Matrix3 Basic Rotate Z Test", (TestArgs args) {
-    Math.Matrix3 mat = new Math.Matrix3.rotateZ(math.PI/4.0);
+    Math.Matrix3 mat = new Math.Matrix3.rotateZ(Math.PI/4.0);
     _matrix3String(args, mat, "[0.707, -0.707, 0.000,",
                               " 0.707,  0.707, 0.000,",
                               " 0.000,  0.000, 1.000]");
@@ -165,23 +165,23 @@ void addMatrix3Tests(TestManager tests) {
   });
 
   tests.add("Matrix3 Rotate Z Test", (TestArgs args) {
-    _matrix3String(args, new Math.Matrix3.rotateZ(-math.PI/4.0),
+    _matrix3String(args, new Math.Matrix3.rotateZ(-Math.PI/4.0),
       "[ 0.707, 0.707, 0.000,",
       " -0.707, 0.707, 0.000,",
       "  0.000, 0.000, 1.000]");
-    _matrix3String(args, new Math.Matrix3.rotateZ(math.PI/2.0),
+    _matrix3String(args, new Math.Matrix3.rotateZ(Math.PI/2.0),
       "[0.000, -1.000, 0.000,",
       " 1.000,  0.000, 0.000,",
       " 0.000,  0.000, 1.000]");
-    _matrix3String(args, new Math.Matrix3.rotateZ(-math.PI),
+    _matrix3String(args, new Math.Matrix3.rotateZ(-Math.PI),
       "[-1.000,  0.000, 0.000,",
       "  0.000, -1.000, 0.000,",
       "  0.000,  0.000, 1.000]");
-    _matrix3String(args, new Math.Matrix3.rotateZ(math.PI),
+    _matrix3String(args, new Math.Matrix3.rotateZ(Math.PI),
       "[-1.000,  0.000, 0.000,",
       "  0.000, -1.000, 0.000,",
       "  0.000,  0.000, 1.000]");
-    _matrix3String(args, new Math.Matrix3.rotateZ(math.PI*3.0/8.0),
+    _matrix3String(args, new Math.Matrix3.rotateZ(Math.PI*3.0/8.0),
       "[0.383, -0.924, 0.000,",
       " 0.924,  0.383, 0.000,",
       " 0.000,  0.000, 1.000]");
@@ -241,15 +241,15 @@ void addMatrix3Tests(TestManager tests) {
       "[0.500, 0.000, 0.000,",
       " 0.000, 0.333, 0.000,",
       " 0.000, 0.000, 0.250]");
-    _invsMatrix3(args, new Math.Matrix3.rotateX(math.PI/4.0),
+    _invsMatrix3(args, new Math.Matrix3.rotateX(Math.PI/4.0),
       "[1.000,  0.000, 0.000,",
       " 0.000,  0.707, 0.707,",
       " 0.000, -0.707, 0.707]");
-    _invsMatrix3(args, new Math.Matrix3.rotateY(math.PI/4.0),
+    _invsMatrix3(args, new Math.Matrix3.rotateY(Math.PI/4.0),
       "[ 0.707, 0.000, 0.707,",
       "  0.000, 1.000, 0.000,",
       " -0.707, 0.000, 0.707]");
-    _invsMatrix3(args, new Math.Matrix3.rotateZ(math.PI/4.0),
+    _invsMatrix3(args, new Math.Matrix3.rotateZ(Math.PI/4.0),
       "[ 0.707, 0.707, 0.000,",
       " -0.707, 0.707, 0.000,",
       "  0.000, 0.000, 1.000]");

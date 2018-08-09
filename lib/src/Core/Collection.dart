@@ -81,9 +81,12 @@ class Collection<T> implements Iterable<T> {
 
   /// Checks whether any item in this collection satisfies the given [hndl].
   bool any(bool hndl(T item)) => this._list.any(hndl);
+  
+  /// Provides a view of this iterable as an iterable of [T2] instances.
+  Iterable<T2> cast<T2>() => this._list.cast<T2>();
 
   /// Indicates if the given [item] is contained.
-  bool contains(T item) => this._list.contains(item);
+  bool contains(Object item) => this._list.contains(item);
 
   /// Gets the item at the given index.
   T elementAt(int index) => this._list.elementAt(index);
@@ -92,7 +95,7 @@ class Collection<T> implements Iterable<T> {
   bool every(bool hndl(T item)) => this._list.every(hndl);
 
   /// Expands each element of this Iterable into zero or more elements.
-  Iterable expand(Iterable hndl(T element)) => this._list.expand(hndl);
+  Iterable<T2> expand<T2>(Iterable<T2> hndl(T element)) => this._list.expand<T2>(hndl);
 
   /// Returns the first element that satisfies the given predicate test.
   T firstWhere(bool test(T element), {T orElse()}) =>
@@ -100,8 +103,12 @@ class Collection<T> implements Iterable<T> {
 
   /// Reduces a collection to a single value by iteratively
   /// combining each element of the collection with an existing value
-  dynamic fold(initialValue, dynamic combine(previousValue, T element)) =>
-    this._list.fold(initialValue, combine);
+  T2 fold<T2>(T2 initialValue, T2 combine(T2 previousValue, T element)) =>
+    this._list.fold<T2>(initialValue, combine);
+
+  /// Returns the lazy concatentation of this iterable and [other].
+  Iterable<T> followedBy(Iterable<T> other) =>
+    this._list.followedBy(other);
 
   /// Calls the given function handler, [hndl], foreach item.
   void forEach(void hndl(T item)) => this._list.forEach(hndl);
@@ -116,14 +123,14 @@ class Collection<T> implements Iterable<T> {
 
   /// Returns a new lazy Iterable with elements that are created by calling
   /// [hndl] on each element of this Iterable in iteration order.
-  Iterable map(dynamic hndl(T e)) => this._list.map(hndl);
+  Iterable<T2> map<T2>(T2 hndl(T e)) => this._list.map<T2>(hndl);
 
   /// Reduces a collection to a single value by iteratively combining
   /// elements of the collection using the provided function.
   T reduce(T combine(T value, T element)) => this._list.reduce(combine);
 
   /// Returns the single element that satisfies test.
-  T singleWhere(bool test(T element)) => this._list.singleWhere(test);
+  T singleWhere(bool test(T element), {T orElse()}) => this._list.singleWhere(test, orElse: orElse);
 
   /// Returns an Iterable that provides all but the first count elements.
   Iterable<T> skip(int count) => this._list.skip(count);
@@ -233,6 +240,9 @@ class Collection<T> implements Iterable<T> {
     }
     return items;
   }
+  
+  /// Returns a new lazy [Iterable] with all elements that have type [T].
+  Iterable<T> whereType<T>() => this._list.whereType();
 
   /// Removes all the items.
   void clear() {

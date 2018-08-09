@@ -23,7 +23,7 @@ class WebGLBuffer implements Buffer {
   factory WebGLBuffer.fromDoubleList(WebGL.RenderingContext gl, int bufType, List<double> data) {
     WebGL.Buffer buffer = gl.createBuffer();
     gl.bindBuffer(bufType, buffer);
-    gl.bufferData(bufType, new Typed.Float32List.fromList(data), WebGL.STATIC_DRAW);
+    gl.bufferData(bufType, new Typed.Float32List.fromList(data), WebGL.WebGL.STATIC_DRAW);
     gl.bindBuffer(bufType, null);
     return new WebGLBuffer(bufType, buffer);
   }
@@ -33,7 +33,7 @@ class WebGLBuffer implements Buffer {
   factory WebGLBuffer.fromIntList(WebGL.RenderingContext gl, int bufType, List<int> data) {
     WebGL.Buffer buffer = gl.createBuffer();
     gl.bindBuffer(bufType, buffer);
-    gl.bufferData(bufType, new Typed.Int16List.fromList(data), WebGL.STATIC_DRAW);
+    gl.bufferData(bufType, new Typed.Int16List.fromList(data), WebGL.WebGL.STATIC_DRAW);
     gl.bindBuffer(bufType, null);
     return new WebGLBuffer(bufType, buffer);
   }

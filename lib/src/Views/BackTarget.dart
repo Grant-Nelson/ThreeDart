@@ -128,26 +128,26 @@ class BackTarget extends Target {
     this._colorBuffer  = this._colorTxt.texture;
     this._actualWidth  = this._colorTxt.actualWidth;
     this._actualHeight = this._colorTxt.actualHeight;
-    gl.bindTexture(WebGL.TEXTURE_2D, this._colorBuffer);
+    gl.bindTexture(WebGL.WebGL.TEXTURE_2D, this._colorBuffer);
 
     // Setup depth buffer.
     if (this._hasDepth) {
       this._depthBuffer = gl.createRenderbuffer();
-      gl.bindRenderbuffer(WebGL.RENDERBUFFER, this._depthBuffer);
-      gl.renderbufferStorage(WebGL.RENDERBUFFER, WebGL.DEPTH_COMPONENT16, this._actualWidth, this._actualHeight);
+      gl.bindRenderbuffer(WebGL.WebGL.RENDERBUFFER, this._depthBuffer);
+      gl.renderbufferStorage(WebGL.WebGL.RENDERBUFFER, WebGL.WebGL.DEPTH_COMPONENT16, this._actualWidth, this._actualHeight);
     }
 
     // Bind render buffers to a render target frame buffer.
     this._framebuffer = gl.createFramebuffer();
-    gl.bindFramebuffer(WebGL.FRAMEBUFFER, this._framebuffer);
-    gl.framebufferTexture2D(WebGL.FRAMEBUFFER, WebGL.COLOR_ATTACHMENT0, WebGL.TEXTURE_2D, this._colorBuffer, 0);
+    gl.bindFramebuffer(WebGL.WebGL.FRAMEBUFFER, this._framebuffer);
+    gl.framebufferTexture2D(WebGL.WebGL.FRAMEBUFFER, WebGL.WebGL.COLOR_ATTACHMENT0, WebGL.WebGL.TEXTURE_2D, this._colorBuffer, 0);
     if (this._hasDepth)
-      gl.framebufferRenderbuffer(WebGL.FRAMEBUFFER, WebGL.DEPTH_ATTACHMENT, WebGL.RENDERBUFFER, this._depthBuffer);
+      gl.framebufferRenderbuffer(WebGL.WebGL.FRAMEBUFFER, WebGL.WebGL.DEPTH_ATTACHMENT, WebGL.WebGL.RENDERBUFFER, this._depthBuffer);
 
     // Clean up and release buffers.
-    gl.bindTexture(WebGL.TEXTURE_2D, null);
-    if (this._hasDepth) gl.bindRenderbuffer(WebGL.RENDERBUFFER, null);
-    gl.bindFramebuffer(WebGL.FRAMEBUFFER, null);
+    gl.bindTexture(WebGL.WebGL.TEXTURE_2D, null);
+    if (this._hasDepth) gl.bindRenderbuffer(WebGL.WebGL.RENDERBUFFER, null);
+    gl.bindFramebuffer(WebGL.WebGL.FRAMEBUFFER, null);
   }
 
   /// Binds this target to the [state].
@@ -156,10 +156,10 @@ class BackTarget extends Target {
       this._initialize(state.gl);
     }
 
-    state.gl.bindFramebuffer(WebGL.FRAMEBUFFER, this._framebuffer);
-    state.gl.enable(WebGL.CULL_FACE);
-    if (this._hasDepth) state.gl.enable(WebGL.DEPTH_TEST);
-    state.gl.depthFunc(WebGL.LESS);
+    state.gl.bindFramebuffer(WebGL.WebGL.FRAMEBUFFER, this._framebuffer);
+    state.gl.enable(WebGL.WebGL.CULL_FACE);
+    if (this._hasDepth) state.gl.enable(WebGL.WebGL.DEPTH_TEST);
+    state.gl.depthFunc(WebGL.WebGL.LESS);
 
     state.width  = (this._region.dx*this._width ).round();
     state.height = (this._region.dy*this._height).round();
@@ -172,11 +172,11 @@ class BackTarget extends Target {
     int clearMask = 0;
     if (this._clearDepth && this._hasDepth) {
       state.gl.clearDepth(this._depth);
-      clearMask |= WebGL.DEPTH_BUFFER_BIT;
+      clearMask |= WebGL.WebGL.DEPTH_BUFFER_BIT;
     }
     if (this._clearColor) {
       state.gl.clearColor(this._color.red, this._color.green, this._color.blue, this._color.alpha);
-      clearMask |= WebGL.COLOR_BUFFER_BIT;
+      clearMask |= WebGL.WebGL.COLOR_BUFFER_BIT;
     }
     if (clearMask > 0) {
       state.gl.clear(clearMask);
@@ -185,6 +185,6 @@ class BackTarget extends Target {
 
   /// Unbinds this target from the [state].
   void unbind(Core.RenderState state) {
-    state.gl.bindFramebuffer(WebGL.FRAMEBUFFER, null);
+    state.gl.bindFramebuffer(WebGL.WebGL.FRAMEBUFFER, null);
   }
 }

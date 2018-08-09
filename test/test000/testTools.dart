@@ -185,7 +185,7 @@ class TestManager {
 
     /// Creates new test manager attached to the given element.
     TestManager(this._elem) {
-      this._escape = new convert.HtmlEscape(convert.HtmlEscapeMode.ELEMENT);
+      this._escape = new convert.HtmlEscape(convert.HtmlEscapeMode.element);
       this._header = new html.DivElement();
       this._elem.children.add(this._header);
       html.DivElement checkBoxes = new html.DivElement()

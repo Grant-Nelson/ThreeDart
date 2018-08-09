@@ -148,7 +148,7 @@ class TexturedSpot implements Light {
   /// The feild-of-view of the light in the y-axis (up) of the texture.
   double get fov => this._fov;
   void set fov(double fov) {
-    fov = Math.clampVal(fov ?? Math.PI_3, 0.0, math.PI);
+    fov = Math.clampVal(fov ?? Math.PI_3, 0.0, Math.PI);
     if (!Math.Comparer.equals(this._fov, fov)) {
       double prev = this._fov;
       this._fov = fov;

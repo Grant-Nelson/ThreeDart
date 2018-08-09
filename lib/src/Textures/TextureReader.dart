@@ -14,12 +14,12 @@ class TextureReader {
   /// Reads the given range of the given [texture] into the reader buffer.
   factory TextureReader.read(WebGL.RenderingContext gl, Texture2D texture, int x, int y, int width, int height) {
     WebGL.Framebuffer fb = gl.createFramebuffer();
-    gl.bindFramebuffer(WebGL.FRAMEBUFFER, fb);
-    gl.framebufferTexture2D(WebGL.FRAMEBUFFER, WebGL.COLOR_ATTACHMENT0, WebGL.TEXTURE_2D, texture.texture, 0);
+    gl.bindFramebuffer(WebGL.WebGL.FRAMEBUFFER, fb);
+    gl.framebufferTexture2D(WebGL.WebGL.FRAMEBUFFER, WebGL.WebGL.COLOR_ATTACHMENT0, WebGL.WebGL.TEXTURE_2D, texture.texture, 0);
 
     Typed.Uint8List data = new Typed.Uint8List(width*height*4);
-    gl.readPixels(x, y, width, height, WebGL.RGBA, WebGL.UNSIGNED_BYTE, data);
-    gl.bindFramebuffer(WebGL.FRAMEBUFFER, null);
+    gl.readPixels(x, y, width, height, WebGL.WebGL.RGBA, WebGL.WebGL.UNSIGNED_BYTE, data);
+    gl.bindFramebuffer(WebGL.WebGL.FRAMEBUFFER, null);
     return new TextureReader._(data, width, height);
   }
 

@@ -55,7 +55,7 @@ void addMatrix2Tests(TestManager tests) {
   });
 
   tests.add("Matrix2 Basic Rotate Test", (TestArgs args) {
-    Math.Matrix2 mat = new Math.Matrix2.rotate(math.PI/4.0);
+    Math.Matrix2 mat = new Math.Matrix2.rotate(Math.PI/4.0);
     _matrix2String(args, mat, "[0.707, -0.707,",
                               " 0.707,  0.707]");
     double val = 0.70710678118; // sqrt(2)/2
@@ -71,19 +71,19 @@ void addMatrix2Tests(TestManager tests) {
   });
 
   tests.add("Matrix2 Rotate Test", (TestArgs args) {
-    _matrix2String(args, new Math.Matrix2.rotate(-math.PI/4.0),
+    _matrix2String(args, new Math.Matrix2.rotate(-Math.PI/4.0),
       "[ 0.707, 0.707,",
       " -0.707, 0.707]");
-    _matrix2String(args, new Math.Matrix2.rotate(math.PI/2.0),
+    _matrix2String(args, new Math.Matrix2.rotate(Math.PI/2.0),
       "[0.000, -1.000,",
       " 1.000,  0.000]");
-    _matrix2String(args, new Math.Matrix2.rotate(-math.PI),
+    _matrix2String(args, new Math.Matrix2.rotate(-Math.PI),
       "[-1.000,  0.000,",
       "  0.000, -1.000]");
-    _matrix2String(args, new Math.Matrix2.rotate(math.PI),
+    _matrix2String(args, new Math.Matrix2.rotate(Math.PI),
       "[-1.000,  0.000,",
       "  0.000, -1.000]");
-    _matrix2String(args, new Math.Matrix2.rotate(math.PI*3.0/8.0),
+    _matrix2String(args, new Math.Matrix2.rotate(Math.PI*3.0/8.0),
       "[0.383, -0.924,",
       " 0.924,  0.383]");
   });
@@ -126,7 +126,7 @@ void addMatrix2Tests(TestManager tests) {
     _invsMatrix2(args, new Math.Matrix2.scale(2.0, 3.0),
       "[0.500, 0.000,",
       " 0.000, 0.333]");
-    _invsMatrix2(args, new Math.Matrix2.rotate(math.PI/4.0),
+    _invsMatrix2(args, new Math.Matrix2.rotate(Math.PI/4.0),
       "[ 0.707, 0.707,",
       " -0.707, 0.707]");
     _matrix2String(args, new Math.Matrix2(0.0, 0.0,

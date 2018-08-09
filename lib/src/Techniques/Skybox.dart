@@ -9,7 +9,7 @@ class Skybox extends Technique {
   Core.Event _changed;
 
   /// Creates a new sky box technique with the given initial values.
-  Skybox({double fov: math.PI/3.0, Textures.TextureCube boxTexture: null,
+  Skybox({double fov: Math.PI_3, Textures.TextureCube boxTexture: null,
           Math.Color3 boxColor: null}) {
     this._shader    = null;
     this._fov       = fov;

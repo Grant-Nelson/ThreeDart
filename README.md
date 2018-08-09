@@ -1,4 +1,4 @@
-# [![ThreeDart](resources/ThreeDart.png)](https://github.com/Grant-Nelson/ThreeDart/blob/master/)
+# [![ThreeDart](resources/ThreeDart.png)](https://github.com/Grant-Nelson/ThreeDart)
 
 A SnowGremlin Project
 
@@ -10,27 +10,18 @@ A SnowGremlin Project
 
 [ThreeDart Live](http://grant-nelson.github.io/ThreeDart/build/web/)
 
+## Installing
+
+- Clone this repo locally
+- Install [Dart 2.0](https://webdev.dartlang.org/)
+- Run `pub get`
+
+## Running Tutorials and Examples
+
+- Run `webdev serve` from ThreeDart root directory.
+- Open `http://localhost:8080/` in a browser.
+
 ## Running Tests
 
-1. Run `pub serve` from ThreeDart root directory.
+1. Run `webdev serve` from ThreeDart root directory.
 2. Open `http://localhost:8081/` in a browser.
-   - Recommend Chromium/Dartium for fast tests and better dart debugging.
-   - Chrome and Firefox also works well, however it will take a while to load pages while Dart transpiles.
-   - Not tested nor recommended for use on other browsers at this time.
-
-## Internal Implementation Details
-
-- [Core](lib/src/Core)
-- [IO](lib/src/IO)
-- [Math](lib/src/Math)
-- [Movers](lib/src/Movers)
-- [Scenes](lib/src/Scenes)
-- [Shapes](lib/src/Shapes)
-- [Techniques](lib/src/Techniques)
-- [Views](lib/src/Views)
-
-## Built With
-
-[![www.dartlang.org](resources/Dart.png)](https://www.dartlang.org/)
-
-[![www.khronos.org/webgl](resources/WebGL.png)](https://www.khronos.org/webgl/)

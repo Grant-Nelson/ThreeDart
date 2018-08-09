@@ -36,8 +36,8 @@ class TextureCube extends Texture {
   void bind(Core.RenderState state) {
     if (!this._bound && this.loaded) {
       this._bound = true;
-      state.gl.activeTexture(WebGL.TEXTURE0+this.index);
-      state.gl.bindTexture(WebGL.TEXTURE_CUBE_MAP, this._texture);
+      state.gl.activeTexture(WebGL.WebGL.TEXTURE0+this.index);
+      state.gl.bindTexture(WebGL.WebGL.TEXTURE_CUBE_MAP, this._texture);
     }
   }
 
@@ -45,8 +45,8 @@ class TextureCube extends Texture {
   void unbind(Core.RenderState state) {
     if (this._bound) {
       this._bound = false;
-      state.gl.activeTexture(WebGL.TEXTURE0+this.index);
-      state.gl.bindTexture(WebGL.TEXTURE_CUBE_MAP, null);
+      state.gl.activeTexture(WebGL.WebGL.TEXTURE0+this.index);
+      state.gl.bindTexture(WebGL.WebGL.TEXTURE_CUBE_MAP, null);
     }
   }
 }

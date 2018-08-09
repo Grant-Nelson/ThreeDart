@@ -10,8 +10,8 @@ class TextureLoader {
 
   /// Creates a new texture loader.
   TextureLoader(this._gl) {
-    this._max2DSize = this._gl.getParameter(WebGL.MAX_TEXTURE_SIZE);
-    this._maxCubeSize = this._gl.getParameter(WebGL.MAX_CUBE_MAP_TEXTURE_SIZE);
+    this._max2DSize = this._gl.getParameter(WebGL.WebGL.MAX_TEXTURE_SIZE);
+    this._maxCubeSize = this._gl.getParameter(WebGL.WebGL.MAX_CUBE_MAP_TEXTURE_SIZE);
     this._imageCount = 0;
     this._loadedCount = 0;
   }
@@ -35,18 +35,18 @@ class TextureLoader {
   /// The image will load asynchronously.
   Texture2D load2DFromFile(String path, {bool flipY: false, bool wrapEdges: false, bool mipMap: false, bool nearest: false}) {
     WebGL.Texture texture = this._gl.createTexture();
-    this._gl.bindTexture(WebGL.TEXTURE_2D, texture);
+    this._gl.bindTexture(WebGL.WebGL.TEXTURE_2D, texture);
     if (wrapEdges) {
-      this._gl.texParameteri(WebGL.TEXTURE_2D, WebGL.TEXTURE_WRAP_S, WebGL.REPEAT);
-      this._gl.texParameteri(WebGL.TEXTURE_2D, WebGL.TEXTURE_WRAP_T, WebGL.REPEAT);
+      this._gl.texParameteri(WebGL.WebGL.TEXTURE_2D, WebGL.WebGL.TEXTURE_WRAP_S, WebGL.WebGL.REPEAT);
+      this._gl.texParameteri(WebGL.WebGL.TEXTURE_2D, WebGL.WebGL.TEXTURE_WRAP_T, WebGL.WebGL.REPEAT);
     } else {
-      this._gl.texParameteri(WebGL.TEXTURE_2D, WebGL.TEXTURE_WRAP_S, WebGL.CLAMP_TO_EDGE);
-      this._gl.texParameteri(WebGL.TEXTURE_2D, WebGL.TEXTURE_WRAP_T, WebGL.CLAMP_TO_EDGE);
+      this._gl.texParameteri(WebGL.WebGL.TEXTURE_2D, WebGL.WebGL.TEXTURE_WRAP_S, WebGL.WebGL.CLAMP_TO_EDGE);
+      this._gl.texParameteri(WebGL.WebGL.TEXTURE_2D, WebGL.WebGL.TEXTURE_WRAP_T, WebGL.WebGL.CLAMP_TO_EDGE);
     }
-    int min = nearest?(mipMap?WebGL.NEAREST_MIPMAP_NEAREST:WebGL.NEAREST):(mipMap?WebGL.LINEAR_MIPMAP_LINEAR:WebGL.LINEAR);
-    this._gl.texParameteri(WebGL.TEXTURE_2D, WebGL.TEXTURE_MIN_FILTER, min);
-    this._gl.texParameteri(WebGL.TEXTURE_2D, WebGL.TEXTURE_MAG_FILTER, nearest?WebGL.NEAREST:WebGL.LINEAR);
-    this._gl.bindTexture(WebGL.TEXTURE_2D, null);
+    int min = nearest?(mipMap?WebGL.WebGL.NEAREST_MIPMAP_NEAREST:WebGL.WebGL.NEAREST):(mipMap?WebGL.WebGL.LINEAR_MIPMAP_LINEAR:WebGL.WebGL.LINEAR);
+    this._gl.texParameteri(WebGL.WebGL.TEXTURE_2D, WebGL.WebGL.TEXTURE_MIN_FILTER, min);
+    this._gl.texParameteri(WebGL.WebGL.TEXTURE_2D, WebGL.WebGL.TEXTURE_MAG_FILTER, nearest?WebGL.WebGL.NEAREST:WebGL.WebGL.LINEAR);
+    this._gl.bindTexture(WebGL.WebGL.TEXTURE_2D, null);
 
     this._incLoading();
     html.ImageElement image = new html.ImageElement(src: path);
@@ -58,11 +58,11 @@ class TextureLoader {
       result._actualWidth  = image.width;
       result._actualHeight = image.height;
 
-      this._gl.bindTexture(WebGL.TEXTURE_2D, texture);
-      this._gl.pixelStorei(WebGL.UNPACK_FLIP_Y_WEBGL, flipY? 1: 0);
-      this._gl.texImage2D(WebGL.TEXTURE_2D, 0, WebGL.RGBA, WebGL.RGBA, WebGL.UNSIGNED_BYTE, image);
-      if (mipMap) this._gl.generateMipmap(WebGL.TEXTURE_2D);
-      this._gl.bindTexture(WebGL.TEXTURE_2D, null);
+      this._gl.bindTexture(WebGL.WebGL.TEXTURE_2D, texture);
+      this._gl.pixelStorei(WebGL.WebGL.UNPACK_FLIP_Y_WEBGL, flipY? 1: 0);
+      this._gl.texImage2D(WebGL.WebGL.TEXTURE_2D, 0, WebGL.WebGL.RGBA, WebGL.WebGL.RGBA, WebGL.WebGL.UNSIGNED_BYTE, image);
+      if (mipMap) this._gl.generateMipmap(WebGL.WebGL.TEXTURE_2D);
+      this._gl.bindTexture(WebGL.WebGL.TEXTURE_2D, null);
       result._setLoaded();
       this._decLoading();
     });
@@ -88,20 +88,20 @@ class TextureLoader {
   TextureCube loadCubeFromFiles(String posXPath, String posYPath, String posZPath,
     String negXPath, String negYPath, String negZPath, {bool flipY: false}) {
     WebGL.Texture texture = this._gl.createTexture();
-    this._gl.bindTexture(WebGL.TEXTURE_CUBE_MAP, texture);
-    this._gl.texParameteri(WebGL.TEXTURE_CUBE_MAP, WebGL.TEXTURE_WRAP_S, WebGL.REPEAT);
-    this._gl.texParameteri(WebGL.TEXTURE_CUBE_MAP, WebGL.TEXTURE_WRAP_T, WebGL.REPEAT);
-    this._gl.texParameteri(WebGL.TEXTURE_CUBE_MAP, WebGL.TEXTURE_MIN_FILTER, WebGL.LINEAR);
-    this._gl.texParameteri(WebGL.TEXTURE_CUBE_MAP, WebGL.TEXTURE_MAG_FILTER, WebGL.LINEAR);
-    this._gl.bindTexture(WebGL.TEXTURE_CUBE_MAP, null);
+    this._gl.bindTexture(WebGL.WebGL.TEXTURE_CUBE_MAP, texture);
+    this._gl.texParameteri(WebGL.WebGL.TEXTURE_CUBE_MAP, WebGL.WebGL.TEXTURE_WRAP_S, WebGL.WebGL.REPEAT);
+    this._gl.texParameteri(WebGL.WebGL.TEXTURE_CUBE_MAP, WebGL.WebGL.TEXTURE_WRAP_T, WebGL.WebGL.REPEAT);
+    this._gl.texParameteri(WebGL.WebGL.TEXTURE_CUBE_MAP, WebGL.WebGL.TEXTURE_MIN_FILTER, WebGL.WebGL.LINEAR);
+    this._gl.texParameteri(WebGL.WebGL.TEXTURE_CUBE_MAP, WebGL.WebGL.TEXTURE_MAG_FILTER, WebGL.WebGL.LINEAR);
+    this._gl.bindTexture(WebGL.WebGL.TEXTURE_CUBE_MAP, null);
 
     TextureCube result = new TextureCube(texture: texture);
-    this._loadCubeFace(result, texture, posXPath, WebGL.TEXTURE_CUBE_MAP_POSITIVE_X, flipY);
-    this._loadCubeFace(result, texture, negXPath, WebGL.TEXTURE_CUBE_MAP_NEGATIVE_X, flipY);
-    this._loadCubeFace(result, texture, posYPath, WebGL.TEXTURE_CUBE_MAP_POSITIVE_Y, flipY);
-    this._loadCubeFace(result, texture, negYPath, WebGL.TEXTURE_CUBE_MAP_NEGATIVE_Y, flipY);
-    this._loadCubeFace(result, texture, posZPath, WebGL.TEXTURE_CUBE_MAP_POSITIVE_Z, flipY);
-    this._loadCubeFace(result, texture, negZPath, WebGL.TEXTURE_CUBE_MAP_NEGATIVE_Z, flipY);
+    this._loadCubeFace(result, texture, posXPath, WebGL.WebGL.TEXTURE_CUBE_MAP_POSITIVE_X, flipY);
+    this._loadCubeFace(result, texture, negXPath, WebGL.WebGL.TEXTURE_CUBE_MAP_NEGATIVE_X, flipY);
+    this._loadCubeFace(result, texture, posYPath, WebGL.WebGL.TEXTURE_CUBE_MAP_POSITIVE_Y, flipY);
+    this._loadCubeFace(result, texture, negYPath, WebGL.WebGL.TEXTURE_CUBE_MAP_NEGATIVE_Y, flipY);
+    this._loadCubeFace(result, texture, posZPath, WebGL.WebGL.TEXTURE_CUBE_MAP_POSITIVE_Z, flipY);
+    this._loadCubeFace(result, texture, negZPath, WebGL.WebGL.TEXTURE_CUBE_MAP_NEGATIVE_Z, flipY);
     return result;
   }
 
@@ -113,12 +113,12 @@ class TextureLoader {
   /// Reads the given range of the given [texture] into the reader buffer.
   TextureReader read(Texture2D texture, int x, int y, int width, int height) {
     WebGL.Framebuffer fb = this._gl.createFramebuffer();
-    this._gl.bindFramebuffer(WebGL.FRAMEBUFFER, fb);
-    this._gl.framebufferTexture2D(WebGL.FRAMEBUFFER, WebGL.COLOR_ATTACHMENT0, WebGL.TEXTURE_2D, texture.texture, 0);
+    this._gl.bindFramebuffer(WebGL.WebGL.FRAMEBUFFER, fb);
+    this._gl.framebufferTexture2D(WebGL.WebGL.FRAMEBUFFER, WebGL.WebGL.COLOR_ATTACHMENT0, WebGL.WebGL.TEXTURE_2D, texture.texture, 0);
 
     Typed.Uint8List data = new Typed.Uint8List(width*height*4);
-    this._gl.readPixels(x, y, width, height, WebGL.RGBA, WebGL.UNSIGNED_BYTE, data);
-    this._gl.bindFramebuffer(WebGL.FRAMEBUFFER, null);
+    this._gl.readPixels(x, y, width, height, WebGL.WebGL.RGBA, WebGL.WebGL.UNSIGNED_BYTE, data);
+    this._gl.bindFramebuffer(WebGL.WebGL.FRAMEBUFFER, null);
     return new TextureReader._(data, width, height);
   }
 
@@ -129,17 +129,17 @@ class TextureLoader {
     this._incLoading();
     image.onLoad.listen((_) {
         image = this._resizeImage(image, this._maxCubeSize);
-        this._gl.bindTexture(WebGL.TEXTURE_CUBE_MAP, texture);
-        this._gl.pixelStorei(WebGL.UNPACK_FLIP_Y_WEBGL, flipY? 1: 0);
-        this._gl.texImage2D(face, 0, WebGL.RGBA, WebGL.RGBA, WebGL.UNSIGNED_BYTE, image);
-        this._gl.bindTexture(WebGL.TEXTURE_CUBE_MAP, null);
+        this._gl.bindTexture(WebGL.WebGL.TEXTURE_CUBE_MAP, texture);
+        this._gl.pixelStorei(WebGL.WebGL.UNPACK_FLIP_Y_WEBGL, flipY? 1: 0);
+        this._gl.texImage2D(face, 0, WebGL.WebGL.RGBA, WebGL.WebGL.RGBA, WebGL.WebGL.UNSIGNED_BYTE, image);
+        this._gl.bindTexture(WebGL.WebGL.TEXTURE_CUBE_MAP, null);
         result._incLoaded();
         this._decLoading();
     });
   }
 
   /// Resizes the given image to the maximum size proportional to the power of 2.
-  html.ImageElement _resizeImage(html.ImageElement image, int maxSize) {
+  dynamic _resizeImage(html.ImageElement image, int maxSize) {
     maxSize    = Math.nearestPower(maxSize);
     int width  = Math.nearestPower(image.width);
     int height = Math.nearestPower(image.height);
@@ -152,7 +152,8 @@ class TextureLoader {
         ..width  = width
         ..height = height;
 
-      var ctx = canvas.getContext('2d');
+      html.CanvasRenderingContext2D ctx = canvas.getContext('2d');
+      ctx.imageSmoothingEnabled = false;
       ctx.drawImageScaled(image, 0, 0, canvas.width, canvas.height);
       return ctx.getImageData(0, 0, canvas.width, canvas.height);
     }

@@ -26,7 +26,7 @@ class Texture2D extends Texture {
 
   /// Creates a new 2D image from the given [width] and [height].
   factory Texture2D.fromSize(WebGL.RenderingContext gl, int width, int height, {bool wrapEdges: false}) {
-    int maxSize = gl.getParameter(WebGL.MAX_TEXTURE_SIZE);
+    int maxSize = gl.getParameter(WebGL.WebGL.MAX_TEXTURE_SIZE);
     int aWidth  = Math.nearestPower(width);
     int aHeight = Math.nearestPower(height);
     maxSize = Math.nearestPower(maxSize);
@@ -34,18 +34,18 @@ class Texture2D extends Texture {
     aHeight = math.min(aHeight, maxSize);
 
     WebGL.Texture texture = gl.createTexture();
-    gl.bindTexture(WebGL.TEXTURE_2D, texture);
+    gl.bindTexture(WebGL.WebGL.TEXTURE_2D, texture);
     if (wrapEdges) {
-      gl.texParameteri(WebGL.TEXTURE_2D, WebGL.TEXTURE_WRAP_S, WebGL.REPEAT);
-      gl.texParameteri(WebGL.TEXTURE_2D, WebGL.TEXTURE_WRAP_T, WebGL.REPEAT);
+      gl.texParameteri(WebGL.WebGL.TEXTURE_2D, WebGL.WebGL.TEXTURE_WRAP_S, WebGL.WebGL.REPEAT);
+      gl.texParameteri(WebGL.WebGL.TEXTURE_2D, WebGL.WebGL.TEXTURE_WRAP_T, WebGL.WebGL.REPEAT);
     } else {
-      gl.texParameteri(WebGL.TEXTURE_2D, WebGL.TEXTURE_WRAP_S, WebGL.CLAMP_TO_EDGE);
-      gl.texParameteri(WebGL.TEXTURE_2D, WebGL.TEXTURE_WRAP_T, WebGL.CLAMP_TO_EDGE);
+      gl.texParameteri(WebGL.WebGL.TEXTURE_2D, WebGL.WebGL.TEXTURE_WRAP_S, WebGL.WebGL.CLAMP_TO_EDGE);
+      gl.texParameteri(WebGL.WebGL.TEXTURE_2D, WebGL.WebGL.TEXTURE_WRAP_T, WebGL.WebGL.CLAMP_TO_EDGE);
     }
-    gl.texParameteri(WebGL.TEXTURE_2D, WebGL.TEXTURE_MIN_FILTER, WebGL.LINEAR);
-    gl.texParameteri(WebGL.TEXTURE_2D, WebGL.TEXTURE_MAG_FILTER, WebGL.LINEAR);
-    gl.texImage2D(WebGL.TEXTURE_2D, 0, WebGL.RGBA, aWidth, aHeight, 0, WebGL.RGBA, WebGL.UNSIGNED_BYTE, null);
-    gl.bindTexture(WebGL.TEXTURE_2D, null);
+    gl.texParameteri(WebGL.WebGL.TEXTURE_2D, WebGL.WebGL.TEXTURE_MIN_FILTER, WebGL.WebGL.LINEAR);
+    gl.texParameteri(WebGL.WebGL.TEXTURE_2D, WebGL.WebGL.TEXTURE_MAG_FILTER, WebGL.WebGL.LINEAR);
+    gl.texImage2D(WebGL.WebGL.TEXTURE_2D, 0, WebGL.WebGL.RGBA, aWidth, aHeight, 0, WebGL.WebGL.RGBA, WebGL.WebGL.UNSIGNED_BYTE, null);
+    gl.bindTexture(WebGL.WebGL.TEXTURE_2D, null);
 
     Texture2D result = new Texture2D(texture: texture);
     result._width  = width;
@@ -109,8 +109,8 @@ class Texture2D extends Texture {
   void bind(Core.RenderState state) {
     if (!this._bound && this._loaded) {
       this._bound = true;
-      state.gl.activeTexture(WebGL.TEXTURE0+this.index);
-      state.gl.bindTexture(WebGL.TEXTURE_2D, this._texture);
+      state.gl.activeTexture(WebGL.WebGL.TEXTURE0+this.index);
+      state.gl.bindTexture(WebGL.WebGL.TEXTURE_2D, this._texture);
     }
   }
 
@@ -118,8 +118,8 @@ class Texture2D extends Texture {
   void unbind(Core.RenderState state) {
     if (this._bound) {
       this._bound = false;
-      state.gl.activeTexture(WebGL.TEXTURE0+this.index);
-      state.gl.bindTexture(WebGL.TEXTURE_2D, null);
+      state.gl.activeTexture(WebGL.WebGL.TEXTURE0+this.index);
+      state.gl.bindTexture(WebGL.WebGL.TEXTURE_2D, null);
     }
   }
 }

@@ -388,7 +388,7 @@ class Shape implements ShapeBuilder {
     final int length = this._vertices.length;
     final int count = type.count;
     final int stride = type.size;
-    final int byteStride = stride*Typed.Float32List.BYTES_PER_ELEMENT;
+    final int byteStride = stride*Typed.Float32List.bytesPerElement;
     List<double> vertices = new List<double>(length*stride);
     List<Data.BufferAttr> attrs = new List<Data.BufferAttr>(count);
     int offset = 0;
@@ -396,7 +396,7 @@ class Shape implements ShapeBuilder {
       Data.VertexType local = type.at(i);
       final int size = local.size;
       attrs[i] = new Data.BufferAttr(local, size,
-        offset*Typed.Float32List.BYTES_PER_ELEMENT, byteStride);
+        offset*Typed.Float32List.bytesPerElement, byteStride);
       for (int j = 0; j < length; ++j) {
         Vertex ver = this._vertices[j];
         List<double> list = ver.listFor(local);
@@ -409,15 +409,15 @@ class Shape implements ShapeBuilder {
       offset += size;
     }
 
-    Data.Buffer vertexBuf = builder.fromDoubleList(WebGL.ARRAY_BUFFER, vertices);
+    Data.Buffer vertexBuf = builder.fromDoubleList(WebGL.WebGL.ARRAY_BUFFER, vertices);
     Data.BufferStore store = new Data.BufferStore(vertexBuf, attrs, type);
     if (!this._points.isEmpty) {
       List<int> indices = new List<int>();
       for (int i = 0; i < this._points.length; ++i) {
         indices.add(this._points[i].vertex.index);
       }
-      Data.Buffer indexBuf = builder.fromIntList(WebGL.ELEMENT_ARRAY_BUFFER, indices);
-      store.indexObjects.add(new Data.IndexObject(WebGL.POINTS, indices.length, indexBuf));
+      Data.Buffer indexBuf = builder.fromIntList(WebGL.WebGL.ELEMENT_ARRAY_BUFFER, indices);
+      store.indexObjects.add(new Data.IndexObject(WebGL.WebGL.POINTS, indices.length, indexBuf));
     }
 
     if (!this._lines.isEmpty) {
@@ -426,8 +426,8 @@ class Shape implements ShapeBuilder {
         indices.add(this._lines[i].vertex1.index);
         indices.add(this._lines[i].vertex2.index);
       }
-      Data.Buffer indexBuf = builder.fromIntList(WebGL.ELEMENT_ARRAY_BUFFER, indices);
-      store.indexObjects.add(new Data.IndexObject(WebGL.LINES, indices.length, indexBuf));
+      Data.Buffer indexBuf = builder.fromIntList(WebGL.WebGL.ELEMENT_ARRAY_BUFFER, indices);
+      store.indexObjects.add(new Data.IndexObject(WebGL.WebGL.LINES, indices.length, indexBuf));
     }
 
     if (!this._faces.isEmpty) {
@@ -437,8 +437,8 @@ class Shape implements ShapeBuilder {
         indices.add(this._faces[i].vertex2.index);
         indices.add(this._faces[i].vertex3.index);
       }
-      Data.Buffer indexBuf = builder.fromIntList(WebGL.ELEMENT_ARRAY_BUFFER, indices);
-      store.indexObjects.add(new Data.IndexObject(WebGL.TRIANGLES, indices.length, indexBuf));
+      Data.Buffer indexBuf = builder.fromIntList(WebGL.WebGL.ELEMENT_ARRAY_BUFFER, indices);
+      store.indexObjects.add(new Data.IndexObject(WebGL.WebGL.TRIANGLES, indices.length, indexBuf));
     }
 
     return store;

@@ -122,10 +122,10 @@ class FrontTarget extends Target {
   /// Binds this target to the given state so that the following render
   /// will target the front target.
   void bind(Core.RenderState state) {
-    state.gl.bindFramebuffer(WebGL.FRAMEBUFFER, null);
-    state.gl.enable(WebGL.CULL_FACE);
-    state.gl.enable(WebGL.DEPTH_TEST);
-    state.gl.depthFunc(WebGL.LESS);
+    state.gl.bindFramebuffer(WebGL.WebGL.FRAMEBUFFER, null);
+    state.gl.enable(WebGL.WebGL.CULL_FACE);
+    state.gl.enable(WebGL.WebGL.DEPTH_TEST);
+    state.gl.depthFunc(WebGL.WebGL.LESS);
 
     int width    = state.gl.drawingBufferWidth;
     int height   = state.gl.drawingBufferHeight;
@@ -138,15 +138,15 @@ class FrontTarget extends Target {
     int clearMask = 0;
     if (this._clearStencil) {
       state.gl.clearStencil(this._stencil);
-      clearMask |= WebGL.STENCIL_BUFFER_BIT;
+      clearMask |= WebGL.WebGL.STENCIL_BUFFER_BIT;
     }
     if (this._clearDepth) {
       state.gl.clearDepth(this._depth);
-      clearMask |= WebGL.DEPTH_BUFFER_BIT;
+      clearMask |= WebGL.WebGL.DEPTH_BUFFER_BIT;
     }
     if (this._clearColor) {
       state.gl.clearColor(this._color.red, this._color.green, this._color.blue, this._color.alpha);
-      clearMask |= WebGL.COLOR_BUFFER_BIT;
+      clearMask |= WebGL.WebGL.COLOR_BUFFER_BIT;
     }
     if (clearMask > 0) {
       state.gl.clear(clearMask);

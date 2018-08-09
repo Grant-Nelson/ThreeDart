@@ -81,7 +81,7 @@ class UserRotater implements Mover, Core.UserInteractable {
     this._input = null;
     this._pitch = new ComponentShift()
       ..wrap = true
-      ..maximumLocation = math.PI * 2.0
+      ..maximumLocation = Math.PI * 2.0
       ..minimumLocation = 0.0
       ..location = 0.0
       ..maximumVelocity = 100.0
@@ -90,7 +90,7 @@ class UserRotater implements Mover, Core.UserInteractable {
     this._pitch.changed.add(this._onChanged);
     this._yaw = new ComponentShift()
       ..wrap = true
-      ..maximumLocation = math.PI * 2.0
+      ..maximumLocation = Math.PI * 2.0
       ..minimumLocation = 0.0
       ..location = 0.0
       ..maximumVelocity = 100.0
