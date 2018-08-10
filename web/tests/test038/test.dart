@@ -67,7 +67,6 @@ ThreeDart.Entity createObjects(ThreeDart.ThreeDart td) {
       group.children.add(obj);
     }
   }
-  print("Count: ${group.children.length}");
 
   return group;
 }

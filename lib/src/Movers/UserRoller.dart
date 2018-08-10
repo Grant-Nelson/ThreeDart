@@ -121,7 +121,7 @@ class UserRoller implements Mover, Core.UserInteractable {
   }
 
   /// Handles the mouse down event.
-  void _mouseDownHandle(Core.MouseEventArgs args) {
+  void _mouseDownHandle(Core.EventArgs args) {
     if (this._ctrlPressed  != this._input.ctrlPressed)  return;
     if (this._altPressed   != this._input.altPressed)   return;
     if (this._shiftPressed != this._input.shiftPressed) return;
@@ -131,26 +131,29 @@ class UserRoller implements Mover, Core.UserInteractable {
   }
 
   /// Handles the mouse move event.
-  void _mouseMoveHandle(Core.MouseEventArgs args) {
+  void _mouseMoveHandle(Core.EventArgs args) {
+    Core.MouseEventArgs margs = (args as Core.MouseEventArgs);
+
     if (!this._pressed) return;
     if (this._inDeadBand) {
-      if (args.rawOffset.length2() < this._deadBand2) return;
+      if (margs.rawOffset.length2() < this._deadBand2) return;
       this._inDeadBand = false;
     }
+
     if (this._cumulative) {
-      this._prevVal = args.adjustedOffset;
+      this._prevVal = margs.adjustedOffset;
       this._roll.velocity = this._prevVal.dx*10.0*this._rollScalar;
     } else {
-      Math.Vector2 off = args.adjustedOffset;
+      Math.Vector2 off = margs.adjustedOffset;
       this._roll.location = -off.dx*this._rollScalar + this._lastRoll;
       this._roll.velocity = 0.0;
-      this._prevVal = args.adjustedDelta;
+      this._prevVal = margs.adjustedDelta;
     }
     this._onChanged();
   }
 
   /// Handle the mouse up event.
-  void _mouseUpHandle(Core.MouseEventArgs args) {
+  void _mouseUpHandle(Core.EventArgs args) {
     if (!this._pressed) return;
     this._pressed = false;
     if (this._inDeadBand) return;

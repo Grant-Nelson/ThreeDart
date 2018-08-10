@@ -81,11 +81,12 @@ class UserZoom implements Mover, Core.UserInteractable {
   }
 
   /// Handles the mouse wheel changing.
-  void _mouseWheelHandle(Core.MouseWheelEventArgs args) {
+  void _mouseWheelHandle(Core.EventArgs args) {
     if (this._ctrlPressed != this._input.ctrlPressed) return;
     if (this._altPressed != this._input.altPressed) return;
     if (this._shiftPressed != this._input.shiftPressed) return;
-    this.zoom += args.wheel.dy*this._zoomScalar;
+    Core.MouseWheelEventArgs margs = (args as Core.MouseWheelEventArgs);
+    this.zoom += margs.wheel.dy*this._zoomScalar;
   }
 
   /// Indicates if the control/meta key must be pressed or released.

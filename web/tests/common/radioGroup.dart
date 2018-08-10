@@ -45,7 +45,7 @@ class RadioGroup {
 
   updateUrlWithRadioButtonInfo(text) {
     Uri current = Uri.base;
-    Map parameters = new Map.from(current.queryParameters);
+    Map<String, String> parameters = new Map<String, String>.from(current.queryParameters);
     parameters['$_elemId'] = text;
 
     Uri newUrl = current.replace(queryParameters: parameters);

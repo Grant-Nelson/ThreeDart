@@ -13,13 +13,13 @@ class Collection<T> implements Iterable<T> {
   List<T> _list;
 
   /// The handler method for before adding items to this collection.
-  CollectionPreaddHandle _onPreaddHndl;
+  CollectionPreaddHandle<T> _onPreaddHndl;
 
   /// The handler method for added items to this collection.
-  CollectionChangeHandle _onAddedHndl;
+  CollectionChangeHandle<T> _onAddedHndl;
 
   /// The handler method for remvoed items to this collection.
-  CollectionChangeHandle _onRemovedHndl;
+  CollectionChangeHandle<T> _onRemovedHndl;
 
   /// Constructs a new collection.
   Collection() {
@@ -34,9 +34,9 @@ class Collection<T> implements Iterable<T> {
   /// This method should be protected (if dart had protected methods).
   /// Do not call this method unless calling from an inheriting or including
   /// class otherwise unexpected errors may occur.
-  void setHandlers({CollectionPreaddHandle onPreaddHndl:  null,
-                    CollectionChangeHandle onAddedHndl:   null,
-                    CollectionChangeHandle onRemovedHndl: null}) {
+  void setHandlers({CollectionPreaddHandle<T> onPreaddHndl:  null,
+                    CollectionChangeHandle<T> onAddedHndl:   null,
+                    CollectionChangeHandle<T> onRemovedHndl: null}) {
     this._onPreaddHndl  = onPreaddHndl;
     this._onAddedHndl   = onAddedHndl;
     this._onRemovedHndl = onRemovedHndl;

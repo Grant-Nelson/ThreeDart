@@ -192,7 +192,7 @@ class UserRotater implements Mover, Core.UserInteractable {
     return new Math.Vector2(dx, dy);
   }
 
-  void _lockChangedHandle(Core.MouseEventArgs args) {
+  void _lockChangedHandle(Core.EventArgs args) {
     if (this._input.pointerLocked) {
       this._inDeadBand = true;
       this._lastYaw = this._yaw.location;
@@ -201,7 +201,7 @@ class UserRotater implements Mover, Core.UserInteractable {
   }
 
   /// Handles the mouse down event.
-  void _mouseDownHandle(Core.MouseEventArgs args) {
+  void _mouseDownHandle(Core.EventArgs args) {
     if (!this._locking) {
       if (this._ctrlPressed  != this._input.ctrlPressed)  return;
       if (this._altPressed   != this._input.altPressed)   return;
@@ -214,7 +214,9 @@ class UserRotater implements Mover, Core.UserInteractable {
   }
 
   /// Handles the mouse move event.
-  void _mouseMoveHandle(Core.MouseEventArgs args) {
+  void _mouseMoveHandle(Core.EventArgs args) {
+    Core.MouseEventArgs margs = (args as Core.MouseEventArgs);
+
     if (this._locking) {
       if (!this._input.pointerLocked) return;
       if (this._ctrlPressed  != this._input.ctrlPressed)  return;
@@ -223,28 +225,28 @@ class UserRotater implements Mover, Core.UserInteractable {
     } else if (!this._pressed) return;
 
     if (this._inDeadBand) {
-      if (args.rawOffset.length2() < this._deadBand2) return;
+      if (margs.rawOffset.length2() < this._deadBand2) return;
       this._inDeadBand = false;
     }
 
     if (this._cumulative) {
-      this._prevVal = this._getInverses(args.adjustedOffset);
+      this._prevVal = this._getInverses(margs.adjustedOffset);
       this._yaw.velocity   = -this._prevVal.dx*10.0*this._yawScalar;
       this._pitch.velocity = -this._prevVal.dy*10.0*this._pitchScalar;
     } else {
-      Math.Vector2 off = this._getInverses(args.adjustedOffset);
+      Math.Vector2 off = this._getInverses(margs.adjustedOffset);
       this._yaw.location   = -off.dx*this._yawScalar + this._lastYaw;
       this._pitch.location = -off.dy*this._pitchScalar + this._lastPitch;
       this._pitch.velocity = 0.0;
       this._yaw.velocity   = 0.0;
-      this._prevVal = this._getInverses(args.adjustedDelta);
+      this._prevVal = this._getInverses(margs.adjustedDelta);
     }
 
     this._onChanged();
   }
 
   /// Handle the mouse up event.
-  void _mouseUpHandle(Core.MouseEventArgs args) {
+  void _mouseUpHandle(Core.EventArgs args) {
     if (!this._pressed) return;
     this._pressed = false;
     if (this._inDeadBand) return;
