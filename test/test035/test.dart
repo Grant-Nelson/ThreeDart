@@ -60,9 +60,10 @@ void main() {
     ..technique = tech
     ..children.add(obj)
     ..camera.mover = camMover
-    ..onPreUpdate.add((ThreeDart.StateEventArgs args) {
-      Math.Matrix4 mat1 = mover1.update(args.state, null);
-      Math.Matrix4 mat2 = mover2.update(args.state, null);
+    ..onPreUpdate.add((ThreeDart.EventArgs args) {
+      ThreeDart.RenderState state = (args as ThreeDart.StateEventArgs).state;
+      Math.Matrix4 mat1 = mover1.update(state, null);
+      Math.Matrix4 mat2 = mover2.update(state, null);
       tech.bendMatrices[0] = mat1;
       tech.bendMatrices[1] = mat2;
       tech.bendMatrices[2] = mat1;

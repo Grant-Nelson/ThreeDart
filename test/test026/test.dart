@@ -1,7 +1,5 @@
 library ThreeDart.test.test026;
 
-import 'dart:math';
-
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 import 'package:ThreeDart/Shapes.dart' as Shapes;
 import 'package:ThreeDart/Movers.dart' as Movers;
@@ -47,7 +45,7 @@ void main() {
 
   Movers.Group camMover = new Movers.Group()
   ..add(new Movers.UserRotater(input: td.userInput))
-  ..add(new Movers.Constant.rotateX(PI))
+  ..add(new Movers.Constant.rotateX(Math.PI))
   ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));
 
   Movers.Rotater colorMover = new Movers.Rotater(deltaYaw: 0.3, deltaPitch: 0.5, deltaRoll: 0.7);
@@ -57,9 +55,10 @@ void main() {
     ..children.add(centerObj)
     ..children.add(room)
     ..camera.mover = camMover
-    ..onPreUpdate.add((ThreeDart.StateEventArgs args) {
-      tech.colorMatrix = colorMover.update(args.state, null);
-      tech.texture2DMatrix = new Math.Matrix3.fromMatrix4(txtMover.update(args.state, null));
+    ..onPreUpdate.add((ThreeDart.EventArgs args) {
+      ThreeDart.RenderState state = (args as ThreeDart.StateEventArgs).state;
+      tech.colorMatrix = colorMover.update(state, null);
+      tech.texture2DMatrix = new Math.Matrix3.fromMatrix4(txtMover.update(state, null));
     });
 
   new common.RadioGroup("shapes")

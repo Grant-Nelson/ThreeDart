@@ -1,6 +1,6 @@
 part of ThreeDart.test.common;
 
-typedef void checkSelecutedHndl(bool);
+typedef void checkSelecutedHndl(bool selected);
 
 class CheckGroup {
 

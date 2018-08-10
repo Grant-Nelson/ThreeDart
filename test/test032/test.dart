@@ -5,7 +5,6 @@ import 'dart:async';
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 import 'package:ThreeDart/IO.dart' as IO;
 import 'package:ThreeDart/Movers.dart' as Movers;
-import 'package:ThreeDart/Math.dart' as Math;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import '../common/common.dart' as common;

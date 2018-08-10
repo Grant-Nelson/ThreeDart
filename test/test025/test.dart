@@ -1,7 +1,5 @@
 library ThreeDart.test.test025;
 
-import 'dart:math';
-
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 import 'package:ThreeDart/Shapes.dart' as Shapes;
 import 'package:ThreeDart/Movers.dart' as Movers;
@@ -48,7 +46,7 @@ void main() {
 
   Movers.Group camMover = new Movers.Group()
   ..add(new Movers.UserRotater(input: td.userInput))
-  ..add(new Movers.Constant.rotateX(PI))
+  ..add(new Movers.Constant.rotateX(Math.PI))
   ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));
 
   ThreeDart.Entity obj = new ThreeDart.Entity()

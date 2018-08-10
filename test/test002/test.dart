@@ -63,7 +63,7 @@ void main() {
     ..add("Cuboid",        () { setShape(Shapes.cuboid()); })
     ..add("Cuboid+",       () { setShape(Shapes.cuboid(widthDiv: 15, heightDiv: 15,
                                 vertexHndl: (Shapes.Vertex ver, double u, double v) {
-                                  double height = cos(v*4.0*PI+PI)*0.1 + cos(u*4.0*PI+PI)*0.1;
+                                  double height = cos(v*4.0*Math.PI + Math.PI)*0.1 + cos(u*4.0*Math.PI + Math.PI)*0.1;
                                   Math.Vector3 vec = new Math.Vector3.fromPoint3(ver.location).normal();
                                   ver.location += new Math.Point3.fromVector3(vec*height);
                                 }));
@@ -74,7 +74,7 @@ void main() {
     ..add("Cylinder+",     () { setShape(Shapes.cylinder(sides: 16, div: 8)); })
     ..add("Cone",          () { setShape(Shapes.cylinder(topRadius: 0.0, sides: 12, capTop: false)); })
     ..add("Cylindrical",   () { setShape(Shapes.cylindrical(sides: 50, div: 25,
-                                radiusHndl: (double u, double v) => cos(v*4.0*PI + PI)*0.2 + cos(u*6.0*PI)*0.3 + 0.8)); })
+                                radiusHndl: (double u, double v) => cos(v*4.0*Math.PI + Math.PI)*0.2 + cos(u*6.0*Math.PI)*0.3 + 0.8)); })
     ..add("LatLonSphere",  () { setShape(Shapes.latLonSphere(10, 20)); })
     ..add("LatLonSphere+", () { setShape(Shapes.latLonSphere(20, 40)); })
     ..add("IsoSphere",     () { setShape(Shapes.isosphere(2)); })
@@ -82,7 +82,7 @@ void main() {
     ..add("Sphere",        () { setShape(Shapes.sphere(widthDiv: 6, heightDiv: 6)); })
     ..add("Sphere+",       () { setShape(Shapes.sphere(widthDiv: 10, heightDiv: 10)); })
     ..add("Spherical",     () { setShape(Shapes.sphere(widthDiv: 10, heightDiv: 10,
-                                heightHndl: (double u, double v) => cos(sqrt((u-0.5)*(u-0.5) + (v-0.5)*(v-0.5))*PI)*0.3)); })
+                                heightHndl: (double u, double v) => cos(sqrt((u-0.5)*(u-0.5) + (v-0.5)*(v-0.5))*Math.PI)*0.3)); })
     ..add("Toroid",        () { setShape(Shapes.toroid()); })
     ..add("Knot",          () { setShape(Shapes.knot()); })
     ..add("Grid",          () { setShape(Shapes.grid()); })
