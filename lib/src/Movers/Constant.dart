@@ -126,6 +126,6 @@ class Constant extends Mover {
 
   /// The string for this constant mover.
   String toString() {
-    return "Constant: "+this._mat.toString("          ");
+    return "Constant: "+this._mat.format("          ");
   }
 }

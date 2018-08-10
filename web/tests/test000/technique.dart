@@ -61,11 +61,11 @@ void testTechnique(TestArgs args, Math.Matrix4 objMat, Math.Matrix4 camMat, List
   if (tech.results.length != pairs.length) {
     String result = "";
     for (int i = 0; i < tech.results.length; i++) {
-      result += "\n   " + tech.results[i].toString(1, 3);
+      result += "\n   " + tech.results[i].format(1, 3);
     }
     String expStr = "";
     for (int i = 0; i < pairs.length; i++) {
-      expStr += "\n   " + pairs[i].outPoint.toString(1, 3);
+      expStr += "\n   " + pairs[i].outPoint.format(1, 3);
     }
     args.error("Unexpected number of results from debugging technique: " +
       "\n   Expected: $expStr" +

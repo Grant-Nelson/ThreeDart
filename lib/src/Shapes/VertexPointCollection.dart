@@ -62,10 +62,13 @@ class VertexPointCollection {
   }
 
   /// Gets to string for all the points.
-  String toString([String indent = ""]) {
+  String toString() => this.format();
+
+  /// Gets the formatted string for all the points with and optional [indent].
+  String format([String indent = ""]) {
     List<String> parts = new List<String>();
     for (Point pnt in this._points) {
-      parts.add(pnt.toString(indent));
+      parts.add(pnt.format(indent));
     }
     return parts.join('\n');
   }

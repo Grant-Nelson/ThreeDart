@@ -133,7 +133,7 @@ class Shaper {
     // For mostly wireframe, uncomment the following line and comment out the two lines below it.
     //shape.addLines([i, i+1, i+1, i+2, i+2, i+3, i+3, i, i, i+2]);
     shape.addTriangleFan([i, i+1, i+2, i+3]);
-    if (twoSided) shape.addTriangleFan([i+3, i+2, i+1, i]);
+    if (twoSided) shape.addTriangleFan([i+3, i+2, i+1, i]); // TODO: FIX underside of furn
   }
 
   /// Adds the top square of a block to the given [shape].

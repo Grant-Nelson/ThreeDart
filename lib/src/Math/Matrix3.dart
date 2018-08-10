@@ -245,7 +245,10 @@ class Matrix3 {
   }
 
   /// Gets the string for this matrix.
-  String toString([String indent = "", int fraction = 3, int whole = 0]) {
+  String toString() => this.format();
+
+  /// Gets the formatted string for this matrix.
+  String format([String indent = "", int fraction = 3, int whole = 0]) {
     List<String> col1 = formatColumn([this.m11, this.m12, this.m13], fraction, whole);
     List<String> col2 = formatColumn([this.m21, this.m22, this.m23], fraction, whole);
     List<String> col3 = formatColumn([this.m31, this.m32, this.m33], fraction, whole);

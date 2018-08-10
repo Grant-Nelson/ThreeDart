@@ -78,8 +78,11 @@ class Point {
   bool operator ==(var other) => identical(this, other);
 
   /// Gets the string for this point.
+  String toString() => this.format();
+
+  /// Gets the formatted string for this point.
   /// The [indent] is added to the front when provided.
-  String toString([String indent = ""]) {
+  String format([String indent = ""]) {
     if (this.disposed) return "${indent}disposed";
     return "${indent}${Math.formatInt(this._ver._index)}";
   }

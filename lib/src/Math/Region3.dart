@@ -324,7 +324,10 @@ class Region3 {
   }
 
   /// Gets the string for this region.
-  String toString([int fraction = 3, int whole = 0]) =>
+  String toString() => this.format();
+
+  /// Gets the formatted string for this region.
+  String format([int fraction = 3, int whole = 0]) =>
     '['+ formatDouble(this.x,  fraction, whole)+
     ', '+formatDouble(this.y,  fraction, whole)+
     ', '+formatDouble(this.z,  fraction, whole)+

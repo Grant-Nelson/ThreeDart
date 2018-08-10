@@ -133,13 +133,16 @@ class ShapeLineCollection {
   }
 
   /// Gets to string for all the lines.
-  String toString([String indent = ""]) {
+  String toString() => this.format();
+
+  /// Gets the formatted string for this lines with and optional [indent].
+  String format([String indent = ""]) {
     List<String> parts = new List<String>();
     final int count = this._lines.length;
     for (int i = 0; i < count; ++i) {
       Line line = this._lines[i];
       if (line == null) parts.add("$indent$i. null");
-      else parts.add(line.toString(indent+"$i. "));
+      else parts.add(line.format(indent+"$i. "));
     }
     return parts.join('\n');
   }

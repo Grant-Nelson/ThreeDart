@@ -99,7 +99,7 @@ void addMatrix4Tests(TestManager tests) {
   });
 
   tests.add("Matrix4 Basic Rotate X Test", (TestArgs args) {
-    Math.Matrix4 mat = new Math.Matrix4.rotateX(math.PI/4.0);
+    Math.Matrix4 mat = new Math.Matrix4.rotateX(Math.PI/4.0);
     _matrix4String(args, mat, "[1.000, 0.000,  0.000, 0.000,",
                               " 0.000, 0.707, -0.707, 0.000,",
                               " 0.000, 0.707,  0.707, 0.000,",
@@ -117,27 +117,27 @@ void addMatrix4Tests(TestManager tests) {
   });
 
   tests.add("Matrix4 Rotate X Test", (TestArgs args) {
-    _matrix4String(args, new Math.Matrix4.rotateX(-math.PI/4.0),
+    _matrix4String(args, new Math.Matrix4.rotateX(-Math.PI/4.0),
       "[1.000,  0.000, 0.000, 0.000,",
       " 0.000,  0.707, 0.707, 0.000,",
       " 0.000, -0.707, 0.707, 0.000,",
       " 0.000,  0.000, 0.000, 1.000]");
-    _matrix4String(args, new Math.Matrix4.rotateX(math.PI/2.0),
+    _matrix4String(args, new Math.Matrix4.rotateX(Math.PI/2.0),
       "[1.000, 0.000,  0.000, 0.000,",
       " 0.000, 0.000, -1.000, 0.000,",
       " 0.000, 1.000,  0.000, 0.000,",
       " 0.000, 0.000,  0.000, 1.000]");
-    _matrix4String(args, new Math.Matrix4.rotateX(-math.PI),
+    _matrix4String(args, new Math.Matrix4.rotateX(-Math.PI),
       "[1.000,  0.000,  0.000, 0.000,",
       " 0.000, -1.000,  0.000, 0.000,",
       " 0.000,  0.000, -1.000, 0.000,",
       " 0.000,  0.000,  0.000, 1.000]");
-    _matrix4String(args, new Math.Matrix4.rotateX(math.PI),
+    _matrix4String(args, new Math.Matrix4.rotateX(Math.PI),
       "[1.000,  0.000,  0.000, 0.000,",
       " 0.000, -1.000,  0.000, 0.000,",
       " 0.000,  0.000, -1.000, 0.000,",
       " 0.000,  0.000,  0.000, 1.000]");
-    _matrix4String(args, new Math.Matrix4.rotateX(math.PI*3.0/8.0),
+    _matrix4String(args, new Math.Matrix4.rotateX(Math.PI*3.0/8.0),
       "[1.000, 0.000,  0.000, 0.000,",
       " 0.000, 0.383, -0.924, 0.000,",
       " 0.000, 0.924,  0.383, 0.000,",
@@ -145,7 +145,7 @@ void addMatrix4Tests(TestManager tests) {
   });
 
   tests.add("Matrix4 Basic Rotate Y Test", (TestArgs args) {
-    Math.Matrix4 mat = new Math.Matrix4.rotateY(math.PI/4.0);
+    Math.Matrix4 mat = new Math.Matrix4.rotateY(Math.PI/4.0);
     _matrix4String(args, mat, "[0.707, 0.000, -0.707, 0.000,",
                               " 0.000, 1.000,  0.000, 0.000,",
                               " 0.707, 0.000,  0.707, 0.000,",
@@ -163,27 +163,27 @@ void addMatrix4Tests(TestManager tests) {
   });
 
   tests.add("Matrix4 Rotate Y Test", (TestArgs args) {
-    _matrix4String(args, new Math.Matrix4.rotateY(-math.PI/4.0),
+    _matrix4String(args, new Math.Matrix4.rotateY(-Math.PI/4.0),
       "[ 0.707, 0.000, 0.707, 0.000,",
       "  0.000, 1.000, 0.000, 0.000,",
       " -0.707, 0.000, 0.707, 0.000,",
       "  0.000, 0.000, 0.000, 1.000]");
-    _matrix4String(args, new Math.Matrix4.rotateY(math.PI/2.0),
+    _matrix4String(args, new Math.Matrix4.rotateY(Math.PI/2.0),
       "[0.000, 0.000, -1.000, 0.000,",
       " 0.000, 1.000,  0.000, 0.000,",
       " 1.000, 0.000,  0.000, 0.000,",
       " 0.000, 0.000,  0.000, 1.000]");
-    _matrix4String(args, new Math.Matrix4.rotateY(-math.PI),
+    _matrix4String(args, new Math.Matrix4.rotateY(-Math.PI),
       "[-1.000, 0.000,  0.000, 0.000,",
       "  0.000, 1.000,  0.000, 0.000,",
       "  0.000, 0.000, -1.000, 0.000,",
       "  0.000, 0.000,  0.000, 1.000]");
-    _matrix4String(args, new Math.Matrix4.rotateY(math.PI),
+    _matrix4String(args, new Math.Matrix4.rotateY(Math.PI),
       "[-1.000, 0.000,  0.000, 0.000,",
       "  0.000, 1.000,  0.000, 0.000,",
       "  0.000, 0.000, -1.000, 0.000,",
       "  0.000, 0.000,  0.000, 1.000]");
-    _matrix4String(args, new Math.Matrix4.rotateY(math.PI*3.0/8.0),
+    _matrix4String(args, new Math.Matrix4.rotateY(Math.PI*3.0/8.0),
       "[0.383, 0.000, -0.924, 0.000,",
       " 0.000, 1.000,  0.000, 0.000,",
       " 0.924, 0.000,  0.383, 0.000,",
@@ -191,7 +191,7 @@ void addMatrix4Tests(TestManager tests) {
   });
 
   tests.add("Matrix4 Basic Rotate Z Test", (TestArgs args) {
-    Math.Matrix4 mat = new Math.Matrix4.rotateZ(math.PI/4.0);
+    Math.Matrix4 mat = new Math.Matrix4.rotateZ(Math.PI/4.0);
     _matrix4String(args, mat, "[0.707, -0.707, 0.000, 0.000,",
                               " 0.707,  0.707, 0.000, 0.000,",
                               " 0.000,  0.000, 1.000, 0.000,",
@@ -209,27 +209,27 @@ void addMatrix4Tests(TestManager tests) {
   });
 
   tests.add("Matrix4 Rotate Z Test", (TestArgs args) {
-    _matrix4String(args, new Math.Matrix4.rotateZ(-math.PI/4.0),
+    _matrix4String(args, new Math.Matrix4.rotateZ(-Math.PI/4.0),
       "[ 0.707, 0.707, 0.000, 0.000,",
       " -0.707, 0.707, 0.000, 0.000,",
       "  0.000, 0.000, 1.000, 0.000,",
       "  0.000, 0.000, 0.000, 1.000]");
-    _matrix4String(args, new Math.Matrix4.rotateZ(math.PI/2.0),
+    _matrix4String(args, new Math.Matrix4.rotateZ(Math.PI/2.0),
       "[0.000, -1.000, 0.000, 0.000,",
       " 1.000,  0.000, 0.000, 0.000,",
       " 0.000,  0.000, 1.000, 0.000,",
       " 0.000,  0.000, 0.000, 1.000]");
-    _matrix4String(args, new Math.Matrix4.rotateZ(-math.PI),
+    _matrix4String(args, new Math.Matrix4.rotateZ(-Math.PI),
       "[-1.000,  0.000, 0.000, 0.000,",
       "  0.000, -1.000, 0.000, 0.000,",
       "  0.000,  0.000, 1.000, 0.000,",
       "  0.000,  0.000, 0.000, 1.000]");
-    _matrix4String(args, new Math.Matrix4.rotateZ(math.PI),
+    _matrix4String(args, new Math.Matrix4.rotateZ(Math.PI),
       "[-1.000,  0.000, 0.000, 0.000,",
       "  0.000, -1.000, 0.000, 0.000,",
       "  0.000,  0.000, 1.000, 0.000,",
       "  0.000,  0.000, 0.000, 1.000]");
-    _matrix4String(args, new Math.Matrix4.rotateZ(math.PI*3.0/8.0),
+    _matrix4String(args, new Math.Matrix4.rotateZ(Math.PI*3.0/8.0),
       "[0.383, -0.924, 0.000, 0.000,",
       " 0.924,  0.383, 0.000, 0.000,",
       " 0.000,  0.000, 1.000, 0.000,",
@@ -305,17 +305,17 @@ void addMatrix4Tests(TestManager tests) {
       " 0.000, 0.333, 0.000, 0.000,",
       " 0.000, 0.000, 0.250, 0.000,",
       " 0.000, 0.000, 0.000, 1.000]");
-    _invsMatrix4(args, new Math.Matrix4.rotateX(math.PI/4.0),
+    _invsMatrix4(args, new Math.Matrix4.rotateX(Math.PI/4.0),
       "[1.000,  0.000, 0.000, 0.000,",
       " 0.000,  0.707, 0.707, 0.000,",
       " 0.000, -0.707, 0.707, 0.000,",
       " 0.000,  0.000, 0.000, 1.000]");
-    _invsMatrix4(args, new Math.Matrix4.rotateY(math.PI/4.0),
+    _invsMatrix4(args, new Math.Matrix4.rotateY(Math.PI/4.0),
       "[ 0.707, 0.000, 0.707, 0.000,",
       "  0.000, 1.000, 0.000, 0.000,",
       " -0.707, 0.000, 0.707, 0.000,",
       "  0.000, 0.000, 0.000, 1.000]");
-    _invsMatrix4(args, new Math.Matrix4.rotateZ(math.PI/4.0),
+    _invsMatrix4(args, new Math.Matrix4.rotateZ(Math.PI/4.0),
       "[ 0.707, 0.707, 0.000, 0.000,",
       " -0.707, 0.707, 0.000, 0.000,",
       "  0.000, 0.000, 1.000, 0.000,",
@@ -434,13 +434,13 @@ void addMatrix4Tests(TestManager tests) {
 
 void _matrix4String(TestArgs args, Math.Matrix4 mat, String exp1, String exp2, String exp3, String exp4) {
   String exp = exp1+"\n             "+exp2+"\n             "+exp3+"\n             "+exp4;
-  String result = mat.toString("             ");
+  String result = mat.format("             ");
   if (result != exp) {
     args.error("Unexpected result from Matrix4: "+
       "\n   Expected: $exp"+
       "\n   Gotten:   $result\n");
     args.fail();
-  } else args.info("Checking: "+mat.toString("          ")+"\n\n");
+  } else args.info("Checking: "+mat.format("          ")+"\n\n");
 }
 
 void _invsMatrix4(TestArgs args, Math.Matrix4 mat, String exp1, String exp2, String exp3, String exp4) {
@@ -449,26 +449,26 @@ void _invsMatrix4(TestArgs args, Math.Matrix4 mat, String exp1, String exp2, Str
   Math.Matrix4 result = inv.inverse();
   if (result != mat) {
     args.error("Unexpected result from Matrix4.inverse().inverse(): "+
-      "\n   Expected: " + mat.toString("             ") +
-      "\n   Gotten:   " + result.toString("             ") + "\n");
+      "\n   Expected: " + mat.format("             ") +
+      "\n   Gotten:   " + result.format("             ") + "\n");
     args.fail();
   }
   Math.Matrix4 ident1 = mat*inv;
   if (ident1 != new Math.Matrix4.identity()) {
     args.error("Unexpected result from Matrix4*Matrix4.inverse(): "+
-      "\n   Matrix:   " + mat.toString("             ") +
-      "\n   Inverted: " + inv.toString("             ") +
-      "\n   Expected: " + new Math.Matrix4.identity().toString("             ") +
-      "\n   Gotten:   " + ident1.toString("             ") + "\n");
+      "\n   Matrix:   " + mat.format("             ") +
+      "\n   Inverted: " + inv.format("             ") +
+      "\n   Expected: " + new Math.Matrix4.identity().format("             ") +
+      "\n   Gotten:   " + ident1.format("             ") + "\n");
     args.fail();
   }
   Math.Matrix4 ident2 = mat*inv;
   if (ident2 != new Math.Matrix4.identity()) {
     args.error("Unexpected result from Matrix4*Matrix4.inverse(): "+
-      "\n   Matrix:   " + mat.toString("             ") +
-      "\n   Inverted: " + inv.toString("             ") +
-      "\n   Expected: " + new Math.Matrix4.identity().toString("             ") +
-      "\n   Gotten:   " + ident2.toString("             ") + "\n");
+      "\n   Matrix:   " + mat.format("             ") +
+      "\n   Inverted: " + inv.format("             ") +
+      "\n   Expected: " + new Math.Matrix4.identity().format("             ") +
+      "\n   Gotten:   " + ident2.format("             ") + "\n");
     args.fail();
   }
 }
@@ -480,7 +480,7 @@ void _transPnt4Matrix4(TestArgs args, Math.Matrix4 mat,
   Math.Point4 exp = new Math.Point4(expX, expY, expZ, expW);
   Math.Point4 result = mat.transPnt4(pnt);
   args.info("Checking Matrix4.transPnt4: "+
-    "\n   Matrix:   "+mat.toString("             ")+
+    "\n   Matrix:   "+mat.format("             ")+
     "\n   Point:    $pnt\n");
   if (result != exp) {
     args.error("Unexpected result from Matrix4.transPnt4: "+
@@ -497,7 +497,7 @@ void _transVec4Matrix4(TestArgs args, Math.Matrix4 mat,
   Math.Vector4 exp = new Math.Vector4(expX, expY, expZ, expW);
   Math.Vector4 result = mat.transVec4(vec);
   args.info("Checking Matrix4.transVec4: "+
-    "\n   Matrix:   "+mat.toString("             ")+
+    "\n   Matrix:   "+mat.format("             ")+
     "\n   Vector:   $vec\n");
   if (result != exp) {
     args.error("Unexpected result from Matrix4.transVec4: "+
@@ -513,7 +513,7 @@ void _transPnt3Matrix4(TestArgs args, Math.Matrix4 mat,
   Math.Point3 exp = new Math.Point3(expX, expY, expZ);
   Math.Point3 result = mat.transPnt3(pnt);
   args.info("Checking Matrix4.transPnt3: "+
-    "\n   Matrix:   "+mat.toString("             ")+
+    "\n   Matrix:   "+mat.format("             ")+
     "\n   Point:    $pnt\n");
   if (result != exp) {
     args.error("Unexpected result from Matrix4.transPnt3: "+
@@ -529,7 +529,7 @@ void _transVec3Matrix4(TestArgs args, Math.Matrix4 mat,
   Math.Vector3 exp = new Math.Vector3(expX, expY, expZ);
   Math.Vector3 result = mat.transVec3(vec);
   args.info("Checking Matrix4.transVec3: "+
-    "\n   Matrix:   "+mat.toString("             ")+
+    "\n   Matrix:   "+mat.format("             ")+
     "\n   Vector:   $vec\n");
   if (result != exp) {
     args.error("Unexpected result from Matrix4.transVec3: "+
@@ -544,7 +544,7 @@ void _transPnt2Matrix4(TestArgs args, Math.Matrix4 mat, double pntX, double pntY
   Math.Point2 exp = new Math.Point2(expX, expY);
   Math.Point2 result = mat.transPnt2(pnt);
   args.info("Checking Matrix4.transPnt2: "+
-    "\n   Matrix:   "+mat.toString("             ")+
+    "\n   Matrix:   "+mat.format("             ")+
     "\n   Point:    $pnt\n");
   if (result != exp) {
     args.error("Unexpected result from Matrix4.transPnt2: "+
@@ -559,7 +559,7 @@ void _transVec2Matrix4(TestArgs args, Math.Matrix4 mat, double vecX, double vecY
   Math.Vector2 exp = new Math.Vector2(expX, expY);
   Math.Vector2 result = mat.transVec2(vec);
   args.info("Checking Matrix4.transVec2: "+
-    "\n   Matrix:   "+mat.toString("             ")+
+    "\n   Matrix:   "+mat.format("             ")+
     "\n   Point:    $vec\n");
   if (result != exp) {
     args.error("Unexpected result from Matrix4.transVec2: "+

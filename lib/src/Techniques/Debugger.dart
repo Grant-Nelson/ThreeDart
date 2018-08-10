@@ -40,9 +40,9 @@ class Debugger extends Technique {
     Math.Matrix4 objMat  = state.object.matrix;
 
     if (this._buf != null) {
-      this._buf.write("Object:     "+objMat.toString("            ")+"\n\n");
-      this._buf.write("View:       "+viewMat.toString("            ")+"\n\n");
-      this._buf.write("Projection: "+projMat.toString("            ")+"\n\n");
+      this._buf.write("Object:     "+objMat.format("            ")+"\n\n");
+      this._buf.write("View:       "+viewMat.format("            ")+"\n\n");
+      this._buf.write("Projection: "+projMat.format("            ")+"\n\n");
     }
 
     this._results.clear();
@@ -58,11 +58,11 @@ class Debugger extends Technique {
         Math.Point3 pnt5 = new Math.Point3.fromPoint4(pnt4)/pnt4.w;
 
         if (this._buf != null) {
-          this._buf.write(pnt1.toString(3, 2) + " => " +
-                          pnt2.toString(3, 2) + " => " +
-                          pnt3.toString(3, 2) + " => " +
-                          pnt4.toString(3, 2) + " => " +
-                          pnt5.toString(3, 2) + "\n");
+          this._buf.write(pnt1.format(3, 2) + " => " +
+                          pnt2.format(3, 2) + " => " +
+                          pnt3.format(3, 2) + " => " +
+                          pnt4.format(3, 2) + " => " +
+                          pnt5.format(3, 2) + "\n");
         }
 
         this._results.add(pnt5);

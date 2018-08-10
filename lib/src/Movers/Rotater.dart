@@ -150,7 +150,10 @@ class Rotater extends Mover {
   }
 
   /// The string for this constant mover.
-  String toString([int fraction = 3, int whole = 0]) {
+  String toString() => this.format();
+
+  /// Gets the formatted string for this constant mover.
+  String format([int fraction = 3, int whole = 0]) {
     return "Rotater: ["+
       Math.formatDouble(this._yaw,        fraction, whole)+", "+
       Math.formatDouble(this._pitch,      fraction, whole)+", "+

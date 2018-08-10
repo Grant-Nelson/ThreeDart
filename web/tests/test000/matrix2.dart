@@ -168,13 +168,13 @@ void _doubleCheck(TestArgs args, double value, double exp, String name) {
 
 void _matrix2String(TestArgs args, Math.Matrix2 mat, String exp1, String exp2) {
   String exp = exp1+"\n             "+exp2;
-  String result = mat.toString("             ");
+  String result = mat.format("             ");
   if (result != exp) {
     args.error("Unexpected result from Matrix2: "+
       "\n   Expected: $exp"+
       "\n   Gotten:   $result\n");
     args.fail();
-  } else args.info("Checking: "+mat.toString("          ")+"\n\n");
+  } else args.info("Checking: "+mat.format("          ")+"\n\n");
 }
 
 void _invsMatrix2(TestArgs args, Math.Matrix2 mat, String exp1, String exp2) {
@@ -183,26 +183,26 @@ void _invsMatrix2(TestArgs args, Math.Matrix2 mat, String exp1, String exp2) {
   Math.Matrix2 result = inv.inverse();
   if (result != mat) {
     args.error("Unexpected result from Matrix2.inverse().inverse(): "+
-      "\n   Expected: " + mat.toString("             ") +
-      "\n   Gotten:   " + result.toString("             ") + "\n");
+      "\n   Expected: " + mat.format("             ") +
+      "\n   Gotten:   " + result.format("             ") + "\n");
     args.fail();
   }
   Math.Matrix2 ident1 = mat*inv;
   if (ident1 != new Math.Matrix2.identity()) {
     args.error("Unexpected result from Matrix2*Matrix2.inverse(): "+
-      "\n   Matrix:   " + mat.toString("             ") +
-      "\n   Inverted: " + inv.toString("             ") +
-      "\n   Expected: " + new Math.Matrix2.identity().toString("             ") +
-      "\n   Gotten:   " + ident1.toString("             ") + "\n");
+      "\n   Matrix:   " + mat.format("             ") +
+      "\n   Inverted: " + inv.format("             ") +
+      "\n   Expected: " + new Math.Matrix2.identity().format("             ") +
+      "\n   Gotten:   " + ident1.format("             ") + "\n");
     args.fail();
   }
   Math.Matrix2 ident2 = mat*inv;
   if (ident2 != new Math.Matrix2.identity()) {
     args.error("Unexpected result from Matrix2*Matrix2.inverse(): "+
-      "\n   Matrix:   " + mat.toString("             ") +
-      "\n   Inverted: " + inv.toString("             ") +
-      "\n   Expected: " + new Math.Matrix2.identity().toString("             ") +
-      "\n   Gotten:   " + ident2.toString("             ") + "\n");
+      "\n   Matrix:   " + mat.format("             ") +
+      "\n   Inverted: " + inv.format("             ") +
+      "\n   Expected: " + new Math.Matrix2.identity().format("             ") +
+      "\n   Gotten:   " + ident2.format("             ") + "\n");
     args.fail();
   }
 }
@@ -212,7 +212,7 @@ void _transPnt2Matrix2(TestArgs args, Math.Matrix2 mat, double pntX, double pntY
   Math.Point2 exp = new Math.Point2(expX, expY);
   Math.Point2 result = mat.transPnt2(pnt);
   args.info("Checking Matrix2.transPnt2: "+
-    "\n   Matrix:   "+mat.toString("             ")+
+    "\n   Matrix:   "+mat.format("             ")+
     "\n   Point:    $pnt\n");
   if (result != exp) {
     args.error("Unexpected result from Matrix2.transPnt2: "+
@@ -227,7 +227,7 @@ void _transVec2Matrix2(TestArgs args, Math.Matrix2 mat, double vecX, double vecY
   Math.Vector2 exp = new Math.Vector2(expX, expY);
   Math.Vector2 result = mat.transVec2(vec);
   args.info("Checking Matrix2.transVec2: "+
-    "\n   Matrix:   "+mat.toString("             ")+
+    "\n   Matrix:   "+mat.format("             ")+
     "\n   Vector:   $vec\n");
   if (result != exp) {
     args.error("Unexpected result from Matrix2.transVec2: "+

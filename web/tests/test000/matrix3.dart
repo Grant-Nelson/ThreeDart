@@ -319,13 +319,13 @@ void addMatrix3Tests(TestManager tests) {
 
 void _matrix3String(TestArgs args, Math.Matrix3 mat, String exp1, String exp2, String exp3) {
   String exp = exp1+"\n             "+exp2+"\n             "+exp3;
-  String result = mat.toString("             ");
+  String result = mat.format("             ");
   if (result != exp) {
     args.error("Unexpected result from Matrix3: "+
       "\n   Expected: $exp"+
       "\n   Gotten:   $result\n");
     args.fail();
-  } else args.info("Checking: "+mat.toString("          ")+"\n\n");
+  } else args.info("Checking: "+mat.format("          ")+"\n\n");
 }
 
 void _invsMatrix3(TestArgs args, Math.Matrix3 mat, String exp1, String exp2, String exp3) {
@@ -334,26 +334,26 @@ void _invsMatrix3(TestArgs args, Math.Matrix3 mat, String exp1, String exp2, Str
   Math.Matrix3 result = inv.inverse();
   if (result != mat) {
     args.error("Unexpected result from Matrix3.inverse().inverse(): "+
-      "\n   Expected: " + mat.toString("             ") +
-      "\n   Gotten:   " + result.toString("             ") + "\n");
+      "\n   Expected: " + mat.format("             ") +
+      "\n   Gotten:   " + result.format("             ") + "\n");
     args.fail();
   }
   Math.Matrix3 ident1 = mat*inv;
   if (ident1 != new Math.Matrix3.identity()) {
     args.error("Unexpected result from Matrix3*Matrix3.inverse(): "+
-      "\n   Matrix:   " + mat.toString("             ") +
-      "\n   Inverted: " + inv.toString("             ") +
-      "\n   Expected: " + new Math.Matrix3.identity().toString("             ") +
-      "\n   Gotten:   " + ident1.toString("             ") + "\n");
+      "\n   Matrix:   " + mat.format("             ") +
+      "\n   Inverted: " + inv.format("             ") +
+      "\n   Expected: " + new Math.Matrix3.identity().format("             ") +
+      "\n   Gotten:   " + ident1.format("             ") + "\n");
     args.fail();
   }
   Math.Matrix3 ident2 = mat*inv;
   if (ident2 != new Math.Matrix3.identity()) {
     args.error("Unexpected result from Matrix3*Matrix3.inverse(): "+
-      "\n   Matrix:   " + mat.toString("             ") +
-      "\n   Inverted: " + inv.toString("             ") +
-      "\n   Expected: " + new Math.Matrix3.identity().toString("             ") +
-      "\n   Gotten:   " + ident2.toString("             ") + "\n");
+      "\n   Matrix:   " + mat.format("             ") +
+      "\n   Inverted: " + inv.format("             ") +
+      "\n   Expected: " + new Math.Matrix3.identity().format("             ") +
+      "\n   Gotten:   " + ident2.format("             ") + "\n");
     args.fail();
   }
 }
@@ -363,7 +363,7 @@ void _transPnt3Matrix3(TestArgs args, Math.Matrix3 mat, double pntX, double pntY
   Math.Point3 exp = new Math.Point3(expX, expY, expZ);
   Math.Point3 result = mat.transPnt3(pnt);
   args.info("Checking Matrix3.transPnt3: "+
-    "\n   Matrix:   "+mat.toString("             ")+
+    "\n   Matrix:   "+mat.format("             ")+
     "\n   Point:    $pnt\n");
   if (result != exp) {
     args.error("Unexpected result from Matrix3.transPnt3: "+
@@ -379,7 +379,7 @@ void _transVec3Matrix3(TestArgs args, Math.Matrix3 mat,
   Math.Vector3 exp = new Math.Vector3(expX, expY, expZ);
   Math.Vector3 result = mat.transVec3(vec);
   args.info("Checking Matrix3.transVec3: "+
-    "\n   Matrix:   "+mat.toString("             ")+
+    "\n   Matrix:   "+mat.format("             ")+
     "\n   Vector:   $vec\n");
   if (result != exp) {
     args.error("Unexpected result from Matrix3.transVec3: "+
@@ -394,7 +394,7 @@ void _transPnt2Matrix3(TestArgs args, Math.Matrix3 mat, double pntX, double pntY
   Math.Point2 exp = new Math.Point2(expX, expY);
   Math.Point2 result = mat.transPnt2(pnt);
   args.info("Checking Matrix3.transPnt2: "+
-    "\n   Matrix:   "+mat.toString("             ")+
+    "\n   Matrix:   "+mat.format("             ")+
     "\n   Point:    $pnt\n");
   if (result != exp) {
     args.error("Unexpected result from Matrix3.transPnt2: "+
@@ -409,7 +409,7 @@ void _transVec2Matrix3(TestArgs args, Math.Matrix3 mat, double vecX, double vecY
   Math.Vector2 exp = new Math.Vector2(expX, expY);
   Math.Vector2 result = mat.transVec2(vec);
   args.info("Checking Matrix3.transVec2: "+
-    "\n   Matrix:   "+mat.toString("             ")+
+    "\n   Matrix:   "+mat.format("             ")+
     "\n   Vector:   $vec\n");
   if (result != exp) {
     args.error("Unexpected result from Matrix3.transVec2: "+

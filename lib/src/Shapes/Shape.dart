@@ -444,24 +444,27 @@ class Shape implements ShapeBuilder {
     return store;
   }
 
-  /// Gets the string for the shape with and optional [indent].
-  String toString([String indent = ""]) {
+  /// Gets the string for the shape 
+  String toString() => this.format();
+
+  /// Gets the formatted string for this shape with and optional [indent].
+  String format([String indent = ""]) {
     List<String> parts = new List<String>();
     if (!this._vertices.isEmpty) {
       parts.add("${indent}Vertices:");
-      parts.add(this._vertices.toString("${indent}   "));
+      parts.add(this._vertices.format("${indent}   "));
     }
     if (!this._points.isEmpty) {
       parts.add('${indent}Points:');
-      parts.add(this._points.toString("${indent}   "));
+      parts.add(this._points.format("${indent}   "));
     }
     if (!this._lines.isEmpty) {
       parts.add('${indent}Lines:');
-      parts.add(this._lines.toString("${indent}   "));
+      parts.add(this._lines.format("${indent}   "));
     }
     if (!this._faces.isEmpty) {
       parts.add('${indent}Faces:');
-      parts.add(this._faces.toString("${indent}   "));
+      parts.add(this._faces.format("${indent}   "));
     }
     return parts.join('\n');
   }

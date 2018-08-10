@@ -221,10 +221,13 @@ class ShapeFaceCollection {
   }
 
   /// Gets to string for all the faces.
-  String toString([String indent = ""]) {
+  String toString() => this.format();
+
+  /// Gets the formatted string for this faces with and optional [indent].
+  String format([String indent = ""]) {
     List<String> parts = new List<String>();
     for (Face face in this._faces) {
-      parts.add(face.toString(indent));
+      parts.add(face.format(indent));
     }
     return parts.join('\n');
   }

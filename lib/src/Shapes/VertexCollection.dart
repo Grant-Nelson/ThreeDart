@@ -144,11 +144,14 @@ class VertexCollection {
     }
 
   /// Gets to string for all the vertices.
-  String toString([String indent = ""]) {
+  String toString() => this.format();
+
+  /// Gets the formatted string for all the vertices with and optional [indent].
+  String format([String indent = ""]) {
     this._updateIndices();
     List<String> parts = new List<String>();
     for (Vertex vertex in this._vertices) {
-      parts.add(vertex.toString(indent));
+      parts.add(vertex.format(indent));
     }
     return parts.join('\n');
   }

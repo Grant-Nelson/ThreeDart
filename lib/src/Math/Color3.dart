@@ -127,9 +127,12 @@ class Color3 {
     if (!Comparer.equals(clr.blue,  this.blue))  return false;
     return true;
   }
-
+  
   /// Gets the string for this color.
-  String toString([int fraction = 3, int whole = 0]) => '['+
+  String toString() => this.format();
+
+  /// Gets the formatted string for this color.
+  String format([int fraction = 3, int whole = 0]) => '['+
     formatDouble(this.red,   fraction, whole)+', '+
     formatDouble(this.green, fraction, whole)+', '+
     formatDouble(this.blue,  fraction, whole)+']';
