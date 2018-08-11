@@ -5,7 +5,7 @@ class Orthogonal implements Camera {
   Movers.Mover _mover;
   double _near;
   double _far;
-  Core.Event _changed;
+  Events.Event _changed;
 
   /// Creates a new orthogonal camera.
   Orthogonal() {
@@ -16,13 +16,13 @@ class Orthogonal implements Camera {
   }
 
   /// Indicates that this target has changed.
-  Core.Event get changed {
-    if (this._changed == null) this._changed = new Core.Event();
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
     return this._changed;
   }
 
   /// Handles a change in this target.
-  void _onChanged([Core.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
@@ -33,7 +33,7 @@ class Orthogonal implements Camera {
     if (!Math.Comparer.equals(this._near, near)) {
       double prev = this._near;
       this._near = near;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "near", prev, this._near));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "near", prev, this._near));
     }
   }
 
@@ -44,7 +44,7 @@ class Orthogonal implements Camera {
     if (!Math.Comparer.equals(this._far, far)) {
       double prev = this._far;
       this._far = far;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "far", prev, this._far));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "far", prev, this._far));
     }
   }
 
@@ -56,7 +56,7 @@ class Orthogonal implements Camera {
       Movers.Mover prev = this._mover;
       this._mover = mover;
       if (this._mover != null) this._mover.changed.add(this._onChanged);
-      this._onChanged(new Core.ValueChangedEventArgs(this, "mover", prev, this._mover));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "mover", prev, this._mover));
     }
   }
 

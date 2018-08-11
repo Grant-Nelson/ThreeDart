@@ -2,9 +2,11 @@ library ThreeDart.Core;
 
 import 'dart:web_gl' as WebGL;
 import 'dart:html' as html;
-import 'dart:async' as async;
 
+import '../Collections/Collections.dart' as Collections;
 import '../Data/Data.dart' as Data;
+import '../Events/Events.dart' as Events;
+import '../Input/Input.dart' as Input;
 import '../Math/Math.dart' as Math;
 import '../Movers/Movers.dart' as Movers;
 import '../Scenes/Scenes.dart' as Scenes;
@@ -14,15 +16,8 @@ import '../Techniques/Techniques.dart' as Techniques;
 import '../Textures/Textures.dart' as Textures;
 
 part 'Bindable.dart';
-part 'Changable.dart';
-part 'Collection.dart';
 part 'Entity.dart';
-part 'Event.dart';
-part 'EventArgs.dart';
-part 'Matrix4Stack.dart';
+part 'EntityEventArgs.dart';
 part 'RenderState.dart';
+part 'StateEventArgs.dart';
 part 'ThreeDart.dart';
-part 'UserInput.dart';
-part 'UserInteractable.dart';
-part 'UserKey.dart';
-part 'UserKeyGroup.dart';

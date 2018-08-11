@@ -127,7 +127,7 @@ void _addCuboidSide(Shape shape, Data.VertexType type, ver2Handle vertexHndl,
 /// [flip] will flip the disk over, and [radiusHndl] is a handle for custom variant radius.
 Shape disk({int sides: 8, double height: 0.0, bool flip: false,
     double bending: -1.0, func1Handle radiusHndl: null}) {
-  if (radiusHndl == null) radiusHndl = (double a) => 1.0;
+  radiusHndl ??= (double a) => 1.0;
   if (sides < 3) return null;
   Shape shape = new Shape();
   double sign = flip? -1.0: 1.0;
@@ -312,7 +312,7 @@ void _isoSphereDiv(Shape shape, Vertex ver1, Vertex ver2, Vertex ver3, int itera
 /// The [widthDiv] and [heightDiv] define the divisions of the grids used.
 /// The [heightHndl] added addition height to the curved grid.
 Shape sphere({int widthDiv: 8, int heightDiv: 8, func2Handle heightHndl: null}) {
-  if (heightHndl == null) heightHndl = (double a, double b) => 0.0;
+  heightHndl ??= (double a, double b) => 0.0;
   Shape shape = cuboid(widthDiv: widthDiv, heightDiv: heightDiv,
     vertexHndl: (Vertex ver, double u, double v) {
       double height = 1.0+heightHndl(u, v);
@@ -372,7 +372,7 @@ Shape cylindricalPath(int minorCount, int majorCount, double minorRadius, double
 
 /// Creates a flat grid shape with an option caustom [heightHndl].
 Shape grid({int widthDiv: 4, int heightDiv: 4, func2Handle heightHndl: null}) {
-  if (heightHndl == null) heightHndl = (double u, double v) => 0.0;
+  heightHndl ??= (double u, double v) => 0.0;
   return surface(widthDiv, heightDiv, (Vertex ver, double u, double v) {
     double x = u*2.0-1.0;
     double y = v*2.0-1.0;

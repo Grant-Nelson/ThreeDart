@@ -27,7 +27,7 @@ class Vertex {
     this._points = new VertexPointCollection._(this);
     this._lines  = new VertexLineCollection._(this);
     this._faces  = new VertexFaceCollection._(this);
-    if (type == null) type = Data.VertexType.All;
+    type ??= Data.VertexType.All;
 
     this._index   = 0;
     this._loc     = type.has(Data.VertexType.Pos)?     loc:     null;

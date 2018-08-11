@@ -3,7 +3,7 @@ part of ThreeDart.Movers;
 /// A mover which inverts the matrix from another mover.
 class Invert implements Mover {
   Mover _mover;
-  Core.Event _changed;
+  Events.Event _changed;
   Math.Matrix4 _mat;
   int _frameNum;
 
@@ -18,8 +18,8 @@ class Invert implements Mover {
   }
 
   /// Emits when the mover has changed.
-  Core.Event get changed {
-    if (this._changed == null) this._changed = new Core.Event();
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
     return this._changed;
   }
 
@@ -31,7 +31,7 @@ class Invert implements Mover {
       this._mover = mover;
       if (mover != null) mover.changed.add(this._onChanged);
       if (prev != null) prev.changed.remove(this._onChanged);
-      this._onChanged(new Core.ValueChangedEventArgs(this, "mover", prev, this._mover));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "mover", prev, this._mover));
     }
   }
 
@@ -39,7 +39,7 @@ class Invert implements Mover {
   Math.Matrix4 get matrix => this._mat;
 
   /// Handles a child mover being changed.
-  void _onChanged([Core.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 

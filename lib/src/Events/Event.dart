@@ -1,8 +1,4 @@
-part of ThreeDart.Core;
-
-/// The method signature for event handlers.
-/// The [args] are any additional information about the event.
-typedef void EventHandler(EventArgs args);
+part of ThreeDart.Events;
 
 /// The collection of handles which can be called when some action has occurred.
 ///

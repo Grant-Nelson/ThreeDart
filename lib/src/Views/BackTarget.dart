@@ -16,7 +16,7 @@ class BackTarget extends Target {
   double _depth;
   bool _clearDepth;
   Math.Region2 _region;
-  Core.Event _changed;
+  Events.Event _changed;
 
   /// Creates a new back target.
   BackTarget(int width, int height, {bool hasDepth: true}) {
@@ -38,19 +38,19 @@ class BackTarget extends Target {
   }
 
   /// Indicates that this target has changed.
-  Core.Event get changed {
-    if (this._changed == null) this._changed = new Core.Event();
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
     return this._changed;
   }
 
   /// Handles a change in this target.
-  void _onChanged([Core.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
   /// Handles a change of a boolean value.
   void _onBoolChanged(String name, bool value) {
-    this._onChanged(new Core.ValueChangedEventArgs(this, name, !value, value));
+    this._onChanged(new Events.ValueChangedEventArgs(this, name, !value, value));
   }
 
   /// The requested width in pixels of the back buffer.
@@ -78,7 +78,7 @@ class BackTarget extends Target {
     if (this._color != color) {
       Math.Color4 prev = this._color;
       this._color = color;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "color", prev, this._color));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "color", prev, this._color));
     }
   }
 
@@ -97,7 +97,7 @@ class BackTarget extends Target {
     if (!Math.Comparer.equals(this._depth, depth)) {
       double prev = this._depth;
       this._depth = depth;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "depth", prev, this._depth));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "depth", prev, this._depth));
     }
   }
 
@@ -117,7 +117,7 @@ class BackTarget extends Target {
     if (this._region != region) {
       Math.Region2 prev = this._region;
       this._region = region;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "region", prev, this._region));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "region", prev, this._region));
     }
   }
 

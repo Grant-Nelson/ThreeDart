@@ -34,7 +34,7 @@ class ReducedShape implements ShapeBuilder {
   Math.Region3 _aabb;
 
   /// The event emitted when the shape has been changed.
-  Core.Event _changed;
+  Events.Event _changed;
 
   /// Creates a new reduced shape with a specific vertex type.
   /// This isn't nearly as flexible as [Shape] and doesn't provides
@@ -53,8 +53,8 @@ class ReducedShape implements ShapeBuilder {
   }
 
   /// The changed event to signal when ever the shape is modified.
-  Core.Event get changed {
-    if (this._changed == null) this._changed = new Core.Event();
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
     return this._changed;
   }
 
@@ -91,8 +91,7 @@ class ReducedShape implements ShapeBuilder {
     }
 
     if (this._type.has(Data.VertexType.Pos)) {
-      if (this._aabb == null)
-        this._aabb = new Math.Region3.fromPoint(vertices[0].location);
+      this._aabb ??= new Math.Region3.fromPoint(vertices[0].location);
       for (int i = length-1; i >= 0; i--)
         this._aabb = this._aabb.expandWithPoint(vertices[i].location);
     }
@@ -220,7 +219,7 @@ class ReducedShape implements ShapeBuilder {
   /// This isn't meant to be called from outside the entity, in other languages this would
   /// be a protected method. This method is exposed to that the shape is extended and
   /// these methods can be overwritten. If overwritten call this super method to still emit events.
-  void onChanged([Core.EventArgs args = null]) {
+  void onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 

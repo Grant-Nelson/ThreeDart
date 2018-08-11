@@ -82,13 +82,13 @@ class Sterioscopic implements Scene {
 
   /// Event emitted on an render for this pass.
   Core.Event get onRender {
-    if (this._onRender == null) this._onRender = new Core.Event();
+    this._onRender ??= new Core.Event();
     return this._onRender;
   }
 
   /// The event emitted when the scene has changed.
   Core.Event get changed {
-    if (this._changed == null) this._changed = new Core.Event();
+    this._changed ??= new Core.Event();
     return this._changed;
   }
 

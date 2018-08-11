@@ -6,7 +6,7 @@ class Shape implements ShapeBuilder {
   ShapePointCollection _points;
   ShapeLineCollection _lines;
   ShapeFaceCollection _faces;
-  Core.Event _changed;
+  Events.Event _changed;
 
   /// Creates a new shape.
   Shape() {
@@ -35,8 +35,8 @@ class Shape implements ShapeBuilder {
   ShapeFaceCollection get faces => this._faces;
 
   /// The changed event to signal when ever the shape is modified.
-  Core.Event get changed {
-    if (this._changed == null) this._changed = new Core.Event();
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
     return this._changed;
   }
 
@@ -173,7 +173,7 @@ class Shape implements ShapeBuilder {
   /// Finds the first index of the vertex which matches the given vertex.
   /// If no match is found then -1 is returned.
   int findFirstIndex(Vertex ver, [VertexMatcher matcher = null, int startIndex = 0]) {
-    if (matcher == null) matcher = new FullVertexMatcher();
+    matcher ??= new FullVertexMatcher();
     final int count = this._vertices.length;
     for (int i = startIndex; i < count; ++i) {
       Vertex ver2 = this._vertices[i];
@@ -189,7 +189,7 @@ class Shape implements ShapeBuilder {
   /// Gets the first vertex in this shape which matches the given vertex.
   /// If no match is found then null is returned.
   Vertex findFirst(Vertex ver, [VertexMatcher matcher = null, int startIndex = 0]) {
-    if (matcher == null) matcher = new FullVertexMatcher();
+    matcher ??= new FullVertexMatcher();
     final int count = this._vertices.length;
     for (int i = startIndex; i < count; ++i) {
       Vertex ver2 = this._vertices[i];
@@ -204,7 +204,7 @@ class Shape implements ShapeBuilder {
 
   /// Finds all vertices in this shape which matches the given vertex.
   List<Vertex> findAll(Vertex ver, [VertexMatcher matcher = null, int startIndex = 0]) {
-    if (matcher == null) matcher = new FullVertexMatcher();
+    matcher ??= new FullVertexMatcher();
     List<Vertex> results = new List<Vertex>();
     final int count = this._vertices.length;
     for (int i = startIndex; i < count; ++i) {
@@ -288,7 +288,7 @@ class Shape implements ShapeBuilder {
   /// This is useful if you wrap a flat grid into a cylinder and want
   /// to smooth where the opposite edges touch.
   void joinSeams([VertexMatcher matcher = null]) {
-    if (matcher == null) matcher = new VertexLocationMatcher();
+    matcher ??= new VertexLocationMatcher();
     this.mergeVertices(matcher, new VertexJoiner());
   }
 
@@ -297,7 +297,7 @@ class Shape implements ShapeBuilder {
   /// however the edges will still have seperate vertices meaning the surface
   /// can have texturing without a texture seam.
   void adjustNormals([VertexMatcher matcher = null]) {
-    if (matcher == null) matcher = new VertexLocationMatcher();
+    matcher ??= new VertexLocationMatcher();
     this.mergeVertices(matcher, new NormalAdjuster());
   }
 
@@ -306,7 +306,7 @@ class Shape implements ShapeBuilder {
   /// however the edges will still have seperate vertices meaning the surface
   /// can have texturing without a texture seam.
   void adjustBinormals([VertexMatcher matcher = null]) {
-    if (matcher == null) matcher = new VertexLocationMatcher();
+    matcher ??= new VertexLocationMatcher();
     this.mergeVertices(matcher, new BinormalAdjuster());
   }
 
@@ -328,7 +328,7 @@ class Shape implements ShapeBuilder {
   /// and the shape is centered then offset by the given [offset].
   void resizeCenter([double size = 2.0, Math.Point3 offset = null]) {
     Math.Region3 aabb = this.calculateAABB();
-    if (offset == null) offset = new Math.Point3.zero();
+    offset ??= new Math.Point3.zero();
     offset = offset - aabb.center;
     double maxSize = aabb.dx;
     if (aabb.dy > maxSize) maxSize = aabb.dy;
@@ -473,7 +473,7 @@ class Shape implements ShapeBuilder {
   /// This isn't meant to be called from outside the entity, in other languages this would
   /// be a protected method. This method is exposed to that the shape is extended and
   /// these methods can be overwritten. If overwritten call this super method to still emit events.
-  void onChanged([Core.EventArgs args = null]) {
+  void onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 

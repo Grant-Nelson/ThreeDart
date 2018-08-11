@@ -54,13 +54,13 @@ class TextureLoader {
     image.onLoad.listen((_) {
       result._width  = image.width;
       result._height = image.height;
-      image = this._resizeImage(image, this._max2DSize);
+      dynamic data = this._resizeImage(image, this._max2DSize, nearest);
       result._actualWidth  = image.width;
       result._actualHeight = image.height;
 
       this._gl.bindTexture(WebGL.WebGL.TEXTURE_2D, texture);
       this._gl.pixelStorei(WebGL.WebGL.UNPACK_FLIP_Y_WEBGL, flipY? 1: 0);
-      this._gl.texImage2D(WebGL.WebGL.TEXTURE_2D, 0, WebGL.WebGL.RGBA, WebGL.WebGL.RGBA, WebGL.WebGL.UNSIGNED_BYTE, image);
+      this._gl.texImage2D(WebGL.WebGL.TEXTURE_2D, 0, WebGL.WebGL.RGBA, WebGL.WebGL.RGBA, WebGL.WebGL.UNSIGNED_BYTE, data);
       if (mipMap) this._gl.generateMipmap(WebGL.WebGL.TEXTURE_2D);
       this._gl.bindTexture(WebGL.WebGL.TEXTURE_2D, null);
       result._setLoaded();
@@ -96,12 +96,12 @@ class TextureLoader {
     this._gl.bindTexture(WebGL.WebGL.TEXTURE_CUBE_MAP, null);
 
     TextureCube result = new TextureCube(texture: texture);
-    this._loadCubeFace(result, texture, posXPath, WebGL.WebGL.TEXTURE_CUBE_MAP_POSITIVE_X, flipY);
-    this._loadCubeFace(result, texture, negXPath, WebGL.WebGL.TEXTURE_CUBE_MAP_NEGATIVE_X, flipY);
-    this._loadCubeFace(result, texture, posYPath, WebGL.WebGL.TEXTURE_CUBE_MAP_POSITIVE_Y, flipY);
-    this._loadCubeFace(result, texture, negYPath, WebGL.WebGL.TEXTURE_CUBE_MAP_NEGATIVE_Y, flipY);
-    this._loadCubeFace(result, texture, posZPath, WebGL.WebGL.TEXTURE_CUBE_MAP_POSITIVE_Z, flipY);
-    this._loadCubeFace(result, texture, negZPath, WebGL.WebGL.TEXTURE_CUBE_MAP_NEGATIVE_Z, flipY);
+    this._loadCubeFace(result, texture, posXPath, WebGL.WebGL.TEXTURE_CUBE_MAP_POSITIVE_X, flipY, false);
+    this._loadCubeFace(result, texture, negXPath, WebGL.WebGL.TEXTURE_CUBE_MAP_NEGATIVE_X, flipY, false);
+    this._loadCubeFace(result, texture, posYPath, WebGL.WebGL.TEXTURE_CUBE_MAP_POSITIVE_Y, flipY, false);
+    this._loadCubeFace(result, texture, negYPath, WebGL.WebGL.TEXTURE_CUBE_MAP_NEGATIVE_Y, flipY, false);
+    this._loadCubeFace(result, texture, posZPath, WebGL.WebGL.TEXTURE_CUBE_MAP_POSITIVE_Z, flipY, false);
+    this._loadCubeFace(result, texture, negZPath, WebGL.WebGL.TEXTURE_CUBE_MAP_NEGATIVE_Z, flipY, false);
     return result;
   }
 
@@ -124,14 +124,14 @@ class TextureLoader {
 
   /// Loads a face from the given path.
   /// The image will load asynchronously.
-  void _loadCubeFace(TextureCube result, WebGL.Texture texture, String path, int face, bool flipY) {
+  void _loadCubeFace(TextureCube result, WebGL.Texture texture, String path, int face, bool flipY, bool nearest) {
     html.ImageElement image = new html.ImageElement(src: path);
     this._incLoading();
     image.onLoad.listen((_) {
-        image = this._resizeImage(image, this._maxCubeSize);
+        dynamic data = this._resizeImage(image, this._maxCubeSize, nearest);
         this._gl.bindTexture(WebGL.WebGL.TEXTURE_CUBE_MAP, texture);
         this._gl.pixelStorei(WebGL.WebGL.UNPACK_FLIP_Y_WEBGL, flipY? 1: 0);
-        this._gl.texImage2D(face, 0, WebGL.WebGL.RGBA, WebGL.WebGL.RGBA, WebGL.WebGL.UNSIGNED_BYTE, image);
+        this._gl.texImage2D(face, 0, WebGL.WebGL.RGBA, WebGL.WebGL.RGBA, WebGL.WebGL.UNSIGNED_BYTE, data);        
         this._gl.bindTexture(WebGL.WebGL.TEXTURE_CUBE_MAP, null);
         result._incLoaded();
         this._decLoading();
@@ -139,7 +139,7 @@ class TextureLoader {
   }
 
   /// Resizes the given image to the maximum size proportional to the power of 2.
-  dynamic _resizeImage(html.ImageElement image, int maxSize) {
+  dynamic _resizeImage(html.ImageElement image, int maxSize, bool nearest) {
     maxSize    = Math.nearestPower(maxSize);
     int width  = Math.nearestPower(image.width);
     int height = Math.nearestPower(image.height);
@@ -153,7 +153,7 @@ class TextureLoader {
         ..height = height;
 
       html.CanvasRenderingContext2D ctx = canvas.getContext('2d');
-      ctx.imageSmoothingEnabled = false;
+      ctx.imageSmoothingEnabled = nearest;
       ctx.drawImageScaled(image, 0, 0, canvas.width, canvas.height);
       return ctx.getImageData(0, 0, canvas.width, canvas.height);
     }

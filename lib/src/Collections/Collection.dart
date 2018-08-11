@@ -1,10 +1,4 @@
-part of ThreeDart.Core;
-
-/// The handler for the call back prior to an item being added.
-typedef bool CollectionPreaddHandle<T>(Iterable<T> added);
-
-/// The handler for the call back when the collection is changed.
-typedef void CollectionChangeHandle<T>(int index, Iterable<T> items);
+part of ThreeDart.Collections;
 
 /// A collection of objects.
 class Collection<T> implements Iterable<T> {

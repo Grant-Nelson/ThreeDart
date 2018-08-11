@@ -1,15 +1,5 @@
 part of ThreeDart.Core;
 
-/// The event argument for carrying an event's additional information.
-class EventArgs {
-
-  /// The sender of the event.
-  final Object sender;
-
-  /// Creates a new event argument.
-  EventArgs(this.sender);
-}
-
 /// The event argument for event's with information about entities changing.
 class EntityEventArgs extends EventArgs {
 
@@ -92,6 +82,41 @@ class MouseEventArgs extends PointEventArgs {
   double get dtTotal => this.currentTime.difference(this.startTime).inMilliseconds*0.001;
 }
 
+/// A locked mouse movement event argument.
+class LockedMouseEventArgs extends EventArgs {
+
+  /// True if the mouse button is pressed, false otherwise.
+  final bool pressed;
+
+  /// The size of the canvas or region.
+  /// This is used to adjust the raw points into the region's normalized space.
+  final Math.Region2 size;
+
+  /// The point, in pixels, at which the mouse button was last pressed or released.
+  final Math.Vector2 movement;
+
+  /// The start time at which the mouse button was last pressed or released.
+  final DateTime startTime;
+
+  /// The time of the last mouse event.
+  final DateTime previousTime;
+
+  /// The current wall time that the event started on.
+  final DateTime currentTime;
+
+  /// Creates a mouse event argument.
+  LockedMouseEventArgs(Object sender, this.pressed, Math.Region2 size,
+    this.startRawPoint, this.previousRawPoint, Math.Point2 rawPoint,
+    this.startTime, this.previousTime, DateTime currentTime):
+    super(sender, size, rawPoint, currentTime);
+
+  /// The change in time, in seconds, from the previous time to this time.
+  double get dt => this.currentTime.difference(this.previousTime).inMilliseconds*0.001;
+
+  /// The change in time, in seconds, from the start time to this time.
+  double get dtTotal => this.currentTime.difference(this.startTime).inMilliseconds*0.001;
+}
+
 /// The mouse wheel event argument.
 class MouseWheelEventArgs extends PointEventArgs {
 
@@ -123,53 +148,5 @@ class StateEventArgs extends EventArgs {
 
   /// Creates a new state event argument.
   StateEventArgs(Object sender, this.state):
-    super(sender);
-}
-
-/// The event argument for event's with information about entities changing.
-class ValueChangedEventArgs extends EventArgs {
-
-  /// The name of the value which was changed in the sender.
-  final String name;
-
-  /// The previous value (or nil) of the value before it was changed.
-  final Object previous;
-
-  /// The current value that the value was just changed to.
-  final Object value;
-
-  /// Creates an entity event argument.
-  ValueChangedEventArgs(Object sender, this.name, this.previous, this.value):
-    super(sender);
-
-  /// The string for this event argument.
-  String toString() => "ValueChanged: $name, $previous => $value";
-}
-
-/// The event argument for event's when items are added to a collection.
-class ItemsAddedEventArgs<T> extends EventArgs {
-
-  /// The index that the items were inserted at.
-  final int index;
-
-  /// The list of items which were added.
-  final Iterable<T> added;
-
-  /// Creates an items added event argument.
-  ItemsAddedEventArgs(Object sender, this.index, this.added):
-    super(sender);
-}
-
-/// The event argument for event's when items removed from a collection.
-class ItemsRemovedEventArgs<T> extends EventArgs {
-
-  /// The index that the items were taken from.
-  final int index;
-
-  /// The list of items which were removed.
-  final Iterable<T> removed;
-
-  /// Creates an items removed event argument.
-  ItemsRemovedEventArgs(Object sender, this.index, this.removed):
     super(sender);
 }

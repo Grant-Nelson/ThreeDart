@@ -1,4 +1,4 @@
-part of ThreeDart.Core;
+part of ThreeDart.Input;
 
 /// The user input object for changing HTML Element events
 /// into 3Dart events for user input.
@@ -124,9 +124,10 @@ class UserInput {
   /// If [setStart] is true then the start point and time are set.
   MouseEventArgs _getMouseArgs(html.MouseEvent msEvent, bool setStart) {
     html.Rectangle rect = this._elem.getBoundingClientRect();
-    final Math.Point2 pnt = this._pointerLocked?
+    final Math.Point2 pnt = new Math.Point2(msEvent.page.x-rect.left, msEvent.page.y-rect.top);
+
+      
       new Math.Point2(msEvent.movement.x, msEvent.movement.y):
-      new Math.Point2(msEvent.page.x-rect.left, msEvent.page.y-rect.top);
     final DateTime curTime = new DateTime.now();
     final Math.Region2 size = new Math.Region2(0.0, 0.0, this._elem.client.width, this._elem.client.height);
     this._ctrlPressed = msEvent.ctrlKey||msEvent.metaKey;

@@ -9,7 +9,7 @@ class GaussianBlur extends Technique {
   double _highOffset;
   double _lowOffset;
   double _depthLimit;
-  Core.Event _changed;
+  Events.Event _changed;
 
   /// Creates a new cover Gaussian blur technique with the given initial values.
   GaussianBlur({Textures.Texture2D colorTxt: null,
@@ -36,13 +36,13 @@ class GaussianBlur extends Technique {
   }
 
   /// Indicates that this technique has changed.
-  Core.Event get changed {
-    if (this._changed == null) this._changed = new Core.Event();
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
     return this._changed;
   }
 
   /// Handles a change in this technique.
-  void _onChanged([Core.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
@@ -53,7 +53,7 @@ class GaussianBlur extends Technique {
     if (!Math.Comparer.equals(this._highOffset, value)) {
       double prev = this._highOffset;
       this._highOffset = value;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "highOffset", prev, this._highOffset));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "highOffset", prev, this._highOffset));
     }
   }
 
@@ -64,7 +64,7 @@ class GaussianBlur extends Technique {
     if (!Math.Comparer.equals(this._lowOffset, value)) {
       double prev = this._lowOffset;
       this._lowOffset = value;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "lowOffset", prev, this._lowOffset));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "lowOffset", prev, this._lowOffset));
     }
   }
 
@@ -75,7 +75,7 @@ class GaussianBlur extends Technique {
     if (!Math.Comparer.equals(this._depthLimit, value)) {
       double prev = this._depthLimit;
       this._depthLimit = value;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "depthLimit", prev, this._depthLimit));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "depthLimit", prev, this._depthLimit));
     }
   }
 
@@ -87,7 +87,7 @@ class GaussianBlur extends Technique {
       Textures.Texture2D prev = this._colorTxt;
       this._colorTxt = txt;
       if (this._colorTxt != null) this._colorTxt.loadFinished.add(this._onChanged);
-      this._onChanged(new Core.ValueChangedEventArgs(this, "colorTexture", prev, this._colorTxt));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "colorTexture", prev, this._colorTxt));
     }
   }
 
@@ -99,7 +99,7 @@ class GaussianBlur extends Technique {
       Textures.Texture2D prev = this._depthTxt;
       this._depthTxt = txt;
       if (this._depthTxt != null) this._depthTxt.loadFinished.add(this._onChanged);
-      this._onChanged(new Core.ValueChangedEventArgs(this, "depthTexture", prev, this._depthTxt));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "depthTexture", prev, this._depthTxt));
     }
   }
 
@@ -110,7 +110,7 @@ class GaussianBlur extends Technique {
     if (this._txtMat != mat) {
       Math.Matrix3 prev = this._txtMat;
       this._txtMat = mat;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "textureMatrix", prev, this._depthTxt));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "textureMatrix", prev, this._depthTxt));
     }
   }
 
@@ -131,8 +131,7 @@ class GaussianBlur extends Technique {
 
   /// Renders this technique for the given state and entity.
   void render(Core.RenderState state, Core.Entity obj) {
-    if (this._shader == null)
-      this._shader = new Shaders.GaussianBlur.cached(state);
+    this._shader ??= new Shaders.GaussianBlur.cached(state);
 
     if (obj.cacheNeedsUpdate) {
       obj.cache = obj.shapeBuilder.build(new Data.WebGLBufferBuilder(state.gl), Data.VertexType.Pos|Data.VertexType.Txt2D)

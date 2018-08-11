@@ -11,7 +11,7 @@ class Spot implements Light {
   double _attenuation0;
   double _attenuation1;
   double _attenuation2;
-  Core.Event _changed;
+  Events.Event _changed;
 
   /// Creates a new spot light data.
   Spot({
@@ -65,13 +65,13 @@ class Spot implements Light {
   }
 
   /// The event emitted when the light has changed.
-  Core.Event get changed {
-    if (this._changed == null) this._changed = new Core.Event();
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
     return this._changed;
   }
 
   /// Handles changes to the light.
-  void _onChanged([Core.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
@@ -89,7 +89,7 @@ class Spot implements Light {
       Movers.Mover prev = this._mover;
       this._mover = mover;
       if (this._mover != null) this._mover.changed.add(this._onChanged);
-      this._onChanged(new Core.ValueChangedEventArgs(this, "mover", prev, this._mover));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "mover", prev, this._mover));
     }
   }
 
@@ -100,7 +100,7 @@ class Spot implements Light {
     if (this._color != color) {
       Math.Color3 prev = this._color;
       this._color = color;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "color", prev, this._color));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "color", prev, this._color));
     }
   }
 
@@ -111,7 +111,7 @@ class Spot implements Light {
     if (!Math.Comparer.equals(this._cutoff, cutoff)) {
       double prev = this._cutoff;
       this._cutoff = cutoff;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "cutoff", prev, this._cutoff));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "cutoff", prev, this._cutoff));
     }
   }
 
@@ -122,7 +122,7 @@ class Spot implements Light {
     if (!Math.Comparer.equals(this._coneAngle, coneAngle)) {
       double prev = this._coneAngle;
       this._coneAngle = coneAngle;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "coneAngle", prev, this._coneAngle));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "coneAngle", prev, this._coneAngle));
     }
   }
 
@@ -133,7 +133,7 @@ class Spot implements Light {
     if (!Math.Comparer.equals(this._attenuation0, attenuation0)) {
       double prev = this._attenuation0;
       this._attenuation0 = attenuation0;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "attenuation0", prev, this._attenuation0));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "attenuation0", prev, this._attenuation0));
     }
   }
 
@@ -144,7 +144,7 @@ class Spot implements Light {
     if (!Math.Comparer.equals(this._attenuation1, attenuation1)) {
       double prev = this._attenuation1;
       this._attenuation1 = attenuation1;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "attenuation1", prev, this._attenuation1));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "attenuation1", prev, this._attenuation1));
     }
   }
 
@@ -155,7 +155,7 @@ class Spot implements Light {
     if (!Math.Comparer.equals(this._attenuation2, attenuation2)) {
       double prev = this._attenuation2;
       this._attenuation2 = attenuation2;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "attenuation2", prev, this._attenuation2));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "attenuation2", prev, this._attenuation2));
     }
   }
 }

@@ -11,7 +11,7 @@ class Debugger extends Technique {
   List<Math.Point3> _results;
 
   /// An event to indicate when this technique has been changed.
-  Core.Event _changed;
+  Events.Event _changed;
 
   /// Creates a new debugging technique.
   Debugger([StringBuffer this._buf = null]) {
@@ -23,8 +23,8 @@ class Debugger extends Technique {
   List<Math.Point3> get results => this._results;
 
   /// Since there are no setting, this is currently never emitted.
-  Core.Event get changed {
-    if (this._changed == null) this._changed = new Core.Event();
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
     return this._changed;
   }
 

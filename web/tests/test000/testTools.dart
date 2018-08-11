@@ -74,7 +74,7 @@ class TestBlock extends TestArgs {
     String time = "";
     if (this._start != null) {
       DateTime end = this._end;
-      if (end == null) end = new DateTime.now();
+      end ??= new DateTime.now();
       time = ((end.difference(this._start).inMilliseconds)*0.001).toStringAsFixed(2);
       time ="(${time}s)";
     }

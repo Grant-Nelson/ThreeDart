@@ -1,15 +1,15 @@
-part of ThreeDart.Core;
+part of ThreeDart.Input;
 
 /// A group of keyboard keys for user interactions.
-class UserKeyGroup extends Collection<UserKey> implements UserInteractable, Changable {
-  Event _changed;
+class KeyGroup extends Collection<UserKey> implements Interactable, Events.Changable {
+  Events.Event _changed;
   UserInput _input;
   bool _pressed;
-  Event _keyUp;
-  Event _keyDown;
+  Events.Event _keyUp;
+  Events.Event _keyDown;
 
   /// Creates a new user key group.
-  UserKeyGroup() {
+  KeyGroup() {
     this._changed = null;
     this._input   = null;
     this._pressed = false;
@@ -21,30 +21,30 @@ class UserKeyGroup extends Collection<UserKey> implements UserInteractable, Chan
   }
 
   /// Emits when the group has changed.
-  Event get changed {
-    this._changed ??= new Event();
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
     return this._changed;
   }
 
   /// Emits when one of the contained keys is pressed.
-  Event get keyUp {
-    this._keyUp ??= new Event();
+  Events.Event get keyUp {
+    this._keyUp ??= new Events.Event();
     return this._keyUp;
   }
 
   /// Emits when one of the contained keys is released.
-  Event get keyDown {
-    this._keyDown ??= new Event();
+  Events.Event get keyDown {
+    this._keyDown ??= new Events.Event();
     return this._keyDown;
   }
 
   /// Adds a key to this collection.
   void addKey(int key, {bool ctrl: false, bool alt: false, bool shift: false}) {
-    this.add(new UserKey(key, ctrl: ctrl, alt: alt, shift: shift));
+    this.add(new Key(key, ctrl: ctrl, alt: alt, shift: shift));
   }
 
   /// Handles emitting a change.
-  void _onChanged([EventArgs args = null]) {
+  void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
@@ -61,26 +61,26 @@ class UserKeyGroup extends Collection<UserKey> implements UserInteractable, Chan
   }
 
   /// Handles a key being added to make sure there are no repeats.
-  bool _onPreadd(Iterable<UserKey> keys) {
-    for(UserKey key in keys) {
+  bool _onPreadd(Iterable<Key> keys) {
+    for(Key key in keys) {
       if (this.contains(key)) return false;
     }
     return true;
   }
 
   /// Handles a new key being added.
-  void _onAdded(int index, Iterable<UserKey> items) {
-    this._onChanged(new ItemsAddedEventArgs<UserKey>(this, index, items));
+  void _onAdded(int index, Iterable<Key> items) {
+    this._onChanged(new Events.ItemsAddedEventArgs<Key>(this, index, items));
   }
 
   /// Handles a key bring removed.
-  void _onRemoved(int index, Iterable<UserKey> items) {
-    this._onChanged(new ItemsRemovedEventArgs<UserKey>(this, index, items));
+  void _onRemoved(int index, Iterable<Key> items) {
+    this._onChanged(new Events.ItemsRemovedEventArgs<Key>(this, index, items));
   }
 
   /// Handles a key bring pressed.
-  void _onKeyDown(EventArgs args) {
-    if (!this._pressed && (args is KeyEventArgs)) {
+  void _onKeyDown(Events.EventArgs args) {
+    if (!this._pressed && (args is Events.KeyEventArgs)) {
       if (this.contains(args.key)) {
         this._pressed = true;
         this._keyDown?.emit(args);

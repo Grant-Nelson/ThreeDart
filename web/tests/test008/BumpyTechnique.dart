@@ -2,7 +2,7 @@ part of ThreeDart.test.test008;
 
 /// The bumpy test rendering technique.
 class BumpyTechnique extends Techniques.Technique {
-  Shaders.Shader _shader;
+  BumpyShader _shader;
   Textures.Texture2D _txt;
   double _offsetScalar;
   ThreeDart.Event _changed;
@@ -17,7 +17,7 @@ class BumpyTechnique extends Techniques.Technique {
 
   /// Emits an event whem the technique being changed.
   ThreeDart.Event get changed {
-    if (this._changed == null) this._changed = new ThreeDart.Event();
+    this._changed ??= new ThreeDart.Event();
     return this._changed;
   }
 
@@ -55,9 +55,7 @@ class BumpyTechnique extends Techniques.Technique {
 
   /// Renderes the given [obj] with the current texture for the given [state].
   void render(ThreeDart.RenderState state, ThreeDart.Entity obj) {
-    if (this._shader == null)
-      this._shader = new BumpyShader.cached(state);
-    BumpyShader shader = this._shader as BumpyShader;
+    this._shader ??= new BumpyShader.cached(state);
 
     if (obj.cacheNeedsUpdate) {
       obj.cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl),

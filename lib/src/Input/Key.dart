@@ -1,7 +1,7 @@
-part of ThreeDart.Core;
+part of ThreeDart.Input;
 
 /// A keyboard key press or release value with modifiers.
-class UserKey {
+class Key {
   static const int backspace    = 8;
   static const int tab          = 9;
   static const int enter        = 13;
@@ -86,13 +86,13 @@ class UserKey {
   final bool shift;
 
   /// Creates a new key.
-  UserKey(int this.key, {bool this.ctrl: false, bool this.alt: false, bool this.shift: false});
+  Key(int this.key, {bool this.ctrl: false, bool this.alt: false, bool this.shift: false});
 
   /// Checks the equality of this key to the given object.
   bool operator ==(var other) {
     if (identical(this, other)) return true;
-    if (other is! UserKey) return false;
-    UserKey key = other as UserKey;
+    if (other is! Key) return false;
+    Key key = other as Key;
     if (this.key   != key.key)   return false;
     if (this.ctrl  != key.ctrl)  return false;
     if (this.alt   != key.alt)   return false;

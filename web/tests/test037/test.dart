@@ -13,7 +13,8 @@ import '../common/common.dart' as common;
 
 void main() {
   common.shellTest("Test 037", ["heightMaps", "shapes", "scalars"],
-    "A test of applying a height map to an image.");
+    "A test of applying a height map to an image. "+
+    "Some shapes will take a bit to calculate depending on quality of mapping.");
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
 
@@ -75,8 +76,8 @@ void main() {
   };
   new common.RadioGroup("shapes")
     ..add("Cuboid",       () { setShape(Shapes.cuboid(widthDiv: 50, heightDiv: 50)); })
-    ..add("Cylinder",     () { setShape(Shapes.cylinder(sides: 100, div: 100, capTop: false, capBottom: false)); })
-    ..add("LatLonSphere", () { setShape(Shapes.latLonSphere(100, 100)); })
+    ..add("Cylinder",     () { setShape(Shapes.cylinder(sides: 80, div: 80, capTop: false, capBottom: false)); })
+    ..add("LatLonSphere", () { setShape(Shapes.latLonSphere(80, 80)); })
     ..add("Sphere",       () { setShape(Shapes.sphere(widthDiv: 50, heightDiv: 50)); })
     ..add("Toroid",       () { setShape(Shapes.toroid(minorCount: 50, majorCount: 50)); })
     ..add("Grid Small",   () { setShape(Shapes.grid(widthDiv: 50, heightDiv: 50)); })

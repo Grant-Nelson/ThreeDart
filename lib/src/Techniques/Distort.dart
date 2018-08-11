@@ -10,7 +10,7 @@ class Distort extends Technique {
   Math.Matrix3 _colorTxt2DMat;
   Math.Matrix3 _bumpTxt2DMat;
   Math.Matrix4 _bumpMat;
-  Core.Event _changed;
+  Events.Event _changed;
 
   /// Creates a new distort cover technique with the given initial values.
   Distort({Textures.Texture2D colorTxt: null,
@@ -27,13 +27,13 @@ class Distort extends Technique {
   }
 
   /// Indicates that this technique has changed.
-  Core.Event get changed {
-    if (this._changed == null) this._changed = new Core.Event();
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
     return this._changed;
   }
 
   /// Handles a change in this technique.
-  void _onChanged([Core.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
@@ -102,8 +102,7 @@ class Distort extends Technique {
 
   /// Renders this technique for the given state and entity.
   void render(Core.RenderState state, Core.Entity obj) {
-    if (this._shader == null)
-      this._shader = new Shaders.Distort.cached(state);
+    this._shader ??= new Shaders.Distort.cached(state);
 
     if (obj.cacheNeedsUpdate) {
       obj.cache = obj.shapeBuilder.build(new Data.WebGLBufferBuilder(state.gl), Data.VertexType.Pos|Data.VertexType.Txt2D)

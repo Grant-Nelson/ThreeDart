@@ -1,8 +1,8 @@
 part of ThreeDart.Movers;
 
 /// A mover which groups several movers.
-class Group extends Core.Collection<Mover> implements Mover {
-  Core.Event _changed;
+class Group extends Collections.Collection<Mover> implements Mover {
+  Events.Event _changed;
   Math.Matrix4 _mat;
   int _frameNum;
 
@@ -18,8 +18,8 @@ class Group extends Core.Collection<Mover> implements Mover {
   }
 
   /// Emits when the mover has changed.
-  Core.Event get changed {
-    if (this._changed == null) this._changed = new Core.Event();
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
     return this._changed;
   }
 
@@ -27,7 +27,7 @@ class Group extends Core.Collection<Mover> implements Mover {
   Math.Matrix4 get matrix => this._mat;
 
   /// Handles a child mover being changed.
-  void _onChanged([Core.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
@@ -40,7 +40,7 @@ class Group extends Core.Collection<Mover> implements Mover {
     for (Mover mover in added) {
       if (mover != null) mover.changed.add(this._onChanged);
     }
-    this._onChanged(new Core.ItemsAddedEventArgs(this, index, added));
+    this._onChanged(new Events.ItemsAddedEventArgs(this, index, added));
   }
 
   /// Is called when one or more items are removed from this collection.
@@ -52,7 +52,7 @@ class Group extends Core.Collection<Mover> implements Mover {
     for (Mover mover in removed) {
       if (mover != null) mover.changed.remove(this._onChanged);
     }
-    this._onChanged(new Core.ItemsRemovedEventArgs(this, index, removed));
+    this._onChanged(new Events.ItemsRemovedEventArgs(this, index, removed));
   }
 
   /// Updates all of the contained movers then multiply their results in order.

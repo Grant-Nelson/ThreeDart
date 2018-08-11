@@ -8,7 +8,7 @@ class Normal extends Technique {
   Shaders.ColorSourceType _bumpyType;
   Textures.Texture2D _bump2D;
   Textures.TextureCube _bumpCube;
-  Core.Event _changed;
+  Events.Event _changed;
 
   /// Creates a new material/light technique.
   Normal() {
@@ -20,13 +20,13 @@ class Normal extends Technique {
   }
 
   /// Indicates that this technique has changed.
-  Core.Event get changed {
-    if (this._changed == null) this._changed = new Core.Event();
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
     return this._changed;
   }
 
   /// Handles a change in this technique.
-  void _onChanged([Core.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
@@ -36,7 +36,7 @@ class Normal extends Technique {
       Textures.Texture2D prev = this._bump2D;
       this._bump2D = bump2D;
       if (this._bump2D != null) this._bump2D.loadFinished.add(this._onChanged);
-      this._onChanged(new Core.ValueChangedEventArgs(this, "bumpyTexture2D", prev, this._bump2D));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "bumpyTexture2D", prev, this._bump2D));
     }
   }
 
@@ -46,7 +46,7 @@ class Normal extends Technique {
       Textures.TextureCube prev = this._bumpCube;
       this._bumpCube = bumpCube;
       if (this._bumpCube != null) this._bumpCube.loadFinished.add(this._onChanged);
-      this._onChanged(new Core.ValueChangedEventArgs(this, "bumpyTextureCube", prev, this._bumpCube));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "bumpyTextureCube", prev, this._bumpCube));
     }
   }
 
@@ -57,7 +57,7 @@ class Normal extends Technique {
     if (this._txt2DMat != mat) {
       Math.Matrix3 prev = this._txt2DMat;
       this._txt2DMat = mat;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "texture2DMatrix", prev, this._txt2DMat));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "texture2DMatrix", prev, this._txt2DMat));
     }
   }
 
@@ -68,7 +68,7 @@ class Normal extends Technique {
     if (this._txtCubeMat != mat) {
       Math.Matrix4 prev = this._txtCubeMat;
       this._txtCubeMat = mat;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "textureCubeMatrix", prev, this._txtCubeMat));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "textureCubeMatrix", prev, this._txtCubeMat));
     }
   }
 

@@ -54,7 +54,7 @@ class UserZoom implements Mover, Core.UserInteractable {
 
   /// Emits when the mover has changed.
   Core.Event get changed {
-    if (this._changed == null) this._changed = new Core.Event();
+    this._changed ??= new Core.Event();
     return this._changed;
   }
 

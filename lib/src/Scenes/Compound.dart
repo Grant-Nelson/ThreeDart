@@ -22,7 +22,7 @@ class Compound extends Core.Collection<Scene> implements Scene {
 
   /// The event emitted when the scene has changed.
   Core.Event get changed {
-    if (this._changed == null) this._changed = new Core.Event();
+    this._changed ??= new Core.Event();
     return this._changed;
   }
 

@@ -1,13 +1,13 @@
-part of ThreeDart.Core;
+part of ThreeDart.Collections;
 
 /// A stack of matrix 4x4s.
-class Matrix4Stack implements Changable {
+class Matrix4Stack implements Events.Changable {
 
   /// The list storing the stack.
   List<Math.Matrix4> _mat;
 
   /// The event indicating the stack has changed.
-  Event _changed;
+  Events.Event _changed;
 
   /// Creates a new matrix stack.
   Matrix4Stack() {
@@ -25,13 +25,13 @@ class Matrix4Stack implements Changable {
   int get length => this._mat.length;
 
   /// The event emitted when the stack has changed.
-  Event get changed {
-    this._changed ??= new Event();
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
     return this._changed;
   }
 
   /// Handles changes to the stack.
-  void _onChanged([EventArgs args = null]) {
+  void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
@@ -45,11 +45,8 @@ class Matrix4Stack implements Changable {
   /// Pushes a new matrix onto the stack.
   /// If null is pushed the identity matrix will be put on the top of the stack.
   void push(Math.Matrix4 mat) {
-    if (mat == null) {
-      this._mat.add(new Math.Matrix4.identity());
-    } else {
-      this._mat.add(mat);
-    }
+    if (mat == null) this._mat.add(new Math.Matrix4.identity());
+    else this._mat.add(mat);
     this._onChanged();
   }
 
@@ -57,11 +54,8 @@ class Matrix4Stack implements Changable {
   /// If null is pushed the current top of the stack will be pushed on the top
   /// of the stack as if multiplies by the identity.
   void pushMul(Math.Matrix4 mat) {
-    if (mat == null) {
-      this._mat.add(this.matrix);
-    } else {
-      this._mat.add(mat * this.matrix);
-    }
+    if (mat == null) this._mat.add(this.matrix);
+    else this._mat.add(mat * this.matrix);
     this._onChanged();
   }
 

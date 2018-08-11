@@ -6,7 +6,7 @@ class Skybox extends Technique {
   double _fov;
   Textures.TextureCube _boxTxt;
   Math.Color3 _boxClr;
-  Core.Event _changed;
+  Events.Event _changed;
 
   /// Creates a new sky box technique with the given initial values.
   Skybox({double fov: Math.PI_3, Textures.TextureCube boxTexture: null,
@@ -19,13 +19,13 @@ class Skybox extends Technique {
   }
 
   /// Indicates that this technique has changed.
-  Core.Event get changed {
-    if (this._changed == null) this._changed = new Core.Event();
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
     return this._changed;
   }
 
   /// Handles a change in this technique.
-  void _onChanged([Core.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
@@ -35,7 +35,7 @@ class Skybox extends Technique {
     if (!Math.Comparer.equals(this._fov, fov)) {
       double prev = this._fov;
       this._fov = fov;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "fov", prev, this._fov));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "fov", prev, this._fov));
     }
   }
 
@@ -47,7 +47,7 @@ class Skybox extends Technique {
       Textures.TextureCube prev = this._boxTxt;
       this._boxTxt = boxTxt;
       if (this._boxTxt != null) this._boxTxt.loadFinished.add(this._onChanged);
-      this._onChanged(new Core.ValueChangedEventArgs(this, "boxTexture", prev, this._boxTxt));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "boxTexture", prev, this._boxTxt));
     }
   }
 
@@ -58,7 +58,7 @@ class Skybox extends Technique {
     if (this._boxClr != color) {
       Math.Color3 prev = this._boxClr;
       this._boxClr = color;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "boxColor", prev, this._boxClr));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "boxColor", prev, this._boxClr));
     }
   }
 
@@ -69,8 +69,7 @@ class Skybox extends Technique {
 
   /// Renders this technique for the given state and entity.
   void render(Core.RenderState state, Core.Entity obj) {
-    if (this._shader == null)
-      this._shader = new Shaders.Skybox.cached(state);
+    this._shader ??= new Shaders.Skybox.cached(state);
 
     if (obj.cacheNeedsUpdate) {
       obj.cache = obj.shapeBuilder.build(new Data.WebGLBufferBuilder(state.gl), Data.VertexType.Pos)

@@ -1,4 +1,4 @@
-part of ThreeDart.Core;
+part of ThreeDart.Events;
 
 /// The interface for a changable.
 abstract class Changable {

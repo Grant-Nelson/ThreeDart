@@ -178,7 +178,7 @@ class Matrix4 {
   /// [x]. [y], and [z] is the vector direction.
   /// [upHint] is a hint to help correct the top direction of the rotation.
   factory Matrix4.vectorTowards(double x, double y, double z, {Vector3 upHint: null}) {
-    if (upHint == null) upHint = new Vector3(0.0, 1.0, 0.0);
+    upHint ??= new Vector3(0.0, 1.0, 0.0);
     Vector3 forward = new Vector3(x, y, z);
     return new Matrix4.lookTowards(new Point3(0.0, 0.0, 0.0), upHint, forward);
   }

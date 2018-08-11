@@ -7,7 +7,7 @@ class Depth extends Technique {
   Math.Color3 _fogClr;
   double _fogStart;
   double _fogStop;
-  Core.Event _changed;
+  Events.Event _changed;
 
   /// Creates a new depth technique with the given initial values.
   Depth({Math.Color3 objClr:   null,
@@ -28,13 +28,13 @@ class Depth extends Technique {
   }
 
   /// Indicates that this technique has changed.
-  Core.Event get changed {
-    if (this._changed == null) this._changed = new Core.Event();
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
     return this._changed;
   }
 
   /// Handles a change in this technique.
-  void _onChanged([Core.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
@@ -45,7 +45,7 @@ class Depth extends Technique {
     if (this._objClr != clr) {
       Math.Color3 prev = this._objClr;
       this._objClr = clr;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "objectColor", prev, this._objClr));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "objectColor", prev, this._objClr));
     }
   }
 
@@ -56,7 +56,7 @@ class Depth extends Technique {
     if (this._fogClr != clr) {
       Math.Color3 prev = this._fogClr;
       this._fogClr = clr;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "fogColor", prev, this._fogClr));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "fogColor", prev, this._fogClr));
     }
   }
 
@@ -67,7 +67,7 @@ class Depth extends Technique {
     if (!Math.Comparer.equals(this._fogStart, start)) {
       double prev = this._fogStart;
       this._fogStart = start;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "fogStart", prev, this._fogStart));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "fogStart", prev, this._fogStart));
     }
   }
 
@@ -78,7 +78,7 @@ class Depth extends Technique {
     if (!Math.Comparer.equals(this._fogStop, stop)) {
       double prev = this._fogStop;
       this._fogStop = stop;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "fogStop", prev, this._fogStop));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "fogStop", prev, this._fogStop));
     }
   }
 
@@ -89,8 +89,7 @@ class Depth extends Technique {
 
   /// Renders this technique for the given state and entity.
   void render(Core.RenderState state, Core.Entity obj) {
-    if (this._shader == null)
-      this._shader = new Shaders.Depth.cached(state);
+    this._shader ??= new Shaders.Depth.cached(state);
 
     if (obj.cache is! Data.BufferStore) obj.clearCache();
     if (obj.cacheNeedsUpdate) {

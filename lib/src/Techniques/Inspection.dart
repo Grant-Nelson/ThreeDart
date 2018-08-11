@@ -31,7 +31,7 @@ class Inspection extends Technique {
   bool _showAABB;
   bool _showBend;
   double _vectorScale;
-  Core.Event _changed;
+  Events.Event _changed;
 
   /// Creates a new inspection techinque.
   Inspection() {
@@ -68,19 +68,19 @@ class Inspection extends Technique {
   }
 
   /// Indicates that this technique has changed.
-  Core.Event get changed {
-    if (this._changed == null) this._changed = new Core.Event();
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
     return this._changed;
   }
 
   /// Handles a change in this technique.
-  void _onChanged([Core.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
   /// Handles a change to a boolean value.
   void _onBoolChanged(String name, bool value) {
-    this._onChanged(new Core.ValueChangedEventArgs(this, name, !value, value));
+    this._onChanged(new Events.ValueChangedEventArgs(this, name, !value, value));
   }
 
   /// Indicates if the filled shape should be showed.
@@ -261,7 +261,7 @@ class Inspection extends Technique {
     if (!Math.Comparer.equals(this._vectorScale, scale)) {
       double prevScale = this._vectorScale;
       this._vectorScale = scale;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "vectorScale", prevScale, scale));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "vectorScale", prevScale, scale));
     }
   }
 
@@ -272,8 +272,7 @@ class Inspection extends Technique {
 
   /// Renders the current [obj] with the current [state].
   void render(Core.RenderState state, Core.Entity obj) {
-    if (this._shader == null)
-      this._shader = new Shaders.Inspection.cached(state);
+    this._shader ??= new Shaders.Inspection.cached(state);
 
     if (obj.cacheNeedsUpdate) {
       obj.shapeBuilder.calculateNormals();
@@ -426,7 +425,7 @@ class Inspection extends Technique {
   /// Convertes the given [shape] into the wire frame shape.
   Shapes.Shape _wireFrame(Shapes.Shape shape, {Math.Color4 color: null}) {
     Shapes.Shape result = new Shapes.Shape();
-    if (color == null) color = new Math.Color4(0.0, 0.7, 1.0);
+    color ??= new Math.Color4(0.0, 0.7, 1.0);
     shape.vertices.forEach((Shapes.Vertex vertex) {
       result.vertices.add(vertex.copy()
         ..color = color
@@ -675,7 +674,7 @@ class Inspection extends Technique {
     double maxBend = 0.0;
     shape.vertices.forEach((Shapes.Vertex vertex) {
       Math.Point4 bend = vertex.bending;
-      if (bend == null) bend = new Math.Point4.zero();
+      bend ??= new Math.Point4.zero();
       maxBend = math.max(maxBend, bend.x);
       maxBend = math.max(maxBend, bend.y);
       maxBend = math.max(maxBend, bend.z);
@@ -701,7 +700,7 @@ class Inspection extends Technique {
     Shapes.Shape result = new Shapes.Shape();
     shape.vertices.forEach((Shapes.Vertex vertex) {
       Math.Point4 bend = vertex.bending;
-      if (bend == null) bend = new Math.Point4.zero();
+      bend ??= new Math.Point4.zero();
       Math.Color3 clr = new Math.Color3.black();
       clr = clr + this._bendColor(bend.x, maxIndex);
       clr = clr + this._bendColor(bend.y, maxIndex);

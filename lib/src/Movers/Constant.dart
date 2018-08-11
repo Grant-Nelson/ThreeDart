@@ -3,7 +3,7 @@ part of ThreeDart.Movers;
 /// Constant mover applies a constant matrix to an entity or group.
 class Constant extends Mover {
   Math.Matrix4 _mat;
-  Core.Event _changed;
+  Events.Event _changed;
 
   /// Creates a new constant mover.
   Constant([Math.Matrix4 mat = null]) {
@@ -87,13 +87,13 @@ class Constant extends Mover {
     new Constant(new Math.Matrix4.lookAtTarget(pos, up, focus));
 
   /// Emits when the mover has changed.
-  Core.Event get changed {
-    if (this._changed == null) this._changed = new Core.Event();
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
     return this._changed;
   }
 
   /// Handles emitting a change.
-  void _onChanged([Core.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
@@ -104,7 +104,7 @@ class Constant extends Mover {
     if (this._mat != mat) {
       Math.Matrix4 prev = this._mat;
       this._mat = mat;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "matrix", prev, this._mat));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "matrix", prev, this._mat));
     }
   }
 

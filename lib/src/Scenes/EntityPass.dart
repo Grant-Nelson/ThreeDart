@@ -118,25 +118,25 @@ class EntityPass implements RenderPass {
 
   /// Event emitted before an update for this pass.
   Core.Event get onPreUpdate {
-    if (this._onPreUpdate == null) this._onPreUpdate = new Core.Event();
+    this._onPreUpdate ??= new Core.Event();
     return this._onPreUpdate;
   }
 
   /// Event emitted after an update for this pass.
   Core.Event get onPostUpdate {
-    if (this._onPostUpdate == null) this._onPostUpdate = new Core.Event();
+    this._onPostUpdate ??= new Core.Event();
     return this._onPostUpdate;
   }
 
   /// Event emitted on an render for this pass.
   Core.Event get onRender {
-    if (this._onRender == null) this._onRender = new Core.Event();
+    this._onRender ??= new Core.Event();
     return this._onRender;
   }
 
   /// Event emitted on a the pass or a child entity has changed.
   Core.Event get changed {
-    if (this._changed == null) this._changed = new Core.Event();
+    this._changed ??= new Core.Event();
     return this._changed;
   }
 
