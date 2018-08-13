@@ -4,29 +4,26 @@ part of ThreeDart.Input;
 /// into 3Dart events for user input.
 class UserInput {
 
+  // Key handler for the user keyboard input.
+  KeyInput _key;
+
   /// The HTML element the user input is driven from.
   html.Element _elem;
 
   /// The event to emit when the mouse button is pressed.
-  Event _mouseDown;
+  Events.Event _mouseDown;
 
   /// The event to emit when the mouse button is released.
-  Event _mouseUp;
+  Events.Event _mouseUp;
 
   /// The event to emit when the mouse is moved.
-  Event _mouseMove;
+  Events.Event _mouseMove;
 
   /// The event to emit when the mouse wheel is moved.
-  Event _mouseWheel;
+  Events.Event _mouseWheel;
 
   /// The event to emit when the mouse is locked or unlocked.
-  Event _pointerLockChanged;
-
-  /// The event to emit when a key is released.
-  Event _keyUp;
-
-  /// The event to emit when a key is pressed.
-  Event _keyDown;
+  Events.Event _pointerLockChanged;
 
   /// Indicates if the mouse button is pressed or not.
   bool _mousePressed;
@@ -46,15 +43,6 @@ class UserInput {
   /// The time of the last mouse event.
   DateTime _prevTime;
 
-  /// Indicates the control or meta key has been pressed.
-  bool _ctrlPressed;
-
-  /// Indicates the alt key has been pressed.
-  bool _altPressed;
-
-  /// Indicates the shift key has been pressed.
-  bool _shiftPressed;
-
   /// Indicates the mouse is currently locked.
   bool _pointerLocked;
 
@@ -66,13 +54,13 @@ class UserInput {
 
   /// Creates a new user input for the given [_elem].
   UserInput(this._elem) {
+    this._key = new KeyInput(this._elem);
+
     this._mouseDown = null;
     this._mouseUp = null;
     this._mouseMove = null;
     this._mouseWheel = null;
     this._pointerLockChanged = null;
-    this._keyUp = null;
-    this._keyDown = null;
 
     this._mousePressed = false;
     this._lockOnClick = false;
@@ -80,9 +68,6 @@ class UserInput {
     this._startPnt = null;
     this._prevTime = null;
     this._prevPnt = null;
-    this._ctrlPressed = false;
-    this._altPressed = false;
-    this._shiftPressed = false;
     this._pointerLocked = false;
     this._msEventOnLock = null;
     this._eventStreams = new List<async.StreamSubscription<Object>>();
@@ -93,8 +78,6 @@ class UserInput {
     this._eventStreams.add(this._elem.onMouseWheel.listen(this._onMouseWheel));
     this._eventStreams.add(html.document.onMouseMove.listen(this._onDocMouseMove));
     this._eventStreams.add(html.document.onMouseUp.listen(this._onDocMouseUp));
-    this._eventStreams.add(html.document.onKeyUp.listen(this._onKeyUp));
-    this._eventStreams.add(html.document.onKeyDown.listen(this._onKeyDown));
     this._eventStreams.add(html.document.onPointerLockChange.listen(this._onPointerLockChanged));
 
     // TODO: Implement touch as a mouse event.
@@ -115,6 +98,9 @@ class UserInput {
       html.document.exitPointerLock();
     }
   }
+  
+  // Key handler for the user keyboard input.
+  KeyInput get keyInput => this._key;
 
   /// Gets or sets if the mouse should lock the pointer on click.
   bool get lockOnClick => this._lockOnClick;
@@ -125,14 +111,10 @@ class UserInput {
   MouseEventArgs _getMouseArgs(html.MouseEvent msEvent, bool setStart) {
     html.Rectangle rect = this._elem.getBoundingClientRect();
     final Math.Point2 pnt = new Math.Point2(msEvent.page.x-rect.left, msEvent.page.y-rect.top);
-
-      
-      new Math.Point2(msEvent.movement.x, msEvent.movement.y):
+    // new Math.Point2(msEvent.movement.x, msEvent.movement.y):
     final DateTime curTime = new DateTime.now();
     final Math.Region2 size = new Math.Region2(0.0, 0.0, this._elem.client.width, this._elem.client.height);
-    this._ctrlPressed = msEvent.ctrlKey||msEvent.metaKey;
-    this._altPressed = msEvent.altKey;
-    this._shiftPressed = msEvent.shiftKey;
+    this._key._modPressed = new Modifiers(msEvent.ctrlKey||msEvent.metaKey, msEvent.altKey, msEvent.shiftKey);
     MouseEventArgs args = new MouseEventArgs(this, this._mousePressed, size,
       this._startPnt, this._prevPnt, pnt, this._startTime, this._prevTime, curTime);
     if (setStart) {
@@ -202,9 +184,7 @@ class UserInput {
 
   /// Handles the mouse wheel being moved over the canvas.
   void _onMouseWheel(html.WheelEvent msEvent) {
-    this._ctrlPressed = msEvent.ctrlKey||msEvent.metaKey;
-    this._altPressed = msEvent.altKey;
-    this._shiftPressed = msEvent.shiftKey;
+    this._key._modPressed = new Modifiers(msEvent.ctrlKey||msEvent.metaKey, msEvent.altKey, msEvent.shiftKey);
     if (this._mouseWheel != null) {
       final Math.Point2 pnt = new Math.Point2(msEvent.offset.x, msEvent.offset.y);
       final DateTime curTime = new DateTime.now();
@@ -226,83 +206,38 @@ class UserInput {
     }
   }
 
-  /// Handles a keyboard key being released.
-  void _onKeyUp(html.KeyboardEvent kEvent) {
-    this._ctrlPressed = kEvent.ctrlKey||kEvent.metaKey;
-    this._altPressed = kEvent.altKey;
-    this._shiftPressed = kEvent.shiftKey;
-    if (this._keyUp != null) {
-      this._keyUp.emit(new KeyEventArgs(this, new UserKey(kEvent.keyCode,
-        ctrl: this._ctrlPressed, alt: this._altPressed, shift: this._shiftPressed)));
-      kEvent.preventDefault();
-    }
-  }
-
-  /// Handles a keyboard key being pressed.
-  void _onKeyDown(html.KeyboardEvent kEvent) {
-    this._ctrlPressed = kEvent.ctrlKey||kEvent.metaKey;
-    this._altPressed = kEvent.altKey;
-    this._shiftPressed = kEvent.shiftKey;
-    if (this._keyDown != null) {
-      this._keyDown.emit(new KeyEventArgs(this, new UserKey(kEvent.keyCode,
-        ctrl: this._ctrlPressed, alt: this._altPressed, shift: this._shiftPressed)));
-      kEvent.preventDefault();
-    }
-  }
-
   /// The mouse down event.
-  Event get mouseDown {
-    this._mouseDown ??= new Event();
+  Events.Event get mouseDown {
+    this._mouseDown ??= new Events.Event();
     return this._mouseDown;
   }
 
   /// The mouse up event.
-  Event get mouseUp {
-    this._mouseUp ??= new Event();
+  Events.Event get mouseUp {
+    this._mouseUp ??= new Events.Event();
     return this._mouseUp;
   }
 
   /// The mouse move event.
-  Event get mouseMove {
-    this._mouseMove ??= new Event();
+  Events.Event get mouseMove {
+    this._mouseMove ??= new Events.Event();
     return this._mouseMove;
   }
 
   /// The mouse wheel move event.
-  Event get mouseWheel {
-    this._mouseWheel ??= new Event();
+  Events.Event get mouseWheel {
+    this._mouseWheel ??= new Events.Event();
     return this._mouseWheel;
   }
 
   /// The mouse has been locked or unlocked.
-  Event get pointerLockChanged {
-    this._pointerLockChanged ??= new Event();
+  Events.Event get pointerLockChanged {
+    this._pointerLockChanged ??= new Events.Event();
     return this._pointerLockChanged;
-  }
-
-  /// The keyboard key released event.
-  Event get keyUp {
-    this._keyUp ??= new Event();
-    return this._keyUp;
-  }
-
-  /// The keyboard key pressed event.
-  Event get keyDown {
-    this._keyDown ??= new Event();
-    return this._keyDown;
   }
 
   /// Indicates if the mouse button is currently pressed.
   bool get mousePressed => this._mousePressed;
-
-  /// Indicates if the control or meta key is currently pressed.
-  bool get ctrlPressed => this._ctrlPressed;
-
-  /// Indicates if the alt key is currently pressed.
-  bool get altPressed => this._altPressed;
-
-  /// Indicates if the shift key is currently pressed.
-  bool get shiftPressed => this._shiftPressed;
 
   /// Indicates if the mouse is currently locked.
   bool get pointerLocked => this._pointerLocked;

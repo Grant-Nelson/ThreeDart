@@ -1,7 +1,7 @@
 part of ThreeDart.Input;
 
 /// A group of keyboard keys for user interactions.
-class KeyGroup extends Collection<UserKey> implements Interactable, Events.Changable {
+class KeyGroup extends Collections.Collection<Key> implements Interactable, Events.Changable {
   Events.Event _changed;
   UserInput _input;
   bool _pressed;
@@ -80,7 +80,7 @@ class KeyGroup extends Collection<UserKey> implements Interactable, Events.Chang
 
   /// Handles a key bring pressed.
   void _onKeyDown(Events.EventArgs args) {
-    if (!this._pressed && (args is Events.KeyEventArgs)) {
+    if (!this._pressed && (args is KeyEventArgs)) {
       if (this.contains(args.key)) {
         this._pressed = true;
         this._keyDown?.emit(args);
@@ -89,7 +89,7 @@ class KeyGroup extends Collection<UserKey> implements Interactable, Events.Chang
   }
 
   /// Handles a key bring released.
-  void _onKeyUp(EventArgs args) {
+  void _onKeyUp(Events.EventArgs args) {
     if (this._pressed && (args is KeyEventArgs)) {
       if (this.contains(args.key)) {
         this._pressed = false;
@@ -104,16 +104,18 @@ class KeyGroup extends Collection<UserKey> implements Interactable, Events.Chang
     if (input == null) return false;
     if (this._input != null) return false;
     this._input = input;
-    this._input.keyDown.add(this._onKeyDown);
-    this._input.keyUp.add(this._onKeyUp);
+    this._input.keyInput
+      ..keyDown.add(this._onKeyDown)
+      ..keyUp.add(this._onKeyUp);
     return true;
   }
 
   /// Detaches this object from it's attached [UserInput].
   void detach() {
     if (this._input != null) {
-      this._input.keyDown.remove(this._onKeyDown);
-      this._input.keyUp.remove(this._onKeyUp);
+      this._input.keyInput
+        ..keyDown.remove(this._onKeyDown)
+        ..keyUp.remove(this._onKeyUp);
       this._input = null;
     }
   }

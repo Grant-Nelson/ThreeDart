@@ -4,6 +4,7 @@ import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 import 'package:ThreeDart/Shapes.dart' as Shapes;
 import 'package:ThreeDart/Movers.dart' as Movers;
 import 'package:ThreeDart/Math.dart' as Math;
+import 'package:ThreeDart/Events.dart' as Events;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
@@ -55,7 +56,7 @@ void main() {
     ..children.add(centerObj)
     ..children.add(room)
     ..camera.mover = camMover
-    ..onPreUpdate.add((ThreeDart.EventArgs args) {
+    ..onPreUpdate.add((Events.EventArgs args) {
       ThreeDart.RenderState state = (args as ThreeDart.StateEventArgs).state;
       tech.colorMatrix = colorMover.update(state, null);
       tech.texture2DMatrix = new Math.Matrix3.fromMatrix4(txtMover.update(state, null));

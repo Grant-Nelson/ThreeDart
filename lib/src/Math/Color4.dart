@@ -34,7 +34,7 @@ class Color4 {
   /// Constructs a new [Color4] instance with a gray color from the optional [value].
   factory Color4.gray([double value = 0.5, double alpha = 1.0]) {
     value = clampVal(value);
-    new Color4._(value, value, value, clampVal(alpha));
+    return new Color4._(value, value, value, clampVal(alpha));
   }
 
   /// Constructs a new [Color4] instance with full color, white.

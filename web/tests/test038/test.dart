@@ -4,6 +4,7 @@ import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 import 'package:ThreeDart/Shapes.dart' as Shapes;
 import 'package:ThreeDart/Movers.dart' as Movers;
 import 'package:ThreeDart/Math.dart' as Math;
+import 'package:ThreeDart/Events.dart' as Events;
 import 'package:ThreeDart/Lights.dart' as Lights;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Textures.dart' as Textures;
@@ -87,7 +88,7 @@ void main() {
   // Setup the First person camera
   Movers.UserTranslator trans = new Movers.UserTranslator(input: td.userInput);
   Movers.UserRotater rot = new Movers.UserRotater.flat(input: td.userInput);
-  rot.changed.add((ThreeDart.EventArgs args) {
+  rot.changed.add((Events.EventArgs args) {
     trans.velocityRotation = new Math.Matrix3.rotateY(-rot.yaw.location);
   });
   Movers.Group camera = new Movers.Group([trans, rot]);

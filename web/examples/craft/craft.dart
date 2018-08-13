@@ -10,6 +10,9 @@ import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Views.dart' as Views;
 import 'package:ThreeDart/Data.dart' as Data;
+import 'package:ThreeDart/Input.dart' as Input;
+import 'package:ThreeDart/Events.dart' as Events;
+
 import 'package:OpenSimplexNoiseDart/OpenSimplexNoise.dart' as simplex;
 
 import 'dart:math' as math;

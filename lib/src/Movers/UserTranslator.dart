@@ -4,13 +4,13 @@ part of ThreeDart.Movers;
 typedef Math.Point3 CollisionHandle(Math.Point3 prev, Math.Point3 next);
 
 /// A translation mover which translates on an object in response to user input.
-class UserTranslator implements Mover, Core.UserInteractable {
-  Core.UserKeyGroup _xNegKey;
-  Core.UserKeyGroup _xPosKey;
-  Core.UserKeyGroup _yNegKey;
-  Core.UserKeyGroup _yPosKey;
-  Core.UserKeyGroup _zNegKey;
-  Core.UserKeyGroup _zPosKey;
+class UserTranslator implements Mover, Input.Interactable {
+  Input.KeyGroup _xNegKey;
+  Input.KeyGroup _xPosKey;
+  Input.KeyGroup _yNegKey;
+  Input.KeyGroup _yPosKey;
+  Input.KeyGroup _zNegKey;
+  Input.KeyGroup _zPosKey;
   ComponentShift _offsetX;
   ComponentShift _offsetY;
   ComponentShift _offsetZ;
@@ -26,33 +26,34 @@ class UserTranslator implements Mover, Core.UserInteractable {
   Math.Matrix4 _mat;
 
   /// Event for handling changes to this mover.
-  Core.Event _changed;
+  Events.Event _changed;
 
+  /// A handler for optionally handling collisions in movement.
   CollisionHandle _collision;
 
   /// Creates an instance of [UserTranslator].
-  UserTranslator({Core.UserInput input: null}) {
-    this._xNegKey = new Core.UserKeyGroup()
-      ..addKey(Core.UserKey.rightArrow)
-      ..addKey(Core.UserKey.keyD)
+  UserTranslator({Input.UserInput input: null}) {
+    this._xNegKey = new Input.KeyGroup()
+      ..addKey(Input.Key.rightArrow)
+      ..addKey(Input.Key.keyD)
       ..keyDown.add(this._onKeyDown);
-    this._xPosKey = new Core.UserKeyGroup()
-      ..addKey(Core.UserKey.leftArrow)
-      ..addKey(Core.UserKey.keyA)
+    this._xPosKey = new Input.KeyGroup()
+      ..addKey(Input.Key.leftArrow)
+      ..addKey(Input.Key.keyA)
       ..keyDown.add(this._onKeyDown);
-    this._yNegKey = new Core.UserKeyGroup()
-      ..addKey(Core.UserKey.keyQ)
+    this._yNegKey = new Input.KeyGroup()
+      ..addKey(Input.Key.keyQ)
       ..keyDown.add(this._onKeyDown);
-    this._yPosKey = new Core.UserKeyGroup()
-      ..addKey(Core.UserKey.keyE)
+    this._yPosKey = new Input.KeyGroup()
+      ..addKey(Input.Key.keyE)
       ..keyDown.add(this._onKeyDown);
-    this._zNegKey = new Core.UserKeyGroup()
-      ..addKey(Core.UserKey.downArrow)
-      ..addKey(Core.UserKey.keyS)
+    this._zNegKey = new Input.KeyGroup()
+      ..addKey(Input.Key.downArrow)
+      ..addKey(Input.Key.keyS)
       ..keyDown.add(this._onKeyDown);
-    this._zPosKey = new Core.UserKeyGroup()
-      ..addKey(Core.UserKey.upArrow)
-      ..addKey(Core.UserKey.keyW)
+    this._zPosKey = new Input.KeyGroup()
+      ..addKey(Input.Key.upArrow)
+      ..addKey(Input.Key.keyW)
       ..keyDown.add(this._onKeyDown);
 
     final double maxVel = 30.0;
@@ -81,33 +82,33 @@ class UserTranslator implements Mover, Core.UserInteractable {
   }
 
   /// Emits when the mover has changed.
-  Core.Event get changed {
-    this._changed ??= new Core.Event();
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
     return this._changed;
   }
 
   /// Handles a child mover being changed.
-  void _onChanged([Core.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
   /// The group of keys which will cause movement down a negitive X vector.
-  Core.UserKeyGroup get negitiveXKey => this._xNegKey;
+  Input.KeyGroup get negitiveXKey => this._xNegKey;
 
   /// The group of keys which will cause movement down a positive X vector.
-  Core.UserKeyGroup get positiveXKey => this._xPosKey;
+  Input.KeyGroup get positiveXKey => this._xPosKey;
 
   /// The group of keys which will cause movement down a negitive Y vector.
-  Core.UserKeyGroup get negitiveYKey => this._yNegKey;
+  Input.KeyGroup get negitiveYKey => this._yNegKey;
 
   /// The group of keys which will cause movement down a positive Y vector.
-  Core.UserKeyGroup get positiveYKey => this._yPosKey;
+  Input.KeyGroup get positiveYKey => this._yPosKey;
 
   /// The group of keys which will cause movement down a negitive Z vector.
-  Core.UserKeyGroup get negitiveZKey => this._zNegKey;
+  Input.KeyGroup get negitiveZKey => this._zNegKey;
 
   /// The group of keys which will cause movement down a positive Z vector.
-  Core.UserKeyGroup get positiveZKey => this._zPosKey;
+  Input.KeyGroup get positiveZKey => this._zPosKey;
 
   /// The X offset component shifter.
   ComponentShift get offsetX => this._offsetX;
@@ -124,7 +125,7 @@ class UserTranslator implements Mover, Core.UserInteractable {
     if (this._deccel != deccel) {
       double prev = this._deccel;
       this._deccel = deccel;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "decceleration", prev, this._deccel));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "decceleration", prev, this._deccel));
     }
   }
 
@@ -134,7 +135,7 @@ class UserTranslator implements Mover, Core.UserInteractable {
     if (this._accel != accel) {
       double prev = this._accel;
       this._accel = accel;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "acceleration", prev, this._accel));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "acceleration", prev, this._accel));
     }
   }
 
@@ -146,7 +147,7 @@ class UserTranslator implements Mover, Core.UserInteractable {
       Math.Matrix3 prev = this._velRot;
       this._velRot = velRot;
       this._velRotInv = this._velRot.inverse();
-      this._onChanged(new Core.ValueChangedEventArgs(this, "velocityRotation", prev, this._velRot));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "velocityRotation", prev, this._velRot));
     }
   }
 
@@ -186,12 +187,12 @@ class UserTranslator implements Mover, Core.UserInteractable {
   }
 
   /// Handles a key pressed.
-  void _onKeyDown(Core.EventArgs args) {
+  void _onKeyDown(Events.EventArgs args) {
     this._onChanged(args);
   }
 
   /// Updates a single component of the movement for the given keys.
-  double _updateComponent(Core.UserKeyGroup negKey, Core.UserKeyGroup posKey, double deccel, double accel, double value) {
+  double _updateComponent(Input.KeyGroup negKey, Input.KeyGroup posKey, double deccel, double accel, double value) {
     if      (negKey.pressed) value += accel;
     else if (posKey.pressed) value -= accel;
     else if (value > 0.0) value -= math.min( value, deccel);
@@ -218,7 +219,7 @@ class UserTranslator implements Mover, Core.UserInteractable {
   }
 
   /// Attaches this mover to the user input.
-  bool attach(Core.UserInput input) {
+  bool attach(Input.UserInput input) {
     bool result = true;
     result = this._xNegKey.attach(input) && result;
     result = this._xPosKey.attach(input) && result;

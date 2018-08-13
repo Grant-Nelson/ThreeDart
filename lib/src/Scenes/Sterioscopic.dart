@@ -31,7 +31,7 @@ class Sterioscopic implements Scene {
   Views.Target _target;
 
   /// The set of passes to run on each side.
-  Core.Collection<RenderPass> _passes;
+  Collections.Collection<RenderPass> _passes;
 
   /// The distance between the left and right eye.
   double _eyeSpacing;
@@ -40,10 +40,10 @@ class Sterioscopic implements Scene {
   double _focusDistance;
 
   /// Event emitted on an render for this pass.
-  Core.Event _onRender;
+  Events.Event _onRender;
 
   /// Event emitted when a pass has changed.
-  Core.Event _changed;
+  Events.Event _changed;
 
   /// Creates a new render pass.
   Sterioscopic({
@@ -62,7 +62,7 @@ class Sterioscopic implements Scene {
     this._leftRegion = new Math.Region2(0.0, 0.0, 0.5, 1.0);
     this._rightRegion = new Math.Region2(0.5, 0.0, 0.5, 1.0);
     this._target = null;
-    this._passes = new Core.Collection<RenderPass>();
+    this._passes = new Collections.Collection<RenderPass>();
     this._passes.setHandlers(
       onAddedHndl: this._onAddedRenderPass,
       onRemovedHndl: this._onRemovedRenderPass);
@@ -81,19 +81,19 @@ class Sterioscopic implements Scene {
   }
 
   /// Event emitted on an render for this pass.
-  Core.Event get onRender {
-    this._onRender ??= new Core.Event();
+  Events.Event get onRender {
+    this._onRender ??= new Events.Event();
     return this._onRender;
   }
 
   /// The event emitted when the scene has changed.
-  Core.Event get changed {
-    this._changed ??= new Core.Event();
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
     return this._changed;
   }
 
   /// Handles a change in this pass.
-  void _onChanged([Core.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
@@ -102,7 +102,7 @@ class Sterioscopic implements Scene {
     for (RenderPass pass in passes) {
       if (pass != null) pass.changed.add(this._onChanged);
     }
-    this._onChanged(new Core.ItemsAddedEventArgs(this, index, passes));
+    this._onChanged(new Events.ItemsAddedEventArgs(this, index, passes));
   }
 
   /// Handles render passes being removed.
@@ -110,7 +110,7 @@ class Sterioscopic implements Scene {
     for (RenderPass pass in passes) {
       if (pass != null) pass.changed.remove(this._onChanged);
     }
-    this._onChanged(new Core.ItemsRemovedEventArgs(this, index, passes));
+    this._onChanged(new Events.ItemsRemovedEventArgs(this, index, passes));
   }
 
   /// The camera mover describing the view of the scene.
@@ -120,7 +120,7 @@ class Sterioscopic implements Scene {
       Movers.Mover prev = this._leftMovGroup[0];
       this._leftMovGroup[0] = camMover;
       this._rightMovGroup[0] = camMover;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "cameraMover", prev, camMover));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "cameraMover", prev, camMover));
     }
   }
 
@@ -133,12 +133,12 @@ class Sterioscopic implements Scene {
       Views.Target prev = this._target;
       this._target = target;
       if (this._target != null) this._target.changed.add(this._onChanged);
-      this._onChanged(new Core.ValueChangedEventArgs(this, "target", prev, this._target));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "target", prev, this._target));
     }
   }
 
   /// The passes in the order to render them.
-  Core.Collection<RenderPass> get passes => this._passes;
+  Collections.Collection<RenderPass> get passes => this._passes;
 
   /// The distance between the left and right eye.
   double get eyeSpacing => this._eyeSpacing;
@@ -148,7 +148,7 @@ class Sterioscopic implements Scene {
       double prev = this._eyeSpacing;
       this._eyeSpacing = eyeSpacing;
       this._updateConstMats();
-      this._onChanged(new Core.ValueChangedEventArgs(this, "eyeSpacing", prev, this._eyeSpacing));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "eyeSpacing", prev, this._eyeSpacing));
     }
   }
 
@@ -160,7 +160,7 @@ class Sterioscopic implements Scene {
       double prev = this._focusDistance;
       this._focusDistance = focusDistance;
       this._updateConstMats();
-      this._onChanged(new Core.ValueChangedEventArgs(this, "focusDistance", prev, this._focusDistance));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "focusDistance", prev, this._focusDistance));
     }
   }
 

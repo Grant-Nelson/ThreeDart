@@ -74,34 +74,36 @@ class Key {
   static const int key9 = 57;
 
   /// The key code for the pressed or released value.
-  final int key;
+  final int code;
 
+  /// The key modifiers.
+  final Modifiers modifiers;
+  
   /// The control key modifier.
-  final bool ctrl;
+  bool get ctrl => this.modifiers.ctrl;
 
   /// The alternate key modifier.
-  final bool alt;
+  bool get alt => this.modifiers.alt;
 
   /// The shift key modifier.
-  final bool shift;
+  bool get shift => this.modifiers.shift;
 
   /// Creates a new key.
-  Key(int this.key, {bool this.ctrl: false, bool this.alt: false, bool this.shift: false});
+  factory Key(int code, {bool ctrl: false, bool alt: false, bool shift: false}) =>
+    new Key.fromMod(code, new Modifiers(ctrl, alt, shift));
+
+  Key.fromMod(int this.code, Modifiers this.modifiers);
 
   /// Checks the equality of this key to the given object.
   bool operator ==(var other) {
     if (identical(this, other)) return true;
     if (other is! Key) return false;
     Key key = other as Key;
-    if (this.key   != key.key)   return false;
-    if (this.ctrl  != key.ctrl)  return false;
-    if (this.alt   != key.alt)   return false;
-    if (this.shift != key.shift) return false;
+    if (this.code      != key.code)  return false;
+    if (this.modifiers != key.modifiers)  return false;
     return true;
   }
 
   /// The string for this key.
-  String toString() =>
-    '${this.ctrl?"Ctrl+":""}${this.alt?"Alt+":""}'+
-    '${this.shift?"Shift+":""}${this.key}';
+  String toString() =>"${this.modifiers}${this.code}";
 }

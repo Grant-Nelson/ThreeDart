@@ -5,7 +5,7 @@ class BumpyTechnique extends Techniques.Technique {
   BumpyShader _shader;
   Textures.Texture2D _txt;
   double _offsetScalar;
-  ThreeDart.Event _changed;
+  Events.Event _changed;
 
   /// Creates a new bumpy test techinque technique.
   BumpyTechnique() {
@@ -16,13 +16,13 @@ class BumpyTechnique extends Techniques.Technique {
   }
 
   /// Emits an event whem the technique being changed.
-  ThreeDart.Event get changed {
-    this._changed ??= new ThreeDart.Event();
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
     return this._changed;
   }
 
   /// Handles the technique being changed.
-  void _onChanged([ThreeDart.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
@@ -34,7 +34,7 @@ class BumpyTechnique extends Techniques.Technique {
       Textures.Texture2D prev = this._txt;
       this._txt = txt;
       if (this._txt != null) this._txt.loadFinished.add(this._onChanged);
-      this._onChanged(new ThreeDart.ValueChangedEventArgs(this, "bumpyTexture", prev, this._txt));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "bumpyTexture", prev, this._txt));
     }
   }
 
@@ -44,7 +44,7 @@ class BumpyTechnique extends Techniques.Technique {
     if (!Math.Comparer.equals(this._offsetScalar, scalar)) {
       double prev = this._offsetScalar;
       this._offsetScalar = scalar;
-      this._onChanged(new ThreeDart.ValueChangedEventArgs(this, "offsetScalar", prev, this._offsetScalar));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "offsetScalar", prev, this._offsetScalar));
     }
   }
 
@@ -61,17 +61,17 @@ class BumpyTechnique extends Techniques.Technique {
       obj.cache = obj.shape.build(new Data.WebGLBufferBuilder(state.gl),
         Data.VertexType.Pos|Data.VertexType.Norm|Data.VertexType.Binm|
         Data.VertexType.Txt2D|Data.VertexType.Weight)
-        ..findAttribute(Data.VertexType.Pos).attr = shader.posAttr.loc
-        ..findAttribute(Data.VertexType.Norm).attr = shader.normAttr.loc
-        ..findAttribute(Data.VertexType.Binm).attr = shader.binmAttr.loc
-        ..findAttribute(Data.VertexType.Txt2D).attr = shader.txtAttr.loc
-        ..findAttribute(Data.VertexType.Weight).attr = shader.weightAttr.loc;
+        ..findAttribute(Data.VertexType.Pos).attr = this._shader.posAttr.loc
+        ..findAttribute(Data.VertexType.Norm).attr = this._shader.normAttr.loc
+        ..findAttribute(Data.VertexType.Binm).attr = this._shader.binmAttr.loc
+        ..findAttribute(Data.VertexType.Txt2D).attr = this._shader.txtAttr.loc
+        ..findAttribute(Data.VertexType.Weight).attr = this._shader.weightAttr.loc;
     }
 
     if (this._txt != null) {
       this._txt.index = 0;
 
-      shader
+      this._shader
         ..bind(state)
         ..bumpTexture = this._txt
         ..projectMatrix = state.projection.matrix

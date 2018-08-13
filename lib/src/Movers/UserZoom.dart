@@ -1,10 +1,10 @@
 part of ThreeDart.Movers;
 
 /// A zoom mover which zooms on an object in response to user input.
-class UserZoom implements Mover, Core.UserInteractable {
+class UserZoom implements Mover, Input.Interactable {
 
   /// The user input this zoomer is attached to.
-  Core.UserInput _input;
+  Input.UserInput _input;
 
   /// Indicates if the control/meta key must be pressed or released.
   bool _ctrlPressed;
@@ -28,14 +28,14 @@ class UserZoom implements Mover, Core.UserInteractable {
   Math.Matrix4 _mat;
 
   /// Event for handling changes to this mover.
-  Core.Event _changed;
+  Events.Event _changed;
 
   /// Creates an instance of [UserZoom].
   UserZoom({
       bool ctrl:  false,
       bool alt:   false,
       bool shift: false,
-      Core.UserInput input: null}) {
+      Input.UserInput input: null}) {
     this._input = null;
     this._ctrlPressed  = false;
     this._altPressed   = false;
@@ -53,18 +53,18 @@ class UserZoom implements Mover, Core.UserInteractable {
   }
 
   /// Emits when the mover has changed.
-  Core.Event get changed {
-    this._changed ??= new Core.Event();
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
     return this._changed;
   }
 
   /// Handles a child mover being changed.
-  void _onChanged([Core.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
   /// Attaches this mover to the user input.
-  bool attach(Core.UserInput input) {
+  bool attach(Input.UserInput input) {
     if (input == null) return false;
     if (this._input != null) return false;
     this._input = input;
@@ -81,11 +81,11 @@ class UserZoom implements Mover, Core.UserInteractable {
   }
 
   /// Handles the mouse wheel changing.
-  void _mouseWheelHandle(Core.EventArgs args) {
+  void _mouseWheelHandle(Events.EventArgs args) {
     if (this._ctrlPressed != this._input.ctrlPressed) return;
     if (this._altPressed != this._input.altPressed) return;
     if (this._shiftPressed != this._input.shiftPressed) return;
-    Core.MouseWheelEventArgs margs = (args as Core.MouseWheelEventArgs);
+    Input.MouseWheelEventArgs margs = (args as Input.MouseWheelEventArgs);
     this.zoom += margs.wheel.dy*this._zoomScalar;
   }
 
@@ -96,7 +96,7 @@ class UserZoom implements Mover, Core.UserInteractable {
     if (this._ctrlPressed != enable) {
       bool prev = this._ctrlPressed;
       this._ctrlPressed = enable;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "ctrlPressed", prev, this._ctrlPressed));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "ctrlPressed", prev, this._ctrlPressed));
     }
   }
 
@@ -107,7 +107,7 @@ class UserZoom implements Mover, Core.UserInteractable {
     if (this._altPressed != enable) {
       bool prev = this._altPressed;
       this._altPressed = enable;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "altPressed", prev, this._altPressed));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "altPressed", prev, this._altPressed));
     }
   }
 
@@ -118,7 +118,7 @@ class UserZoom implements Mover, Core.UserInteractable {
     if (this._shiftPressed != enable) {
       bool prev = this._shiftPressed;
       this._shiftPressed = enable;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "shiftPressed", prev, this._shiftPressed));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "shiftPressed", prev, this._shiftPressed));
     }
   }
 
@@ -129,7 +129,7 @@ class UserZoom implements Mover, Core.UserInteractable {
     if (!Math.Comparer.equals(this._zoomScalar, value)) {
       double prev = this._zoomScalar;
       this._zoomScalar = value;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "zoomScalar", prev, this._zoomScalar));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "zoomScalar", prev, this._zoomScalar));
     }
   }
 
@@ -140,7 +140,7 @@ class UserZoom implements Mover, Core.UserInteractable {
     if (this._zoom != value) {
       double prev = this._zoom;
       this._zoom = value;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "zoom", prev, this._zoom));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "zoom", prev, this._zoom));
     }
   }
 

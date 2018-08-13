@@ -7,6 +7,7 @@ import 'package:ThreeDart/Shapes.dart' as Shapes;
 import 'package:ThreeDart/Shaders.dart' as Shaders;
 import 'package:ThreeDart/Movers.dart' as Movers;
 import 'package:ThreeDart/Math.dart' as Math;
+import 'package:ThreeDart/Events.dart' as Events;
 import 'package:ThreeDart/Data.dart' as Data;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Textures.dart' as Textures;

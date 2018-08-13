@@ -1,10 +1,10 @@
 part of ThreeDart.Movers;
 
 /// A rotater which rotates an object in response to user input.
-class UserRotater implements Mover, Core.UserInteractable {
+class UserRotater implements Mover, Input.Interactable {
 
   /// The user input this rotater is attached to.
-  Core.UserInput _input;
+  Input.UserInput _input;
 
   /// The pitch component for this rotater.
   ComponentShift _pitch;
@@ -14,6 +14,11 @@ class UserRotater implements Mover, Core.UserInteractable {
 
   /// Indicates the user rotater works for locking.
   bool _locking;
+
+
+  /// Indicates if the modifier keys which must be pressed or released.
+  Input.Modifiers _modPressed;
+
 
   /// Indicates if the control/meta key must be pressed or released.
   bool _ctrlPressed;
@@ -67,7 +72,7 @@ class UserRotater implements Mover, Core.UserInteractable {
   Math.Matrix4 _mat;
 
   /// Event for handling changes to this mover.
-  Core.Event _changed;
+  Events.Event _changed;
 
   /// Creates a new user rotater instance.
   UserRotater({
@@ -77,7 +82,7 @@ class UserRotater implements Mover, Core.UserInteractable {
       bool shift:   false,
       bool invertX: false,
       bool invertY: false,
-      Core.UserInput input: null}) {
+      Input.UserInput input: null}) {
     this._input = null;
     this._pitch = new ComponentShift()
       ..wrap = true
@@ -133,7 +138,7 @@ class UserRotater implements Mover, Core.UserInteractable {
       bool shift:   false,
       bool invertX: false,
       bool invertY: false,
-      Core.UserInput input: null}) =>
+      Input.UserInput input: null}) =>
     new UserRotater(
       locking: locking,
       ctrl:    ctrl,
@@ -149,18 +154,18 @@ class UserRotater implements Mover, Core.UserInteractable {
       ..pitch.wrap = false;
 
   /// Emits when the mover has changed.
-  Core.Event get changed {
-    this._changed ??= new Core.Event();
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
     return this._changed;
   }
 
   /// Handles a child mover being changed.
-  void _onChanged([Core.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
   /// Attaches this mover to the user input.
-  bool attach(Core.UserInput input) {
+  bool attach(Input.UserInput input) {
     if (input == null) return false;
     if (this._input != null) return false;
     this._input = input;
@@ -192,7 +197,7 @@ class UserRotater implements Mover, Core.UserInteractable {
     return new Math.Vector2(dx, dy);
   }
 
-  void _lockChangedHandle(Core.EventArgs args) {
+  void _lockChangedHandle(Events.EventArgs args) {
     if (this._input.pointerLocked) {
       this._inDeadBand = true;
       this._lastYaw = this._yaw.location;
@@ -201,7 +206,7 @@ class UserRotater implements Mover, Core.UserInteractable {
   }
 
   /// Handles the mouse down event.
-  void _mouseDownHandle(Core.EventArgs args) {
+  void _mouseDownHandle(Events.EventArgs args) {
     if (!this._locking) {
       if (this._ctrlPressed  != this._input.ctrlPressed)  return;
       if (this._altPressed   != this._input.altPressed)   return;
@@ -214,8 +219,8 @@ class UserRotater implements Mover, Core.UserInteractable {
   }
 
   /// Handles the mouse move event.
-  void _mouseMoveHandle(Core.EventArgs args) {
-    Core.MouseEventArgs margs = (args as Core.MouseEventArgs);
+  void _mouseMoveHandle(Events.EventArgs args) {
+    Input.MouseEventArgs margs = (args as Input.MouseEventArgs);
 
     if (this._locking) {
       if (!this._input.pointerLocked) return;
@@ -246,7 +251,7 @@ class UserRotater implements Mover, Core.UserInteractable {
   }
 
   /// Handle the mouse up event.
-  void _mouseUpHandle(Core.EventArgs args) {
+  void _mouseUpHandle(Events.EventArgs args) {
     if (!this._pressed) return;
     this._pressed = false;
     if (this._inDeadBand) return;
@@ -270,7 +275,7 @@ class UserRotater implements Mover, Core.UserInteractable {
     if (this._ctrlPressed != enable) {
       bool prev = this._ctrlPressed;
       this._ctrlPressed = enable;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "ctrlPressed", prev, this._ctrlPressed));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "ctrlPressed", prev, this._ctrlPressed));
     }
   }
 
@@ -281,7 +286,7 @@ class UserRotater implements Mover, Core.UserInteractable {
     if (this._altPressed != enable) {
       bool prev = this._altPressed;
       this._altPressed = enable;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "altPressed", prev, this._altPressed));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "altPressed", prev, this._altPressed));
     }
   }
 
@@ -292,7 +297,7 @@ class UserRotater implements Mover, Core.UserInteractable {
     if (this._shiftPressed != enable) {
       bool prev = this._shiftPressed;
       this._shiftPressed = enable;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "shiftPressed", prev, this._shiftPressed));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "shiftPressed", prev, this._shiftPressed));
     }
   }
 
@@ -303,7 +308,7 @@ class UserRotater implements Mover, Core.UserInteractable {
     if (this._cumulative != enable) {
       bool prev = this._cumulative;
       this._cumulative = enable;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "cumulative", prev, this._cumulative));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "cumulative", prev, this._cumulative));
     }
   }
 
@@ -314,7 +319,7 @@ class UserRotater implements Mover, Core.UserInteractable {
     if (this._invertX != invert) {
       bool prev = this._invertX;
       this._invertX = invert;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "invertX", prev, this._invertX));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "invertX", prev, this._invertX));
     }
   }
 
@@ -325,7 +330,7 @@ class UserRotater implements Mover, Core.UserInteractable {
     if (this._invertY != invert) {
       bool prev = this._invertY;
       this._invertY = invert;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "invertY", prev, this._invertY));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "invertY", prev, this._invertY));
     }
   }
 
@@ -336,7 +341,7 @@ class UserRotater implements Mover, Core.UserInteractable {
     if (!Math.Comparer.equals(this._pitchScalar, value)) {
       double prev = this._pitchScalar;
       this._pitchScalar = value;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "pitchScalar", prev, this._pitchScalar));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "pitchScalar", prev, this._pitchScalar));
     }
   }
 
@@ -347,7 +352,7 @@ class UserRotater implements Mover, Core.UserInteractable {
     if (!Math.Comparer.equals(this._yawScalar, value)) {
       double prev = this._yawScalar;
       this._yawScalar = value;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "yawScalar", prev, this._yawScalar));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "yawScalar", prev, this._yawScalar));
     }
   }
 
@@ -359,7 +364,7 @@ class UserRotater implements Mover, Core.UserInteractable {
       double prev = this._deadBand;
       this._deadBand = value;
       this._deadBand2 = this._deadBand * this._deadBand;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "deadBand", prev, this._deadBand));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "deadBand", prev, this._deadBand));
     }
   }
 
