@@ -16,7 +16,17 @@ class Modifiers {
   /// Creates a new modifier's group.
   Modifiers(this.ctrl, this.alt, this.shift);
 
+  /// Creates a new modifier with nothing set yet.
   factory Modifiers.none() => new Modifiers(false, false, false);
+
+  /// Creates a new control or meta key pressed modifier.
+  factory Modifiers.ctrlKey() => new Modifiers(true, false, false);
+
+  /// Creates a new alt key pressed modifier.
+  factory Modifiers.altKey() => new Modifiers(false, true, false);
+
+  /// Creates a new shirt key pressed modifier.
+  factory Modifiers.shiftKey() => new Modifiers(false, false, true);
 
   /// Checks the equality of these modifiers to the given object.
   bool operator ==(var other) {

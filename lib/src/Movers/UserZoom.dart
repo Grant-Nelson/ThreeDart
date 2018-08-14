@@ -6,14 +6,8 @@ class UserZoom implements Mover, Input.Interactable {
   /// The user input this zoomer is attached to.
   Input.UserInput _input;
 
-  /// Indicates if the control/meta key must be pressed or released.
-  bool _ctrlPressed;
-
-  /// Indicates if the alt key must be pressed or released.
-  bool _altPressed;
-
-  /// Indicates if the shift key must be pressed or released.
-  bool _shiftPressed;
+  /// Indicates if the modifier keys which must be pressed or released.
+  Input.Modifiers _modPressed;
 
   /// The scalar to change how fast the zoom occures.
   double _zoomScalar;
@@ -35,20 +29,17 @@ class UserZoom implements Mover, Input.Interactable {
       bool ctrl:  false,
       bool alt:   false,
       bool shift: false,
+      Input.Modifiers mod:   null,
       Input.UserInput input: null}) {
     this._input = null;
-    this._ctrlPressed  = false;
-    this._altPressed   = false;
-    this._shiftPressed = false;
-    this._zoomScalar   = 0.01;
-    this._zoom         = 0.0;
-    this._frameNum     = 0;
-    this._mat          = null;
-    this._changed      = null;
+    this._modPressed = null;
+    this._zoomScalar = 0.01;
+    this._zoom       = 0.0;
+    this._frameNum   = 0;
+    this._mat        = null;
+    this._changed    = null;
 
-    this.ctrlPressed  = ctrl;
-    this.altPressed   = alt;
-    this.shiftPressed = shift;
+    this.modifiers = mod ?? new Input.Modifiers(ctrl, alt, shift);
     this.attach(input);
   }
 
@@ -82,43 +73,19 @@ class UserZoom implements Mover, Input.Interactable {
 
   /// Handles the mouse wheel changing.
   void _mouseWheelHandle(Events.EventArgs args) {
-    if (this._ctrlPressed != this._input.ctrlPressed) return;
-    if (this._altPressed != this._input.altPressed) return;
-    if (this._shiftPressed != this._input.shiftPressed) return;
+    if (this._modPressed != this._input.keyInput.modifiers) return;
     Input.MouseWheelEventArgs margs = (args as Input.MouseWheelEventArgs);
     this.zoom += margs.wheel.dy*this._zoomScalar;
   }
 
-  /// Indicates if the control/meta key must be pressed or released.
-  bool get ctrlPressed => this._ctrlPressed;
-  void set ctrlPressed(bool enable) {
-    enable = enable ?? false;
-    if (this._ctrlPressed != enable) {
-      bool prev = this._ctrlPressed;
-      this._ctrlPressed = enable;
-      this._onChanged(new Events.ValueChangedEventArgs(this, "ctrlPressed", prev, this._ctrlPressed));
-    }
-  }
-
-  /// Indicates if the alt key must be pressed or released.
-  bool get altPressed => this._altPressed;
-  void set altPressed(bool enable) {
-    enable = enable ?? false;
-    if (this._altPressed != enable) {
-      bool prev = this._altPressed;
-      this._altPressed = enable;
-      this._onChanged(new Events.ValueChangedEventArgs(this, "altPressed", prev, this._altPressed));
-    }
-  }
-
-  /// Indicates if the shift key must be pressed or released.
-  bool get shiftPressed => this._shiftPressed;
-  void set shiftPressed(bool enable) {
-    enable = enable ?? false;
-    if (this._shiftPressed != enable) {
-      bool prev = this._shiftPressed;
-      this._shiftPressed = enable;
-      this._onChanged(new Events.ValueChangedEventArgs(this, "shiftPressed", prev, this._shiftPressed));
+  /// Indicates if the modifiers keys must be pressed or released.
+  Input.Modifiers get modifiers => this._modPressed;
+  void set modifiers(Input.Modifiers mods) {
+    mods = mods ?? new Input.Modifiers.none();
+    if (this._modPressed != mods) {
+      Input.Modifiers prev = this._modPressed;
+      this._modPressed = mods;
+      this._onChanged(new Events.ValueChangedEventArgs(this, "modifiers", prev, mods));
     }
   }
 

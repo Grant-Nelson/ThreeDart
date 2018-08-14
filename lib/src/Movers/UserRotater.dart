@@ -15,19 +15,8 @@ class UserRotater implements Mover, Input.Interactable {
   /// Indicates the user rotater works for locking.
   bool _locking;
 
-
   /// Indicates if the modifier keys which must be pressed or released.
   Input.Modifiers _modPressed;
-
-
-  /// Indicates if the control/meta key must be pressed or released.
-  bool _ctrlPressed;
-
-  /// Indicates if the alt key must be pressed or released.
-  bool _altPressed;
-
-  /// Indicates if the shift key must be pressed or released.
-  bool _shiftPressed;
 
   /// Indicates if the rotations should be continuous or not.
   bool _cumulative;
@@ -76,12 +65,13 @@ class UserRotater implements Mover, Input.Interactable {
 
   /// Creates a new user rotater instance.
   UserRotater({
-      bool locking: false,
       bool ctrl:    false,
       bool alt:     false,
       bool shift:   false,
+      bool locking: false,
       bool invertX: false,
       bool invertY: false,
+      Input.Modifiers mod:   null,
       Input.UserInput input: null}) {
     this._input = null;
     this._pitch = new ComponentShift()
@@ -102,31 +92,27 @@ class UserRotater implements Mover, Input.Interactable {
       ..velocity  = 0.0
       ..dampening = 0.5;
     this._yaw.changed.add(this._onChanged);
-    this._locking      = locking;
-    this._ctrlPressed  = false;
-    this._altPressed   = false;
-    this._shiftPressed = false;
-    this._cumulative   = false;
-    this._invertX      = false;
-    this._invertY      = false;
-    this._pitchScalar  = 2.5;
-    this._yawScalar    = 2.5;
-    this._deadBand     = 2.0;
-    this._deadBand2    = 4.0;
-    this._pressed      = false;
-    this._inDeadBand   = false;
-    this._lastYaw      = 0.0;
-    this._lastPitch    = 0.0;
-    this._prevVal      = null;
-    this._frameNum     = 0;
-    this._mat          = null;
-    this._changed      = null;
+    this._locking     = locking;
+    this._modPressed  = null;
+    this._cumulative  = false;
+    this._invertX     = false;
+    this._invertY     = false;
+    this._pitchScalar = 2.5;
+    this._yawScalar   = 2.5;
+    this._deadBand    = 2.0;
+    this._deadBand2   = 4.0;
+    this._pressed     = false;
+    this._inDeadBand  = false;
+    this._lastYaw     = 0.0;
+    this._lastPitch   = 0.0;
+    this._prevVal     = null;
+    this._frameNum    = 0;
+    this._mat         = null;
+    this._changed     = null;
 
-    this.ctrlPressed  = ctrl;
-    this.altPressed   = alt;
-    this.shiftPressed = shift;
-    this.invertX      = invertX;
-    this.invertY      = invertY;
+    this.modifiers = mod ?? new Input.Modifiers(ctrl, alt, shift);
+    this.invertX   = invertX;
+    this.invertY   = invertY;
     this.attach(input);
   }
 
@@ -138,12 +124,11 @@ class UserRotater implements Mover, Input.Interactable {
       bool shift:   false,
       bool invertX: false,
       bool invertY: false,
+      Input.Modifiers mod:   null,
       Input.UserInput input: null}) =>
     new UserRotater(
       locking: locking,
-      ctrl:    ctrl,
-      alt:     alt,
-      shift:   shift,
+      mod:     mod,
       invertX: invertX,
       invertY: invertY,
       input: input)
@@ -208,9 +193,7 @@ class UserRotater implements Mover, Input.Interactable {
   /// Handles the mouse down event.
   void _mouseDownHandle(Events.EventArgs args) {
     if (!this._locking) {
-      if (this._ctrlPressed  != this._input.ctrlPressed)  return;
-      if (this._altPressed   != this._input.altPressed)   return;
-      if (this._shiftPressed != this._input.shiftPressed) return;
+      if (this._modPressed != this._input.keyInput.modifiers) return;
       this._pressed = true;
       this._inDeadBand = true;
       this._lastYaw = this._yaw.location;
@@ -224,9 +207,7 @@ class UserRotater implements Mover, Input.Interactable {
 
     if (this._locking) {
       if (!this._input.pointerLocked) return;
-      if (this._ctrlPressed  != this._input.ctrlPressed)  return;
-      if (this._altPressed   != this._input.altPressed)   return;
-      if (this._shiftPressed != this._input.shiftPressed) return;
+      if (this._modPressed != this._input.keyInput.modifiers) return;
     } else if (!this._pressed) return;
 
     if (this._inDeadBand) {
@@ -268,36 +249,14 @@ class UserRotater implements Mover, Input.Interactable {
   /// The yaw component for this rotater.
   ComponentShift get yaw => this._yaw;
 
-  /// Indicates if the control/meta key must be pressed or released.
-  bool get ctrlPressed => this._ctrlPressed;
-  void set ctrlPressed(bool enable) {
-    enable = enable ?? false;
-    if (this._ctrlPressed != enable) {
-      bool prev = this._ctrlPressed;
-      this._ctrlPressed = enable;
-      this._onChanged(new Events.ValueChangedEventArgs(this, "ctrlPressed", prev, this._ctrlPressed));
-    }
-  }
-
-  /// Indicates if the alt key must be pressed or released.
-  bool get altPressed => this._altPressed;
-  void set altPressed(bool enable) {
-    enable = enable ?? false;
-    if (this._altPressed != enable) {
-      bool prev = this._altPressed;
-      this._altPressed = enable;
-      this._onChanged(new Events.ValueChangedEventArgs(this, "altPressed", prev, this._altPressed));
-    }
-  }
-
-  /// Indicates if the shift key must be pressed or released.
-  bool get shiftPressed => this._shiftPressed;
-  void set shiftPressed(bool enable) {
-    enable = enable ?? false;
-    if (this._shiftPressed != enable) {
-      bool prev = this._shiftPressed;
-      this._shiftPressed = enable;
-      this._onChanged(new Events.ValueChangedEventArgs(this, "shiftPressed", prev, this._shiftPressed));
+  /// Indicates if the modifiers keys must be pressed or released.
+  Input.Modifiers get modifiers => this._modPressed;
+  void set modifiers(Input.Modifiers mods) {
+    mods = mods ?? new Input.Modifiers.none();
+    if (this._modPressed != mods) {
+      Input.Modifiers prev = this._modPressed;
+      this._modPressed = mods;
+      this._onChanged(new Events.ValueChangedEventArgs(this, "modifiers", prev, mods));
     }
   }
 

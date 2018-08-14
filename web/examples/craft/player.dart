@@ -165,7 +165,7 @@ class Player {
     if (this._highlight == null) return;
 
     int blockType = BlockType.Air;
-    if ((args as Input.KeyEventArgs).key.key == Input.Key.keyE) {
+    if ((args as Input.KeyEventArgs).key.code == Input.Key.keyE) {
       NeighborBlockInfo neighbor = this._getNeighborBlock(this._highlight, this._playerViewTarget());
       this._highlight = neighbor.info;
       blockType = BlockType.PlaceableBlocks[this._selectedBlockIndex];

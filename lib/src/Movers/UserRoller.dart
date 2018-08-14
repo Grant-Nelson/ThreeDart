@@ -50,6 +50,7 @@ class UserRoller implements Mover, Input.Interactable {
       bool ctrl:  false,
       bool alt:   false,
       bool shift: false,
+      Input.Modifiers mod:   null,
       Input.UserInput input: null}) {
     this._input = null;
     this._roll = new ComponentShift()
@@ -61,7 +62,7 @@ class UserRoller implements Mover, Input.Interactable {
       ..velocity  = 0.0
       ..dampening = 0.2;
     this._roll.changed.add(this._onChanged);
-    this._modPressed = new Input.Modifiers(ctrl, alt, shift);
+    this._modPressed = null;
     this._cumulative = false;
     this._rollScalar = 2.5;
     this._deadBand   = 2.0;
@@ -73,6 +74,8 @@ class UserRoller implements Mover, Input.Interactable {
     this._frameNum   = 0;
     this._mat        = null;
     this._changed    = null;
+    
+    this.modifiers = mod ?? new Input.Modifiers(ctrl, alt, shift);
     this.attach(input);
   }
 
