@@ -41,11 +41,6 @@ class LockedMouseInput {
     this._buttons = 0;
     this._startTime = null;
     this._prevTime = null;
-
-    // TODO: Implement touch as a mouse event.
-    //this._elem.onTouchStart
-    //this._elem.onTouchMove
-    //this._elem.onTouchEnd
   }
 
   /// Indicates the mouse buttons which are currently pressed.

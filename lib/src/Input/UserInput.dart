@@ -36,6 +36,11 @@ class UserInput {
     this._eventStreams.add(html.document.onMouseMove.listen(this._onDocMouseMove));
     this._eventStreams.add(html.document.onMouseUp.listen(this._onDocMouseUp));
     this._eventStreams.add(html.document.onPointerLockChange.listen(this._onPointerLockChanged));
+    
+    // TODO: Implement touch as a mouse event.
+    //this._elem.onTouchStart
+    //this._elem.onTouchMove
+    //this._elem.onTouchEnd
   }
 
   /// Disposes the user input.
