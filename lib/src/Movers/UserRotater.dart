@@ -150,20 +150,22 @@ class UserRotater implements Mover, Input.Interactable {
     if (input == null) return false;
     if (this._input != null) return false;
     this._input = input;
-    //this._input.pointerLockChanged.add(this._lockChangedHandle);
     this._input.mouse.down.add(this._mouseDownHandle);
     this._input.mouse.move.add(this._mouseMoveHandle);
     this._input.mouse.up.add(this._mouseUpHandle);
+    this._input.locked.lockChanged.add(this._lockChangedHandle);
+    this._input.locked.move.add(this._lockedMoveHandle);
     return true;
   }
 
   /// Detaches this mover from the user input.
   void detach() {
     if (this._input != null) {
-      //this._input.pointerLockChanged.remove(this._lockChangedHandle);
       this._input.mouse.down.remove(this._mouseDownHandle);
       this._input.mouse.move.remove(this._mouseMoveHandle);
       this._input.mouse.up.remove(this._mouseUpHandle);
+      this._input.locked.lockChanged.remove(this._lockChangedHandle);
+      this._input.locked.move.remove(this._lockedMoveHandle);
       this._input = null;
     }
   }
@@ -177,18 +179,10 @@ class UserRotater implements Mover, Input.Interactable {
     return new Math.Vector2(dx, dy);
   }
 
-  /// TODO: Comment
-  void _lockChangedHandle(Events.EventArgs args) {
-    // if (this._input.pointerLocked) {
-    //   this._inDeadBand = true;
-    //   this._lastYaw = this._yaw.location;
-    //   this._lastPitch = this._pitch.location;
-    // }
-  }
-
   /// Handles the mouse down event.
   void _mouseDownHandle(Events.EventArgs args) {
-    if (this._modPressed != this._input.key.modifiers) return;
+    Input.MouseEventArgs margs = (args as Input.MouseEventArgs);
+    if (this._modPressed != margs.button.modifiers) return;
     this._pressed = true;
     this._inDeadBand = true;
     this._lastYaw = this._yaw.location;
@@ -198,7 +192,6 @@ class UserRotater implements Mover, Input.Interactable {
   /// Handles the mouse move event.
   void _mouseMoveHandle(Events.EventArgs args) {
     Input.MouseEventArgs margs = (args as Input.MouseEventArgs);
-
     if (!this._pressed) return;
     if (this._inDeadBand) {
       if (margs.rawOffset.length2() < this._deadBand2) return;
@@ -222,7 +215,7 @@ class UserRotater implements Mover, Input.Interactable {
   }
 
   /// Handle the mouse up event.
-  void _mouseUpHandle(Events.EventArgs args) {
+  void _mouseUpHandle(Events.EventArgs _) {
     if (!this._pressed) return;
     this._pressed = false;
     if (this._inDeadBand) return;
@@ -231,6 +224,31 @@ class UserRotater implements Mover, Input.Interactable {
       this._pitch.velocity = -this._prevVal.dy*10.0*this._pitchScalar;
       this._onChanged();
     }
+  }  
+
+  /// TODO: Comment
+  void _lockChangedHandle(Events.EventArgs args) {
+    Input.LockedEventArgs margs = (args as Input.LockedEventArgs);
+    if (margs.locked) {
+      this._inDeadBand = true;
+      this._lastYaw = this._yaw.location;
+      this._lastPitch = this._pitch.location;
+    }
+  }
+
+  /// TODO: Comment
+  void _lockedMoveHandle(Events.EventArgs args) {
+    Input.MouseEventArgs margs = (args as Input.MouseEventArgs);
+    if (this._modPressed != margs.button.modifiers) return;
+
+    Math.Vector2 off = this._getInverses(margs.adjustedOffset);
+    this._yaw.location   = -off.dx*this._yawScalar + this._lastYaw;
+    this._pitch.location = -off.dy*this._pitchScalar + this._lastPitch;
+    this._pitch.velocity = 0.0;
+    this._yaw.velocity   = 0.0;
+    this._prevVal = this._getInverses(margs.adjustedDelta);
+
+    this._onChanged();
   }
 
   /// The pitch component for this rotater.
@@ -251,6 +269,7 @@ class UserRotater implements Mover, Input.Interactable {
   }
 
   /// Indicates if the rotations should be continuous or not.
+  /// This does not apply when the mouse is locked.
   bool get cumulative => this._cumulative;
   void set cumulative(bool enable) {
     enable = enable ?? false;

@@ -259,7 +259,7 @@ class UserInput {
       this._pointerLocked = locked;
       final Button button = this._convertButton(this._msEventOnLock);
       final Math.Point2 pnt = this._rawPoint(this._msEventOnLock);
-      this._locked._onLockChanged(button, pnt);
+      this._locked._onLockChanged(button, pnt, locked);
     }
   }
 }

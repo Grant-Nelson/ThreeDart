@@ -43,12 +43,12 @@ class MouseInput {
 
     this._buttons = 0;
     this._startTime = null;
-    this._startPnt = null;
+    this._startPnt = new Math.Point2.zero();
     this._prevTime = null;
-    this._prevPnt = null;
+    this._prevPnt = new Math.Point2.zero();
   }
 
-  /// Gets the mouse arguments for the given [msEvent].
+  /// Gets the mouse arguments.
   /// If [setStart] is true then the start point and time are set.
   MouseEventArgs _getMouseArgs(Button button, Math.Point2 pnt, bool setStart) {
     final DateTime curTime = new DateTime.now();
@@ -90,9 +90,7 @@ class MouseInput {
   // TODO: Comment
   bool performWheel(Math.Vector2 wheel, Math.Point2 pnt) {
     if (this._wheel == null) return false;
-    final DateTime curTime = new DateTime.now();
-    final Math.Region2 size = new Math.Region2(0.0, 0.0, this._input._elem.client.width, this._input._elem.client.height);
-    this._wheel.emit(new MouseWheelEventArgs(this, size, pnt, curTime, wheel));
+    this._wheel.emit(new MouseWheelEventArgs(this, this._input.clientRect, pnt, new DateTime.now(), wheel));
     return true;
   }
 

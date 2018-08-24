@@ -13,7 +13,7 @@ part 'Key.dart';
 part 'KeyEventArgs.dart';
 part 'KeyGroup.dart';
 part 'KeyInput.dart';
-part 'LockedMouseEventArgs.dart';
+part 'LockedEventArgs.dart';
 part 'LockedMouseInput.dart';
 part 'Modifiers.dart';
 part 'MouseEventArgs.dart';
