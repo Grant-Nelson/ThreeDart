@@ -1,7 +1,7 @@
 part of ThreeDart.Core;
 
 /// [TreeDart] (3Dart) is the a tool for rendering WebGL with Dart.
-class ThreeDart implements Changable {
+class ThreeDart implements Events.Changable {
 
   /// The element the canvas was added to or the canvas being drawn to.
   html.Element _elem;
@@ -22,10 +22,10 @@ class ThreeDart implements Changable {
   Textures.TextureLoader _txtLoader;
 
   /// The user input listener.
-  UserInput _input;
+  Input.UserInput _input;
 
   /// Event to indicate something attached to this instance has changed.
-  Event _changed;
+  Events.Event _changed;
 
   /// Indicates the refresh should be automatically
   bool _autoRefresh;
@@ -101,7 +101,7 @@ class ThreeDart implements Changable {
     this._scene  = null;
     this._state     = new RenderState(this._gl, this._canvas);
     this._txtLoader = new Textures.TextureLoader(this._gl);
-    this._input     = new UserInput(this._canvas);
+    this._input     = new Input.UserInput(this._canvas);
     this._changed       = null;
     this._autoRefresh   = true;
     this._pendingRender = false;
@@ -120,7 +120,7 @@ class ThreeDart implements Changable {
   html.CanvasElement get canvas => this._canvas;
 
   /// The user input listener.
-  UserInput get userInput => this._input;
+  Input.UserInput get userInput => this._input;
 
   /// The state used for rendering.
   RenderState get state => this._state;
@@ -142,13 +142,13 @@ class ThreeDart implements Changable {
   bool get pendingRender => this._pendingRender;
 
   /// Indicates that this instance or something attached to is has changed.
-  Event get changed {
-    if (this._changed == null) this._changed ??= new Event();
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
     return this._changed;
   }
 
   /// Handles a change in this instance..
-  void _onChanged([EventArgs args = null]) {
+  void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
     if (this._autoRefresh) this.requestRender();
   }

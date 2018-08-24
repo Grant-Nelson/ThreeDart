@@ -33,5 +33,7 @@ void mainPage() {
     ..addPar(["Advanced Movers"])
     ..addPar(["Advanced Shapes"])
     ..addPar(["Advanced Techniques"])
-    ..addPar(["Scene Compositing"]);
+    ..addPar(["Scene Compositing"])
+    ..addHeader(2, "Tests")
+    ..addPar(["[Tests|/tests/]"]);
 }

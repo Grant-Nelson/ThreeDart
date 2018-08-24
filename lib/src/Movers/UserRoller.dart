@@ -1,22 +1,16 @@
 part of ThreeDart.Movers;
 
 /// A roller which rotates an object in response to user input.
-class UserRoller implements Mover, Core.UserInteractable {
+class UserRoller implements Mover, Input.Interactable {
 
   /// The user input this roller is attached to.
-  Core.UserInput _input;
+  Input.UserInput _input;
 
   /// The roll component for this roller.
   ComponentShift _roll;
 
-  /// Indicates if the control/meta key must be pressed or released.
-  bool _ctrlPressed;
-
-  /// Indicates if the alt key must be pressed or released.
-  bool _altPressed;
-
-  /// Indicates if the shift key must be pressed or released.
-  bool _shiftPressed;
+  /// Indicates if the modifier keys which must be pressed or released.
+  Input.Modifiers _modPressed;
 
   /// Indicates if the rotations should be continuous or not.
   bool _cumulative;
@@ -49,27 +43,26 @@ class UserRoller implements Mover, Core.UserInteractable {
   Math.Matrix4 _mat;
 
   /// Event for handling changes to this mover.
-  Core.Event _changed;
+  Events.Event _changed;
 
   /// Creates a new user rotater instance.
   UserRoller({
       bool ctrl:  false,
       bool alt:   false,
       bool shift: false,
-      Core.UserInput input: null}) {
+      Input.Modifiers mod:   null,
+      Input.UserInput input: null}) {
     this._input = null;
     this._roll = new ComponentShift()
       ..wrap = true
-      ..maximumLocation = math.PI * 2.0
+      ..maximumLocation = Math.PI * 2.0
       ..minimumLocation = 0.0
       ..location = 0.0
       ..maximumVelocity = 100.0
       ..velocity  = 0.0
       ..dampening = 0.2;
     this._roll.changed.add(this._onChanged);
-    this._ctrlPressed  = false;
-    this._altPressed   = false;
-    this._shiftPressed = false;
+    this._modPressed = null;
     this._cumulative = false;
     this._rollScalar = 2.5;
     this._deadBand   = 2.0;
@@ -81,76 +74,75 @@ class UserRoller implements Mover, Core.UserInteractable {
     this._frameNum   = 0;
     this._mat        = null;
     this._changed    = null;
-
-    this.ctrlPressed  = ctrl;
-    this.altPressed   = alt;
-    this.shiftPressed = shift;
+    
+    this.modifiers = mod ?? new Input.Modifiers(ctrl, alt, shift);
     this.attach(input);
   }
 
   /// Emits when the mover has changed.
-  Core.Event get changed {
-    if (this._changed == null) this._changed = new Core.Event();
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
     return this._changed;
   }
 
   /// Handles a child mover being changed.
-  void _onChanged([Core.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
   /// Attaches this mover to the user input.
-  bool attach(Core.UserInput input) {
+  bool attach(Input.UserInput input) {
     if (input == null) return false;
     if (this._input != null) return false;
     this._input = input;
-    this._input.mouseDown.add(this._mouseDownHandle);
-    this._input.mouseMove.add(this._mouseMoveHandle);
-    this._input.mouseUp.add(this._mouseUpHandle);
+    this._input.mouse.down.add(this._mouseDownHandle);
+    this._input.mouse.move.add(this._mouseMoveHandle);
+    this._input.mouse.up.add(this._mouseUpHandle);
     return true;
   }
 
   /// Detaches this mover from the user input.
   void detach() {
     if (this._input != null) {
-      this._input.mouseDown.remove(this._mouseDownHandle);
-      this._input.mouseMove.remove(this._mouseMoveHandle);
-      this._input.mouseUp.remove(this._mouseUpHandle);
+      this._input.mouse.down.remove(this._mouseDownHandle);
+      this._input.mouse.move.remove(this._mouseMoveHandle);
+      this._input.mouse.up.remove(this._mouseUpHandle);
       this._input = null;
     }
   }
 
   /// Handles the mouse down event.
-  void _mouseDownHandle(Core.MouseEventArgs args) {
-    if (this._ctrlPressed  != this._input.ctrlPressed)  return;
-    if (this._altPressed   != this._input.altPressed)   return;
-    if (this._shiftPressed != this._input.shiftPressed) return;
+  void _mouseDownHandle(Events.EventArgs args) {
+    if (this._modPressed != this._input.key.modifiers) return;
     this._pressed = true;
     this._inDeadBand = true;
     this._lastRoll = this._roll.location;
   }
 
   /// Handles the mouse move event.
-  void _mouseMoveHandle(Core.MouseEventArgs args) {
+  void _mouseMoveHandle(Events.EventArgs args) {
+    Input.MouseEventArgs margs = (args as Input.MouseEventArgs);
+
     if (!this._pressed) return;
     if (this._inDeadBand) {
-      if (args.rawOffset.length2() < this._deadBand2) return;
+      if (margs.rawOffset.length2() < this._deadBand2) return;
       this._inDeadBand = false;
     }
+
     if (this._cumulative) {
-      this._prevVal = args.adjustedOffset;
+      this._prevVal = margs.adjustedOffset;
       this._roll.velocity = this._prevVal.dx*10.0*this._rollScalar;
     } else {
-      Math.Vector2 off = args.adjustedOffset;
+      Math.Vector2 off = margs.adjustedOffset;
       this._roll.location = -off.dx*this._rollScalar + this._lastRoll;
       this._roll.velocity = 0.0;
-      this._prevVal = args.adjustedDelta;
+      this._prevVal = margs.adjustedDelta;
     }
     this._onChanged();
   }
 
   /// Handle the mouse up event.
-  void _mouseUpHandle(Core.MouseEventArgs args) {
+  void _mouseUpHandle(Events.EventArgs args) {
     if (!this._pressed) return;
     this._pressed = false;
     if (this._inDeadBand) return;
@@ -163,36 +155,14 @@ class UserRoller implements Mover, Core.UserInteractable {
   /// The roll component for this rotater.
   ComponentShift get roll => this._roll;
 
-  /// Indicates if the control/meta key must be pressed or released.
-  bool get ctrlPressed => this._ctrlPressed;
-  void set ctrlPressed(bool enable) {
-    enable = enable ?? false;
-    if (this._ctrlPressed != enable) {
-      bool prev = this._ctrlPressed;
-      this._ctrlPressed = enable;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "ctrlPressed", prev, this._ctrlPressed));
-    }
-  }
-
-  /// Indicates if the alt key must be pressed or released.
-  bool get altPressed => this._altPressed;
-  void set altPressed(bool enable) {
-    enable = enable ?? false;
-    if (this._altPressed != enable) {
-      bool prev = this._altPressed;
-      this._altPressed = enable;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "altPressed", prev, this._altPressed));
-    }
-  }
-
-  /// Indicates if the shift key must be pressed or released.
-  bool get shiftPressed => this._shiftPressed;
-  void set shiftPressed(bool enable) {
-    enable = enable ?? false;
-    if (this._shiftPressed != enable) {
-      bool prev = this._shiftPressed;
-      this._shiftPressed = enable;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "shiftPressed", prev, this._shiftPressed));
+  /// Indicates if the modifiers keys must be pressed or released.
+  Input.Modifiers get modifiers => this._modPressed;
+  void set modifiers(Input.Modifiers mods) {
+    mods = mods ?? new Input.Modifiers.none();
+    if (this._modPressed != mods) {
+      Input.Modifiers prev = this._modPressed;
+      this._modPressed = mods;
+      this._onChanged(new Events.ValueChangedEventArgs(this, "modifiers", prev, mods));
     }
   }
 
@@ -203,7 +173,7 @@ class UserRoller implements Mover, Core.UserInteractable {
     if (this._cumulative != enable) {
       bool prev = this._cumulative;
       this._cumulative = enable;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "cumulative", prev, this._cumulative));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "cumulative", prev, this._cumulative));
     }
   }
 
@@ -214,7 +184,7 @@ class UserRoller implements Mover, Core.UserInteractable {
     if (!Math.Comparer.equals(this._rollScalar, value)) {
       double prev = this._rollScalar;
       this._rollScalar = value;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "rollScalar", prev, this._rollScalar));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "rollScalar", prev, this._rollScalar));
     }
   }
 
@@ -226,7 +196,7 @@ class UserRoller implements Mover, Core.UserInteractable {
       double prev = this._deadBand;
       this._deadBand = value;
       this._deadBand2 = this._deadBand * this._deadBand;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "deadBand", prev, this._deadBand));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "deadBand", prev, this._deadBand));
     }
   }
 

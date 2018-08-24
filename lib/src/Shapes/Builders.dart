@@ -127,11 +127,11 @@ void _addCuboidSide(Shape shape, Data.VertexType type, ver2Handle vertexHndl,
 /// [flip] will flip the disk over, and [radiusHndl] is a handle for custom variant radius.
 Shape disk({int sides: 8, double height: 0.0, bool flip: false,
     double bending: -1.0, func1Handle radiusHndl: null}) {
-  if (radiusHndl == null) radiusHndl = (double a) => 1.0;
+  radiusHndl ??= (double a) => 1.0;
   if (sides < 3) return null;
   Shape shape = new Shape();
   double sign = flip? -1.0: 1.0;
-  double step = -2.0*PI/sides.toDouble();
+  double step = -2.0*Math.PI/sides.toDouble();
   List<Vertex> vers = new List<Vertex>();
   vers.add(shape.vertices.addNew(
     loc:     new Math.Point3(0.0, 0.0, height),
@@ -177,7 +177,7 @@ Shape cylindrical({func2Handle radiusHndl: null, int sides: 8, int div: 1, bool 
   if (sides < 3) return null;
   if (div < 1) return null;
   Shape shape = surface(div, sides, (Vertex ver, double u, double v) {
-    double angle = 2.0*PI*u;
+    double angle = 2.0*Math.PI*u;
     double x = -sin(angle), y = cos(angle);
     double z = Math.lerpVal(-1.0, 1.0, v);
     double radius = radiusHndl(u, v);
@@ -206,10 +206,10 @@ Shape cylindrical({func2Handle radiusHndl: null, int sides: 8, int div: 1, bool 
 /// the [longitudeDiv] is the number of longitude divitions.
 Shape latLonSphere([int latitudeDiv = 12, int longitudeDiv = 24]) {
   Shape shape = surface(latitudeDiv, longitudeDiv, (Vertex ver, double u, double v) {
-    double r = sin(v*PI);
-    Math.Vector3 vec = new Math.Vector3(cos(u*2.0*PI)*r,
-                                        cos(v*PI),
-                                        sin(u*2.0*PI)*r);
+    double r = sin(v*Math.PI);
+    Math.Vector3 vec = new Math.Vector3(cos(u*Math.TAU)*r,
+                                        cos(v*Math.PI),
+                                        sin(u*Math.TAU)*r);
     ver.location = new Math.Point3.fromVector3(vec.normal());
   });
   shape.faces.removeCollapsed();
@@ -275,9 +275,9 @@ Vertex _isosphereAdd(Shape shape, Math.Vector3 norm) {
 
   ver.color = new Math.Color4(norm.dx*0.5 + 0.5, norm.dy*0.5 + 0.5, norm.dz*0.5 + 0.5);
   double w = sqrt(norm.dx*norm.dx + norm.dy*norm.dy);
-  double tu = atan2(norm.dy, norm.dx)*0.5/PI;
+  double tu = atan2(norm.dy, norm.dx)/Math.PI_2;
   if (tu < 0) tu = -tu;
-  double tv = atan2(w, norm.dz)/PI;
+  double tv = atan2(w, norm.dz)/Math.PI;
   if (tv < 0) tv = -tv;
   ver.texture2D = new Math.Point2(tu, tv);
   shape.vertices.add(ver);
@@ -312,7 +312,7 @@ void _isoSphereDiv(Shape shape, Vertex ver1, Vertex ver2, Vertex ver3, int itera
 /// The [widthDiv] and [heightDiv] define the divisions of the grids used.
 /// The [heightHndl] added addition height to the curved grid.
 Shape sphere({int widthDiv: 8, int heightDiv: 8, func2Handle heightHndl: null}) {
-  if (heightHndl == null) heightHndl = (double a, double b) => 0.0;
+  heightHndl ??= (double a, double b) => 0.0;
   Shape shape = cuboid(widthDiv: widthDiv, heightDiv: heightDiv,
     vertexHndl: (Vertex ver, double u, double v) {
       double height = 1.0+heightHndl(u, v);
@@ -347,9 +347,9 @@ Shape knot({int minorCount: 12, int majorCount: 120, double minorRadius: 0.3, do
 /// Creates a cylindrical path is a bend cylinder with no cap.
 Shape cylindricalPath(int minorCount, int majorCount, double minorRadius, double majorRadius, func1PntHandle pathHndl) {
   Shape shape = surface(minorCount, majorCount, (Vertex ver, double u, double v) {
-    double majorAngle = u*2.0*PI;
+    double majorAngle = u*Math.TAU;
     Math.Point3 cur = pathHndl(majorAngle)*majorRadius;
-    Math.Point3 next = pathHndl(majorAngle + PI/majorCount)*majorRadius;
+    Math.Point3 next = pathHndl(majorAngle + Math.PI/majorCount)*majorRadius;
     Math.Vector3 heading = new Math.Vector3.fromPoint3(next - cur).normal();
 
     Math.Vector3 other = new Math.Vector3(1.0, 0.0, 0.0);
@@ -359,7 +359,7 @@ Shape cylindricalPath(int minorCount, int majorCount, double minorRadius, double
     Math.Vector3 cross = heading.cross(other).normal();
     other = cross.cross(heading).normal();
 
-    var minorAngle = v*2.0*PI;
+    var minorAngle = v*Math.TAU;
     var minorCos = cos(minorAngle)*minorRadius;
     var minorSin = sin(minorAngle)*minorRadius;
     ver.location = cur + new Math.Point3.fromVector3(other*minorCos - cross*minorSin);
@@ -372,7 +372,7 @@ Shape cylindricalPath(int minorCount, int majorCount, double minorRadius, double
 
 /// Creates a flat grid shape with an option caustom [heightHndl].
 Shape grid({int widthDiv: 4, int heightDiv: 4, func2Handle heightHndl: null}) {
-  if (heightHndl == null) heightHndl = (double u, double v) => 0.0;
+  heightHndl ??= (double u, double v) => 0.0;
   return surface(widthDiv, heightDiv, (Vertex ver, double u, double v) {
     double x = u*2.0-1.0;
     double y = v*2.0-1.0;

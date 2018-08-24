@@ -1,15 +1,15 @@
 part of ThreeDart.Lights;
 
 /// A collection of lights.
-class LightCollection extends Core.Collection<Light> {
+class LightCollection extends Collections.Collection<Light> {
   List<Directional> _dirLights;
   List<Point> _pntLights;
   List<Spot> _spotLights;
   List<TexturedDirectional> _txtDirLights;
   List<TexturedPoint> _txtPntLights;
   List<TexturedSpot> _txtSpotLights;
-  Core.Event _changed;
-  Core.Event _lightChanged;
+  Events.Event _changed;
+  Events.Event _lightChanged;
 
   /// Creates a new light collection.
   LightCollection() {
@@ -27,24 +27,24 @@ class LightCollection extends Core.Collection<Light> {
   }
 
   /// The event emitted when the collection has changed.
-  Core.Event get changed {
-    if (this._changed == null) this._changed = new Core.Event();
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
     return this._changed;
   }
 
   /// The event emitted when a light's value has changed.
-  Core.Event get lightChanged {
-    if (this._lightChanged == null) this._lightChanged = new Core.Event();
+  Events.Event get lightChanged {
+    this._lightChanged ??= new Events.Event();
     return this._lightChanged;
   }
 
   /// Handles changes to the collection.
-  void _onChanged([Core.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
   /// Handles changes to the light's values.
-  void _onLightChanged([Core.EventArgs args = null]) {
+  void _onLightChanged([Events.EventArgs args = null]) {
     this._lightChanged?.emit(args);
   }
 
@@ -62,7 +62,7 @@ class LightCollection extends Core.Collection<Light> {
       this._addOther(light);
       light.changed.add(this._onLightChanged);
     }
-    this._onChanged(new Core.ItemsAddedEventArgs(this, index, added));
+    this._onChanged(new Events.ItemsAddedEventArgs(this, index, added));
   }
 
   /// Handles a light being removed.
@@ -71,7 +71,7 @@ class LightCollection extends Core.Collection<Light> {
       this._removeOther(light);
       light.changed.remove(this._onLightChanged);
     }
-    this._onChanged(new Core.ItemsRemovedEventArgs(this, index, removed));
+    this._onChanged(new Events.ItemsRemovedEventArgs(this, index, removed));
   }
 
   /// Gets the set of directional lights in this collection.

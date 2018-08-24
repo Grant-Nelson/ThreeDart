@@ -1,6 +1,7 @@
 # Don’t commit the following directories created by pub.
 .buildlog
 .DS_Store
+.dart_tool/
 .pub/
 .vscode/
 build/

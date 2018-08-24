@@ -164,13 +164,16 @@ class VertexLineCollection {
   }
 
   /// Gets to string for all the lines.
-  String toString([String indent = ""]) {
+  String toString() => this.format();
+
+  /// Gets the formatted string for all the lines with and optional [indent].
+  String format([String indent = ""]) {
     List<String> parts = new List<String>();
     for (Line line in this._lines1) {
-      parts.add(line.toString(indent));
+      parts.add(line.format(indent));
     }
     for (Line line in this._lines2) {
-      parts.add(line.toString(indent));
+      parts.add(line.format(indent));
     }
     return parts.join('\n');
   }

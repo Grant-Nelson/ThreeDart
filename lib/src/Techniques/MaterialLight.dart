@@ -6,7 +6,7 @@ class MaterialLight extends Technique {
   Math.Matrix3 _txt2DMat;
   Math.Matrix4 _txtCubeMat;
   Math.Matrix4 _colorMat;
-  Core.Collection<Math.Matrix4> _bendMats;
+  Collections.Collection<Math.Matrix4> _bendMats;
   MaterialLightColorComponent _emission;
   MaterialLightColorComponent _ambient;
   MaterialLightColorComponent _diffuse;
@@ -18,7 +18,7 @@ class MaterialLight extends Technique {
   MaterialLightRefractionComponent _refract;
   MaterialLightAlphaComponent _alpha;
   Lights.LightCollection _lights;
-  Core.Event _changed;
+  Events.Event _changed;
 
   /// Creates a new material/light technique.
   MaterialLight() {
@@ -26,7 +26,7 @@ class MaterialLight extends Technique {
     this._txt2DMat   = null;
     this._txtCubeMat = null;
     this._colorMat   = null;
-    this._bendMats   = new Core.Collection<Math.Matrix4>();
+    this._bendMats   = new Collections.Collection<Math.Matrix4>();
     this._bendMats.setHandlers(
       onAddedHndl:   this._onBendMatsAdded,
       onRemovedHndl: this._onBendMatsRemoved);
@@ -47,30 +47,30 @@ class MaterialLight extends Technique {
   }
 
   /// Indicates that this technique has changed.
-  Core.Event get changed {
-    if (this._changed == null) this._changed = new Core.Event();
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
     return this._changed;
   }
 
   /// Handles a change in this technique.
-  void _onChanged([Core.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
   /// Resets the shader when a component has changed.
-  void _resetShader([Core.EventArgs args = null]) {
+  void _resetShader([Events.EventArgs args = null]) {
     this._shader = null;
     this._onChanged(args);
   }
 
   /// Handles added matrices to the bend matrices.
   void _onBendMatsAdded(int index, Iterable<Math.Matrix4> mats) {
-    this._onChanged(new Core.ItemsAddedEventArgs(this, index, mats));
+    this._onChanged(new Events.ItemsAddedEventArgs(this, index, mats));
   }
 
   /// Handles removed matrices from the bend matrices.
   void _onBendMatsRemoved(int index, Iterable<Math.Matrix4> mats) {
-    this._onChanged(new Core.ItemsRemovedEventArgs(this, index, mats));
+    this._onChanged(new Events.ItemsRemovedEventArgs(this, index, mats));
   }
 
   /// The lights to render with.
@@ -84,7 +84,7 @@ class MaterialLight extends Technique {
       if (Math.xor(this._txt2DMat == null, mat == null)) this._shader = null;
       Math.Matrix3 prev = this._txt2DMat;
       this._txt2DMat = mat;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "texture2DMatrix", prev, this._txt2DMat));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "texture2DMatrix", prev, this._txt2DMat));
     }
   }
 
@@ -96,7 +96,7 @@ class MaterialLight extends Technique {
       if (Math.xor(this._txtCubeMat == null, mat == null)) this._shader = null;
       Math.Matrix4 prev = this._txtCubeMat;
       this._txtCubeMat = mat;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "textureCubeMatrix", prev, this._txtCubeMat));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "textureCubeMatrix", prev, this._txtCubeMat));
     }
   }
 
@@ -107,12 +107,12 @@ class MaterialLight extends Technique {
       if (Math.xor(this._colorMat == null, mat == null)) this._shader = null;
       Math.Matrix4 prev = this._colorMat;
       this._colorMat = mat;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "colorMatrix", prev, this._colorMat));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "colorMatrix", prev, this._colorMat));
     }
   }
 
   /// The list of matrices for bending the shape by weights.
-  Core.Collection<Math.Matrix4> get bendMatrices => this._bendMats;
+  Collections.Collection<Math.Matrix4> get bendMatrices => this._bendMats;
 
   /// The emission component of the material.
   MaterialLightColorComponent get emission => this._emission;
@@ -140,7 +140,7 @@ class MaterialLight extends Technique {
       Textures.TextureCube prev = this._envSampler;
       this._envSampler = txt;
       if (this._envSampler != null) this._envSampler.loadFinished.add(this._onChanged);
-      this._onChanged(new Core.ValueChangedEventArgs(this, "environment", prev, this._envSampler));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "environment", prev, this._envSampler));
     }
   }
 
@@ -517,8 +517,8 @@ class MaterialLight extends Technique {
           this._shader.alpha = this._alpha.value;
           break;
       }
-      state.gl.enable(WebGL.BLEND);
-      state.gl.blendFunc(WebGL.SRC_ALPHA, WebGL.ONE_MINUS_SRC_ALPHA);
+      state.gl.enable(WebGL.WebGL.BLEND);
+      state.gl.blendFunc(WebGL.WebGL.SRC_ALPHA, WebGL.WebGL.ONE_MINUS_SRC_ALPHA);
     }
 
     for (int i = 0; i < textures.length; i++) {
@@ -531,7 +531,7 @@ class MaterialLight extends Technique {
         ..unbind(state);
 
     if (cfg.alpha != Shaders.ColorSourceType.None) {
-      state.gl.disable(WebGL.BLEND);
+      state.gl.disable(WebGL.WebGL.BLEND);
     }
 
     for (int i = 0; i < textures.length; i++) {

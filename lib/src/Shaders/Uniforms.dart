@@ -72,7 +72,10 @@ class UniformContainer {
   }
 
   /// Gets the string for this collection.
-  String toString({String sep: "\n"}) {
+  String toString() => this.format();
+
+  /// Gets the formatted string for this collection.
+  String format({String sep: "\n"}) {
     String result = "";
     for (Uniform uniform in this._uniforms) {
         result += "$uniform$sep";

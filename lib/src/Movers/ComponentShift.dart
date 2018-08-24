@@ -1,7 +1,7 @@
 part of ThreeDart.Movers;
 
 /// A simple single component for shifting and smoothing movement.
-class ComponentShift extends Core.Changable {
+class ComponentShift extends Events.Changable {
   bool _wrap;
   double _maxLoc;
   double _minLoc;
@@ -10,7 +10,7 @@ class ComponentShift extends Core.Changable {
   double _vel;
   double _acc;
   double _velDamp;
-  Core.Event _changed;
+  Events.Event _changed;
 
   /// Creates a new [ComponentShift] instance.
   ComponentShift() {
@@ -32,13 +32,13 @@ class ComponentShift extends Core.Changable {
   }
 
   /// Emits when the component has changed.
-  Core.Event get changed {
-    if (this._changed == null) this._changed = new Core.Event();
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
     return this._changed;
   }
 
   /// Handles emitting a change.
-  void _onChanged([Core.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
@@ -50,7 +50,7 @@ class ComponentShift extends Core.Changable {
     if (this._wrap != wrap) {
       bool prev = this._wrap;
       this._wrap = wrap;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "warp", prev, this._wrap));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "warp", prev, this._wrap));
     }
   }
 
@@ -66,7 +66,7 @@ class ComponentShift extends Core.Changable {
         this._loc = this._maxLoc;
       } else if (this._maxLoc < this._loc)
         this._loc = this._clapWrap(this._loc);
-      this._onChanged(new Core.ValueChangedEventArgs(this, "maximumLocation", prev, this._maxLoc));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "maximumLocation", prev, this._maxLoc));
     }
   }
 
@@ -82,7 +82,7 @@ class ComponentShift extends Core.Changable {
         this._loc = this._minLoc;
       } else if (this._minLoc > this._loc)
         this._loc = this._clapWrap(this._loc);
-      this._onChanged(new Core.ValueChangedEventArgs(this, "minimumLocation", prev, this._minLoc));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "minimumLocation", prev, this._minLoc));
     }
   }
 
@@ -93,7 +93,7 @@ class ComponentShift extends Core.Changable {
     if (!Math.Comparer.equals(this._loc, loc)) {
       double prev = this._loc;
       this._loc = loc;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "location", prev, this._loc));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "location", prev, this._loc));
     }
   }
 
@@ -109,7 +109,7 @@ class ComponentShift extends Core.Changable {
         this._maxVel = 0.0;
         this._vel = 0.0;
       } else this._vel = Math.clampVal(this._vel, -this._maxVel, this._maxVel);
-      this._onChanged(new Core.ValueChangedEventArgs(this, "maximumVelocity", prev, this._maxVel));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "maximumVelocity", prev, this._maxVel));
     }
   }
 
@@ -120,7 +120,7 @@ class ComponentShift extends Core.Changable {
     if (!Math.Comparer.equals(this._vel, vel)) {
       double prev = this._vel;
       this._vel = vel;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "velocity", prev, this._vel));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "velocity", prev, this._vel));
     }
   }
 
@@ -130,7 +130,7 @@ class ComponentShift extends Core.Changable {
     if (!Math.Comparer.equals(this._acc, acc)) {
       double prev = this._acc;
       this._acc = acc;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "acceleration", prev, this._acc));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "acceleration", prev, this._acc));
     }
   }
 
@@ -144,7 +144,7 @@ class ComponentShift extends Core.Changable {
     if (!Math.Comparer.equals(this._velDamp, dampening)) {
       double prev = this._velDamp;
       this._velDamp = dampening;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "dampening", prev, this._velDamp));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "dampening", prev, this._velDamp));
     }
   }
 

@@ -2,8 +2,11 @@ library ThreeDart.Movers;
 
 import 'dart:math' as math;
 
-import '../Math/Math.dart' as Math;
+import '../Collections/Collections.dart' as Collections;
 import '../Core/Core.dart' as Core;
+import '../Input/Input.dart' as Input;
+import '../Events/Events.dart' as Events;
+import '../Math/Math.dart' as Math;
 
 part 'ComponentShift.dart';
 part 'Constant.dart';

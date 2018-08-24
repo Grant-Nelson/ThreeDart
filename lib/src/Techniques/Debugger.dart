@@ -11,7 +11,7 @@ class Debugger extends Technique {
   List<Math.Point3> _results;
 
   /// An event to indicate when this technique has been changed.
-  Core.Event _changed;
+  Events.Event _changed;
 
   /// Creates a new debugging technique.
   Debugger([StringBuffer this._buf = null]) {
@@ -23,8 +23,8 @@ class Debugger extends Technique {
   List<Math.Point3> get results => this._results;
 
   /// Since there are no setting, this is currently never emitted.
-  Core.Event get changed {
-    if (this._changed == null) this._changed = new Core.Event();
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
     return this._changed;
   }
 
@@ -40,9 +40,9 @@ class Debugger extends Technique {
     Math.Matrix4 objMat  = state.object.matrix;
 
     if (this._buf != null) {
-      this._buf.write("Object:     "+objMat.toString("            ")+"\n\n");
-      this._buf.write("View:       "+viewMat.toString("            ")+"\n\n");
-      this._buf.write("Projection: "+projMat.toString("            ")+"\n\n");
+      this._buf.write("Object:     "+objMat.format("            ")+"\n\n");
+      this._buf.write("View:       "+viewMat.format("            ")+"\n\n");
+      this._buf.write("Projection: "+projMat.format("            ")+"\n\n");
     }
 
     this._results.clear();
@@ -58,11 +58,11 @@ class Debugger extends Technique {
         Math.Point3 pnt5 = new Math.Point3.fromPoint4(pnt4)/pnt4.w;
 
         if (this._buf != null) {
-          this._buf.write(pnt1.toString(3, 2) + " => " +
-                          pnt2.toString(3, 2) + " => " +
-                          pnt3.toString(3, 2) + " => " +
-                          pnt4.toString(3, 2) + " => " +
-                          pnt5.toString(3, 2) + "\n");
+          this._buf.write(pnt1.format(3, 2) + " => " +
+                          pnt2.format(3, 2) + " => " +
+                          pnt3.format(3, 2) + " => " +
+                          pnt4.format(3, 2) + " => " +
+                          pnt5.format(3, 2) + "\n");
         }
 
         this._results.add(pnt5);

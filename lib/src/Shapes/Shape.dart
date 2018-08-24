@@ -6,7 +6,7 @@ class Shape implements ShapeBuilder {
   ShapePointCollection _points;
   ShapeLineCollection _lines;
   ShapeFaceCollection _faces;
-  Core.Event _changed;
+  Events.Event _changed;
 
   /// Creates a new shape.
   Shape() {
@@ -35,8 +35,8 @@ class Shape implements ShapeBuilder {
   ShapeFaceCollection get faces => this._faces;
 
   /// The changed event to signal when ever the shape is modified.
-  Core.Event get changed {
-    if (this._changed == null) this._changed = new Core.Event();
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
     return this._changed;
   }
 
@@ -173,7 +173,7 @@ class Shape implements ShapeBuilder {
   /// Finds the first index of the vertex which matches the given vertex.
   /// If no match is found then -1 is returned.
   int findFirstIndex(Vertex ver, [VertexMatcher matcher = null, int startIndex = 0]) {
-    if (matcher == null) matcher = new FullVertexMatcher();
+    matcher ??= new FullVertexMatcher();
     final int count = this._vertices.length;
     for (int i = startIndex; i < count; ++i) {
       Vertex ver2 = this._vertices[i];
@@ -189,7 +189,7 @@ class Shape implements ShapeBuilder {
   /// Gets the first vertex in this shape which matches the given vertex.
   /// If no match is found then null is returned.
   Vertex findFirst(Vertex ver, [VertexMatcher matcher = null, int startIndex = 0]) {
-    if (matcher == null) matcher = new FullVertexMatcher();
+    matcher ??= new FullVertexMatcher();
     final int count = this._vertices.length;
     for (int i = startIndex; i < count; ++i) {
       Vertex ver2 = this._vertices[i];
@@ -204,7 +204,7 @@ class Shape implements ShapeBuilder {
 
   /// Finds all vertices in this shape which matches the given vertex.
   List<Vertex> findAll(Vertex ver, [VertexMatcher matcher = null, int startIndex = 0]) {
-    if (matcher == null) matcher = new FullVertexMatcher();
+    matcher ??= new FullVertexMatcher();
     List<Vertex> results = new List<Vertex>();
     final int count = this._vertices.length;
     for (int i = startIndex; i < count; ++i) {
@@ -288,7 +288,7 @@ class Shape implements ShapeBuilder {
   /// This is useful if you wrap a flat grid into a cylinder and want
   /// to smooth where the opposite edges touch.
   void joinSeams([VertexMatcher matcher = null]) {
-    if (matcher == null) matcher = new VertexLocationMatcher();
+    matcher ??= new VertexLocationMatcher();
     this.mergeVertices(matcher, new VertexJoiner());
   }
 
@@ -297,7 +297,7 @@ class Shape implements ShapeBuilder {
   /// however the edges will still have seperate vertices meaning the surface
   /// can have texturing without a texture seam.
   void adjustNormals([VertexMatcher matcher = null]) {
-    if (matcher == null) matcher = new VertexLocationMatcher();
+    matcher ??= new VertexLocationMatcher();
     this.mergeVertices(matcher, new NormalAdjuster());
   }
 
@@ -306,7 +306,7 @@ class Shape implements ShapeBuilder {
   /// however the edges will still have seperate vertices meaning the surface
   /// can have texturing without a texture seam.
   void adjustBinormals([VertexMatcher matcher = null]) {
-    if (matcher == null) matcher = new VertexLocationMatcher();
+    matcher ??= new VertexLocationMatcher();
     this.mergeVertices(matcher, new BinormalAdjuster());
   }
 
@@ -328,7 +328,7 @@ class Shape implements ShapeBuilder {
   /// and the shape is centered then offset by the given [offset].
   void resizeCenter([double size = 2.0, Math.Point3 offset = null]) {
     Math.Region3 aabb = this.calculateAABB();
-    if (offset == null) offset = new Math.Point3.zero();
+    offset ??= new Math.Point3.zero();
     offset = offset - aabb.center;
     double maxSize = aabb.dx;
     if (aabb.dy > maxSize) maxSize = aabb.dy;
@@ -388,7 +388,7 @@ class Shape implements ShapeBuilder {
     final int length = this._vertices.length;
     final int count = type.count;
     final int stride = type.size;
-    final int byteStride = stride*Typed.Float32List.BYTES_PER_ELEMENT;
+    final int byteStride = stride*Typed.Float32List.bytesPerElement;
     List<double> vertices = new List<double>(length*stride);
     List<Data.BufferAttr> attrs = new List<Data.BufferAttr>(count);
     int offset = 0;
@@ -396,7 +396,7 @@ class Shape implements ShapeBuilder {
       Data.VertexType local = type.at(i);
       final int size = local.size;
       attrs[i] = new Data.BufferAttr(local, size,
-        offset*Typed.Float32List.BYTES_PER_ELEMENT, byteStride);
+        offset*Typed.Float32List.bytesPerElement, byteStride);
       for (int j = 0; j < length; ++j) {
         Vertex ver = this._vertices[j];
         List<double> list = ver.listFor(local);
@@ -409,15 +409,15 @@ class Shape implements ShapeBuilder {
       offset += size;
     }
 
-    Data.Buffer vertexBuf = builder.fromDoubleList(WebGL.ARRAY_BUFFER, vertices);
+    Data.Buffer vertexBuf = builder.fromDoubleList(WebGL.WebGL.ARRAY_BUFFER, vertices);
     Data.BufferStore store = new Data.BufferStore(vertexBuf, attrs, type);
     if (!this._points.isEmpty) {
       List<int> indices = new List<int>();
       for (int i = 0; i < this._points.length; ++i) {
         indices.add(this._points[i].vertex.index);
       }
-      Data.Buffer indexBuf = builder.fromIntList(WebGL.ELEMENT_ARRAY_BUFFER, indices);
-      store.indexObjects.add(new Data.IndexObject(WebGL.POINTS, indices.length, indexBuf));
+      Data.Buffer indexBuf = builder.fromIntList(WebGL.WebGL.ELEMENT_ARRAY_BUFFER, indices);
+      store.indexObjects.add(new Data.IndexObject(WebGL.WebGL.POINTS, indices.length, indexBuf));
     }
 
     if (!this._lines.isEmpty) {
@@ -426,8 +426,8 @@ class Shape implements ShapeBuilder {
         indices.add(this._lines[i].vertex1.index);
         indices.add(this._lines[i].vertex2.index);
       }
-      Data.Buffer indexBuf = builder.fromIntList(WebGL.ELEMENT_ARRAY_BUFFER, indices);
-      store.indexObjects.add(new Data.IndexObject(WebGL.LINES, indices.length, indexBuf));
+      Data.Buffer indexBuf = builder.fromIntList(WebGL.WebGL.ELEMENT_ARRAY_BUFFER, indices);
+      store.indexObjects.add(new Data.IndexObject(WebGL.WebGL.LINES, indices.length, indexBuf));
     }
 
     if (!this._faces.isEmpty) {
@@ -437,31 +437,34 @@ class Shape implements ShapeBuilder {
         indices.add(this._faces[i].vertex2.index);
         indices.add(this._faces[i].vertex3.index);
       }
-      Data.Buffer indexBuf = builder.fromIntList(WebGL.ELEMENT_ARRAY_BUFFER, indices);
-      store.indexObjects.add(new Data.IndexObject(WebGL.TRIANGLES, indices.length, indexBuf));
+      Data.Buffer indexBuf = builder.fromIntList(WebGL.WebGL.ELEMENT_ARRAY_BUFFER, indices);
+      store.indexObjects.add(new Data.IndexObject(WebGL.WebGL.TRIANGLES, indices.length, indexBuf));
     }
 
     return store;
   }
 
-  /// Gets the string for the shape with and optional [indent].
-  String toString([String indent = ""]) {
+  /// Gets the string for the shape 
+  String toString() => this.format();
+
+  /// Gets the formatted string for this shape with and optional [indent].
+  String format([String indent = ""]) {
     List<String> parts = new List<String>();
     if (!this._vertices.isEmpty) {
       parts.add("${indent}Vertices:");
-      parts.add(this._vertices.toString("${indent}   "));
+      parts.add(this._vertices.format("${indent}   "));
     }
     if (!this._points.isEmpty) {
       parts.add('${indent}Points:');
-      parts.add(this._points.toString("${indent}   "));
+      parts.add(this._points.format("${indent}   "));
     }
     if (!this._lines.isEmpty) {
       parts.add('${indent}Lines:');
-      parts.add(this._lines.toString("${indent}   "));
+      parts.add(this._lines.format("${indent}   "));
     }
     if (!this._faces.isEmpty) {
       parts.add('${indent}Faces:');
-      parts.add(this._faces.toString("${indent}   "));
+      parts.add(this._faces.format("${indent}   "));
     }
     return parts.join('\n');
   }
@@ -470,7 +473,7 @@ class Shape implements ShapeBuilder {
   /// This isn't meant to be called from outside the entity, in other languages this would
   /// be a protected method. This method is exposed to that the shape is extended and
   /// these methods can be overwritten. If overwritten call this super method to still emit events.
-  void onChanged([Core.EventArgs args = null]) {
+  void onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 

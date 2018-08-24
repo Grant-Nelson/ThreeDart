@@ -1,19 +1,13 @@
 part of ThreeDart.Movers;
 
 /// A zoom mover which zooms on an object in response to user input.
-class UserZoom implements Mover, Core.UserInteractable {
+class UserZoom implements Mover, Input.Interactable {
 
   /// The user input this zoomer is attached to.
-  Core.UserInput _input;
+  Input.UserInput _input;
 
-  /// Indicates if the control/meta key must be pressed or released.
-  bool _ctrlPressed;
-
-  /// Indicates if the alt key must be pressed or released.
-  bool _altPressed;
-
-  /// Indicates if the shift key must be pressed or released.
-  bool _shiftPressed;
+  /// Indicates if the modifier keys which must be pressed or released.
+  Input.Modifiers _modPressed;
 
   /// The scalar to change how fast the zoom occures.
   double _zoomScalar;
@@ -28,96 +22,70 @@ class UserZoom implements Mover, Core.UserInteractable {
   Math.Matrix4 _mat;
 
   /// Event for handling changes to this mover.
-  Core.Event _changed;
+  Events.Event _changed;
 
   /// Creates an instance of [UserZoom].
   UserZoom({
       bool ctrl:  false,
       bool alt:   false,
       bool shift: false,
-      Core.UserInput input: null}) {
+      Input.Modifiers mod:   null,
+      Input.UserInput input: null}) {
     this._input = null;
-    this._ctrlPressed  = false;
-    this._altPressed   = false;
-    this._shiftPressed = false;
-    this._zoomScalar   = 0.01;
-    this._zoom         = 0.0;
-    this._frameNum     = 0;
-    this._mat          = null;
-    this._changed      = null;
+    this._modPressed = null;
+    this._zoomScalar = 0.01;
+    this._zoom       = 0.0;
+    this._frameNum   = 0;
+    this._mat        = null;
+    this._changed    = null;
 
-    this.ctrlPressed  = ctrl;
-    this.altPressed   = alt;
-    this.shiftPressed = shift;
+    this.modifiers = mod ?? new Input.Modifiers(ctrl, alt, shift);
     this.attach(input);
   }
 
   /// Emits when the mover has changed.
-  Core.Event get changed {
-    if (this._changed == null) this._changed = new Core.Event();
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
     return this._changed;
   }
 
   /// Handles a child mover being changed.
-  void _onChanged([Core.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
   /// Attaches this mover to the user input.
-  bool attach(Core.UserInput input) {
+  bool attach(Input.UserInput input) {
     if (input == null) return false;
     if (this._input != null) return false;
     this._input = input;
-    this._input.mouseWheel.add(this._mouseWheelHandle);
+    this._input.mouse.wheel.add(this._mouseWheelHandle);
     return true;
   }
 
   /// Detaches this mover from the user input.
   void detach() {
     if (this._input != null) {
-      this._input.mouseWheel.remove(this._mouseWheelHandle);
+      this._input.mouse.wheel.remove(this._mouseWheelHandle);
       this._input = null;
     }
   }
 
   /// Handles the mouse wheel changing.
-  void _mouseWheelHandle(Core.MouseWheelEventArgs args) {
-    if (this._ctrlPressed != this._input.ctrlPressed) return;
-    if (this._altPressed != this._input.altPressed) return;
-    if (this._shiftPressed != this._input.shiftPressed) return;
-    this.zoom += args.wheel.dy*this._zoomScalar;
+  void _mouseWheelHandle(Events.EventArgs args) {
+    if (this._modPressed != this._input.key.modifiers) return;
+    Input.MouseWheelEventArgs margs = (args as Input.MouseWheelEventArgs);
+    this.zoom += margs.wheel.dy*this._zoomScalar;
   }
 
-  /// Indicates if the control/meta key must be pressed or released.
-  bool get ctrlPressed => this._ctrlPressed;
-  void set ctrlPressed(bool enable) {
-    enable = enable ?? false;
-    if (this._ctrlPressed != enable) {
-      bool prev = this._ctrlPressed;
-      this._ctrlPressed = enable;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "ctrlPressed", prev, this._ctrlPressed));
-    }
-  }
-
-  /// Indicates if the alt key must be pressed or released.
-  bool get altPressed => this._altPressed;
-  void set altPressed(bool enable) {
-    enable = enable ?? false;
-    if (this._altPressed != enable) {
-      bool prev = this._altPressed;
-      this._altPressed = enable;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "altPressed", prev, this._altPressed));
-    }
-  }
-
-  /// Indicates if the shift key must be pressed or released.
-  bool get shiftPressed => this._shiftPressed;
-  void set shiftPressed(bool enable) {
-    enable = enable ?? false;
-    if (this._shiftPressed != enable) {
-      bool prev = this._shiftPressed;
-      this._shiftPressed = enable;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "shiftPressed", prev, this._shiftPressed));
+  /// Indicates if the modifiers keys must be pressed or released.
+  Input.Modifiers get modifiers => this._modPressed;
+  void set modifiers(Input.Modifiers mods) {
+    mods = mods ?? new Input.Modifiers.none();
+    if (this._modPressed != mods) {
+      Input.Modifiers prev = this._modPressed;
+      this._modPressed = mods;
+      this._onChanged(new Events.ValueChangedEventArgs(this, "modifiers", prev, mods));
     }
   }
 
@@ -128,7 +96,7 @@ class UserZoom implements Mover, Core.UserInteractable {
     if (!Math.Comparer.equals(this._zoomScalar, value)) {
       double prev = this._zoomScalar;
       this._zoomScalar = value;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "zoomScalar", prev, this._zoomScalar));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "zoomScalar", prev, this._zoomScalar));
     }
   }
 
@@ -139,7 +107,7 @@ class UserZoom implements Mover, Core.UserInteractable {
     if (this._zoom != value) {
       double prev = this._zoom;
       this._zoom = value;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "zoom", prev, this._zoom));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "zoom", prev, this._zoom));
     }
   }
 

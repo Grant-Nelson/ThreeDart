@@ -4,7 +4,7 @@ import 'dart:typed_data' as Typed;
 import 'dart:web_gl' as WebGL;
 import 'dart:math';
 
-import '../Core/Core.dart' as Core;
+import '../Events/Events.dart' as Events;
 import '../Data/Data.dart' as Data;
 import '../Math/Math.dart' as Math;
 import '../Textures/Textures.dart' as Textures;

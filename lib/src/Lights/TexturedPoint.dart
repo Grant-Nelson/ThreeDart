@@ -9,7 +9,7 @@ class TexturedPoint implements Light {
   double _attenuation0;
   double _attenuation1;
   double _attenuation2;
-  Core.Event _changed;
+  Events.Event _changed;
 
   /// Creates a new textured point light data.
   TexturedPoint({
@@ -37,13 +37,13 @@ class TexturedPoint implements Light {
   }
 
   /// Emits when the light is changed.
-  Core.Event get changed {
-    if (this._changed == null) this._changed = new Core.Event();
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
     return this._changed;
   }
 
   /// Handles a change in the light.
-  void _onChanged([Core.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
@@ -76,7 +76,7 @@ class TexturedPoint implements Light {
       Movers.Mover prev = this._mover;
       this._mover = mover;
       if (this._mover != null) this._mover.changed.add(this._onChanged);
-      this._onChanged(new Core.ValueChangedEventArgs(this, "mover", prev, this._mover));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "mover", prev, this._mover));
     }
   }
 
@@ -87,7 +87,7 @@ class TexturedPoint implements Light {
     if (this._color != color) {
       Math.Color3 prev = this._color;
       this._color = color;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "color", prev, this._color));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "color", prev, this._color));
     }
   }
 
@@ -99,7 +99,7 @@ class TexturedPoint implements Light {
       Textures.TextureCube prev = this._texture;
       this._texture = texture;
       if (this._texture != null) this._texture.loadFinished.add(this._onChanged);
-      this._onChanged(new Core.ValueChangedEventArgs(this, "texture", prev, this._texture));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "texture", prev, this._texture));
     }
   }
 
@@ -110,7 +110,7 @@ class TexturedPoint implements Light {
     if (!Math.Comparer.equals(this._attenuation0, attenuation0)) {
       double prev = this._attenuation0;
       this._attenuation0 = attenuation0;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "attenuation0", prev, this._attenuation0));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "attenuation0", prev, this._attenuation0));
     }
   }
 
@@ -121,7 +121,7 @@ class TexturedPoint implements Light {
     if (!Math.Comparer.equals(this._attenuation1, attenuation1)) {
       double prev = this._attenuation1;
       this._attenuation1 = attenuation1;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "attenuation1", prev, this._attenuation1));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "attenuation1", prev, this._attenuation1));
     }
   }
 
@@ -132,7 +132,7 @@ class TexturedPoint implements Light {
     if (!Math.Comparer.equals(this._attenuation2, attenuation2)) {
       double prev = this._attenuation2;
       this._attenuation2 = attenuation2;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "attenuation2", prev, this._attenuation2));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "attenuation2", prev, this._attenuation2));
     }
   }
 }

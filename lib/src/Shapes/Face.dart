@@ -293,8 +293,11 @@ class Face {
   bool operator ==(var other) => identical(this, other);
 
   /// Gets the string for this face.
+  String toString() => this.format();
+
+  /// Gets the formatted string for this face.
   /// The [indent] is added to the front when provided.
-  String toString([String indent = ""]) {
+  String format([String indent = ""]) {
     if (this.disposed) return "${indent}disposed";
     String result = indent +
         Math.formatInt(this._ver1._index)+', '+

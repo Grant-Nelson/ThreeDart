@@ -2,8 +2,8 @@ part of craft;
 
 /// Defines the world shown in 3Dart craft.
 class World {
-  static const maxXSize = Chunk.xSize*12;
-  static const maxZSize = Chunk.zSize*12;
+  static const maxXSize = Chunk.xSize*8;
+  static const maxZSize = Chunk.zSize*8;
 
   Materials _mats;
   Generator _gen;
@@ -69,7 +69,7 @@ class World {
   }
 
   /// Updates the world to the player's view.
-  void update(ThreeDart.EventArgs args) {
+  void update(Events.EventArgs args) {
     Math.Matrix4 mat = this.player.location.matrix;
     Math.Point3 loc3 = mat.transPnt3(new Math.Point3(0.0, 0.0, 0.0));
     Math.Point3 front3 = mat.transPnt3(new Math.Point3(0.0, 0.0, -Chunk.zSize.toDouble()));

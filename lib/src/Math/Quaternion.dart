@@ -153,7 +153,10 @@ class Quaternion {
   }
 
   /// Gets the string for this quaternion.
-  String toString([int fraction = 3, int whole = 0]) =>
+  String toString() => this.format();
+
+  /// Gets the formatted string for this quaternion.
+  String format([int fraction = 3, int whole = 0]) =>
     '['+   formatDouble(this.a, fraction, whole)+
     'i + '+formatDouble(this.b, fraction, whole)+
     'j + '+formatDouble(this.c, fraction, whole)+

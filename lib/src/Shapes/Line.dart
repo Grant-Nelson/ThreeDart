@@ -120,8 +120,11 @@ class Line {
   bool operator ==(var other) => identical(this, other);
 
   /// Gets the string for this line.
+  String toString() => this.format();
+
+  /// Gets the formatted string for this line.
   /// The [indent] is added to the front when provided.
-  String toString([String indent = ""]) {
+  String format([String indent = ""]) {
     if (this.disposed) return "${indent}disposed";
     return indent + Math.formatInt(this._ver1._index) +
              ", " + Math.formatInt(this._ver2._index);

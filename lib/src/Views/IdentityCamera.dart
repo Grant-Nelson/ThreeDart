@@ -3,7 +3,7 @@ part of ThreeDart.Views;
 /// A identity camera for rendering of a scene.
 class IdentityCamera implements Camera {
   Movers.Mover _mover;
-  Core.Event _changed;
+  Events.Event _changed;
 
   /// Creates a new identity camera.
   IdentityCamera({Movers.Mover mover: null}) {
@@ -12,13 +12,13 @@ class IdentityCamera implements Camera {
   }
 
   /// Indicates that this target has changed.
-  Core.Event get changed {
-    if (this._changed == null) this._changed = new Core.Event();
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
     return this._changed;
   }
 
   /// Handles a change in this target.
-  void _onChanged([Core.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
@@ -30,7 +30,7 @@ class IdentityCamera implements Camera {
       Movers.Mover prev = this._mover;
       this._mover = mover;
       if (this._mover != null) this._mover.changed.add(this._onChanged);
-      this._onChanged(new Core.ValueChangedEventArgs(this, "mover", prev, this._mover));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "mover", prev, this._mover));
     }
   }
 

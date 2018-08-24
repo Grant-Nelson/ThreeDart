@@ -134,7 +134,10 @@ class Vector3 {
   }
 
   /// Gets the string for this vector.
-  String toString([int fraction = 3, int whole = 0]) =>
+  String toString() => this.format();
+
+  /// Gets the formatted string for this vector.
+  String format([int fraction = 3, int whole = 0]) =>
     '['+ formatDouble(this.dx, fraction, whole)+
     ', '+formatDouble(this.dy, fraction, whole)+
     ', '+formatDouble(this.dz, fraction, whole)+']';

@@ -61,7 +61,7 @@ class BufferStore implements Core.Bindable, TechniqueCache {
     for (int i = 0; i < objCount; i++) {
       IndexObject indexObj = this._indexObjs[i];
       indexObj.buffer.bind(state);
-      state.gl.drawElements(indexObj.type, indexObj.count, WebGL.UNSIGNED_SHORT, 0);
+      state.gl.drawElements(indexObj.type, indexObj.count, WebGL.WebGL.UNSIGNED_SHORT, 0);
       indexObj.buffer.unbind(state);
     }
   }

@@ -138,7 +138,7 @@ class ShapeFaceCollection {
 
   /// Removes all faces which match eachother based on the given matcher.
   void removeRepeats([FaceMatcher matcher = null]) {
-    if (matcher == null) matcher = new ExactFaceMatcher();
+    matcher ??= new ExactFaceMatcher();
     for (int i = this._faces.length-1; i >= 0; --i) {
       Face faceA = this._faces[i];
       if (faceA != null) {
@@ -158,7 +158,7 @@ class ShapeFaceCollection {
   /// Removes all faces which match eachother based
   /// on the given matcher and share a vertex.
   void removeVertexRepeats([FaceMatcher matcher = null]) {
-    if (matcher == null) matcher = new ExactFaceMatcher();
+    matcher ??= new ExactFaceMatcher();
     for (int k = this._shape.vertices.length-1; k >= 0; --k) {
       Vertex ver = this._shape.vertices[k];
       for (int i = ver._faces.length-1; i >= 0; --i) {
@@ -190,7 +190,7 @@ class ShapeFaceCollection {
   void removeAll() {
     for (int i = this._faces.length-1; i >= 0; --i) {
       Face face = this._faces[i];
-      if (face == null) face.dispose();
+      face?.dispose();
     }
     this._faces.clear();
   }
@@ -221,10 +221,13 @@ class ShapeFaceCollection {
   }
 
   /// Gets to string for all the faces.
-  String toString([String indent = ""]) {
+  String toString() => this.format();
+
+  /// Gets the formatted string for this faces with and optional [indent].
+  String format([String indent = ""]) {
     List<String> parts = new List<String>();
     for (Face face in this._faces) {
-      parts.add(face.toString(indent));
+      parts.add(face.format(indent));
     }
     return parts.join('\n');
   }

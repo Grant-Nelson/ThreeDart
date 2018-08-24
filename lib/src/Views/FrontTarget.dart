@@ -9,7 +9,7 @@ class FrontTarget extends Target {
   int _stencil;
   bool _clearStencil;
   Math.Region2 _region;
-  Core.Event _changed;
+  Events.Event _changed;
 
   /// Constructs a new front target.
   FrontTarget({Math.Color4  color:        null,
@@ -30,19 +30,19 @@ class FrontTarget extends Target {
   }
 
   /// Indicates that this target has changed.
-  Core.Event get changed {
-    if (this._changed == null) this._changed = new Core.Event();
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
     return this._changed;
   }
 
   /// Handles a change in this target.
-  void _onChanged([Core.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
   /// Handles a change of a boolean value.
   void _onBoolChanged(String name, bool value) {
-    this._onChanged(new Core.ValueChangedEventArgs(this, name, !value, value));
+    this._onChanged(new Events.ValueChangedEventArgs(this, name, !value, value));
   }
 
   /// The clear color to clear the target to before rendering.
@@ -52,7 +52,7 @@ class FrontTarget extends Target {
     if (this._color != color) {
       Math.Color4 prev = this._color;
       this._color = color;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "color", prev, this._color));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "color", prev, this._color));
     }
   }
 
@@ -73,7 +73,7 @@ class FrontTarget extends Target {
     if (!Math.Comparer.equals(this._depth, depth)) {
       double prev = this._depth;
       this._depth = depth;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "depth", prev, this._depth));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "depth", prev, this._depth));
     }
   }
 
@@ -94,7 +94,7 @@ class FrontTarget extends Target {
     if (this._stencil != stencil) {
       int prev = this._stencil;
       this._stencil = stencil;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "stencil", prev, this._stencil));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "stencil", prev, this._stencil));
     }
   }
 
@@ -115,17 +115,17 @@ class FrontTarget extends Target {
     if (this._region != region) {
       Math.Region2 prev = this._region;
       this._region = region;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "region", prev, this._region));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "region", prev, this._region));
     }
   }
 
   /// Binds this target to the given state so that the following render
   /// will target the front target.
   void bind(Core.RenderState state) {
-    state.gl.bindFramebuffer(WebGL.FRAMEBUFFER, null);
-    state.gl.enable(WebGL.CULL_FACE);
-    state.gl.enable(WebGL.DEPTH_TEST);
-    state.gl.depthFunc(WebGL.LESS);
+    state.gl.bindFramebuffer(WebGL.WebGL.FRAMEBUFFER, null);
+    state.gl.enable(WebGL.WebGL.CULL_FACE);
+    state.gl.enable(WebGL.WebGL.DEPTH_TEST);
+    state.gl.depthFunc(WebGL.WebGL.LESS);
 
     int width    = state.gl.drawingBufferWidth;
     int height   = state.gl.drawingBufferHeight;
@@ -138,15 +138,15 @@ class FrontTarget extends Target {
     int clearMask = 0;
     if (this._clearStencil) {
       state.gl.clearStencil(this._stencil);
-      clearMask |= WebGL.STENCIL_BUFFER_BIT;
+      clearMask |= WebGL.WebGL.STENCIL_BUFFER_BIT;
     }
     if (this._clearDepth) {
       state.gl.clearDepth(this._depth);
-      clearMask |= WebGL.DEPTH_BUFFER_BIT;
+      clearMask |= WebGL.WebGL.DEPTH_BUFFER_BIT;
     }
     if (this._clearColor) {
       state.gl.clearColor(this._color.red, this._color.green, this._color.blue, this._color.alpha);
-      clearMask |= WebGL.COLOR_BUFFER_BIT;
+      clearMask |= WebGL.WebGL.COLOR_BUFFER_BIT;
     }
     if (clearMask > 0) {
       state.gl.clear(clearMask);

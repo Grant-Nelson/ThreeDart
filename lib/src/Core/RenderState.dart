@@ -51,13 +51,13 @@ class RenderState {
   Math.Matrix4 _viewObjMat;
 
   /// The stack of projection matrices.
-  Matrix4Stack _projStack;
+  Collections.Matrix4Stack _projStack;
 
   /// The stack of the view matrices.
-  Matrix4Stack _viewStack;
+  Collections.Matrix4Stack _viewStack;
 
   /// The stack of Entity matrices.
-  Matrix4Stack _objStack;
+  Collections.Matrix4Stack _objStack;
 
   /// The stack of techniques.
   List<Techniques.Technique> _tech;
@@ -78,20 +78,20 @@ class RenderState {
     this._invViewMat = null;
     this._projViewObjMat = null;
     this._viewObjMat = null;
-    this._projStack = new Matrix4Stack()
-      ..changed.add((EventArgs e) {
+    this._projStack = new Collections.Matrix4Stack()
+      ..changed.add((Events.EventArgs e) {
         this._projViewMat = null;
         this._projViewObjMat = null;
       });
-    this._viewStack = new Matrix4Stack()
-      ..changed.add((EventArgs e) {
+    this._viewStack = new Collections.Matrix4Stack()
+      ..changed.add((Events.EventArgs e) {
         this._projViewMat = null;
         this._invViewMat = null;
         this._projViewObjMat = null;
         this._viewObjMat = null;
       });
-    this._objStack = new Matrix4Stack()
-      ..changed.add((EventArgs e) {
+    this._objStack = new Collections.Matrix4Stack()
+      ..changed.add((Events.EventArgs e) {
         this._projViewObjMat = null;
         this._viewObjMat = null;
       });
@@ -145,44 +145,36 @@ class RenderState {
 
   /// The projection matrix multiplied by the view matrix.
   Math.Matrix4 get projectionViewMatrix {
-    if (this._projViewMat == null) {
-      this._projViewMat = this.projection.matrix * this.view.matrix;
-    }
+    this._projViewMat ??= this.projection.matrix * this.view.matrix;
     return this._projViewMat;
   }
 
   /// The inverse of the view matrix.
   Math.Matrix4 get inverseViewMatrix {
-    if (this._invViewMat == null) {
-      this._invViewMat = this.view.matrix.inverse();
-    }
+    this._invViewMat ??= this.view.matrix.inverse();
     return this._invViewMat;
   }
 
   /// The product of the projection matrix, the view matrix, and the object matrix.
   Math.Matrix4 get projectionViewObjectMatrix {
-    if (this._projViewObjMat == null) {
-      this._projViewObjMat = this.projectionViewMatrix * this.object.matrix;
-    }
+    this._projViewObjMat ??= this.projectionViewMatrix * this.object.matrix;
     return this._projViewObjMat;
   }
 
   /// The view matrix multiplied by the object matrix.
   Math.Matrix4 get viewObjectMatrix {
-    if (this._viewObjMat == null) {
-      this._viewObjMat = this.view.matrix * this.object.matrix;
-    }
+    this._viewObjMat ??= this.view.matrix * this.object.matrix;
     return this._viewObjMat;
   }
 
   /// The stack of projection matrices.
-  Matrix4Stack get projection => this._projStack;
+  Collections.Matrix4Stack get projection => this._projStack;
 
   /// The stack of the view matrices.
-  Matrix4Stack get view => this._viewStack;
+  Collections.Matrix4Stack get view => this._viewStack;
 
   /// The stack of object matrices.
-  Matrix4Stack get object => this._objStack;
+  Collections.Matrix4Stack get object => this._objStack;
 
   /// The current technique to render with.
   /// May return null if the technique stack is empty.

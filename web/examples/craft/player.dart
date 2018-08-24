@@ -11,8 +11,8 @@ class Player {
   static const double _jumpSpeed = 30.0; // The velocity to apply when the player jumps.
   static const double _highlightDistance = 6.0; /// The maximum distance to set a highlight selection from the player.
   static const double _playerHeight = 2.0; /// The player's height.
-  static const double _headOffset = 1.5; /// The player's head collision offset.
-  static const double _footOffset = 0.5; /// The player's foot collision offset.
+  static const double _headOffset = 0.5; /// The player's head collision offset.
+  static const double _footOffset = 1.5; /// The player's foot collision offset.
 
   Movers.UserTranslator _trans;
   Movers.UserRotater _rot;
@@ -40,8 +40,8 @@ class Player {
       ..offsetY.acceleration = _gravity
       ..offsetZ.maximumVelocity = _speed
       ..collisionHandle = this._handleCollide;
-    this._rot = new Movers.UserRotater.flat(input: td.userInput);
-    this._rot.changed.add((ThreeDart.EventArgs args) {
+    this._rot = new Movers.UserRotater.flat(input: td.userInput, locking: true);
+    this._rot.changed.add((Events.EventArgs args) {
       this._trans.velocityRotation = new Math.Matrix3.rotateY(-this._rot.yaw.location);
     });
 
@@ -68,23 +68,23 @@ class Player {
       this._playerLoc]);
 
     // Sets up the key watcher for jumping.
-    new ThreeDart.UserKeyGroup()
-      ..addKey(ThreeDart.UserKey.spacebar)
+    new Input.KeyGroup()
+      ..addKey(Input.Key.spacebar)
       ..attach(td.userInput)
       ..keyDown.add(this._onJump);
     this._touchingGround = true;
 
     // Sets up the key watcher for changing the selected block value.
-    new ThreeDart.UserKeyGroup()
-      ..addKey(ThreeDart.UserKey.tab)
-      ..addKey(ThreeDart.UserKey.tab, shift: true)
+    new Input.KeyGroup()
+      ..addKey(Input.Key.tab)
+      ..addKey(Input.Key.tab, shift: true)
       ..attach(td.userInput)
       ..keyDown.add(this._onBlockCycle);
 
     // Sets up the key watcher for modifying the voxel data of a chunk.
-    new ThreeDart.UserKeyGroup()
-      ..addKey(ThreeDart.UserKey.keyE)
-      ..addKey(ThreeDart.UserKey.keyQ)
+    new Input.KeyGroup()
+      ..addKey(Input.Key.keyE)
+      ..addKey(Input.Key.keyQ)
       ..attach(td.userInput)
       ..keyDown.add(this._onBlockChange);
 
@@ -139,14 +139,14 @@ class Player {
   }
 
   /// Handles when the player presses the jump key.
-  void _onJump(ThreeDart.EventArgs args) {
+  void _onJump(Events.EventArgs args) {
     if (this._touchingGround)
       this._trans.offsetY.velocity = _jumpSpeed;
   }
 
   /// Handles when the player presses the button(s) to cycle the selected block value in the hand.
-  void _onBlockCycle(ThreeDart.EventArgs args) {
-    ThreeDart.KeyEventArgs keyArgs = args as ThreeDart.KeyEventArgs;
+  void _onBlockCycle(Events.EventArgs args) {
+    Input.KeyEventArgs keyArgs = args as Input.KeyEventArgs;
     int length = BlockType.PlaceableBlocks.length;
     if (keyArgs.key.shift) {
       this._selectedBlockIndex--;
@@ -161,11 +161,11 @@ class Player {
   }
 
   /// Handles when the player presses the button(s) to modify the voxal values of a chunk.
-  void _onBlockChange(ThreeDart.EventArgs args) {
+  void _onBlockChange(Events.EventArgs args) {
     if (this._highlight == null) return;
 
     int blockType = BlockType.Air;
-    if ((args as ThreeDart.KeyEventArgs).key.key == ThreeDart.UserKey.keyE) {
+    if ((args as Input.KeyEventArgs).key.code == Input.Key.keyE) {
       NeighborBlockInfo neighbor = this._getNeighborBlock(this._highlight, this._playerViewTarget());
       this._highlight = neighbor.info;
       blockType = BlockType.PlaceableBlocks[this._selectedBlockIndex];
@@ -232,7 +232,7 @@ class Player {
     }
 
     // Check if stuck in the ground and push up until out of the ground.
-    while (_isHard(x, y-_playerHeight+_pad, z) || _isHard(x, y-_pad, z)) {
+    while (_isHard(x, y-_playerHeight+_pad, z) || _isHard(x, y, z)) {
       y = ny + _pad;
       ny += 1.0;
       this._trans.offsetY.velocity = 0.0;
@@ -271,7 +271,7 @@ class Player {
   }
 
   /// Updates the selection for the highlighted block that can be modified.
-  void _updateHighlight(ThreeDart.EventArgs _) {
+  void _updateHighlight(Events.EventArgs _) {
     Math.Ray3 ray = this._playerViewTarget();
     Math.Ray3 back = ray.reverse;
 

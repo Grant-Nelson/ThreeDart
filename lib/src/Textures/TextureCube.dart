@@ -8,7 +8,7 @@ class TextureCube extends Texture {
   WebGL.Texture _texture;
   bool _bound;
   int _loaded;
-  Core.Event _loadFinished;
+  Events.Event _loadFinished;
 
   /// Creates a new cube map texture.
   TextureCube({int index: 0, WebGL.Texture texture: null}):
@@ -16,7 +16,7 @@ class TextureCube extends Texture {
     this._texture = texture;
     this._bound = false;
     this._loaded = 0;
-    this._loadFinished = new Core.Event();
+    this._loadFinished = new Events.Event();
   }
 
   /// Increments the loaded value of the images.
@@ -30,14 +30,14 @@ class TextureCube extends Texture {
   bool get loaded => this._loaded >= 6;
 
   /// Emitted when the texture has finished being loaded.
-  Core.Event get loadFinished => this._loadFinished;
+  Events.Event get loadFinished => this._loadFinished;
 
   /// Binds some data to the given [state].
   void bind(Core.RenderState state) {
     if (!this._bound && this.loaded) {
       this._bound = true;
-      state.gl.activeTexture(WebGL.TEXTURE0+this.index);
-      state.gl.bindTexture(WebGL.TEXTURE_CUBE_MAP, this._texture);
+      state.gl.activeTexture(WebGL.WebGL.TEXTURE0+this.index);
+      state.gl.bindTexture(WebGL.WebGL.TEXTURE_CUBE_MAP, this._texture);
     }
   }
 
@@ -45,8 +45,8 @@ class TextureCube extends Texture {
   void unbind(Core.RenderState state) {
     if (this._bound) {
       this._bound = false;
-      state.gl.activeTexture(WebGL.TEXTURE0+this.index);
-      state.gl.bindTexture(WebGL.TEXTURE_CUBE_MAP, null);
+      state.gl.activeTexture(WebGL.WebGL.TEXTURE0+this.index);
+      state.gl.bindTexture(WebGL.WebGL.TEXTURE_CUBE_MAP, null);
     }
   }
 }

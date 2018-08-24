@@ -27,7 +27,7 @@ class Vertex {
     this._points = new VertexPointCollection._(this);
     this._lines  = new VertexLineCollection._(this);
     this._faces  = new VertexFaceCollection._(this);
-    if (type == null) type = Data.VertexType.All;
+    type ??= Data.VertexType.All;
 
     this._index   = 0;
     this._loc     = type.has(Data.VertexType.Pos)?     loc:     null;
@@ -280,7 +280,10 @@ class Vertex {
   bool operator ==(var other) => identical(this, other);
 
   /// Gets the string for this vertex.
-  String toString([String indent = ""]) {
+  String toString() => this.format();
+
+  /// Gets the formatted string for this vertex with and optional [indent].
+  String format([String indent = ""]) {
     List<String> parts = new List<String>();
     parts.add(Math.formatInt(this._index));
     if (this._loc != null) parts.add(this._loc.toString());

@@ -1,12 +1,10 @@
 part of ThreeDart.Core;
 
-// TODO: Update all the events for the Entity
-
 /// A renderable entity in a tree of entities for a scene.
 ///
 /// An [Entity] is a [Shape], [Technique], and a [Mover]
 /// to create an output when rendered.
-class Entity implements Movers.Movable, Changable {
+class Entity implements Movers.Movable, Events.Changable {
 
   /// The name for this entity.
   String _name;
@@ -41,37 +39,37 @@ class Entity implements Movers.Movable, Changable {
   Math.Matrix4 _matrix;
 
   /// The list of children entities to this entity.
-  Collection<Entity> _children;
+  Collections.Collection<Entity> _children;
 
   /// The event emitted when any part of the entity is changed.
-  Event _changed;
+  Events.Event _changed;
 
   /// The event emitted when the shape has been changed.
-  Event _shapeChanged;
+  Events.Event _shapeChanged;
 
   /// The event emitted when the shape builder has been changed.
-  Event _shapeBuilderChanged;
+  Events.Event _shapeBuilderChanged;
 
   /// The event emitted when the technique has been changed.
-  Event _techChanged;
+  Events.Event _techChanged;
 
   /// The event emitted when the mover has been changed.
-  Event _moverChanged;
+  Events.Event _moverChanged;
 
   /// The event emitted when the matrix has been changed.
-  Event _matrixChanged;
+  Events.Event _matrixChanged;
 
   /// The event emitted when one or more children is added.
-  Event _childrenAdded;
+  Events.Event _childrenAdded;
 
   /// The event emitted when one or more children is removed.
-  Event _childrenRemoved;
+  Events.Event _childrenRemoved;
 
   /// The event emitted when an extension is added.
-  Event _extensionAdded;
+  Events.Event _extensionAdded;
 
   /// The event emitted when an extension is removed.
-  Event _extensionRemoved;
+  Events.Event _extensionRemoved;
 
   /// Creates a new Entity.
   Entity({String name: "",
@@ -88,7 +86,7 @@ class Entity implements Movers.Movable, Changable {
     this._tech = null;
     this._mover = null;
     this._matrix = null;
-    this._children = new Collection<Entity>();
+    this._children = new Collections.Collection<Entity>();
     this._children.setHandlers(
       onAddedHndl: this.onChildrenAdded,
       onRemovedHndl: this.onChildrenRemoved);
@@ -149,7 +147,7 @@ class Entity implements Movers.Movable, Changable {
   set cache(Data.TechniqueCache cache) => _cache = cache;
 
   /// The children Entitys of this Entity.
-  Collection<Entity> get children => _children;
+  Collections.Collection<Entity> get children => _children;
 
   /// The shape to draw at this Entity.
   /// May be null to not draw anything, usefull if this Entity
@@ -324,56 +322,56 @@ class Entity implements Movers.Movable, Changable {
   }
 
   /// The event emitted when any part of the entity is changed.
-  Event get changed {
-    this._changed ??= new Event();
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
     return this._changed;
   }
 
   /// The event emitted when the shape has been changed.
-  Event get shapeChanged {
-    this._shapeChanged ??= new Event();
+  Events.Event get shapeChanged {
+    this._shapeChanged ??= new Events.Event();
     return this._shapeChanged;
   }
 
   /// The event emitted when the technique has been changed.
-  Event get techChanged {
-    this._techChanged ??= new Event();
+  Events.Event get techChanged {
+    this._techChanged ??= new Events.Event();
     return this._techChanged;
   }
 
   /// The event emitted when the mover has been changed.
-  Event get moverChanged {
-    this._moverChanged ??= new Event();
+  Events.Event get moverChanged {
+    this._moverChanged ??= new Events.Event();
     return this._moverChanged;
   }
 
   /// The event emitted when the matrix has been changed.
-  Event get matrixChanged {
-    this._matrixChanged ??= new Event();
+  Events.Event get matrixChanged {
+    this._matrixChanged ??= new Events.Event();
     return this._matrixChanged;
   }
 
   /// The event emitted when one or more child is added.
-  Event get childrenAdded {
-    this._childrenAdded ??= new Event();
+  Events.Event get childrenAdded {
+    this._childrenAdded ??= new Events.Event();
     return this._childrenAdded;
   }
 
   /// The event emitted when one or more child is removed.
-  Event get childrenRemoved {
-    this._childrenRemoved ??= new Event();
+  Events.Event get childrenRemoved {
+    this._childrenRemoved ??= new Events.Event();
     return this._childrenRemoved;
   }
 
   /// The event emitted when an extension is added.
-  Event get extensionAdded {
-    this._extensionAdded ??= new Event();
+  Events.Event get extensionAdded {
+    this._extensionAdded ??= new Events.Event();
     return this._extensionAdded;
   }
 
   /// The event emitted when an extension is removed.
-  Event get extensionRemoved {
-    this._extensionRemoved ??= new Event();
+  Events.Event get extensionRemoved {
+    this._extensionRemoved ??= new Events.Event();
     return this._extensionRemoved;
   }
 
@@ -383,7 +381,7 @@ class Entity implements Movers.Movable, Changable {
   /// This isn't meant to be called from outside the entity, in other languages this would
   /// be a protected method. This method is exposed to that the entity is extended and
   /// these methods can be overwritten. If overwritten call this super method to still emit events.
-  void onChanged([EventArgs args = null]) {
+  void onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
@@ -394,7 +392,7 @@ class Entity implements Movers.Movable, Changable {
   /// This isn't meant to be called from outside the entity, in other languages this would
   /// be a protected method. This method is exposed to that the entity is extended and
   /// these methods can be overwritten. If overwritten call this super method to still emit events.
-  void onShapeModified([EventArgs args = null]) {
+  void onShapeModified([Events.EventArgs args = null]) {
     this.clearCache();
     this.onChanged(args);
   }
@@ -407,9 +405,10 @@ class Entity implements Movers.Movable, Changable {
   /// be a protected method. This method is exposed to that the entity is extended and
   /// these methods can be overwritten. If overwritten call this super method to still emit events.
   void onShapeChanged(Shapes.Shape oldShape, Shapes.Shape newShape) {
-    this._shapeChanged?.emit();
-    this._shapeBuilderChanged?.emit();
-    this.onChanged();
+    Events.EventArgs args = new Events.ValueChangedEventArgs(this, "shape", oldShape, newShape);
+    this._shapeChanged?.emit(args);
+    this._shapeBuilderChanged?.emit(args);
+    this.onChanged(args);
   }
 
   /// Called when the shape builder is added or removed.
@@ -420,8 +419,9 @@ class Entity implements Movers.Movable, Changable {
   /// be a protected method. This method is exposed to that the entity is extended and
   /// these methods can be overwritten. If overwritten call this super method to still emit events.
   void onShapeBuilderChanged(Shapes.ShapeBuilder oldShape, Shapes.ShapeBuilder newShape) {
-    this._shapeBuilderChanged?.emit();
-    this.onChanged();
+    Events.EventArgs args = new Events.ValueChangedEventArgs(this, "shapeBuilder", oldShape, newShape);
+    this._shapeBuilderChanged?.emit(args);
+    this.onChanged(args);
   }
 
   /// Handles a change in the technique.
@@ -429,7 +429,7 @@ class Entity implements Movers.Movable, Changable {
   /// This isn't meant to be called from outside the entity, in other languages this would
   /// be a protected method. This method is exposed to that the entity is extended and
   /// these methods can be overwritten. If overwritten call this super method to still emit events.
-  void onTechModified([EventArgs args = null]) {
+  void onTechModified([Events.EventArgs args = null]) {
     this.onChanged(args);
   }
 
@@ -441,8 +441,9 @@ class Entity implements Movers.Movable, Changable {
   /// be a protected method. This method is exposed to that the entity is extended and
   /// these methods can be overwritten. If overwritten call this super method to still emit events.
   void onTechChanged(Techniques.Technique oldTech, Techniques.Technique newTech) {
-    this._techChanged?.emit();
-    this.onChanged();
+    Events.EventArgs args = new Events.ValueChangedEventArgs(this, "technique", oldTech, newTech);
+    this._techChanged?.emit(args);
+    this.onChanged(args);
   }
 
   /// Handles a change in the mover.
@@ -450,7 +451,7 @@ class Entity implements Movers.Movable, Changable {
   /// This isn't meant to be called from outside the entity, in other languages this would
   /// be a protected method. This method is exposed to that the entity is extended and
   /// these methods can be overwritten. If overwritten call this super method to still emit events.
-  void onMoverModified([EventArgs args = null]) {
+  void onMoverModified([Events.EventArgs args = null]) {
     this.onChanged(args);
   }
 
@@ -462,8 +463,9 @@ class Entity implements Movers.Movable, Changable {
   /// be a protected method. This method is exposed to that the entity is extended and
   /// these methods can be overwritten. If overwritten call this super method to still emit events.
   void onMoverChanged(Movers.Mover oldMover, Movers.Mover newMover) {
-    this._moverChanged?.emit();
-    this.onChanged();
+    Events.EventArgs args = new Events.ValueChangedEventArgs(this, "mover", oldMover, newMover);
+    this._moverChanged?.emit(args);
+    this.onChanged(args);
   }
 
   /// Called when the matrix is added or removed is removed.
@@ -474,8 +476,9 @@ class Entity implements Movers.Movable, Changable {
   /// be a protected method. This method is exposed to that the entity is extended and
   /// these methods can be overwritten. If overwritten call this super method to still emit events.
   void onMatrixChanged(Math.Matrix4 oldMatrix, Math.Matrix4 newMatrix) {
-    this._matrixChanged?.emit();
-    this.onChanged();
+    Events.EventArgs args = new Events.ValueChangedEventArgs(this, "matrix", oldMatrix, newMatrix);
+    this._matrixChanged?.emit(args);
+    this.onChanged(args);
   }
 
   /// Handles a change in the child.
@@ -483,7 +486,7 @@ class Entity implements Movers.Movable, Changable {
   /// This isn't meant to be called from outside the entity, in other languages this would
   /// be a protected method. This method is exposed to that the entity is extended and
   /// these methods can be overwritten. If overwritten call this super method to still emit events.
-  void onChildrenModified([EventArgs args = null]) {
+  void onChildrenModified([Events.EventArgs args = null]) {
     this.onChanged(args);
   }
 

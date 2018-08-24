@@ -10,7 +10,7 @@ class Rotater extends Mover {
   double _deltaRoll;
   int _frameNum;
   Math.Matrix4 _mat;
-  Core.Event _changed;
+  Events.Event _changed;
 
   /// Creates a new rotater.
   Rotater({
@@ -39,13 +39,13 @@ class Rotater extends Mover {
   }
 
   /// Emits when the mover has changed.
-  Core.Event get changed {
-    if (this._changed == null) this._changed = new Core.Event();
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
     return this._changed;
   }
 
   /// Handles a child mover being changed.
-  void _onChanged([Core.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
@@ -56,7 +56,7 @@ class Rotater extends Mover {
     if (!Math.Comparer.equals(this._yaw, value)) {
       double prev = this._yaw;
       this._yaw = value;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "yaw", prev, this._yaw));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "yaw", prev, this._yaw));
     }
   }
 
@@ -67,7 +67,7 @@ class Rotater extends Mover {
     if (!Math.Comparer.equals(this._pitch, value)) {
       double prev = this._pitch;
       this._pitch = value;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "pitch", prev, this._pitch));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "pitch", prev, this._pitch));
     }
   }
 
@@ -78,7 +78,7 @@ class Rotater extends Mover {
     if (!Math.Comparer.equals(this._roll, value)) {
       double prev = this._roll;
       this._roll = value;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "roll", prev, this._roll));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "roll", prev, this._roll));
     }
   }
 
@@ -89,7 +89,7 @@ class Rotater extends Mover {
     if (!Math.Comparer.equals(this._deltaYaw, value)) {
       double prev = this._deltaYaw;
       this._deltaYaw = value;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "deltaYaw", prev, this._deltaYaw));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "deltaYaw", prev, this._deltaYaw));
     }
   }
 
@@ -100,7 +100,7 @@ class Rotater extends Mover {
     if (!Math.Comparer.equals(this._deltaPitch, value)) {
       double prev = this._deltaPitch;
       this._deltaPitch = value;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "deltaPitch", prev, this._deltaPitch));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "deltaPitch", prev, this._deltaPitch));
     }
   }
 
@@ -111,7 +111,7 @@ class Rotater extends Mover {
     if (!Math.Comparer.equals(this._deltaRoll, value)) {
       double prev = this._deltaRoll;
       this._deltaRoll = value;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "deltaRoll", prev, this._deltaRoll));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "deltaRoll", prev, this._deltaRoll));
     }
   }
 
@@ -150,7 +150,10 @@ class Rotater extends Mover {
   }
 
   /// The string for this constant mover.
-  String toString([int fraction = 3, int whole = 0]) {
+  String toString() => this.format();
+
+  /// Gets the formatted string for this constant mover.
+  String format([int fraction = 3, int whole = 0]) {
     return "Rotater: ["+
       Math.formatDouble(this._yaw,        fraction, whole)+", "+
       Math.formatDouble(this._pitch,      fraction, whole)+", "+

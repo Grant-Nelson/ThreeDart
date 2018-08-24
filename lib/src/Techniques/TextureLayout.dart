@@ -1,109 +1,18 @@
 part of ThreeDart.Techniques;
 
-/// An entry in the TextureLayout technique descibing the layout of one texture.
-class TextureLayoutEntry implements Core.Changable {
-  Textures.Texture2D _txt;
-  Math.Matrix4 _clrMat;
-  Math.Region2 _src;
-  Math.Region2 _dest;
-  bool _flip;
-  Core.Event _changed;
-
-  /// Creates an entry for the texture layout technique.
-  TextureLayoutEntry({Textures.Texture2D texture:     null,
-                      Math.Matrix4       colorMatrix: null,
-                      Math.Region2       source:      null,
-                      Math.Region2       destination: null,
-                      bool               flip:        false}) {
-    this.texture     = texture;
-    this.colorMatrix = colorMatrix;
-    this.source      = source;
-    this.destination = destination;
-    this.flip        = flip;
-    this._changed    = null;
-  }
-
-  /// Indicates that this entity has changed.
-  Core.Event get changed {
-    if (this._changed == null) this._changed = new Core.Event();
-    return this._changed;
-  }
-
-  /// Handles a change in this entity.
-  void _onChanged([Core.EventArgs args = null]) {
-    this._changed?.emit(args);
-  }
-
-  /// The texture to draw for this entry.
-  Textures.Texture2D get texture => this._txt;
-  void set texture(Textures.Texture2D txt) {
-    if (this._txt != txt) {
-      if (this._txt != null) this._txt.loadFinished.remove(this._onChanged);
-      Textures.Texture2D prev = this._txt;
-      this._txt = txt;
-      if (this._txt != null) this._txt.loadFinished.add(this._onChanged);
-      this._onChanged(new Core.ValueChangedEventArgs(this, "texture", prev, this._txt));
-    }
-  }
-
-  /// The color adjustment matrix.
-  Math.Matrix4 get colorMatrix => this._clrMat;
-  void set colorMatrix(Math.Matrix4 mat) {
-    mat = mat ?? new Math.Matrix4.identity();
-    if (this._clrMat != mat) {
-      Math.Matrix4 prev = this._clrMat;
-      this._clrMat = mat;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "colorMatrix", prev, this._clrMat));
-    }
-  }
-
-  /// The source region of the texture to render with.
-  Math.Region2 get source => this._src;
-  void set source(Math.Region2 src) {
-    src = src ?? new Math.Region2(0.0, 0.0, 1.0, 1.0);
-    if (this._src != src) {
-      Math.Region2 prev = this._src;
-      this._src = src;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "source", prev, this._src));
-    }
-  }
-
-  /// The destination to render the source region into.
-  Math.Region2 get destination => this._dest;
-  void set destination(Math.Region2 dest) {
-    dest = dest ?? new Math.Region2(0.0, 0.0, 1.0, 1.0);
-    if (this._dest != dest) {
-      Math.Region2 prev = this._dest;
-      this._dest = dest;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "destination", prev, this._dest));
-    }
-  }
-
-  /// Indicates if the image should be flipped or not.
-  bool get flip => this._flip;
-  void set flip(bool flip) {
-    if (this._flip != flip) {
-      this._flip = flip;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "flip", !flip, this._flip));
-    }
-  }
-}
-
-//===============================================
-
 /// A technique for a cover pass which draws several textures.
 class TextureLayout extends Technique {
   Math.Color4 _backClr;
   Shaders.TextureLayout _shader;
-  Core.Collection<TextureLayoutEntry> _entries;
+  Collections.Collection<TextureLayoutEntry> _entries;
   int _lastCount;
-  Core.Event _changed;
+  Events.Event _changed;
 
   /// Creates a new sky box technique with the given initial values.
   TextureLayout({Math.Color4 backColor: null}) {
     this.backColor = backColor;
     this._shader   = null;
-    this._entries  = new Core.Collection<TextureLayoutEntry>();
+    this._entries  = new Collections.Collection<TextureLayoutEntry>();
     this._entries.setHandlers(
       onAddedHndl: _onEntityAdded,
       onRemovedHndl: _onEntityRemoved);
@@ -112,13 +21,13 @@ class TextureLayout extends Technique {
   }
 
   /// Indicates that this technique has changed.
-  Core.Event get changed {
-    if (this._changed == null) this._changed = new Core.Event();
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
     return this._changed;
   }
 
   /// Handles a change in this technique.
-  void _onChanged([Core.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
@@ -139,7 +48,7 @@ class TextureLayout extends Technique {
   }
 
   /// The list of layout entries.
-  Core.Collection<TextureLayoutEntry> get entries => this._entries;
+  Collections.Collection<TextureLayoutEntry> get entries => this._entries;
 
   /// The background color for the layout.
   Math.Color4 get backColor => this._backClr;
@@ -148,7 +57,7 @@ class TextureLayout extends Technique {
     if (this._backClr != clr) {
       Math.Color4 prev = this._backClr;
       this._backClr = clr;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "backColor", prev, this._backClr));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "backColor", prev, this._backClr));
     }
   }
 
@@ -182,8 +91,7 @@ class TextureLayout extends Technique {
       this._shader = null;
     }
 
-    if (this._shader == null)
-      this._shader = new Shaders.TextureLayout.cached(newCount, state);
+    this._shader ??= new Shaders.TextureLayout.cached(newCount, state);
 
     if (obj.cacheNeedsUpdate) {
       obj.cache = obj.shapeBuilder.build(new Data.WebGLBufferBuilder(state.gl), Data.VertexType.Pos)

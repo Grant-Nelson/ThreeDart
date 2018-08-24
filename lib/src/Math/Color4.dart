@@ -34,7 +34,7 @@ class Color4 {
   /// Constructs a new [Color4] instance with a gray color from the optional [value].
   factory Color4.gray([double value = 0.5, double alpha = 1.0]) {
     value = clampVal(value);
-    new Color4._(value, value, value, clampVal(alpha));
+    return new Color4._(value, value, value, clampVal(alpha));
   }
 
   /// Constructs a new [Color4] instance with full color, white.
@@ -127,9 +127,12 @@ class Color4 {
     if (!Comparer.equals(clr.alpha, this.alpha)) return false;
     return true;
   }
-
+  
   /// Gets the string for this color.
-  String toString([int fraction = 3, int whole = 0]) => '['+
+  String toString() => this.format();
+
+  /// Gets the formatted string for this color.
+  String format([int fraction = 3, int whole = 0]) => '['+
     formatDouble(this.red,   fraction, whole)+', '+
     formatDouble(this.green, fraction, whole)+', '+
     formatDouble(this.blue,  fraction, whole)+', '+

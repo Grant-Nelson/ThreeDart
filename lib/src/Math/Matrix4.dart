@@ -178,7 +178,7 @@ class Matrix4 {
   /// [x]. [y], and [z] is the vector direction.
   /// [upHint] is a hint to help correct the top direction of the rotation.
   factory Matrix4.vectorTowards(double x, double y, double z, {Vector3 upHint: null}) {
-    if (upHint == null) upHint = new Vector3(0.0, 1.0, 0.0);
+    upHint ??= new Vector3(0.0, 1.0, 0.0);
     Vector3 forward = new Vector3(x, y, z);
     return new Matrix4.lookTowards(new Point3(0.0, 0.0, 0.0), upHint, forward);
   }
@@ -423,7 +423,10 @@ class Matrix4 {
   }
 
   /// Gets the string for this matrix.
-  String toString([String indent = "", int fraction = 3, int whole = 0]) {
+  String toString() => this.format();
+
+  /// Gets the formatted string for this matrix.
+  String format([String indent = "", int fraction = 3, int whole = 0]) {
     List<String> col1 = formatColumn([this.m11, this.m12, this.m13, this.m14], fraction, whole);
     List<String> col2 = formatColumn([this.m21, this.m22, this.m23, this.m24], fraction, whole);
     List<String> col3 = formatColumn([this.m31, this.m32, this.m33, this.m34], fraction, whole);

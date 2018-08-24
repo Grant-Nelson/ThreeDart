@@ -48,7 +48,7 @@ class Point2 {
   ///
   /// [values] is a list of doubles are in the order x then y.
   factory Point2.fromList(List<double> values) {
-    assert(values.length == 2);
+    assert(values.length == 2, );
     return new Point2(values[0], values[1]);
   }
 
@@ -113,7 +113,10 @@ class Point2 {
   }
 
   /// Gets the string for this point.
-  String toString([int fraction = 3, int whole = 0]) =>
+  String toString() => this.format();
+
+  /// Gets the formatted string for this point.
+  String format([int fraction = 3, int whole = 0]) =>
     '['+ formatDouble(this.x, fraction, whole)+
     ', '+formatDouble(this.y, fraction, whole)+']';
 }

@@ -31,7 +31,7 @@ class Inspection extends Technique {
   bool _showAABB;
   bool _showBend;
   double _vectorScale;
-  Core.Event _changed;
+  Events.Event _changed;
 
   /// Creates a new inspection techinque.
   Inspection() {
@@ -68,19 +68,19 @@ class Inspection extends Technique {
   }
 
   /// Indicates that this technique has changed.
-  Core.Event get changed {
-    if (this._changed == null) this._changed = new Core.Event();
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
     return this._changed;
   }
 
   /// Handles a change in this technique.
-  void _onChanged([Core.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
   /// Handles a change to a boolean value.
   void _onBoolChanged(String name, bool value) {
-    this._onChanged(new Core.ValueChangedEventArgs(this, name, !value, value));
+    this._onChanged(new Events.ValueChangedEventArgs(this, name, !value, value));
   }
 
   /// Indicates if the filled shape should be showed.
@@ -261,7 +261,7 @@ class Inspection extends Technique {
     if (!Math.Comparer.equals(this._vectorScale, scale)) {
       double prevScale = this._vectorScale;
       this._vectorScale = scale;
-      this._onChanged(new Core.ValueChangedEventArgs(this, "vectorScale", prevScale, scale));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "vectorScale", prevScale, scale));
     }
   }
 
@@ -272,8 +272,7 @@ class Inspection extends Technique {
 
   /// Renders the current [obj] with the current [state].
   void render(Core.RenderState state, Core.Entity obj) {
-    if (this._shader == null)
-      this._shader = new Shaders.Inspection.cached(state);
+    this._shader ??= new Shaders.Inspection.cached(state);
 
     if (obj.cacheNeedsUpdate) {
       obj.shapeBuilder.calculateNormals();
@@ -292,7 +291,7 @@ class Inspection extends Technique {
 
     if (obj.cache is Data.BufferStoreSet) {
       Data.BufferStoreSet store = obj.cache as Data.BufferStoreSet;
-      state.gl.blendFunc(WebGL.ONE, WebGL.ONE);
+      state.gl.blendFunc(WebGL.WebGL.ONE, WebGL.WebGL.ONE);
 
       if (obj.shape == null) this._renderAllBuilderParts(store, state, obj);
       else                   this._renderAllShapeParts(store, state, obj);
@@ -305,22 +304,22 @@ class Inspection extends Technique {
   /// Renders the current [obj] with the current [state].
   /// Must have a shape, not just a shape builder, to do a full inspection.
   void _renderAllBuilderParts(Data.BufferStoreSet store, Core.RenderState state, Core.Entity obj) {
-    state.gl.disable(WebGL.DEPTH_TEST);
-    state.gl.enable(WebGL.BLEND);
+    state.gl.disable(WebGL.WebGL.DEPTH_TEST);
+    state.gl.enable(WebGL.WebGL.BLEND);
 
     if (this._showAxis)
       this._renderBuilder(state, store, obj.shapeBuilder, 'Axis', this._axis, this._ambient4, this._diffuse4);
     if (this._showAABB)
       this._renderBuilder(state, store, obj.shapeBuilder, 'AABB', this._aabb, this._ambient4, this._diffuse4);
 
-    state.gl.enable(WebGL.DEPTH_TEST);
-    state.gl.disable(WebGL.BLEND);
+    state.gl.enable(WebGL.WebGL.DEPTH_TEST);
+    state.gl.disable(WebGL.WebGL.BLEND);
   }
 
   /// Renders the current [obj] with the current [state].
   void _renderAllShapeParts(Data.BufferStoreSet store, Core.RenderState state, Core.Entity obj) {
-    state.gl.enable(WebGL.DEPTH_TEST);
-    state.gl.disable(WebGL.BLEND);
+    state.gl.enable(WebGL.WebGL.DEPTH_TEST);
+    state.gl.disable(WebGL.WebGL.BLEND);
 
     // TODO: Why does POINTS not respect depth tests?
     // Once they do move these two below with the other DEPTH_TEST disabled.
@@ -340,8 +339,8 @@ class Inspection extends Technique {
     if (this._showBend)
       this._render(state, store, obj.shape, 'bend1', this._bendFill, this._ambient3, this._diffuse3);
 
-    state.gl.disable(WebGL.DEPTH_TEST);
-    state.gl.enable(WebGL.BLEND);
+    state.gl.disable(WebGL.WebGL.DEPTH_TEST);
+    state.gl.enable(WebGL.WebGL.BLEND);
 
     if (this._showWireFrame)
       this._render(state, store, obj.shape, 'wireFrame', this._wireFrame, this._ambient2, this._diffuse2);
@@ -364,8 +363,8 @@ class Inspection extends Technique {
     if (this._showAABB)
       this._render(state, store, obj.shape, 'AABB', this._aabb, this._ambient4, this._diffuse4);
 
-    state.gl.enable(WebGL.DEPTH_TEST);
-    state.gl.disable(WebGL.BLEND);
+    state.gl.enable(WebGL.WebGL.DEPTH_TEST);
+    state.gl.disable(WebGL.WebGL.BLEND);
   }
 
   /// Renderes one of the shape components to inspect.
@@ -426,7 +425,7 @@ class Inspection extends Technique {
   /// Convertes the given [shape] into the wire frame shape.
   Shapes.Shape _wireFrame(Shapes.Shape shape, {Math.Color4 color: null}) {
     Shapes.Shape result = new Shapes.Shape();
-    if (color == null) color = new Math.Color4(0.0, 0.7, 1.0);
+    color ??= new Math.Color4(0.0, 0.7, 1.0);
     shape.vertices.forEach((Shapes.Vertex vertex) {
       result.vertices.add(vertex.copy()
         ..color = color
@@ -675,7 +674,7 @@ class Inspection extends Technique {
     double maxBend = 0.0;
     shape.vertices.forEach((Shapes.Vertex vertex) {
       Math.Point4 bend = vertex.bending;
-      if (bend == null) bend = new Math.Point4.zero();
+      bend ??= new Math.Point4.zero();
       maxBend = math.max(maxBend, bend.x);
       maxBend = math.max(maxBend, bend.y);
       maxBend = math.max(maxBend, bend.z);
@@ -701,7 +700,7 @@ class Inspection extends Technique {
     Shapes.Shape result = new Shapes.Shape();
     shape.vertices.forEach((Shapes.Vertex vertex) {
       Math.Point4 bend = vertex.bending;
-      if (bend == null) bend = new Math.Point4.zero();
+      bend ??= new Math.Point4.zero();
       Math.Color3 clr = new Math.Color3.black();
       clr = clr + this._bendColor(bend.x, maxIndex);
       clr = clr + this._bendColor(bend.y, maxIndex);

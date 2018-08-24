@@ -6,6 +6,7 @@ import 'dart:math' as math;
 import 'dart:typed_data' as Typed;
 
 import '../Core/Core.dart' as Core;
+import '../Events/Events.dart' as Events;
 import '../Math/Math.dart' as Math;
 
 part 'Texture.dart';

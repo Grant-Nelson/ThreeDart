@@ -76,12 +76,12 @@ class MtlLoader {
         case "Ns":       this._processShininess(parts[1]);    return;
         case "d":        this._processAlpha(parts[1]);        return;
         case "Tr":       this._processTransparency(parts[1]); return;
-        case "map_Ka":   await this._processAmbientMap(parts[1], dir);   return;
-        case "map_Kd":   await this._processDiffuseMap(parts[1], dir);   return;
-        case "map_Ks":   await this._processSpecularMap(parts[1], dir);  return;
-        case "map_d":    await this._processAlphaMap(parts[1], dir);     return;
-        case "map_bump": await this._processBumpMap(parts[1], dir);      return;
-        case "bump":     await this._processBumpMap(parts[1], dir);      return;
+        case "map_Ka":   await this._processAmbientMap(parts[1], dir);  return;
+        case "map_Kd":   await this._processDiffuseMap(parts[1], dir);  return;
+        case "map_Ks":   await this._processSpecularMap(parts[1], dir); return;
+        case "map_d":    await this._processAlphaMap(parts[1], dir);    return;
+        case "map_bump": await this._processBumpMap(parts[1], dir);     return;
+        case "bump":     await this._processBumpMap(parts[1], dir);     return;
         default:
           if (!strict) return;
           throw new Exception("Unknown or unsupported line type \"${parts[0]}\".");

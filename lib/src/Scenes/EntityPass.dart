@@ -13,19 +13,19 @@ class EntityPass implements RenderPass {
   Techniques.Technique _tech;
 
   /// The children entities to render.
-  Core.Collection<Core.Entity> _children;
+  Collections.Collection<Core.Entity> _children;
 
   /// Event emitted before an update for this pass.
-  Core.Event _onPreUpdate;
+  Events.Event _onPreUpdate;
 
   /// Event emitted after an update for this pass.
-  Core.Event _onPostUpdate;
+  Events.Event _onPostUpdate;
 
   /// Event emitted on an render for this pass.
-  Core.Event _onRender;
+  Events.Event _onRender;
 
   /// Event emitted on an render for this pass.
-  Core.Event _changed;
+  Events.Event _changed;
 
   /// Creates a new render pass.
   EntityPass({
@@ -37,7 +37,7 @@ class EntityPass implements RenderPass {
     this._camera = null;
     this._target = null;
     this._tech   = null;
-    this._children = new Core.Collection<Core.Entity>();
+    this._children = new Collections.Collection<Core.Entity>();
     this._children.setHandlers(
       onAddedHndl: this._onChildrenAdded,
       onRemovedHndl: this._onChildrenRemoved);
@@ -53,7 +53,7 @@ class EntityPass implements RenderPass {
   }
 
   /// Handles a change in this pass.
-  void _onChanged([Core.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
@@ -62,7 +62,7 @@ class EntityPass implements RenderPass {
     for (Core.Entity entity in entities) {
       if (entity != null) entity.changed.add(this._onChanged);
     }
-    this._onChanged(new Core.ItemsAddedEventArgs(this, index, entities));
+    this._onChanged(new Events.ItemsAddedEventArgs(this, index, entities));
   }
 
   /// Called when a child is removed.
@@ -70,7 +70,7 @@ class EntityPass implements RenderPass {
     for (Core.Entity entity in entities) {
       if (entity != null) entity.changed.remove(this._onChanged);
     }
-    this._onChanged(new Core.ItemsRemovedEventArgs(this, index, entities));
+    this._onChanged(new Events.ItemsRemovedEventArgs(this, index, entities));
   }
 
   /// The camera describing the view of the scene.
@@ -83,7 +83,7 @@ class EntityPass implements RenderPass {
       Views.Camera prev = this._camera;
       this._camera = camera;
       if (this._camera != null) this._camera.changed.add(this._onChanged);
-      this._onChanged(new Core.ValueChangedEventArgs(this, "camera", prev, this._camera));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "camera", prev, this._camera));
     }
   }
 
@@ -97,7 +97,7 @@ class EntityPass implements RenderPass {
       Views.Target prev = this._target;
       this._target = target;
       if (this._target != null) this._target.changed.add(this._onChanged);
-      this._onChanged(new Core.ValueChangedEventArgs(this, "target", prev, this._target));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "target", prev, this._target));
     }
   }
 
@@ -109,34 +109,34 @@ class EntityPass implements RenderPass {
       Techniques.Technique prev = this._tech;
       this._tech = tech;
       if (this._tech != null) this._tech.changed.add(this._onChanged);
-      this._onChanged(new Core.ValueChangedEventArgs(this, "technique", prev, this._tech));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "technique", prev, this._tech));
     }
   }
 
   /// The children entities to render.
-  Core.Collection<Core.Entity> get children => this._children;
+  Collections.Collection<Core.Entity> get children => this._children;
 
   /// Event emitted before an update for this pass.
-  Core.Event get onPreUpdate {
-    if (this._onPreUpdate == null) this._onPreUpdate = new Core.Event();
+  Events.Event get onPreUpdate {
+    this._onPreUpdate ??= new Events.Event();
     return this._onPreUpdate;
   }
 
   /// Event emitted after an update for this pass.
-  Core.Event get onPostUpdate {
-    if (this._onPostUpdate == null) this._onPostUpdate = new Core.Event();
+  Events.Event get onPostUpdate {
+    this._onPostUpdate ??= new Events.Event();
     return this._onPostUpdate;
   }
 
   /// Event emitted on an render for this pass.
-  Core.Event get onRender {
-    if (this._onRender == null) this._onRender = new Core.Event();
+  Events.Event get onRender {
+    this._onRender ??= new Events.Event();
     return this._onRender;
   }
 
   /// Event emitted on a the pass or a child entity has changed.
-  Core.Event get changed {
-    if (this._changed == null) this._changed = new Core.Event();
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
     return this._changed;
   }
 

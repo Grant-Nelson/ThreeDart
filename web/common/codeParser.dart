@@ -10,7 +10,7 @@ abstract class CodeParser {
   /// Constructs a new code parser.
   /// The lowercase [name] of the type of code to parse, e.g. html, dart, or glsl
   CodeParser._(String this._name) {
-    this._escape = new convert.HtmlEscape(convert.HtmlEscapeMode.ELEMENT);
+    this._escape = new convert.HtmlEscape(convert.HtmlEscapeMode.element);
     this._tokenizer = null;
     this._lineList = [];
   }
@@ -48,7 +48,7 @@ abstract class CodeParser {
   void parse(List<String> lines) {
     this._lineList = [];
     String code = lines.join("\n");
-    if (this._tokenizer == null) this._tokenizer = this.createTokenizer();
+    this._tokenizer ??= this.createTokenizer();
     for (Tokenizer.Token token in this._tokenizer.tokenize(code)) {
       this.processToken(token);
     }

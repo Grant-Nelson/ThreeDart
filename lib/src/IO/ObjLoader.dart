@@ -169,7 +169,7 @@ class ObjLoader {
       if (!Math.Comparer.equals(list[3], 1.0))
         throw new Exception("Currently, non-one w values in positions are not supported.");
     }
-    this._posList.add(new _objVertex(new Math.Point3.fromList(list)));
+    this._posList.add(new _objVertex(new Math.Point3.fromList([list[0], list[1], list[2]])));
   }
 
   /// Process a new vertex texture (vt) line.
@@ -183,7 +183,7 @@ class ObjLoader {
       if (!Math.Comparer.equals(list[2], 0.0))
         throw new Exception("Currently, non-zero z values in textures are not supported.");
     }
-    this._texList.add(new Math.Point2.fromList(list));
+    this._texList.add(new Math.Point2.fromList([list[0], list[1]]));
   }
 
   /// Process a new vertex normal (vn) line.
