@@ -3,8 +3,8 @@ part of ThreeDart.Input;
 /// A mouse event argument.
 class MouseEventArgs extends PointEventArgs {
 
-  /// True if the mouse button is pressed, false otherwise.
-  final bool pressed;
+  /// The mouse buttons which are pressed, false otherwise.
+  final Button button;
 
   /// The point, in pixels, at which the mouse button was last pressed or released.
   final Math.Point2 startRawPoint;
@@ -19,7 +19,7 @@ class MouseEventArgs extends PointEventArgs {
   final DateTime previousTime;
 
   /// Creates a mouse event argument.
-  MouseEventArgs(Object sender, this.pressed, Math.Region2 size,
+  MouseEventArgs(Object sender, this.button, Math.Region2 size,
     this.startRawPoint, this.previousRawPoint, Math.Point2 rawPoint,
     this.startTime, this.previousTime, DateTime currentTime):
     super(sender, size, rawPoint, currentTime);

@@ -8,11 +8,16 @@ class RadioGroup {
 
   RadioGroup(String this._elemId) {
     this._elem = html.document.getElementById(this._elemId);
+    if (this._elem == null) {
+      throw "Failed to find $this._elemId for RadioGroup";
+    }
   }
 
   String get selectedItem => Uri.base.queryParameters['$_elemId'];
 
   void add(String text, radioSelectedHndl hndl, [bool selectedByDefault = false]) {
+    if (this._elem == null) return;
+
     // When adding buttons, check the URL to see if the button added should be the selected one.
     bool itemIsChecked = false;
     if (selectedItem == null) {

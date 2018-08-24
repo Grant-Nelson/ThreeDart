@@ -7,14 +7,17 @@ import '../Collections/Collections.dart' as Collections;
 import '../Events/Events.dart' as Events;
 import '../Math/Math.dart' as Math;
 
+part 'Button.dart';
 part 'Interactable.dart';
 part 'Key.dart';
 part 'KeyEventArgs.dart';
 part 'KeyGroup.dart';
 part 'KeyInput.dart';
 part 'LockedMouseEventArgs.dart';
+part 'LockedMouseInput.dart';
 part 'Modifiers.dart';
 part 'MouseEventArgs.dart';
+part 'MouseInput.dart';
 part 'MouseWheelEventArgs.dart';
 part 'PointEventArgs.dart';
 part 'UserInput.dart';

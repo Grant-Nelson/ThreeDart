@@ -37,8 +37,10 @@ class Event {
   ///
   /// The [args] will be submitted to each event handler.
   /// The event will not be emitted if it is currently suspended.
-  /// The method will return after each event handler has returned.
-  void emit([EventArgs args = null]) {
+  /// The method will return after all event handlers has returned.
+  /// Returns true if any handler is emitted even if suspended, false if empty.
+  bool emit([EventArgs args = null]) {
+    bool hasHndls = this._hndls.isNotEmpty;
     args ??= new EventArgs(null);
     if (this.suspended) {
       if (!this.pending) this._pendingArgs = args;
@@ -47,6 +49,7 @@ class Event {
         hndl(args);
       });
     }
+    return hasHndls;
   }
 
   /// Puts a future into the main event loop to emit this event.

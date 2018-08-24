@@ -92,6 +92,7 @@ class Key {
   factory Key(int code, {bool ctrl: false, bool alt: false, bool shift: false}) =>
     new Key.fromMod(code, new Modifiers(ctrl, alt, shift));
 
+  /// Creates a new key with the given modifiers.
   Key.fromMod(int this.code, Modifiers this.modifiers);
 
   /// Checks the equality of this key to the given object.

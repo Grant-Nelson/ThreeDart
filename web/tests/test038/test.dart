@@ -73,7 +73,7 @@ ThreeDart.Entity createObjects(ThreeDart.ThreeDart td) {
 }
 
 void main() {
-  common.shellTest("Test 038", [],
+  common.shellTest("Test 038", ["options"],
     "A test of basic 3D movement around a room similar to a first person view. "+
     "A and D (left and right arrow keys) strifes left and right. "+
     "W and S (up and down arrow keys) moves forward and backward. "+
@@ -96,6 +96,9 @@ void main() {
   td.scene = new Scenes.EntityPass()
     ..children.add(group)
     ..camera.mover = camera;
+
+  new common.CheckGroup("options")
+    ..add("Mouse Locking", (bool enable) { td.userInput.lockOnClick = enable; }, false);
 
   common.showFPS(td);
 }

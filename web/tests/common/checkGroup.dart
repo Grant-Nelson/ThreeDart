@@ -8,9 +8,13 @@ class CheckGroup {
 
   CheckGroup(String elemId) {
     this._elem = html.document.getElementById(elemId);
+    if (this._elem == null) {
+      throw "Failed to find $elemId for CheckGroup";
+    }
   }
 
   void add(String text, checkSelecutedHndl hndl, [bool checked = false]) {
+    if (this._elem == null) return;
     hndl(checked);
     html.LabelElement label = new html.LabelElement()
       ..style.whiteSpace = "nowrap";

@@ -12,9 +12,6 @@ class UserRotater implements Mover, Input.Interactable {
   /// The yaw component for this rotater.
   ComponentShift _yaw;
 
-  /// Indicates the user rotater works for locking.
-  bool _locking;
-
   /// Indicates if the modifier keys which must be pressed or released.
   Input.Modifiers _modPressed;
 
@@ -92,7 +89,6 @@ class UserRotater implements Mover, Input.Interactable {
       ..velocity  = 0.0
       ..dampening = 0.5;
     this._yaw.changed.add(this._onChanged);
-    this._locking     = locking;
     this._modPressed  = null;
     this._cumulative  = false;
     this._invertX     = false;
@@ -154,21 +150,20 @@ class UserRotater implements Mover, Input.Interactable {
     if (input == null) return false;
     if (this._input != null) return false;
     this._input = input;
-    this._input.lockOnClick = this._locking;
-    this._input.pointerLockChanged.add(this._lockChangedHandle);
-    this._input.mouseDown.add(this._mouseDownHandle);
-    this._input.mouseMove.add(this._mouseMoveHandle);
-    this._input.mouseUp.add(this._mouseUpHandle);
+    //this._input.pointerLockChanged.add(this._lockChangedHandle);
+    this._input.mouse.down.add(this._mouseDownHandle);
+    this._input.mouse.move.add(this._mouseMoveHandle);
+    this._input.mouse.up.add(this._mouseUpHandle);
     return true;
   }
 
   /// Detaches this mover from the user input.
   void detach() {
     if (this._input != null) {
-    this._input.pointerLockChanged.remove(this._lockChangedHandle);
-      this._input.mouseDown.remove(this._mouseDownHandle);
-      this._input.mouseMove.remove(this._mouseMoveHandle);
-      this._input.mouseUp.remove(this._mouseUpHandle);
+      //this._input.pointerLockChanged.remove(this._lockChangedHandle);
+      this._input.mouse.down.remove(this._mouseDownHandle);
+      this._input.mouse.move.remove(this._mouseMoveHandle);
+      this._input.mouse.up.remove(this._mouseUpHandle);
       this._input = null;
     }
   }
@@ -182,34 +177,29 @@ class UserRotater implements Mover, Input.Interactable {
     return new Math.Vector2(dx, dy);
   }
 
+  /// TODO: Comment
   void _lockChangedHandle(Events.EventArgs args) {
-    if (this._input.pointerLocked) {
-      this._inDeadBand = true;
-      this._lastYaw = this._yaw.location;
-      this._lastPitch = this._pitch.location;
-    }
+    // if (this._input.pointerLocked) {
+    //   this._inDeadBand = true;
+    //   this._lastYaw = this._yaw.location;
+    //   this._lastPitch = this._pitch.location;
+    // }
   }
 
   /// Handles the mouse down event.
   void _mouseDownHandle(Events.EventArgs args) {
-    if (!this._locking) {
-      if (this._modPressed != this._input.keyInput.modifiers) return;
-      this._pressed = true;
-      this._inDeadBand = true;
-      this._lastYaw = this._yaw.location;
-      this._lastPitch = this._pitch.location;
-    }
+    if (this._modPressed != this._input.key.modifiers) return;
+    this._pressed = true;
+    this._inDeadBand = true;
+    this._lastYaw = this._yaw.location;
+    this._lastPitch = this._pitch.location;
   }
 
   /// Handles the mouse move event.
   void _mouseMoveHandle(Events.EventArgs args) {
     Input.MouseEventArgs margs = (args as Input.MouseEventArgs);
 
-    if (this._locking) {
-      if (!this._input.pointerLocked) return;
-      if (this._modPressed != this._input.keyInput.modifiers) return;
-    } else if (!this._pressed) return;
-
+    if (!this._pressed) return;
     if (this._inDeadBand) {
       if (margs.rawOffset.length2() < this._deadBand2) return;
       this._inDeadBand = false;
@@ -316,6 +306,7 @@ class UserRotater implements Mover, Input.Interactable {
   }
 
   /// The dead-band, in pixels, before any movement is made.
+  /// This does not apply when the mouse is locked.
   double get deadBand => this._deadBand;
   void set deadBand(double value) {
     value = value ?? 0.0;

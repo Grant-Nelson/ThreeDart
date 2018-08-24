@@ -95,25 +95,25 @@ class UserRoller implements Mover, Input.Interactable {
     if (input == null) return false;
     if (this._input != null) return false;
     this._input = input;
-    this._input.mouseDown.add(this._mouseDownHandle);
-    this._input.mouseMove.add(this._mouseMoveHandle);
-    this._input.mouseUp.add(this._mouseUpHandle);
+    this._input.mouse.down.add(this._mouseDownHandle);
+    this._input.mouse.move.add(this._mouseMoveHandle);
+    this._input.mouse.up.add(this._mouseUpHandle);
     return true;
   }
 
   /// Detaches this mover from the user input.
   void detach() {
     if (this._input != null) {
-      this._input.mouseDown.remove(this._mouseDownHandle);
-      this._input.mouseMove.remove(this._mouseMoveHandle);
-      this._input.mouseUp.remove(this._mouseUpHandle);
+      this._input.mouse.down.remove(this._mouseDownHandle);
+      this._input.mouse.move.remove(this._mouseMoveHandle);
+      this._input.mouse.up.remove(this._mouseUpHandle);
       this._input = null;
     }
   }
 
   /// Handles the mouse down event.
   void _mouseDownHandle(Events.EventArgs args) {
-    if (this._modPressed != this._input.keyInput.modifiers) return;
+    if (this._modPressed != this._input.key.modifiers) return;
     this._pressed = true;
     this._inDeadBand = true;
     this._lastRoll = this._roll.location;

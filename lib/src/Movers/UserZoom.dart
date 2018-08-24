@@ -59,21 +59,21 @@ class UserZoom implements Mover, Input.Interactable {
     if (input == null) return false;
     if (this._input != null) return false;
     this._input = input;
-    this._input.mouseWheel.add(this._mouseWheelHandle);
+    this._input.mouse.wheel.add(this._mouseWheelHandle);
     return true;
   }
 
   /// Detaches this mover from the user input.
   void detach() {
     if (this._input != null) {
-      this._input.mouseWheel.remove(this._mouseWheelHandle);
+      this._input.mouse.wheel.remove(this._mouseWheelHandle);
       this._input = null;
     }
   }
 
   /// Handles the mouse wheel changing.
   void _mouseWheelHandle(Events.EventArgs args) {
-    if (this._modPressed != this._input.keyInput.modifiers) return;
+    if (this._modPressed != this._input.key.modifiers) return;
     Input.MouseWheelEventArgs margs = (args as Input.MouseWheelEventArgs);
     this.zoom += margs.wheel.dy*this._zoomScalar;
   }
