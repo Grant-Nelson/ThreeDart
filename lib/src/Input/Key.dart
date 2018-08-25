@@ -2,6 +2,7 @@ part of ThreeDart.Input;
 
 /// A keyboard key press or release value with modifiers.
 class Key {
+  static const int none         = 0;
   static const int backspace    = 8;
   static const int tab          = 9;
   static const int enter        = 13;

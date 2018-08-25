@@ -71,7 +71,9 @@ class LockedMouseInput {
     return args;
   }
   
-  // TODO: Comment
+  // Performs a locked mouse press down event.
+  // This also sets the button code currently pressed.
+  // Returns true if any events were called, false if none were called.
   bool performDown(Button button, Math.Vector2 vec) {
     this._buttons = button.code;
     if (this._down == null) return false;
@@ -79,7 +81,9 @@ class LockedMouseInput {
     return true;
   }
 
-  // TODO: Comment
+  // Performs a locked mouse press up event.
+  // This also unsets the button code currently pressed.
+  // Returns true if any events were called, false if none were called.
   bool performUp(Button button, Math.Vector2 vec) {
     this._buttons &= ~button.code;
     if (this._up == null) return false;
@@ -87,14 +91,16 @@ class LockedMouseInput {
     return true;
   }
 
-  // TODO: Comment
+  // Performs a locked mouse movement event.
+  // Returns true if any events were called, false if none were called.
   bool performMove(Button button, Math.Vector2 vec) {
     if (this._move == null) return false;
     this._move.emit(this._getMouseArgs(button, vec, false));
     return true;
   }
 
-  // TODO: Comment
+  // Performs a locked mouse wheel event.
+  // Returns true if any events were called, false if none were called.
   bool performWheel(Math.Vector2 wheel) {
     if (this._wheel == null) return false;
     this._wheel.emit(new MouseWheelEventArgs(this, this._input.clientRect, this._prevPnt, new DateTime.now(), wheel));

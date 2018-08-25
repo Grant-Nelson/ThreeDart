@@ -7,6 +7,7 @@ class UserInput {
   KeyInput _key;
   MouseInput _mouse;
   LockedMouseInput _locked;
+  TouchInput _touch;
   bool _focused;
   bool _lockOnClick;
   bool _pointerLocked;
@@ -18,6 +19,7 @@ class UserInput {
     this._key = new KeyInput._();
     this._mouse = new MouseInput._(this);
     this._locked = new LockedMouseInput._(this);
+    this._touch = new TouchInput._(this);
     this._focused = false;
     this._lockOnClick = false;
     this._pointerLocked = false;
@@ -36,11 +38,9 @@ class UserInput {
     this._eventStreams.add(html.document.onMouseMove.listen(this._onDocMouseMove));
     this._eventStreams.add(html.document.onMouseUp.listen(this._onDocMouseUp));
     this._eventStreams.add(html.document.onPointerLockChange.listen(this._onPointerLockChanged));
-    
-    // TODO: Implement touch as a mouse event.
-    //this._elem.onTouchStart
-    //this._elem.onTouchMove
-    //this._elem.onTouchEnd
+    this._eventStreams.add(this._elem.onTouchStart.listen(this._onTouchStart));
+    this._eventStreams.add(this._elem.onTouchEnd.listen(this._onTouchEnd));
+    this._eventStreams.add(this._elem.onTouchMove.listen(this._onTouchMove));
   }
 
   /// Disposes the user input.
@@ -65,6 +65,9 @@ class UserInput {
   /// Locked mouse handler for the user locked mouse input.
   LockedMouseInput get locked => this._locked;
   
+  /// Touch pad handler for the user touch or mobile input.
+  TouchInput get touch => this._touch;
+  
   /// Gets or sets if the mouse should lock the pointer on click.
   bool get lockOnClick => this._lockOnClick;
   void set lockOnClick(bool enable) { this._lockOnClick = enable; }
@@ -87,7 +90,12 @@ class UserInput {
     this._key._mods = new Modifiers(msEvent.ctrlKey||msEvent.metaKey, msEvent.altKey, msEvent.shiftKey);
   }
 
-  /// Gets the raw point relative to the client retangle in pixels.
+  /// Sets the modifier keys for a touch event.
+  void _setTouchModifiers(html.TouchEvent tEvent) {
+    this._key._mods = new Modifiers(tEvent.ctrlKey||tEvent.metaKey, tEvent.altKey, tEvent.shiftKey);
+  }
+
+  /// Gets the raw mouse point relative to the client retangle in pixels.
   Math.Point2 _rawPoint(html.MouseEvent msEvent) {
     html.Rectangle rect = this._elem.getBoundingClientRect();
     return new Math.Point2(msEvent.page.x-rect.left, msEvent.page.y-rect.top);
@@ -96,6 +104,16 @@ class UserInput {
   /// Gets the raw movement on the client in delta pixels.
   Math.Vector2 _rawMove(html.MouseEvent msEvent) {
     return new Math.Vector2(msEvent.movement.x, msEvent.movement.y);
+  }
+
+  /// Gets the raw touch points relative to the client retangle in pixels.
+  List<Math.Point2> _rawTouchPoints(html.TouchEvent tEvent) {
+    html.Rectangle rect = this._elem.getBoundingClientRect();
+    List<Math.Point2> pnts = new List<Math.Point2>();
+    for (html.Touch touch in tEvent.touches) {
+      pnts.add(new Math.Point2(touch.page.x-rect.left, touch.page.y-rect.top));
+    }
+    return pnts;
   }
 
   /// Convertes the html button into the 3Dart button.
@@ -116,8 +134,8 @@ class UserInput {
   }
 
   /// Handles cancelling the content menu for the canvas.
-  bool _onContentMenu(html.Event _) {
-    return !this.hasFocus;
+  void _onContentMenu(html.Event e) {
+    if (this.hasFocus) e.preventDefault();
   }
 
   /// Handles a keyboard key being released.
@@ -138,8 +156,9 @@ class UserInput {
 
   /// Handles the mouse down in canvas event.
   void _onMouseDown(html.MouseEvent msEvent) {
-    async.Timer.run(this._elem.focus);
+    this._elem.focus();
     this._focused = true; // This is here because focus/blur doesn't work right now.
+
     this._setMouseModifiers(msEvent);
 
     if (this._pointerLocked) {
@@ -261,5 +280,32 @@ class UserInput {
       final Math.Point2 pnt = this._rawPoint(this._msEventOnLock);
       this._locked._onLockChanged(button, pnt, locked);
     }
+  }
+
+  // Handles touch screen point presses starting on the canvas.
+  void _onTouchStart(html.TouchEvent tEvent) {
+    this._elem.focus();
+    this._focused = true; // This is here because focus/blur doesn't work right now.
+
+    this._setTouchModifiers(tEvent);
+    final List<Math.Point2> pnts = this._rawTouchPoints(tEvent);
+    if (this._touch.performStart(pnts))
+      tEvent.preventDefault();
+  }
+
+  // Handles touch screen point presses ending.
+  void _onTouchEnd(html.TouchEvent tEvent) {
+    this._setTouchModifiers(tEvent);
+    final List<Math.Point2> pnts = this._rawTouchPoints(tEvent);
+    if (this._touch.performEnd(pnts))
+      tEvent.preventDefault();
+  }
+
+  // Handles touch screen points moving.
+  void _onTouchMove(html.TouchEvent tEvent) {
+    this._setTouchModifiers(tEvent);
+    final List<Math.Point2> pnts = this._rawTouchPoints(tEvent);
+    if (this._touch.performMove(pnts))
+      tEvent.preventDefault();
   }
 }

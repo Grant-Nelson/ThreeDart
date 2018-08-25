@@ -155,6 +155,9 @@ class UserRotater implements Mover, Input.Interactable {
     this._input.mouse.up.add(this._mouseUpHandle);
     this._input.locked.lockChanged.add(this._lockChangedHandle);
     this._input.locked.move.add(this._lockedMoveHandle);
+    this._input.touch.start.add(this._touchStartHandle);
+    this._input.touch.move.add(this._touchMoveHandle);
+    this._input.touch.end.add(this._touchEndHandle);
     return true;
   }
 
@@ -166,6 +169,9 @@ class UserRotater implements Mover, Input.Interactable {
       this._input.mouse.up.remove(this._mouseUpHandle);
       this._input.locked.lockChanged.remove(this._lockChangedHandle);
       this._input.locked.move.remove(this._lockedMoveHandle);
+      this._input.touch.start.remove(this._touchStartHandle);
+      this._input.touch.move.remove(this._touchMoveHandle);
+      this._input.touch.end.remove(this._touchEndHandle);
       this._input = null;
     }
   }
@@ -226,7 +232,7 @@ class UserRotater implements Mover, Input.Interactable {
     }
   }  
 
-  /// TODO: Comment
+  /// Handle the change in the mouse pointer lock.
   void _lockChangedHandle(Events.EventArgs args) {
     Input.LockedEventArgs margs = (args as Input.LockedEventArgs);
     if (margs.locked) {
@@ -236,7 +242,7 @@ class UserRotater implements Mover, Input.Interactable {
     }
   }
 
-  /// TODO: Comment
+  /// Handle the locked mouse movement.
   void _lockedMoveHandle(Events.EventArgs args) {
     Input.MouseEventArgs margs = (args as Input.MouseEventArgs);
     if (this._modPressed != margs.button.modifiers) return;
@@ -251,6 +257,52 @@ class UserRotater implements Mover, Input.Interactable {
     this._onChanged();
   }
 
+  /// Handle the touch screen touch start.
+  void _touchStartHandle(Events.EventArgs args) {
+    this._pressed = true;
+    this._inDeadBand = true;
+    this._lastYaw = this._yaw.location;
+    this._lastPitch = this._pitch.location;
+  }
+
+  /// Handle the touch screen move.
+  void _touchMoveHandle(Events.EventArgs args) {
+    Input.TouchEventArgs targs = (args as Input.TouchEventArgs);
+    
+    if (!this._pressed) return;
+    if (this._inDeadBand) {
+      if (targs.rawOffset.length2() < this._deadBand2) return;
+      this._inDeadBand = false;
+    }
+    
+    if (this._cumulative) {
+      this._prevVal = this._getInverses(targs.adjustedOffset);
+      this._yaw.velocity   = -this._prevVal.dx*10.0*this._yawScalar;
+      this._pitch.velocity = -this._prevVal.dy*10.0*this._pitchScalar;
+    } else {
+      Math.Vector2 off = this._getInverses(targs.adjustedOffset);
+      this._yaw.location   = -off.dx*this._yawScalar + this._lastYaw;
+      this._pitch.location = -off.dy*this._pitchScalar + this._lastPitch;
+      this._pitch.velocity = 0.0;
+      this._yaw.velocity   = 0.0;
+      this._prevVal = this._getInverses(targs.adjustedDelta);
+    }
+
+    this._onChanged();
+  }
+
+  /// Handle the touch screen end.
+  void _touchEndHandle(Events.EventArgs args) {
+    if (!this._pressed) return;
+    this._pressed = false;
+    if (this._inDeadBand) return;
+    if (this._prevVal.length2() > 0.0001) {
+      this._yaw.velocity   = -this._prevVal.dx*10.0*this._yawScalar;
+      this._pitch.velocity = -this._prevVal.dy*10.0*this._pitchScalar;
+      this._onChanged();
+    }
+  }
+
   /// The pitch component for this rotater.
   ComponentShift get pitch => this._pitch;
 
@@ -258,6 +310,7 @@ class UserRotater implements Mover, Input.Interactable {
   ComponentShift get yaw => this._yaw;
 
   /// Indicates if the modifiers keys must be pressed or released.
+  /// This does not apply when using a touch input.
   Input.Modifiers get modifiers => this._modPressed;
   void set modifiers(Input.Modifiers mods) {
     mods = mods ?? new Input.Modifiers.none();

@@ -20,4 +20,6 @@ part 'MouseEventArgs.dart';
 part 'MouseInput.dart';
 part 'MouseWheelEventArgs.dart';
 part 'PointEventArgs.dart';
+part 'TouchEventArgs.dart';
+part 'TouchInput.dart';
 part 'UserInput.dart';
