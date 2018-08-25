@@ -41,6 +41,8 @@ void show() {
       "to turn this into a simple online game."])
     ..addPar(["«[Back to Examples List|http://grant-nelson.github.io/ThreeDart/build/web/]"])
     ..addHeader(1, "Controls")
+    ..addPar(["• _Currently there are no controls for mobile browsers_"])
+    ..addPar(["• *Esc* to release the mouse capture"])
     ..addPar(["• *W* or *Up arrow* to move forward"])
     ..addPar(["• *S* or *Down arrow* to move backward"])
     ..addPar(["• *A* or *Left arrow* to strife left"])
@@ -48,10 +50,8 @@ void show() {
     ..addPar(["• *Space bar* to jump"])
     ..addPar(["• *Tab* cycles the block selected which can be placed"])
     ..addPar(["• *Shift-Tab* cycles the selection in the reverse direction"])
-    ..addPar(["• *Q* removes the currently highlighted block"])
-    ..addPar(["• *E* places the selected block on the highlighted block"])
-    ..addPar(["• *Right click and drag* the mouse to look around"])
-    ..addPar(["• _Currently there are no controls for mobile browsers_"])
+    ..addPar(["• *Left click* or *Q* removes the currently highlighted block"])
+    ..addPar(["• *Right click* or *E* places the selected block on the highlighted block"])
     ..addHeader(1, "Help wanted")
     ..addPar(["There is still much to be done, many cool new features, and several little bugs. ",
       "If you would like to contribute to this example, have an idea, find a bug, or just want to learn more about it, ",

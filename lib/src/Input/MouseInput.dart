@@ -34,6 +34,12 @@ class MouseInput {
   /// The time of the last mouse event.
   DateTime _prevTime;
 
+  /// The horizontal mouse wheel movement sensitivity.
+  double _whSensitivity;
+
+  /// The vertical mouse wheel movement sensitivity.
+  double _wvSensitivity;
+
   /// Creates a new user mouse input.
   MouseInput._(this._input) {
     this._down = null;
@@ -46,6 +52,9 @@ class MouseInput {
     this._startPnt = new Math.Point2.zero();
     this._prevTime = null;
     this._prevPnt = new Math.Point2.zero();
+    
+    this._whSensitivity = 1.0;
+    this._wvSensitivity = 1.0;
   }
 
   /// Gets the mouse arguments.
@@ -96,9 +105,18 @@ class MouseInput {
   // Returns true if any events were called, false if none were called.
   bool performWheel(Math.Vector2 wheel, Math.Point2 pnt) {
     if (this._wheel == null) return false;
-    this._wheel.emit(new MouseWheelEventArgs(this, this._input.clientRect, pnt, new DateTime.now(), wheel));
+    this._wheel.emit(new MouseWheelEventArgs(this, this._input.clientRect, pnt,
+      new DateTime.now(), new Math.Vector2(wheel.dx*this._whSensitivity, wheel.dy*this._wvSensitivity)));
     return true;
   }
+
+  /// The horizontal mouse wheel movement sensitivity.
+  double get wheelHorizontalSensitivity => this._whSensitivity;
+  void set wheelHorizontalSensitivity(double sensitivity) => this._whSensitivity = sensitivity;
+
+  /// The vertical mouse wheel movement sensitivity.
+  double get wheelVerticalSensitivity => this._wvSensitivity;
+  void set wheelVerticalSensitivity(double sensitivity) => this._wvSensitivity = sensitivity;
 
   /// The mouse down event.
   Events.Event get down {

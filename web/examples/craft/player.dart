@@ -13,6 +13,7 @@ class Player {
   static const double _playerHeight = 2.0; /// The player's height.
   static const double _headOffset = 0.5; /// The player's head collision offset.
   static const double _footOffset = 1.5; /// The player's foot collision offset.
+  static const double _mouseSensitivity = 0.4; /// The sensitivity of the locked pointer mouse.
 
   Movers.UserTranslator _trans;
   Movers.UserRotater _rot;
@@ -34,6 +35,11 @@ class Player {
 
   /// Creates a new player for the world.
   Player(ThreeDart.ThreeDart td, this._world) {
+    td.userInput.lockOnClick = true;
+    td.userInput.locked
+      ..horizontalSensitivity = _mouseSensitivity
+      ..verticalSensitivity = _mouseSensitivity;
+
     this._trans = new Movers.UserTranslator(input: td.userInput)
       ..offsetX.maximumVelocity = _speed
       ..offsetY.maximumVelocity = _fallSpeed
@@ -87,6 +93,7 @@ class Player {
       ..addKey(Input.Key.keyQ)
       ..attach(td.userInput)
       ..keyDown.add(this._onBlockChange);
+    td.userInput.locked.down.add(this._onClickBlockChange);
 
     // Creates the cross hair entity for drawing the cross hairs.
     this._crossHairs = new ThreeDart.Entity(
@@ -162,11 +169,25 @@ class Player {
 
   /// Handles when the player presses the button(s) to modify the voxal values of a chunk.
   void _onBlockChange(Events.EventArgs args) {
+    Input.Key key = (args as Input.KeyEventArgs).key;
+    this._changeBlock(key.code == Input.Key.keyE);
+  }
+
+  /// Handles when the player clicks a mouse button to modify the voxal values of a chunk.
+  void _onClickBlockChange(Events.EventArgs args) {
+    Input.Button button = (args as Input.MouseEventArgs).button;
+    this._changeBlock(button.code == Input.Button.right);
+  }
+
+  /// Modify the voxal values of a chunk.
+  /// If [setBlock] is true then the current block in the hand is set on a neighboring side to the 
+  /// highlight, if false then the highlighted block is set to air.
+  void _changeBlock(bool setBlock) {
     if (this._highlight == null) return;
 
     int blockType = BlockType.Air;
-    if ((args as Input.KeyEventArgs).key.code == Input.Key.keyE) {
-      NeighborBlockInfo neighbor = this._getNeighborBlock(this._highlight, this._playerViewTarget());
+    if (setBlock) {
+     NeighborBlockInfo neighbor = this._getNeighborBlock(this._highlight, this._playerViewTarget());
       this._highlight = neighbor.info;
       blockType = BlockType.PlaceableBlocks[this._selectedBlockIndex];
 

@@ -25,9 +25,6 @@ class LockedMouseInput {
   /// Indicates if the mouse buttons which are pressed or not.
   int _buttons;
   
-  /// The point, in pixels, in which the mouse button was last pressed or released.
-  Math.Point2 _startPnt;
-
   /// The point, in pixels, of the last mouse event.
   Math.Point2 _prevPnt;
 
@@ -36,6 +33,18 @@ class LockedMouseInput {
 
   /// The time of the last mouse event.
   DateTime _prevTime;
+
+  /// The horizontal mouse movement sensitivity.
+  double _hSensitivity;
+  
+  /// The vertical mouse movement sensitivity.
+  double _vSensitivity;
+
+  /// The horizontal mouse wheel movement sensitivity.
+  double _whSensitivity;
+
+  /// The vertical mouse wheel movement sensitivity.
+  double _wvSensitivity;
 
   /// Creates a new user input for the given [_elem].
   LockedMouseInput._(this._input) {
@@ -46,9 +55,12 @@ class LockedMouseInput {
     this._lockChanged = null;
     this._buttons = 0;
     this._startTime = null;
-    this._startPnt = new Math.Point2.zero();
     this._prevTime = null;
     this._prevPnt = new Math.Point2.zero();
+    this._hSensitivity = 1.0;
+    this._vSensitivity = 1.0;
+    this._whSensitivity = 1.0;
+    this._wvSensitivity = 1.0;
   }
 
   /// Indicates the mouse buttons which are currently pressed.
@@ -56,16 +68,11 @@ class LockedMouseInput {
 
   /// Gets the locked mouse arguments.
   /// If [setStart] is true then the start point and time are set.
-  MouseEventArgs _getMouseArgs(Button button, Math.Vector2 vec, bool setStart) {
+  MouseEventArgs _getMouseArgs(Button button, Math.Vector2 vec) {
     final DateTime curTime = new DateTime.now();
-    final Math.Point2 pnt = this._prevPnt + Math.Point2.fromVector2(vec);
+    final Math.Point2 pnt = this._prevPnt + Math.Point2(vec.dx*this._hSensitivity, vec.dy*this._vSensitivity);
     MouseEventArgs args = new MouseEventArgs(this, button, this._input.clientRect,
-      this._startPnt, this._prevPnt, pnt, this._startTime, this._prevTime, curTime);
-    
-    if (setStart) {
-      this._startTime = curTime;
-      this._startPnt = pnt;
-    }
+      new Math.Point2.zero(), this._prevPnt, pnt, this._startTime, this._prevTime, curTime);
     this._prevTime = curTime;
     this._prevPnt = pnt;
     return args;
@@ -77,7 +84,7 @@ class LockedMouseInput {
   bool performDown(Button button, Math.Vector2 vec) {
     this._buttons = button.code;
     if (this._down == null) return false;
-    this._down.emit(this._getMouseArgs(button, vec, true));
+    this._down.emit(this._getMouseArgs(button, vec));
     return true;
   }
 
@@ -87,7 +94,7 @@ class LockedMouseInput {
   bool performUp(Button button, Math.Vector2 vec) {
     this._buttons &= ~button.code;
     if (this._up == null) return false;
-    this._up.emit(this._getMouseArgs(button, vec, true));
+    this._up.emit(this._getMouseArgs(button, vec));
     return true;
   }
 
@@ -95,7 +102,7 @@ class LockedMouseInput {
   // Returns true if any events were called, false if none were called.
   bool performMove(Button button, Math.Vector2 vec) {
     if (this._move == null) return false;
-    this._move.emit(this._getMouseArgs(button, vec, false));
+    this._move.emit(this._getMouseArgs(button, vec));
     return true;
   }
 
@@ -103,7 +110,8 @@ class LockedMouseInput {
   // Returns true if any events were called, false if none were called.
   bool performWheel(Math.Vector2 wheel) {
     if (this._wheel == null) return false;
-    this._wheel.emit(new MouseWheelEventArgs(this, this._input.clientRect, this._prevPnt, new DateTime.now(), wheel));
+    this._wheel.emit(new MouseWheelEventArgs(this, this._input.clientRect, this._prevPnt,
+      new DateTime.now(), new Math.Vector2(wheel.dx*this._whSensitivity, wheel.dy*this._wvSensitivity)));
     return true;
   }
   
@@ -112,7 +120,25 @@ class LockedMouseInput {
     if (this._lockChanged == null) return;
     final DateTime curTime = new DateTime.now();
     this._lockChanged.emit(new LockedEventArgs(this, locked, button, this._input.clientRect, pnt, curTime));
+    this._startTime = curTime;
+    this._prevPnt = new Math.Point2.zero();
   }
+
+  /// The horizontal mouse movement sensitivity.
+  double get horizontalSensitivity => this._hSensitivity;
+  void set horizontalSensitivity(double sensitivity) => this._hSensitivity = sensitivity;
+  
+  /// The vertical mouse movement sensitivity.
+  double get verticalSensitivity => this._vSensitivity;
+  void set verticalSensitivity(double sensitivity) => this._vSensitivity = sensitivity;
+
+  /// The horizontal mouse wheel movement sensitivity.
+  double get wheelHorizontalSensitivity => this._whSensitivity;
+  void set wheelHorizontalSensitivity(double sensitivity) => this._whSensitivity = sensitivity;
+
+  /// The vertical mouse wheel movement sensitivity.
+  double get wheelVerticalSensitivity => this._wvSensitivity;
+  void set wheelVerticalSensitivity(double sensitivity) => this._wvSensitivity = sensitivity;
 
   /// The mouse down event.
   Events.Event get down {

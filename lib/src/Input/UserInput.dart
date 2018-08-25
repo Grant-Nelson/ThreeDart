@@ -192,6 +192,7 @@ class UserInput {
         msEvent.preventDefault();
       return;
     }
+    if (this._lockOnClick) return;
 
     final Math.Point2 pnt = this._rawPoint(msEvent);
     if (this._mouse.performUp(button, pnt))
@@ -211,6 +212,7 @@ class UserInput {
           msEvent.preventDefault();
         return;
       }
+      if (this._lockOnClick) return;
 
       final Math.Point2 pnt = this._rawPoint(msEvent);
       if (this._mouse.performUp(button, pnt))
@@ -229,6 +231,7 @@ class UserInput {
         msEvent.preventDefault();
       return;
     }
+    if (this._lockOnClick) return;
 
     final Math.Point2 pnt = this._rawPoint(msEvent);
     if (this._mouse.performMove(button, pnt))
@@ -248,6 +251,7 @@ class UserInput {
           msEvent.preventDefault();
         return;
       }
+      if (this._lockOnClick) return;
 
       final Math.Point2 pnt = this._rawPoint(msEvent);
       if (this._mouse.performMove(button, pnt))
@@ -265,6 +269,7 @@ class UserInput {
         msEvent.preventDefault();
       return;
     }
+    if (this._lockOnClick) return;
 
     final Math.Point2 pnt = this._rawPoint(msEvent);
     if (this._mouse.performWheel(wheel, pnt))
