@@ -31,7 +31,7 @@ part 'shaper.dart';
 part 'world.dart';
 
 /// Starts up the 3Dart Craft example
-void show() {
+void main() {
   new common.ShellPage("3Dart Craft")
     ..addLargeCanvas("targetCanvas")
     ..addHeader(1, "About")
@@ -39,7 +39,7 @@ void show() {
       "to create a [voxel|https://en.wikipedia.org/wiki/Voxel] environment for browser driven video games. ",
       "This example has no server backing it so none of the changes are persisted. It would take very little ",
       "to turn this into a simple online game."])
-    ..addPar(["«[Back to Examples List|http://grant-nelson.github.io/ThreeDart/build/web/]"])
+    ..addPar(["«[Back to Examples List|../../]"])
     ..addHeader(1, "Controls")
     ..addPar(["• _Currently there are no controls for mobile browsers_"])
     ..addPar(["• *Esc* to release the mouse capture"])

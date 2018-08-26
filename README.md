@@ -4,7 +4,7 @@
 
 ## See Live Examples and Tutorials
 
-[ThreeDart Live](http://grant-nelson.github.io/ThreeDart/build/web/)
+[ThreeDart Live](http://grant-nelson.github.io/ThreeDart/build/)
 
 ## Setup
 
