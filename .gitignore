@@ -4,7 +4,7 @@
 .dart_tool/
 .pub/
 .vscode/
-build/
+#build/
 
 .packages
 packages
@@ -12,7 +12,7 @@ packages/
 
 # Or the files created by dart2js.
 *.dart2
-*.dart.js
+#*.dart.js
 *.js_
 *.js.deps
 *.js.map

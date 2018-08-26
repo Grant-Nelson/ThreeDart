@@ -1,0 +1,96 @@
+.queued {
+  color: #336799;
+  background-color: #C7DDF5;
+}
+
+.running {
+  color: #C7DDF5;
+  background-color: #336799;
+}
+
+.passed {
+  color: #FFFFFF;
+  background-color: #118855;
+}
+
+.failed  {
+  color: #FFFFFF;
+  background-color: #AA3311;
+}
+
+.info_log {
+  float: left;
+  color: #000000;
+  padding: 0px;
+  margin: 0px;
+}
+
+.notice_log {
+  float: left;
+  color: #0000DD;
+  padding: 0px;
+  margin: 0px;
+}
+
+.warning_log {
+  float: left;
+  color: #DD8800;
+  padding: 0px;
+  margin: 0px;
+}
+
+.error_log {
+  float: left;
+  color: #FF0000;
+  padding: 0px;
+  margin: 0px;
+}
+
+.top_header {
+  margin: 0px;
+  font-size: 2em;
+  width: 100%-5px;
+  font-weight: bold;
+  padding: 5px;
+  border: 1px solid black;
+}
+
+.log_checkboxes {
+  padding: 5px;
+  width: 100%-5px;
+}
+
+.test_header {
+  margin: 5px 0px -2px 20px;
+  width: 100%-25px;
+  padding: 5px;
+  border: 1px solid black;
+}
+
+.test_body {
+  border: 1px solid black;
+  margin: 0px 0px 0px 20px;
+  width: 100%-25px;
+  text-align: left;
+  font-family: "Lucida Console";
+  font-size: .75em;
+  white-space: nowrap;
+  background-color: #DDDDDD;
+  -webkit-transition: all 0.5s ease-in-out;
+  -moz-transition: all 0.5s ease-in-out;
+  transition: all 0.5s ease-in-out;
+}
+
+.body_shown {
+  min-height: 150px;
+  max-height: 400px;
+  overflow: scroll;
+  padding: 10px;
+}
+
+.body_hidden {
+  min-height: 0px;
+  max-height: 0px;
+  overflow: hidden;
+  padding: 0px 10px 0px 10px;
+}
