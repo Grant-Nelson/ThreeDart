@@ -34,6 +34,12 @@ class MouseInput {
   /// The time of the last mouse event.
   DateTime _prevTime;
 
+  /// The horizontal mouse wheel movement sensitivity.
+  double _whSensitivity;
+
+  /// The vertical mouse wheel movement sensitivity.
+  double _wvSensitivity;
+
   /// Creates a new user mouse input.
   MouseInput._(this._input) {
     this._down = null;
@@ -43,12 +49,15 @@ class MouseInput {
 
     this._buttons = 0;
     this._startTime = null;
-    this._startPnt = null;
+    this._startPnt = new Math.Point2.zero();
     this._prevTime = null;
-    this._prevPnt = null;
+    this._prevPnt = new Math.Point2.zero();
+    
+    this._whSensitivity = 1.0;
+    this._wvSensitivity = 1.0;
   }
 
-  /// Gets the mouse arguments for the given [msEvent].
+  /// Gets the mouse arguments.
   /// If [setStart] is true then the start point and time are set.
   MouseEventArgs _getMouseArgs(Button button, Math.Point2 pnt, bool setStart) {
     final DateTime curTime = new DateTime.now();
@@ -64,7 +73,9 @@ class MouseInput {
     return args;
   }
 
-  // TODO: Comment
+  // Performs a mouse press down event.
+  // This also sets the button code currently pressed.
+  // Returns true if any events were called, false if none were called.
   bool performDown(Button button, Math.Point2 pnt) {
     this._buttons = button.code;
     if (this._down == null) return false;
@@ -72,7 +83,9 @@ class MouseInput {
     return true;
   }
 
-  // TODO: Comment
+  // Performs a mouse press up event.
+  // This also unsets the button code currently pressed.
+  // Returns true if any events were called, false if none were called.
   bool performUp(Button button, Math.Point2 pnt) {
     this._buttons &= ~button.code;
     if (this._up == null) return false;
@@ -80,21 +93,30 @@ class MouseInput {
     return true;
   }
 
-  // TODO: Comment
+  // Performs a mouse move event.
+  // Returns true if any events were called, false if none were called.
   bool performMove(Button button, Math.Point2 pnt) {
     if (this._move == null) return false;
     this._move.emit(this._getMouseArgs(button, pnt, false));
     return true;
   }
 
-  // TODO: Comment
+  // Performs a mouse wheel event.
+  // Returns true if any events were called, false if none were called.
   bool performWheel(Math.Vector2 wheel, Math.Point2 pnt) {
     if (this._wheel == null) return false;
-    final DateTime curTime = new DateTime.now();
-    final Math.Region2 size = new Math.Region2(0.0, 0.0, this._input._elem.client.width, this._input._elem.client.height);
-    this._wheel.emit(new MouseWheelEventArgs(this, size, pnt, curTime, wheel));
+    this._wheel.emit(new MouseWheelEventArgs(this, this._input.clientRect, pnt,
+      new DateTime.now(), new Math.Vector2(wheel.dx*this._whSensitivity, wheel.dy*this._wvSensitivity)));
     return true;
   }
+
+  /// The horizontal mouse wheel movement sensitivity.
+  double get wheelHorizontalSensitivity => this._whSensitivity;
+  void set wheelHorizontalSensitivity(double sensitivity) => this._whSensitivity = sensitivity;
+
+  /// The vertical mouse wheel movement sensitivity.
+  double get wheelVerticalSensitivity => this._wvSensitivity;
+  void set wheelVerticalSensitivity(double sensitivity) => this._wvSensitivity = sensitivity;
 
   /// The mouse down event.
   Events.Event get down {

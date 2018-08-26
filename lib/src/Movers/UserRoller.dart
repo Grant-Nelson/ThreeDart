@@ -128,7 +128,7 @@ class UserRoller implements Mover, Input.Interactable {
       if (margs.rawOffset.length2() < this._deadBand2) return;
       this._inDeadBand = false;
     }
-
+    
     if (this._cumulative) {
       this._prevVal = margs.adjustedOffset;
       this._roll.velocity = this._prevVal.dx*10.0*this._rollScalar;

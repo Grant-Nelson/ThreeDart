@@ -60,6 +60,7 @@ class UserZoom implements Mover, Input.Interactable {
     if (this._input != null) return false;
     this._input = input;
     this._input.mouse.wheel.add(this._mouseWheelHandle);
+    this._input.locked.wheel.add(this._mouseWheelHandle);
     return true;
   }
 
@@ -67,6 +68,7 @@ class UserZoom implements Mover, Input.Interactable {
   void detach() {
     if (this._input != null) {
       this._input.mouse.wheel.remove(this._mouseWheelHandle);
+      this._input.locked.wheel.remove(this._mouseWheelHandle);
       this._input = null;
     }
   }

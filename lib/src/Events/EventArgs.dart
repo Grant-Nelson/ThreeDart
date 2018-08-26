@@ -6,6 +6,12 @@ class EventArgs {
   /// The sender of the event.
   final Object sender;
 
+  /// Indicates if the event should be passed onto the next event handler (true),
+  /// or stopped being handled (false).
+  bool propagate;
+
   /// Creates a new event argument.
-  EventArgs(this.sender);
+  EventArgs(this.sender) {
+    this.propagate = true;
+  }
 }

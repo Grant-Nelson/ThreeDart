@@ -24,12 +24,27 @@ class LockedMouseInput {
 
   /// Indicates if the mouse buttons which are pressed or not.
   int _buttons;
+  
+  /// The point, in pixels, of the last mouse event.
+  Math.Point2 _prevPnt;
 
   /// The time in which the mouse button was last pressed or released.
   DateTime _startTime;
 
   /// The time of the last mouse event.
   DateTime _prevTime;
+
+  /// The horizontal mouse movement sensitivity.
+  double _hSensitivity;
+  
+  /// The vertical mouse movement sensitivity.
+  double _vSensitivity;
+
+  /// The horizontal mouse wheel movement sensitivity.
+  double _whSensitivity;
+
+  /// The vertical mouse wheel movement sensitivity.
+  double _wvSensitivity;
 
   /// Creates a new user input for the given [_elem].
   LockedMouseInput._(this._input) {
@@ -41,168 +56,116 @@ class LockedMouseInput {
     this._buttons = 0;
     this._startTime = null;
     this._prevTime = null;
-
-    // TODO: Implement touch as a mouse event.
-    //this._elem.onTouchStart
-    //this._elem.onTouchMove
-    //this._elem.onTouchEnd
+    this._prevPnt = new Math.Point2.zero();
+    this._hSensitivity = 1.0;
+    this._vSensitivity = 1.0;
+    this._whSensitivity = 1.0;
+    this._wvSensitivity = 1.0;
   }
 
   /// Indicates the mouse buttons which are currently pressed.
   int get buttons => this._buttons;
 
-  /*
-  /// Gets the mouse arguments for the given [msEvent].
+  /// Gets the locked mouse arguments.
   /// If [setStart] is true then the start point and time are set.
-  MouseEventArgs _getMouseArgs(html.MouseEvent msEvent, bool setStart) {
-    html.Rectangle rect = this._elem.getBoundingClientRect();
-    final Math.Point2 pnt = new Math.Point2(msEvent.page.x-rect.left, msEvent.page.y-rect.top);
-    // new Math.Point2(msEvent.movement.x, msEvent.movement.y):
+  MouseEventArgs _getMouseArgs(Button button, Math.Vector2 vec) {
     final DateTime curTime = new DateTime.now();
-    final Math.Region2 size = new Math.Region2(0.0, 0.0, this._elem.client.width, this._elem.client.height);
-    this._key._modPressed = new Modifiers(msEvent.ctrlKey||msEvent.metaKey, msEvent.altKey, msEvent.shiftKey);
-    MouseEventArgs args = new MouseEventArgs(this, this._mousePressed, size,
-      this._startPnt, this._prevPnt, pnt, this._startTime, this._prevTime, curTime);
-    if (setStart) {
-      this._startTime = curTime;
-      this._startPnt = pnt;
-    }
+    final Math.Point2 pnt = this._prevPnt + Math.Point2(vec.dx*this._hSensitivity, vec.dy*this._vSensitivity);
+    MouseEventArgs args = new MouseEventArgs(this, button, this._input.clientRect,
+      new Math.Point2.zero(), this._prevPnt, pnt, this._startTime, this._prevTime, curTime);
     this._prevTime = curTime;
     this._prevPnt = pnt;
     return args;
   }
-
-  /// Handles the mouse down in canvas event.
-  void _onMouseDown(html.MouseEvent msEvent) {
-    if (this._lockOnClick && !this._pointerLocked) {
-      this._msEventOnLock = msEvent;
-      this._elem.requestPointerLock();
-      return;
-    }
-
-    this._elem.focus();
-    this._mousePressed = true;
-    if (this._mouseDown != null) {
-      this._mouseDown.emit(this._getMouseArgs(msEvent, true));
-      msEvent.preventDefault();
-    }
-  }
-
-  /// Handles the mouse up in canvas event.
-  void _onMouseUp(html.MouseEvent msEvent) {
-    this._mousePressed = false;
-    if (this._mouseUp != null) {
-      this._mouseUp.emit(this._getMouseArgs(msEvent, true));
-      msEvent.preventDefault();
-    }
-  }
-
-  /// Handles the mouse up ouside the canvas event
-  /// when the mouse was pressed while over the canvas.
-  void _onDocMouseUp(html.MouseEvent msEvent) {
-    if (this._mousePressed && !this._elem.client.containsPoint(msEvent.client)) {
-      this._mousePressed = false;
-      if (this._mouseUp != null) {
-        this._mouseUp.emit(this._getMouseArgs(msEvent, true));
-        msEvent.preventDefault();
-      }
-    }
-  }
-
-  /// Handles the mouse move on the canvas event.
-  void _onMouseMove(html.MouseEvent msEvent) {
-    if (this._mouseMove != null) {
-      this._mouseMove.emit(this._getMouseArgs(msEvent, false));
-      msEvent.preventDefault();
-    }
-  }
-
-  /// Handles the mouse move off the canvas event
-  /// when the mouse was pressed while over the canvas.
-  void _onDocMouseMove(html.MouseEvent msEvent) {
-    if (this._pointerLocked || (this._mousePressed && !this._elem.client.containsPoint(msEvent.client))) {
-      if (this._mouseMove != null) {
-        this._mouseMove.emit(this._getMouseArgs(msEvent, false));
-        msEvent.preventDefault();
-      }
-    }
-  }
-
-  /// Handles the mouse wheel being moved over the canvas.
-  void _onMouseWheel(html.WheelEvent msEvent) {
-    this._key._modPressed = new Modifiers(msEvent.ctrlKey||msEvent.metaKey, msEvent.altKey, msEvent.shiftKey);
-    if (this._mouseWheel != null) {
-      final Math.Point2 pnt = new Math.Point2(msEvent.offset.x, msEvent.offset.y);
-      final DateTime curTime = new DateTime.now();
-      final Math.Region2 size = new Math.Region2(0.0, 0.0, this._elem.client.width, this._elem.client.height);
-      final Math.Vector2 wheel = new Math.Vector2(msEvent.deltaX, msEvent.deltaY)/180.0;
-      this._mouseWheel.emit(new MouseWheelEventArgs(this, size, pnt, curTime, wheel));
-      msEvent.preventDefault();
-    }
-  }
-
-  /// Handles the mouse lock and unlock on the canvas.
-  void _onPointerLockChanged(html.Event event) {
-    bool locked = (html.document.pointerLockElement == this._elem);
-    if (locked != this._pointerLocked) {
-      this._pointerLocked = locked;
-      if (this._pointerLockChanged != null) {
-        this._pointerLockChanged.emit(this._getMouseArgs(this._msEventOnLock, true));
-      }
-    }
-  }
-  */
   
-  // TODO: Comment
+  // Performs a locked mouse press down event.
+  // This also sets the button code currently pressed.
+  // Returns true if any events were called, false if none were called.
   bool performDown(Button button, Math.Vector2 vec) {
-    return false;
+    this._buttons = button.code;
+    if (this._down == null) return false;
+    this._down.emit(this._getMouseArgs(button, vec));
+    return true;
   }
 
-  // TODO: Comment
+  // Performs a locked mouse press up event.
+  // This also unsets the button code currently pressed.
+  // Returns true if any events were called, false if none were called.
   bool performUp(Button button, Math.Vector2 vec) {
-    return false;
+    this._buttons &= ~button.code;
+    if (this._up == null) return false;
+    this._up.emit(this._getMouseArgs(button, vec));
+    return true;
   }
 
-  // TODO: Comment
+  // Performs a locked mouse movement event.
+  // Returns true if any events were called, false if none were called.
   bool performMove(Button button, Math.Vector2 vec) {
-    return false;
+    if (this._move == null) return false;
+    this._move.emit(this._getMouseArgs(button, vec));
+    return true;
   }
 
-  // TODO: Comment
+  // Performs a locked mouse wheel event.
+  // Returns true if any events were called, false if none were called.
   bool performWheel(Math.Vector2 wheel) {
-    return false;
+    if (this._wheel == null) return false;
+    this._wheel.emit(new MouseWheelEventArgs(this, this._input.clientRect, this._prevPnt,
+      new DateTime.now(), new Math.Vector2(wheel.dx*this._whSensitivity, wheel.dy*this._wvSensitivity)));
+    return true;
   }
   
-  // TODO: Comment
-  bool _onLockChanged(Button button, Math.Point2 pnt) {
+  /// Handles the mouse lock and unlock on the canvas.
+  void _onLockChanged(Button button, Math.Point2 pnt, bool locked) {
+    if (this._lockChanged == null) return;
+    final DateTime curTime = new DateTime.now();
+    this._lockChanged.emit(new LockedEventArgs(this, locked, button, this._input.clientRect, pnt, curTime));
+    this._startTime = curTime;
+    this._prevPnt = new Math.Point2.zero();
   }
+
+  /// The horizontal mouse movement sensitivity.
+  double get horizontalSensitivity => this._hSensitivity;
+  void set horizontalSensitivity(double sensitivity) => this._hSensitivity = sensitivity;
+  
+  /// The vertical mouse movement sensitivity.
+  double get verticalSensitivity => this._vSensitivity;
+  void set verticalSensitivity(double sensitivity) => this._vSensitivity = sensitivity;
+
+  /// The horizontal mouse wheel movement sensitivity.
+  double get wheelHorizontalSensitivity => this._whSensitivity;
+  void set wheelHorizontalSensitivity(double sensitivity) => this._whSensitivity = sensitivity;
+
+  /// The vertical mouse wheel movement sensitivity.
+  double get wheelVerticalSensitivity => this._wvSensitivity;
+  void set wheelVerticalSensitivity(double sensitivity) => this._wvSensitivity = sensitivity;
 
   /// The mouse down event.
-  Events.Event get mouseDown {
+  Events.Event get down {
     this._down ??= new Events.Event();
     return this._down;
   }
 
   /// The mouse up event.
-  Events.Event get mouseUp {
+  Events.Event get up {
     this._up ??= new Events.Event();
     return this._up;
   }
 
   /// The mouse move event.
-  Events.Event get mouseMove {
+  Events.Event get move {
     this._move ??= new Events.Event();
     return this._move;
   }
 
   /// The mouse wheel move event.
-  Events.Event get mouseWheel {
+  Events.Event get wheel {
     this._wheel ??= new Events.Event();
     return this._wheel;
   }
 
   /// The mouse has been locked or unlocked.
-  Events.Event get pointerLockChanged {
+  Events.Event get lockChanged {
     this._lockChanged ??= new Events.Event();
     return this._lockChanged;
   }

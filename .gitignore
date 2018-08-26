@@ -11,6 +11,7 @@ packages
 packages/
 
 # Or the files created by dart2js.
+*.dart2
 *.dart.js
 *.js_
 *.js.deps

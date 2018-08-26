@@ -46,7 +46,7 @@ class Event {
       if (!this.pending) this._pendingArgs = args;
     } else {
       this._hndls.forEach((EventHandler hndl) {
-        hndl(args);
+        if (args.propagate) hndl(args);
       });
     }
     return hasHndls;

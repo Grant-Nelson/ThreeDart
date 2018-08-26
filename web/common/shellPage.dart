@@ -7,7 +7,7 @@ class ShellPage {
   Tokenizer.Tokenizer _parTokenizer;
 
   /// Creates a new shell page with an optional [title].
-  ShellPage([String title = ""]) {
+  ShellPage([String title = "", bool showTopTitle = true]) {
     html.BodyElement body = html.document.body;
 
     html.DivElement scrollTop = new html.DivElement()
@@ -24,10 +24,12 @@ class ShellPage {
 
     if (title.isNotEmpty) {
       html.document.title = title;
-      html.DivElement titleElem = new html.DivElement()
-        ..className = "pageTitle"
-        ..text = title;
-      pageCenter.append(titleElem);
+      if (showTopTitle) {
+        html.DivElement titleElem = new html.DivElement()
+          ..className = "pageTitle"
+          ..text = title;
+        pageCenter.append(titleElem);
+      }
     }
 
     this._page = new html.DivElement();

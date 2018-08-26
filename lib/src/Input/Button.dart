@@ -2,11 +2,12 @@ part of ThreeDart.Input;
 
 /// A mouse button press or release value with modifiers.
 class Button {
-  static const int left  = 1;
-  static const int right = 2;
+  static const int none   = 0;
+  static const int left   = 1;
+  static const int right  = 2;
   static const int middle = 4;
   static const int fourth = 8;
-  static const int fifth = 16;
+  static const int fifth  = 16;
 
   /// The mouse button code for the pressed or released value.
   final int code;

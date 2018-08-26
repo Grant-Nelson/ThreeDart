@@ -18,7 +18,7 @@ void main() {
 }
 
 void mainPage() {
-  new common.ShellPage()
+  new common.ShellPage("3Dart", false)
     ..addImage("3Dart", "resources/ThreeDart.png")
     ..addPar(["Currently 3Dart is still in beta."])
     ..addPar(["Please visit the [3Dart GitHub repository|https://github.com/Grant-Nelson/ThreeDart] ",
