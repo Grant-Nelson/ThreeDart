@@ -8,13 +8,14 @@ import 'package:ThreeDart/Views.dart' as Views;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
-import '../common/common.dart' as common;
+import '../../common/common.dart' as common;
 
 void main() {
-  common.shellTest("Test 013", [],
-    "Test of sky box and cover pass.");
+  new common.ShellPage("Test 013")
+    ..addLargeCanvas("testCanvas")
+    ..addPar(["Test of sky box and cover pass."]);
 
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
   Movers.Group secondMover = new Movers.Group()
     ..add(new Movers.UserRotater(input: td.userInput))

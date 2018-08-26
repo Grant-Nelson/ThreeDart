@@ -9,14 +9,15 @@ import 'package:ThreeDart/Textures.dart' as Textures;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
 import 'package:ThreeDart/Views.dart' as Views;
-import '../common/common.dart' as common;
+import '../../common/common.dart' as common;
 
 void main() {
-  common.shellTest("Test 016", [],
-    "A test of the Material Lighting shader with cube texturing, "+
-    "bump mapping, and a color directional light.");
+  new common.ShellPage("Test 016")
+    ..addLargeCanvas("testCanvas")
+    ..addPar(["A test of the Material Lighting shader with cube texturing, ",
+      "bump mapping, and a color directional light."]);
 
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
   Views.FrontTarget target = new Views.FrontTarget()
     ..clearColor = false;

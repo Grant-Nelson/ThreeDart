@@ -8,15 +8,17 @@ import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Textures.dart' as Textures;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
-import '../common/common.dart' as common;
+import '../../common/common.dart' as common;
 
 void main() {
-  common.shellTest("Test 018", ["shapes"],
-    "A test of the Material Lighting shader where a diffuse textue and "+
-    "inverse diffuse texture are used. Grass is only shown in the dark. "+
-    "Dirt is shown where the directional light is shining.");
+  new common.ShellPage("Test 018")
+    ..addLargeCanvas("testCanvas")
+    ..addPar(["A test of the Material Lighting shader where a diffuse textue and ",
+      "inverse diffuse texture are used. Grass is only shown in the dark. ",
+      "Dirt is shown where the directional light is shining."])
+    ..addControlBoxes(["shapes"]);
 
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..shape = Shapes.sphere()

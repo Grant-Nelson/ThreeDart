@@ -12,18 +12,20 @@ import 'package:ThreeDart/Data.dart' as Data;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Textures.dart' as Textures;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
-import '../common/common.dart' as common;
+import '../../common/common.dart' as common;
 
 part 'BumpyShader.dart';
 part 'BumpyTechnique.dart';
 
 void main() {
-  common.shellTest("Test 008", ["bumpMaps", "scalars"],
-    "A custom shader for testing and fixing the normal distortion "+
-    "equation used for bump maps. This displays the normal vectors "+
-    "across a surface.");
+  new common.ShellPage("Test 008")
+    ..addLargeCanvas("testCanvas")
+    ..addPar(["A custom shader for testing and fixing the normal distortion ",
+      "equation used for bump maps. This displays the normal vectors ",
+      "across a surface."])
+    ..addControlBoxes(["bumpMaps", "scalars"]);
 
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
   Shapes.Shape shape = Shapes.grid(widthDiv: 50, heightDiv: 50);
   shape.calculateNormals();

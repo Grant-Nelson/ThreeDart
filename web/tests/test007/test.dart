@@ -8,15 +8,16 @@ import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
 import 'package:ThreeDart/Textures.dart' as Textures;
-import '../common/common.dart' as common;
+import '../../common/common.dart' as common;
 
 void main() {
-  common.shellTest("Test 007", [],
-    "A test of the Material Lighting shader with bumpy 2D textures and "+
-    "a directional light. The lighting and bump is being applied to "+
-    "ambient, diffuse, and specular 2D texturing.");
+  new common.ShellPage("Test 007")
+    ..addLargeCanvas("testCanvas")
+    ..addPar(["A test of the Material Lighting shader with bumpy 2D textures and ",
+      "a directional light. The lighting and bump is being applied to ",
+      "ambient, diffuse, and specular 2D texturing."]);
 
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..shape = Shapes.cube()

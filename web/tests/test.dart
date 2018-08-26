@@ -2,7 +2,7 @@ library ThreeDart.tests;
 
 import 'dart:html' as html;
 
-import 'common/common.dart' as common;
+import '../common/common.dart' as common;
 
 void main() {
   html.DivElement elem = new html.DivElement();
@@ -11,7 +11,8 @@ void main() {
   for (int i = 0; i <= 38; i++)
     addTest(elem, "test"+"$i".padLeft(3, '0'));
 
-  common.shellPage("3Dart Tests", elem, true, "./resources/SnowTop.png");
+  new common.ShellPage("3Dart Tests")
+    ..addElem(elem);
 }
 
 void addTest(html.Element elem, String testName) {

@@ -9,13 +9,15 @@ import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Textures.dart' as Textures;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
-import '../common/common.dart' as common;
+import '../../common/common.dart' as common;
 
 void main() {
-  common.shellTest("Test 015", ["bumpMaps", "controls"],
-    "Test of Material Lighting shader with bump mapping, reflections, refractions.");
+  new common.ShellPage("Test 015")
+    ..addLargeCanvas("testCanvas")
+    ..addPar(["Test of Material Lighting shader with bump mapping, reflections, refractions."])
+    ..addControlBoxes(["bumpMaps", "controls"]);
 
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
   Views.FrontTarget target = new Views.FrontTarget()
     ..clearColor = false;
