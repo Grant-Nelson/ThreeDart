@@ -29,7 +29,7 @@ class CubeData {
 
 /// This loads and prepares all the materials (colors and textures) used for rendering.
 class Materials {
-  static const String imgFolder = "./examples/craft/resources/";
+  static const String imgFolder = "./textures/";
   static const String fileExt = ".png";
 
   ThreeDart.ThreeDart _td;

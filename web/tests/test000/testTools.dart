@@ -103,7 +103,6 @@ class TestBlock extends TestArgs {
     new asy.Future(() {
       this._started = true;
       this._update();
-      html.window.requestAnimationFrame((_) { });
     }).then((_){
       this._start = new DateTime.now();
       this._test(this);
@@ -116,7 +115,6 @@ class TestBlock extends TestArgs {
       this._finished = true;
       this._man._testDone(this);
       this._update();
-      html.window.requestAnimationFrame((_) { });
     });
   }
 
@@ -232,10 +230,7 @@ class TestManager {
       if (block.failed) this._failed++;
       this._update();
       if (this._finished < this._tests.length) {
-        new asy.Future(() {
-          html.window.requestAnimationFrame((_) { });
-          this._tests[this._finished].run();
-        });
+        asy.Timer.run(this._tests[this._finished].run);
       }
     }
 
@@ -276,10 +271,7 @@ class TestManager {
 
       // If currently none are running, start this one.
       if (this._finished + 1 == this._tests.length) {
-        new asy.Future(() {
-          html.window.requestAnimationFrame((_) { });
-          this._tests[this._finished].run();
-        });
+        asy.Timer.run(this._tests[this._finished].run);
       }
     }
 }

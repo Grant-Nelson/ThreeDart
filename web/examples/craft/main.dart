@@ -31,15 +31,16 @@ part 'shaper.dart';
 part 'world.dart';
 
 /// Starts up the 3Dart Craft example
-void show() {
+void main() {
   new common.ShellPage("3Dart Craft")
+    ..addPar(["Please wait, this example may take a while to load."])
     ..addLargeCanvas("targetCanvas")
     ..addHeader(1, "About")
     ..addPar(["3Dart Craft is an example of how [3Dart|https://github.com/Grant-Nelson/ThreeDart] can be used ",
       "to create a [voxel|https://en.wikipedia.org/wiki/Voxel] environment for browser driven video games. ",
       "This example has no server backing it so none of the changes are persisted. It would take very little ",
       "to turn this into a simple online game."])
-    ..addPar(["«[Back to Examples List|http://grant-nelson.github.io/ThreeDart/build/web/]"])
+    ..addPar(["«[Back to Examples List|../../]"])
     ..addHeader(1, "Controls")
     ..addPar(["• _Currently there are no controls for mobile browsers_"])
     ..addPar(["• *Esc* to release the mouse capture"])
@@ -60,10 +61,10 @@ void show() {
     ..addPar(["There are tons of ways to contribute. You could even start your own example. ",
       "See the [3Dart Project|https://github.com/Grant-Nelson/ThreeDart] for more."]);
 
-    startCraft();
+    Timer.run(startCraft);
 }
 
-Future startCraft() async {
+void startCraft() {
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("targetCanvas");
   Materials mats = new Materials(td);
   World world = new World(mats);

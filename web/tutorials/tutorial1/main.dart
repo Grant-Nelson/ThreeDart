@@ -1,6 +1,11 @@
-part of ThreeDart.web.tutorials;
+import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
+import 'package:ThreeDart/Shapes.dart' as Shapes;
+import 'package:ThreeDart/Movers.dart' as Movers;
+import 'package:ThreeDart/Techniques.dart' as Techniques;
+import 'package:ThreeDart/Scenes.dart' as Scenes;
+import '../../common/common.dart' as common;
 
-void tutorial1() {
+void main() {
   new common.ShellPage("Tutorial 1")
     ..addPar(["This tutorial will walk you through creating the \"Hello World\" ",
       "of 3D graphics, a rotating cube. After this tutorial you should know how ",
