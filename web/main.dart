@@ -10,9 +10,9 @@ void main() {
       "were you can download and play with 3Dart right now. Please feel free to help ",
       "develop and contribute to the 3Dart code and community."])
     ..addHeader(2, "Examples")
-    ..addPar(["[3Dart Craft|/ThreeDart/build/examples/craft/]"])
+    ..addPar(["[3Dart Craft|./examples/craft/]"])
     ..addHeader(2, "Tutorials")
-    ..addPar(["[Getting Started|/ThreeDart/build/tutorials/tutorial1/]"])
+    ..addPar(["[Getting Started|./tutorials/tutorial1/]"])
     ..addHeader(6, "Tutorials still need to be written", "")
     ..addPar(["Material Lighting"])
     ..addPar(["Advanced Movers"])
@@ -20,5 +20,5 @@ void main() {
     ..addPar(["Advanced Techniques"])
     ..addPar(["Scene Compositing"])
     ..addHeader(2, "Tests")
-    ..addPar(["[Tests|/ThreeDart/build/tests/]"]);
+    ..addPar(["[Tests|./tests/]"]);
 }

@@ -2339,9 +2339,9 @@ y=[P.t]
 z.t(H.f(["Currently 3Dart is still in beta."],y))
 z.t(H.f(["Please visit the [3Dart GitHub repository|https://github.com/Grant-Nelson/ThreeDart] ","were you can download and play with 3Dart right now. Please feel free to help ","develop and contribute to the 3Dart code and community."],y))
 z.W(2,"Examples")
-z.t(H.f(["[3Dart Craft|/examples/craft/]"],y))
+z.t(H.f(["[3Dart Craft|./examples/craft/]"],y))
 z.W(2,"Tutorials")
-z.t(H.f(["[Getting Started|/tutorials/tutorial1/]"],y))
+z.t(H.f(["[Getting Started|./tutorials/tutorial1/]"],y))
 z.ab(6,"Tutorials still need to be written","")
 z.t(H.f(["Material Lighting"],y))
 z.t(H.f(["Advanced Movers"],y))
@@ -2349,7 +2349,7 @@ z.t(H.f(["Advanced Shapes"],y))
 z.t(H.f(["Advanced Techniques"],y))
 z.t(H.f(["Scene Compositing"],y))
 z.W(2,"Tests")
-z.t(H.f(["[Tests|/tests/]"],y))}},1]]
+z.t(H.f(["[Tests|./tests/]"],y))}},1]]
 setupProgram(dart,0,0)
 J.m=function(a){if(typeof a=="number"){if(Math.floor(a)==a)return J.bn.prototype
 return J.cJ.prototype}if(typeof a=="string")return J.aM.prototype
