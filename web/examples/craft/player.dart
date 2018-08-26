@@ -253,6 +253,7 @@ class Player {
     }
 
     // Check if stuck in the ground and push up until out of the ground.
+    // Known bug/feature: Jumping at the bottom of a tree (or any overhang) can result in "quick climbing" the tree.
     while (_isHard(x, y-_playerHeight+_pad, z) || _isHard(x, y, z)) {
       y = ny + _pad;
       ny += 1.0;

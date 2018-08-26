@@ -30,7 +30,7 @@ class Generator {
       await this._plants(chunk);
     }
     await this._add3Dart(-12, 40, -15);
-    await this._towerOfPips(0, 2, 0);
+    await this._towerOfPimps(0, 2, 0);
   }
 
   /// Sets a location anywhere in the world with the given block value.
@@ -265,8 +265,8 @@ class Generator {
       [1, 1, 1, 2, 3, 4, 5, 6]);
   }
 
-  /// Adds the RT tribute tower of "pips" to the world.
-  Future _towerOfPips(int x, int y, int z) async {
+  /// Adds the RT tribute, "the tower of pimps", to the world.
+  Future _towerOfPimps(int x, int y, int z) async {
     final int width = 3, height = 7;
     for (int px = -width; px <= width; px++) {
       for (int py = 0; py <= height; py++) {
@@ -276,9 +276,10 @@ class Generator {
       }
     }
 
-    this._set(x, y+3, z, BlockType.YellowShine);
-    this._set(x, y+2, z, BlockType.YellowShine);
-    this._set(x, y+1, z, BlockType.YellowShine);
     this._set(x, y,   z, BlockType.BlackShine);
+    this._set(x, y+1, z, BlockType.YellowShine);
+    this._set(x, y+2, z, BlockType.YellowShine);
+    this._set(x, y+3, z, BlockType.YellowShine);
+    this._set(x, y+4, z, BlockType.YellowShine);
   }
 }
