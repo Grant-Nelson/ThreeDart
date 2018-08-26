@@ -33,6 +33,7 @@ part 'world.dart';
 /// Starts up the 3Dart Craft example
 void main() {
   new common.ShellPage("3Dart Craft")
+    ..addPar(["Please wait, this example may take a while to load."])
     ..addLargeCanvas("targetCanvas")
     ..addHeader(1, "About")
     ..addPar(["3Dart Craft is an example of how [3Dart|https://github.com/Grant-Nelson/ThreeDart] can be used ",
@@ -60,10 +61,10 @@ void main() {
     ..addPar(["There are tons of ways to contribute. You could even start your own example. ",
       "See the [3Dart Project|https://github.com/Grant-Nelson/ThreeDart] for more."]);
 
-    startCraft();
+    Timer.run(startCraft);
 }
 
-Future startCraft() async {
+void startCraft() {
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("targetCanvas");
   Materials mats = new Materials(td);
   World world = new World(mats);

@@ -15,22 +15,22 @@ class Generator {
   }
 
   /// Fills all the current chunks with data.
-  Future fillWorld() async {
+  void fillWorld() {
     this._addPyramid();
     for (Chunk chunk in this._world._chunks) {
-      await this._turrainChunk(chunk);
+      this._turrainChunk(chunk);
     }
     for (Chunk chunk in this._world._chunks) {
-      await this._applyWaterChunk(chunk);
+      this._applyWaterChunk(chunk);
     }
     for (Chunk chunk in this._world._chunks) {
-      await this._trees(chunk);
+      this._trees(chunk);
     }
     for (Chunk chunk in this._world._chunks) {
-      await this._plants(chunk);
+      this._plants(chunk);
     }
-    await this._add3Dart(-12, 40, -15);
-    await this._towerOfPimps(0, 2, 0);
+    this._add3Dart(-12, 40, -15);
+    this._towerOfPimps(0, 2, 0);
   }
 
   /// Sets a location anywhere in the world with the given block value.
@@ -43,7 +43,7 @@ class Generator {
     this._simplex.eval2D((x + chunk.x)*scale, (z + chunk.z)*scale)*0.5 + 0.5;
 
   /// Applies the turrain (turf, dirt, and rock) to the given chunk.
-  Future _turrainChunk(Chunk chunk) async {
+  void _turrainChunk(Chunk chunk) {
     for (int x = 0; x < Chunk.xSize; x++) {
       for (int z = 0; z < Chunk.zSize; z++) {
         this._turrainBlock(chunk, x, z);
@@ -73,7 +73,7 @@ class Generator {
   }
 
   /// Applies the water and sand for the given chunk.
-  Future _applyWaterChunk(Chunk chunk) async {
+  void _applyWaterChunk(Chunk chunk) {
     for (int x = 0; x < Chunk.xSize; x++) {
       for (int z = 0; z < Chunk.zSize; z++) {
         this._applyWaterBlock(chunk, x, z);
@@ -105,7 +105,7 @@ class Generator {
 
   /// Determines the trees for the given chunk.
   /// The leaves will hang over into neighbor chunks.
-  Future _trees(Chunk chunk) async {
+  void _trees(Chunk chunk) {
     for (int x = 0; x < Chunk.xSize; x++) {
       for (int z = 0; z < Chunk.zSize; z++) {
         if (this._noise(chunk, x, z, 1.5) < 0.1)
@@ -160,7 +160,7 @@ class Generator {
   }
 
   /// Adds plants to the given chunk.
-  Future _plants(Chunk chunk) async {
+  void _plants(Chunk chunk) {
     for (int x = 0; x < Chunk.xSize; x++) {
       for (int z = 0; z < Chunk.zSize; z++) {
         if (this._noise(chunk, x, z, 12.5) < 0.1)
@@ -188,7 +188,7 @@ class Generator {
   }
 
   /// Adds the pyramid to the center of the world.
-  Future _addPyramid() async {
+  void _addPyramid() {
     int height = 30;
     for (int py = height; py >= 0; py-=2) {
       int width = (height-py)+3;
@@ -241,7 +241,7 @@ class Generator {
 
 
   /// Adds the 3Dart text to the world.
-  Future _add3Dart(int x, int y, int z) async {
+  void _add3Dart(int x, int y, int z) {
     var put = (int value, int dx, int dy, List<int> px, List<int> py) {
       for (int i = px.length -1; i >= 0; i--) {
         this._set(x+dx+px[i], y+dy-py[i], z, value);
@@ -266,7 +266,7 @@ class Generator {
   }
 
   /// Adds the RT tribute, "the tower of pimps", to the world.
-  Future _towerOfPimps(int x, int y, int z) async {
+  void _towerOfPimps(int x, int y, int z) {
     final int width = 3, height = 7;
     for (int px = -width; px <= width; px++) {
       for (int py = 0; py <= height; py++) {
