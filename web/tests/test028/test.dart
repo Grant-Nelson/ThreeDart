@@ -9,14 +9,15 @@ import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Textures.dart' as Textures;
 import 'package:ThreeDart/Lights.dart' as Lights;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
-import '../common/common.dart' as common;
+import '../../common/common.dart' as common;
 
 void main() {
-  common.shellTest("Test 028", [],
-    "Test of a Gaussian blur cover pass. "+
-    "Notice the depth of field causing things further away to be blurry.");
+  new common.ShellPage("Test 028")
+    ..addLargeCanvas("testCanvas")
+    ..addPar(["Test of a Gaussian blur cover pass. ",
+      "Notice the depth of field causing things further away to be blurry."]);
 
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
   Movers.Group secondMover = new Movers.Group()
     ..add(new Movers.UserRotater(input: td.userInput))
@@ -96,6 +97,7 @@ void main() {
     ..target = new Views.FrontTarget(clearColor: false)
     ..technique = layoutTech;
 
+  // TODO: Fix aspect ratio problem
   td.scene = new Scenes.Compound(passes: [skybox, colorPass, depthPass, blurPass, layout]);
 
   common.showFPS(td);

@@ -5,13 +5,14 @@ import 'package:ThreeDart/Shapes.dart' as Shapes;
 import 'package:ThreeDart/Movers.dart' as Movers;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
-import '../common/common.dart' as common;
+import '../../common/common.dart' as common;
 
 void main() {
-  common.shellTest("Test 004", [],
-    "Test of repeat use of a single mover and shape. There are 9 rings "+
-    "moving at the same speed, however the second one is attached to "+
-    "the first, the third to the second, and so on.");
+  new common.ShellPage("Test 004")
+    ..addLargeCanvas("testCanvas")
+    ..addPar(["Test of repeat use of a single mover and shape. There are 9 rings ",
+      "moving at the same speed, however the second one is attached to ",
+      "the first, the third to the second, and so on."]);
 
   Movers.Rotater rotater = new Movers.Rotater()
     ..deltaYaw = 0.51
@@ -39,7 +40,7 @@ void main() {
     ..children.add(obj8)
     ..camera.mover = new Movers.Constant.translate(0.0, 0.0, 5.0);
 
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart")
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas")
     ..scene = pass;
 
   common.showFPS(td);

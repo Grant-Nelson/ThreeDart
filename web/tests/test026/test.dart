@@ -8,16 +8,19 @@ import 'package:ThreeDart/Events.dart' as Events;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
-import '../common/common.dart' as common;
+import '../../common/common.dart' as common;
 
 void main() {
-  common.shellTest("Test 026", ["shapes"],
-    "Test of the Material Lighting shader with a textured directional light. "+
-    "The texturing of the directional light is being modified with a matrix. "+
-    "The texture metrix is updated using the pre-update mathods. "+
-    "Use Ctrl plus the mouse to move the center object.");
+  new common.ShellPage("Test 026")
+    ..addLargeCanvas("testCanvas")
+    ..addPar([
+      "Test of the Material Lighting shader with a textured directional light. ",
+      "The texturing of the directional light is being modified with a matrix. ",
+      "The texture metrix is updated using the pre-update mathods. ",
+      "Use Ctrl plus the mouse to move the center object."])
+    ..addControlBoxes(["shapes"]);
 
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
   Lights.Directional dir1 = new Lights.Directional()
     ..mover = new Movers.Constant.vectorTowards(0.3, 0.4, 1.0);

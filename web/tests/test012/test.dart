@@ -8,14 +8,15 @@ import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Textures.dart' as Textures;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
-import '../common/common.dart' as common;
+import '../../common/common.dart' as common;
 
 void main() {
-  common.shellTest("Test 012", [],
-    "A test of the Material Lighting shader with cube textures and "+
-    "a directional light with a cube texture bump map.");
+  new common.ShellPage("Test 012")
+    ..addLargeCanvas("testCanvas")
+    ..addPar(["A test of the Material Lighting shader with cube textures and ",
+      "a directional light with a cube texture bump map."]);
 
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..shape = Shapes.cube()

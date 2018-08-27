@@ -8,17 +8,18 @@ import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
 import 'package:ThreeDart/Textures.dart' as Textures;
-import '../common/common.dart' as common;
+import '../../common/common.dart' as common;
 
 void main() {
-  common.shellTest("Test 005", [],
-    "A test of the Material Lighting shader with 2D textures and directional "+
-    "lighting. This test has texturing for emission, ambient, diffuse, and "+
-    "specular. The same texture is used for ambient and diffuse. "+
-    "The emission texture makes the lights on the panel glow. "+
-    "The specular texture makes specific parts shiny and other parts not.");
+  new common.ShellPage("Test 005")
+    ..addLargeCanvas("testCanvas")
+    ..addPar(["A test of the Material Lighting shader with 2D textures and directional ",
+      "lighting. This test has texturing for emission, ambient, diffuse, and ",
+      "specular. The same texture is used for ambient and diffuse. ",
+      "The emission texture makes the lights on the panel glow. ",
+      "The specular texture makes specific parts shiny and other parts not."]);
 
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..shape = (Shapes.cube()..adjustNormals())

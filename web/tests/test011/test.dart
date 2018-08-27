@@ -8,15 +8,17 @@ import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Textures.dart' as Textures;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
-import '../common/common.dart' as common;
+import '../../common/common.dart' as common;
 
 void main() {
-  common.shellTest("Test 011", ["shapes"],
-    "A test of the Material Lighting shader with cube textures and "+
-    "a directional light. The cube textures are for ambient, diffuse, "+
-    "and specular.");
+  new common.ShellPage("Test 011")
+    ..addLargeCanvas("testCanvas")
+    ..addPar(["A test of the Material Lighting shader with cube textures and ",
+      "a directional light. The cube textures are for ambient, diffuse, ",
+      "and specular."])
+    ..addControlBoxes(["shapes"]);
 
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..shape = Shapes.sphere()

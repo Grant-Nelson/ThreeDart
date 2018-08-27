@@ -8,14 +8,16 @@ import 'package:ThreeDart/Events.dart' as Events;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
-import '../common/common.dart' as common;
+import '../../common/common.dart' as common;
 
 void main() {
-  common.shellTest("Test 035", ["shapes"],
-    "A test of the bending a shape with the Material Light Shader. "+
-    "Not all of the shapes have predefined bend values.");
+  new common.ShellPage("Test 035")
+    ..addLargeCanvas("testCanvas")
+    ..addPar(["A test of the bending a shape with the Material Light Shader. ",
+      "Not all of the shapes have predefined bend values."])
+    ..addControlBoxes(["shapes"]);
 
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..mover = new Movers.Constant();

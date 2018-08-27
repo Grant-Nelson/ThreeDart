@@ -7,15 +7,17 @@ import 'package:ThreeDart/Math.dart' as Math;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
-import '../common/common.dart' as common;
+import '../../common/common.dart' as common;
 
 void main() {
-  common.shellTest("Test 006", ["bumpMaps"],
-    "A test of the Material Lighting shader with a bumpy 2D texture and "+
-    "a directional light. Select different bump maps for the test. "+
-    "The additional lines are part of shape inspection.");
+  new common.ShellPage("Test 006")
+    ..addLargeCanvas("testCanvas")
+    ..addPar(["A test of the Material Lighting shader with a bumpy 2D texture and ",
+      "a directional light. Select different bump maps for the test. ",
+      "The additional lines are part of shape inspection."])
+    ..addControlBoxes(["bumpMaps"]);
 
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
   Shapes.Shape shape = Shapes.cube();
 
