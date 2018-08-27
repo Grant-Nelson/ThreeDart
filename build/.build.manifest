@@ -107,7 +107,6 @@ tests/resources/ScrewBumpMap.png
 tests/resources/ScrewColor.png
 tests/resources/ScrewHeightMap.png
 tests/resources/ScrewSpecular.png
-tests/resources/SnowTop.png
 tests/resources/Test.png
 tests/resources/Wolf.obj
 tests/resources/diceBumpMap/negx.png
@@ -140,13 +139,13 @@ tests/resources/earthSpecular/negz.png
 tests/resources/earthSpecular/posx.png
 tests/resources/earthSpecular/posy.png
 tests/resources/earthSpecular/posz.png
+tests/resources/maskonaive/README.md
 tests/resources/maskonaive/negx.jpg
 tests/resources/maskonaive/negy.jpg
 tests/resources/maskonaive/negz.jpg
 tests/resources/maskonaive/posx.jpg
 tests/resources/maskonaive/posy.jpg
 tests/resources/maskonaive/posz.jpg
-tests/resources/maskonaive/readme.txt
 tests/resources/plant/leaf.jpg
 tests/resources/plant/plant.mtl
 tests/resources/plant/plant.obj

@@ -67,6 +67,14 @@ body {
   text-decoration: underline;
 }
 
+.fps {
+  padding-left: 20px;
+  padding-bottom: 10px;
+  text-align: left;
+  color: #111;
+  font: 14px Tahoma, Helvetica, Arial, Sans-Serif;
+}
+
 .textPar {
   padding-left: 20px;
   padding-bottom: 10px;
