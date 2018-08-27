@@ -7,7 +7,7 @@ import 'package:ThreeDart/Math.dart' as Math;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
-import '../common/common.dart' as common;
+import '../../common/common.dart' as common;
 
 void addLightBall(Techniques.MaterialLight tech, Scenes.EntityPass pass,
     double r, double g, double b, double yaw, double pitch, double roll) {
@@ -37,11 +37,13 @@ void addLightBall(Techniques.MaterialLight tech, Scenes.EntityPass pass,
 }
 
 void main() {
-  common.shellTest("Test 021", ["shapes"],
-    "Test of the Material Lighting shader with multiple moving point lights. "+
-    "Emissive spheres are added at the lights sources.");
+  new common.ShellPage("Test 021")
+    ..addLargeCanvas("testCanvas")
+    ..addPar(["Test of the Material Lighting shader with multiple moving point lights. ",
+      "Emissive spheres are added at the lights sources."])
+    ..addControlBoxes(["shapes"]);
 
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
   ThreeDart.Entity centerObj = new ThreeDart.Entity()
     ..mover = new Movers.Constant.scale(1.0, 1.0, 1.0)

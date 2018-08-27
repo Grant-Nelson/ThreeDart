@@ -9,14 +9,16 @@ import 'package:ThreeDart/Lights.dart' as Lights;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Textures.dart' as Textures;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
-import '../common/common.dart' as common;
+import '../../common/common.dart' as common;
 
 void main() {
-  common.shellTest("Test 037", ["heightMaps", "shapes", "scalars"],
-    "A test of applying a height map to an image. "+
-    "Some shapes will take a bit to calculate depending on quality of mapping.");
+  new common.ShellPage("Test 037")
+    ..addLargeCanvas("testCanvas")
+    ..addPar(["A test of applying a height map to an image. ",
+      "Some shapes will take a bit to calculate depending on quality of mapping."])
+    ..addControlBoxes(["heightMaps", "shapes", "scalars"]);
 
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
     ..lights.add(new Lights.Directional(

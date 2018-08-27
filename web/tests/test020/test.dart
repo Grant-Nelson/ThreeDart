@@ -7,13 +7,15 @@ import 'package:ThreeDart/Math.dart' as Math;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
-import '../common/common.dart' as common;
+import '../../common/common.dart' as common;
 
 void main() {
-  common.shellTest("Test 020", ["shapes"],
-    "Test of the Matrial Lighting shader with multiple moving directional lights.");
+  new common.ShellPage("Test 020")
+    ..addLargeCanvas("testCanvas")
+    ..addPar(["Test of the Matrial Lighting shader with multiple moving directional lights."])
+    ..addControlBoxes(["shapes"]);
 
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
   Lights.Directional redDir = new Lights.Directional(
     mover: new Movers.Rotater(deltaYaw: 0.3, deltaPitch: 0.0, deltaRoll: 0.0),

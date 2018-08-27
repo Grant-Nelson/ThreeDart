@@ -7,13 +7,14 @@ import 'package:ThreeDart/Math.dart' as Math;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Views.dart' as Views;
-import '../common/common.dart' as common;
+import '../../common/common.dart' as common;
 
 void main() {
-  common.shellTest("Test 030", [],
-    "A test of the Normal shader for dynamically rendering normal maps.");
+  new common.ShellPage("Test 030")
+    ..addLargeCanvas("testCanvas")
+    ..addPar(["A test of the Normal shader for dynamically rendering normal maps."]);
 
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..shape = Shapes.cube()

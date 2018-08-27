@@ -8,13 +8,15 @@ import 'package:ThreeDart/Textures.dart' as Textures;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
-import '../common/common.dart' as common;
+import '../../common/common.dart' as common;
 
 void main() {
-  common.shellTest("Test 022", ["shapes"],
-    "Test of the Material Lighting shader with a textured point light.");
+  new common.ShellPage("Test 022")
+    ..addLargeCanvas("testCanvas")
+    ..addPar(["Test of the Material Lighting shader with a textured point light."])
+    ..addControlBoxes(["shapes"]);
 
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
   Textures.TextureCube texture = td.textureLoader.loadCubeFromPath("../resources/earthColor");
 
   Movers.Group mover = new Movers.Group()

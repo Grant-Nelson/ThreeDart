@@ -9,13 +9,15 @@ import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
 import 'package:ThreeDart/Textures.dart' as Textures;
 import 'package:ThreeDart/Views.dart' as Views;
-import '../common/common.dart' as common;
+import '../../common/common.dart' as common;
 
 void main() {
-  common.shellTest("Test 019", [],
-    "A test of the Material Lighting shader with an alpha texture.");
+  new common.ShellPage("Test 019")
+    ..addLargeCanvas("testCanvas")
+    ..addPar(["A test of the Material Lighting shader with an alpha texture. ",
+      "There are no mapped reflections, this is actually transparent."]);
 
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..shape = Shapes.cube();
