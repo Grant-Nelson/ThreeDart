@@ -14,13 +14,14 @@ import '../../common/common.dart' as common;
 void main() {
   new common.ShellPage("Test 034")
     ..addLargeCanvas("testCanvas")
-    ..addPar(["Test of resizing the render target."]);
+    ..addPar(["Test of resizing the render target. ",
+      "Resizing the canvas works better in Chrome."]);
 
   Element canvas = document.getElementById("testCanvas");
   canvas.style
     ..width = "100%"
     ..height = "100%"
-    ..margin = "-2px";
+    ..margin = "-4px";
   Element div = new DivElement();
   div.style
     ..border = "2px solid"

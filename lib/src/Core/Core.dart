@@ -2,6 +2,7 @@ library ThreeDart.Core;
 
 import 'dart:web_gl' as WebGL;
 import 'dart:html' as html;
+import 'dart:async';
 
 import '../Collections/Collections.dart' as Collections;
 import '../Data/Data.dart' as Data;
