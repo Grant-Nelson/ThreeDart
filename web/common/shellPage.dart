@@ -36,8 +36,11 @@ class ShellPage {
     pageCenter.append(this._page);
     this._parTokenizer = null;
 
-    html.document.onScroll.listen((_) {
-    	scrollTop.style.top = "${-0.05*body.scrollTop}px";
+    html.document.onScroll.listen((html.Event e) {
+      Timer.run(() {
+        int offset = html.document.documentElement.scrollTop;
+        scrollTop.style.top = "${-0.01*offset}px";
+      });
     });
   }
 
@@ -56,7 +59,7 @@ class ShellPage {
       ..id = id
       ..style.fontSize = "${28 - level*3}px";
     html.AnchorElement anchor = new html.AnchorElement()
-      ..href = "#${id}"
+      ..href = "#$id"
       ..text = text;
     textHeaderElem.append(anchor);
     this._page.append(textHeaderElem);
@@ -255,7 +258,7 @@ class ShellPage {
       ..className = "pageImage"
       ..id = id;
     html.AnchorElement anchor = new html.AnchorElement()
-      ..href = "#${id}";
+      ..href = "#$id";
     html.ImageElement image = new html.ImageElement()
       ..src = path;
     anchor.append(image);
@@ -279,6 +282,65 @@ class ShellPage {
       ..className = "pageLargeCanvas"
       ..id = id;
     this._page.append(canvas);
+  }
+
+  /// Adds an FPS output for the given TreeDart object.
+  void addFPS(ThreeDart.ThreeDart td) {
+    html.DivElement textElem = new html.DivElement()
+      ..text = "0.00 fps"
+      ..className = "fps";
+    this._page.append(textElem);
+    
+    new Timer.periodic(const Duration(milliseconds: 5000), (Timer time) {
+      String fps = td.fps.toStringAsFixed(2);
+      textElem.text = "$fps fps";
+    });
+  }
+
+  /// Adds the given element into the page.
+  void addElem(html.Element elem) {
+    html.DivElement elemContainer = new html.DivElement();
+    elemContainer.append(elem);
+
+    html.DivElement endPage = new html.DivElement();
+    endPage.style
+      ..display = "block"
+      ..clear   = "both";
+    elemContainer.append(endPage);
+    
+    this._page.append(elemContainer);
+  }
+
+  /// Adds a set of controls, side by side.
+  void addControlBoxes(List<String> ids) {
+    html.TableElement table = new html.TableElement()
+      ..id = "shellTable";
+    table.style
+      ..width       = "100%"
+      ..padding     = "0px"
+      ..marginLeft  = "auto"
+      ..marginRight = "auto";
+    this._page.append(table);
+
+    html.TableRowElement bottomRow = table.addRow();
+    bottomRow.addCell().style
+      ..textAlign     = "center"
+      ..verticalAlign = "top"
+      ..marginLeft    = "auto"
+      ..marginRight   = "auto";
+    for (int i = 0; i < ids.length; i++) {
+      html.DivElement ctrlBlock = new html.DivElement()
+        ..id = ids[i]
+        ..style.textAlign     = "left"
+        ..style.verticalAlign = "top";
+      html.TableCellElement cell = bottomRow.addCell();
+      cell.style
+          ..textAlign     = "center"
+          ..verticalAlign = "top"
+          ..marginLeft    = "auto"
+          ..marginRight   = "auto";
+      cell.append(ctrlBlock);
+    }
   }
 
   /// Constructs the paragraph tokenizer if the tokenizer hasn't been setup yet.

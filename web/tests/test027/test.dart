@@ -8,14 +8,15 @@ import 'package:ThreeDart/Views.dart' as Views;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
-import '../common/common.dart' as common;
+import '../../common/common.dart' as common;
 
 void main() {
-  common.shellTest("Test 027", [],
-    "Test of a back buffer target for rendering to a texture. "+
-    "That back buffer texture is applied to a box.");
+  new common.ShellPage("Test 027")
+    ..addLargeCanvas("testCanvas")
+    ..addPar(["Test of a back buffer target for rendering to a texture. ",
+      "That back buffer texture is applied to a box."]);
 
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
   Movers.Group firstMover =new Movers.Group()
     ..add(new Movers.Rotater())

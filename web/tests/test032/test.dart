@@ -7,15 +7,17 @@ import 'package:ThreeDart/IO.dart' as IO;
 import 'package:ThreeDart/Movers.dart' as Movers;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
-import '../common/common.dart' as common;
+import '../../common/common.dart' as common;
 
 void main() {
-  common.shellTest("Test 032", ["controls", "shapes", "scalars"],
-    "The inspection test for shapes loaders. "+
-    "For generated shapes see test002. "+
-    "Note: Some shapes will take time to load.");
+  new common.ShellPage("Test 032")
+    ..addLargeCanvas("testCanvas")
+    ..addPar(["The inspection test for shapes loaders. ",
+      "For generated shapes see test002. ",
+      "Note: Some shapes will take time to load."])
+    ..addControlBoxes(["controls", "shapes", "scalars"]);
 
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
   bool showMtrl = true;
   ThreeDart.Entity obj = new ThreeDart.Entity()

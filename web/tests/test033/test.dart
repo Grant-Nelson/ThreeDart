@@ -9,13 +9,16 @@ import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Textures.dart' as Textures;
 import 'package:ThreeDart/Lights.dart' as Lights;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
-import '../common/common.dart' as common;
+import '../../common/common.dart' as common;
 
 void main() {
-  common.shellTest("Test 033", [],
-    "Test of a sterioscopic scene.");
+  new common.ShellPage("Test 033")
+    ..addLargeCanvas("testCanvas")
+    ..addPar(["Test of a sterioscopic scene."]);
 
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
+  // TODO: Fix null emit error
+
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
   ThreeDart.Entity cubeEntity = new ThreeDart.Entity(shape: Shapes.cube());
   ThreeDart.Entity shapeEntity = new ThreeDart.Entity();

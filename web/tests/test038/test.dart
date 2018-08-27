@@ -9,7 +9,7 @@ import 'package:ThreeDart/Lights.dart' as Lights;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Textures.dart' as Textures;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
-import '../common/common.dart' as common;
+import '../../common/common.dart' as common;
 
 ThreeDart.Entity createFloor(ThreeDart.ThreeDart td) {
   Textures.Texture2D floorTxt =
@@ -73,13 +73,15 @@ ThreeDart.Entity createObjects(ThreeDart.ThreeDart td) {
 }
 
 void main() {
-  common.shellTest("Test 038", ["options"],
-    "A test of basic 3D movement around a room similar to a first person view. "+
-    "A and D (left and right arrow keys) strifes left and right. "+
-    "W and S (up and down arrow keys) moves forward and backward. "+
-    "Q and E moves up and down. Mouse looks around with left mouse button pressed.");
+  new common.ShellPage("Test 038")
+    ..addLargeCanvas("testCanvas")
+    ..addPar(["A test of basic 3D movement around a room similar to a first person view. ",
+      "A and D (left and right arrow keys) strifes left and right. ",
+      "W and S (up and down arrow keys) moves forward and backward. ",
+      "Q and E moves up and down. Mouse looks around with left mouse button pressed."])
+    ..addControlBoxes(["options"]);
 
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
   ThreeDart.Entity group = new ThreeDart.Entity()
     ..children.add(createFloor(td))

@@ -11,14 +11,16 @@ import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Textures.dart' as Textures;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
-import '../common/common.dart' as common;
+import '../../common/common.dart' as common;
 
 void main() {
-  common.shellTest("Test 014", ["controls", "shapes"],
-    "Test of Material Lighting shader with different reflections and refractions. "+
-    "No alpha is being used. The background cube maps is being painted onto the object.");
+  new common.ShellPage("Test 014")
+    ..addLargeCanvas("testCanvas")
+    ..addPar(["Test of Material Lighting shader with different reflections and refractions. "+
+      "No alpha is being used. The background cube maps is being painted onto the object."])
+    ..addControlBoxes(["controls", "shapes"]);
 
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
   Views.FrontTarget target = new Views.FrontTarget()
     ..clearColor = false;

@@ -8,18 +8,19 @@ import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Views.dart' as Views;
 import 'package:ThreeDart/Lights.dart' as Lights;
-import '../common/common.dart' as common;
+import '../../common/common.dart' as common;
 
 void main() {
-  common.shellTest("Test 031", [],
-    "A test of the Distortion cover with a dynamic normal map. "+
-    "The distortion map is generated into one back buffer. "+
-    "The scene is generated into another back buffer. "+
-    "The two parts are combined with a Distortion cover. "+
-    "Use mouse to rotate cube in normal map and Ctrl plus mouse "+
-    "to rotate scene.");
+  new common.ShellPage("Test 031")
+    ..addLargeCanvas("testCanvas")
+    ..addPar(["A test of the Distortion cover with a dynamic normal map. ",
+      "The distortion map is generated into one back buffer. ",
+      "The scene is generated into another back buffer. ",
+      "The two parts are combined with a Distortion cover. ",
+      "Use mouse to rotate cube in normal map and Ctrl plus mouse ",
+      "to rotate scene."]);
 
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
   ThreeDart.Entity normalObj = new ThreeDart.Entity()
     ..shape = Shapes.cube()

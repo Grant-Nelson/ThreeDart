@@ -7,14 +7,16 @@ import 'package:ThreeDart/Math.dart' as Math;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
-import '../common/common.dart' as common;
+import '../../common/common.dart' as common;
 
 void main() {
-  common.shellTest("Test 024", ["shapes"],
-    "Test of the Material Lighting shader with a simple spot light. "+
-    "Use Ctrl plus the mouse to move the light.");
+  new common.ShellPage("Test 024")
+    ..addLargeCanvas("testCanvas")
+    ..addPar(["Test of the Material Lighting shader with a simple spot light. ",
+      "Use Ctrl plus the mouse to move the light."])
+    ..addControlBoxes(["shapes"]);
 
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("threeDart");
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
   Movers.Group lightMover = new Movers.Group()
     ..add(new Movers.Constant.translate(0.0, 0.0, -2.5))
