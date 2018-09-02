@@ -121,7 +121,14 @@ class UserInput {
     new Button(msEvent.buttons, ctrl: msEvent.ctrlKey||msEvent.metaKey, alt: msEvent.altKey, shift: msEvent.shiftKey);
 
   /// Determines if the given mouse location is containerd in the canvas.
-  bool _mouseContained(html.MouseEvent msEvent) => this._elem.client.containsPoint(msEvent.client);
+  bool _mouseContained(html.MouseEvent msEvent) {
+    html.Rectangle rect = this._elem.getBoundingClientRect();
+    final int x = msEvent.page.x - rect.left;
+    if (x < 0) return false;
+    final int y = msEvent.page.y - rect.top;
+    if (y < 0) return false;
+    return (x < rect.width) && (y < rect.height);
+  }
 
   /// Handles focus of the canvas.
   void _onFocus(html.Event _) {
@@ -134,8 +141,9 @@ class UserInput {
   }
 
   /// Handles cancelling the content menu for the canvas.
-  void _onContentMenu(html.Event e) {
-    if (this.hasFocus) e.preventDefault();
+  void _onContentMenu(html.MouseEvent msEvent) {
+    if (this.hasFocus && this._mouseContained(msEvent))
+      msEvent.preventDefault();
   }
 
   /// Handles a keyboard key being released.
@@ -290,7 +298,7 @@ class UserInput {
   // Handles touch screen point presses starting on the canvas.
   void _onTouchStart(html.TouchEvent tEvent) {
     this._elem.focus();
-    this._focused = true; // This is here because focus/blur doesn't work right now.
+    this._focused = true; // TODO: Fix focus. This is here because focus/blur doesn't work right now.
 
     this._setTouchModifiers(tEvent);
     final List<Math.Point2> pnts = this._rawTouchPoints(tEvent);
