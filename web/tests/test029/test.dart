@@ -19,14 +19,14 @@ void main() {
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
-  Movers.Group secondMover = new Movers.Group()
+  Movers.Group mover = new Movers.Group()
     ..add(new Movers.UserRotater(input: td.userInput))
     ..add(new Movers.UserRoller(ctrl: true, input: td.userInput))
     ..add(new Movers.UserZoom(input: td.userInput))
     ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));
-  Views.Perspective userCamera = new Views.Perspective(mover: secondMover);
+  Views.Perspective userCamera = new Views.Perspective(mover: mover);
 
-  Views.BackTarget colorTarget = new Views.BackTarget(800, 600)
+  Views.BackTarget colorTarget = new Views.BackTarget(800, 600, autoResize: true)
     ..clearColor = false;
 
   ThreeDart.Entity obj = new ThreeDart.Entity()

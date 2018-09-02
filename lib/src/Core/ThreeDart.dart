@@ -175,8 +175,6 @@ class ThreeDart implements Events.Changable {
     return fps;
   }
 
-  /// TODO: Somehow need to detect the size change of the canvas and call a render.
-
   /// Makes sure the size of the canvas is correctly set.
   void _resize() {
     // Lookup the size the browser is displaying the canvas in CSS pixels and
@@ -191,6 +189,7 @@ class ThreeDart implements Events.Changable {
       this._canvas.width  = displayWidth;
       this._canvas.height = displayHeight;
     }
+    Timer.run(this.requestRender);
   }
 
   /// Requests a render to start the next time the main message loop

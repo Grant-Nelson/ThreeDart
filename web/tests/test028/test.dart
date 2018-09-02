@@ -57,7 +57,7 @@ void main() {
     ..specular.shininess = 10.0
     ..bump.textureCube = td.textureLoader.loadCubeFromPath("../resources/diceBumpMap");
 
-  Views.BackTarget colorTarget = new Views.BackTarget(800, 600)
+  Views.BackTarget colorTarget = new Views.BackTarget(800, 600, autoResize: true)
     ..clearColor = false;
 
   Scenes.CoverPass skybox = new Scenes.CoverPass.skybox(
@@ -71,7 +71,7 @@ void main() {
     ..technique = colorTech
     ..children.add(group);
 
-  Views.BackTarget depthTarget = new Views.BackTarget(400, 300);
+  Views.BackTarget depthTarget = new Views.BackTarget(400, 300, autoResize: true, autoResizeScalar: 0.5);
   Scenes.EntityPass depthPass = new Scenes.EntityPass()
     ..camera = userCamera
     ..target = depthTarget
@@ -97,7 +97,6 @@ void main() {
     ..target = new Views.FrontTarget(clearColor: false)
     ..technique = layoutTech;
 
-  // TODO: Fix aspect ratio problem
   td.scene = new Scenes.Compound(passes: [skybox, colorPass, depthPass, blurPass, layout]);
 
   common.showFPS(td);

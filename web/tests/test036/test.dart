@@ -24,7 +24,7 @@ void main() {
     ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));
   Views.Perspective userCamera = new Views.Perspective(mover: secondMover);
 
-  Views.BackTarget target = new Views.BackTarget(800, 600)
+  Views.BackTarget back = new Views.BackTarget(800, 600, autoResize: true)
     ..color = new Math.Color4.transparent();
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
@@ -42,7 +42,7 @@ void main() {
   Scenes.EntityPass pass = new Scenes.EntityPass()
     ..camera = userCamera
     ..technique = tech
-    ..target = target
+    ..target = back
     ..children.add(obj);
 
   Techniques.TextureLayout layout = new Techniques.TextureLayout(
@@ -54,16 +54,17 @@ void main() {
     for (int j = 0; j < count; ++j) {
       double yOffset = j.toDouble()*scale;
       layout.entries.add(new Techniques.TextureLayoutEntry(
-        texture: target.colorTexture,
+        texture: back.colorTexture,
         destination: new Math.Region2(xOffset, yOffset, scale, scale)));
     }
   }
   layout.entries.add(new Techniques.TextureLayoutEntry()
-    ..texture = target.colorTexture);
+    ..texture = back.colorTexture);
 
+  Views.FrontTarget front = new Views.FrontTarget(color: new Math.Color4.black());
   Scenes.CoverPass layoutCover = new Scenes.CoverPass()
     ..technique = layout
-    ..target = new Views.FrontTarget(color: new Math.Color4.black());
+    ..target = front;
 
   td.scene = new Scenes.Compound(passes: [pass, layoutCover]);
 

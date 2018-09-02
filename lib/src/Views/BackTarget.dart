@@ -7,6 +7,8 @@ class BackTarget extends Target {
   int _actualWidth;
   int _actualHeight;
   bool _hasDepth;
+  bool _autoResize;
+  double _autoResizeScalar;
   WebGL.Framebuffer _framebuffer;
   WebGL.Texture _colorBuffer;
   WebGL.Renderbuffer _depthBuffer;
@@ -19,12 +21,14 @@ class BackTarget extends Target {
   Events.Event _changed;
 
   /// Creates a new back target.
-  BackTarget(int width, int height, {bool hasDepth: true}) {
-    this._width        = width ?? 512;
-    this._height       = height ?? 512;
-    this._actualWidth  = this._width;
-    this._actualHeight = this._height;
+  BackTarget(int width, int height, {bool hasDepth: true, bool autoResize: false, double autoResizeScalar: 1.0}) {
+    this._width        = 512;
+    this._height       = 512;
+    this._actualWidth  = 512;
+    this._actualHeight = 512;
     this._hasDepth     = hasDepth ?? true;
+    this._autoResize   = autoResize ?? false;
+    this._autoResizeScalar = autoResizeScalar ?? 1.0;
     this._framebuffer  = null;
     this._colorBuffer  = null;
     this._depthBuffer  = null;
@@ -35,6 +39,9 @@ class BackTarget extends Target {
     this._clearDepth   = true;
     this._region       = new Math.Region2(0.0, 0.0, 1.0, 1.0);
     this._changed      = null;
+    
+    this.width  = width ?? 512;
+    this.height = height ?? 512;
   }
 
   /// Indicates that this target has changed.
@@ -55,9 +62,31 @@ class BackTarget extends Target {
 
   /// The requested width in pixels of the back buffer.
   int get width => this._width;
+  void set width(int width) {
+    width ??= 512;
+    if (width < 1) width = 1;
+    if (this._width != width) {
+      int old = this._width;
+      this._framebuffer = null;
+      this._width       = width;
+      this._actualWidth = width;
+      this._onChanged(new Events.ValueChangedEventArgs(this, "width", old, width));
+    }
+  }
 
   /// The requested height in pixels of the back buffer.
   int get height => this._height;
+  void set height(int height) {
+    height ??= 512;
+    if (height < 1) height = 1;
+    if (this._height != height) {
+      int old = this._height;
+      this._framebuffer  = null;
+      this._height       = height;
+      this._actualHeight = height;
+      this._onChanged(new Events.ValueChangedEventArgs(this, "height", old, height));
+    }
+  }
 
   /// The actual width in pixel of the back buffer.
   int get actualWidth => this._actualWidth;
@@ -110,6 +139,25 @@ class BackTarget extends Target {
     }
   }
 
+  /// Indicates if the target buffer should automatically resize to the size of the canvas.
+  bool get autoResize => this._autoResize;
+  void set autoResize(bool autoResize) {
+    if (this._autoResize != autoResize) {
+      this._autoResize = autoResize;
+      this._onBoolChanged("autoResize", this._autoResize);
+    }
+  }
+
+  /// The scalar to apply to the width and height when an automatic resize occurs.
+  double get autoResizeScalar => this._autoResizeScalar;
+  void set autoResizeScalar(double scalar) {
+    if (!Math.Comparer.equals(this._autoResizeScalar, scalar)) {
+      double prev = this._autoResizeScalar;
+      this._autoResizeScalar = scalar;
+      this._onChanged(new Events.ValueChangedEventArgs(this, "autoResizeScalar", prev, this._autoResizeScalar));
+    }
+  }
+
   /// The region of the front target to render to.
   /// <0, 0> is top left corner and <1, 1> is botton right.
   Math.Region2 get region => this._region;
@@ -152,6 +200,11 @@ class BackTarget extends Target {
 
   /// Binds this target to the [state].
   void bind(Core.RenderState state) {
+    if (this._autoResize) {
+      this.width  = (state.gl.drawingBufferWidth * this._autoResizeScalar).round();
+      this.height = (state.gl.drawingBufferHeight * this._autoResizeScalar).round();
+    }
+
     if (this._framebuffer == null) {
       this._initialize(state.gl);
     }
