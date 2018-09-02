@@ -16,8 +16,6 @@ void main() {
     ..addLargeCanvas("testCanvas")
     ..addPar(["Test of a sterioscopic scene."]);
 
-  // TODO: Fix null emit error
-
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
   ThreeDart.Entity cubeEntity = new ThreeDart.Entity(shape: Shapes.cube());

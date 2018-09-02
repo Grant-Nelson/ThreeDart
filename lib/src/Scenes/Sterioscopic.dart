@@ -192,6 +192,6 @@ class Sterioscopic implements Scene {
     }
 
     Core.StateEventArgs args = new Core.StateEventArgs(this, state);
-    this._onRender.emit(args);
+    this._onRender?.emit(args);
   }
 }
