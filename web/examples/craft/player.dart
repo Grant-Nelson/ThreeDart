@@ -2,8 +2,8 @@ part of craft;
 
 /// The object defining the player and view of the game.
 class Player {
-  static const int _startX = 0; /// The x starting location of the player.
-  static const int _startZ = 0; /// The y starting location of the player.
+  static const double _startX = 0.5; /// The x starting location of the player.
+  static const double _startZ = 0.5; /// The y starting location of the player.
   static const double _gravity = -100.0; /// The gravity force to apply onto the player.
   static const double _speed = 6.0; /// The speed at which the player moves.
   static const double _fallSpeed = 60.0; /// The maximum speed the player can fall at, terminal velocity.
@@ -131,10 +131,9 @@ class Player {
 
   /// Sets the player's coordinates to the starting position at the top most location.
   void goHome() {
-    Chunk chunk = this._world.findChunk(_startX, _startZ);
-    int y = chunk.topHit(_startX, _startZ);
-    this._trans.location = new Math.Point3(
-      _startX.toDouble(), y.toDouble()+60.0, _startZ.toDouble());
+    Chunk chunk = this._world.findChunk(_startX.toInt(), _startZ.toInt());
+    int y = chunk?.topHit(_startX.toInt(), _startZ.toInt()) ?? 0;
+    this._trans.location = new Math.Point3(_startX, y.toDouble()+60.0, _startZ);
     this._trans.velocity = new Math.Vector3.zero();
   }
 

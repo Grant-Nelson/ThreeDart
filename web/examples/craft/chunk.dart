@@ -39,6 +39,9 @@ class Chunk {
   /// Indicates if the chunk's entities need to be updated to reflect the chunk's data.
   bool _needUpdate;
 
+  /// Indicates if the chunk hasn't been generated yet.
+  bool _needGen;
+
   /// Creates a new chunk for the given [x] and [z] world offset for the given [world].
   Chunk(this.x, this.z, this._world) {
     this._data = new data.Uint8List(_dataLength)
@@ -52,6 +55,7 @@ class Chunk {
     }
 
     this._needUpdate = true;
+    this._needGen = true;
   }
 
   /// Gets the string for this chunk for debugging.
@@ -64,31 +68,52 @@ class Chunk {
   /// Gets or sets if this chunk needs an update.
   bool get needUpdate => this._needUpdate;
   set needUpdate(bool update) => this._needUpdate = update;
+  
+  /// Gets or sets if this chunk needs to be generated.
+  bool get needToGenerate => this._needGen;
+
+  /// Indicates that the chunk is finished being generated.
+  void finishGenerate() {
+    this._needGen = false;
+    this._needUpdate = true;
+    this.left?.needUpdate = true;
+    this.right?.needUpdate = true;
+    this.front?.needUpdate = true;
+    this.back?.needUpdate = true;
+  }
 
   /// Calculates the chunk's data offset for the given x, y, and z location.
   int _index(int x, int y, int z) => (x * ySize + y) * zSize + z;
 
   /// Gets the value of the block at the given location.
-  /// If the coordinates are outside this chunk the neighboring chunk will checked.
+  /// This will not check neighbors if the coordinates are outside this chunk.
   int getBlock(int x, int y, int z) {
+    if (y < 0) return BlockType.Boundary;
+    if (y >= ySize ||
+        x < 0 || x >= xSize ||
+        z < 0 || z >= zSize) return BlockType.Air;
+    return this._data[this._index(x, y, z)];
+  }
+
+  /// Gets the value of the block at the given location.
+  /// If the coordinates are outside this chunk the neighboring chunk will checked.
+  int getWorldBlock(int x, int y, int z) {
     if (y < 0)      return BlockType.Boundary;
     if (y >= ySize) return BlockType.Air;
-    if (x < 0)      return left?. getBlock(x + xSize, y, z) ?? BlockType.Air;
-    if (x >= xSize) return right?.getBlock(x - xSize, y, z) ?? BlockType.Air;
-    if (z < 0)      return back?. getBlock(x, y, z + zSize) ?? BlockType.Air;
-    if (z >= zSize) return front?.getBlock(x, y, z - zSize) ?? BlockType.Air;
+    if (x < 0)      return left?. getWorldBlock(x + xSize, y, z) ?? BlockType.Air;
+    if (x >= xSize) return right?.getWorldBlock(x - xSize, y, z) ?? BlockType.Air;
+    if (z < 0)      return back?. getWorldBlock(x, y, z + zSize) ?? BlockType.Air;
+    if (z >= zSize) return front?.getWorldBlock(x, y, z - zSize) ?? BlockType.Air;
     return this._data[this._index(x, y, z)];
   }
 
   /// Sets the value of the block at the given location.
-  /// If the coordinates are outside this chunk the neighboring chunk will be set to.
+  /// This will not set neighbors if the coordinates are outside this chunk.
   /// Returns true if block set, false if not.
   bool setBlock(int x, int y, int z, int value) {
-    if (y < 0 || y >= ySize) return false;
-    if (x < 0)      return left?. setBlock(x + xSize, y, z, value) ?? false;
-    if (x >= xSize) return right?.setBlock(x - xSize, y, z, value) ?? false;
-    if (z < 0)      return back?. setBlock(x, y, z + zSize, value) ?? false;
-    if (z >= zSize) return front?.setBlock(x, y, z - zSize, value) ?? false;
+    if (y < 0 || y >= ySize ||
+        x < 0 || x >= xSize ||
+        z < 0 || z >= zSize) return false;
     this._data[this._index(x, y, z)] = value;
     return true;
   }

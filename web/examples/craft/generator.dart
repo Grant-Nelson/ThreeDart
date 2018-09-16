@@ -3,39 +3,26 @@ part of craft;
 /// The generator will initialize chunks to create the world.
 class Generator {
 
-  /// The world to generate.
-  World _world;
-
   /// The noise generator for the world.
   simplex.OpenSimplexNoise _simplex;
 
   /// Creates a new generator for the given world.
-  Generator(this._world, [int seed = 0]) {
+  Generator([int seed = 0]) {
     this._simplex = new simplex.OpenSimplexNoise(seed);
   }
 
-  /// Fills all the current chunks with data.
-  void fillWorld() {
-    this._addPyramid();
-    for (Chunk chunk in this._world._chunks) {
-      this._turrainChunk(chunk);
-    }
-    for (Chunk chunk in this._world._chunks) {
-      this._applyWaterChunk(chunk);
-    }
-    for (Chunk chunk in this._world._chunks) {
-      this._trees(chunk);
-    }
-    for (Chunk chunk in this._world._chunks) {
-      this._plants(chunk);
-    }
-    this._add3Dart(-12, 40, -15);
-    this._towerOfPimps(0, 2, 0);
-  }
-
-  /// Sets a location anywhere in the world with the given block value.
-  void _set(int x, int y, int z, int value) {
-    this._world.getBlock(x.toDouble(), y.toDouble(), z.toDouble()).value = value;
+  /// Fills the given chunk with data.
+  void fillChunk(Chunk chunk) {
+    if (chunk == null) return;
+    this._addPyramid(chunk);
+    this._turrain(chunk);
+    this._applyWater(chunk);
+    this._applySand(chunk);
+    this._trees(chunk);
+    this._plants(chunk);
+    this._add3Dart(chunk);
+    this._towerOfPimps(chunk);
+    chunk.finishGenerate();
   }
 
   /// Get the scaled 2D noise offset for the given chunk.
@@ -43,7 +30,7 @@ class Generator {
     this._simplex.eval2D((x + chunk.x)*scale, (z + chunk.z)*scale)*0.5 + 0.5;
 
   /// Applies the turrain (turf, dirt, and rock) to the given chunk.
-  void _turrainChunk(Chunk chunk) {
+  void _turrain(Chunk chunk) {
     for (int x = 0; x < Chunk.xSize; x++) {
       for (int z = 0; z < Chunk.zSize; z++) {
         this._turrainBlock(chunk, x, z);
@@ -51,14 +38,19 @@ class Generator {
     }
   }
 
-  /// Determines the turrain blocks for the column in the current chunk.
-  void _turrainBlock(Chunk chunk, int x, int z) {
+  /// Determines the height of the noise turrain at the given location
+  int _turrainHeight(Chunk chunk, int x, int z) {
     double terrain = 0.6 * this._noise(chunk, x, z, 0.001) +
                      0.3 * this._noise(chunk, x, z, 0.01) +
                      0.1 * this._noise(chunk, x, z, 0.1);
     int maxy = (math.pow(terrain, 2.0)*Chunk.ySize).toInt();
     maxy = (maxy >= Chunk.ySize)? Chunk.ySize-1: maxy;
+    return maxy;
+  }
 
+  /// Determines the turrain blocks for the column in the current chunk.
+  void _turrainBlock(Chunk chunk, int x, int z) {
+    int maxy = this._turrainHeight(chunk, x, z);
     for (int y = 0; y <= maxy; y++) {
       if (chunk.getBlock(x, y, z) == BlockType.Air) {
         int block = BlockType.Rock;
@@ -72,8 +64,8 @@ class Generator {
     }
   }
 
-  /// Applies the water and sand for the given chunk.
-  void _applyWaterChunk(Chunk chunk) {
+  /// Applies the water for the given chunk.
+  void _applyWater(Chunk chunk) {
     for (int x = 0; x < Chunk.xSize; x++) {
       for (int z = 0; z < Chunk.zSize; z++) {
         this._applyWaterBlock(chunk, x, z);
@@ -81,7 +73,7 @@ class Generator {
     }
   }
 
-  /// Determines the water blocks for a column and any surrounding sand blocks.
+  /// Determines the water blocks for a column.
   void _applyWaterBlock(Chunk chunk, int x, int z) {
     const int depth = 8;
     int maxy = chunk.topHit(x, z, 0);
@@ -89,8 +81,24 @@ class Generator {
       for (int y = depth; y > maxy; y--) {
         chunk.setBlock(x, y, z, BlockType.Water);
       }
+    }
+  }
 
-      for (int y = depth+2; y > maxy-2; y--) {
+  /// Determines the water blocks and adds surrounding sand blocks.
+  void _applySand(Chunk chunk) {
+    for (int x = -1; x <= Chunk.xSize; x++) {
+      for (int z = -1; z <= Chunk.zSize; z++) {
+        this._applySandBlock(chunk, x, z);
+      }
+    }
+  }
+
+  /// Determines the water blocks and adds surrounding sand blocks.
+  void _applySandBlock(Chunk chunk, int x, int z) {
+    const int depth = 8;
+    int maxy = this._turrainHeight(chunk, x, z);
+    if (maxy < depth) {
+      for (int y = depth+2; y > 0; y--) {
         for (int dx = -1; dx <= 1; dx++) {
           for (int dz = -1; dz <= 1; dz++) {
             int value = chunk.getBlock(x+dx, y, z+dz);
@@ -106,8 +114,8 @@ class Generator {
   /// Determines the trees for the given chunk.
   /// The leaves will hang over into neighbor chunks.
   void _trees(Chunk chunk) {
-    for (int x = 0; x < Chunk.xSize; x++) {
-      for (int z = 0; z < Chunk.zSize; z++) {
+    for (int x = -3; x < Chunk.xSize+3; x++) {
+      for (int z = -3; z < Chunk.zSize+3; z++) {
         if (this._noise(chunk, x, z, 1.5) < 0.1)
           this._addTree(chunk, x, z);
       }
@@ -116,9 +124,14 @@ class Generator {
 
   /// Adds a tree at the given [x] and [z] to this chunk.
   void _addTree(Chunk chunk, int x, int z) {
-    int maxy = chunk.topHit(x, z, 0);
-    int value = chunk.getBlock(x, maxy, z);
-    if (value != BlockType.Turf && value != BlockType.DryLeaves) return;
+    final int height = 30;
+    if ((chunk.x + Chunk.xSize >= -height) && (chunk.x < height) &&
+        (chunk.z + Chunk.zSize >= -height) && (chunk.z < height))
+      return;
+
+    const int miny = 10;
+    int maxy = this._turrainHeight(chunk, x, z);
+    if (maxy < miny) return;
 
     for (int y = 1; y < 8; y++) {
       chunk.setBlock(x, maxy + y, z, BlockType.TrunkUD);
@@ -188,63 +201,77 @@ class Generator {
   }
 
   /// Adds the pyramid to the center of the world.
-  void _addPyramid() {
-    int height = 30;
+  void _addPyramid(Chunk chunk) {
+    final int height = 30;
+    if ((chunk.x + Chunk.xSize < -height) || (chunk.x > height) ||
+        (chunk.z + Chunk.zSize < -height) || (chunk.z > height))
+      return;
+      
+    var put = (int dx, int dy, int dz, int value) {
+      chunk.setBlock(dx - chunk.x, dy, dz - chunk.z, value);
+    };
+
     for (int py = height; py >= 0; py-=2) {
       int width = (height-py)+3;
       for (int px = -width; px <= width; px++) {
         for (int pz = -width; pz <= width; pz++) {
-          this._set(px, py, pz, BlockType.WhiteShine);
-          this._set(px, py-1, pz, BlockType.WhiteShine);
+          put(px, py, pz, BlockType.WhiteShine);
+          put(px, py-1, pz, BlockType.WhiteShine);
         }
       }
 
       for (int pw = -2; pw <= 2; pw++) {
-          this._set(-width-1, py, pw, BlockType.Brick);
-          this._set(-width-1, py-1, pw, BlockType.Brick);
-          this._set(-width-2, py-1, pw, BlockType.Brick);
+        put(-width-1, py, pw, BlockType.Brick);
+        put(-width-1, py-1, pw, BlockType.Brick);
+        put(-width-2, py-1, pw, BlockType.Brick);
 
-          this._set(width+1, py, pw, BlockType.Brick);
-          this._set(width+1, py-1, pw, BlockType.Brick);
-          this._set(width+2, py-1, pw, BlockType.Brick);
+        put(width+1, py, pw, BlockType.Brick);
+        put(width+1, py-1, pw, BlockType.Brick);
+        put(width+2, py-1, pw, BlockType.Brick);
 
-          this._set(pw, py, -width-1, BlockType.Brick);
-          this._set(pw, py-1, -width-1, BlockType.Brick);
-          this._set(pw, py-1, -width-2, BlockType.Brick);
+        put(pw, py, -width-1, BlockType.Brick);
+        put(pw, py-1, -width-1, BlockType.Brick);
+        put(pw, py-1, -width-2, BlockType.Brick);
 
-          this._set(pw, py, width+1, BlockType.Brick);
-          this._set(pw, py-1, width+1, BlockType.Brick);
-          this._set(pw, py-1, width+2, BlockType.Brick);
+        put(pw, py, width+1, BlockType.Brick);
+        put(pw, py-1, width+1, BlockType.Brick);
+        put(pw, py-1, width+2, BlockType.Brick);
       }
 
-      this._set(-width-1, py+1, 2, BlockType.Brick);
-      this._set(-width-2, py, 2, BlockType.Brick);
-      this._set(-width-1, py+1, -2, BlockType.Brick);
-      this._set(-width-2, py, -2, BlockType.Brick);
+      put(-width-1, py+1, 2, BlockType.Brick);
+      put(-width-2, py, 2, BlockType.Brick);
+      put(-width-1, py+1, -2, BlockType.Brick);
+      put(-width-2, py, -2, BlockType.Brick);
 
-      this._set(width+1, py+1, 2, BlockType.Brick);
-      this._set(width+2, py, 2, BlockType.Brick);
-      this._set(width+1, py+1, -2, BlockType.Brick);
-      this._set(width+2, py, -2, BlockType.Brick);
+      put(width+1, py+1, 2, BlockType.Brick);
+      put(width+2, py, 2, BlockType.Brick);
+      put(width+1, py+1, -2, BlockType.Brick);
+      put(width+2, py, -2, BlockType.Brick);
 
-      this._set(2, py+1, -width-1, BlockType.Brick);
-      this._set(2, py, -width-2, BlockType.Brick);
-      this._set(-2, py+1, -width-1, BlockType.Brick);
-      this._set(-2, py, -width-2, BlockType.Brick);
+      put(2, py+1, -width-1, BlockType.Brick);
+      put(2, py, -width-2, BlockType.Brick);
+      put(-2, py+1, -width-1, BlockType.Brick);
+      put(-2, py, -width-2, BlockType.Brick);
 
-      this._set(2, py+1, width+1, BlockType.Brick);
-      this._set(2, py, width+2, BlockType.Brick);
-      this._set(-2, py+1, width+1, BlockType.Brick);
-      this._set(-2, py, width+2, BlockType.Brick);
+      put(2, py+1, width+1, BlockType.Brick);
+      put(2, py, width+2, BlockType.Brick);
+      put(-2, py+1, width+1, BlockType.Brick);
+      put(-2, py, width+2, BlockType.Brick);
     }
   }
 
-
   /// Adds the 3Dart text to the world.
-  void _add3Dart(int x, int y, int z) {
+  void _add3Dart(Chunk chunk) {
+    final int x = -12, y = 40, z = -25;
+    final int xWidth = 24, zWidth = 3;
+
+    if ((chunk.x + Chunk.xSize < x - xWidth) || (chunk.x > x + xWidth) ||
+        (chunk.z + Chunk.zSize < z - zWidth) || (chunk.z > z + zWidth))
+      return;
+
     var put = (int value, int dx, int dy, List<int> px, List<int> py) {
       for (int i = px.length -1; i >= 0; i--) {
-        this._set(x+dx+px[i], y+dy-py[i], z, value);
+        chunk.setBlock(x + dx + px[i] - chunk.x, y + dy - py[i], z - chunk.z, value);
       }
     };
 
@@ -266,20 +293,30 @@ class Generator {
   }
 
   /// Adds the RT tribute, "the tower of pimps", to the world.
-  void _towerOfPimps(int x, int y, int z) {
-    final int width = 3, height = 7;
-    for (int px = -width; px <= width; px++) {
+  void _towerOfPimps(Chunk chunk) {
+    final int x = 0, y = 2, z = 0;
+    final int xWidth = 3, zWidth = 3, height = 7;
+
+    if ((chunk.x + Chunk.xSize < x - xWidth) || (chunk.x > x + xWidth) ||
+        (chunk.z + Chunk.zSize < z - zWidth) || (chunk.z > z + zWidth))
+      return;
+
+    var put = (int dx, int dy, int dz, int value) {
+      chunk.setBlock(dx - chunk.x, dy, dz - chunk.z, value);
+    };
+
+    for (int px = -xWidth; px <= xWidth; px++) {
       for (int py = 0; py <= height; py++) {
-        for (int pz = -width; pz <= width; pz++) {
-          this._set(x + px, y + py, z + pz, BlockType.Air);
+        for (int pz = -zWidth; pz <= zWidth; pz++) {
+          put(x + px, y + py, z + pz, BlockType.Air);
         }
       }
     }
 
-    this._set(x, y,   z, BlockType.BlackShine);
-    this._set(x, y+1, z, BlockType.YellowShine);
-    this._set(x, y+2, z, BlockType.YellowShine);
-    this._set(x, y+3, z, BlockType.YellowShine);
-    this._set(x, y+4, z, BlockType.YellowShine);
+    put(x, y,   z, BlockType.BlackShine);
+    put(x, y+1, z, BlockType.YellowShine);
+    put(x, y+2, z, BlockType.YellowShine);
+    put(x, y+3, z, BlockType.YellowShine);
+    put(x, y+4, z, BlockType.YellowShine);
   }
 }

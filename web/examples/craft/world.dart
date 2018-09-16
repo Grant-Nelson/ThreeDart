@@ -2,9 +2,6 @@ part of craft;
 
 /// Defines the world shown in 3Dart craft.
 class World {
-  static const maxXSize = Chunk.xSize*6;
-  static const maxZSize = Chunk.zSize*6;
-
   Materials _mats;
   Generator _gen;
   List<Chunk> _chunks;
@@ -13,19 +10,25 @@ class World {
 
   /// Creates a new world with the given meterials.
   World(this._mats) {
-    this._gen = new Generator(this);
+    this._gen = new Generator();
     this._chunks = new List<Chunk>();
     this._entities = new List<ThreeDart.Entity>();
     for (Techniques.MaterialLight tech in this._mats.materials)
       this.entities.add(new ThreeDart.Entity(tech: tech));
 
+    // Preinitialize the starting part of the world.
+    const maxXSize = Chunk.xSize*2;
+    const maxZSize = Chunk.xSize*2;
     for (int x = -maxXSize; x < maxXSize; x += Chunk.xSize) {
       for (int z = -maxZSize; z < maxZSize; z += Chunk.zSize) {
-        this._chunks.add(new Chunk(x, z, this));
+        Chunk chunk = new Chunk(x, z, this);
+        this._chunks.add(chunk);
+        this._gen.fillChunk(chunk);
       }
     }
 
-    this._gen.fillWorld();
+    // Start timer for periodically generating chunks.
+    new Timer.periodic(new Duration(milliseconds: 10), this._worldTick);
   }
 
   /// Gets the random noise generator for this world.
@@ -66,6 +69,20 @@ class World {
     if (bz < 0) bz += Chunk.zSize;
 
     return new BlockInfo(bx, by, bz, cx, cz, chunk);
+  }
+  
+  /// Adds and removes chunks as needed and
+  /// generates one chunk which is still pending to be loaded.
+  void _worldTick(Timer timer) {
+    // TODO: Add and remove chunks based on player location.
+    // TODO: Pick the closest to the player which still needs to be loaded.
+    
+    for (Chunk chunk in this._chunks) {
+      if (chunk.needToGenerate) {
+        this._gen.fillChunk(chunk);
+        break;
+      }
+    }
   }
 
   /// Updates the world to the player's view.
