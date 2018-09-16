@@ -126,6 +126,9 @@ class Player {
   /// The mover to the location of the player.
   Movers.Group get location => this._playerLoc;
 
+  /// Gets the specific point location of the player in the world.
+  Math.Point3 get point => this._playerLoc.matrix.transPnt3(new Math.Point3.zero());
+
   /// The base entity for the player.
   ThreeDart.Entity get entity => this._entity;
 

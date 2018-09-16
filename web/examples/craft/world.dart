@@ -1,5 +1,11 @@
 part of craft;
 
+const int outXSize = Chunk.xSize*6;
+const int outZSize = Chunk.zSize*6;
+const int inXSize = Chunk.xSize*4;
+const int inZSize = Chunk.zSize*4;
+const int worldTickMilliseconds = 100;
+
 /// Defines the world shown in 3Dart craft.
 class World {
   Materials _mats;
@@ -7,12 +13,14 @@ class World {
   List<Chunk> _chunks;
   List<ThreeDart.Entity> _entities;
   Player _player;
+  Chunk _lastChunk;
 
   /// Creates a new world with the given meterials.
   World(this._mats) {
     this._gen = new Generator();
     this._chunks = new List<Chunk>();
     this._entities = new List<ThreeDart.Entity>();
+    this._lastChunk = null;
     for (Techniques.MaterialLight tech in this._mats.materials)
       this.entities.add(new ThreeDart.Entity(tech: tech));
 
@@ -28,7 +36,7 @@ class World {
     }
 
     // Start timer for periodically generating chunks.
-    new Timer.periodic(new Duration(milliseconds: 10), this._worldTick);
+    new Timer.periodic(new Duration(milliseconds: worldTickMilliseconds), this._worldTick);
   }
 
   /// Gets the random noise generator for this world.
@@ -74,14 +82,56 @@ class World {
   /// Adds and removes chunks as needed and
   /// generates one chunk which is still pending to be loaded.
   void _worldTick(Timer timer) {
-    // TODO: Add and remove chunks based on player location.
-    // TODO: Pick the closest to the player which still needs to be loaded.
-    
+    Math.Point3 player = this._player.point;
+    BlockInfo pBlock = this.getBlock(player.x, player.y, player.z);
+
+    // Check if the last chunk
+    if (this._lastChunk != pBlock.chunk) {
+      this._lastChunk = pBlock.chunk;
+
+      // Add in any out of bounds chunks.
+      int minXOut = pBlock.chunkX - outXSize, maxXOut = pBlock.chunkX + outXSize;
+      int minZOut = pBlock.chunkZ - outZSize, maxZOut = pBlock.chunkZ + outZSize;
+      for (int i = this._chunks.length-1; i >= 0; i--) {
+        Chunk chunk = this._chunks[i];
+        if ((minXOut > chunk.x) || (maxXOut <= chunk.x) ||
+            (minZOut > chunk.z) || (maxZOut <= chunk.z)) {
+          this._chunks.removeAt(i);
+        }
+      }
+
+      // Add in any missing chunks.
+      int minXIn = pBlock.chunkX - inXSize, maxXIn = pBlock.chunkX + inXSize;
+      int minZIn = pBlock.chunkZ - inZSize, maxZIn = pBlock.chunkZ + inZSize;
+      for (int x = minXIn; x < maxXIn; x += Chunk.xSize) {
+        for (int z = minZIn; z < maxZIn; z += Chunk.zSize) {
+          Chunk oldChunk = this.findChunk(x, z);
+          if (oldChunk == null) {
+            print(">> $x, $z");
+            this._chunks.add(new Chunk(x, z, this));
+          }
+        }
+      }
+    }
+
+    // Pick the nearest non-generated chunk to generate.
+    double edgeX = player.x - Chunk.xSize*0.5;
+    double edgeZ = player.z - Chunk.zSize*0.5;
+    Chunk nearest = null;
+    double minDist2 = 1000000.0;
     for (Chunk chunk in this._chunks) {
       if (chunk.needToGenerate) {
-        this._gen.fillChunk(chunk);
-        break;
+        double dx = chunk.x - edgeX;
+        double dz = chunk.z - edgeZ;
+        double dist2 = dx*dx + dz*dz;
+        if ((nearest == null) || (minDist2 > dist2)) {
+          nearest = chunk;
+          minDist2 = dist2;
+        }
       }
+    }
+    if (nearest != null) {
+      this._gen.fillChunk(nearest);
     }
   }
 
