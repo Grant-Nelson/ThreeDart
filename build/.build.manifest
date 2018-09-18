@@ -3,6 +3,7 @@ examples/craft/index.html
 examples/craft/main.dart.js
 examples/craft/textures/blackShine.png
 examples/craft/textures/blueFlowers.png
+examples/craft/textures/boundary.png
 examples/craft/textures/brick.png
 examples/craft/textures/crosshair.png
 examples/craft/textures/dirt.png
