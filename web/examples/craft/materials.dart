@@ -51,6 +51,7 @@ class Materials {
       mover: new Movers.Constant.lookAtTarget(new Math.Point3.zero(),
       new Math.Vector3(0.0, 0.0, 1.0), new Math.Point3(0.5, -1.0, 0.2)));
 
+    int boundary       = this._addMat("boundary");
     int brick          = this._addMat("brick");
     int dirt           = this._addMat("dirt");
     int dryLeavesSide  = this._addMat("dryLeavesSide");
@@ -81,6 +82,7 @@ class Materials {
     int water          = this._addMat("water1", true);
 
     //                value,                 top,           bottom,        left,          right,         front,         back
+    this._addCubeData(BlockType.Boundary,    boundary,      boundary,      boundary,      boundary,      boundary,      boundary);
     this._addCubeData(BlockType.Dirt,        dirt,          dirt,          dirt,          dirt,          dirt,          dirt);
     this._addCubeData(BlockType.Turf,        turfTop,       dirt,          turfSide,      turfSide,      turfSide,      turfSide);
     this._addCubeData(BlockType.Rock,        rock,          rock,          rock,          rock,          rock,          rock);

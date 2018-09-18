@@ -4,7 +4,7 @@ const int outXSize = Chunk.xSize*8;
 const int outZSize = Chunk.zSize*8;
 const int inXSize = Chunk.xSize*4;
 const int inZSize = Chunk.zSize*4;
-const int worldTickMilliseconds = 100;
+const int worldTickMilliseconds = 50;
 
 /// Defines the world shown in 3Dart craft.
 class World {

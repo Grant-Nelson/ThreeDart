@@ -40,7 +40,7 @@ class Shaper {
   /// Use [finish] to apply the shapes to the chunks entities.
   void buildChunkShapes(Chunk chunk) {
     for (int x = Chunk.xSize - 1; x >= 0; x--) {
-      for (int y = Chunk.ySize - 1; y >= 0; y--) {
+      for (int y = Chunk.ySize - 1; y >= -1; y--) {
         for (int z = Chunk.zSize - 1; z >= 0; z--) {
           int value = chunk.getWorldBlock(x, y, z);
           this._addBlockToShapes(chunk, x, y, z, value, false, 1.0);
