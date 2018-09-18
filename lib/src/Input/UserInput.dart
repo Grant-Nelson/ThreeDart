@@ -79,7 +79,8 @@ class UserInput {
   bool get pointerLocked => this._pointerLocked;
 
   /// Determines the rectangle for the client of the element being watched.
-  Math.Region2 get clientRect => new Math.Region2(0.0, 0.0, this._elem.client.width, this._elem.client.height);
+  Math.Region2 get clientRect => new Math.Region2(0.0, 0.0,
+    this._elem.client.width.toDouble(), this._elem.client.height.toDouble());
 
   /// Converts the html key into the 3Dart key.
   Key _convertKey(html.KeyboardEvent kEvent) =>
@@ -98,7 +99,7 @@ class UserInput {
   /// Gets the raw mouse point relative to the client retangle in pixels.
   Math.Point2 _rawPoint(html.MouseEvent msEvent) {
     html.Rectangle rect = this._elem.getBoundingClientRect();
-    return new Math.Point2(msEvent.page.x-rect.left, msEvent.page.y-rect.top);
+    return new Math.Point2((msEvent.page.x-rect.left).toDouble(), (msEvent.page.y-rect.top).toDouble());
   }
 
   /// Gets the raw movement on the client in delta pixels.
@@ -111,7 +112,7 @@ class UserInput {
     html.Rectangle rect = this._elem.getBoundingClientRect();
     List<Math.Point2> pnts = new List<Math.Point2>();
     for (html.Touch touch in tEvent.touches) {
-      pnts.add(new Math.Point2(touch.page.x-rect.left, touch.page.y-rect.top));
+      pnts.add(new Math.Point2((touch.page.x-rect.left).toDouble(), (touch.page.y-rect.top).toDouble()));
     }
     return pnts;
   }
@@ -123,9 +124,9 @@ class UserInput {
   /// Determines if the given mouse location is containerd in the canvas.
   bool _mouseContained(html.MouseEvent msEvent) {
     html.Rectangle rect = this._elem.getBoundingClientRect();
-    final int x = msEvent.page.x - rect.left;
+    final num x = msEvent.page.x - rect.left;
     if (x < 0) return false;
-    final int y = msEvent.page.y - rect.top;
+    final num y = msEvent.page.y - rect.top;
     if (y < 0) return false;
     return (x < rect.width) && (y < rect.height);
   }
