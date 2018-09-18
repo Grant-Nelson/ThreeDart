@@ -94,6 +94,11 @@ class Player {
       ..attach(td.userInput)
       ..keyDown.add(this._onBlockChange);
     td.userInput.locked.down.add(this._onClickBlockChange);
+    
+    new Input.KeyGroup()
+      ..addKey(Input.Key.keyO)
+      ..attach(td.userInput)
+      ..keyDown.add(this._onReturnToOrigin);
 
     // Creates the cross hair entity for drawing the cross hairs.
     this._crossHairs = new ThreeDart.Entity(
@@ -138,6 +143,11 @@ class Player {
     int y = chunk?.topHit(_startX.toInt(), _startZ.toInt()) ?? 0;
     this._trans.location = new Math.Point3(_startX, y.toDouble()+60.0, _startZ);
     this._trans.velocity = new Math.Vector3.zero();
+  }
+
+  /// Handles then the player presses the return to origin button.
+  void _onReturnToOrigin(Events.EventArgs args) {
+    this.goHome();
   }
 
   /// Determines if the block at the given coordinates can not be walked through.
@@ -299,12 +309,14 @@ class Player {
     Math.Ray3 ray = this._playerViewTarget();
     Math.Ray3 back = ray.reverse;
 
+    int dist = 0;
     BlockInfo info = this._world.getBlock(ray.x, ray.y, ray.z);
     while ((info != null) && (info.value == BlockType.Air)) {
       info = this._getNeighborBlock(info, back)?.info;
+      dist++;
     }
 
-    if ((info != null) && ((info.value == BlockType.Air) || (info.value == BlockType.Boundary))) info = null;
+    if ((info != null) && ((dist < 1) || (info.value == BlockType.Air) || (info.value == BlockType.Boundary))) info = null;
     this._highlight = info;
 
     if (this._highlight == null) {

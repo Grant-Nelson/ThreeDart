@@ -1,7 +1,7 @@
 part of craft;
 
-const int outXSize = Chunk.xSize*6;
-const int outZSize = Chunk.zSize*6;
+const int outXSize = Chunk.xSize*8;
+const int outZSize = Chunk.zSize*8;
 const int inXSize = Chunk.xSize*4;
 const int inZSize = Chunk.zSize*4;
 const int worldTickMilliseconds = 100;
@@ -107,7 +107,6 @@ class World {
         for (int z = minZIn; z < maxZIn; z += Chunk.zSize) {
           Chunk oldChunk = this.findChunk(x, z);
           if (oldChunk == null) {
-            print(">> $x, $z");
             this._chunks.add(new Chunk(x, z, this));
           }
         }

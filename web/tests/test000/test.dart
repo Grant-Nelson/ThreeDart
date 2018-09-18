@@ -3,6 +3,7 @@ library ThreeDart.test.test000;
 import 'dart:html' as html;
 import 'dart:async' as asy;
 import 'dart:convert' as convert;
+import 'dart:typed_data' as data;
 
 import 'package:ThreeDart/Data.dart' as Data;
 import 'package:ThreeDart/Math.dart' as Math;
@@ -13,6 +14,7 @@ import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 import '../../common/common.dart' as common;
 
+part 'bench.dart';
 part 'testTools.dart';
 part 'matrix2.dart';
 part 'matrix3.dart';
@@ -26,7 +28,8 @@ void main() {
   html.DivElement elem = new html.DivElement();
   TestManager tests = new TestManager(elem);
 
-  vertexTypeTests(tests);
+  addBench(tests);
+  addVertexTypeTests(tests);
   addMatrix2Tests(tests);
   addMatrix3Tests(tests);
   addMatrix4Tests(tests);

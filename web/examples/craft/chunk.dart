@@ -69,7 +69,7 @@ class Chunk {
   bool get needUpdate => this._needUpdate;
   set needUpdate(bool update) => this._needUpdate = update;
   
-  /// Gets or sets if this chunk needs to be generated.
+  /// Gets if this chunk needs to be generated.
   bool get needToGenerate => this._needGen;
 
   /// Indicates that the chunk is finished being generated.
