@@ -2,8 +2,8 @@ part of craft;
 
 /// The object defining the player and view of the game.
 class Player {
-  static const int _startX = 0; /// The x starting location of the player.
-  static const int _startZ = 0; /// The y starting location of the player.
+  static const double _startX = 0.5; /// The x starting location of the player.
+  static const double _startZ = 0.5; /// The y starting location of the player.
   static const double _gravity = -100.0; /// The gravity force to apply onto the player.
   static const double _speed = 6.0; /// The speed at which the player moves.
   static const double _fallSpeed = 60.0; /// The maximum speed the player can fall at, terminal velocity.
@@ -94,6 +94,11 @@ class Player {
       ..attach(td.userInput)
       ..keyDown.add(this._onBlockChange);
     td.userInput.locked.down.add(this._onClickBlockChange);
+    
+    new Input.KeyGroup()
+      ..addKey(Input.Key.keyO)
+      ..attach(td.userInput)
+      ..keyDown.add(this._onReturnToOrigin);
 
     // Creates the cross hair entity for drawing the cross hairs.
     this._crossHairs = new ThreeDart.Entity(
@@ -126,16 +131,23 @@ class Player {
   /// The mover to the location of the player.
   Movers.Group get location => this._playerLoc;
 
+  /// Gets the specific point location of the player in the world.
+  Math.Point3 get point => this._playerLoc.matrix.transPnt3(new Math.Point3.zero());
+
   /// The base entity for the player.
   ThreeDart.Entity get entity => this._entity;
 
   /// Sets the player's coordinates to the starting position at the top most location.
   void goHome() {
-    Chunk chunk = this._world.findChunk(_startX, _startZ);
-    int y = chunk.topHit(_startX, _startZ);
-    this._trans.location = new Math.Point3(
-      _startX.toDouble(), y.toDouble()+60.0, _startZ.toDouble());
+    Chunk chunk = this._world.findChunk(_startX.toInt(), _startZ.toInt());
+    int y = chunk?.topHit(_startX.toInt(), _startZ.toInt()) ?? 0;
+    this._trans.location = new Math.Point3(_startX, y.toDouble()+60.0, _startZ);
     this._trans.velocity = new Math.Vector3.zero();
+  }
+
+  /// Handles then the player presses the return to origin button.
+  void _onReturnToOrigin(Events.EventArgs args) {
+    this.goHome();
   }
 
   /// Determines if the block at the given coordinates can not be walked through.
@@ -297,12 +309,14 @@ class Player {
     Math.Ray3 ray = this._playerViewTarget();
     Math.Ray3 back = ray.reverse;
 
+    int dist = 0;
     BlockInfo info = this._world.getBlock(ray.x, ray.y, ray.z);
     while ((info != null) && (info.value == BlockType.Air)) {
       info = this._getNeighborBlock(info, back)?.info;
+      dist++;
     }
 
-    if ((info != null) && ((info.value == BlockType.Air) || (info.value == BlockType.Boundary))) info = null;
+    if ((info != null) && ((dist < 1) || (info.value == BlockType.Air) || (info.value == BlockType.Boundary))) info = null;
     this._highlight = info;
 
     if (this._highlight == null) {

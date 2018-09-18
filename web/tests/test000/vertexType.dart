@@ -1,6 +1,6 @@
 part of ThreeDart.test.test000;
 
-void vertexTypeTests(TestManager tests) {
+void addVertexTypeTests(TestManager tests) {
 
   tests.add("VertexTypes and Groups", (TestArgs args) {
     _checkVertexType(args, Data.VertexType.None,    "None",    0x0000, 0, 0);

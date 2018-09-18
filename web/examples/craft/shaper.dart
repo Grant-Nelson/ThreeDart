@@ -1,22 +1,27 @@
 part of craft;
 
+// This shows a pseudo wireframe instead of filled shapes.
+// Anything with special shape logic, like mushrooms, might not become wireframe.
+// This is useful to check that only the visible sides of the vocals are being drawn.
+const bool _showWireFrame = false;
+
 /// The shaper creates the shapes for all the items in the world.
 class Shaper {
-  final Math.Vector3 _topNorm    = new Math.Vector3( 0.0,  1.0,  0.0);
-  final Math.Vector3 _bottomNorm = new Math.Vector3( 0.0, -1.0,  0.0);
-  final Math.Vector3 _leftNorm   = new Math.Vector3( 1.0,  0.0,  0.0);
-  final Math.Vector3 _rightNorm  = new Math.Vector3(-1.0,  0.0,  0.0);
-  final Math.Vector3 _frontNorm  = new Math.Vector3( 0.0,  0.0,  1.0);
-  final Math.Vector3 _backNorm   = new Math.Vector3( 0.0,  0.0, -1.0);
+  static final Math.Vector3 _topNorm    = new Math.Vector3( 0.0,  1.0,  0.0);
+  static final Math.Vector3 _bottomNorm = new Math.Vector3( 0.0, -1.0,  0.0);
+  static final Math.Vector3 _leftNorm   = new Math.Vector3( 1.0,  0.0,  0.0);
+  static final Math.Vector3 _rightNorm  = new Math.Vector3(-1.0,  0.0,  0.0);
+  static final Math.Vector3 _frontNorm  = new Math.Vector3( 0.0,  0.0,  1.0);
+  static final Math.Vector3 _backNorm   = new Math.Vector3( 0.0,  0.0, -1.0);
 
-  final Math.Point3 _frontTopLeft     = new Math.Point3(-0.5,  0.5,  0.5);
-  final Math.Point3 _frontTopRight    = new Math.Point3( 0.5,  0.5,  0.5);
-  final Math.Point3 _frontBottomLeft  = new Math.Point3(-0.5, -0.5,  0.5);
-  final Math.Point3 _frontBottomRight = new Math.Point3( 0.5, -0.5,  0.5);
-  final Math.Point3 _backTopLeft      = new Math.Point3(-0.5,  0.5, -0.5);
-  final Math.Point3 _backTopRight     = new Math.Point3( 0.5,  0.5, -0.5);
-  final Math.Point3 _backBottomLeft   = new Math.Point3(-0.5, -0.5, -0.5);
-  final Math.Point3 _backBottomRight  = new Math.Point3( 0.5, -0.5, -0.5);
+  static final Math.Point3 _frontTopLeft     = new Math.Point3(-0.5,  0.5,  0.5);
+  static final Math.Point3 _frontTopRight    = new Math.Point3( 0.5,  0.5,  0.5);
+  static final Math.Point3 _frontBottomLeft  = new Math.Point3(-0.5, -0.5,  0.5);
+  static final Math.Point3 _frontBottomRight = new Math.Point3( 0.5, -0.5,  0.5);
+  static final Math.Point3 _backTopLeft      = new Math.Point3(-0.5,  0.5, -0.5);
+  static final Math.Point3 _backTopRight     = new Math.Point3( 0.5,  0.5, -0.5);
+  static final Math.Point3 _backBottomLeft   = new Math.Point3(-0.5, -0.5, -0.5);
+  static final Math.Point3 _backBottomRight  = new Math.Point3( 0.5, -0.5, -0.5);
 
   Materials _mats;
   Data.VertexType _vertexType;
@@ -35,9 +40,9 @@ class Shaper {
   /// Use [finish] to apply the shapes to the chunks entities.
   void buildChunkShapes(Chunk chunk) {
     for (int x = Chunk.xSize - 1; x >= 0; x--) {
-      for (int y = Chunk.ySize - 1; y >= 0; y--) {
+      for (int y = Chunk.ySize - 1; y >= -1; y--) {
         for (int z = Chunk.zSize - 1; z >= 0; z--) {
-          int value = chunk.getBlock(x, y, z);
+          int value = chunk.getWorldBlock(x, y, z);
           this._addBlockToShapes(chunk, x, y, z, value, false, 1.0);
         }
       }
@@ -130,10 +135,12 @@ class Shaper {
     Shapes.Vertex ver3 = this._getVertex(loc + off3*scalar, norm, 1.0, 1.0);
     Shapes.Vertex ver4 = this._getVertex(loc + off4*scalar, norm, 1.0, 0.0);
     int i = shape.addVertices([ver1, ver2, ver3, ver4]);
-    // For mostly wireframe, uncomment the following line and comment out the two lines below it.
-    //shape.addLines([i, i+1, i+1, i+2, i+2, i+3, i+3, i, i, i+2]);
-    shape.addTriangleFan([i, i+1, i+2, i+3]);
-    if (twoSided) shape.addTriangleFan([i+3, i+2, i+1, i]); // TODO: FIX underside of furn
+    if (_showWireFrame) {
+      shape.addLines([i, i+1, i+1, i+2, i+2, i+3, i+3, i, i, i+2]);
+    } else {
+      shape.addTriangleFan([i, i+1, i+2, i+3]);
+      if (twoSided) shape.addTriangleFan([i+2, i+1, i, i+3]);
+    }
   }
 
   /// Adds the top square of a block to the given [shape].
@@ -180,7 +187,7 @@ class Shaper {
     if (y >= Chunk.ySize) return true;
     x += chunkLoc.x.toInt();
     z += chunkLoc.z.toInt();
-    int neighbor = chunk.getBlock(x, y, z);
+    int neighbor = chunk.getWorldBlock(x, y, z);
     return BlockType.drawSide(value, neighbor);
   }
 

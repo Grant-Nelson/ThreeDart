@@ -33,7 +33,7 @@ part 'world.dart';
 /// Starts up the 3Dart Craft example
 void main() {
   new common.ShellPage("3Dart Craft")
-    ..addPar(["Please wait, this example may take a while to load."])
+    ..addPar(["This example is in development and may still have a few issues and glitches."])
     ..addLargeCanvas("targetCanvas")
     ..addHeader(1, "About")
     ..addPar(["3Dart Craft is an example of how [3Dart|https://github.com/Grant-Nelson/ThreeDart] can be used ",
@@ -53,6 +53,7 @@ void main() {
     ..addPar(["• *Shift-Tab* cycles the selection in the reverse direction"])
     ..addPar(["• *Left click* or *Q* removes the currently highlighted block"])
     ..addPar(["• *Right click* or *E* places the selected block on the highlighted block"])
+    ..addPar(["• *O* to return the starting location"])
     ..addHeader(1, "Help wanted")
     ..addPar(["There is still much to be done, many cool new features, and several little bugs. ",
       "If you would like to contribute to this example, have an idea, find a bug, or just want to learn more about it, ",

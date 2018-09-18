@@ -14,54 +14,54 @@ class BlockType {
   /// Transparent water block
   static const int Water = 1;
 
-  /// Invisible wall used to block players from leaving the island
-  static const int Boundary = 2;
-
   //====================================
   // Solid blocks
   //====================================
 
+  /// Unbreakable floor used for below the chunks.
+  static const int Boundary = 100;
+
   /// Brown on all sides dirt block
-  static const int Dirt = 100;
+  static const int Dirt = 101;
 
   /// Turf block has grass turf on the top of dirt
-  static const int Turf = 101;
+  static const int Turf = 102;
 
   /// Basic grey rock block
-  static const int Rock = 102;
+  static const int Rock = 103;
 
   /// Off-white sand block beside water
-  static const int Sand = 103;
+  static const int Sand = 104;
 
   /// Dry leaves is turf with some leaves on it
-  static const int DryLeaves = 104;
+  static const int DryLeaves = 105;
 
   /// Trunk block of a tree placed up right (up/down)
-  static const int TrunkUD = 105;
+  static const int TrunkUD = 106;
 
   /// Trunk block of a tree placed on its side, facing north/south
-  static const int TrunkNS = 106;
+  static const int TrunkNS = 107;
 
   /// Trunk block of a tree placed on its side, facing east/west
-  static const int TrunkEW = 107;
+  static const int TrunkEW = 108;
 
   /// Block of grey bricks
-  static const int Brick = 108;
+  static const int Brick = 109;
 
   /// Red reflective solid block, like ruby
-  static const int RedShine = 109;
+  static const int RedShine = 110;
 
   /// White reflective solid block, like silver
-  static const int WhiteShine = 110;
+  static const int WhiteShine = 111;
 
   /// Yellow reflective solid block, like gold
-  static const int YellowShine = 111;
+  static const int YellowShine = 112;
 
   /// Black reflective solid block, like obsidian
-  static const int BlackShine = 112;
+  static const int BlackShine = 113;
 
   /// A block of leaves on the top of the tree
-  static const int Leaves = 113;
+  static const int Leaves = 114;
 
   //====================================
   // Open blocks
@@ -114,8 +114,8 @@ class BlockType {
     switch(value) {
       case Air:         return "air";
       case Water:       return "water";
-      case Boundary:    return "boundary";
 
+      case Boundary:    return "boundary";
       case Dirt:        return "dirt";
       case Turf:        return "turf";
       case Rock:        return "rock";
@@ -143,17 +143,17 @@ class BlockType {
 
   /// hard determines if the given block type can not be walked through.
   static bool hard(int value) {
-    return solid(value) || (value == Boundary);
+    return solid(value);
   }
 
   /// solid determines if the given block type can not be seen through.
   static bool solid(int value) {
-    return (value >= Dirt) && (value <= Leaves);
+    return (value >= Boundary) && (value <= Leaves);
   }
 
   /// open determines if the given block type can be seen through.
   static bool open(int value) {
-    return ((value >= Grass) && (value <= Mushroom)) || (value == Boundary);
+    return (value >= Grass) && (value <= Mushroom);
   }
 
   /// Determines if the side of the block should be drawn.
