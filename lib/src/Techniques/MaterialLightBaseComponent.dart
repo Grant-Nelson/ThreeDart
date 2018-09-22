@@ -43,10 +43,10 @@ abstract class MaterialLightBaseComponent {
   /// This will connect the changed events and call changed.
   void _setTxt2D(Textures.Texture2D txt2D) {
     if (this._txt2D != txt2D) {
-      if (this._txt2D != null) this._txt2D.loadFinished.remove(this._onChanged);
+      if (this._txt2D != null) this._txt2D.changed.remove(this._onChanged);
       Textures.Texture2D prev = this._txt2D;
       this._txt2D = txt2D;
-      if (this._txt2D != null) this._txt2D.loadFinished.add(this._onChanged);
+      if (this._txt2D != null) this._txt2D.changed.add(this._onChanged);
       this._onChanged(new Events.ValueChangedEventArgs(this, "${this._name}.texture2D", prev, this._txt2D));
     }
   }
@@ -55,10 +55,10 @@ abstract class MaterialLightBaseComponent {
   /// This will connect the changed events and call changed.
   void _setTxtCube(Textures.TextureCube txtCube) {
     if (this._txtCube != txtCube) {
-      if (this._txtCube != null) this._txtCube.loadFinished.remove(this._onChanged);
+      if (this._txtCube != null) this._txtCube.changed.remove(this._onChanged);
       Textures.TextureCube prev = this._txtCube;
       this._txtCube = txtCube;
-      if (this._txtCube != null) this._txtCube.loadFinished.add(this._onChanged);
+      if (this._txtCube != null) this._txtCube.changed.add(this._onChanged);
       this._onChanged(new Events.ValueChangedEventArgs(this, "${this._name}.textureCube", prev, this._txtCube));
     }
   }

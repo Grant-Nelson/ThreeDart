@@ -32,20 +32,20 @@ class Normal extends Technique {
 
   void _setBump2D(Textures.Texture2D bump2D) {
     if (this._bump2D != bump2D) {
-      if (this._bump2D != null) this._bump2D.loadFinished.remove(this._onChanged);
+      if (this._bump2D != null) this._bump2D.changed.remove(this._onChanged);
       Textures.Texture2D prev = this._bump2D;
       this._bump2D = bump2D;
-      if (this._bump2D != null) this._bump2D.loadFinished.add(this._onChanged);
+      if (this._bump2D != null) this._bump2D.changed.add(this._onChanged);
       this._onChanged(new Events.ValueChangedEventArgs(this, "bumpyTexture2D", prev, this._bump2D));
     }
   }
 
   void _setBumpCube(Textures.TextureCube bumpCube) {
     if (this._bumpCube != bumpCube) {
-      if (this._bumpCube != null) this._bumpCube.loadFinished.remove(this._onChanged);
+      if (this._bumpCube != null) this._bumpCube.changed.remove(this._onChanged);
       Textures.TextureCube prev = this._bumpCube;
       this._bumpCube = bumpCube;
-      if (this._bumpCube != null) this._bumpCube.loadFinished.add(this._onChanged);
+      if (this._bumpCube != null) this._bumpCube.changed.add(this._onChanged);
       this._onChanged(new Events.ValueChangedEventArgs(this, "bumpyTextureCube", prev, this._bumpCube));
     }
   }

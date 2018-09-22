@@ -2,6 +2,7 @@ part of ThreeDart.Textures;
 
 /// A 2D texture.
 class Texture2D extends Texture {
+  int _index;
   WebGL.Texture _texture;
   bool _bound;
   bool _loaded;
@@ -9,11 +10,11 @@ class Texture2D extends Texture {
   int _height;
   int _actualWidth;
   int _actualHeight;
-  Events.Event _loadFinished;
+  Events.Event _changed;
 
   /// Creates a new 2D texture.
-  Texture2D({int index: 0, WebGL.Texture texture: null}):
-    super._(index) {
+  Texture2D({int index: 0, WebGL.Texture texture: null}) {
+    this._index   = index;
     this._texture = texture;
     this._bound   = false;
     this._loaded  = false;
@@ -21,7 +22,7 @@ class Texture2D extends Texture {
     this._height  = 0;
     this._actualWidth  = 0;
     this._actualHeight = 0;
-    this._loadFinished = new Events.Event();
+    this._changed = null;
   }
 
   /// Creates a new 2D image from the given [width] and [height].
@@ -60,9 +61,13 @@ class Texture2D extends Texture {
   void _setLoaded() {
     if (!this._loaded) {
       this._loaded = true;
-      this._loadFinished.emit();
+      this._changed?.emit();
     }
   }
+
+  /// The index of the texture when bound to the rendering context.
+  int get index => this._index;
+  set index(int index) => this._index = index;
 
   /// The internal texture instance.
   WebGL.Texture get texture => this._texture;
@@ -81,10 +86,14 @@ class Texture2D extends Texture {
 
   /// The height of the image in pixels allowed by this machine's architecture.
   int get actualHeight => this._actualHeight;
-
-  /// Emitted when the texture has finished being loaded.
-  /// TODO: Change to changable
-  Events.Event get loadFinished => this._loadFinished;
+  
+  /// Emitted when the texture has finished being loaded or replaced.
+  ///
+  /// On change typically indicates a new render is needed.
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
+    return this._changed;
+  }
 
   /// This replaces the internals of this texture with the given [txt].
   void replace(Texture2D txt) {
@@ -95,6 +104,7 @@ class Texture2D extends Texture {
       this._height  = 0;
       this._actualWidth  = 0;
       this._actualHeight = 0;
+      this._changed?.emit();
     } else {
       this._texture = txt._texture;
       this._bound   = txt._bound;
@@ -103,6 +113,7 @@ class Texture2D extends Texture {
       this._height  = txt._height;
       this._actualWidth  = txt._actualWidth;
       this._actualHeight = txt._actualHeight;
+      this._changed?.emit();
     }
   }
 
