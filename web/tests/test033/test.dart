@@ -14,7 +14,8 @@ import '../../common/common.dart' as common;
 void main() {
   new common.ShellPage("Test 033")
     ..addLargeCanvas("testCanvas")
-    ..addPar(["Test of a sterioscopic scene."]);
+    ..addPar(["Test of a sterioscopic scene."])
+    ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 

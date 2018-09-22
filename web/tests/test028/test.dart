@@ -15,7 +15,8 @@ void main() {
   new common.ShellPage("Test 028")
     ..addLargeCanvas("testCanvas")
     ..addPar(["Test of a Gaussian blur cover pass. ",
-      "Notice the depth of field causing things further away to be blurry."]);
+      "Notice the depth of field causing things further away to be blurry."])
+    ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 

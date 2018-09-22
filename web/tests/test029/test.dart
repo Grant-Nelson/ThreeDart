@@ -15,7 +15,8 @@ void main() {
     ..addLargeCanvas("testCanvas")
     ..addPar(["Test of bump distort pass. It renders the scene to a back buffer then ",
       "paints that back buffer texture to the front buffer with a distortion."])
-    ..addControlBoxes(["bumpMaps"]);
+    ..addControlBoxes(["bumpMaps"])
+    ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 

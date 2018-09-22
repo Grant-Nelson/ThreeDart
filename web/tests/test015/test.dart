@@ -15,7 +15,8 @@ void main() {
   new common.ShellPage("Test 015")
     ..addLargeCanvas("testCanvas")
     ..addPar(["Test of Material Lighting shader with bump mapping, reflections, refractions."])
-    ..addControlBoxes(["bumpMaps", "controls"]);
+    ..addControlBoxes(["bumpMaps", "controls"])
+    ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 

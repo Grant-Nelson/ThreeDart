@@ -16,7 +16,8 @@ void main() {
     ..addLargeCanvas("testCanvas")
     ..addPar(["A test of applying a height map to an image. ",
       "Some shapes will take a bit to calculate depending on quality of mapping."])
-    ..addControlBoxes(["heightMaps", "shapes", "scalars"]);
+    ..addControlBoxes(["heightMaps", "shapes", "scalars"])
+    ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 

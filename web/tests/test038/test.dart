@@ -79,7 +79,8 @@ void main() {
       "A and D (left and right arrow keys) strifes left and right. ",
       "W and S (up and down arrow keys) moves forward and backward. ",
       "Q and E moves up and down. Mouse looks around with left mouse button pressed."])
-    ..addControlBoxes(["options"]);
+    ..addControlBoxes(["options"])
+    ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 

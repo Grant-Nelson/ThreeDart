@@ -15,7 +15,8 @@ void main() {
   new common.ShellPage("Test 016")
     ..addLargeCanvas("testCanvas")
     ..addPar(["A test of the Material Lighting shader with cube texturing, ",
-      "bump mapping, and a color directional light."]);
+      "bump mapping, and a color directional light."])
+    ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 

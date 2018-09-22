@@ -12,7 +12,8 @@ void main() {
     addTest(elem, "test"+"$i".padLeft(3, '0'));
 
   new common.ShellPage("3Dart Tests")
-    ..addElem(elem);
+    ..addElem(elem)
+    ..addPar(["«[Back to Home|../]"]);
 }
 
 void addTest(html.Element elem, String testName) {

@@ -18,7 +18,8 @@ void main() {
       "The scene is generated into another back buffer. ",
       "The two parts are combined with a Distortion cover. ",
       "Use mouse to rotate cube in normal map and Ctrl plus mouse ",
-      "to rotate scene."]);
+      "to rotate scene."])
+    ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 

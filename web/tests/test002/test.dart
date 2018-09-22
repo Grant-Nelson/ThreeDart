@@ -18,7 +18,8 @@ void main() {
       "and for checking the data privided by the shapes. ",
       "Also it is useful for testing out new generated shape configurations. ",
       "For loaded shape testing see test032."])
-    ..addControlBoxes(["controls", "shapes", "scalars"]);
+    ..addControlBoxes(["controls", "shapes", "scalars"])
+    ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
