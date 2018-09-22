@@ -28,7 +28,7 @@ class Generator {
     this._addPyramid();
     this._turrain();
     this._applyWater();
-    this._applySand();
+    this._applySand(); // TODO: Simplify the sand
     this._trees();
     this._plants();
     this._add3Dart();

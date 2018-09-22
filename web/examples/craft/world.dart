@@ -5,6 +5,7 @@ const int outZSize = Chunk.zSize*8;
 const int inXSize = Chunk.xSize*4;
 const int inZSize = Chunk.zSize*4;
 const int worldTickMilliseconds = 50;
+const int animationTickMilliseconds = 500;
 
 /// Defines the world shown in 3Dart craft.
 class World {
@@ -35,8 +36,9 @@ class World {
       }
     }
 
-    // Start timer for periodically generating chunks.
+    // Start timer for periodically generating chunks and animate.
     new Timer.periodic(new Duration(milliseconds: worldTickMilliseconds), this._worldTick);
+    new Timer.periodic(new Duration(milliseconds: animationTickMilliseconds), this._animationTick);
   }
 
   /// Gets the random noise generator for this world.
@@ -79,10 +81,23 @@ class World {
     return new BlockInfo(bx, by, bz, cx, cz, chunk);
   }
   
+  
   /// Adds and removes chunks as needed and
   /// generates one chunk which is still pending to be loaded.
   void _worldTick(Timer timer) {
     Math.Point3 player = this._player.point;
+    this._updateLoadedChunks(player);
+    this._generateChunk(player);
+  }
+
+  // Animates the water texture.
+  void _animationTick(Timer time) {
+    this._mats.waterChanger.nextTexture();
+  }
+
+  /// Updates chunks which are loaded and removes any loaded chunks
+  /// which aren't needed anymore.
+  void _updateLoadedChunks(Math.Point3 player) {
     BlockInfo pBlock = this.getBlock(player.x, player.y, player.z);
 
     // Check if the last chunk
@@ -112,8 +127,10 @@ class World {
         }
       }
     }
+  }
 
-    // Pick the nearest non-generated chunk to generate.
+  /// This picks the nearest non-generated chunk to generate.
+  void _generateChunk(Math.Point3 player) {
     double edgeX = player.x - Chunk.xSize*0.5;
     double edgeZ = player.z - Chunk.zSize*0.5;
     Chunk nearest = null;

@@ -39,6 +39,7 @@ class Materials {
   Lights.Directional _light;
   Techniques.MaterialLight _selection;
   Techniques.MaterialLight _crosshair;
+  Textures.Texture2DChanger _waterChanger;
 
   /// Creates a new material collection and starts loading the materials.
   Materials(this._td) {
@@ -79,7 +80,14 @@ class Materials {
     int blueFlowers    = this._addMat("blueFlowers");
     int redFlowers     = this._addMat("redFlowers");
     int whiteFlowers   = this._addMat("whiteFlowers");
-    int water          = this._addMat("water1", true);
+
+    this._waterChanger = new Textures.Texture2DChanger(
+      textures: new List<Textures.Texture2D>.from([
+        this._loadText("water1"),
+        this._loadText("water2"),
+        this._loadText("water3"),
+      ]));
+    int water = this._addMatTxt(this._waterChanger, true);
 
     //                value,                 top,           bottom,        left,          right,         front,         back
     this._addCubeData(BlockType.Boundary,    boundary,      boundary,      boundary,      boundary,      boundary,      boundary);
@@ -120,26 +128,38 @@ class Materials {
   /// This full set of all the materials used by craft.
   List<Techniques.MaterialLight> get materials => this._mats;
 
+  /// The changer to animate the water.
+  Textures.Texture2DChanger get waterChanger => this._waterChanger;
+
   /// The meterial used for all the sides of the selection box.
   Techniques.MaterialLight get selection => this._selection;
 
   /// The material used for the cross hair in the center of the screen.
   Techniques.MaterialLight get crosshair => this._crosshair;
 
+  /// Loads a texture with the given file name.
+  Textures.Texture2D _loadText(String fileName) {
+    String path = imgFolder + fileName + fileExt;
+    return this._td.textureLoader.load2DFromFile(path, wrapEdges: false, nearest: false, mipMap: true);
+  }
+
   /// Loads a material with lighting information and adds it to the material list.
   /// Returns the index for the new material.
   int _addMat(String fileName, [bool shiny = false]) {
-    String path = imgFolder + fileName + fileExt;
-    Textures.Texture2D blockTxt = this._td.textureLoader.
-      load2DFromFile(path, wrapEdges: false, nearest: false, mipMap: true);
+    return this._addMatTxt(this._loadText(fileName), shiny);
+  }
 
+  /// Creates a material with lighting information and adds
+  /// it to the material list with the given texture.
+  /// Returns the index for the new material.
+  int _addMatTxt(Textures.Texture2D blockTxt, [bool shiny = false]) {
     Techniques.MaterialLight tech = new Techniques.MaterialLight()
       ..lights.add(this._light)
       ..ambient.color = new Math.Color3.gray(0.8)
       ..diffuse.color = new Math.Color3.gray(0.4)
       ..ambient.texture2D = blockTxt
       ..diffuse.texture2D = blockTxt
-      ..alpha.texture2D = blockTxt;
+      ..alpha.texture2D   = blockTxt;
 
     if (shiny) {
       tech.specular
@@ -154,14 +174,10 @@ class Materials {
   /// Loads a material with no lighting information and adds it to the material list.
   /// Returns the material which was loaded.
   Techniques.MaterialLight _addEmissionMat(String fileName) {
-     String path = imgFolder + fileName + fileExt;
-    Textures.Texture2D blockTxt = this._td.textureLoader.
-      load2DFromFile(path, wrapEdges: false, nearest: false, mipMap: true);
-
+    Textures.Texture2D blockTxt = this._loadText(fileName);
     Techniques.MaterialLight tech = new Techniques.MaterialLight()
       ..emission.texture2D = blockTxt
       ..alpha.texture2D = blockTxt;
-
     return tech;
   }
 

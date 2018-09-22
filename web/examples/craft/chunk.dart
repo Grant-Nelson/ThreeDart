@@ -156,6 +156,11 @@ class Chunk {
 
   /// Updates the visiblity of this chunk.
   void updateVisiblity(Math.Point2 loc, Math.Point2 front) {
+    if (this._needGen) {
+      this._enabled = false;
+      return;
+    }
+
     Math.Region2 aabb = new Math.Region2(this.x.toDouble(), this.z.toDouble(), xSize.toDouble(), zSize.toDouble());
     Math.Point2 nearLoc = aabb.nearestPoint(loc);
     if (nearLoc.distance2(loc) < _minDrawDist2) {

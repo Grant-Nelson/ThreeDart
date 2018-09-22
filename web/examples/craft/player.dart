@@ -309,6 +309,9 @@ class Player {
     Math.Ray3 ray = this._playerViewTarget();
     Math.Ray3 back = ray.reverse;
 
+    // TODO: Fix issue where player can't select some edges from
+    //       the edge block directly next chunk.
+
     int dist = 0;
     BlockInfo info = this._world.getBlock(ray.x, ray.y, ray.z);
     while ((info != null) && (info.value == BlockType.Air)) {
