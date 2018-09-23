@@ -4,13 +4,13 @@ part of craft;
 /// This makes up one of the many square areas of the world.
 class Chunk {
   /// The number of blocks wide every chunk is.
-  static const int xSize = 24;
+  static const int xSize = 16;
 
   /// The number of blocks tall every chunk is.
   static const int ySize = 48;
 
   /// The number of block deep every chunk is.
-  static const int zSize = 24;
+  static const int zSize = 16;
 
   /// The total number of blocks per chunk.
   static const int _dataLength = xSize * ySize * zSize;
