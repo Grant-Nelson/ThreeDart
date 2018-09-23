@@ -22,6 +22,7 @@ examples/craft/textures/sand.png
 examples/craft/textures/selection.png
 examples/craft/textures/trunkEnd.png
 examples/craft/textures/trunkSide.png
+examples/craft/textures/trunkTilted.png
 examples/craft/textures/turfSide.png
 examples/craft/textures/turfTop.png
 examples/craft/textures/water1.png
@@ -29,6 +30,9 @@ examples/craft/textures/water2.png
 examples/craft/textures/water3.png
 examples/craft/textures/whiteFlowers.png
 examples/craft/textures/whiteShine.png
+examples/craft/textures/woodEnd.png
+examples/craft/textures/woodSide.png
+examples/craft/textures/woodTilted.png
 examples/craft/textures/yellowShine.png
 examples/index.html
 index.html
@@ -274,6 +278,9 @@ tests/test037/test.png
 tests/test038/index.html
 tests/test038/test.dart.js
 tests/test038/test.png
+tests/test039/index.html
+tests/test039/test.dart.js
+tests/test039/test.png
 tutorials/index.html
 tutorials/tutorial1/index.html
 tutorials/tutorial1/main.dart.js
