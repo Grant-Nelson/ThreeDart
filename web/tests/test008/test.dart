@@ -23,7 +23,8 @@ void main() {
     ..addPar(["A custom shader for testing and fixing the normal distortion ",
       "equation used for bump maps. This displays the normal vectors ",
       "across a surface."])
-    ..addControlBoxes(["bumpMaps", "scalars"]);
+    ..addControlBoxes(["bumpMaps", "scalars"])
+    ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 

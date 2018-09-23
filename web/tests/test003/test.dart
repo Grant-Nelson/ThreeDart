@@ -12,7 +12,8 @@ import '../../common/common.dart' as common;
 void main() {
   new common.ShellPage("Test 003")
     ..addLargeCanvas("testCanvas")
-    ..addPar(["A test of the Material Light Shader with a solid color directional lighting."]);
+    ..addPar(["A test of the Material Light Shader with a solid color directional lighting."])
+    ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..shape = Shapes.toroid()

@@ -14,7 +14,8 @@ void main() {
     ..addLargeCanvas("testCanvas")
     ..addPar(["Test of the Material Lighting shader with a textured spot light. ",
       "Use Ctrl plus the mouse to move the light."])
-    ..addControlBoxes(["shapes"]);
+    ..addControlBoxes(["shapes"])
+    ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 

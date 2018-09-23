@@ -15,7 +15,8 @@ void main() {
     ..addLargeCanvas("testCanvas")
     ..addPar(["A test of the bending a shape with the Material Light Shader. ",
       "Not all of the shapes have predefined bend values."])
-    ..addControlBoxes(["shapes"]);
+    ..addControlBoxes(["shapes"])
+    ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 

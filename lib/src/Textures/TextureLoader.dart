@@ -50,7 +50,7 @@ class TextureLoader {
 
     this._incLoading();
     html.ImageElement image = new html.ImageElement(src: path);
-    Texture2D result = new Texture2D(texture: texture);
+    Texture2DSolid result = new Texture2DSolid(texture: texture);
     image.onLoad.listen((_) {
       result._width  = image.width;
       result._height = image.height;

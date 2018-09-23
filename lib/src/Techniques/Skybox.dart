@@ -43,10 +43,10 @@ class Skybox extends Technique {
   Textures.TextureCube get boxTexture => this._boxTxt;
   void set boxTexture(Textures.TextureCube boxTxt) {
     if (this._boxTxt != boxTxt) {
-      if (this._boxTxt != null) this._boxTxt.loadFinished.remove(this._onChanged);
+      if (this._boxTxt != null) this._boxTxt.changed.remove(this._onChanged);
       Textures.TextureCube prev = this._boxTxt;
       this._boxTxt = boxTxt;
-      if (this._boxTxt != null) this._boxTxt.loadFinished.add(this._onChanged);
+      if (this._boxTxt != null) this._boxTxt.changed.add(this._onChanged);
       this._onChanged(new Events.ValueChangedEventArgs(this, "boxTexture", prev, this._boxTxt));
     }
   }

@@ -12,7 +12,8 @@ import '../../common/common.dart' as common;
 void main() {
   new common.ShellPage("Test 030")
     ..addLargeCanvas("testCanvas")
-    ..addPar(["A test of the Normal shader for dynamically rendering normal maps."]);
+    ..addPar(["A test of the Normal shader for dynamically rendering normal maps."])
+    ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 

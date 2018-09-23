@@ -15,7 +15,8 @@ void main() {
     ..addLargeCanvas("testCanvas")
     ..addPar(["A test of the Material Lighting shader with bumpy 2D textures and ",
       "a directional light. The lighting and bump is being applied to ",
-      "ambient, diffuse, and specular 2D texturing."]);
+      "ambient, diffuse, and specular 2D texturing."])
+    ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 

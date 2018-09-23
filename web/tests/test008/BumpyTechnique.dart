@@ -30,10 +30,10 @@ class BumpyTechnique extends Techniques.Technique {
   Textures.Texture2D get bumpyTexture => this._txt;
   void set bumpyTexture(Textures.Texture2D txt) {
     if (this._txt != txt) {
-      if (this._txt != null) this._txt.loadFinished.remove(this._onChanged);
+      if (this._txt != null) this._txt.changed.remove(this._onChanged);
       Textures.Texture2D prev = this._txt;
       this._txt = txt;
-      if (this._txt != null) this._txt.loadFinished.add(this._onChanged);
+      if (this._txt != null) this._txt.changed.add(this._onChanged);
       this._onChanged(new Events.ValueChangedEventArgs(this, "bumpyTexture", prev, this._txt));
     }
   }

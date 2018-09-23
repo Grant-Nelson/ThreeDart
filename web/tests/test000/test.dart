@@ -38,5 +38,6 @@ void main() {
   addTechniqueTests(tests);
 
   new common.ShellPage("Unit-tests", false)
-    ..addElem(elem);
+    ..addElem(elem)
+    ..addPar(["«[Back to Tests|../]"]);
 }

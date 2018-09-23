@@ -12,7 +12,8 @@ void main() {
     ..addLargeCanvas("testCanvas")
     ..addPar(["Test of repeat use of a single mover and shape. There are 9 rings ",
       "moving at the same speed, however the second one is attached to ",
-      "the first, the third to the second, and so on."]);
+      "the first, the third to the second, and so on."])
+    ..addPar(["«[Back to Tests|../]"]);
 
   Movers.Rotater rotater = new Movers.Rotater()
     ..deltaYaw = 0.51

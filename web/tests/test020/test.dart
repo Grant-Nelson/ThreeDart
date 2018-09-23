@@ -13,7 +13,8 @@ void main() {
   new common.ShellPage("Test 020")
     ..addLargeCanvas("testCanvas")
     ..addPar(["Test of the Matrial Lighting shader with multiple moving directional lights."])
-    ..addControlBoxes(["shapes"]);
+    ..addControlBoxes(["shapes"])
+    ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 

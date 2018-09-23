@@ -15,7 +15,8 @@ void main() {
   new common.ShellPage("Test 019")
     ..addLargeCanvas("testCanvas")
     ..addPar(["A test of the Material Lighting shader with an alpha texture. ",
-      "There are no mapped reflections, this is actually transparent."]);
+      "There are no mapped reflections, this is actually transparent."])
+    ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 

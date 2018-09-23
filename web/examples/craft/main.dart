@@ -24,6 +24,7 @@ import '../../common/common.dart' as common;
 part 'blockInfo.dart';
 part 'blockType.dart';
 part 'chunk.dart';
+part 'constants.dart';
 part 'generator.dart';
 part 'materials.dart';
 part 'player.dart';

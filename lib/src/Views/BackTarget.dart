@@ -12,7 +12,7 @@ class BackTarget extends Target {
   WebGL.Framebuffer _framebuffer;
   WebGL.Texture _colorBuffer;
   WebGL.Renderbuffer _depthBuffer;
-  Textures.Texture2D _colorTxt;
+  Textures.Texture2DSolid _colorTxt;
   Math.Color4 _color;
   bool _clearColor;
   double _depth;
@@ -32,7 +32,7 @@ class BackTarget extends Target {
     this._framebuffer  = null;
     this._colorBuffer  = null;
     this._depthBuffer  = null;
-    this._colorTxt     = new Textures.Texture2D();
+    this._colorTxt     = new Textures.Texture2DSolid();
     this._color        = new Math.Color4.black();
     this._clearColor   = true;
     this._depth        = 2000.0;
@@ -172,7 +172,7 @@ class BackTarget extends Target {
   /// Initializes the back target.
   void _initialize(WebGL.RenderingContext gl) {
     // Setup color buffer
-    this._colorTxt.replace(new Textures.Texture2D.fromSize(gl, this._width, this._height));
+    this._colorTxt.replace(new Textures.Texture2DSolid.fromSize(gl, this._width, this._height));
     this._colorBuffer  = this._colorTxt.texture;
     this._actualWidth  = this._colorTxt.actualWidth;
     this._actualHeight = this._colorTxt.actualHeight;

@@ -18,7 +18,8 @@ void main() {
     ..addLargeCanvas("testCanvas")
     ..addPar(["Test of Material Lighting shader with different reflections and refractions. "+
       "No alpha is being used. The background cube maps is being painted onto the object."])
-    ..addControlBoxes(["controls", "shapes"]);
+    ..addControlBoxes(["controls", "shapes"])
+    ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 

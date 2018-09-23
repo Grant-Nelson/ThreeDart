@@ -16,7 +16,8 @@ void main() {
     ..addPar(["A test of the Material Lighting shader where a diffuse textue and ",
       "inverse diffuse texture are used. Grass is only shown in the dark. ",
       "Dirt is shown where the directional light is shining."])
-    ..addControlBoxes(["shapes"]);
+    ..addControlBoxes(["shapes"])
+    ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 

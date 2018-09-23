@@ -17,7 +17,8 @@ void main() {
       "lighting. This test has texturing for emission, ambient, diffuse, and ",
       "specular. The same texture is used for ambient and diffuse. ",
       "The emission texture makes the lights on the panel glow. ",
-      "The specular texture makes specific parts shiny and other parts not."]);
+      "The specular texture makes specific parts shiny and other parts not."])
+    ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 

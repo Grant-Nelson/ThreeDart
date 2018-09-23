@@ -29,9 +29,6 @@ class CubeData {
 
 /// This loads and prepares all the materials (colors and textures) used for rendering.
 class Materials {
-  static const String imgFolder = "./textures/";
-  static const String fileExt = ".png";
-
   ThreeDart.ThreeDart _td;
   Map<int, CubeData> _cubeData;
   Map<int, List<int>> _matData;
@@ -39,6 +36,7 @@ class Materials {
   Lights.Directional _light;
   Techniques.MaterialLight _selection;
   Techniques.MaterialLight _crosshair;
+  Textures.Texture2DChanger _waterChanger;
 
   /// Creates a new material collection and starts loading the materials.
   Materials(this._td) {
@@ -61,8 +59,12 @@ class Materials {
     int sand           = this._addMat("sand");
     int trunkEnd       = this._addMat("trunkEnd");
     int trunkSide      = this._addMat("trunkSide");
+    int trunkTilted    = this._addMat("trunkTilted");
     int turfSide       = this._addMat("turfSide");
     int turfTop        = this._addMat("turfTop");
+    int woodEnd        = this._addMat("woodEnd");
+    int woodSide       = this._addMat("woodSide");
+    int woodTilted     = this._addMat("woodTilted");
 
     int blackShine     = this._addMat("blackShine", true);
     int redShine       = this._addMat("redShine", true);
@@ -79,7 +81,14 @@ class Materials {
     int blueFlowers    = this._addMat("blueFlowers");
     int redFlowers     = this._addMat("redFlowers");
     int whiteFlowers   = this._addMat("whiteFlowers");
-    int water          = this._addMat("water1", true);
+
+    this._waterChanger = new Textures.Texture2DChanger(
+      textures: new List<Textures.Texture2D>.from([
+        this._loadText("water1"),
+        this._loadText("water2"),
+        this._loadText("water3"),
+      ]));
+    int water = this._addMatTxt(this._waterChanger, true);
 
     //                value,                 top,           bottom,        left,          right,         front,         back
     this._addCubeData(BlockType.Boundary,    boundary,      boundary,      boundary,      boundary,      boundary,      boundary);
@@ -89,14 +98,17 @@ class Materials {
     this._addCubeData(BlockType.Sand,        sand,          sand,          sand,          sand,          sand,          sand);
     this._addCubeData(BlockType.DryLeaves,   dryLeavesTop,  dirt,          dryLeavesSide, dryLeavesSide, dryLeavesSide, dryLeavesSide);
     this._addCubeData(BlockType.TrunkUD,     trunkEnd,      trunkEnd,      trunkSide,     trunkSide,     trunkSide,     trunkSide);
-    this._addCubeData(BlockType.TrunkNS,     trunkSide,     trunkSide,     trunkSide,     trunkSide,     trunkEnd,      trunkEnd);
-    this._addCubeData(BlockType.TrunkEW,     trunkSide,     trunkSide,     trunkEnd,      trunkEnd,      trunkSide,     trunkSide);
+    this._addCubeData(BlockType.TrunkNS,     trunkSide,     trunkSide,     trunkTilted,   trunkTilted,   trunkEnd,      trunkEnd);
+    this._addCubeData(BlockType.TrunkEW,     trunkTilted,   trunkTilted,   trunkEnd,      trunkEnd,      trunkTilted,   trunkTilted);
     this._addCubeData(BlockType.Brick,       brick,         brick,         brick,         brick,         brick,         brick);
     this._addCubeData(BlockType.RedShine,    redShine,      redShine,      redShine,      redShine,      redShine,      redShine);
     this._addCubeData(BlockType.WhiteShine,  whiteShine,    whiteShine,    whiteShine,    whiteShine,    whiteShine,    whiteShine);
     this._addCubeData(BlockType.YellowShine, yellowShine,   yellowShine,   yellowShine,   yellowShine,   yellowShine,   yellowShine);
     this._addCubeData(BlockType.BlackShine,  blackShine,    blackShine,    blackShine,    blackShine,    blackShine,    blackShine);
     this._addCubeData(BlockType.Leaves,      leaves,        leaves,        leaves,        leaves,        leaves,        leaves);
+    this._addCubeData(BlockType.WoodUD,      woodEnd,       woodEnd,       woodSide,      woodSide,      woodSide,      woodSide);
+    this._addCubeData(BlockType.WoodNS,      woodSide,      woodSide,      woodTilted,    woodTilted,    woodEnd,       woodEnd);
+    this._addCubeData(BlockType.WoodEW,      woodTilted,    woodTilted,    woodEnd,       woodEnd,       woodTilted,    woodTilted);
     this._addCubeData(BlockType.Water,       water,         water,         water,         water,         water,         water);
 
     this._addMatData(BlockType.Grass,       [grass]);
@@ -120,26 +132,38 @@ class Materials {
   /// This full set of all the materials used by craft.
   List<Techniques.MaterialLight> get materials => this._mats;
 
+  /// The changer to animate the water.
+  Textures.Texture2DChanger get waterChanger => this._waterChanger;
+
   /// The meterial used for all the sides of the selection box.
   Techniques.MaterialLight get selection => this._selection;
 
   /// The material used for the cross hair in the center of the screen.
   Techniques.MaterialLight get crosshair => this._crosshair;
 
+  /// Loads a texture with the given file name.
+  Textures.Texture2D _loadText(String fileName) {
+    String path = Constants.imgFolder + fileName + Constants.fileExt;
+    return this._td.textureLoader.load2DFromFile(path, wrapEdges: false, nearest: false, mipMap: true);
+  }
+
   /// Loads a material with lighting information and adds it to the material list.
   /// Returns the index for the new material.
   int _addMat(String fileName, [bool shiny = false]) {
-    String path = imgFolder + fileName + fileExt;
-    Textures.Texture2D blockTxt = this._td.textureLoader.
-      load2DFromFile(path, wrapEdges: false, nearest: false, mipMap: true);
+    return this._addMatTxt(this._loadText(fileName), shiny);
+  }
 
+  /// Creates a material with lighting information and adds
+  /// it to the material list with the given texture.
+  /// Returns the index for the new material.
+  int _addMatTxt(Textures.Texture2D blockTxt, [bool shiny = false]) {
     Techniques.MaterialLight tech = new Techniques.MaterialLight()
       ..lights.add(this._light)
       ..ambient.color = new Math.Color3.gray(0.8)
       ..diffuse.color = new Math.Color3.gray(0.4)
       ..ambient.texture2D = blockTxt
       ..diffuse.texture2D = blockTxt
-      ..alpha.texture2D = blockTxt;
+      ..alpha.texture2D   = blockTxt;
 
     if (shiny) {
       tech.specular
@@ -154,14 +178,10 @@ class Materials {
   /// Loads a material with no lighting information and adds it to the material list.
   /// Returns the material which was loaded.
   Techniques.MaterialLight _addEmissionMat(String fileName) {
-     String path = imgFolder + fileName + fileExt;
-    Textures.Texture2D blockTxt = this._td.textureLoader.
-      load2DFromFile(path, wrapEdges: false, nearest: false, mipMap: true);
-
+    Textures.Texture2D blockTxt = this._loadText(fileName);
     Techniques.MaterialLight tech = new Techniques.MaterialLight()
       ..emission.texture2D = blockTxt
       ..alpha.texture2D = blockTxt;
-
     return tech;
   }
 
