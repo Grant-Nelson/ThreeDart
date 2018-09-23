@@ -41,7 +41,8 @@ void main() {
     ..addLargeCanvas("testCanvas")
     ..addPar(["Test of the Material Lighting shader with multiple moving point lights. ",
       "Emissive spheres are added at the lights sources."])
-    ..addControlBoxes(["shapes"]);
+    ..addControlBoxes(["shapes"])
+    ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 

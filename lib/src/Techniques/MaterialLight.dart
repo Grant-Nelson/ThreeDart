@@ -136,10 +136,10 @@ class MaterialLight extends Technique {
   Textures.TextureCube get environment => this._envSampler;
   set environment(Textures.TextureCube txt) {
     if (this._envSampler != txt) {
-      if (this._envSampler != null) this._envSampler.loadFinished.remove(this._onChanged);
+      if (this._envSampler != null) this._envSampler.changed.remove(this._onChanged);
       Textures.TextureCube prev = this._envSampler;
       this._envSampler = txt;
-      if (this._envSampler != null) this._envSampler.loadFinished.add(this._onChanged);
+      if (this._envSampler != null) this._envSampler.changed.add(this._onChanged);
       this._onChanged(new Events.ValueChangedEventArgs(this, "environment", prev, this._envSampler));
     }
   }

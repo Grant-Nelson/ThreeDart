@@ -10,7 +10,8 @@ import '../../common/common.dart' as common;
 void main() {
   new common.ShellPage("Test 001")
     ..addLargeCanvas("testCanvas")
-    ..addPar(["Test of the Depth shader, a basic fog shader with a single auto-rotating shape."]);
+    ..addPar(["Test of the Depth shader, a basic fog shader with a single auto-rotating shape."])
+    ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..shape = Shapes.toroid()

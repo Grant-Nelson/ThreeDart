@@ -11,12 +11,11 @@ class Generator {
 
   /// The current chunk that is being worked on.
   Chunk _curChunk;
-
+  
   /// Creates a new generator for the given world.
   Generator([int seed = 0]) {
     this._simplex = new simplex.OpenSimplexNoise(seed);
-    int dataLength = (Chunk.xSize + 6) * (Chunk.zSize + 6);
-    this._tempCache = new data.Uint8List(dataLength);
+    this._tempCache = new data.Uint8List(Constants.heightCacheLength);
     this._curChunk = null;
   }
 
@@ -25,11 +24,11 @@ class Generator {
     if (chunk == null) return;
     this._curChunk = chunk;
     this._prepareHeightCache();
-    this._addPyramid();
     this._turrain();
     this._applyWater();
     this._applySand();
     this._trees();
+    this._addPyramid();
     this._plants();
     this._add3Dart();
     this._towerOfPimps();
@@ -42,20 +41,18 @@ class Generator {
     
   /// Gets the height of the turrain from the prepared height cache.
   int _turrainHeight(int x, int z) =>
-    this._tempCache[(x+3)*(Chunk.zSize+6) + (z+3)];
+    this._tempCache[(x+Constants.borderSize)*Constants.paddedSize + (z+Constants.borderSize)];
 
   /// Prepares the temporary cached turrain height.
   void _prepareHeightCache() {
     int offset = 0;
-    for (int x = -3; x < Chunk.xSize+3; x++) {
-      for (int z = -3; z < Chunk.zSize+3; z++) {
-
+    for (int x = Constants.paddedMin; x < Constants.paddedMax; x++) {
+      for (int z = Constants.paddedMin; z < Constants.paddedMax; z++) {
         double terrain = 0.6 * this._noise(x, z, 0.001) +
-                         0.3 * this._noise(x, z, 0.01) +
-                         0.1 * this._noise(x, z, 0.1);
-        int maxy = (math.pow(terrain, 2.0)*Chunk.ySize).toInt();
-        maxy = (maxy >= Chunk.ySize)? Chunk.ySize-1: maxy;
-
+                        0.3 * this._noise(x, z, 0.01) +
+                        0.1 * this._noise(x, z, 0.1);
+        int maxy = (math.pow(terrain, 2.0)*Constants.chunkYSize).toInt();
+        maxy = (maxy >= Constants.chunkYSize)? Constants.chunkYSize-1: maxy;
         this._tempCache[offset] = maxy;
         offset++;
       }
@@ -64,8 +61,8 @@ class Generator {
 
   /// Applies the turrain (turf, dirt, and rock) to the current chunk.
   void _turrain() {
-    for (int x = 0; x < Chunk.xSize; x++) {
-      for (int z = 0; z < Chunk.zSize; z++) {
+    for (int x = 0; x < Constants.chunkSideSize; x++) {
+      for (int z = 0; z < Constants.chunkSideSize; z++) {
         this._turrainBlock(x, z);
       }
     }
@@ -75,22 +72,26 @@ class Generator {
   void _turrainBlock(int x, int z) {
     int maxy = this._turrainHeight(x, z);
     for (int y = 0; y <= maxy; y++) {
-      if (this._curChunk.getBlock(x, y, z) == BlockType.Air) {
-        int block = BlockType.Rock;
+      int block = BlockType.Rock;
+      if (maxy < Constants.waterDepth) {
+        if (maxy - Constants.sandDepth <= y) {
+          block = BlockType.Sand;
+        }
+      } else {
         if (maxy == y) {
           block = BlockType.Turf;
-        } else if (maxy - 1 == y) {
+        } else if (maxy - Constants.dirtDepth <= y) {
           block = BlockType.Dirt;
         }
-        this._curChunk.setBlock(x, y, z, block);
       }
+      this._curChunk.setBlock(x, y, z, block);
     }
   }
 
   /// Applies the water for the given chunk.
   void _applyWater() {
-    for (int x = 0; x < Chunk.xSize; x++) {
-      for (int z = 0; z < Chunk.zSize; z++) {
+    for (int x = 0; x < Constants.chunkSideSize; x++) {
+      for (int z = 0; z < Constants.chunkSideSize; z++) {
         this._applyWaterBlock(x, z);
       }
     }
@@ -98,10 +99,9 @@ class Generator {
 
   /// Determines the water blocks for a column.
   void _applyWaterBlock(int x, int z) {
-    const int depth = 8;
     int maxy = this._curChunk.topHit(x, z, 0);
-    if (maxy < depth) {
-      for (int y = depth; y > maxy; y--) {
+    if (maxy < Constants.waterDepth) {
+      for (int y = Constants.waterDepth; y > maxy; y--) {
         this._curChunk.setBlock(x, y, z, BlockType.Water);
       }
     }
@@ -109,8 +109,8 @@ class Generator {
 
   /// Determines the water blocks and adds surrounding sand blocks.
   void _applySand() {
-    for (int x = -1; x <= Chunk.xSize; x++) {
-      for (int z = -1; z <= Chunk.zSize; z++) {
+    for (int x = -1; x <= Constants.chunkSideSize; x++) {
+      for (int z = -1; z <= Constants.chunkSideSize; z++) {
         this._applySandBlock(x, z);
       }
     }
@@ -118,10 +118,9 @@ class Generator {
 
   /// Determines the water blocks and adds surrounding sand blocks.
   void _applySandBlock(int x, int z) {
-    const int depth = 8;
     int maxy = this._turrainHeight(x, z);
-    if (maxy < depth) {
-      for (int y = depth+2; y > 0; y--) {
+    if (maxy < Constants.waterDepth) {
+      for (int y = Constants.maxEdgeSand; y > Constants.minEdgeSand; y--) {
         for (int dx = -1; dx <= 1; dx++) {
           for (int dz = -1; dz <= 1; dz++) {
             int value = this._curChunk.getBlock(x+dx, y, z+dz);
@@ -137,8 +136,8 @@ class Generator {
   /// Determines the trees for the given chunk.
   /// The leaves will hang over into neighbor chunks.
   void _trees() {
-    for (int x = -3; x < Chunk.xSize+3; x++) {
-      for (int z = -3; z < Chunk.zSize+3; z++) {
+    for (int x = Constants.paddedMin; x < Constants.paddedMax; x++) {
+      for (int z = Constants.paddedMin; z < Constants.paddedMax; z++) {
         if (this._noise(x, z, 1.5) < 0.1)
           this._addTree(x, z);
       }
@@ -148,29 +147,29 @@ class Generator {
   /// Adds a tree at the given [x] and [z] to this chunk.
   void _addTree(int x, int z) {
     // Don't place a tree too close to the pyramid
-    final int height = 30;
-    if ((x + this._curChunk.x >= -height) && (x + this._curChunk.x < height) &&
-        (z + this._curChunk.z >= -height) && (z + this._curChunk.z < height))
+    if ((x + this._curChunk.x >= -Constants.pyramidSize) &&
+        (x + this._curChunk.x < Constants.pyramidSize) &&
+        (z + this._curChunk.z >= -Constants.pyramidSize) &&
+        (z + this._curChunk.z < Constants.pyramidSize))
       return;
 
-    const int miny = 10;
     int maxy = this._turrainHeight(x, z);
-    if (maxy < miny) return;
+    if (maxy < Constants.treeMin) return;
 
-    for (int y = 1; y < 8; y++) {
+    for (int y = 1; y < Constants.treeHeight; y++) {
       this._curChunk.setBlock(x, maxy + y, z, BlockType.TrunkUD);
     }
 
     _addTreeBase(x, z);
-    _addTreeLeaves(x, maxy + 8, z);
+    _addTreeLeaves(x, maxy + Constants.treeHeight, z);
   }
 
   /// Adds the base of a tree to the given [x] and [z] to this chunk.
   void _addTreeBase(int x, int z) {
-    for (int px = -3; px <= 3; px++) {
-      for (int pz = -3; pz <= 3; pz++) {
-        if ((px * px + pz * pz) <= 10) {
-          for (int y = Chunk.ySize-1; y >= 0; y--) {
+    for (int px = -Constants.deadLeavesRadius; px <= Constants.deadLeavesRadius; px++) {
+      for (int pz = -Constants.deadLeavesRadius; pz <= Constants.deadLeavesRadius; pz++) {
+        if ((px * px + pz * pz) <= Constants.deadLeavesRadius2) {
+          for (int y = Constants.chunkYSize-1; y >= 0; y--) {
             if (this._curChunk.getBlock(x+px, y, z+pz) == BlockType.Turf) {
               this._curChunk.setBlock(x+px, y, z+pz, BlockType.DryLeaves);
               break;
@@ -183,10 +182,10 @@ class Generator {
 
   /// Adds the leaves of a tree to the given [x] and [z] to this chunk.
   void _addTreeLeaves(int x, int y, int z) {
-    for (int px = -3; px <= 3; px++) {
-      for (int py = -3; py <= 3; py++) {
-        for (int pz = -3; pz <= 3; pz++) {
-          if ((px * px + py * py + pz * pz) <= 16) {
+    for (int px = -Constants.leavesRadius; px <= Constants.leavesRadius; px++) {
+      for (int py = -Constants.leavesRadius; py <= Constants.leavesRadius; py++) {
+        for (int pz = -Constants.leavesRadius; pz <= Constants.leavesRadius; pz++) {
+          if ((px * px + py * py + pz * pz) <= Constants.leavesRadius2) {
             if (this._curChunk.getBlock(x+px, y+py, z+pz) == BlockType.Air) {
               this._curChunk.setBlock(x+px, y+py, z+pz, BlockType.Leaves);
             }
@@ -198,8 +197,8 @@ class Generator {
 
   /// Adds plants to the given chunk.
   void _plants() {
-    for (int x = 0; x < Chunk.xSize; x++) {
-      for (int z = 0; z < Chunk.zSize; z++) {
+    for (int x = 0; x < Constants.chunkSideSize; x++) {
+      for (int z = 0; z < Constants.chunkSideSize; z++) {
         if (this._noise(x, z, 12.5) < 0.1)
           this._addPlant(x, z, BlockType.RedFlower);
         else if (this._noise(x+400, z, 12.5) < 0.1)
@@ -226,17 +225,18 @@ class Generator {
 
   /// Adds the pyramid to the center of the world.
   void _addPyramid() {
-    final int height = 30;
-    if ((this._curChunk.x + Chunk.xSize < -height) || (this._curChunk.x > height) ||
-        (this._curChunk.z + Chunk.zSize < -height) || (this._curChunk.z > height))
+    if ((this._curChunk.x + Constants.chunkSideSize < -Constants.pyramidSize) ||
+        (this._curChunk.x > Constants.pyramidSize) ||
+        (this._curChunk.z + Constants.chunkSideSize < -Constants.pyramidSize) ||
+        (this._curChunk.z > Constants.pyramidSize))
       return;
       
     var put = (int dx, int dy, int dz, int value) {
       this._curChunk.setBlock(dx - this._curChunk.x, dy, dz - this._curChunk.z, value);
     };
 
-    for (int py = height; py >= 0; py-=2) {
-      int width = (height-py)+3;
+    for (int py = Constants.pyramidSize; py >= 0; py-=2) {
+      int width = (Constants.pyramidSize-py)+3;
       for (int px = -width; px <= width; px++) {
         for (int pz = -width; pz <= width; pz++) {
           put(px, py, pz, BlockType.WhiteShine);
@@ -289,8 +289,8 @@ class Generator {
     final int x = -12, y = 40, z = -25;
     final int xWidth = 24, zWidth = 3;
 
-    if ((this._curChunk.x + Chunk.xSize < x - xWidth) || (this._curChunk.x > x + xWidth) ||
-        (this._curChunk.z + Chunk.zSize < z - zWidth) || (this._curChunk.z > z + zWidth))
+    if ((this._curChunk.x + Constants.chunkSideSize < x - xWidth) || (this._curChunk.x > x + xWidth) ||
+        (this._curChunk.z + Constants.chunkSideSize < z - zWidth) || (this._curChunk.z > z + zWidth))
       return;
 
     var put = (int value, int dx, int dy, List<int> px, List<int> py) {
@@ -321,8 +321,8 @@ class Generator {
     final int x = 0, y = 2, z = 0;
     final int xWidth = 3, zWidth = 3, height = 7;
 
-    if ((this._curChunk.x + Chunk.xSize < x - xWidth) || (this._curChunk.x > x + xWidth) ||
-        (this._curChunk.z + Chunk.zSize < z - zWidth) || (this._curChunk.z > z + zWidth))
+    if ((this._curChunk.x + Constants.chunkSideSize < x - xWidth) || (this._curChunk.x > x + xWidth) ||
+        (this._curChunk.z + Constants.chunkSideSize < z - zWidth) || (this._curChunk.z > z + zWidth))
       return;
 
     var put = (int dx, int dy, int dz, int value) {

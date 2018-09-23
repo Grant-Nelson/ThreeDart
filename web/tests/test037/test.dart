@@ -16,7 +16,8 @@ void main() {
     ..addLargeCanvas("testCanvas")
     ..addPar(["A test of applying a height map to an image. ",
       "Some shapes will take a bit to calculate depending on quality of mapping."])
-    ..addControlBoxes(["heightMaps", "shapes", "scalars"]);
+    ..addControlBoxes(["heightMaps", "shapes", "scalars"])
+    ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
@@ -49,7 +50,7 @@ void main() {
   var updateShape = () {
     if ((baseShape != null) && (textureFile.isNotEmpty)) {
       Textures.Texture2D heightMap = td.textureLoader.load2DFromFile(textureFile);
-      heightMap.loadFinished.add((_) {
+      heightMap.changed.add((_) {
         Textures.TextureReader heightReader = td.textureLoader.readAll(heightMap);
         Shapes.Shape shape = new Shapes.Shape.copy(baseShape);
         shape.calculateNormals();

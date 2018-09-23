@@ -15,7 +15,8 @@ void main() {
     ..addPar(["A test of the Material Lighting shader with a bumpy 2D texture and ",
       "a directional light. Select different bump maps for the test. ",
       "The additional lines are part of shape inspection."])
-    ..addControlBoxes(["bumpMaps"]);
+    ..addControlBoxes(["bumpMaps"])
+    ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 

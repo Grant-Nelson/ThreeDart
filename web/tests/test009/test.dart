@@ -14,7 +14,8 @@ void main() {
     ..addLargeCanvas("testCanvas")
     ..addPar(["Another test of the Material Lighting shader with solid color and ",
       "a directional lighting. The light and object don't move but the camera can be ",
-      "moved around the object."]);
+      "moved around the object."])
+    ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 

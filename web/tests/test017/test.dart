@@ -17,7 +17,8 @@ void main() {
     ..addPar(["A test of the Material Lighting shader with solid color directional "+
       "light, cube mapped textures, and a reflection map. The specular map is "+
       "also used to define where reflections are painted."])
-    ..addControlBoxes(["shapes"]);
+    ..addControlBoxes(["shapes"])
+    ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 

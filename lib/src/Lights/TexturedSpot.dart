@@ -131,10 +131,10 @@ class TexturedSpot implements Light {
   Textures.Texture2D get texture => this._texture;
   void set texture(Textures.Texture2D texture) {
     if (this._texture != texture) {
-      if (this._texture != null) this._texture.loadFinished.remove(this._onChanged);
+      if (this._texture != null) this._texture.changed.remove(this._onChanged);
       Textures.Texture2D prev = this._texture;
       this._texture = texture;
-      if (texture != null) this._texture.loadFinished.add(this._onChanged);
+      if (texture != null) this._texture.changed.add(this._onChanged);
       this._onChanged(new Events.ValueChangedEventArgs(this, "texture", prev, this._texture));
     }
   }

@@ -15,7 +15,8 @@ void main() {
   new common.ShellPage("Test 034")
     ..addLargeCanvas("testCanvas")
     ..addPar(["Test of resizing the render target. ",
-      "Resizing the canvas works better in Chrome."]);
+      "Resizing the canvas works better in Chrome."])
+    ..addPar(["«[Back to Tests|../]"]);
 
   Element canvas = document.getElementById("testCanvas");
   canvas.style

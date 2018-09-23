@@ -16,7 +16,8 @@ void main() {
     ..addPar(["A test of the Material Lighting shader with cube textures and ",
       "a directional light. The cube textures are for ambient, diffuse, ",
       "and specular."])
-    ..addControlBoxes(["shapes"]);
+    ..addControlBoxes(["shapes"])
+    ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 

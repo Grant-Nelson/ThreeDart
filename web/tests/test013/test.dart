@@ -13,7 +13,8 @@ import '../../common/common.dart' as common;
 void main() {
   new common.ShellPage("Test 013")
     ..addLargeCanvas("testCanvas")
-    ..addPar(["Test of sky box and cover pass."]);
+    ..addPar(["Test of sky box and cover pass."])
+    ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 

@@ -83,10 +83,10 @@ class GaussianBlur extends Technique {
   Textures.Texture2D get colorTexture => this._colorTxt;
   void set colorTexture(Textures.Texture2D txt) {
     if (this._colorTxt != txt) {
-      if (this._colorTxt != null) this._colorTxt.loadFinished.remove(this._onChanged);
+      if (this._colorTxt != null) this._colorTxt.changed.remove(this._onChanged);
       Textures.Texture2D prev = this._colorTxt;
       this._colorTxt = txt;
-      if (this._colorTxt != null) this._colorTxt.loadFinished.add(this._onChanged);
+      if (this._colorTxt != null) this._colorTxt.changed.add(this._onChanged);
       this._onChanged(new Events.ValueChangedEventArgs(this, "colorTexture", prev, this._colorTxt));
     }
   }
@@ -95,10 +95,10 @@ class GaussianBlur extends Technique {
   Textures.Texture2D get depthTexture => this._depthTxt;
   void set depthTexture(Textures.Texture2D txt) {
     if (this._depthTxt != txt) {
-      if (this._depthTxt != null) this._depthTxt.loadFinished.remove(this._onChanged);
+      if (this._depthTxt != null) this._depthTxt.changed.remove(this._onChanged);
       Textures.Texture2D prev = this._depthTxt;
       this._depthTxt = txt;
-      if (this._depthTxt != null) this._depthTxt.loadFinished.add(this._onChanged);
+      if (this._depthTxt != null) this._depthTxt.changed.add(this._onChanged);
       this._onChanged(new Events.ValueChangedEventArgs(this, "depthTexture", prev, this._depthTxt));
     }
   }

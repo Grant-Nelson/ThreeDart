@@ -1,15 +1,9 @@
 part of ThreeDart.Textures;
 
 /// The base for all texture and surface types.
-abstract class Texture extends Core.Bindable {
-
-  /// The index of the texture.
-  int _index;
-
-  /// Creates a new base texture.
-  Texture._(this._index);
+abstract class Texture extends Core.Bindable implements Events.Changable {
 
   /// The index of the texture when bound to the rendering context.
-  int get index => this._index;
-  set index(int index) => this._index = index;
+  int get index;
+  set index(int index);
 }

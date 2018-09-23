@@ -18,7 +18,8 @@ void main() {
       "The texturing of the directional light is being modified with a matrix. ",
       "The texture metrix is updated using the pre-update mathods. ",
       "Use Ctrl plus the mouse to move the center object."])
-    ..addControlBoxes(["shapes"]);
+    ..addControlBoxes(["shapes"])
+    ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 

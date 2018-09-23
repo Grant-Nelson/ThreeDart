@@ -2,19 +2,6 @@ part of craft;
 
 /// The object defining the player and view of the game.
 class Player {
-  static const double _startX = 0.5; /// The x starting location of the player.
-  static const double _startZ = 0.5; /// The y starting location of the player.
-  static const double _gravity = -100.0; /// The gravity force to apply onto the player.
-  static const double _speed = 6.0; /// The speed at which the player moves.
-  static const double _fallSpeed = 60.0; /// The maximum speed the player can fall at, terminal velocity.
-  static const double _pad = 0.25; /// The padding for collision detection.
-  static const double _jumpSpeed = 30.0; // The velocity to apply when the player jumps.
-  static const double _highlightDistance = 6.0; /// The maximum distance to set a highlight selection from the player.
-  static const double _playerHeight = 2.0; /// The player's height.
-  static const double _headOffset = 0.5; /// The player's head collision offset.
-  static const double _footOffset = 1.5; /// The player's foot collision offset.
-  static const double _mouseSensitivity = 0.4; /// The sensitivity of the locked pointer mouse.
-
   Movers.UserTranslator _trans;
   Movers.UserRotater _rot;
   World _world;
@@ -37,14 +24,14 @@ class Player {
   Player(ThreeDart.ThreeDart td, this._world) {
     td.userInput.lockOnClick = true;
     td.userInput.locked
-      ..horizontalSensitivity = _mouseSensitivity
-      ..verticalSensitivity = _mouseSensitivity;
+      ..horizontalSensitivity = Constants.mouseSensitivity
+      ..verticalSensitivity = Constants.mouseSensitivity;
 
     this._trans = new Movers.UserTranslator(input: td.userInput)
-      ..offsetX.maximumVelocity = _speed
-      ..offsetY.maximumVelocity = _fallSpeed
-      ..offsetY.acceleration = _gravity
-      ..offsetZ.maximumVelocity = _speed
+      ..offsetX.maximumVelocity = Constants.walkSpeed
+      ..offsetY.maximumVelocity = Constants.maxFallSpeed
+      ..offsetY.acceleration = Constants.gravity
+      ..offsetZ.maximumVelocity = Constants.walkSpeed
       ..collisionHandle = this._handleCollide;
     this._rot = new Movers.UserRotater.flat(input: td.userInput, locking: true);
     this._rot.changed.add((Events.EventArgs args) {
@@ -139,9 +126,9 @@ class Player {
 
   /// Sets the player's coordinates to the starting position at the top most location.
   void goHome() {
-    Chunk chunk = this._world.findChunk(_startX.toInt(), _startZ.toInt());
-    int y = chunk?.topHit(_startX.toInt(), _startZ.toInt()) ?? 0;
-    this._trans.location = new Math.Point3(_startX, y.toDouble()+60.0, _startZ);
+    Chunk chunk = this._world.findChunk(Constants.playerStartX.toInt(), Constants.playerStartZ.toInt());
+    int y = chunk?.topHit(Constants.playerStartX.toInt(), Constants.playerStartZ.toInt()) ?? 0;
+    this._trans.location = new Math.Point3(Constants.playerStartX, y.toDouble()+60.0, Constants.playerStartZ);
     this._trans.velocity = new Math.Vector3.zero();
   }
 
@@ -160,7 +147,7 @@ class Player {
   /// Handles when the player presses the jump key.
   void _onJump(Events.EventArgs args) {
     if (this._touchingGround)
-      this._trans.offsetY.velocity = _jumpSpeed;
+      this._trans.offsetY.velocity = Constants.jumpSpeed;
   }
 
   /// Handles when the player presses the button(s) to cycle the selected block value in the hand.
@@ -209,6 +196,12 @@ class Player {
         } else if (neighbor.region.overlaps(Math.HitRegion.ZPos|Math.HitRegion.ZNeg)) {
           blockType = BlockType.TrunkNS;
         }
+      } else if (blockType == BlockType.WoodUD) {
+        if (neighbor.region.overlaps(Math.HitRegion.XPos|Math.HitRegion.XNeg)) {
+          blockType = BlockType.WoodEW;
+        } else if (neighbor.region.overlaps(Math.HitRegion.ZPos|Math.HitRegion.ZNeg)) {
+          blockType = BlockType.WoodNS;
+        }
       }
     }
 
@@ -216,10 +209,10 @@ class Player {
     if (chunk != null) {
       this._highlight.value = blockType;
       chunk.needUpdate = true;
-      if (this._highlight.x <= 0)               chunk.left?.needUpdate = true;
-      if (this._highlight.z <= 0)               chunk.back?.needUpdate = true;
-      if (this._highlight.x >= Chunk.xSize - 1) chunk.right?.needUpdate = true;
-      if (this._highlight.z >= Chunk.zSize - 1) chunk.front?.needUpdate = true;
+      if (this._highlight.x <= 0)                           chunk.left?.needUpdate = true;
+      if (this._highlight.z <= 0)                           chunk.back?.needUpdate = true;
+      if (this._highlight.x >= Constants.chunkSideSize - 1) chunk.right?.needUpdate = true;
+      if (this._highlight.z >= Constants.chunkSideSize - 1) chunk.front?.needUpdate = true;
     }
   }
 
@@ -230,44 +223,44 @@ class Player {
     this._touchingGround = false;
 
     // Check if hitting head
-    if (_isHard(x, y-_pad, z)) {
-      y = ny - _pad;
+    if (_isHard(x, y-Constants.collisionPad, z)) {
+      y = ny - Constants.collisionPad;
       this._trans.offsetY.velocity = 0.0;
     }
 
     // Check if touching the ground
-    if (_isHard(x, y-_playerHeight+_pad, z)) {
-      y = ny + _pad;
+    if (_isHard(x, y-Constants.playerHeight+Constants.collisionPad, z)) {
+      y = ny + Constants.collisionPad;
       this._trans.offsetY.velocity = 0.0;
       this._touchingGround = true;
     }
 
     // Handle pushing out of left and right walls
-    if (_isHard(x-_pad, y-_headOffset, z) ||
-        _isHard(x-_pad, y-_footOffset, z)) {
-      x = nx - _pad;
+    if (_isHard(x-Constants.collisionPad, y-Constants.playerHeadOffset, z) ||
+        _isHard(x-Constants.collisionPad, y-Constants.playerFootOffset, z)) {
+      x = nx - Constants.collisionPad;
       this._trans.offsetX.velocity = 0.0;
-    } else if (_isHard(x+_pad, y-_headOffset, z) ||
-               _isHard(x+_pad, y-_footOffset, z)) {
-      x = nx + _pad;
+    } else if (_isHard(x+Constants.collisionPad, y-Constants.playerHeadOffset, z) ||
+               _isHard(x+Constants.collisionPad, y-Constants.playerFootOffset, z)) {
+      x = nx + Constants.collisionPad;
       this._trans.offsetX.velocity = 0.0;
     }
 
     // Handle pushing out of front and back walls
-    if (_isHard(x, y-_headOffset, z-_pad) ||
-        _isHard(x, y-_footOffset, z-_pad)) {
-      z = nz - _pad;
+    if (_isHard(x, y-Constants.playerHeadOffset, z-Constants.collisionPad) ||
+        _isHard(x, y-Constants.playerFootOffset, z-Constants.collisionPad)) {
+      z = nz - Constants.collisionPad;
       this._trans.offsetZ.velocity = 0.0;
-    } else if (_isHard(x, y-_headOffset, z+_pad) ||
-               _isHard(x, y-_footOffset, z+_pad)) {
-      z = nz + _pad;
+    } else if (_isHard(x, y-Constants.playerHeadOffset, z+Constants.collisionPad) ||
+               _isHard(x, y-Constants.playerFootOffset, z+Constants.collisionPad)) {
+      z = nz + Constants.collisionPad;
       this._trans.offsetZ.velocity = 0.0;
     }
 
     // Check if stuck in the ground and push up until out of the ground.
     // Known bug/feature: Jumping at the bottom of a tree (or any overhang) can result in "quick climbing" the tree.
-    while (_isHard(x, y-_playerHeight+_pad, z) || _isHard(x, y, z)) {
-      y = ny + _pad;
+    while (_isHard(x, y-Constants.playerHeight+Constants.collisionPad, z) || _isHard(x, y, z)) {
+      y = ny + Constants.collisionPad;
       ny += 1.0;
       this._trans.offsetY.velocity = 0.0;
       this._touchingGround = true;
@@ -281,7 +274,7 @@ class Player {
     Math.Matrix4 mat = this._playerLoc.matrix;
     return new Math.Ray3.fromVertex(
       mat.transPnt3(new Math.Point3.zero()),
-      mat.transVec3(new Math.Vector3(0.0, 0.0, -_highlightDistance)));
+      mat.transVec3(new Math.Vector3(0.0, 0.0, -Constants.highlightDistance)));
   }
 
   /// Gets the neighboring block to the given block with the given [ray] pointing at the side to get the neighbor for.
@@ -308,6 +301,10 @@ class Player {
   void _updateHighlight(Events.EventArgs _) {
     Math.Ray3 ray = this._playerViewTarget();
     Math.Ray3 back = ray.reverse;
+
+    // TODO: Fix issue where player can't select some edges from
+    //       the edge block directly next chunk. There are dead areas
+    //       in the selection that must be fixed.
 
     int dist = 0;
     BlockInfo info = this._world.getBlock(ray.x, ray.y, ray.z);

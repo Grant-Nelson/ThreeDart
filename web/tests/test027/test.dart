@@ -14,7 +14,8 @@ void main() {
   new common.ShellPage("Test 027")
     ..addLargeCanvas("testCanvas")
     ..addPar(["Test of a back buffer target for rendering to a texture. ",
-      "That back buffer texture is applied to a box."]);
+      "That back buffer texture is applied to a box."])
+    ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 

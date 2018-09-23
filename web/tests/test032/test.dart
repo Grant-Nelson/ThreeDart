@@ -15,7 +15,8 @@ void main() {
     ..addPar(["The inspection test for shapes loaders. ",
       "For generated shapes see test002. ",
       "Note: Some shapes will take time to load."])
-    ..addControlBoxes(["controls", "shapes", "scalars"]);
+    ..addControlBoxes(["controls", "shapes", "scalars"])
+    ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 

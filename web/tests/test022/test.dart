@@ -14,7 +14,8 @@ void main() {
   new common.ShellPage("Test 022")
     ..addLargeCanvas("testCanvas")
     ..addPar(["Test of the Material Lighting shader with a textured point light."])
-    ..addControlBoxes(["shapes"]);
+    ..addControlBoxes(["shapes"])
+    ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
   Textures.TextureCube texture = td.textureLoader.loadCubeFromPath("../resources/earthColor");
