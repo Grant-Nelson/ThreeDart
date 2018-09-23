@@ -3,24 +3,6 @@ part of craft;
 /// A chunk represents the voxal information for a large number of blocks.
 /// This makes up one of the many square areas of the world.
 class Chunk {
-  /// The number of blocks wide every chunk is.
-  static const int xSize = 16;
-
-  /// The number of blocks tall every chunk is.
-  static const int ySize = 48;
-
-  /// The number of block deep every chunk is.
-  static const int zSize = 16;
-
-  /// The total number of blocks per chunk.
-  static const int _dataLength = xSize * ySize * zSize;
-
-  /// The minimum number of blocks away from the player to always render a chunck.
-  static const double _minDrawDist2 =  10.0 * 10.0;
-
-  /// The maximum number of blocks away from the player to render before not drawing a chunck.
-  static const double _maxDrawDist2 = 120.0 * 120.0;
-
   /// The offset to the left edge of the chunk.
   final int x;
 
@@ -44,8 +26,8 @@ class Chunk {
 
   /// Creates a new chunk for the given [x] and [z] world offset for the given [world].
   Chunk(this.x, this.z, this._world) {
-    this._data = new data.Uint8List(_dataLength)
-      ..fillRange(0, _dataLength, BlockType.Air);
+    this._data = new data.Uint8List(Constants.chunkDataLength)
+      ..fillRange(0, Constants.chunkDataLength, BlockType.Air);
 
     this._entities = new List<ThreeDart.Entity>();
     for (ThreeDart.Entity parent in this._world.entities) {
@@ -56,6 +38,16 @@ class Chunk {
 
     this._needUpdate = true;
     this._needGen = true;
+  }
+
+  /// Removes this chunk from the entities list and
+  /// prepares it to be reomved from the chunk list.
+  void remove() {
+    int index = 0;
+    for (ThreeDart.Entity parent in this._world.entities) {
+      parent.children.remove(this._entities[index]);
+      index++;
+    }
   }
 
   /// Gets the string for this chunk for debugging.
@@ -83,27 +75,28 @@ class Chunk {
   }
 
   /// Calculates the chunk's data offset for the given x, y, and z location.
-  int _index(int x, int y, int z) => (x * ySize + y) * zSize + z;
+  int _index(int x, int y, int z) =>
+    (x * Constants.chunkYSize + y) * Constants.chunkSideSize + z;
 
   /// Gets the value of the block at the given location.
   /// This will not check neighbors if the coordinates are outside this chunk.
   int getBlock(int x, int y, int z) {
     if (y < 0) return BlockType.Boundary;
-    if (y >= ySize ||
-        x < 0 || x >= xSize ||
-        z < 0 || z >= zSize) return BlockType.Air;
+    if ((y >= Constants.chunkYSize) ||
+        (x < 0) || (x >= Constants.chunkSideSize) ||
+        (z < 0) || (z >= Constants.chunkSideSize)) return BlockType.Air;
     return this._data[this._index(x, y, z)];
   }
 
   /// Gets the value of the block at the given location.
   /// If the coordinates are outside this chunk the neighboring chunk will checked.
   int getWorldBlock(int x, int y, int z) {
-    if (y < 0)      return BlockType.Boundary;
-    if (y >= ySize) return BlockType.Air;
-    if (x < 0)      return left?. getWorldBlock(x + xSize, y, z) ?? BlockType.Air;
-    if (x >= xSize) return right?.getWorldBlock(x - xSize, y, z) ?? BlockType.Air;
-    if (z < 0)      return back?. getWorldBlock(x, y, z + zSize) ?? BlockType.Air;
-    if (z >= zSize) return front?.getWorldBlock(x, y, z - zSize) ?? BlockType.Air;
+    if (y < 0)                        return BlockType.Boundary;
+    if (y >= Constants.chunkYSize)    return BlockType.Air;
+    if (x < 0)                        return left?. getWorldBlock(x + Constants.chunkSideSize, y, z) ?? BlockType.Air;
+    if (x >= Constants.chunkSideSize) return right?.getWorldBlock(x - Constants.chunkSideSize, y, z) ?? BlockType.Air;
+    if (z < 0)                        return back?. getWorldBlock(x, y, z + Constants.chunkSideSize) ?? BlockType.Air;
+    if (z >= Constants.chunkSideSize) return front?.getWorldBlock(x, y, z - Constants.chunkSideSize) ?? BlockType.Air;
     return this._data[this._index(x, y, z)];
   }
 
@@ -111,29 +104,29 @@ class Chunk {
   /// This will not set neighbors if the coordinates are outside this chunk.
   /// Returns true if block set, false if not.
   bool setBlock(int x, int y, int z, int value) {
-    if (y < 0 || y >= ySize ||
-        x < 0 || x >= xSize ||
-        z < 0 || z >= zSize) return false;
+    if ((y < 0) || (y >= Constants.chunkYSize) ||
+        (x < 0) || (x >= Constants.chunkSideSize) ||
+        (z < 0) || (z >= Constants.chunkSideSize)) return false;
     this._data[this._index(x, y, z)] = value;
     return true;
   }
 
   /// Gets the chunk to the left (XNeg) of this chunk.
-  Chunk get left  => this._world.findChunk(this.x - xSize, this.z);
+  Chunk get left => this._world.findChunk(this.x - Constants.chunkSideSize, this.z);
 
   /// Gets the chunk to the front (ZPos) of this chunk.
-  Chunk get front => this._world.findChunk(this.x, this.z + zSize);
+  Chunk get front => this._world.findChunk(this.x, this.z + Constants.chunkSideSize);
 
   /// Gets the chunk to the right (XPos) of this chunk.
-  Chunk get right => this._world.findChunk(this.x + xSize, this.z);
+  Chunk get right => this._world.findChunk(this.x + Constants.chunkSideSize, this.z);
 
   /// Gets the chunk to the back (ZNeg) of this chunk.
-  Chunk get back  => this._world.findChunk(this.x, this.z - zSize);
+  Chunk get back => this._world.findChunk(this.x, this.z - Constants.chunkSideSize);
 
   /// Determines the highest non-air block in the given [x] and [z] column.
   /// If no ground is found then the given [defaultY] is returned.
-  int topHit(int x, int z, [int defaultY = ySize]) {
-    for (int y = ySize-1; y >= 0; y--) {
+  int topHit(int x, int z, [int defaultY = Constants.chunkYSize]) {
+    for (int y = Constants.chunkYSize-1; y >= 0; y--) {
       if (BlockType.solid(this.getBlock(x, y, z))) return y;
     }
     return defaultY;
@@ -161,9 +154,10 @@ class Chunk {
       return;
     }
 
-    Math.Region2 aabb = new Math.Region2(this.x.toDouble(), this.z.toDouble(), xSize.toDouble(), zSize.toDouble());
+    Math.Region2 aabb = new Math.Region2(this.x.toDouble(), this.z.toDouble(),
+      Constants.chunkSideSize.toDouble(), Constants.chunkSideSize.toDouble());
     Math.Point2 nearLoc = aabb.nearestPoint(loc);
-    if (nearLoc.distance2(loc) < _minDrawDist2) {
+    if (nearLoc.distance2(loc) < Constants.minDrawDist2) {
       this._enabled = true;
       return;
     }
@@ -173,7 +167,7 @@ class Chunk {
     Math.Vector2 toNear = new Math.Vector2(nearFront.x - loc.x, nearFront.y - loc.y);
 
     double length = toNear.length2();
-    if (length > _maxDrawDist2) {
+    if (length > Constants.maxDrawDist2) {
       this._enabled = false;
       return;
     }

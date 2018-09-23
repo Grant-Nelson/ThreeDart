@@ -29,9 +29,6 @@ class CubeData {
 
 /// This loads and prepares all the materials (colors and textures) used for rendering.
 class Materials {
-  static const String imgFolder = "./textures/";
-  static const String fileExt = ".png";
-
   ThreeDart.ThreeDart _td;
   Map<int, CubeData> _cubeData;
   Map<int, List<int>> _matData;
@@ -139,7 +136,7 @@ class Materials {
 
   /// Loads a texture with the given file name.
   Textures.Texture2D _loadText(String fileName) {
-    String path = imgFolder + fileName + fileExt;
+    String path = Constants.imgFolder + fileName + Constants.fileExt;
     return this._td.textureLoader.load2DFromFile(path, wrapEdges: false, nearest: false, mipMap: true);
   }
 

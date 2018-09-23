@@ -7,22 +7,6 @@ const bool _showWireFrame = false;
 
 /// The shaper creates the shapes for all the items in the world.
 class Shaper {
-  static final Math.Vector3 _topNorm    = new Math.Vector3( 0.0,  1.0,  0.0);
-  static final Math.Vector3 _bottomNorm = new Math.Vector3( 0.0, -1.0,  0.0);
-  static final Math.Vector3 _leftNorm   = new Math.Vector3( 1.0,  0.0,  0.0);
-  static final Math.Vector3 _rightNorm  = new Math.Vector3(-1.0,  0.0,  0.0);
-  static final Math.Vector3 _frontNorm  = new Math.Vector3( 0.0,  0.0,  1.0);
-  static final Math.Vector3 _backNorm   = new Math.Vector3( 0.0,  0.0, -1.0);
-
-  static final Math.Point3 _frontTopLeft     = new Math.Point3(-0.5,  0.5,  0.5);
-  static final Math.Point3 _frontTopRight    = new Math.Point3( 0.5,  0.5,  0.5);
-  static final Math.Point3 _frontBottomLeft  = new Math.Point3(-0.5, -0.5,  0.5);
-  static final Math.Point3 _frontBottomRight = new Math.Point3( 0.5, -0.5,  0.5);
-  static final Math.Point3 _backTopLeft      = new Math.Point3(-0.5,  0.5, -0.5);
-  static final Math.Point3 _backTopRight     = new Math.Point3( 0.5,  0.5, -0.5);
-  static final Math.Point3 _backBottomLeft   = new Math.Point3(-0.5, -0.5, -0.5);
-  static final Math.Point3 _backBottomRight  = new Math.Point3( 0.5, -0.5, -0.5);
-
   Materials _mats;
   Data.VertexType _vertexType;
   List<Shapes.ReducedShape> _shapes;
@@ -39,9 +23,9 @@ class Shaper {
   /// Builds all the shames for a whole given [chunk].
   /// Use [finish] to apply the shapes to the chunks entities.
   void buildChunkShapes(Chunk chunk) {
-    for (int x = Chunk.xSize - 1; x >= 0; x--) {
-      for (int y = Chunk.ySize - 1; y >= -1; y--) {
-        for (int z = Chunk.zSize - 1; z >= 0; z--) {
+    for (int x = Constants.chunkSideSize - 1; x >= 0; x--) {
+      for (int y = Constants.chunkYSize - 1; y >= -1; y--) {
+        for (int z = Constants.chunkSideSize - 1; z >= 0; z--) {
           int value = chunk.getWorldBlock(x, y, z);
           this._addBlockToShapes(chunk, x, y, z, value, false, 1.0);
         }
@@ -145,27 +129,27 @@ class Shaper {
 
   /// Adds the top square of a block to the given [shape].
   void _addTopToShape(Shapes.ReducedShape shape, Math.Point3 loc, bool twoSided, double scalar) =>
-    _addQuad(shape, loc, _backTopLeft, _frontTopLeft, _frontTopRight, _backTopRight, _topNorm, twoSided, scalar);
+    _addQuad(shape, loc, Constants.backTopLeft, Constants.frontTopLeft, Constants.frontTopRight, Constants.backTopRight, Constants.topNorm, twoSided, scalar);
 
   /// Adds the bottom square of a block to the given [shape].
   void _addBottomToShape(Shapes.ReducedShape shape, Math.Point3 loc, bool twoSided, double scalar) =>
-    _addQuad(shape, loc, _frontBottomLeft, _backBottomLeft, _backBottomRight, _frontBottomRight, _bottomNorm, twoSided, scalar);
+    _addQuad(shape, loc, Constants.frontBottomLeft, Constants.backBottomLeft, Constants.backBottomRight, Constants.frontBottomRight, Constants.bottomNorm, twoSided, scalar);
 
   /// Adds the left square of a block to the given [shape].
   void _addLeftToShape(Shapes.ReducedShape shape, Math.Point3 loc, bool twoSided, double scalar) =>
-    _addQuad(shape, loc, _backTopLeft, _backBottomLeft, _frontBottomLeft, _frontTopLeft, _leftNorm, twoSided, scalar);
+    _addQuad(shape, loc, Constants.backTopLeft, Constants.backBottomLeft, Constants.frontBottomLeft, Constants.frontTopLeft, Constants.leftNorm, twoSided, scalar);
 
   /// Adds the right square of a block to the given [shape].
   void _addRightToShape(Shapes.ReducedShape shape, Math.Point3 loc, bool twoSided, double scalar) =>
-    _addQuad(shape, loc, _frontTopRight, _frontBottomRight, _backBottomRight, _backTopRight, _rightNorm, twoSided, scalar);
+    _addQuad(shape, loc, Constants.frontTopRight, Constants.frontBottomRight, Constants.backBottomRight, Constants.backTopRight, Constants.rightNorm, twoSided, scalar);
 
   /// Adds the front square of a block to the given [shape].
   void _addFrontToShape(Shapes.ReducedShape shape, Math.Point3 loc, bool twoSided, double scalar) =>
-    _addQuad(shape, loc, _frontTopLeft, _frontBottomLeft, _frontBottomRight, _frontTopRight, _frontNorm, twoSided, scalar);
+    _addQuad(shape, loc, Constants.frontTopLeft, Constants.frontBottomLeft, Constants.frontBottomRight, Constants.frontTopRight, Constants.frontNorm, twoSided, scalar);
 
   /// Adds the back square of a block to the given [shape].
   void _addBackToShape(Shapes.ReducedShape shape, Math.Point3 loc, bool twoSided, double scalar) =>
-    _addQuad(shape, loc, _backTopRight, _backBottomRight, _backBottomLeft, _backTopLeft, _backNorm, twoSided, scalar);
+    _addQuad(shape, loc, Constants.backTopRight, Constants.backBottomRight, Constants.backBottomLeft, Constants.backTopLeft, Constants.backNorm, twoSided, scalar);
 
   /// Adds a cube to the shapes defined by the materials cube data for the given block [value].
   /// Only the sides of the cube which are visible are added, the rest are skipped.
@@ -184,7 +168,7 @@ class Shaper {
     if (chunk == null) return true;
     y += chunkLoc.y.toInt();
     if (y < 0) return false;
-    if (y >= Chunk.ySize) return true;
+    if (y >= Constants.chunkYSize) return true;
     x += chunkLoc.x.toInt();
     z += chunkLoc.z.toInt();
     int neighbor = chunk.getWorldBlock(x, y, z);
@@ -219,7 +203,7 @@ class Shaper {
       mat.transPnt3(new Math.Point3(0.0, -0.5,  0.0)),
       mat.transPnt3(new Math.Point3(0.4, -0.1,  0.4)),
       mat.transPnt3(new Math.Point3(0.8,  0.0,  0.0)),
-      _topNorm, true, 1.0);
+      Constants.topNorm, true, 1.0);
   }
 
   /// Adds a fern to the shapes at the given [loc].
@@ -242,11 +226,11 @@ class Shaper {
     List<Shapes.Vertex> botcap = [];
     for (double d = 0.0; d <= 2.0; d += 0.25) {
       Math.Matrix3 mat = new Math.Matrix3.rotateY(Math.PI*d);
-      side.add(this._getVertex(loc + mat.transPnt3(new Math.Point3( 0.07, -0.1, 0.0)), mat.transVec3(_frontNorm), (d-1.0).abs(), 0.0));
-      side.add(this._getVertex(loc + mat.transPnt3(new Math.Point3( 0.1,  -0.5, 0.0)), mat.transVec3(_frontNorm), (d-1.0).abs(), 1.0));
+      side.add(this._getVertex(loc + mat.transPnt3(new Math.Point3( 0.07, -0.1, 0.0)), mat.transVec3(Constants.frontNorm), (d-1.0).abs(), 0.0));
+      side.add(this._getVertex(loc + mat.transPnt3(new Math.Point3( 0.1,  -0.5, 0.0)), mat.transVec3(Constants.frontNorm), (d-1.0).abs(), 1.0));
       Math.Point3 topLoc = mat.transPnt3(new Math.Point3(0.1, -0.5, 0.0));
       Math.Point3 topTxt = mat.transPnt3(new Math.Point3(0.1,  0.0, 0.0));
-      botcap.add(this._getVertex(loc + topLoc, _bottomNorm, topTxt.x+0.5, topTxt.z+0.5));
+      botcap.add(this._getVertex(loc + topLoc, Constants.bottomNorm, topTxt.x+0.5, topTxt.z+0.5));
     }
 
     int side1Index = sideShape.addVertices(side);
@@ -256,8 +240,8 @@ class Shaper {
 
     List<Shapes.Vertex> top = [];
     List<Shapes.Vertex> bottom = [];
-    top.add(   this._getVertex(loc + new Math.Point3(0.0,  0.05, 0.0), _topNorm,    0.5, 0.5));
-    bottom.add(this._getVertex(loc + new Math.Point3(0.0, -0.1,  0.0), _bottomNorm, 0.5, 0.5));
+    top.add(   this._getVertex(loc + new Math.Point3(0.0,  0.05, 0.0), Constants.topNorm,    0.5, 0.5));
+    bottom.add(this._getVertex(loc + new Math.Point3(0.0, -0.1,  0.0), Constants.bottomNorm, 0.5, 0.5));
 
     for (double d = 0.0; d <= 1.0; d += 0.1) {
       Math.Matrix3 topMat = new Math.Matrix3.rotateY(-Math.PI*2.0*d);
