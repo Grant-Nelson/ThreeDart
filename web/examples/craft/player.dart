@@ -196,6 +196,12 @@ class Player {
         } else if (neighbor.region.overlaps(Math.HitRegion.ZPos|Math.HitRegion.ZNeg)) {
           blockType = BlockType.TrunkNS;
         }
+      } else if (blockType == BlockType.WoodUD) {
+        if (neighbor.region.overlaps(Math.HitRegion.XPos|Math.HitRegion.XNeg)) {
+          blockType = BlockType.WoodEW;
+        } else if (neighbor.region.overlaps(Math.HitRegion.ZPos|Math.HitRegion.ZNeg)) {
+          blockType = BlockType.WoodNS;
+        }
       }
     }
 
@@ -297,7 +303,8 @@ class Player {
     Math.Ray3 back = ray.reverse;
 
     // TODO: Fix issue where player can't select some edges from
-    //       the edge block directly next chunk.
+    //       the edge block directly next chunk. There are dead areas
+    //       in the selection that must be fixed.
 
     int dist = 0;
     BlockInfo info = this._world.getBlock(ray.x, ray.y, ray.z);

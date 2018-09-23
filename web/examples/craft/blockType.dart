@@ -62,6 +62,15 @@ class BlockType {
 
   /// A block of leaves on the top of the tree
   static const int Leaves = 114;
+  
+  /// Wood block of a wooden planks placed up right (up/down)
+  static const int WoodUD = 115;
+
+  /// Wood block of a wooden planks placed on its side, facing north/south
+  static const int WoodNS = 116;
+
+  /// Wood block of a wooden planks placed on its side, facing east/west
+  static const int WoodEW = 117;
 
   //====================================
   // Open blocks
@@ -95,6 +104,7 @@ class BlockType {
     Sand ,
     DryLeaves,
     TrunkUD,
+    WoodUD,
     Brick,
     RedShine,
     WhiteShine,
@@ -130,6 +140,9 @@ class BlockType {
       case YellowShine: return "yellowShine";
       case BlackShine:  return "blackShine";
       case Leaves:      return "leaves";
+      case WoodUD:      return "wood-ud";
+      case WoodNS:      return "wood-ns";
+      case WoodEW:      return "wood-ew";
 
       case Grass:       return "grass";
       case Fern:        return "fern";
@@ -148,7 +161,7 @@ class BlockType {
 
   /// solid determines if the given block type can not be seen through.
   static bool solid(int value) {
-    return (value >= Boundary) && (value <= Leaves);
+    return (value >= Boundary) && (value <= WoodEW);
   }
 
   /// open determines if the given block type can be seen through.

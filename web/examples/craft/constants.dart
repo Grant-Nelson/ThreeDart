@@ -81,9 +81,6 @@ class Constants {
   /// The size of the X and Z border around the turrain required for trees.
   static const int borderSize = 3;
 
-  /// Twice the border size.
-  static const int border2Size = 2 * borderSize;
-
   /// The minimum X and Z including the border, value is inclusive to the range.
   static const int paddedMin = -borderSize;
 
@@ -91,10 +88,10 @@ class Constants {
   static const int paddedMax = chunkSideSize + borderSize;
 
   /// The total X and Z size including borders.
-  static const int paddedSize = chunkSideSize + border2Size;
+  static const int paddedSize = paddedMax - paddedMin;
   
   /// The number of values in the height cache of the generator.
-  static const int heightCacheLength = (chunkSideSize + border2Size) * (chunkSideSize + border2Size);
+  static const int heightCacheLength = paddedSize * paddedSize;
 
   /// The X starting location of the player.
   static const double playerStartX = 0.5;

@@ -59,8 +59,12 @@ class Materials {
     int sand           = this._addMat("sand");
     int trunkEnd       = this._addMat("trunkEnd");
     int trunkSide      = this._addMat("trunkSide");
+    int trunkTilted    = this._addMat("trunkTilted");
     int turfSide       = this._addMat("turfSide");
     int turfTop        = this._addMat("turfTop");
+    int woodEnd        = this._addMat("woodEnd");
+    int woodSide       = this._addMat("woodSide");
+    int woodTilted     = this._addMat("woodTilted");
 
     int blackShine     = this._addMat("blackShine", true);
     int redShine       = this._addMat("redShine", true);
@@ -94,14 +98,17 @@ class Materials {
     this._addCubeData(BlockType.Sand,        sand,          sand,          sand,          sand,          sand,          sand);
     this._addCubeData(BlockType.DryLeaves,   dryLeavesTop,  dirt,          dryLeavesSide, dryLeavesSide, dryLeavesSide, dryLeavesSide);
     this._addCubeData(BlockType.TrunkUD,     trunkEnd,      trunkEnd,      trunkSide,     trunkSide,     trunkSide,     trunkSide);
-    this._addCubeData(BlockType.TrunkNS,     trunkSide,     trunkSide,     trunkSide,     trunkSide,     trunkEnd,      trunkEnd);
-    this._addCubeData(BlockType.TrunkEW,     trunkSide,     trunkSide,     trunkEnd,      trunkEnd,      trunkSide,     trunkSide);
+    this._addCubeData(BlockType.TrunkNS,     trunkSide,     trunkSide,     trunkTilted,   trunkTilted,   trunkEnd,      trunkEnd);
+    this._addCubeData(BlockType.TrunkEW,     trunkTilted,   trunkTilted,   trunkEnd,      trunkEnd,      trunkTilted,   trunkTilted);
     this._addCubeData(BlockType.Brick,       brick,         brick,         brick,         brick,         brick,         brick);
     this._addCubeData(BlockType.RedShine,    redShine,      redShine,      redShine,      redShine,      redShine,      redShine);
     this._addCubeData(BlockType.WhiteShine,  whiteShine,    whiteShine,    whiteShine,    whiteShine,    whiteShine,    whiteShine);
     this._addCubeData(BlockType.YellowShine, yellowShine,   yellowShine,   yellowShine,   yellowShine,   yellowShine,   yellowShine);
     this._addCubeData(BlockType.BlackShine,  blackShine,    blackShine,    blackShine,    blackShine,    blackShine,    blackShine);
     this._addCubeData(BlockType.Leaves,      leaves,        leaves,        leaves,        leaves,        leaves,        leaves);
+    this._addCubeData(BlockType.WoodUD,      woodEnd,       woodEnd,       woodSide,      woodSide,      woodSide,      woodSide);
+    this._addCubeData(BlockType.WoodNS,      woodSide,      woodSide,      woodTilted,    woodTilted,    woodEnd,       woodEnd);
+    this._addCubeData(BlockType.WoodEW,      woodTilted,    woodTilted,    woodEnd,       woodEnd,       woodTilted,    woodTilted);
     this._addCubeData(BlockType.Water,       water,         water,         water,         water,         water,         water);
 
     this._addMatData(BlockType.Grass,       [grass]);

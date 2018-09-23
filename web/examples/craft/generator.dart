@@ -45,18 +45,14 @@ class Generator {
 
   /// Prepares the temporary cached turrain height.
   void _prepareHeightCache() {
-    // TODO: See what it looks like if the noise is only calculated every other
-    //       square (1/4 noise samples) then use quadratic to calculate beteen the samples.
     int offset = 0;
     for (int x = Constants.paddedMin; x < Constants.paddedMax; x++) {
       for (int z = Constants.paddedMin; z < Constants.paddedMax; z++) {
-
         double terrain = 0.6 * this._noise(x, z, 0.001) +
-                         0.3 * this._noise(x, z, 0.01) +
-                         0.1 * this._noise(x, z, 0.1);
+                        0.3 * this._noise(x, z, 0.01) +
+                        0.1 * this._noise(x, z, 0.1);
         int maxy = (math.pow(terrain, 2.0)*Constants.chunkYSize).toInt();
         maxy = (maxy >= Constants.chunkYSize)? Constants.chunkYSize-1: maxy;
-
         this._tempCache[offset] = maxy;
         offset++;
       }
