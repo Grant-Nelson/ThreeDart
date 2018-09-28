@@ -4,10 +4,10 @@ part of craft;
 /// This makes up one of the many square areas of the world.
 class Chunk {
   /// The offset to the left edge of the chunk.
-  final int x;
+  int _x;
 
   /// The offset to the front edge of the chunk.
-  final int z;
+  int _z;
 
   /// This is the world this chunk belongs to.
   World _world;
@@ -24,11 +24,9 @@ class Chunk {
   /// Indicates if the chunk hasn't been generated yet.
   bool _needGen;
 
-  /// Creates a new chunk for the given [x] and [z] world offset for the given [world].
-  Chunk(this.x, this.z, this._world) {
-    this._data = new data.Uint8List(Constants.chunkDataLength)
-      ..fillRange(0, Constants.chunkDataLength, BlockType.Air);
-
+  /// Creates a new chunk for the given [world].
+  Chunk(this._world) {
+    this._data = new data.Uint8List(Constants.chunkDataLength);
     this._entities = new List<ThreeDart.Entity>();
     for (ThreeDart.Entity parent in this._world.entities) {
       ThreeDart.Entity entity = new ThreeDart.Entity();
@@ -36,23 +34,35 @@ class Chunk {
       this._entities.add(entity);
     }
 
+    this._x = 0;
+    this._z = 0;
     this._needUpdate = true;
     this._needGen = true;
   }
 
-  /// Removes this chunk from the entities list and
-  /// prepares it to be reomved from the chunk list.
-  void remove() {
-    int index = 0;
-    for (ThreeDart.Entity parent in this._world.entities) {
-      parent.children.remove(this._entities[index]);
-      index++;
-    }
+  /// Prepares this chunk for uses.
+  void prepare(int x, int z) {
+    this._x = x;
+    this._z = z;
+    this._needUpdate = true;
+    this._needGen = true;
   }
+
+  /// Makes this chunk available to be reused.
+  void freeup() {
+    this._enabled = false;
+    this._needGen = true;
+  }
+
+  /// The offset to the left edge of the chunk.
+  int get x => this._x;
+
+  /// The offset to the front edge of the chunk.
+  int get z => this._z;
 
   /// Gets the string for this chunk for debugging.
   @override
-  String toString() => "chunk($x, $z)";
+  String toString() => "chunk(${this._x}, ${this._z})";
 
   /// Gets the entities used for rendering this chunk.
   List<ThreeDart.Entity> get entities => this._entities;
