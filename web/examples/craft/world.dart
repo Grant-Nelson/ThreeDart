@@ -87,6 +87,7 @@ class World {
   void _generateTick(Timer timer) {
     Math.Point3 player = this._player.point;
     this._generateChunk(player);
+    this._refreshDirty(player);
   }
 
   // Animates the water texture.
@@ -143,7 +144,7 @@ class World {
     double edgeX = player.x - Constants.chunkSideSize*0.5;
     double edgeZ = player.z - Constants.chunkSideSize*0.5;
     Chunk nearest = null;
-    double minDist2 = 1000000.0;
+    double minDist2 = 1.0e-9;
     for (Chunk chunk in this._chunks) {
       if (chunk.needToGenerate) {
         double dx = chunk.x - edgeX;
@@ -157,6 +158,29 @@ class World {
     }
     if (nearest != null) {
       this._gen.fillChunk(nearest);
+    }
+  }
+
+  /// This picks the nearest dirty chunk to refresh.
+  void _refreshDirty(Math.Point3 player) {
+    double edgeX = player.x - Constants.chunkSideSize*0.5;
+    double edgeZ = player.z - Constants.chunkSideSize*0.5;
+    Chunk nearest = null;
+    double minDist2 = 1.0e-9;
+    for (Chunk chunk in this._chunks) {
+      if (chunk.dirty) {
+        double dx = chunk.x - edgeX;
+        double dz = chunk.z - edgeZ;
+        double dist2 = dx*dx + dz*dz;
+        if ((nearest == null) || (minDist2 > dist2)) {
+          nearest = chunk;
+          minDist2 = dist2;
+        }
+      }
+    }
+    if (nearest != null) {
+      nearest.dirty = false;
+      nearest.needUpdate = true;
     }
   }
 

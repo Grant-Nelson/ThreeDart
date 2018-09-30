@@ -18,6 +18,9 @@ class Chunk {
   /// The entities for rendering all the different types of block textures.
   List<ThreeDart.Entity> _entities;
 
+  /// Indicates if the chunk eventually needs updating but not right away.
+  bool _dirty;
+
   /// Indicates if the chunk's entities need to be updated to reflect the chunk's data.
   bool _needUpdate;
 
@@ -36,6 +39,7 @@ class Chunk {
 
     this._x = 0;
     this._z = 0;
+    this._dirty = false;
     this._needUpdate = true;
     this._needGen = true;
   }
@@ -44,14 +48,17 @@ class Chunk {
   void prepare(int x, int z) {
     this._x = x;
     this._z = z;
-    this._needUpdate = true;
+    this._dirty = true;
     this._needGen = true;
+    this._enabled = false;
   }
 
   /// Makes this chunk available to be reused.
   void freeup() {
+    this._dirty = false;
     this._enabled = false;
     this._needGen = true;
+    this._needUpdate = false;
   }
 
   /// The offset to the left edge of the chunk.
@@ -66,6 +73,10 @@ class Chunk {
 
   /// Gets the entities used for rendering this chunk.
   List<ThreeDart.Entity> get entities => this._entities;
+  
+  /// Gets or sets if this chunk eventually needs an update.
+  bool get dirty => this._dirty && !this._needGen;
+  set dirty(bool dirty) => this._dirty = dirty;
 
   /// Gets or sets if this chunk needs an update.
   bool get needUpdate => this._needUpdate;
@@ -77,11 +88,12 @@ class Chunk {
   /// Indicates that the chunk is finished being generated.
   void finishGenerate() {
     this._needGen = false;
-    this._needUpdate = true;
-    this.left?.needUpdate = true;
-    this.right?.needUpdate = true;
-    this.front?.needUpdate = true;
-    this.back?.needUpdate = true;
+    this._dirty = true;
+    this._enabled = false;
+    this.left?.dirty = true;
+    this.right?.dirty = true;
+    this.front?.dirty = true;
+    this.back?.dirty = true;
   }
 
   /// Calculates the chunk's data offset for the given x, y, and z location.
@@ -144,8 +156,10 @@ class Chunk {
 
   /// Updates the shapes in the entities for rendering this chucnk.
   void updateShape() {
-    if (!this._needUpdate) return;
+    if (this._needGen || !this._needUpdate) return;
     this._needUpdate = false;
+    this._dirty = false;
+
     Shaper shape = new Shaper(this._world.materials);
     shape.buildChunkShapes(this);
     shape.finish(this.entities);
@@ -159,7 +173,7 @@ class Chunk {
 
   /// Updates the visiblity of this chunk.
   void updateVisiblity(Math.Point2 loc, Math.Point2 front) {
-    if (this._needGen) {
+    if (this._needGen || this._needUpdate) {
       this._enabled = false;
       return;
     }

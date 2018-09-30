@@ -19,7 +19,7 @@ class Constants {
   static const double minDrawDist2 = 10.0 * 10.0;
 
   /// The maximum number of blocks away from the player to render before not drawing a chunck.
-  static const double maxDrawDist2 = 100.0 * 100.0;
+  static const double maxDrawDist2 = 80.0 * 80.0;
 
   /// The maximum chunk X and Z distance from the player to keep chunks.
   static const int maxChunkDist = chunkSideSize * 8;
