@@ -6378,13 +6378,14 @@ a.a.clear(16640)
 z=this.a
 y=a.c
 v=a.d
-s=a.cy
-r=z.b
-q=z.c
-p=z.d
-o=p-q
-n=1/Math.tan(r*0.5)
-s.dX(V.aI(-n/(y/v),0,0,0,0,n,0,0,0,0,p/o,-p*q/o,0,0,1,0))
+s=z.c
+r=z.d
+q=z.e
+p=q-r
+o=1/Math.tan(s*0.5)
+n=V.aI(-o/(y/v),0,0,0,0,o,0,0,0,0,q/p,-q*r/p,0,0,1,0)
+z.a
+a.cy.dX(n)
 y=$.en
 if(y==null){y=new V.E(0,0,-1)
 m=y.v(0,Math.sqrt(y.D(y)))
@@ -6395,7 +6396,7 @@ j=new V.E(0,0,0)
 y=V.aI(l.a,k.a,m.a,l.N(0).D(j),l.b,k.b,m.b,k.N(0).D(j),l.c,k.c,m.c,m.N(0).D(j),0,0,0,1)
 $.en=y
 i=y}else i=y
-y=z.a
+y=z.b
 if(y!=null){h=y.aO(0,a,z)
 if(h!=null)i=h.k(0,i)}a.db.dX(i)
 z=this.c
@@ -10115,25 +10116,25 @@ u=new V.eG(o==null?p.b:o,q,t)}++t}}}},eJ:{"^":"ee;b,0c,0a",
 i:function(a){return this.b.b+": "+this.cA(0)}}}],["","",,X,{"^":"",dM:{"^":"b;",$isaJ:1},hL:{"^":"eA;0a,0b,0c,0d,0e,0f,0r,0x",
 gw:function(){var z=this.x
 if(z==null){z=D.T()
-this.x=z}return z}},iz:{"^":"b;0a,0b,0c,0d,0e",
-gw:function(){var z=this.e
+this.x=z}return z}},iz:{"^":"b;0a,0b,0c,0d,0e,0f",
+gw:function(){var z=this.f
 if(z==null){z=D.T()
-this.e=z}return z},
+this.f=z}return z},
 aP:[function(a){var z
 H.f(a,"$ist")
-z=this.e
+z=this.f
 if(!(z==null))z.G(a)},function(){return this.aP(null)},"ig","$1","$0","gcC",0,2,1],
 saK:function(a){var z,y,x
-if(!J.P(this.a,a)){z=this.a
+if(!J.P(this.b,a)){z=this.b
 if(z!=null){z=z.gw()
 z.toString
 y=H.h(this.gcC(),{func:1,ret:-1,args:[D.t]})
-C.a.L(z.a,y)}x=this.a
-this.a=a
+C.a.L(z.a,y)}x=this.b
+this.b=a
 if(a!=null){z=a.gw()
 z.toString
 y=H.h(this.gcC(),{func:1,ret:-1,args:[D.t]})
-C.a.h(z.a,y)}z=new D.N("mover",x,this.a,this,[U.ai])
+C.a.h(z.a,y)}z=new D.N("mover",x,this.b,this,[U.ai])
 z.b=!0
 this.aP(z)}},
 $isaJ:1,
@@ -10487,23 +10488,23 @@ z.f=null
 z.r=null
 z.x=null
 k=new X.iz()
-k.b=1.0471975511965976
-k.c=0.1
-k.d=2000
+k.c=1.0471975511965976
+k.d=0.1
+k.e=2000
 k.saK(null)
-q=k.b
-if(!$.o.$2(q,1.0471975511965976)){r=k.b
-k.b=1.0471975511965976
+q=k.c
+if(!$.o.$2(q,1.0471975511965976)){r=k.c
+k.c=1.0471975511965976
 q=new D.N("fov",r,1.0471975511965976,k,[P.q])
 q.b=!0
-k.aP(q)}q=k.c
-if(!$.o.$2(q,0.1)){r=k.c
-k.c=0.1
+k.aP(q)}q=k.d
+if(!$.o.$2(q,0.1)){r=k.d
+k.d=0.1
 q=new D.N("near",r,0.1,k,[P.q])
 q.b=!0
-k.aP(q)}q=k.d
-if(!$.o.$2(q,2000)){r=k.d
-k.d=2000
+k.aP(q)}q=k.e
+if(!$.o.$2(q,2000)){r=k.e
+k.e=2000
 q=new D.N("far",r,2000,k,[P.q])
 q.b=!0
 k.aP(q)}q=z.a

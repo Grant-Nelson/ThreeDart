@@ -5232,7 +5232,7 @@ C.a.O(s.a,x)}}z=new D.bV(a,b,this,[z])
 z.b=!0
 this.X(z)},"$2","geJ",8,0,6],
 saJ:function(a){var z,y,x
-if(a==null)a=X.ea(2000,1.0471975511965976,null,0.1)
+if(a==null)a=X.ea(2000,1.0471975511965976,null,0.1,null)
 z=this.a
 if(z!==a){if(z!=null){z=z.gm()
 z.toString
@@ -9123,16 +9123,16 @@ if(y.d!=null){q=P.d3(w,0,null)
 p=y.d
 o=p.c.i(0,q)
 u=new V.es(o==null?p.b:o,q,t)}++t}}}},ev:{"^":"e3;b,0c,0a",
-j:function(a){return this.b.b+": "+this.cH(0)}}}],["","",,X,{"^":"",fD:{"^":"cm;0a,0b,0c,0d,0e,0f,0r,0x,0y,0z,0Q,0ch,0cx,0cy,0db,0dx,0dy",
-gm:function(){var z=this.dy
+j:function(a){return this.b.b+": "+this.cH(0)}}}],["","",,X,{"^":"",fD:{"^":"cm;0a,0b,0c,0d,0e,0f,0r,0x,0y,0z,0Q,0ch,0cx,0cy,0db,0dx,0dy,0fr",
+gm:function(){var z=this.fr
 if(z==null){z=D.C()
-this.dy=z}return z},
-ai:function(a){var z=this.dy
+this.fr=z}return z},
+ai:function(a){var z=this.fr
 if(!(z==null))z.q(a)},
 sad:function(a,b){var z
 if(b<1)b=1
 z=this.a
-if(z!==b){this.x=null
+if(z!==b){this.y=null
 this.a=b
 this.c=b
 z=new D.x("width",z,b,this,[P.B])
@@ -9141,7 +9141,7 @@ this.ai(z)}},
 saa:function(a,b){var z
 if(b<1)b=1
 z=this.b
-if(z!==b){this.x=null
+if(z!==b){this.y=null
 this.b=b
 this.d=b
 z=new D.x("height",z,b,this,[P.B])
@@ -9153,10 +9153,10 @@ y=this.r
 if(typeof z!=="number")return z.l()
 this.sad(0,C.h.T(z*y))
 y=a.a.drawingBufferHeight
-z=this.r
+z=this.x
 if(typeof y!=="number")return y.l()
-this.saa(0,C.h.T(y*z))}if(this.x==null){z=a.a
-y=this.Q
+this.saa(0,C.h.T(y*z))}if(this.y==null){z=a.a
+y=this.ch
 x=this.a
 w=this.b
 v=H.W(z.getParameter(3379))
@@ -9189,28 +9189,28 @@ y.r=r.r
 y.x=r.x
 y=y.y
 if(!(y==null))y.cb()
-y=this.Q
+y=this.ch
 x=y.b
-this.y=x
+this.z=x
 this.c=y.r
 this.d=y.x
 z.bindTexture(3553,x)
 y=z.createRenderbuffer()
-this.z=y
+this.Q=y
 z.bindRenderbuffer(36161,y)
 z.renderbufferStorage(36161,33189,this.c,this.d)
 y=z.createFramebuffer()
-this.x=y
+this.y=y
 z.bindFramebuffer(36160,y)
-z.framebufferTexture2D(36160,36064,3553,this.y,0)
-z.framebufferRenderbuffer(36160,36096,36161,this.z)
+z.framebufferTexture2D(36160,36064,3553,this.z,0)
+z.framebufferRenderbuffer(36160,36096,36161,this.Q)
 z.bindTexture(3553,null)
 z.bindRenderbuffer(36161,null)
-z.bindFramebuffer(36160,null)}a.a.bindFramebuffer(36160,this.x)
+z.bindFramebuffer(36160,null)}a.a.bindFramebuffer(36160,this.y)
 a.a.enable(2884)
 a.a.enable(2929)
 a.a.depthFunc(513)
-z=this.dx
+z=this.dy
 y=z.c
 a.c=C.h.T(y*this.a)
 x=z.d
@@ -9222,15 +9222,15 @@ o=C.h.T(z.b*p)
 n=C.h.T(y*w)
 m=C.h.T(x*p)
 a.a.viewport(q,o,n,m)
-a.a.clearDepth(this.cy)
-if(this.cx){z=a.a
-y=this.ch
+a.a.clearDepth(this.db)
+if(this.cy){z=a.a
+y=this.cx
 z.clearColor(y.a,y.b,y.c,y.d)
 l=16640}else l=256
 if(l>0)a.a.clear(l)},
 a1:function(a){a.a.bindFramebuffer(36160,null)},
 p:{
-du:function(a,b,c,d,e){var z=new X.fD()
+du:function(a,b,c,d,e,f){var z=new X.fD()
 z.a=512
 z.b=512
 z.c=512
@@ -9238,12 +9238,13 @@ z.d=512
 z.e=!0
 z.f=!0
 z.r=d
-z.Q=T.em(0,null)
-z.ch=new V.ap(0,0,0,1)
-z.cx=!0
-z.cy=2000
-z.db=!0
-z.dx=V.aO(0,0,1,1)
+z.x=e
+z.ch=T.em(0,null)
+z.cx=new V.ap(0,0,0,1)
+z.cy=!0
+z.db=2000
+z.dx=!0
+z.dy=V.aO(0,0,1,1)
 z.sad(0,a)
 z.saa(0,b)
 return z}}},c7:{"^":"a;",$isax:1},hb:{"^":"cm;0a,0b,0c,0d,0e,0f,0r,0x",
@@ -9298,29 +9299,29 @@ a.db.by(z)},
 a1:function(a){a.cy.ax()
 a.db.ax()},
 $isax:1,
-$isc7:1},hV:{"^":"a;0a,0b,0c,0d,0e",
-gm:function(){var z=this.e
+$isc7:1},hV:{"^":"a;0a,0b,0c,0d,0e,0f",
+gm:function(){var z=this.f
 if(z==null){z=D.C()
-this.e=z}return z},
+this.f=z}return z},
 ai:[function(a){var z
 H.j(a,"$isl")
-z=this.e
+z=this.f
 if(!(z==null))z.q(a)},function(){return this.ai(null)},"hI","$1","$0","gef",0,2,0],
 F:function(a){var z,y,x,w,v,u,t,s,r,q
 z=a.c
 y=a.d
-x=a.cy
-w=this.b
-v=this.c
-u=this.d
-t=u-v
-s=1/Math.tan(w*0.5)
-x.by(V.av(-s/(z/y),0,0,0,0,s,0,0,0,0,u/t,-u*v/t,0,0,1,0))
+x=this.c
+w=this.d
+v=this.e
+u=v-w
+t=1/Math.tan(x*0.5)
+s=V.av(-t/(z/y),0,0,0,0,t,0,0,0,0,v/u,-v*w/u,0,0,1,0)
+a.cy.by(s)
 z=$.eb
 if(z==null){z=V.e5(new V.af(0,0,0),new V.H(0,1,0),new V.H(0,0,-1))
 $.eb=z
 r=z}else r=z
-z=this.a
+z=this.b
 if(z!=null){q=z.aR(0,a,this)
 if(q!=null)r=q.l(0,r)}a.db.by(r)},
 a1:function(a){a.cy.ax()
@@ -9328,31 +9329,31 @@ a.db.ax()},
 $isax:1,
 $isc7:1,
 p:{
-ea:function(a,b,c,d){var z,y,x,w
+ea:function(a,b,c,d,e){var z,y,x,w
 z=new X.hV()
-z.b=1.0471975511965976
-z.c=0.1
-z.d=2000
-if(null!=c){y=z.a
-z.a=c
+z.c=1.0471975511965976
+z.d=0.1
+z.e=2000
+if(null!=c){y=z.b
+z.b=c
 if(c!=null){x=c.gm()
 x.toString
 w=H.c(z.gef(),{func:1,ret:-1,args:[D.l]})
-C.a.h(x.a,w)}x=new D.x("mover",y,z.a,z,[U.a6])
-x.b=!0
-z.ai(x)}x=z.b
-if(!$.m.$2(x,b)){y=z.b
-z.b=b
-x=new D.x("fov",y,b,z,[P.u])
+C.a.h(x.a,w)}x=new D.x("mover",y,z.b,z,[U.a6])
 x.b=!0
 z.ai(x)}x=z.c
-if(!$.m.$2(x,d)){y=z.c
-z.c=d
-x=new D.x("near",y,d,z,[P.u])
+if(!$.m.$2(x,b)){y=z.c
+z.c=b
+x=new D.x("fov",y,b,z,[P.u])
 x.b=!0
 z.ai(x)}x=z.d
-if(!$.m.$2(x,a)){y=z.d
-z.d=a
+if(!$.m.$2(x,d)){y=z.d
+z.d=d
+x=new D.x("near",y,d,z,[P.u])
+x.b=!0
+z.ai(x)}x=z.e
+if(!$.m.$2(x,a)){y=z.e
+z.e=a
 x=new D.x("far",y,a,z,[P.u])
 x.b=!0
 z.ai(x)}return z}}},cm:{"^":"a;"}}],["","",,V,{"^":"",
@@ -9655,7 +9656,7 @@ x.M(t)
 x.aW(z)
 u.h(0,x)
 u.h(0,U.cK(V.hL(0,0,5)))
-n=X.ea(2000,1.0471975511965976,u,0.1)
+n=X.ea(2000,1.0471975511965976,u,0.1,null)
 m=F.d1()
 F.bK(m,null,null,1,1,1,0,0,1)
 F.bK(m,null,null,1,1,0,1,0,3)
@@ -9778,8 +9779,8 @@ x=z.a
 x.a=null
 x.u(null)}z.bV(10)
 c.Q.sb7(v.f.dF("../resources/diceBumpMap"))
-b=X.du(800,600,!0,1,!0)
-if(b.cx){b.cx=!1
+b=X.du(800,600,!0,1,1,!0)
+if(b.cy){b.cy=!1
 z=new D.x("clearColor",!0,!1,b,[P.a3])
 z.b=!0
 b.ai(z)}z=v.f.hb("../resources/maskonaive",".jpg")
@@ -9809,7 +9810,7 @@ a0.saJ(n)
 a0.saz(0,b)
 a0.san(c)
 a0.d.h(0,k)
-a1=X.du(400,300,!0,0.5,!0)
+a1=X.du(400,300,!0,0.5,0.5,!0)
 a2=M.dO(null,null,null,null)
 a2.saJ(n)
 a2.saz(0,a1)
@@ -9840,8 +9841,8 @@ x.b=!0
 z.u(x)}a2.san(z)
 a2.d.h(0,k)
 a4=M.cL(null,null,null)
-z=b.Q
-x=a1.Q
+z=b.ch
+x=a1.ch
 t=new O.hc()
 t.e=0
 t.f=4
@@ -9903,10 +9904,10 @@ z.aA(a5.geN(),a5.geO())
 a5.d=0
 a5.e=null
 z=a5.c
-x=a1.Q
+x=a1.ch
 z.h(0,O.eo(null,V.aO(0,0.8,0.2,0.2),!1,null,x))
 x=a5.c
-z=b.Q
+z=b.ch
 x.h(0,O.eo(null,V.aO(0,0.6,0.2,0.2),!1,null,z))
 a6=M.cL(null,null,null)
 a6.saz(0,X.cM(!1,!0,!1,null,2000,null,0))

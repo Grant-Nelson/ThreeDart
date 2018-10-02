@@ -5276,7 +5276,7 @@ C.a.F(s.a,x)}}z=new D.bW(a,b,this,[z])
 z.b=!0
 this.Z(z)},"$2","geQ",8,0,7],
 saW:function(a){var z,y,x
-if(a==null)a=X.ec(2000,1.0471975511965976,null,0.1)
+if(a==null)a=X.ec(2000,1.0471975511965976,null,0.1,null)
 z=this.a
 if(z!==a){if(z!=null){z=z.gn()
 z.toString
@@ -9478,16 +9478,16 @@ if(y.d!=null){q=P.d1(w,0,null)
 p=y.d
 o=p.c.j(0,q)
 u=new V.ev(o==null?p.b:o,q,t)}++t}}}},ey:{"^":"e2;b,0c,0a",
-i:function(a){return this.b.b+": "+this.cF(0)}}}],["","",,X,{"^":"",fJ:{"^":"co;0a,0b,0c,0d,0e,0f,0r,0x,0y,0z,0Q,0ch,0cx,0cy,0db,0dx,0dy",
-gn:function(){var z=this.dy
+i:function(a){return this.b.b+": "+this.cF(0)}}}],["","",,X,{"^":"",fJ:{"^":"co;0a,0b,0c,0d,0e,0f,0r,0x,0y,0z,0Q,0ch,0cx,0cy,0db,0dx,0dy,0fr",
+gn:function(){var z=this.fr
 if(z==null){z=D.C()
-this.dy=z}return z},
-ae:function(a){var z=this.dy
+this.fr=z}return z},
+ae:function(a){var z=this.fr
 if(!(z==null))z.u(a)},
 sad:function(a,b){var z
 if(b<1)b=1
 z=this.a
-if(z!==b){this.x=null
+if(z!==b){this.y=null
 this.a=b
 this.c=b
 z=new D.B("width",z,b,this,[P.A])
@@ -9496,7 +9496,7 @@ this.ae(z)}},
 sac:function(a,b){var z
 if(b<1)b=1
 z=this.b
-if(z!==b){this.x=null
+if(z!==b){this.y=null
 this.b=b
 this.d=b
 z=new D.B("height",z,b,this,[P.A])
@@ -9508,10 +9508,10 @@ y=this.r
 if(typeof z!=="number")return z.k()
 this.sad(0,C.h.U(z*y))
 y=a.a.drawingBufferHeight
-z=this.r
+z=this.x
 if(typeof y!=="number")return y.k()
-this.sac(0,C.h.U(y*z))}if(this.x==null){z=a.a
-y=this.Q
+this.sac(0,C.h.U(y*z))}if(this.y==null){z=a.a
+y=this.ch
 x=this.a
 w=this.b
 v=H.X(z.getParameter(3379))
@@ -9544,28 +9544,28 @@ y.r=r.r
 y.x=r.x
 y=y.y
 if(!(y==null))y.ca()
-y=this.Q
+y=this.ch
 x=y.b
-this.y=x
+this.z=x
 this.c=y.r
 this.d=y.x
 z.bindTexture(3553,x)
 y=z.createRenderbuffer()
-this.z=y
+this.Q=y
 z.bindRenderbuffer(36161,y)
 z.renderbufferStorage(36161,33189,this.c,this.d)
 y=z.createFramebuffer()
-this.x=y
+this.y=y
 z.bindFramebuffer(36160,y)
-z.framebufferTexture2D(36160,36064,3553,this.y,0)
-z.framebufferRenderbuffer(36160,36096,36161,this.z)
+z.framebufferTexture2D(36160,36064,3553,this.z,0)
+z.framebufferRenderbuffer(36160,36096,36161,this.Q)
 z.bindTexture(3553,null)
 z.bindRenderbuffer(36161,null)
-z.bindFramebuffer(36160,null)}a.a.bindFramebuffer(36160,this.x)
+z.bindFramebuffer(36160,null)}a.a.bindFramebuffer(36160,this.y)
 a.a.enable(2884)
 a.a.enable(2929)
 a.a.depthFunc(513)
-z=this.dx
+z=this.dy
 y=z.c
 a.c=C.c.U(y*this.a)
 x=z.d
@@ -9577,15 +9577,15 @@ o=C.c.U(z.b*p)
 n=C.c.U(y*w)
 m=C.c.U(x*p)
 a.a.viewport(q,o,n,m)
-a.a.clearDepth(this.cy)
-if(this.cx){z=a.a
-y=this.ch
+a.a.clearDepth(this.db)
+if(this.cy){z=a.a
+y=this.cx
 z.clearColor(y.a,y.b,y.c,y.d)
 l=16640}else l=256
 if(l>0)a.a.clear(l)},
 a1:function(a){a.a.bindFramebuffer(36160,null)},
 p:{
-ds:function(a,b,c,d,e){var z=new X.fJ()
+ds:function(a,b,c,d,e,f){var z=new X.fJ()
 z.a=512
 z.b=512
 z.c=512
@@ -9593,12 +9593,13 @@ z.d=512
 z.e=!0
 z.f=!0
 z.r=d
-z.Q=T.ep(0,null)
-z.ch=new V.a9(0,0,0,1)
-z.cx=!0
-z.cy=2000
-z.db=!0
-z.dx=V.aR(0,0,1,1)
+z.x=e
+z.ch=T.ep(0,null)
+z.cx=new V.a9(0,0,0,1)
+z.cy=!0
+z.db=2000
+z.dx=!0
+z.dy=V.aR(0,0,1,1)
 z.sad(0,a)
 z.sac(0,b)
 return z}}},ca:{"^":"a;",$isaC:1},hi:{"^":"co;0a,0b,0c,0d,0e,0f,0r,0x",
@@ -9653,42 +9654,42 @@ a.db.bB(z)},
 a1:function(a){a.cy.az()
 a.db.az()},
 $isaC:1,
-$isca:1},i0:{"^":"a;0a,0b,0c,0d,0e",
-gn:function(){var z=this.e
+$isca:1},i0:{"^":"a;0a,0b,0c,0d,0e,0f",
+gn:function(){var z=this.f
 if(z==null){z=D.C()
-this.e=z}return z},
+this.f=z}return z},
 ae:[function(a){var z
 H.j(a,"$isl")
-z=this.e
+z=this.f
 if(!(z==null))z.u(a)},function(){return this.ae(null)},"hY","$1","$0","gcI",0,2,0],
 sb1:function(a){var z,y,x
-if(!J.H(this.a,a)){z=this.a
+if(!J.H(this.b,a)){z=this.b
 if(z!=null){z=z.gn()
 z.toString
 y=H.d(this.gcI(),{func:1,ret:-1,args:[D.l]})
-C.a.F(z.a,y)}x=this.a
-this.a=a
+C.a.F(z.a,y)}x=this.b
+this.b=a
 if(a!=null){z=a.gn()
 z.toString
 y=H.d(this.gcI(),{func:1,ret:-1,args:[D.l]})
-C.a.h(z.a,y)}z=new D.B("mover",x,this.a,this,[U.ac])
+C.a.h(z.a,y)}z=new D.B("mover",x,this.b,this,[U.ac])
 z.b=!0
 this.ae(z)}},
 H:function(a){var z,y,x,w,v,u,t,s,r,q
 z=a.c
 y=a.d
-x=a.cy
-w=this.b
-v=this.c
-u=this.d
-t=u-v
-s=1/Math.tan(w*0.5)
-x.bB(V.aK(-s/(z/y),0,0,0,0,s,0,0,0,0,u/t,-u*v/t,0,0,1,0))
+x=this.c
+w=this.d
+v=this.e
+u=v-w
+t=1/Math.tan(x*0.5)
+s=V.aK(-t/(z/y),0,0,0,0,t,0,0,0,0,v/u,-v*w/u,0,0,1,0)
+a.cy.bB(s)
 z=$.ed
 if(z==null){z=V.e4(new V.T(0,0,0),new V.F(0,1,0),new V.F(0,0,-1))
 $.ed=z
 r=z}else r=z
-z=this.a
+z=this.b
 if(z!=null){q=z.aR(0,a,this)
 if(q!=null)r=q.k(0,r)}a.db.bB(r)},
 a1:function(a){a.cy.az()
@@ -9696,25 +9697,25 @@ a.db.az()},
 $isaC:1,
 $isca:1,
 p:{
-ec:function(a,b,c,d){var z,y,x
+ec:function(a,b,c,d,e){var z,y,x
 z=new X.i0()
-z.b=1.0471975511965976
-z.c=0.1
-z.d=2000
+z.c=1.0471975511965976
+z.d=0.1
+z.e=2000
 z.sb1(c)
-y=z.b
-if(!$.m.$2(y,b)){x=z.b
-z.b=b
+y=z.c
+if(!$.m.$2(y,b)){x=z.c
+z.c=b
 y=new D.B("fov",x,b,z,[P.w])
 y.b=!0
-z.ae(y)}y=z.c
-if(!$.m.$2(y,d)){x=z.c
-z.c=d
+z.ae(y)}y=z.d
+if(!$.m.$2(y,d)){x=z.d
+z.d=d
 y=new D.B("near",x,d,z,[P.w])
 y.b=!0
-z.ae(y)}y=z.d
-if(!$.m.$2(y,a)){x=z.d
-z.d=a
+z.ae(y)}y=z.e
+if(!$.m.$2(y,a)){x=z.e
+z.e=a
 y=new D.B("far",x,a,z,[P.w])
 y.b=!0
 z.ae(y)}return z}}},co:{"^":"a;"}}],["","",,V,{"^":"",
@@ -9930,10 +9931,10 @@ z=v.f.hl("../resources/diceBumpMap")
 if(s.d!==C.d){s.d=C.d
 s.d1(null)
 s.a=null}s.d2(z)
-r=X.ds(800,600,!0,1,!0)
+r=X.ds(800,600,!0,1,1,!0)
 z=new V.a9(0.5,0.5,1,1)
-if(!r.ch.q(0,z)){q=r.ch
-r.ch=z
+if(!r.cx.q(0,z)){q=r.cx
+r.cx=z
 z=new D.B("color",q,z,r,[V.a9])
 z.b=!0
 r.ae(z)}p=M.dN(null,null,null,null)
@@ -9945,9 +9946,9 @@ o=U.dQ(null)
 o.h(0,U.eT(!1,!0,v.r,!1,!1,!1,null,!1))
 o.h(0,U.eU(!1,!0,v.r,null,!1))
 o.h(0,U.cJ(V.e6(0,0,5)))
-n=X.ec(2000,1.0471975511965976,o,0.1)
-m=X.ds(800,600,!0,1,!0)
-if(m.cx){m.cx=!1
+n=X.ec(2000,1.0471975511965976,o,0.1,null)
+m=X.ds(800,600,!0,1,1,!0)
+if(m.cy){m.cy=!1
 z=new D.B("clearColor",!0,!1,m,[P.a5])
 z.b=!0
 m.ae(z)}l=E.cL(null,!0,null,"",null,null)
@@ -10087,8 +10088,8 @@ if(!J.H(d.d,c)){d.d=c
 d.a6()}c=new V.b2(1,0,0,0,1,0,0,0,1)
 if(!J.H(d.e,c)){d.e=c
 d.a6()}d.sdc(null)
-d.sdg(m.Q)
-d.sdd(r.Q)
+d.sdg(m.ch)
+d.sdd(r.ch)
 d.sdc(V.e5(0.05,0.05,0.05,1))
 b=M.cK(null,null,null)
 b.sap(d)
@@ -10105,10 +10106,10 @@ z.aB(a.geU(),a.geV())
 a.d=0
 a.e=null
 z=a.c
-j=r.Q
+j=r.ch
 z.h(0,O.er(null,V.aR(0,0.8,0.2,0.2),!0,null,j))
 j=a.c
-z=m.Q
+z=m.ch
 j.h(0,O.er(null,V.aR(0,0.6,0.2,0.2),!1,null,z))
 a1=M.cK(null,null,null)
 a1.saA(0,X.cM(!1,!0,!1,null,2000,null,0))

@@ -34,6 +34,8 @@ examples/craft/textures/woodEnd.png
 examples/craft/textures/woodSide.png
 examples/craft/textures/woodTilted.png
 examples/craft/textures/yellowShine.png
+examples/hypersphere/index.html
+examples/hypersphere/main.dart.js
 examples/index.html
 index.html
 main.dart.js

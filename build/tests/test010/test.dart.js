@@ -5072,18 +5072,19 @@ a.a.clear(16640)
 z=this.a
 y=a.c
 v=a.d
-s=a.cy
-r=z.b
-q=z.c
-p=z.d
-o=p-q
-n=1/Math.tan(r*0.5)
-s.dk(V.ap(-n/(y/v),0,0,0,0,n,0,0,0,0,p/o,-p*q/o,0,0,1,0))
+s=z.c
+r=z.d
+q=z.e
+p=q-r
+o=1/Math.tan(s*0.5)
+n=V.ap(-o/(y/v),0,0,0,0,o,0,0,0,0,q/p,-q*r/p,0,0,1,0)
+z.a
+a.cy.dk(n)
 y=$.dP
 if(y==null){y=V.dL(new V.aw(0,0,0),new V.K(0,1,0),new V.K(0,0,-1))
 $.dP=y
 m=y}else m=y
-z=z.a
+z=z.b
 if(z!=null){l=z.a
 if(l!=null)m=l.l(0,m)}a.db.dk(m)
 z=this.c
@@ -8390,25 +8391,25 @@ u=new V.e8(o==null?p.b:o,q,t)}++t}}}},eb:{"^":"dJ;b,0c,0a",
 i:function(a){return this.b.b+": "+this.cl(0)}}}],["","",,X,{"^":"",de:{"^":"a;",$isav:1},fL:{"^":"e2;0a,0b,0c,0d,0e,0f,0r,0x",
 gq:function(){var z=this.x
 if(z==null){z=D.F()
-this.x=z}return z}},hp:{"^":"a;0a,0b,0c,0d,0e",
-gq:function(){var z=this.e
+this.x=z}return z}},hp:{"^":"a;0a,0b,0c,0d,0e,0f",
+gq:function(){var z=this.f
 if(z==null){z=D.F()
-this.e=z}return z},
+this.f=z}return z},
 aF:[function(a){var z
 H.k(a,"$iso")
-z=this.e
+z=this.f
 if(!(z==null))z.u(a)},function(){return this.aF(null)},"hn","$1","$0","gcn",0,2,0],
 saM:function(a){var z,y,x
-if(!J.Q(this.a,a)){z=this.a
+if(!J.Q(this.b,a)){z=this.b
 if(z!=null){z=z.gq()
 z.toString
 y=H.b(this.gcn(),{func:1,ret:-1,args:[D.o]})
-C.a.S(z.a,y)}x=this.a
-this.a=a
+C.a.S(z.a,y)}x=this.b
+this.b=a
 if(a!=null){z=a.gq()
 z.toString
 y=H.b(this.gcn(),{func:1,ret:-1,args:[D.o]})
-C.a.h(z.a,y)}z=new D.H("mover",x,this.a,this,[U.a6])
+C.a.h(z.a,y)}z=new D.H("mover",x,this.b,this,[U.a6])
 z.b=!0
 this.aF(z)}},
 $isav:1,
@@ -8877,23 +8878,23 @@ x.f=null
 x.r=null
 x.x=null
 f=new X.hp()
-f.b=1.0471975511965976
-f.c=0.1
-f.d=2000
+f.c=1.0471975511965976
+f.d=0.1
+f.e=2000
 f.saM(null)
-z=f.b
-if(!$.l.$2(z,1.0471975511965976)){l=f.b
-f.b=1.0471975511965976
+z=f.c
+if(!$.l.$2(z,1.0471975511965976)){l=f.c
+f.c=1.0471975511965976
 z=new D.H("fov",l,1.0471975511965976,f,[P.v])
 z.b=!0
-f.aF(z)}z=f.c
-if(!$.l.$2(z,0.1)){l=f.c
-f.c=0.1
+f.aF(z)}z=f.d
+if(!$.l.$2(z,0.1)){l=f.d
+f.d=0.1
 z=new D.H("near",l,0.1,f,[P.v])
 z.b=!0
-f.aF(z)}z=f.d
-if(!$.l.$2(z,2000)){l=f.d
-f.d=2000
+f.aF(z)}z=f.e
+if(!$.l.$2(z,2000)){l=f.e
+f.e=2000
 z=new D.H("far",l,2000,f,[P.v])
 z.b=!0
 f.aF(z)}z=x.a

@@ -5184,7 +5184,7 @@ C.a.L(s.a,x)}}z=new D.bP(a,b,this,[z])
 z.b=!0
 this.V(z)},"$2","geE",8,0,7],
 sd1:function(a){var z,y,x
-if(a==null)a=X.dV(2000,1.0471975511965976,null,0.1)
+if(a==null)a=X.dV(2000,1.0471975511965976,null,0.1,null)
 z=this.a
 if(z!==a){if(z!=null){z=z.gp()
 z.toString
@@ -5235,18 +5235,19 @@ this.b.a_(a)
 z=this.a
 y=a.c
 x=a.d
-w=a.cy
-v=z.b
-u=z.c
-t=z.d
-s=t-u
-r=1/Math.tan(v*0.5)
-w.bp(V.aw(-r/(y/x),0,0,0,0,r,0,0,0,0,t/s,-t*u/s,0,0,1,0))
+w=z.c
+v=z.d
+u=z.e
+t=u-v
+s=1/Math.tan(w*0.5)
+r=V.aw(-s/(y/x),0,0,0,0,s,0,0,0,0,u/t,-u*v/t,0,0,1,0)
+z.a
+a.cy.bp(r)
 y=$.dW
 if(y==null){y=V.dR(new V.U(0,0,0),new V.G(0,1,0),new V.G(0,0,-1))
 $.dW=y
 q=y}else q=y
-y=z.a
+y=z.b
 if(y!=null){p=y.aL(0,a,z)
 if(p!=null)q=p.j(0,q)}a.db.bp(q)
 z=this.c
@@ -8858,16 +8859,16 @@ if(y.d!=null){q=P.cQ(w,0,null)
 p=y.d
 o=p.c.k(0,q)
 u=new V.ed(o==null?p.b:o,q,t)}++t}}}},eg:{"^":"dP;b,0c,0a",
-i:function(a){return this.b.b+": "+this.cw(0)}}}],["","",,X,{"^":"",fn:{"^":"cg;0a,0b,0c,0d,0e,0f,0r,0x,0y,0z,0Q,0ch,0cx,0cy,0db,0dx,0dy",
-gp:function(){var z=this.dy
+i:function(a){return this.b.b+": "+this.cw(0)}}}],["","",,X,{"^":"",fn:{"^":"cg;0a,0b,0c,0d,0e,0f,0r,0x,0y,0z,0Q,0ch,0cx,0cy,0db,0dx,0dy,0fr",
+gp:function(){var z=this.fr
 if(z==null){z=D.E()
-this.dy=z}return z},
-aa:function(a){var z=this.dy
+this.fr=z}return z},
+aa:function(a){var z=this.fr
 if(!(z==null))z.u(a)},
 sa6:function(a,b){var z
 if(b<1)b=1
 z=this.a
-if(z!==b){this.x=null
+if(z!==b){this.y=null
 this.a=b
 this.c=b
 z=new D.B("width",z,b,this,[P.A])
@@ -8876,7 +8877,7 @@ this.aa(z)}},
 sa1:function(a,b){var z
 if(b<1)b=1
 z=this.b
-if(z!==b){this.x=null
+if(z!==b){this.y=null
 this.b=b
 this.d=b
 z=new D.B("height",z,b,this,[P.A])
@@ -8888,10 +8889,10 @@ y=this.r
 if(typeof z!=="number")return z.j()
 this.sa6(0,C.h.R(z*y))
 y=a.a.drawingBufferHeight
-z=this.r
+z=this.x
 if(typeof y!=="number")return y.j()
-this.sa1(0,C.h.R(y*z))}if(this.x==null){z=a.a
-y=this.Q
+this.sa1(0,C.h.R(y*z))}if(this.y==null){z=a.a
+y=this.ch
 x=this.a
 w=this.b
 v=H.V(z.getParameter(3379))
@@ -8924,28 +8925,28 @@ y.r=r.r
 y.x=r.x
 y=y.y
 if(!(y==null))y.dc()
-y=this.Q
+y=this.ch
 x=y.b
-this.y=x
+this.z=x
 this.c=y.r
 this.d=y.x
 z.bindTexture(3553,x)
 y=z.createRenderbuffer()
-this.z=y
+this.Q=y
 z.bindRenderbuffer(36161,y)
 z.renderbufferStorage(36161,33189,this.c,this.d)
 y=z.createFramebuffer()
-this.x=y
+this.y=y
 z.bindFramebuffer(36160,y)
-z.framebufferTexture2D(36160,36064,3553,this.y,0)
-z.framebufferRenderbuffer(36160,36096,36161,this.z)
+z.framebufferTexture2D(36160,36064,3553,this.z,0)
+z.framebufferRenderbuffer(36160,36096,36161,this.Q)
 z.bindTexture(3553,null)
 z.bindRenderbuffer(36161,null)
-z.bindFramebuffer(36160,null)}a.a.bindFramebuffer(36160,this.x)
+z.bindFramebuffer(36160,null)}a.a.bindFramebuffer(36160,this.y)
 a.a.enable(2884)
 a.a.enable(2929)
 a.a.depthFunc(513)
-z=this.dx
+z=this.dy
 y=z.c
 a.c=C.c.R(y*this.a)
 x=z.d
@@ -8957,9 +8958,9 @@ o=C.c.R(z.b*p)
 n=C.c.R(y*w)
 m=C.c.R(x*p)
 a.a.viewport(q,o,n,m)
-a.a.clearDepth(this.cy)
+a.a.clearDepth(this.db)
 z=a.a
-y=this.ch
+y=this.cx
 z.clearColor(y.a,y.b,y.c,y.d)
 a.a.clear(16640)},
 aK:function(a){a.a.bindFramebuffer(36160,null)}},c2:{"^":"a;",$isay:1},fU:{"^":"cg;0a,0b,0c,0d,0e,0f,0r,0x",
@@ -9008,42 +9009,42 @@ gp:function(){var z=this.b
 if(z==null){z=D.E()
 this.b=z}return z},
 $isay:1,
-$isc2:1},hA:{"^":"a;0a,0b,0c,0d,0e",
-gp:function(){var z=this.e
+$isc2:1},hA:{"^":"a;0a,0b,0c,0d,0e,0f",
+gp:function(){var z=this.f
 if(z==null){z=D.E()
-this.e=z}return z},
+this.f=z}return z},
 aa:[function(a){var z
 H.k(a,"$isl")
-z=this.e
+z=this.f
 if(!(z==null))z.u(a)},function(){return this.aa(null)},"hH","$1","$0","ge7",0,2,0],
 $isay:1,
 $isc2:1,
 n:{
-dV:function(a,b,c,d){var z,y,x,w
+dV:function(a,b,c,d,e){var z,y,x,w
 z=new X.hA()
-z.b=1.0471975511965976
-z.c=0.1
-z.d=2000
-if(null!=c){y=z.a
-z.a=c
+z.c=1.0471975511965976
+z.d=0.1
+z.e=2000
+if(null!=c){y=z.b
+z.b=c
 if(c!=null){x=c.gp()
 x.toString
 w=H.c(z.ge7(),{func:1,ret:-1,args:[D.l]})
-C.a.h(x.a,w)}x=new D.B("mover",y,z.a,z,[U.ad])
-x.b=!0
-z.aa(x)}x=z.b
-if(!$.m.$2(x,b)){y=z.b
-z.b=b
-x=new D.B("fov",y,b,z,[P.w])
+C.a.h(x.a,w)}x=new D.B("mover",y,z.b,z,[U.ad])
 x.b=!0
 z.aa(x)}x=z.c
-if(!$.m.$2(x,d)){y=z.c
-z.c=d
-x=new D.B("near",y,d,z,[P.w])
+if(!$.m.$2(x,b)){y=z.c
+z.c=b
+x=new D.B("fov",y,b,z,[P.w])
 x.b=!0
 z.aa(x)}x=z.d
-if(!$.m.$2(x,a)){y=z.d
-z.d=a
+if(!$.m.$2(x,d)){y=z.d
+z.d=d
+x=new D.B("near",y,d,z,[P.w])
+x.b=!0
+z.aa(x)}x=z.e
+if(!$.m.$2(x,a)){y=z.e
+z.e=a
 x=new D.B("far",y,a,z,[P.w])
 x.b=!0
 z.aa(x)}return z}}},cg:{"^":"a;"}}],["","",,V,{"^":"",
@@ -9347,7 +9348,7 @@ t.I(s)
 t.aN(x)
 u.h(0,t)
 u.h(0,U.dp(V.aw(1,0,0,0,0,1,0,0,0,0,1,5,0,0,0,1)))
-m=X.dV(2000,1.0471975511965976,u,0.1)
+m=X.dV(2000,1.0471975511965976,u,0.1,null)
 l=new X.fn()
 l.a=512
 l.b=512
@@ -9356,17 +9357,18 @@ l.d=512
 l.e=!0
 l.f=!0
 l.r=1
-l.Q=T.e8(0,null)
-l.ch=new V.a3(0,0,0,1)
-l.cx=!0
-l.cy=2000
-l.db=!0
-l.dx=V.aP(0,0,1,1)
+l.x=1
+l.ch=T.e8(0,null)
+l.cx=new V.a3(0,0,0,1)
+l.cy=!0
+l.db=2000
+l.dx=!0
+l.dy=V.aP(0,0,1,1)
 l.sa6(0,800)
 l.sa1(0,600)
 x=new V.a3(0,0,0,0)
-if(!l.ch.q(0,x)){o=l.ch
-l.ch=x
+if(!l.cx.q(0,x)){o=l.cx
+l.cx=x
 x=new D.B("color",o,x,l,[V.a3])
 x.b=!0
 l.aa(x)}k=E.dA(null,!0,null,"",null,null)
@@ -9499,7 +9501,7 @@ f.d=0
 f.e=null
 for(z=[P.a2],e=0;e<3;++e){d=e*0.3333333333333333
 for(c=0;c<3;++c){x=f.c
-t=l.Q
+t=l.ch
 s=V.aP(d,c*0.3333333333333333,0.3333333333333333,0.3333333333333333)
 q=new O.b0()
 q.sad(t)
@@ -9522,7 +9524,7 @@ t=H.u(H.b([q],s),"$isd",[t],"$asd")
 x=x.c
 if(x!=null)x.$2(b,t)}}}z=f.c
 x=O.ik(null,null,!1,null,null)
-x.sad(l.Q)
+x.sad(l.ch)
 z.h(0,x)
 a=X.cC(!0,!0,!1,new V.a3(0,0,0,1),2000,null,0)
 a0=new M.fz()

@@ -4675,13 +4675,14 @@ a.a.clear(16640)
 z=this.a
 y=a.c
 v=a.d
-s=a.cy
-r=z.b
-q=z.c
-p=z.d
-o=p-q
-n=1/Math.tan(r*0.5)
-s.bX(V.au(-n/(y/v),0,0,0,0,n,0,0,0,0,p/o,-p*q/o,0,0,1,0))
+s=z.c
+r=z.d
+q=z.e
+p=q-r
+o=1/Math.tan(s*0.5)
+n=V.au(-o/(y/v),0,0,0,0,o,0,0,0,0,q/p,-q*r/p,0,0,1,0)
+z.a
+a.cy.bX(n)
 y=$.dO
 if(y==null){y=new V.N(0,0,-1)
 m=y.N(0,Math.sqrt(y.P(y)))
@@ -4692,7 +4693,7 @@ j=new V.N(0,0,0)
 y=V.au(l.a,k.a,m.a,l.aG(0).P(j),l.b,k.b,m.b,k.aG(0).P(j),l.c,k.c,m.c,m.aG(0).P(j),0,0,0,1)
 $.dO=y
 i=y}else i=y
-z=z.a
+z=z.b
 if(z!=null){h=z.a
 if(h!=null)i=h.v(0,i)}a.db.bX(i)
 for(z=this.d.a,z=new J.ak(z,z.length,0,[H.r(z,0)]);z.t();)z.d.c4(0,a)
@@ -5505,25 +5506,25 @@ return z}}},ec:{"^":"dH;b,0c,0a",
 i:function(a){return this.b.b+": "+this.bm(0)}}}],["","",,X,{"^":"",dg:{"^":"a;",$isdJ:1},fV:{"^":"e5;0a,0b,0c,0d,0e,0f,0r,0x",
 gC:function(){var z=this.x
 if(z==null){z=D.at()
-this.x=z}return z}},hy:{"^":"a;0a,0b,0c,0d,0e",
-gC:function(){var z=this.e
+this.x=z}return z}},hy:{"^":"a;0a,0b,0c,0d,0e,0f",
+gC:function(){var z=this.f
 if(z==null){z=D.at()
-this.e=z}return z},
+this.f=z}return z},
 al:[function(a){var z
 H.k(a,"$isv")
-z=this.e
+z=this.f
 if(!(z==null))z.M(a)},function(){return this.al(null)},"es","$1","$0","gbo",0,2,2],
 saq:function(a){var z,y,x
-if(!J.W(this.a,a)){z=this.a
+if(!J.W(this.b,a)){z=this.b
 if(z!=null){z=z.gC()
 z.toString
 y=H.h(this.gbo(),{func:1,ret:-1,args:[D.v]})
-C.a.T(z.a,y)}x=this.a
-this.a=a
+C.a.T(z.a,y)}x=this.b
+this.b=a
 if(a!=null){z=a.gC()
 z.toString
 y=H.h(this.gbo(),{func:1,ret:-1,args:[D.v]})
-C.a.h(z.a,y)}z=new D.M("mover",x,this.a,this,[U.bY])
+C.a.h(z.a,y)}z=new D.M("mover",x,this.b,this,[U.bY])
 z.b=!0
 this.al(z)}},
 $isdJ:1,
@@ -6276,23 +6277,23 @@ q.f=null
 q.r=null
 q.x=null
 p=new X.hy()
-p.b=1.0471975511965976
-p.c=0.1
-p.d=2000
+p.c=1.0471975511965976
+p.d=0.1
+p.e=2000
 p.saq(null)
-z=p.b
-if(!$.m.$2(z,1.0471975511965976)){t=p.b
-p.b=1.0471975511965976
+z=p.c
+if(!$.m.$2(z,1.0471975511965976)){t=p.c
+p.c=1.0471975511965976
 z=new D.M("fov",t,1.0471975511965976,p,[P.u])
 z.b=!0
-p.al(z)}z=p.c
-if(!$.m.$2(z,0.1)){t=p.c
-p.c=0.1
+p.al(z)}z=p.d
+if(!$.m.$2(z,0.1)){t=p.d
+p.d=0.1
 z=new D.M("near",t,0.1,p,[P.u])
 z.b=!0
-p.al(z)}z=p.d
-if(!$.m.$2(z,2000)){t=p.d
-p.d=2000
+p.al(z)}z=p.e
+if(!$.m.$2(z,2000)){t=p.e
+p.e=2000
 z=new D.M("far",t,2000,p,[P.u])
 z.b=!0
 p.al(z)}z=q.a

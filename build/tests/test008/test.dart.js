@@ -6256,13 +6256,14 @@ a.a.clear(16640)
 z=this.a
 y=a.c
 v=a.d
-s=a.cy
-r=z.b
-q=z.c
-p=z.d
-o=p-q
-n=1/Math.tan(r*0.5)
-s.cG(V.ay(-n/(y/v),0,0,0,0,n,0,0,0,0,p/o,-p*q/o,0,0,1,0))
+s=z.c
+r=z.d
+q=z.e
+p=q-r
+o=1/Math.tan(s*0.5)
+n=V.ay(-o/(y/v),0,0,0,0,o,0,0,0,0,q/p,-q*r/p,0,0,1,0)
+z.a
+a.cy.cG(n)
 y=$.e4
 if(y==null){y=new V.W(0,0,-1)
 m=y.w(0,Math.sqrt(y.H(y)))
@@ -6273,7 +6274,7 @@ j=new V.W(0,0,0)
 y=V.ay(l.a,k.a,m.a,l.K(0).H(j),l.b,k.b,m.b,k.K(0).H(j),l.c,k.c,m.c,m.K(0).H(j),0,0,0,1)
 $.e4=y
 i=y}else i=y
-z=z.a
+z=z.b
 if(z!=null){h=z.a
 if(h!=null)i=h.p(0,i)}a.db.cG(i)
 for(z=this.d.a,z=new J.ao(z,z.length,0,[H.t(z,0)]);z.C();)z.d.at(0,a)
@@ -7079,25 +7080,25 @@ u=new V.eo(o==null?p.b:o,q,t)}++t}}}},er:{"^":"dZ;b,0c,0a",
 i:function(a){return this.b.b+": "+this.bP(0)}}}],["","",,X,{"^":"",dq:{"^":"b;",$ise_:1},hp:{"^":"ei;0a,0b,0c,0d,0e,0f,0r,0x",
 gt:function(){var z=this.x
 if(z==null){z=D.I()
-this.x=z}return z}},hY:{"^":"b;0a,0b,0c,0d,0e",
-gt:function(){var z=this.e
+this.x=z}return z}},hY:{"^":"b;0a,0b,0c,0d,0e,0f",
+gt:function(){var z=this.f
 if(z==null){z=D.I()
-this.e=z}return z},
+this.f=z}return z},
 ay:[function(a){var z
 H.e(a,"$iso")
-z=this.e
+z=this.f
 if(!(z==null))z.B(a)},function(){return this.ay(null)},"fd","$1","$0","gbS",0,2,2],
 saI:function(a){var z,y,x
-if(!J.T(this.a,a)){z=this.a
+if(!J.T(this.b,a)){z=this.b
 if(z!=null){z=z.gt()
 z.toString
 y=H.c(this.gbS(),{func:1,ret:-1,args:[D.o]})
-C.a.S(z.a,y)}x=this.a
-this.a=a
+C.a.S(z.a,y)}x=this.b
+this.b=a
 if(a!=null){z=a.gt()
 z.toString
 y=H.c(this.gbS(),{func:1,ret:-1,args:[D.o]})
-C.a.h(z.a,y)}z=new D.M("mover",x,this.a,this,[U.a7])
+C.a.h(z.a,y)}z=new D.M("mover",x,this.b,this,[U.a7])
 z.b=!0
 this.ay(z)}},
 $ise_:1,
@@ -7573,23 +7574,23 @@ z.f=null
 z.r=null
 z.x=null
 f=new X.hY()
-f.b=1.0471975511965976
-f.c=0.1
-f.d=2000
+f.c=1.0471975511965976
+f.d=0.1
+f.e=2000
 f.saI(null)
-q=f.b
-if(!$.r.$2(q,1.0471975511965976)){h=f.b
-f.b=1.0471975511965976
+q=f.c
+if(!$.r.$2(q,1.0471975511965976)){h=f.c
+f.c=1.0471975511965976
 q=new D.M("fov",h,1.0471975511965976,f,[P.v])
 q.b=!0
-f.ay(q)}q=f.c
-if(!$.r.$2(q,0.1)){h=f.c
-f.c=0.1
+f.ay(q)}q=f.d
+if(!$.r.$2(q,0.1)){h=f.d
+f.d=0.1
 q=new D.M("near",h,0.1,f,[P.v])
 q.b=!0
-f.ay(q)}q=f.d
-if(!$.r.$2(q,2000)){h=f.d
-f.d=2000
+f.ay(q)}q=f.e
+if(!$.r.$2(q,2000)){h=f.e
+f.e=2000
 q=new D.M("far",h,2000,f,[P.v])
 q.b=!0
 f.ay(q)}q=z.a

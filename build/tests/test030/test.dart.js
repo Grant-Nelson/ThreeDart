@@ -4895,13 +4895,14 @@ a.a.clear(16640)
 z=this.a
 y=a.c
 v=a.d
-s=a.cy
-r=z.b
-q=z.c
-p=z.d
-o=p-q
-n=1/Math.tan(r*0.5)
-s.c4(V.al(-n/(y/v),0,0,0,0,n,0,0,0,0,p/o,-p*q/o,0,0,1,0))
+s=z.c
+r=z.d
+q=z.e
+p=q-r
+o=1/Math.tan(s*0.5)
+n=V.al(-o/(y/v),0,0,0,0,o,0,0,0,0,q/p,-q*r/p,0,0,1,0)
+z.a
+a.cy.c4(n)
 y=$.dE
 if(y==null){y=new V.J(0,0,-1)
 m=y.u(0,Math.sqrt(y.C(y)))
@@ -4912,7 +4913,7 @@ j=new V.J(0,0,0)
 y=V.al(l.a,k.a,m.a,l.G(0).C(j),l.b,k.b,m.b,k.G(0).C(j),l.c,k.c,m.c,m.G(0).C(j),0,0,0,1)
 $.dE=y
 i=y}else i=y
-z=z.a
+z=z.b
 if(z!=null){h=z.a
 if(h!=null)i=h.l(0,i)}a.db.c4(i)
 for(z=this.d.a,z=new J.ak(z,z.length,0,[H.u(z,0)]);z.A();)z.d.an(0,a)
@@ -6041,25 +6042,25 @@ z.e=g
 z.f=!1
 y=V.dK(0,0,1,1)
 z.r=y
-return z}}},h6:{"^":"a;0a,0b,0c,0d,0e",
-gp:function(){var z=this.e
+return z}}},h6:{"^":"a;0a,0b,0c,0d,0e,0f",
+gp:function(){var z=this.f
 if(z==null){z=D.D()
-this.e=z}return z},
+this.f=z}return z},
 ap:[function(a){var z
 H.j(a,"$isn")
-z=this.e
+z=this.f
 if(!(z==null))z.t(a)},function(){return this.ap(null)},"ez","$1","$0","gbv",0,2,1],
 sav:function(a){var z,y,x
-if(!J.L(this.a,a)){z=this.a
+if(!J.L(this.b,a)){z=this.b
 if(z!=null){z=z.gp()
 z.toString
 y=H.b(this.gbv(),{func:1,ret:-1,args:[D.n]})
-C.a.R(z.a,y)}x=this.a
-this.a=a
+C.a.R(z.a,y)}x=this.b
+this.b=a
 if(a!=null){z=a.gp()
 z.toString
 y=H.b(this.gbv(),{func:1,ret:-1,args:[D.n]})
-C.a.h(z.a,y)}z=new D.G("mover",x,this.a,this,[U.a1])
+C.a.h(z.a,y)}z=new D.G("mover",x,this.b,this,[U.a1])
 z.b=!0
 this.ap(z)}},
 $isdz:1,
@@ -6438,23 +6439,23 @@ f.f=null
 f.r=null
 f.x=null
 e=new X.h6()
-e.b=1.0471975511965976
-e.c=0.1
-e.d=2000
+e.c=1.0471975511965976
+e.d=0.1
+e.e=2000
 e.sav(null)
-z=e.b
-if(!$.m.$2(z,1.0471975511965976)){m=e.b
-e.b=1.0471975511965976
+z=e.c
+if(!$.m.$2(z,1.0471975511965976)){m=e.c
+e.c=1.0471975511965976
 z=new D.G("fov",m,1.0471975511965976,e,[P.t])
 z.b=!0
-e.ap(z)}z=e.c
-if(!$.m.$2(z,0.1)){m=e.c
-e.c=0.1
+e.ap(z)}z=e.d
+if(!$.m.$2(z,0.1)){m=e.d
+e.d=0.1
 z=new D.G("near",m,0.1,e,[P.t])
 z.b=!0
-e.ap(z)}z=e.d
-if(!$.m.$2(z,2000)){m=e.d
-e.d=2000
+e.ap(z)}z=e.e
+if(!$.m.$2(z,2000)){m=e.e
+e.e=2000
 z=new D.G("far",m,2000,e,[P.t])
 z.b=!0
 e.ap(z)}z=f.a

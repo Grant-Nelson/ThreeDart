@@ -4580,13 +4580,14 @@ a.a.clear(16640)
 z=this.a
 y=a.c
 v=a.d
-s=a.cy
-r=z.b
-q=z.c
-p=z.d
-o=p-q
-n=1/Math.tan(r*0.5)
-s.bE(V.G(-n/(y/v),0,0,0,0,n,0,0,0,0,p/o,-p*q/o,0,0,1,0))
+s=z.c
+r=z.d
+q=z.e
+p=q-r
+o=1/Math.tan(s*0.5)
+n=V.G(-o/(y/v),0,0,0,0,o,0,0,0,0,q/p,-q*r/p,0,0,1,0)
+z.a
+a.cy.bE(n)
 y=$.e0
 if(y==null){y=new V.ac(0,0,-1)
 m=y.Z(0,Math.sqrt(y.ag(y)))
@@ -4597,7 +4598,7 @@ j=new V.ac(0,0,0)
 y=V.G(l.a,k.a,m.a,l.aI(0).ag(j),l.b,k.b,m.b,k.aI(0).ag(j),l.c,k.c,m.c,m.aI(0).ag(j),0,0,0,1)
 $.e0=y
 i=y}else i=y
-z=z.a
+z=z.b
 if(z!=null){h=z.a
 if(h!=null)i=h.D(0,i)}a.db.bE(i)
 for(z=this.d.a,z=new J.bh(z,z.length,0,[H.t(z,0)]);z.w();)z.d.bL(0,a)
@@ -4810,25 +4811,25 @@ u=new V.eg(o==null?p.b:o,q,t)}++t}}}},ei:{"^":"dT;b,0c,0a",
 h:function(a){return this.b.b+": "+this.bd(0)}}}],["","",,X,{"^":"",dn:{"^":"a;",$isdW:1},fY:{"^":"ec;0a,0b,0c,0d,0e,0f,0r,0x",
 gC:function(){var z=this.x
 if(z==null){z=D.b0()
-this.x=z}return z}},hD:{"^":"a;0a,0b,0c,0d,0e",
-gC:function(){var z=this.e
+this.x=z}return z}},hD:{"^":"a;0a,0b,0c,0d,0e,0f",
+gC:function(){var z=this.f
 if(z==null){z=D.b0()
-this.e=z}return z},
+this.f=z}return z},
 aj:[function(a){var z
 H.n(a,"$isv")
-z=this.e
+z=this.f
 if(!(z==null))z.a1(a)},function(){return this.aj(null)},"dO","$1","$0","gbn",0,2,3],
 sao:function(a){var z,y,x
-if(!J.J(this.a,a)){z=this.a
+if(!J.J(this.b,a)){z=this.b
 if(z!=null){z=z.gC()
 z.toString
 y=H.d(this.gbn(),{func:1,ret:-1,args:[D.v]})
-C.a.P(z.a,y)}x=this.a
-this.a=a
+C.a.P(z.a,y)}x=this.b
+this.b=a
 if(a!=null){z=a.gC()
 z.toString
 y=H.d(this.gbn(),{func:1,ret:-1,args:[D.v]})
-C.a.i(z.a,y)}z=new D.aC("mover",x,this.a,this,[U.cU])
+C.a.i(z.a,y)}z=new D.aC("mover",x,this.b,this,[U.cU])
 z.b=!0
 this.aj(z)}},
 $isdW:1,
@@ -5309,23 +5310,23 @@ m.f=null
 m.r=null
 m.x=null
 l=new X.hD()
-l.b=1.0471975511965976
-l.c=0.1
-l.d=2000
+l.c=1.0471975511965976
+l.d=0.1
+l.e=2000
 l.sao(null)
-y=l.b
-if(!$.l.$2(y,1.0471975511965976)){k=l.b
-l.b=1.0471975511965976
+y=l.c
+if(!$.l.$2(y,1.0471975511965976)){k=l.c
+l.c=1.0471975511965976
 y=new D.aC("fov",k,1.0471975511965976,l,[P.Q])
 y.b=!0
-l.aj(y)}y=l.c
-if(!$.l.$2(y,0.1)){k=l.c
-l.c=0.1
+l.aj(y)}y=l.d
+if(!$.l.$2(y,0.1)){k=l.d
+l.d=0.1
 y=new D.aC("near",k,0.1,l,[P.Q])
 y.b=!0
-l.aj(y)}y=l.d
-if(!$.l.$2(y,2000)){k=l.d
-l.d=2000
+l.aj(y)}y=l.e
+if(!$.l.$2(y,2000)){k=l.e
+l.e=2000
 y=new D.aC("far",k,2000,l,[P.Q])
 y.b=!0
 l.aj(y)}y=m.a
