@@ -2,6 +2,9 @@ part of craft;
 
 /// Set of constants for Craft.
 class Constants {
+  
+  /// The number of chunks to preallocate.
+  static const int initialGraveyardSize = 140;
 
   /// The number of blocks wide and deep of every chunk.
   static const int chunkSideSize = 16;
@@ -16,10 +19,10 @@ class Constants {
   static const double minDrawDist2 = 10.0 * 10.0;
 
   /// The maximum number of blocks away from the player to render before not drawing a chunck.
-  static const double maxDrawDist2 = 100.0 * 100.0;
+  static const double maxDrawDist2 = 80.0 * 80.0;
 
   /// The maximum chunk X and Z distance from the player to keep chunks.
-  static const int maxChunkDist = chunkSideSize * 10;
+  static const int maxChunkDist = chunkSideSize * 8;
 
   /// The minimum chunk X and Z distance from the player that chunks should be loaded.
   static const int minChunkDist = chunkSideSize * 4;
@@ -35,6 +38,9 @@ class Constants {
 
   /// The time in milliseconds between switching images.
   static const int animationTickMs = 250;
+
+  /// The time in milliseconds between debug output prints.
+  static const int debugPrintTickMs = 5000;
 
   /// The path to the textures.
   static const String imgFolder = "./textures/";

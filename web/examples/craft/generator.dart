@@ -24,6 +24,7 @@ class Generator {
     if (chunk == null) return;
     this._curChunk = chunk;
     this._prepareHeightCache();
+    this._clearChunk();
     this._turrain();
     this._applyWater();
     this._applySand();
@@ -57,6 +58,11 @@ class Generator {
         offset++;
       }
     }
+  }
+
+  /// Cleares the chunk of all block data.
+  void _clearChunk() {
+    this._curChunk._data.fillRange(0, Constants.chunkDataLength, BlockType.Air);
   }
 
   /// Applies the turrain (turf, dirt, and rock) to the current chunk.

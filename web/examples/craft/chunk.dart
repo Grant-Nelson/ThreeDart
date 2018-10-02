@@ -4,10 +4,10 @@ part of craft;
 /// This makes up one of the many square areas of the world.
 class Chunk {
   /// The offset to the left edge of the chunk.
-  final int x;
+  int _x;
 
   /// The offset to the front edge of the chunk.
-  final int z;
+  int _z;
 
   /// This is the world this chunk belongs to.
   World _world;
@@ -18,17 +18,18 @@ class Chunk {
   /// The entities for rendering all the different types of block textures.
   List<ThreeDart.Entity> _entities;
 
+  /// Indicates if the chunk eventually needs updating but not right away.
+  bool _dirty;
+
   /// Indicates if the chunk's entities need to be updated to reflect the chunk's data.
   bool _needUpdate;
 
   /// Indicates if the chunk hasn't been generated yet.
   bool _needGen;
 
-  /// Creates a new chunk for the given [x] and [z] world offset for the given [world].
-  Chunk(this.x, this.z, this._world) {
-    this._data = new data.Uint8List(Constants.chunkDataLength)
-      ..fillRange(0, Constants.chunkDataLength, BlockType.Air);
-
+  /// Creates a new chunk for the given [world].
+  Chunk(this._world) {
+    this._data = new data.Uint8List(Constants.chunkDataLength);
     this._entities = new List<ThreeDart.Entity>();
     for (ThreeDart.Entity parent in this._world.entities) {
       ThreeDart.Entity entity = new ThreeDart.Entity();
@@ -36,26 +37,46 @@ class Chunk {
       this._entities.add(entity);
     }
 
+    this._x = 0;
+    this._z = 0;
+    this._dirty = false;
     this._needUpdate = true;
     this._needGen = true;
   }
 
-  /// Removes this chunk from the entities list and
-  /// prepares it to be reomved from the chunk list.
-  void remove() {
-    int index = 0;
-    for (ThreeDart.Entity parent in this._world.entities) {
-      parent.children.remove(this._entities[index]);
-      index++;
-    }
+  /// Prepares this chunk for uses.
+  void prepare(int x, int z) {
+    this._x = x;
+    this._z = z;
+    this._dirty = true;
+    this._needGen = true;
+    this._enabled = false;
   }
+
+  /// Makes this chunk available to be reused.
+  void freeup() {
+    this._dirty = false;
+    this._enabled = false;
+    this._needGen = true;
+    this._needUpdate = false;
+  }
+
+  /// The offset to the left edge of the chunk.
+  int get x => this._x;
+
+  /// The offset to the front edge of the chunk.
+  int get z => this._z;
 
   /// Gets the string for this chunk for debugging.
   @override
-  String toString() => "chunk($x, $z)";
+  String toString() => "chunk(${this._x}, ${this._z})";
 
   /// Gets the entities used for rendering this chunk.
   List<ThreeDart.Entity> get entities => this._entities;
+  
+  /// Gets or sets if this chunk eventually needs an update.
+  bool get dirty => this._dirty && !this._needGen;
+  set dirty(bool dirty) => this._dirty = dirty;
 
   /// Gets or sets if this chunk needs an update.
   bool get needUpdate => this._needUpdate;
@@ -67,11 +88,12 @@ class Chunk {
   /// Indicates that the chunk is finished being generated.
   void finishGenerate() {
     this._needGen = false;
-    this._needUpdate = true;
-    this.left?.needUpdate = true;
-    this.right?.needUpdate = true;
-    this.front?.needUpdate = true;
-    this.back?.needUpdate = true;
+    this._dirty = true;
+    this._enabled = false;
+    this.left?.dirty = true;
+    this.right?.dirty = true;
+    this.front?.dirty = true;
+    this.back?.dirty = true;
   }
 
   /// Calculates the chunk's data offset for the given x, y, and z location.
@@ -134,8 +156,10 @@ class Chunk {
 
   /// Updates the shapes in the entities for rendering this chucnk.
   void updateShape() {
-    if (!this._needUpdate) return;
+    if (this._needGen || !this._needUpdate) return;
     this._needUpdate = false;
+    this._dirty = false;
+
     Shaper shape = new Shaper(this._world.materials);
     shape.buildChunkShapes(this);
     shape.finish(this.entities);
@@ -149,7 +173,7 @@ class Chunk {
 
   /// Updates the visiblity of this chunk.
   void updateVisiblity(Math.Point2 loc, Math.Point2 front) {
-    if (this._needGen) {
+    if (this._needGen || this._needUpdate) {
       this._enabled = false;
       return;
     }
