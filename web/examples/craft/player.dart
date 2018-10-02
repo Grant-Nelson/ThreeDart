@@ -6,7 +6,6 @@ class Player {
   Movers.UserRotater _rot;
   World _world;
   bool _touchingGround;
-  bool _printDebug;
   int _selectedBlockIndex;
   BlockInfo _highlight;
 
@@ -83,17 +82,11 @@ class Player {
       ..attach(td.userInput)
       ..keyDown.add(this._onBlockChange);
     td.userInput.locked.down.add(this._onClickBlockChange);
-    
+
     new Input.KeyGroup()
       ..addKey(Input.Key.keyO)
       ..attach(td.userInput)
       ..keyDown.add(this._onReturnToOrigin);
-    
-    this._printDebug = false;// TODO: REMOVE
-    new Input.KeyGroup()// TODO: REMOVE
-      ..addKey(Input.Key.keyP)
-      ..attach(td.userInput)
-      ..keyDown.add((_) => this._printDebug = true);
 
     // Creates the cross hair entity for drawing the cross hairs.
     this._crossHairs = new ThreeDart.Entity(
@@ -336,21 +329,15 @@ class Player {
     //       the edge block directly next chunk. There are dead areas
     //       in the selection that must be fixed.
 
-    if (this._printDebug) print(">>> ===================="); // TODO: REMOVE
-    if (this._printDebug) print(">>> person: ${ray.x}, ${ray.z}"); // TODO: REMOVE
-    int dist = 0;
     BlockInfo info = this._world.getBlock(ray.x, ray.y, ray.z);
-    if (this._printDebug) print(">>> chunk:  ${info.chunkX}, ${info.chunkZ}"); // TODO: REMOVE
-    if (this._printDebug) print(">>> offset: ${info.x}, ${info.z}"); // TODO: REMOVE
     Shapes.Shape shape = new Shapes.Shape();
-    
+    int dist = 0;
     while ((info != null) && (info.value == BlockType.Air)) {
       this._createHighlightBlock(shape, info);
       info = this._getNeighborBlock(info, back)?.info;
       dist++;
     }
     this._highlightDebug.shape = shape;
-    this._printDebug = false; // TODO: REMOVE
 
     if ((info != null) && ((dist < 1) || (info.value == BlockType.Air) || (info.value == BlockType.Boundary))) info = null;
     this._highlight = info;
