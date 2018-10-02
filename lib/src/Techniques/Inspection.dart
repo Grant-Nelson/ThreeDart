@@ -298,7 +298,7 @@ class Inspection extends Technique {
     }
   }
   
-  /// The second diffuse color.
+  /// The second diffuse color, used for the wireframe color.
   Math.Color4 get diffuse2 => this._diffuse2;
   set diffuse2(Math.Color4 clr) {
     clr ??= new Math.Color4(0.7, 0.7, 0.7);
@@ -309,7 +309,7 @@ class Inspection extends Technique {
     }
   }
   
-  /// The second ambient color.
+  /// The second ambient color, used for the wireframe color.
   Math.Color4 get ambient2 => this._ambient2;
   set ambient2(Math.Color4 clr) {
     clr ??= new Math.Color4(0.3, 0.3, 0.3);

@@ -5,6 +5,7 @@ class Perspective implements Camera {
 
   static Math.Matrix4 _lookMat = null;
 
+  Movers.Mover _premover;
   Movers.Mover _mover;
   double _fov;
   double _near;
@@ -12,20 +13,23 @@ class Perspective implements Camera {
   Events.Event _changed;
 
   /// Creates a new perspective camera.
-  Perspective({Movers.Mover mover: null,
+  Perspective({Movers.Mover premover: null,
+               Movers.Mover mover: null,
                double fov:  Math.PI_3,
                double near: 0.1,
                double far:  2000.0}) {
-    this._mover   = null;
-    this._fov     = Math.PI_3;
-    this._near    = 0.1;
-    this._far     = 2000.0;
-    this._changed = null;
+    this._premover = null;
+    this._mover    = null;
+    this._fov      = Math.PI_3;
+    this._near     = 0.1;
+    this._far      = 2000.0;
+    this._changed  = null;
 
-    this.mover = mover;
-    this.fov   = fov;
-    this.near  = near;
-    this.far   = far;
+    this.premover = premover;
+    this.mover    = mover;
+    this.fov      = fov;
+    this.near     = near;
+    this.far      = far;
   }
 
   /// Indicates that this target has changed.
@@ -84,10 +88,27 @@ class Perspective implements Camera {
     }
   }
 
+  /// The mover to offset the focal point of the world prior to the camera projection.
+  Movers.Mover get premover => this._premover;
+  void set premover(Movers.Mover mover) {
+    if (this._premover != mover) {
+      if (this._premover != null) this._premover.changed.remove(this._onChanged);
+      Movers.Mover prev = this._premover;
+      this._premover = mover;
+      if (this._premover != null) this._premover.changed.add(this._onChanged);
+      this._onChanged(new Events.ValueChangedEventArgs(this, "premover", prev, this._premover));
+    }
+  }
+
   /// Binds this camera to the state.
   void bind(Core.RenderState state) {
     double aspect = state.width.toDouble() / state.height.toDouble();
-    state.projection.push(new Math.Matrix4.perspective(this._fov, aspect, this._near, this._far));
+    Math.Matrix4 proj = new Math.Matrix4.perspective(this._fov, aspect, this._near, this._far);
+    if (this._premover != null) {
+      Math.Matrix4 mat = this._premover.update(state, this);
+      if (mat != null) proj = mat * proj;
+    }
+    state.projection.push(proj);
 
     if (_lookMat == null) {
       _lookMat = new Math.Matrix4.lookTowards(
@@ -96,11 +117,9 @@ class Perspective implements Camera {
         new Math.Vector3(0.0, 0.0, -1.0));
     }
     Math.Matrix4 look = _lookMat;
-    if (mover != null) {
-      Math.Matrix4 mat = mover.update(state, this);
-      if (mat != null) {
-        look = mat * look;
-      }
+    if (this._mover != null) {
+      Math.Matrix4 mat = this._mover.update(state, this);
+      if (mat != null) look = mat * look;
     }
     state.view.push(look);
   }

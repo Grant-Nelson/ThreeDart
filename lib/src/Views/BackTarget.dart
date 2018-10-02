@@ -8,7 +8,8 @@ class BackTarget extends Target {
   int _actualHeight;
   bool _hasDepth;
   bool _autoResize;
-  double _autoResizeScalar;
+  double _autoResizeScalarX;
+  double _autoResizeScalarY;
   WebGL.Framebuffer _framebuffer;
   WebGL.Texture _colorBuffer;
   WebGL.Renderbuffer _depthBuffer;
@@ -21,14 +22,16 @@ class BackTarget extends Target {
   Events.Event _changed;
 
   /// Creates a new back target.
-  BackTarget(int width, int height, {bool hasDepth: true, bool autoResize: false, double autoResizeScalar: 1.0}) {
+  BackTarget(int width, int height, {bool hasDepth: true,
+    bool autoResize: false, double autoResizeScalarX: 1.0, double autoResizeScalarY: 1.0}) {
     this._width        = 512;
     this._height       = 512;
     this._actualWidth  = 512;
     this._actualHeight = 512;
     this._hasDepth     = hasDepth ?? true;
     this._autoResize   = autoResize ?? false;
-    this._autoResizeScalar = autoResizeScalar ?? 1.0;
+    this._autoResizeScalarX = autoResizeScalarX ?? 1.0;
+    this._autoResizeScalarY = autoResizeScalarY ?? 1.0;
     this._framebuffer  = null;
     this._colorBuffer  = null;
     this._depthBuffer  = null;
@@ -148,13 +151,23 @@ class BackTarget extends Target {
     }
   }
 
-  /// The scalar to apply to the width and height when an automatic resize occurs.
-  double get autoResizeScalar => this._autoResizeScalar;
-  void set autoResizeScalar(double scalar) {
-    if (!Math.Comparer.equals(this._autoResizeScalar, scalar)) {
-      double prev = this._autoResizeScalar;
-      this._autoResizeScalar = scalar;
-      this._onChanged(new Events.ValueChangedEventArgs(this, "autoResizeScalar", prev, this._autoResizeScalar));
+  /// The scalar to apply to the width when an automatic resize occurs.
+  double get autoResizeScalarX => this._autoResizeScalarX;
+  void set autoResizeScalarX(double scalar) {
+    if (!Math.Comparer.equals(this._autoResizeScalarX, scalar)) {
+      double prev = this._autoResizeScalarX;
+      this._autoResizeScalarX = scalar;
+      this._onChanged(new Events.ValueChangedEventArgs(this, "autoResizeScalarX", prev, this._autoResizeScalarX));
+    }
+  }
+
+  /// The scalar to apply to the height when an automatic resize occurs.
+  double get autoResizeScalarY => this._autoResizeScalarY;
+  void set autoResizeScalarY(double scalar) {
+    if (!Math.Comparer.equals(this._autoResizeScalarY, scalar)) {
+      double prev = this._autoResizeScalarY;
+      this._autoResizeScalarY = scalar;
+      this._onChanged(new Events.ValueChangedEventArgs(this, "autoResizeScalarY", prev, this._autoResizeScalarY));
     }
   }
 
@@ -201,8 +214,8 @@ class BackTarget extends Target {
   /// Binds this target to the [state].
   void bind(Core.RenderState state) {
     if (this._autoResize) {
-      this.width  = (state.gl.drawingBufferWidth * this._autoResizeScalar).round();
-      this.height = (state.gl.drawingBufferHeight * this._autoResizeScalar).round();
+      this.width  = (state.gl.drawingBufferWidth * this._autoResizeScalarX).round();
+      this.height = (state.gl.drawingBufferHeight * this._autoResizeScalarY).round();
     }
 
     if (this._framebuffer == null) {
