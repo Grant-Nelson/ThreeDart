@@ -16,11 +16,11 @@ class Inspection extends Shader {
       "                                                              \n"+
       "attribute vec3 posAttr;                                       \n"+
       "attribute vec3 normAttr;                                      \n"+
-      "attribute vec3 clrAttr;                                       \n"+
+      "attribute vec4 clrAttr;                                       \n"+
       "attribute vec3 binmAttr;                                      \n"+
       "                                                              \n"+
       "varying vec3 normal;                                          \n"+
-      "varying vec3 color;                                           \n"+
+      "varying vec4 color;                                           \n"+
       "varying vec3 litVec;                                          \n"+
       "varying vec3 camPos;                                          \n"+
       "                                                              \n"+
@@ -36,30 +36,30 @@ class Inspection extends Shader {
 
   /// The fragment shader source code in glsl.
   static String _fragmentSource =
-      "precision mediump float;                                   \n"+
-      "                                                           \n"+
-      "uniform vec3 ambientClr;                                   \n"+
-      "uniform vec3 diffuseClr;                                   \n"+
-      "                                                           \n"+
-      "varying vec3 normal;                                       \n"+
-      "varying vec3 color;                                        \n"+
-      "varying vec3 litVec;                                       \n"+
-      "                                                           \n"+
-      "void main()                                                \n"+
-      "{                                                          \n"+
-      "   vec3 norm = normalize(normal);                          \n"+
-      "   float scalar = dot(norm, litVec);                       \n"+
-      "   vec3 diffuse = diffuseClr*max(scalar, 0.0);             \n"+
-      "   gl_FragColor = vec4(color*(ambientClr + diffuse), 1.0); \n"+
-      "}                                                          \n";
+      "precision mediump float;                        \n"+
+      "                                                \n"+
+      "uniform vec4 ambientClr;                        \n"+
+      "uniform vec4 diffuseClr;                        \n"+
+      "                                                \n"+
+      "varying vec3 normal;                            \n"+
+      "varying vec4 color;                             \n"+
+      "varying vec3 litVec;                            \n"+
+      "                                                \n"+
+      "void main()                                     \n"+
+      "{                                               \n"+
+      "   vec3 norm = normalize(normal);               \n"+
+      "   float scalar = dot(norm, litVec);            \n"+
+      "   vec4 diffuse = diffuseClr*max(scalar, 0.0);  \n"+
+      "   gl_FragColor = color*(ambientClr + diffuse); \n"+
+      "}                                               \n";
 
   Attribute _posAttr;
   Attribute _normAttr;
   Attribute _clrAttr;
   Attribute _binmAttr;
   Uniform3f _lightVec;
-  Uniform3f _ambientClr;
-  Uniform3f _diffuseClr;
+  Uniform4f _ambientClr;
+  Uniform4f _diffuseClr;
   Uniform1f _weightScalar;
   UniformMat4 _viewMat;
   UniformMat4 _viewObjMatrix;
@@ -85,8 +85,8 @@ class Inspection extends Shader {
     this._clrAttr           = this.attributes["clrAttr"];
     this._binmAttr          = this.attributes["binmAttr"];
     this._lightVec          = this.uniforms["lightVec"] as Uniform3f;
-    this._ambientClr        = this.uniforms["ambientClr"] as Uniform3f;
-    this._diffuseClr        = this.uniforms["diffuseClr"] as Uniform3f;
+    this._ambientClr        = this.uniforms["ambientClr"] as Uniform4f;
+    this._diffuseClr        = this.uniforms["diffuseClr"] as Uniform4f;
     this._weightScalar      = this.uniforms["weightScalar"] as Uniform1f;
     this._viewMat           = this.uniforms["viewMat"] as UniformMat4;
     this._viewObjMatrix     = this.uniforms["viewObjMatrix"] as UniformMat4;
@@ -110,17 +110,17 @@ class Inspection extends Shader {
   set lightVector(Math.Vector3 vec) => this._lightVec.setVector3(vec);
 
   /// The ambient color of the shape.
-  Math.Color3 get ambientColor => this._ambientClr.getColor3();
-  set ambientColor(Math.Color3 clr) => this._ambientClr.setColor3(clr);
+  Math.Color4 get ambientColor => this._ambientClr.getColor4();
+  set ambientColor(Math.Color4 clr) => this._ambientClr.setColor4(clr);
 
   /// The diffuse color of the shape.
-  Math.Color3 get diffuseColor => this._diffuseClr.getColor3();
-  set diffuseColor(Math.Color3 clr) => this._diffuseClr.setColor3(clr);
+  Math.Color4 get diffuseColor => this._diffuseClr.getColor4();
+  set diffuseColor(Math.Color4 clr) => this._diffuseClr.setColor4(clr);
 
   /// Sets both the ambient color and diffuse color of the shape.
-  void setColors(Math.Color3 ambientClr, Math.Color3 diffuseClr) {
-    this._ambientClr.setColor3(ambientClr);
-    this._diffuseClr.setColor3(diffuseClr);
+  void setColors(Math.Color4 ambientClr, Math.Color4 diffuseClr) {
+    this._ambientClr.setColor4(ambientClr);
+    this._diffuseClr.setColor4(diffuseClr);
   }
 
   /// The scalar of the weighting for the shape.
