@@ -4,14 +4,14 @@ part of ThreeDart.Techniques;
 class Inspection extends Technique {
   Shaders.Inspection _shader;
   Math.Vector3 _lightVec;
-  Math.Color3 _diffuse1;
-  Math.Color3 _ambient1;
-  Math.Color3 _diffuse2;
-  Math.Color3 _ambient2;
-  Math.Color3 _diffuse3;
-  Math.Color3 _ambient3;
-  Math.Color3 _diffuse4;
-  Math.Color3 _ambient4;
+  Math.Color4 _diffuse1;
+  Math.Color4 _ambient1;
+  Math.Color4 _diffuse2;
+  Math.Color4 _ambient2;
+  Math.Color4 _diffuse3;
+  Math.Color4 _ambient3;
+  Math.Color4 _diffuse4;
+  Math.Color4 _ambient4;
 
   bool _showFilled;
   bool _showWireFrame;
@@ -37,14 +37,14 @@ class Inspection extends Technique {
   Inspection() {
     this._shader = null;
     this._lightVec = new Math.Vector3(0.0, 0.0, -1.0);
-    this._diffuse1 = new Math.Color3(0.2, 0.3, 0.4);
-    this._ambient1 = new Math.Color3(0.1, 0.2, 0.3);
-    this._diffuse2 = new Math.Color3(0.7, 0.7, 0.7);
-    this._ambient2 = new Math.Color3(0.3, 0.3, 0.3);
-    this._diffuse3 = new Math.Color3(0.5, 0.5, 0.5);
-    this._ambient3 = new Math.Color3(0.5, 0.5, 0.5);
-    this._diffuse4 = new Math.Color3(1.0, 1.0, 1.0);
-    this._ambient4 = new Math.Color3(0.8, 0.8, 0.8);
+    this._diffuse1 = new Math.Color4(0.2, 0.3, 0.4);
+    this._ambient1 = new Math.Color4(0.1, 0.2, 0.3);
+    this._diffuse2 = new Math.Color4(0.7, 0.7, 0.7);
+    this._ambient2 = new Math.Color4(0.3, 0.3, 0.3);
+    this._diffuse3 = new Math.Color4(0.5, 0.5, 0.5);
+    this._ambient3 = new Math.Color4(0.5, 0.5, 0.5);
+    this._diffuse4 = new Math.Color4(1.0, 1.0, 1.0);
+    this._ambient4 = new Math.Color4(0.8, 0.8, 0.8);
 
     this._showFilled         = false;
     this._showWireFrame      = false;
@@ -265,6 +265,105 @@ class Inspection extends Technique {
     }
   }
 
+  /// The light vector to highlight the shape with.
+  Math.Vector3 get lightVector => this._lightVec;
+  set lightVector(Math.Vector3 vec) {
+    vec ??= new Math.Vector3(0.0, 0.0, -1.0);
+    if (this._lightVec != vec) {
+      Math.Vector3 prevVec = this._lightVec;
+      this._lightVec = vec;
+      this._onChanged(new Events.ValueChangedEventArgs(this, "lightVector", prevVec, vec));
+    }
+  }
+  
+  /// The first diffuse color, used for the fill color.
+  Math.Color4 get diffuse1 => this._diffuse1;
+  set diffuse1(Math.Color4 clr) {
+    clr ??= new Math.Color4(0.2, 0.3, 0.4);
+    if (this._diffuse1 != clr) {
+      Math.Color4 prevClr = this._diffuse1;
+      this._diffuse1 = clr;
+      this._onChanged(new Events.ValueChangedEventArgs(this, "diffuse1", prevClr, clr));
+    }
+  }
+  
+  /// The first ambient color, used for the fill color.
+  Math.Color4 get ambient1 => this._ambient1;
+  set ambient1(Math.Color4 clr) {
+    clr ??= new Math.Color4(0.1, 0.2, 0.3);
+    if (this._ambient1 != clr) {
+      Math.Color4 prevClr = this._ambient1;
+      this._ambient1 = clr;
+      this._onChanged(new Events.ValueChangedEventArgs(this, "ambient1", prevClr, clr));
+    }
+  }
+  
+  /// The second diffuse color.
+  Math.Color4 get diffuse2 => this._diffuse2;
+  set diffuse2(Math.Color4 clr) {
+    clr ??= new Math.Color4(0.7, 0.7, 0.7);
+    if (this._diffuse2 != clr) {
+      Math.Color4 prevClr = this._diffuse2;
+      this._diffuse2 = clr;
+      this._onChanged(new Events.ValueChangedEventArgs(this, "diffuse2", prevClr, clr));
+    }
+  }
+  
+  /// The second ambient color.
+  Math.Color4 get ambient2 => this._ambient2;
+  set ambient2(Math.Color4 clr) {
+    clr ??= new Math.Color4(0.3, 0.3, 0.3);
+    if (this._ambient2 != clr) {
+      Math.Color4 prevClr = this._ambient2;
+      this._ambient2 = clr;
+      this._onChanged(new Events.ValueChangedEventArgs(this, "ambient2", prevClr, clr));
+    }
+  }
+  
+  /// The third diffuse color.
+  Math.Color4 get diffuse3 => this._diffuse3;
+  set diffuse3(Math.Color4 clr) {
+    clr ??= new Math.Color4(0.5, 0.5, 0.5);
+    if (this._diffuse3 != clr) {
+      Math.Color4 prevClr = this._diffuse3;
+      this._diffuse3 = clr;
+      this._onChanged(new Events.ValueChangedEventArgs(this, "diffuse3", prevClr, clr));
+    }
+  }
+  
+  /// The third ambient color.
+  Math.Color4 get ambient3 => this._ambient3;
+  set ambient3(Math.Color4 clr) {
+    clr ??= new Math.Color4(0.5, 0.5, 0.5);
+    if (this._ambient3 != clr) {
+      Math.Color4 prevClr = this._ambient3;
+      this._ambient3 = clr;
+      this._onChanged(new Events.ValueChangedEventArgs(this, "ambient3", prevClr, clr));
+    }
+  }
+  
+  /// The fourth diffuse color.
+  Math.Color4 get diffuse4 => this._diffuse4;
+  set diffuse4(Math.Color4 clr) {
+    clr ??= new Math.Color4(1.0, 1.0, 1.0);
+    if (this._diffuse4 != clr) {
+      Math.Color4 prevClr = this._diffuse4;
+      this._diffuse4 = clr;
+      this._onChanged(new Events.ValueChangedEventArgs(this, "diffuse4", prevClr, clr));
+    }
+  }
+
+  /// The fourth ambient color.
+  Math.Color4 get ambient4 => this._ambient4;
+  set ambient4(Math.Color4 clr) {
+    clr ??= new Math.Color4(0.8, 0.8, 0.8);
+    if (this._ambient4 != clr) {
+      Math.Color4 prevClr = this._ambient4;
+      this._ambient4 = clr;
+      this._onChanged(new Events.ValueChangedEventArgs(this, "ambient4", prevClr, clr));
+    }
+  }
+
   /// Updates this technique for the given state.
   void update(Core.RenderState state) {
     // Do Nothing
@@ -306,6 +405,7 @@ class Inspection extends Technique {
   void _renderAllBuilderParts(Data.BufferStoreSet store, Core.RenderState state, Core.Entity obj) {
     state.gl.disable(WebGL.WebGL.DEPTH_TEST);
     state.gl.enable(WebGL.WebGL.BLEND);
+    state.gl.blendFunc(WebGL.WebGL.ONE, WebGL.WebGL.ONE);
 
     if (this._showAxis)
       this._renderBuilder(state, store, obj.shapeBuilder, 'Axis', this._axis, this._ambient4, this._diffuse4);
@@ -313,13 +413,13 @@ class Inspection extends Technique {
       this._renderBuilder(state, store, obj.shapeBuilder, 'AABB', this._aabb, this._ambient4, this._diffuse4);
 
     state.gl.enable(WebGL.WebGL.DEPTH_TEST);
-    state.gl.disable(WebGL.WebGL.BLEND);
   }
 
   /// Renders the current [obj] with the current [state].
   void _renderAllShapeParts(Data.BufferStoreSet store, Core.RenderState state, Core.Entity obj) {
     state.gl.enable(WebGL.WebGL.DEPTH_TEST);
-    state.gl.disable(WebGL.WebGL.BLEND);
+    state.gl.enable(WebGL.WebGL.BLEND);
+    state.gl.blendFunc(WebGL.WebGL.SRC_ALPHA, WebGL.WebGL.ONE_MINUS_SRC_ALPHA);
 
     // TODO: Why does POINTS not respect depth tests?
     // Once they do move these two below with the other DEPTH_TEST disabled.
@@ -340,7 +440,7 @@ class Inspection extends Technique {
       this._render(state, store, obj.shape, 'bend1', this._bendFill, this._ambient3, this._diffuse3);
 
     state.gl.disable(WebGL.WebGL.DEPTH_TEST);
-    state.gl.enable(WebGL.WebGL.BLEND);
+    state.gl.blendFunc(WebGL.WebGL.ONE, WebGL.WebGL.ONE);
 
     if (this._showWireFrame)
       this._render(state, store, obj.shape, 'wireFrame', this._wireFrame, this._ambient2, this._diffuse2);
@@ -364,13 +464,12 @@ class Inspection extends Technique {
       this._render(state, store, obj.shape, 'AABB', this._aabb, this._ambient4, this._diffuse4);
 
     state.gl.enable(WebGL.WebGL.DEPTH_TEST);
-    state.gl.disable(WebGL.WebGL.BLEND);
   }
 
   /// Renderes one of the shape components to inspect.
   /// If the component of the shape isn't cached it will be created and cached.
   void _render(Core.RenderState state, Data.BufferStoreSet storeSet, Shapes.Shape shape,
-      String name, Shapes.Shape shapeModHndl(Shapes.Shape shape), Math.Color3 ambient, Math.Color3 diffuse) {
+      String name, Shapes.Shape shapeModHndl(Shapes.Shape shape), Math.Color4 ambient, Math.Color4 diffuse) {
     Data.BufferStore store = storeSet.map[name];
     if (store == null) {
       store = this._buildShape(state, shapeModHndl(shape));
@@ -383,7 +482,7 @@ class Inspection extends Technique {
   /// Renderes one of the shape builder components to inspect.
   /// If the component of the shape isn't cached it will be created and cached.
   void _renderBuilder(Core.RenderState state, Data.BufferStoreSet storeSet, Shapes.ShapeBuilder builder,
-      String name, Shapes.Shape shapeBuilderModHndl(Shapes.ShapeBuilder builder), Math.Color3 ambient, Math.Color3 diffuse) {
+      String name, Shapes.Shape shapeBuilderModHndl(Shapes.ShapeBuilder builder), Math.Color4 ambient, Math.Color4 diffuse) {
     Data.BufferStore store = storeSet.map[name];
     if (store == null) {
       store = this._buildShape(state, shapeBuilderModHndl(builder));
