@@ -6,6 +6,7 @@ class Player {
   Movers.UserRotater _rot;
   World _world;
   bool _touchingGround;
+  bool _printDebug;
   int _selectedBlockIndex;
   BlockInfo _highlight;
 
@@ -17,6 +18,7 @@ class Player {
   ThreeDart.Entity _crossHairs;
   ThreeDart.Entity _blockHand;
   ThreeDart.Entity _blockHighlight;
+  ThreeDart.Entity _highlightDebug;
   ThreeDart.Entity _entity;
   List<ThreeDart.Entity> _blockHandEntities;
 
@@ -86,6 +88,12 @@ class Player {
       ..addKey(Input.Key.keyO)
       ..attach(td.userInput)
       ..keyDown.add(this._onReturnToOrigin);
+    
+    this._printDebug = false;// TODO: REMOVE
+    new Input.KeyGroup()// TODO: REMOVE
+      ..addKey(Input.Key.keyP)
+      ..attach(td.userInput)
+      ..keyDown.add((_) => this._printDebug = true);
 
     // Creates the cross hair entity for drawing the cross hairs.
     this._crossHairs = new ThreeDart.Entity(
@@ -107,8 +115,10 @@ class Player {
     this._blockHighlight = new ThreeDart.Entity(tech: this._world.materials.selection);
     this._highlight = null;
 
+    this._highlightDebug = new ThreeDart.Entity(tech: this._world.materials.materials[0]);
+
     // Puts all the entities under one for the whole player.
-    this._entity = new ThreeDart.Entity(children: [this._crossHairs, this._blockHand, this._blockHighlight]);
+    this._entity = new ThreeDart.Entity(children: [this._crossHairs, this._blockHand, this._blockHighlight, this._highlightDebug]);
     this._updateHand();
   }
 
@@ -297,6 +307,26 @@ class Player {
     return new NeighborBlockInfo(this._world.getBlock(x, y, z), inter.region);
   }
 
+  void _createHighlightBlock(Shapes.Shape shape, BlockInfo info) {
+    double x = info.x.toDouble()+info.chunkX.toDouble();
+    double y = info.y.toDouble();
+    double z = info.z.toDouble()+info.chunkZ.toDouble();
+
+    Shapes.Vertex ver1 = shape.vertices.addNewLoc(x,   y,   z  );
+    Shapes.Vertex ver2 = shape.vertices.addNewLoc(x+1, y,   z  );
+    Shapes.Vertex ver3 = shape.vertices.addNewLoc(x+1, y+1, z  );
+    Shapes.Vertex ver4 = shape.vertices.addNewLoc(x,   y+1, z  );
+    Shapes.Vertex ver5 = shape.vertices.addNewLoc(x,   y,   z+1);
+    Shapes.Vertex ver6 = shape.vertices.addNewLoc(x+1, y,   z+1);
+    Shapes.Vertex ver7 = shape.vertices.addNewLoc(x+1, y+1, z+1);
+    Shapes.Vertex ver8 = shape.vertices.addNewLoc(x,   y+1, z+1);
+
+    shape.lines.addLines([
+      ver1, ver2, ver2, ver3, ver3, ver4, ver4, ver1,
+      ver5, ver6, ver6, ver7, ver7, ver8, ver8, ver5,
+      ver1, ver5, ver2, ver6, ver3, ver7, ver4, ver8]);
+  }
+
   /// Updates the selection for the highlighted block that can be modified.
   void _updateHighlight(Events.EventArgs _) {
     Math.Ray3 ray = this._playerViewTarget();
@@ -306,12 +336,21 @@ class Player {
     //       the edge block directly next chunk. There are dead areas
     //       in the selection that must be fixed.
 
+    if (this._printDebug) print(">>> ===================="); // TODO: REMOVE
+    if (this._printDebug) print(">>> person: ${ray.x}, ${ray.z}"); // TODO: REMOVE
     int dist = 0;
     BlockInfo info = this._world.getBlock(ray.x, ray.y, ray.z);
+    if (this._printDebug) print(">>> chunk:  ${info.chunkX}, ${info.chunkZ}"); // TODO: REMOVE
+    if (this._printDebug) print(">>> offset: ${info.x}, ${info.z}"); // TODO: REMOVE
+    Shapes.Shape shape = new Shapes.Shape();
+    
     while ((info != null) && (info.value == BlockType.Air)) {
+      this._createHighlightBlock(shape, info);
       info = this._getNeighborBlock(info, back)?.info;
       dist++;
     }
+    this._highlightDebug.shape = shape;
+    this._printDebug = false; // TODO: REMOVE
 
     if ((info != null) && ((dist < 1) || (info.value == BlockType.Air) || (info.value == BlockType.Boundary))) info = null;
     this._highlight = info;
