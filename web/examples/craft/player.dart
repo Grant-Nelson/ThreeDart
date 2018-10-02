@@ -81,7 +81,7 @@ class Player {
       ..attach(td.userInput)
       ..keyDown.add(this._onBlockChange);
     td.userInput.locked.down.add(this._onClickBlockChange);
-    
+
     new Input.KeyGroup()
       ..addKey(Input.Key.keyO)
       ..attach(td.userInput)

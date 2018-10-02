@@ -4,6 +4,7 @@ part of craft;
 class World {
   Materials _mats;
   Generator _gen;
+  List<Chunk> _graveyard;
   List<Chunk> _chunks;
   List<ThreeDart.Entity> _entities;
   Player _player;
@@ -12,25 +13,28 @@ class World {
   /// Creates a new world with the given meterials.
   World(this._mats) {
     this._gen = new Generator();
+    this._graveyard = new List<Chunk>();
     this._chunks = new List<Chunk>();
     this._entities = new List<ThreeDart.Entity>();
     this._lastChunk = null;
     for (Techniques.MaterialLight tech in this._mats.materials)
       this.entities.add(new ThreeDart.Entity(tech: tech));
 
+    // Pre-allocate several chunks into the graveyard.
+    for (int i = 0; i < Constants.initialGraveyardSize; i++)
+      this._graveyard.add(new Chunk(this));
+
     // Preinitialize the starting part of the world.
     for (int x = -Constants.initChunkDist; x < Constants.initChunkDist; x += Constants.chunkSideSize) {
       for (int z = -Constants.initChunkDist; z < Constants.initChunkDist; z += Constants.chunkSideSize) {
-        Chunk chunk = new Chunk(x, z, this);
-        this._chunks.add(chunk);
-        this._gen.fillChunk(chunk);
+        this._gen.fillChunk(this._prepareChunk(x, z));
       }
     }
 
     // Start timer for periodically generating chunks and animate.
-    new Timer.periodic(new Duration(milliseconds: Constants.worldTickMs), this._worldTick);
-    new Timer.periodic(new Duration(milliseconds: Constants.generateTickMs), this._generateTick);
-    new Timer.periodic(new Duration(milliseconds: Constants.animationTickMs), this._animationTick);
+    new Timer.periodic(const Duration(milliseconds: Constants.worldTickMs), this._worldTick);
+    new Timer.periodic(const Duration(milliseconds: Constants.generateTickMs), this._generateTick);
+    new Timer.periodic(const Duration(milliseconds: Constants.animationTickMs), this._animationTick);
   }
 
   /// Gets the random noise generator for this world.
@@ -73,7 +77,6 @@ class World {
     return new BlockInfo(bx, by, bz, cx, cz, chunk);
   }
   
-  
   /// Adds and removes chunks as needed.
   void _worldTick(Timer timer) {
     Math.Point3 player = this._player.point;
@@ -84,11 +87,21 @@ class World {
   void _generateTick(Timer timer) {
     Math.Point3 player = this._player.point;
     this._generateChunk(player);
+    this._refreshDirty(player);
   }
 
   // Animates the water texture.
   void _animationTick(Timer time) {
     this._mats.waterChanger.nextTexture();
+  }
+  
+  /// Gets a chunk from the graveyard or creates a new one.
+  /// This will prepare the chunk for the given [x] and [z] world location.
+  Chunk _prepareChunk(int x, int z) {
+    Chunk chunk = this._graveyard.removeLast() ?? new Chunk(this);
+    chunk.prepare(x, z);
+    this._chunks.add(chunk);
+    return chunk;
   }
 
   /// Updates chunks which are loaded and removes any loaded chunks
@@ -100,15 +113,17 @@ class World {
     if (this._lastChunk != pBlock.chunk) {
       this._lastChunk = pBlock.chunk;
 
-      // Add in any out of bounds chunks.
+      // Remove any out of bounds chunks.
       int minXOut = pBlock.chunkX - Constants.maxChunkDist, maxXOut = pBlock.chunkX + Constants.maxChunkDist;
       int minZOut = pBlock.chunkZ - Constants.maxChunkDist, maxZOut = pBlock.chunkZ + Constants.maxChunkDist;
       for (int i = this._chunks.length-1; i >= 0; i--) {
         Chunk chunk = this._chunks[i];
         if ((minXOut > chunk.x) || (maxXOut <= chunk.x) ||
             (minZOut > chunk.z) || (maxZOut <= chunk.z)) {
-          this._chunks[i].remove();
-          this._chunks.removeAt(i);
+          Chunk chunk = this._chunks[i];
+          chunk.freeup();
+          this._chunks.remove(chunk);
+          this._graveyard.add(chunk);
         }
       }
 
@@ -118,9 +133,7 @@ class World {
       for (int x = minXIn; x < maxXIn; x += Constants.chunkSideSize) {
         for (int z = minZIn; z < maxZIn; z += Constants.chunkSideSize) {
           Chunk oldChunk = this.findChunk(x, z);
-          if (oldChunk == null) {
-            this._chunks.add(new Chunk(x, z, this));
-          }
+          if (oldChunk == null) this._prepareChunk(x, z);
         }
       }
     }
@@ -131,7 +144,7 @@ class World {
     double edgeX = player.x - Constants.chunkSideSize*0.5;
     double edgeZ = player.z - Constants.chunkSideSize*0.5;
     Chunk nearest = null;
-    double minDist2 = 1000000.0;
+    double minDist2 = 1.0e-9;
     for (Chunk chunk in this._chunks) {
       if (chunk.needToGenerate) {
         double dx = chunk.x - edgeX;
@@ -146,6 +159,34 @@ class World {
     if (nearest != null) {
       this._gen.fillChunk(nearest);
     }
+  }
+
+  /// This picks the nearest dirty chunk to refresh.
+  void _refreshDirty(Math.Point3 player) {
+    double edgeX = player.x - Constants.chunkSideSize*0.5;
+    double edgeZ = player.z - Constants.chunkSideSize*0.5;
+    Chunk nearest = null;
+    double minDist2 = 1.0e-9;
+    for (Chunk chunk in this._chunks) {
+      if (chunk.dirty) {
+        double dx = chunk.x - edgeX;
+        double dz = chunk.z - edgeZ;
+        double dist2 = dx*dx + dz*dz;
+        if ((nearest == null) || (minDist2 > dist2)) {
+          nearest = chunk;
+          minDist2 = dist2;
+        }
+      }
+    }
+    if (nearest != null) {
+      nearest.dirty = false;
+      nearest.needUpdate = true;
+    }
+  }
+
+  /// Gets the string for debug information to be printed to the console.
+  String debugString() {
+    return "chunks: ${this._chunks.length}, graveyard: ${this._graveyard.length}, player: ${this._player.point}";
   }
 
   /// Updates the world to the player's view.

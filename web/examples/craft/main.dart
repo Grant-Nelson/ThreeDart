@@ -87,9 +87,9 @@ void startCraft() {
   // Set background color to sky blue
   (scene.target as Views.FrontTarget).color = new Math.Color4(0.576, 0.784, 0.929);
 
-  // Start fps output
-  new Timer.periodic(const Duration(milliseconds: 5000), (Timer time) {
+  // Start debug output
+  new Timer.periodic(const Duration(milliseconds: Constants.debugPrintTickMs), (Timer time) {
     String fps = td.fps.toStringAsFixed(2);
-    print("$fps fps");
+    print("$fps fps, "+world.debugString());
   });
 }
