@@ -15,8 +15,31 @@ typedef Math.Point3 func2PntHandle(double a, double b);
 /// A function handler for processing two values for a new vertex.
 typedef void ver2Handle(Vertex ver, double a, double b);
 
+/// Creates a simple line shape.
+Shape line({Data.VertexType type: null}) {
+  Shape shape = new Shape();
+  Vertex ver1 = shape.vertices.addNew(
+    type:    type,
+    loc:     new Math.Point3(-1.0, 0.0, 0.0),
+    txt2D:   new Math.Point2(0.0, 0.0),
+    txtCube: new Math.Vector3(-1.0, -1.0, 0.0).normal(),
+    clr:     new Math.Color4(1.0, 0.0, 0.0, 1.0),
+    bending: new Math.Point4(1.0, 2.0, 4.0, 6.0));
+
+  Vertex ver2 = shape.vertices.addNew(
+    type:    type,
+    loc:     new Math.Point3(1.0, 0.0, 0.0),
+    txt2D:   new Math.Point2(1.0, 0.0),
+    txtCube: new Math.Vector3(1.0, -1.0, 0.0).normal(),
+    clr:     new Math.Color4(0.0, 0.0, 1.0, 1.0),
+    bending: new Math.Point4(0.0, 3.0, 4.0, 6.0));
+
+  shape.lines.add(ver1, ver2);
+  return shape;
+}
+
 /// Creates a square shape.
-Shape square({Data.VertexType type: null}) {
+Shape square({Data.VertexType type: null, frameOnly: false}) {
   Shape shape = new Shape();
   Vertex ver1 = shape.vertices.addNew(
     type:    type,
@@ -50,7 +73,8 @@ Shape square({Data.VertexType type: null}) {
     clr:     new Math.Color4(1.0, 1.0, 0.0, 1.0),
     bending: new Math.Point4(0.0, 2.0, 4.0, 7.0));
 
-  shape.faces.addFan([ver1, ver2, ver3, ver4]);
+  if (frameOnly) shape.lines.addLoop([ver1, ver2, ver3, ver4]);
+  else shape.faces.addFan([ver1, ver2, ver3, ver4]);
   shape.calculateNormals();
   return shape;
 }
@@ -126,20 +150,22 @@ void _addCuboidSide(Shape shape, Data.VertexType type, ver2Handle vertexHndl,
 /// [sides] is the number of division on the side, and [height] is the y offset of the disk.
 /// [flip] will flip the disk over, and [radiusHndl] is a handle for custom variant radius.
 Shape disk({int sides: 8, double height: 0.0, bool flip: false,
-    double bending: -1.0, func1Handle radiusHndl: null}) {
+    double bending: -1.0, func1Handle radiusHndl: null, frameOnly: false}) {
   radiusHndl ??= (double a) => 1.0;
   if (sides < 3) return null;
   Shape shape = new Shape();
   double sign = flip? -1.0: 1.0;
   double step = -2.0*Math.PI/sides.toDouble();
   List<Vertex> vers = new List<Vertex>();
-  vers.add(shape.vertices.addNew(
-    loc:     new Math.Point3(0.0, 0.0, height),
-    norm:    new Math.Vector3(0.0, 0.0, sign),
-    txt2D:   new Math.Point2(0.5, 0.5),
-    txtCube: new Math.Vector3(0.0, 0.0, sign).normal(),
-    clr:     new Math.Color4(1.0, 1.0, 1.0),
-    bending: new Math.Point4(bending, -1.0, -1.0, -1.0)));
+  if (!frameOnly) {
+    vers.add(shape.vertices.addNew(
+      loc:     new Math.Point3(0.0, 0.0, height),
+      norm:    new Math.Vector3(0.0, 0.0, sign),
+      txt2D:   new Math.Point2(0.5, 0.5),
+      txtCube: new Math.Vector3(0.0, 0.0, sign).normal(),
+      clr:     new Math.Color4(1.0, 1.0, 1.0),
+      bending: new Math.Point4(bending, -1.0, -1.0, -1.0)));
+  }
   for (int i = 0; i <= sides; i++) {
     double angle = step*i.toDouble();
     double x = sign*sin(angle), y = cos(angle);
@@ -152,7 +178,8 @@ Shape disk({int sides: 8, double height: 0.0, bool flip: false,
       clr:     new Math.Color4(x, y, y),
       bending: new Math.Point4(bending, -1.0, -1.0, -1.0)));
   }
-  shape.faces.addFan(vers);
+  if (frameOnly) shape.lines.addLoop(vers);
+  else shape.faces.addFan(vers);
   return shape;
 }
 
