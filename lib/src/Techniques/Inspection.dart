@@ -413,6 +413,7 @@ class Inspection extends Technique {
       this._renderBuilder(state, store, obj.shapeBuilder, 'AABB', this._aabb, this._ambient4, this._diffuse4);
 
     state.gl.enable(WebGL.WebGL.DEPTH_TEST);
+    state.gl.blendFunc(WebGL.WebGL.SRC_ALPHA, WebGL.WebGL.ONE_MINUS_SRC_ALPHA);
   }
 
   /// Renders the current [obj] with the current [state].
@@ -464,6 +465,7 @@ class Inspection extends Technique {
       this._render(state, store, obj.shape, 'AABB', this._aabb, this._ambient4, this._diffuse4);
 
     state.gl.enable(WebGL.WebGL.DEPTH_TEST);
+    state.gl.blendFunc(WebGL.WebGL.SRC_ALPHA, WebGL.WebGL.ONE_MINUS_SRC_ALPHA);
   }
 
   /// Renderes one of the shape components to inspect.
