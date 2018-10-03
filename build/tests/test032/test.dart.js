@@ -10059,7 +10059,8 @@ a.a.enable(3042)
 a.a.blendFunc(1,1)
 if(this.k3)this.dQ(a,y,b.d,"Axis",H.d(this.gdw(),{func:1,ret:F.aq,args:[F.cQ]}),this.z,this.y)
 if(this.k4)this.dQ(a,y,b.d,"AABB",H.d(this.gdt(),{func:1,ret:F.aq,args:[F.cQ]}),this.z,this.y)
-a.a.enable(2929)}else{w.enable(2929)
+a.a.enable(2929)
+a.a.blendFunc(770,771)}else{w.enable(2929)
 a.a.enable(3042)
 a.a.blendFunc(770,771)
 if(this.cx)this.a1(a,y,b.c,"vertices",this.ghS(),this.f,this.e)
@@ -10080,7 +10081,8 @@ if(this.fy)this.a1(a,y,b.c,"faceBinormals",this.gfP(),this.x,this.r)
 if(this.go)this.a1(a,y,b.c,"faceTangentals",this.gfS(),this.x,this.r)
 if(this.k3)this.a1(a,y,b.c,"Axis",this.gdw(),this.z,this.y)
 if(this.k4)this.a1(a,y,b.c,"AABB",this.gdt(),this.z,this.y)
-a.a.enable(2929)}}else b.e=null
+a.a.enable(2929)
+a.a.blendFunc(770,771)}}else b.e=null
 y=this.a
 y.toString
 a.a.useProgram(null)

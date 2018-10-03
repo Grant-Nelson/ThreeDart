@@ -4714,7 +4714,8 @@ a.a.enable(3042)
 a.a.blendFunc(1,1)
 if(x.k3)x.cD(a,z,this.d,"Axis",H.d(x.gcm(),{func:1,ret:F.a4,args:[F.cl]}),x.z,x.y)
 if(x.k4)x.cD(a,z,this.d,"AABB",H.d(x.gcj(),{func:1,ret:F.a4,args:[F.cl]}),x.z,x.y)
-a.a.enable(2929)}else{v.enable(2929)
+a.a.enable(2929)
+a.a.blendFunc(770,771)}else{v.enable(2929)
 a.a.enable(3042)
 a.a.blendFunc(770,771)
 if(x.cx)x.a_(a,z,this.c,"vertices",x.gf_(),x.f,x.e)
@@ -4736,7 +4737,8 @@ if(x.fy)x.a_(a,z,this.c,"faceBinormals",x.ge2(),x.x,x.r)
 if(x.go)x.a_(a,z,this.c,"faceTangentals",x.ge5(),x.x,x.r)
 if(x.k3)x.a_(a,z,this.c,"Axis",x.gcm(),x.z,x.y)
 if(x.k4)x.a_(a,z,this.c,"AABB",x.gcj(),x.z,x.y)
-a.a.enable(2929)}}else this.e=null
+a.a.enable(2929)
+a.a.blendFunc(770,771)}}else this.e=null
 z=x.a
 z.toString
 a.a.useProgram(null)
@@ -6775,22 +6777,22 @@ z.d=y}l=F.ct(y)
 k=F.ct(z.b)
 j=F.c8(d,e,new F.mt(z,F.ct(z.c),F.ct(z.d),k,l,c),b)
 if(j!=null)a.aI(j)},
-cy:function(a,b,c,d,e){var z,y,x,w,v,u,t,s,r,q,p,o,n,m,l,k
-H.d(d,{func:1,ret:P.q,args:[P.q]})
-if(d==null)d=new F.mT()
-if(e<3)return
+cy:function(a,b,c,d,e,f){var z,y,x,w,v,u,t,s,r,q,p,o,n,m,l,k
+H.d(e,{func:1,ret:P.q,args:[P.q]})
+if(e==null)e=new F.mT()
+if(f<3)return
 z=F.Z()
 y=b?-1:1
-x=-6.283185307179586/e
+x=-6.283185307179586/f
 w=H.i([],[F.A])
 v=z.a
 u=new V.o(0,0,y)
 u=u.p(0,Math.sqrt(u.A(u)))
-C.a.h(w,v.f5(new V.am(a,-1,-1,-1),new V.F(1,1,1,1),new V.R(0,0,c),new V.o(0,0,y),new V.N(0.5,0.5),u))
-for(v=y*y,t=0;t<=e;++t){s=x*t
+C.a.h(w,v.f5(new V.am(a,-1,-1,-1),new V.F(1,1,1,1),new V.R(0,0,d),new V.o(0,0,y),new V.N(0.5,0.5),u))
+for(v=y*y,t=0;t<=f;++t){s=x*t
 r=y*Math.sin(s)
 q=Math.cos(s)
-p=d.$1(t/e)
+p=e.$1(t/f)
 u=z.a
 if(typeof p!=="number")return H.n(p)
 o=new V.o(r,q,y).p(0,Math.sqrt(r*r+q*q+v))
@@ -6802,7 +6804,7 @@ else l=q>1?1:q
 if(m)m=0
 else m=q>1?1:q
 u.toString
-k=F.aq(new V.am(a,-1,-1,-1),null,new V.F(n,l,m,1),new V.R(r*p,q*p,c),new V.o(0,0,y),new V.N(r*0.5+0.5,q*0.5+0.5),o,null,0)
+k=F.aq(new V.am(a,-1,-1,-1),null,new V.F(n,l,m,1),new V.R(r*p,q*p,d),new V.o(0,0,y),new V.N(r*0.5+0.5,q*0.5+0.5),o,null,0)
 u.h(0,k)
 C.a.h(w,k)}z.d.cN(w)
 return z},
@@ -6815,8 +6817,8 @@ z=F.c8(c,e,new F.mP(d),null)
 if(z==null)return
 z.aa()
 z.b9()
-if(b)z.aI(F.cy(3,!1,1,new F.mQ(d),e))
-z.aI(F.cy(1,!0,-1,new F.mR(d),e))
+if(b)z.aI(F.cy(3,!1,!1,1,new F.mQ(d),e))
+z.aI(F.cy(1,!0,!1,-1,new F.mR(d),e))
 return z},
 fW:function(a,b){var z=F.c8(a,b,new F.n8(),null)
 z.d.bf()
@@ -9680,9 +9682,9 @@ x=a.f
 y=w.m(0,z*0.1+y*0.1)
 a.sU(0,x.t(0,new V.R(y.a,y.b,y.c)))}},
 ns:{"^":"b:0;a",
-$0:function(){this.a.$1(F.cy(-1,!1,0,null,8))}},
+$0:function(){this.a.$1(F.cy(-1,!1,!1,0,null,8))}},
 nt:{"^":"b:0;a",
-$0:function(){this.a.$1(F.cy(-1,!1,0,null,30))}},
+$0:function(){this.a.$1(F.cy(-1,!1,!1,0,null,30))}},
 nu:{"^":"b:0;a",
 $0:function(){this.a.$1(F.dp(1,!0,!0,1,8,1))}},
 nv:{"^":"b:0;a",
