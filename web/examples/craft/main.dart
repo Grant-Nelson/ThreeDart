@@ -77,6 +77,7 @@ void startCraft() {
   Materials mats = new Materials(td);
   World world = new World(mats, seed);
   Player player = new Player(td, world);
+
   Scenes.EntityPass scene = new Scenes.EntityPass()
     ..onPreUpdate.add(world.update)
     ..camera.mover = player.camera;
