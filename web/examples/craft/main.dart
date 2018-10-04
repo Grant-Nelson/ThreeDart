@@ -18,6 +18,7 @@ import 'package:OpenSimplexNoiseDart/OpenSimplexNoise.dart' as simplex;
 import 'dart:math' as math;
 import 'dart:typed_data' as data;
 import 'dart:async';
+import 'dart:html' as html;
 
 import '../../common/common.dart' as common;
 
@@ -67,11 +68,15 @@ void main() {
 }
 
 void startCraft() {
+  int seed = _getSeed();
+  if (seed == null) {
+    seed = _navigateToSeededUrl();
+  }
+
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("targetCanvas");
   Materials mats = new Materials(td);
-  World world = new World(mats);
+  World world = new World(mats, seed);
   Player player = new Player(td, world);
-
   Scenes.EntityPass scene = new Scenes.EntityPass()
     ..onPreUpdate.add(world.update)
     ..camera.mover = player.camera;
@@ -92,4 +97,23 @@ void startCraft() {
     String fps = td.fps.toStringAsFixed(2);
     print("$fps fps, "+world.debugString());
   });
+}
+
+/// Returns the seed provided by the URL's query parameters, or null if no seed is found.
+int _getSeed() {
+  String seedQueryParam = Uri.base.queryParameters["seed"];
+  if (seedQueryParam == null) {
+    return null;
+  }
+
+  return int.tryParse(seedQueryParam);
+}
+
+/// Navigates the browser to a Url with a seed parameter and returns the seed.
+int _navigateToSeededUrl() {
+  // Note: 2^32 is the maximum value allowed.
+  int seed = new math.Random().nextInt(math.pow(2, 32));
+  Uri newUri = Uri.base.replace(queryParameters: {"seed": "$seed"});
+  html.window.history.pushState(null, null, newUri.toString());
+  return seed;
 }
