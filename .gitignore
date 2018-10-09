@@ -2,6 +2,7 @@
 .buildlog
 .DS_Store
 .dart_tool/
+.idea
 .pub/
 .vscode/
 build/
