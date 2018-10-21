@@ -30,8 +30,7 @@ void main() {
       '  </head>',
       '  <body>',
       '    <canvas id="tutorial1" width="800" height="600"></canvas>',
-      '    <script type="application/dart" src="main.dart"></script>',
-      '    <script src="packages/browser/dart.js"></script>',
+      '    <script defer src="main.dart.js"></script>',
       '  </body>',
       '</html>'])
     ..addCode("main.dart", "dart", 0, [
@@ -40,7 +39,6 @@ void main() {
       "import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;",
       "import 'package:ThreeDart/Shapes.dart' as Shapes;",
       "import 'package:ThreeDart/Movers.dart' as Movers;",
-      "import 'package:ThreeDart/Math.dart' as Math;",
       "import 'package:ThreeDart/Techniques.dart' as Techniques;",
       "import 'package:ThreeDart/Scenes.dart' as Scenes;",
       "",
