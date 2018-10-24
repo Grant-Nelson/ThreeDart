@@ -10,7 +10,7 @@ import 'package:ThreeDart/Lights.dart' as Lights;
 import '../../common/common.dart' as common;
 
 void main() {
-  new common.ShellPage("Test 020")
+  common.ShellPage page = new common.ShellPage("Test 020")
     ..addLargeCanvas("testCanvas")
     ..addPar(["Test of the Matrial Lighting shader with multiple moving directional lights."])
     ..addControlBoxes(["shapes"])
@@ -67,5 +67,10 @@ void main() {
     ..add("Toroid",   () { centerObj.shape = Shapes.toroid(); }, true)
     ..add("Knot",     () { centerObj.shape = Shapes.knot(); });
 
+  td.postrender.once((_){
+    page
+      ..addCode("Vertex Shader", "glsl", 0, tech.vertexSourceCode.split("\n"))
+      ..addCode("Fragment Shader", "glsl", 0, tech.fragmentSourceCode.split("\n"));
+  });
   common.showFPS(td);
 }

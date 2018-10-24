@@ -14,5 +14,7 @@
 
 ## Running
 
-- Run `webdev serve` from ThreeDart root directory.
+- Run `pub run webdev serve` from ThreeDart root directory.
+    - Note: You can also install webdev globally with `pub global activate webdev`
+     and run with `webdev serve` from the ThreeDart root directory.
 - Open `http://localhost:8080/` in a browser.

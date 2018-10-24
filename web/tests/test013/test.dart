@@ -11,7 +11,7 @@ import 'package:ThreeDart/Lights.dart' as Lights;
 import '../../common/common.dart' as common;
 
 void main() {
-  new common.ShellPage("Test 013")
+  common.ShellPage page = new common.ShellPage("Test 013")
     ..addLargeCanvas("testCanvas")
     ..addPar(["Test of sky box and cover pass."])
     ..addPar(["«[Back to Tests|../]"]);
@@ -53,5 +53,11 @@ void main() {
 
   td.scene = new Scenes.Compound(passes: [skybox, pass]);
 
+  td.postrender.once((_){
+    Techniques.Skybox skyTech = skybox.technique as Techniques.Skybox;
+    page
+      ..addCode("Vertex Shader for Skybox", "glsl", 0, skyTech.vertexSourceCode.split("\n"))
+      ..addCode("Fragment Shader for Skybox", "glsl", 0, skyTech.fragmentSourceCode.split("\n"));
+  });
   common.showFPS(td);
 }

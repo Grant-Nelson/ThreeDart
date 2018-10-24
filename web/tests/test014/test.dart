@@ -14,7 +14,7 @@ import 'package:ThreeDart/Lights.dart' as Lights;
 import '../../common/common.dart' as common;
 
 void main() {
-  new common.ShellPage("Test 014")
+  common.ShellPage page = new common.ShellPage("Test 014")
     ..addLargeCanvas("testCanvas")
     ..addPar(["Test of Material Lighting shader with different reflections and refractions. "+
       "No alpha is being used. The background cube maps is being painted onto the object."])
@@ -165,5 +165,10 @@ void main() {
     ..add("Toroid",        () { obj.shape = Shapes.toroid(); }, true)
     ..add("Knot",          () { obj.shape = Shapes.knot(); });
 
+  td.postrender.once((_){
+    page
+      ..addCode("Vertex Shader", "glsl", 0, tech.vertexSourceCode.split("\n"))
+      ..addCode("Fragment Shader", "glsl", 0, tech.fragmentSourceCode.split("\n"));
+  });
   common.showFPS(td);
 }

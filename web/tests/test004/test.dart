@@ -8,7 +8,7 @@ import 'package:ThreeDart/Scenes.dart' as Scenes;
 import '../../common/common.dart' as common;
 
 void main() {
-  new common.ShellPage("Test 004")
+  common.ShellPage page = new common.ShellPage("Test 004")
     ..addLargeCanvas("testCanvas")
     ..addPar(["Test of repeat use of a single mover and shape. There are 9 rings ",
       "moving at the same speed, however the second one is attached to ",
@@ -36,13 +36,19 @@ void main() {
   ThreeDart.Entity obj7 = new ThreeDart.Entity(shape: shape, mover: mover)..children.add(obj6);
   ThreeDart.Entity obj8 = new ThreeDart.Entity(shape: shape, mover: mover)..children.add(obj7);
 
+  Techniques.Depth tech = new Techniques.Depth(fogStart: 3.0, fogStop: 6.0);
   Scenes.EntityPass pass = new Scenes.EntityPass()
-    ..technique = new Techniques.Depth(fogStart: 3.0, fogStop: 6.0)
+    ..technique = tech
     ..children.add(obj8)
     ..camera.mover = new Movers.Constant.translate(0.0, 0.0, 5.0);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas")
     ..scene = pass;
 
+  td.postrender.once((_){
+    page
+      ..addCode("Vertex Shader", "glsl", 0, tech.vertexSourceCode.split("\n"))
+      ..addCode("Fragment Shader", "glsl", 0, tech.fragmentSourceCode.split("\n"));
+  });
   common.showFPS(td);
 }

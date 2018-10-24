@@ -72,6 +72,12 @@ class Normal extends Technique {
     }
   }
 
+  /// Gets the vertex source code used for the shader used by this techinique.
+  String get vertexSourceCode => this._shader?.vertexSourceCode;
+
+  /// Gets the fragment source code used for the shader used by this techinique.
+  String get fragmentSourceCode => this._shader?.fragmentSourceCode;
+
   /// Removes any normal distortion from the material.
   void clearBump() {
     if (this._bumpyType != Shaders.ColorSourceType.None) {
