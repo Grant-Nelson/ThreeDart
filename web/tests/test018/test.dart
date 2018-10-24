@@ -11,7 +11,7 @@ import 'package:ThreeDart/Lights.dart' as Lights;
 import '../../common/common.dart' as common;
 
 void main() {
-  new common.ShellPage("Test 018")
+  common.ShellPage page = new common.ShellPage("Test 018")
     ..addLargeCanvas("testCanvas")
     ..addPar(["A test of the Material Lighting shader where a diffuse textue and ",
       "inverse diffuse texture are used. Grass is only shown in the dark. ",
@@ -53,5 +53,10 @@ void main() {
     ..add("Toroid",       () { obj.shape = Shapes.toroid(); })
     ..add("Knot",         () { obj.shape = Shapes.knot(); });
 
+  td.postrender.once((_){
+    page
+      ..addCode("Vertex Shader", "glsl", 0, tech.vertexSourceCode.split("\n"))
+      ..addCode("Fragment Shader", "glsl", 0, tech.fragmentSourceCode.split("\n"));
+  });
   common.showFPS(td);
 }

@@ -10,7 +10,7 @@ import 'package:ThreeDart/Lights.dart' as Lights;
 import '../../common/common.dart' as common;
 
 void main() {
-  new common.ShellPage("Test 010")
+  common.ShellPage page = new common.ShellPage("Test 010")
     ..addLargeCanvas("testCanvas")
     ..addPar(["A test of the Material Lighting shader with solid color and ",
       "a directional light= with a cube texture bump map."])
@@ -40,5 +40,10 @@ void main() {
     ..children.add(obj)
     ..camera.mover = new Movers.Constant.translate(0.0, 0.0, 5.0);
 
+  td.postrender.once((_){
+    page
+      ..addCode("Vertex Shader", "glsl", 0, tech.vertexSourceCode.split("\n"))
+      ..addCode("Fragment Shader", "glsl", 0, tech.fragmentSourceCode.split("\n"));
+  });
   common.showFPS(td);
 }

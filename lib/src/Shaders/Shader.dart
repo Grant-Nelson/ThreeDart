@@ -5,6 +5,9 @@ abstract class Shader extends Core.Bindable {
   WebGL.RenderingContext _gl;
   String _name;
 
+  String _vertexSourceCode;
+  String _fragmentSourceCode;
+
   WebGL.Shader _vertexShader;
   WebGL.Shader _fragmentShader;
   WebGL.Program _program;
@@ -14,6 +17,8 @@ abstract class Shader extends Core.Bindable {
 
   /// Creates a shader with the given rendering context and name.
   Shader(this._gl, this._name) {
+    this._vertexSourceCode = null;
+    this._fragmentSourceCode = null;
     this._vertexShader = null;
     this._fragmentShader = null;
     this._program = null;
@@ -22,9 +27,11 @@ abstract class Shader extends Core.Bindable {
   }
 
   /// initializes and compiles the shader with the given vertex and fragment sources.
-  void initialize(String vertexSource, String fragmentSource) {
-    this._vertexShader = this._createShader(vertexSource, WebGL.WebGL.VERTEX_SHADER);
-    this._fragmentShader = this._createShader(fragmentSource, WebGL.WebGL.FRAGMENT_SHADER);
+  void initialize(String vertexSourceCode, String fragmentSourceCode) {
+    this._vertexSourceCode = vertexSourceCode;
+    this._fragmentSourceCode = fragmentSourceCode;
+    this._vertexShader = this._createShader(this._vertexSourceCode, WebGL.WebGL.VERTEX_SHADER);
+    this._fragmentShader = this._createShader(this._fragmentSourceCode, WebGL.WebGL.FRAGMENT_SHADER);
     this._createProgram();
     this._setupAttributes();
     this._setupUniform();
@@ -32,6 +39,12 @@ abstract class Shader extends Core.Bindable {
 
   /// The name of the shader.
   String get name => this._name;
+  
+  /// Gets the vertex source code used for this shader.
+  String get vertexSourceCode => this._vertexSourceCode;
+
+  /// Gets the fragment source code used for this shader.
+  String get fragmentSourceCode => this._fragmentSourceCode;
 
   /// The list of attributes for this shader.
   AttributeContainer get attributes => this._attrs;

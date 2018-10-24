@@ -47,13 +47,15 @@ class GLSLParser extends CodeParser {
     tok.join("Float", "Float")
       ..addRange("0", "9");
     tok.join("Start", "Sym")
-      ..addSet("<>{}()\\-+*%!&|=.,?:;");
+      ..addSet("<>{}()[]\\-+*%!&|=.,?:;");
     tok.join("Sym", "Sym")
-      ..addSet("<>{}()\\-+*%!&|=.,?:;");
+      ..addSet("<>{}()[]\\-+*%!&|=.,?:;");
     tok.join("Start", "Slash")
       ..addSet("/");
     tok.join("Slash", "Comment")
       ..addSet("/");
+    tok.join("Slash", "Sym")
+      ..addAll();
     tok.join("Comment", "EndComment")
       ..addSet("\n");
     tok.join("Comment", "Comment")

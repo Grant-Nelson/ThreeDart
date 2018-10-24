@@ -12,7 +12,7 @@ import 'package:ThreeDart/Views.dart' as Views;
 import '../../common/common.dart' as common;
 
 void main() {
-  new common.ShellPage("Test 016")
+  common.ShellPage page = new common.ShellPage("Test 016")
     ..addLargeCanvas("testCanvas")
     ..addPar(["A test of the Material Lighting shader with cube texturing, ",
       "bump mapping, and a color directional light."])
@@ -65,5 +65,10 @@ void main() {
 
   td.scene = new Scenes.Compound(passes: [skybox, pass]);
 
+  td.postrender.once((_){
+    page
+      ..addCode("Vertex Shader", "glsl", 0, tech.vertexSourceCode.split("\n"))
+      ..addCode("Fragment Shader", "glsl", 0, tech.fragmentSourceCode.split("\n"));
+  });
   common.showFPS(td);
 }

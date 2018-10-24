@@ -12,7 +12,7 @@ import 'package:ThreeDart/Scenes.dart' as Scenes;
 import '../../common/common.dart' as common;
 
 void main() {
-  new common.ShellPage("Test 028")
+  common.ShellPage page = new common.ShellPage("Test 028")
     ..addLargeCanvas("testCanvas")
     ..addPar(["Test of a Gaussian blur cover pass. ",
       "Notice the depth of field causing things further away to be blurry."])
@@ -80,13 +80,14 @@ void main() {
     ..technique = new Techniques.Depth(fogStart: 3.5, fogStop: 5.5)
     ..children.add(group);
 
-  Scenes.CoverPass blurPass = new Scenes.CoverPass()
-    ..technique = new Techniques.GaussianBlur(
+  Techniques.GaussianBlur blurTech = new Techniques.GaussianBlur(
       colorTxt: colorTarget.colorTexture,
       depthTxt: depthTarget.colorTexture,
       highOffset: 0.0,
       lowOffset: 8.0,
       depthLimit: 0.001);
+  Scenes.CoverPass blurPass = new Scenes.CoverPass()
+    ..technique = blurTech;
 
   Techniques.TextureLayout layoutTech = new Techniques.TextureLayout()
     ..entries.add(new Techniques.TextureLayoutEntry(
@@ -101,5 +102,10 @@ void main() {
 
   td.scene = new Scenes.Compound(passes: [skybox, colorPass, depthPass, blurPass, layout]);
 
+  td.postrender.once((_){
+    page
+      ..addCode("Vertex Shader for blur", "glsl", 0, blurTech.vertexSourceCode.split("\n"))
+      ..addCode("Fragment Shader for blur", "glsl", 0, blurTech.fragmentSourceCode.split("\n"));
+  });
   common.showFPS(td);
 }

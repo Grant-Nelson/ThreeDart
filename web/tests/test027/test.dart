@@ -1,5 +1,7 @@
 library ThreeDart.test.test027;
 
+import 'dart:math';
+
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 import 'package:ThreeDart/Shapes.dart' as Shapes;
 import 'package:ThreeDart/Movers.dart' as Movers;
@@ -11,10 +13,11 @@ import 'package:ThreeDart/Lights.dart' as Lights;
 import '../../common/common.dart' as common;
 
 void main() {
-  new common.ShellPage("Test 027")
+  common.ShellPage page = new common.ShellPage("Test 027")
     ..addLargeCanvas("testCanvas")
     ..addPar(["Test of a back buffer target for rendering to a texture. ",
       "That back buffer texture is applied to a box."])
+    ..addControlBoxes(["shapes"])
     ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
@@ -70,5 +73,29 @@ void main() {
 
   td.scene = new Scenes.Compound(passes: [skybox, firstPass, secondPass]);
 
+  new common.RadioGroup("shapes")
+    ..add("Cube",          () { secondObj.shape = Shapes.cube(); }, true)
+    ..add("Cuboid",        () { secondObj.shape = Shapes.cuboid(widthDiv: 15, heightDiv: 15,
+                                vertexHndl: (Shapes.Vertex ver, double u, double v) {
+                                  double height = cos(v*4.0*Math.PI+Math.PI)*0.1 + cos(u*4.0*Math.PI+Math.PI)*0.1;
+                                  Math.Vector3 vec = new Math.Vector3.fromPoint3(ver.location).normal();
+                                  ver.location += new Math.Point3.fromVector3(vec*height);
+                                });
+                              })
+    ..add("Cylinder",      () { secondObj.shape = Shapes.cylinder(sides: 30); })
+    ..add("Cone",          () { secondObj.shape = Shapes.cylinder(topRadius: 0.0, sides: 30, capTop: false); })
+    ..add("Cylindrical",   () { secondObj.shape = Shapes.cylindrical(sides: 50, div: 25,
+                                radiusHndl: (double u, double v) => cos(v*4.0*Math.PI + Math.PI)*0.2 + cos(u*6.0*Math.PI)*0.3 + 0.8); })
+    ..add("Sphere",        () { secondObj.shape = Shapes.sphere(widthDiv: 6, heightDiv: 6); })
+    ..add("Spherical",     () { secondObj.shape = Shapes.sphere(widthDiv: 10, heightDiv: 10,
+                                heightHndl: (double u, double v) => cos(sqrt((u-0.5)*(u-0.5) + (v-0.5)*(v-0.5))*Math.PI)*0.3); })
+    ..add("Toroid",        () { secondObj.shape = Shapes.toroid(); })
+    ..add("Knot",          () { secondObj.shape = Shapes.knot(); });
+
+  td.postrender.once((_){
+    page
+      ..addCode("Vertex Shader", "glsl", 0, secondTech.vertexSourceCode.split("\n"))
+      ..addCode("Fragment Shader", "glsl", 0, secondTech.fragmentSourceCode.split("\n"));
+  });
   common.showFPS(td);
 }

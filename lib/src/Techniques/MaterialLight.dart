@@ -152,13 +152,17 @@ class MaterialLight extends Technique {
 
   /// The alpha value or scalar on the alpha texture for the material.
   MaterialLightAlphaComponent get alpha => this._alpha;
+  
+  /// Gets the vertex source code used for the shader used by this techinique.
+  String get vertexSourceCode => this._shader?.vertexSourceCode;
+
+  /// Gets the fragment source code used for the shader used by this techinique.
+  String get fragmentSourceCode => this._shader?.fragmentSourceCode;
 
   /// Calculates a limit for the lights and other arrays for the shader from
   /// the current number of lights and lengths. This helps reduce and reuse
   /// shaders with similar number of attributes.
-  int _lengthLimit(int count) {
-    return ((count + 3) ~/ 4) * 4;
-  }
+  int _lengthLimit(int count) => ((count + 3) ~/ 4) * 4;
 
   /// Creates the configuration for this shader.
   Shaders.MaterialLightConfig _config() {
@@ -199,6 +203,7 @@ class MaterialLight extends Technique {
       this._shader = new Shaders.MaterialLight.cached(this._config(), state);
       obj.clearCache();
     }
+
     Shaders.MaterialLightConfig cfg = this._shader.configuration;
     Data.VertexType vertexType = cfg.vertexType;
     if (obj.cache is! Data.BufferStore) obj.clearCache();
