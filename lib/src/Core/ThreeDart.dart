@@ -26,6 +26,12 @@ class ThreeDart implements Events.Changable {
 
   /// Event to indicate something attached to this instance has changed.
   Events.Event _changed;
+  
+  /// Event to indicate a render is about to occur.
+  Events.Event _prerender;
+  
+  /// Event to indicate a render has just finished.
+  Events.Event _postrender;
 
   /// Indicates the refresh should be automatically
   bool _autoRefresh;
@@ -103,6 +109,8 @@ class ThreeDart implements Events.Changable {
     this._txtLoader = new Textures.TextureLoader(this._gl);
     this._input     = new Input.UserInput(this._canvas);
     this._changed       = null;
+    this._prerender     = null;
+    this._postrender    = null;
     this._autoRefresh   = true;
     this._pendingRender = false;
     this._frameTime     = new DateTime.now();
@@ -147,10 +155,32 @@ class ThreeDart implements Events.Changable {
     return this._changed;
   }
 
-  /// Handles a change in this instance..
+  /// Handles a change in this instance.
   void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
     if (this._autoRefresh) this.requestRender();
+  }
+  
+  /// Indicates that a render is about to occur.
+  Events.Event get prerender {
+    this._prerender ??= new Events.Event();
+    return this._prerender;
+  }
+
+  /// Handles an event to fire prior to rendering.
+  void _onPrerender([Events.EventArgs args = null]) {
+    this._prerender?.emit(args);
+  }
+
+  /// Indicates that a render has just occurred.
+  Events.Event get postrender {
+    this._postrender ??= new Events.Event();
+    return this._postrender;
+  }
+
+  /// Handles an event to fire after a render.
+  void _onPostrender([Events.EventArgs args = null]) {
+    this._postrender?.emit(args);
   }
 
   /// The scene to render to the canvas.
@@ -213,10 +243,12 @@ class ThreeDart implements Events.Changable {
       this._frameCount++;
       this._pendingRender = false;
       this._resize();
+      this._onPrerender();
       if (this._scene != null) {
         this._state.reset();
         this._scene.render(this._state);
       }
+      this._onPostrender();
     } catch(exception, stackTrace) {
       print("Error: $exception");
       print("Stack: $stackTrace");

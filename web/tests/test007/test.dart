@@ -11,7 +11,7 @@ import 'package:ThreeDart/Textures.dart' as Textures;
 import '../../common/common.dart' as common;
 
 void main() {
-  new common.ShellPage("Test 007")
+  common.ShellPage page = new common.ShellPage("Test 007")
     ..addLargeCanvas("testCanvas")
     ..addPar(["A test of the Material Lighting shader with bumpy 2D textures and ",
       "a directional light. The lighting and bump is being applied to ",
@@ -46,5 +46,10 @@ void main() {
     ..children.add(obj)
     ..camera.mover = new Movers.Constant.translate(0.0, 0.0, 5.0);
 
+  td.postrender.once((_){
+    page
+      ..addCode("Vertex Shader", "glsl", 0, tech.vertexSourceCode.split("\n"))
+      ..addCode("Fragment Shader", "glsl", 0, tech.fragmentSourceCode.split("\n"));
+  });
   common.showFPS(td);
 }

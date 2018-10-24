@@ -11,7 +11,7 @@ import 'package:ThreeDart/Lights.dart' as Lights;
 import '../../common/common.dart' as common;
 
 void main() {
-  new common.ShellPage("Test 029")
+  common.ShellPage page = new common.ShellPage("Test 029")
     ..addLargeCanvas("testCanvas")
     ..addPar(["Test of bump distort pass. It renders the scene to a back buffer then ",
       "paints that back buffer texture to the front buffer with a distortion."])
@@ -72,5 +72,10 @@ void main() {
     ..add("../resources/ScrewBumpMap.png")
     ..add("../resources/CtrlPnlBumpMap.png");
 
+  td.postrender.once((_){
+    page
+      ..addCode("Vertex Shader for distort", "glsl", 0, distortTech.vertexSourceCode.split("\n"))
+      ..addCode("Fragment Shader for distort", "glsl", 0, distortTech.fragmentSourceCode.split("\n"));
+  });
   common.showFPS(td);
 }

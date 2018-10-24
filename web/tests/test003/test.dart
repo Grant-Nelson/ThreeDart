@@ -10,7 +10,7 @@ import 'package:ThreeDart/Lights.dart' as Lights;
 import '../../common/common.dart' as common;
 
 void main() {
-  new common.ShellPage("Test 003")
+  common.ShellPage page = new common.ShellPage("Test 003")
     ..addLargeCanvas("testCanvas")
     ..addPar(["A test of the Material Light Shader with a solid color directional lighting."])
     ..addPar(["«[Back to Tests|../]"]);
@@ -36,5 +36,10 @@ void main() {
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas")
     ..scene = pass;
 
+  td.postrender.once((_){
+    page
+      ..addCode("Vertex Shader", "glsl", 0, tech.vertexSourceCode.split("\n"))
+      ..addCode("Fragment Shader", "glsl", 0, tech.fragmentSourceCode.split("\n"));
+  });
   common.showFPS(td);
 }

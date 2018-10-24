@@ -10,7 +10,7 @@ import 'package:ThreeDart/Views.dart' as Views;
 import '../../common/common.dart' as common;
 
 void main() {
-  new common.ShellPage("Test 030")
+  common.ShellPage page = new common.ShellPage("Test 030")
     ..addLargeCanvas("testCanvas")
     ..addPar(["A test of the Normal shader for dynamically rendering normal maps."])
     ..addPar(["«[Back to Tests|../]"]);
@@ -37,5 +37,10 @@ void main() {
     ..camera.mover = new Movers.Constant.translate(0.0, 0.0, 5.0);
   td.scene = pass;
 
+  td.postrender.once((_){
+    page
+      ..addCode("Vertex Shader", "glsl", 0, tech.vertexSourceCode.split("\n"))
+      ..addCode("Fragment Shader", "glsl", 0, tech.fragmentSourceCode.split("\n"));
+  });
   common.showFPS(td);
 }

@@ -12,7 +12,7 @@ import 'package:ThreeDart/Scenes.dart' as Scenes;
 import '../../common/common.dart' as common;
 
 void main() {
-  new common.ShellPage("Test 037")
+  common.ShellPage page = new common.ShellPage("Test 037")
     ..addLargeCanvas("testCanvas")
     ..addPar(["A test of applying a height map to an image. ",
       "Some shapes will take a bit to calculate depending on quality of mapping."])
@@ -99,5 +99,10 @@ void main() {
     ..add("0.8", () { setScalar(0.8); })
     ..add("1.0", () { setScalar(1.0); });
 
+  td.postrender.once((_){
+    page
+      ..addCode("Vertex Shader", "glsl", 0, tech.vertexSourceCode.split("\n"))
+      ..addCode("Fragment Shader", "glsl", 0, tech.fragmentSourceCode.split("\n"));
+  });
   common.showFPS(td);
 }

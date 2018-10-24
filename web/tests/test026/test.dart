@@ -11,7 +11,7 @@ import 'package:ThreeDart/Lights.dart' as Lights;
 import '../../common/common.dart' as common;
 
 void main() {
-  new common.ShellPage("Test 026")
+  common.ShellPage page = new common.ShellPage("Test 026")
     ..addLargeCanvas("testCanvas")
     ..addPar([
       "Test of the Material Lighting shader with a textured directional light. ",
@@ -74,5 +74,10 @@ void main() {
     ..add("Toroid",   () { centerObj.shape = Shapes.toroid(); }, true)
     ..add("Knot",     () { centerObj.shape = Shapes.knot(); });
 
+  td.postrender.once((_){
+    page
+      ..addCode("Vertex Shader", "glsl", 0, tech.vertexSourceCode.split("\n"))
+      ..addCode("Fragment Shader", "glsl", 0, tech.fragmentSourceCode.split("\n"));
+  });
   common.showFPS(td);
 }

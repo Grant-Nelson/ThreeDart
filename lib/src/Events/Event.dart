@@ -9,6 +9,9 @@ class Event {
   /// The list of the event handlers to call when this event is emitted.
   List<EventHandler> _hndls;
 
+  /// The list of the event handlers to call only once when this event is emitted.
+  List<EventHandler> _onceHndls;
+
   /// The pending argument from the first emit while the event is suspended.
   EventArgs _pendingArgs;
 
@@ -17,20 +20,39 @@ class Event {
 
   /// Constructs a new event.
   Event() {
-    this._hndls = new List<EventHandler>();
+    this._hndls = null;
+    this._onceHndls = null;
     this._pendingArgs = null;
     this._suspended = 0;
   }
 
+  /// Indicates that there are no handlers attached to this events.
+  bool get isEmpty => (this._hndls?.isEmpty ?? true) && (this._onceHndls?.isEmpty ?? true);
+
   /// Adds a new event handler to be called by this event when an action has occurred.
   void add(EventHandler hndl) {
+    this._hndls ??= new List<EventHandler>();
     this._hndls.add(hndl);
+  }
+
+  /// Adds a new event handler to be called by this event when an action has occurred.
+  /// This event is only called once and then removed.
+  void once(EventHandler hndl) {
+    this._onceHndls ??= new List<EventHandler>();
+    this._onceHndls.add(hndl);
   }
 
   /// Removes the first instance of the event handler from this event.
   /// True is returned if the handler is found, false if not found.
   bool remove(EventHandler hndl) {
-    return this._hndls.remove(hndl);
+    bool removed = false;
+    if (this._hndls?.contains(hndl) ?? false) {
+      removed = this._hndls.remove(hndl) || removed;
+    }
+    if (this._onceHndls?.contains(hndl) ?? false) {
+      removed = this._onceHndls.remove(hndl) || removed;
+    }
+    return removed;
   }
 
   /// Emits this event to all the attached event handlers.
@@ -38,18 +60,25 @@ class Event {
   /// The [args] will be submitted to each event handler.
   /// The event will not be emitted if it is currently suspended.
   /// The method will return after all event handlers has returned.
-  /// Returns true if any handler is emitted even if suspended, false if empty.
+  /// Returns true if any handler could be emitted even if suspended, false if empty.
   bool emit([EventArgs args = null]) {
-    bool hasHndls = this._hndls.isNotEmpty;
+    if (this.isEmpty) return false;
+
     args ??= new EventArgs(null);
     if (this.suspended) {
       if (!this.pending) this._pendingArgs = args;
-    } else {
-      this._hndls.forEach((EventHandler hndl) {
-        if (args.propagate) hndl(args);
-      });
+      return true;
     }
-    return hasHndls;
+
+    this._hndls?.forEach((EventHandler hndl) {
+      if (args.propagate) hndl(args);
+    });
+
+    this._onceHndls?.forEach((EventHandler hndl) {
+      if (args.propagate) hndl(args);
+    });
+    this._onceHndls?.clear();
+    return true;
   }
 
   /// Puts a future into the main event loop to emit this event.

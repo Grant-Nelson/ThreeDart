@@ -18,7 +18,7 @@ part 'BumpyShader.dart';
 part 'BumpyTechnique.dart';
 
 void main() {
-  new common.ShellPage("Test 008")
+  common.ShellPage page = new common.ShellPage("Test 008")
     ..addLargeCanvas("testCanvas")
     ..addPar(["A custom shader for testing and fixing the normal distortion ",
       "equation used for bump maps. This displays the normal vectors ",
@@ -80,5 +80,10 @@ void main() {
     ..add("0.9", () { tech.offsetScalar = 0.9; })
     ..add("1.0", () { tech.offsetScalar = 1.0; });
 
+  td.postrender.once((_){
+    page
+      ..addCode("Vertex Shader", "glsl", 0, tech.vertexSourceCode.split("\n"))
+      ..addCode("Fragment Shader", "glsl", 0, tech.fragmentSourceCode.split("\n"));
+  });
   common.showFPS(td);
 }

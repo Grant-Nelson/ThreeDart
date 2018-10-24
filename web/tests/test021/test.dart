@@ -37,7 +37,7 @@ void addLightBall(Techniques.MaterialLight tech, Scenes.EntityPass pass,
 }
 
 void main() {
-  new common.ShellPage("Test 021")
+  common.ShellPage page = new common.ShellPage("Test 021")
     ..addLargeCanvas("testCanvas")
     ..addPar(["Test of the Material Lighting shader with multiple moving point lights. ",
       "Emissive spheres are added at the lights sources."])
@@ -84,5 +84,10 @@ void main() {
     ..add("Toroid",   () { centerObj.shape = Shapes.toroid(); }, true)
     ..add("Knot",     () { centerObj.shape = Shapes.knot(); });
 
+  td.postrender.once((_){
+    page
+      ..addCode("Vertex Shader", "glsl", 0, tech.vertexSourceCode.split("\n"))
+      ..addCode("Fragment Shader", "glsl", 0, tech.fragmentSourceCode.split("\n"));
+  });
   common.showFPS(td);
 }

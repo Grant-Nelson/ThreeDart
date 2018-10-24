@@ -12,7 +12,7 @@ import 'package:ThreeDart/Lights.dart' as Lights;
 import '../../common/common.dart' as common;
 
 void main() {
-  new common.ShellPage("Test 015")
+  common.ShellPage page = new common.ShellPage("Test 015")
     ..addLargeCanvas("testCanvas")
     ..addPar(["Test of Material Lighting shader with bump mapping, reflections, refractions."])
     ..addControlBoxes(["bumpMaps", "controls"])
@@ -143,5 +143,10 @@ void main() {
     ..add("../resources/ScrewBumpMap.png")
     ..add("../resources/CtrlPnlBumpMap.png");
 
+  td.postrender.once((_){
+    page
+      ..addCode("Vertex Shader", "glsl", 0, tech.vertexSourceCode.split("\n"))
+      ..addCode("Fragment Shader", "glsl", 0, tech.fragmentSourceCode.split("\n"));
+  });
   common.showFPS(td);
 }
