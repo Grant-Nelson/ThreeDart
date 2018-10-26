@@ -69,9 +69,7 @@ void main() {
 
 void startCraft() {
   int seed = _getSeed();
-  if (seed == null) {
-    seed = _navigateToSeededUrl();
-  }
+  if (seed < 0) seed = _navigateToSeededUrl();
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("targetCanvas");
   Materials mats = new Materials(td);
@@ -100,20 +98,16 @@ void startCraft() {
   });
 }
 
-/// Returns the seed provided by the URL's query parameters, or null if no seed is found.
+/// Returns the seed provided by the URL's query parameters, or -1 if no seed is found.
 int _getSeed() {
   String seedQueryParam = Uri.base.queryParameters["seed"];
-  if (seedQueryParam == null) {
-    return null;
-  }
-
-  return int.tryParse(seedQueryParam);
+  if (seedQueryParam == null) return -1;
+  return int.tryParse(seedQueryParam) ?? -1;
 }
 
 /// Navigates the browser to a Url with a seed parameter and returns the seed.
 int _navigateToSeededUrl() {
-  // Note: 2^32 is the maximum value allowed.
-  int seed = new math.Random().nextInt(math.pow(2, 32));
+  int seed = new math.Random().nextInt(Constants.maxSeed);
   Uri newUri = Uri.base.replace(queryParameters: {"seed": "$seed"});
   html.window.history.pushState(null, null, newUri.toString());
   return seed;

@@ -2,6 +2,9 @@ part of craft;
 
 /// Set of constants for Craft.
 class Constants {
+
+  /// The maximum number, 1<<32 (limited by [nextInt]), allowed for the seed.
+  static const int maxSeed = 4294967296;
   
   /// The number of chunks to preallocate.
   static const int initialGraveyardSize = 140;
