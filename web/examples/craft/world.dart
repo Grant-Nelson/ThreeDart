@@ -10,9 +10,9 @@ class World {
   Player _player;
   Chunk _lastChunk;
 
-  /// Creates a new world with the given meterials.
-  World(this._mats) {
-    this._gen = new Generator();
+  /// Creates a new world with the given materials.
+  World(this._mats, [int seed = 0]) {
+    this._gen = new Generator(seed);
     this._graveyard = new List<Chunk>();
     this._chunks = new List<Chunk>();
     this._entities = new List<ThreeDart.Entity>();
