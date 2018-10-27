@@ -67,10 +67,13 @@ void startup3D(String targetName) {
     ..children.add(square);
 
   // Add the left side slider control.
-  double wOffset =0.0;
+  double wOffset = 0.5;
+  bool startInside = false;
+  td.userInput.mouse.down.add((_){ startInside = true; });
+  td.userInput.mouse.up.add((_){ startInside = false; });
   td.userInput.mouse.move.add((Events.EventArgs e) {
     Input.MouseEventArgs ms = e as Input.MouseEventArgs;
-    if (!ms.button.has(Input.Button.left)) return;
+    if (!startInside) return;
 
     wOffset += ms.adjustedDelta.dy;
     wOffset = Math.clampVal(wOffset, -0.1, 1.1);
