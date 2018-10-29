@@ -8833,11 +8833,11 @@ z.cr()
 if(b)z.bi(F.hE(3,!1,!1,1,new F.nM(d),e))
 z.bi(F.hE(1,!0,!1,-1,new F.nN(d),e))
 return z},
-hQ:function(a,b,c){var z,y
+hQ:function(a,b,c,d){var z,y
 z={}
 z.a=b
 if(H.l(b,{func:1,ret:P.p,args:[P.p,P.p]})==null)z.a=new F.or()
-y=F.cZ(a,null,new F.os(z),c)
+y=F.cZ(a,null,new F.os(z,c),d)
 y.cr()
 return y},
 hT:function(a,b,c,d){return F.hD(c,a,d,b,new F.ou())},
@@ -8910,13 +8910,13 @@ nN:{"^":"m:34;a",
 $1:function(a){return this.a.$2(1-a,0)}},
 or:{"^":"m:9;",
 $2:function(a,b){return 0}},
-os:{"^":"m:5;a",
+os:{"^":"m:5;a,b",
 $3:function(a,b,c){var z,y,x
 z=this.a.a.$2(b,c)
 if(typeof z!=="number")return H.q(z)
 y=a.f
 x=new V.G(y.a,y.b,y.c)
-z=x.w(0,Math.sqrt(x.D(x))).k(0,1+z)
+z=x.w(0,Math.sqrt(x.D(x))).k(0,this.b+z)
 a.sa1(0,new V.Y(z.a,z.b,z.c))}},
 ou:{"^":"m:23;",
 $1:function(a){return new V.Y(Math.cos(a),Math.sin(a),0)}},
@@ -12139,9 +12139,9 @@ $0:function(){this.a.sa8(0,F.hC(!0,!0,25,new V.o7(),50))}},
 o7:{"^":"m:9;",
 $2:function(a,b){return Math.cos(b*4*3.141592653589793+3.141592653589793)*0.2+Math.cos(a*6*3.141592653589793)*0.3+0.8}},
 oe:{"^":"m:0;a",
-$0:function(){this.a.sa8(0,F.hQ(6,null,6))}},
+$0:function(){this.a.sa8(0,F.hQ(6,null,1,6))}},
 of:{"^":"m:0;a",
-$0:function(){this.a.sa8(0,F.hQ(10,new V.o6(),10))}},
+$0:function(){this.a.sa8(0,F.hQ(10,new V.o6(),1,10))}},
 o6:{"^":"m:9;",
 $2:function(a,b){var z,y
 z=a-0.5

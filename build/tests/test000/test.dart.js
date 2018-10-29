@@ -5567,13 +5567,13 @@ a.m()}},
 kn:{"^":"b:0;",
 $1:function(a){var z,y,x,w,v
 z=new Uint8Array(1000)
-for(y=z.length,x=0;x<400;++x){for(w=0;w<1000;++w){if(w>=y)return H.f(z,w)
+for(y=z.length,x=0;x<100;++x){for(w=0;w<1000;++w){if(w>=y)return H.f(z,w)
 z[w]=0}for(v=0;v<100;++v)for(w=0;w<1000;++w){if(w>=y)return H.f(z,w)
 z[w]=z[w]+1}}a.j(H.d(z),"info_log")}},
 ko:{"^":"b:0;",
 $1:function(a){var z,y,x,w
 z=P.hk(1000,0,!1,P.K)
-for(y=0;y<400;++y){for(x=0;x<1000;++x)C.a.K(z,x,0)
+for(y=0;y<100;++y){for(x=0;x<1000;++x)C.a.K(z,x,0)
 for(w=0;w<100;++w)for(x=0;x<1000;++x){if(x>=z.length)return H.f(z,x)
 C.a.K(z,x,z[x]+1)}}a.j(H.d(z),"info_log")}},
 kq:{"^":"b:0;",
