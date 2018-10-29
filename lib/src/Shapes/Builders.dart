@@ -39,11 +39,11 @@ Shape line({Data.VertexType type: null}) {
 }
 
 /// Creates a square shape.
-Shape square({Data.VertexType type: null, frameOnly: false}) {
+Shape square({double width: 2.0, double height: 2.0, double zOffset: 0.0, Data.VertexType type: null, frameOnly: false}) {
   Shape shape = new Shape();
   Vertex ver1 = shape.vertices.addNew(
     type:    type,
-    loc:     new Math.Point3(-1.0, -1.0, 0.0),
+    loc:     new Math.Point3(-width*0.5, -height*0.5, zOffset),
     txt2D:   new Math.Point2(0.0, 1.0),
     txtCube: new Math.Vector3(-1.0, -1.0, 1.0).normal(),
     clr:     new Math.Color4(1.0, 0.0, 0.0, 1.0),
@@ -51,7 +51,7 @@ Shape square({Data.VertexType type: null, frameOnly: false}) {
 
   Vertex ver2 = shape.vertices.addNew(
     type:    type,
-    loc:     new Math.Point3(1.0, -1.0, 0.0),
+    loc:     new Math.Point3(width*0.5, -height*0.5, zOffset),
     txt2D:   new Math.Point2(1.0, 1.0),
     txtCube: new Math.Vector3(1.0, -1.0, 1.0).normal(),
     clr:     new Math.Color4(0.0, 0.0, 1.0, 1.0),
@@ -59,7 +59,7 @@ Shape square({Data.VertexType type: null, frameOnly: false}) {
 
   Vertex ver3 = shape.vertices.addNew(
     type:    type,
-    loc:     new Math.Point3(1.0, 1.0, 0.0),
+    loc:     new Math.Point3(width*0.5, height*0.5, zOffset),
     txt2D:   new Math.Point2(1.0, 0.0),
     txtCube: new Math.Vector3(1.0, 1.0, 1.0).normal(),
     clr:     new Math.Color4(0.0, 1.0, 0.0, 1.0),
@@ -67,7 +67,7 @@ Shape square({Data.VertexType type: null, frameOnly: false}) {
 
   Vertex ver4 = shape.vertices.addNew(
     type:    type,
-    loc:     new Math.Point3(-1.0, 1.0, 0.0),
+    loc:     new Math.Point3(-width*0.5, height*0.5, zOffset),
     txt2D:   new Math.Point2(0.0, 0.0),
     txtCube: new Math.Vector3(-1.0, 1.0, 1.0).normal(),
     clr:     new Math.Color4(1.0, 1.0, 0.0, 1.0),
@@ -338,11 +338,11 @@ void _isoSphereDiv(Shape shape, Vertex ver1, Vertex ver2, Vertex ver3, int itera
 /// Creates a sphere shape designed for smooth cube texturing using six grids.
 /// The [widthDiv] and [heightDiv] define the divisions of the grids used.
 /// The [heightHndl] added addition height to the curved grid.
-Shape sphere({int widthDiv: 8, int heightDiv: 8, func2Handle heightHndl: null}) {
+Shape sphere({double radius: 1.0, int widthDiv: 8, int heightDiv: 8, func2Handle heightHndl: null}) {
   heightHndl ??= (double a, double b) => 0.0;
   Shape shape = cuboid(widthDiv: widthDiv, heightDiv: heightDiv,
     vertexHndl: (Vertex ver, double u, double v) {
-      double height = 1.0+heightHndl(u, v);
+      double height = radius+heightHndl(u, v);
       Math.Vector3 vec = new Math.Vector3.fromPoint3(ver.location);
       ver.location = new Math.Point3.fromVector3(vec.normal()*height);
     });

@@ -46,6 +46,11 @@ class MaterialLight extends Technique {
     this._changed = null;
   }
 
+  /// Creates a new emission material with an optional colored glow.
+  factory MaterialLight.glow({Math.Color3 color: null}) =>
+    new MaterialLight()
+      ..emission.color = color ?? new Math.Color3.white();
+
   /// Indicates that this technique has changed.
   Events.Event get changed {
     this._changed ??= new Events.Event();

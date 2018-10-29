@@ -100,10 +100,13 @@ void startup4D(String targetName) {
     ..children.add(cube);
 
   // Add the left side slider control.
-  double wOffset =0.0;
+  double wOffset = 0.5;
+  bool startInside = false;
+  td.userInput.mouse.down.add((_){ startInside = true; });
+  td.userInput.mouse.up.add((_){ startInside = false; });
   td.userInput.mouse.move.add((Events.EventArgs e) {
     Input.MouseEventArgs ms = e as Input.MouseEventArgs;
-    if (!ms.button.has(Input.Button.left)) return;
+    if (!startInside) return;
     // If on the right size, don't move the slider.
     if (ms.adjustedPoint.x > 0.0) return;
 
