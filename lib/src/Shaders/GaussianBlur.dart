@@ -24,63 +24,67 @@ class GaussianBlur extends Shader {
 
   /// The fragment shader source code in glsl.
   static String _fragmentSource =
-      "precision mediump float;                                 \n"+
-      "                                                         \n"+
-      "#define MAX_BLUR_RANGE 20.0                              \n"+
-      "                                                         \n"+
-      "uniform sampler2D colorTxt;                              \n"+
-      "uniform sampler2D depthTxt;                              \n"+
-      "uniform int nullColorTxt;                                \n"+
-      "uniform int nullDepthTxt;                                \n"+
-      "uniform float width;                                     \n"+
-      "uniform float height;                                    \n"+
-      "uniform float highOffset;                                \n"+
-      "uniform float lowOffset;                                 \n"+
-      "uniform float depthLimit;                                \n"+
-      "                                                         \n"+
-      "varying vec2 txt2D;                                      \n"+
-      "                                                         \n"+
-      "float div;                                               \n"+
-      "vec4 color;                                              \n"+
-      "                                                         \n"+
-      "void offsetColor(float baseDepth, float tu, float tv)    \n"+
-      "{                                                        \n"+
-      "   vec2 txtOffset = vec2(txt2D.x + tu/width,             \n"+
-      "                         txt2D.y + tv/height);           \n"+
-      "   float depth = texture2D(depthTxt, txtOffset).r;       \n"+
-      "   if (depth - depthLimit > baseDepth) return;           \n"+
-      "   div += 1.0;                                           \n"+
-      "   color += texture2D(colorTxt, txtOffset);              \n"+
-      "}                                                        \n"+
-      "                                                         \n"+
-      "void main()                                              \n"+
-      "{                                                        \n"+
-      "   if(nullColorTxt > 0)                                  \n"+
-      "   {                                                     \n"+
-      "      gl_FragColor = vec4(1.0);                          \n"+
-      "      return;                                            \n"+
-      "   }                                                     \n"+
-      "   color = texture2D(colorTxt, txt2D);                   \n"+
-      "   float baseDepth;                                      \n"+
-      "   if(nullDepthTxt > 0) baseDepth = 1.0;                 \n"+
-      "   else baseDepth = texture2D(depthTxt, txt2D).r;        \n"+
-      "   float offset = mix(lowOffset, highOffset, baseDepth); \n"+
-      "   offset = abs(offset);                                 \n"+
-      "   div = 1.0;                                            \n"+
-      "   for(float x=0.0; x<MAX_BLUR_RANGE; x+=1.0)            \n"+
-      "   {                                                     \n"+
-      "      if(x > offset) break;                              \n"+
-      "      for(float y=1.0; y<MAX_BLUR_RANGE; y+=1.0)         \n"+
-      "      {                                                  \n"+
-      "         if(y > offset) break;                           \n"+
-      "         offsetColor(baseDepth,  x,  y);                 \n"+
-      "         offsetColor(baseDepth,  x, -y);                 \n"+
-      "         offsetColor(baseDepth, -x,  y);                 \n"+
-      "         offsetColor(baseDepth, -x, -y);                 \n"+
-      "      }                                                  \n"+
-      "   }                                                     \n"+
-      "   gl_FragColor = color / div;                           \n"+
-      "}                                                        \n";
+      "precision mediump float;                                  \n"+
+      "                                                          \n"+
+      "#define MAX_BLUR_RANGE 10.0                               \n"+
+      "#define BLUR_STEP 0.3333                                  \n"+
+      "                                                          \n"+
+      "uniform sampler2D colorTxt;                               \n"+
+      "uniform sampler2D depthTxt;                               \n"+
+      "uniform int nullColorTxt;                                 \n"+
+      "uniform int nullDepthTxt;                                 \n"+
+      "uniform float width;                                      \n"+
+      "uniform float height;                                     \n"+
+      "uniform float highOffset;                                 \n"+
+      "uniform float lowOffset;                                  \n"+
+      "uniform float depthLimit;                                 \n"+
+      "                                                          \n"+
+      "varying vec2 txt2D;                                       \n"+
+      "                                                          \n"+
+      "float div;                                                \n"+
+      "vec4 color;                                               \n"+
+      "                                                          \n"+
+      "void offsetColor(float baseDepth, float tu, float tv)     \n"+
+      "{                                                         \n"+
+      "   vec2 txtOffset = vec2(txt2D.x + tu/width,              \n"+
+      "                         txt2D.y + tv/height);            \n"+
+      "   float depth = texture2D(depthTxt, txtOffset).r;        \n"+
+      "   if (depth - depthLimit > baseDepth) return;            \n"+
+      "   div += 1.0;                                            \n"+
+      "   color += texture2D(colorTxt, txtOffset);               \n"+
+      "}                                                         \n"+
+      "                                                          \n"+
+      "void main()                                               \n"+
+      "{                                                         \n"+
+      "   if(nullColorTxt > 0)                                   \n"+
+      "   {                                                      \n"+
+      "      gl_FragColor = vec4(1.0);                           \n"+
+      "      return;                                             \n"+
+      "   }                                                      \n"+
+      "   color = texture2D(colorTxt, txt2D);                    \n"+
+      "   float baseDepth;                                       \n"+
+      "   if(nullDepthTxt > 0) baseDepth = 1.0;                  \n"+
+      "   else baseDepth = texture2D(depthTxt, txt2D).r;         \n"+
+      "   float offset = mix(lowOffset, highOffset, baseDepth);  \n"+
+      "   offset = abs(offset);                                  \n"+
+      "   div = 1.0;                                             \n"+
+      "   if(offset >= 1.0)                                      \n"+
+      "   {                                                      \n"+
+      "      for(float x=0.0; x<MAX_BLUR_RANGE; x+=BLUR_STEP)    \n"+
+      "      {                                                   \n"+
+      "         if(x > offset) break;                            \n"+
+      "         for(float y=0.0; y<MAX_BLUR_RANGE; y+=BLUR_STEP) \n"+
+      "         {                                                \n"+
+      "            if(y > offset) break;                         \n"+
+      "            offsetColor(baseDepth,  x,  y);               \n"+
+      "            offsetColor(baseDepth,  x, -y);               \n"+
+      "            offsetColor(baseDepth, -x,  y);               \n"+
+      "            offsetColor(baseDepth, -x, -y);               \n"+
+      "         }                                                \n"+
+      "      }                                                   \n"+
+      "   }                                                      \n"+
+      "   gl_FragColor = color / div;                            \n"+
+      "}                                                         \n";
 
   Attribute _posAttr;
   Attribute _txtAttr;
