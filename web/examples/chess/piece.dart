@@ -25,7 +25,8 @@ abstract class Piece extends ThreeDart.Entity {
   void _updateLocation() {
     this._mover.matrix = 
       new Math.Matrix4.translate(this._row.toDouble()-4.5, 0.0, this._column.toDouble()-4.5)*
-      new Math.Matrix4.rotateY(this._angle);
+      new Math.Matrix4.rotateY(this._angle)*
+      new Math.Matrix4.scale(0.8, 0.8, 0.8);
   }
 
   void _updateTech() {
