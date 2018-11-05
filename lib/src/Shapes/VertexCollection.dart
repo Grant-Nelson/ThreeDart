@@ -141,7 +141,10 @@ class VertexCollection {
       }
     }
     return true;
-    }
+  }
+
+  /// Gets a copy of the vertices as a list.
+  List<Vertex> copyToList() => this._vertices.toList();
 
   /// Gets to string for all the vertices.
   String toString() => this.format();

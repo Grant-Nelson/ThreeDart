@@ -34,7 +34,26 @@ class Inspection extends Technique {
   Events.Event _changed;
 
   /// Creates a new inspection techinque.
-  Inspection() {
+  Inspection({
+    bool showFilled:         false,
+    bool showWireFrame:      false,
+    bool showVertices:       false,
+    bool showNormals:        false,
+    bool showBinormals:      false,
+    bool showTangentals:     false,
+    bool showTxtCube:        false,
+    bool showFaceCenters:    false,
+    bool showFaceNormals:    false,
+    bool showFaceBinormals:  false,
+    bool showFaceTangentals: false,
+    bool showColorFill:      false,
+    bool showTxt2DColor:     false,
+    bool showWeight:         false,
+    bool showAxis:           false,
+    bool showAABB:           false,
+    bool showBend:           false,
+    double vectorScale:      1.0,
+  }) {
     this._shader = null;
     this._lightVec = new Math.Vector3(0.0, 0.0, -1.0);
     this._diffuse1 = new Math.Color4(0.2, 0.3, 0.4);
@@ -46,24 +65,24 @@ class Inspection extends Technique {
     this._diffuse4 = new Math.Color4(1.0, 1.0, 1.0);
     this._ambient4 = new Math.Color4(0.8, 0.8, 0.8);
 
-    this._showFilled         = false;
-    this._showWireFrame      = false;
-    this._showVertices       = false;
-    this._showNormals        = false;
-    this._showBinormals      = false;
-    this._showTangentals     = false;
-    this._showTxtCube        = false;
-    this._showFaceCenters    = false;
-    this._showFaceNormals    = false;
-    this._showFaceBinormals  = false;
-    this._showFaceTangentals = false;
-    this._showColorFill      = false;
-    this._showTxt2DColor     = false;
-    this._showWeight         = false;
-    this._showAxis           = false;
-    this._showAABB           = false;
-    this._showBend           = false;
-    this._vectorScale        = 1.0;
+    this._showFilled         = showFilled;
+    this._showWireFrame      = showWireFrame;
+    this._showVertices       = showVertices;
+    this._showNormals        = showNormals;
+    this._showBinormals      = showBinormals;
+    this._showTangentals     = showTangentals;
+    this._showTxtCube        = showTxtCube;
+    this._showFaceCenters    = showFaceCenters;
+    this._showFaceNormals    = showFaceNormals;
+    this._showFaceBinormals  = showFaceBinormals;
+    this._showFaceTangentals = showFaceTangentals;
+    this._showColorFill      = showColorFill;
+    this._showTxt2DColor     = showTxt2DColor;
+    this._showWeight         = showWeight;
+    this._showAxis           = showAxis;
+    this._showAABB           = showAABB;
+    this._showBend           = showBend;
+    this._vectorScale        = vectorScale;
     this._changed            = null;
   }
 

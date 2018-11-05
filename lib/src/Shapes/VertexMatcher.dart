@@ -36,3 +36,29 @@ class VertexLocationMatcher extends VertexMatcher {
     return v1.location == v2.location;
   }
 }
+
+
+/// A vertex matcher which matches vertices which have are a less than or equal to a specific distance away.
+class NearVertexLocationMatcher extends VertexMatcher {
+
+  /// The maximum distance away two vertices can be, beyond which two vertices will not be merged.
+  final double epsilon;
+
+  /// The square of the epsilon value.
+  final double epsilon2;
+  
+  /// Creates a new near vertex location matcher.
+  NearVertexLocationMatcher._(this.epsilon, this.epsilon2);
+
+  /// Creates a new near vertex location matcher for the given epsilon.
+  factory NearVertexLocationMatcher(double epsilon) {
+    return NearVertexLocationMatcher._(epsilon, epsilon*epsilon);
+  }
+
+  /// Returns true if [v1] has a near location to [v2], false otherwise.
+  bool matches(Vertex v1, Vertex v2) {
+    if (v1 == null) return false;
+    if (v2 == null) return false;
+    return v1.location.distance2(v2.location) <= epsilon2;
+  }
+}

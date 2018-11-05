@@ -17,28 +17,7 @@ class _objVertex {
 }
 
 /// Entity loader for loading *.obj files.
-/// @see https://en.wikipedia.org/wiki/Wavefront_.obj_file
-class ObjLoader {
-
-  /// Loads a *.obj from the given [filename].
-  /// [txtLoader] is used to load any textures required by materials for this entity.
-  /// [strict] is optional and will print errors for unknown line types.
-  static Future<Core.Entity> fromFile(String fileName, Textures.TextureLoader txtLoader,
-    {bool strict: false, Map<String, Techniques.MaterialLight> mtls: null}) async {
-    try {
-      String dir = getPathTo(fileName);
-      ObjLoader loader = new ObjLoader._(txtLoader, mtls: mtls);
-      String data = await HttpRequest.getString(fileName);
-      await loader.processMultiline(data, strict: strict, dir: dir);
-      print("Done.");
-      // print("Vertices: ${loader.shape.vertices.length}");
-      // print("Faces: ${loader.shape.faces.length}");
-      return loader.entity;
-    } catch(e) {
-      print("$fileName: $e");
-      throw new Exception("$fileName: $e");
-    }
-  }
+class _objReader {
 
   /// The texture loader to load all required images with.
   Textures.TextureLoader _txtLoader;
@@ -54,6 +33,9 @@ class ObjLoader {
 
   /// The map of material names to loaded material techniques.
   Map<String, Techniques.MaterialLight> _mtls;
+
+  /// The event to fire to update the progress with.
+  Events.Event _progress;
 
   /// The current name of the object part being loaded.
   String _name;
@@ -71,11 +53,13 @@ class ObjLoader {
   Core.Entity _rootEntity;
 
   /// Creates a new object loader.
-  ObjLoader._(Textures.TextureLoader this._txtLoader, {Map<String, Techniques.MaterialLight> mtls: null}) {
+  _objReader(Textures.TextureLoader this._txtLoader,
+    {Map<String, Techniques.MaterialLight> mtls: null, Events.Event progress: null}) {
     this._posList = new List<_objVertex>();
     this._texList = new List<Math.Point2>();
     this._normList = new List<Math.Vector3>();
     this._mtls = new Map<String, Techniques.MaterialLight>();
+    this._progress = progress;
     this._name = "";
     this._mat = new Techniques.MaterialLight()
       ..ambient.color = new Math.Color3.gray(0.35)
@@ -103,7 +87,9 @@ class ObjLoader {
   /// Processes a list of lines of a *.obj file.
   Future processLines(List<String> lines, {bool strict: false, String dir: ""}) async {
     for (int i = 0; i < lines.length; ++i) {
-      //if ((i % 1000) == 0) print("${i*100.0/lines.length}");
+      if ((this._progress != null) && ((i % 1000) == 0))
+        this._progress.emit(new ProgressEventArgs(this, i*100.0/lines.length, false));
+
       try {
         await this.processLine(lines[i], strict: strict, dir: dir);
       } catch(e) {
@@ -200,7 +186,7 @@ class ObjLoader {
     List<String> vertexParts = vertexStr.split('/');
     int posIndex = int.parse(vertexParts[0]);
     final int count = this._posList.length;
-    if ((posIndex < -count) || (posIndex > count))
+    if ((posIndex < -count) || (posIndex > count) || (posIndex == 0))
       throw new Exception("The position index, $posIndex, was out of range [-$count..$count] or 0.");
     if (posIndex < 0) posIndex = count + posIndex + 1;
     posIndex--;
@@ -211,7 +197,7 @@ class ObjLoader {
       if ((value != null) && (value.length > 0)) {
         int txtIndex = int.parse(value);
         final int count = this._texList.length;
-        if ((txtIndex < -count) || (txtIndex > count))
+        if ((txtIndex < -count) || (txtIndex > count) || (txtIndex == 0))
           throw new Exception("The texture index, $txtIndex, was out of range [-$count..$count] or 0.");
         if (txtIndex < 0) txtIndex = count + txtIndex + 1;
         txt2D = this._texList[txtIndex-1];
@@ -224,7 +210,7 @@ class ObjLoader {
       if ((value != null) && (value.length > 0)) {
         int normIndex = int.parse(value);
         final int count = this._normList.length;
-        if ((normIndex < -count) || (normIndex > count))
+        if ((normIndex < -count) || (normIndex > count) || (normIndex == 0))
           throw new Exception("The normal index, $normIndex, was out of range [-$count..$count] or 0.");
         if (normIndex < 0) normIndex = count + normIndex + 1;
         norm = this._normList[normIndex-1];
@@ -283,7 +269,7 @@ class ObjLoader {
   Future _processLoadMtrl(String data, String dir, bool strict) async {
     String file = joinPath(dir, data);
     Map<String, Techniques.MaterialLight> mtls =
-      await MtlLoader.fromFile(file, this._txtLoader, strict:strict);
+      await MtlType.fromFile(file, this._txtLoader, strict:strict);
     this._mtls.addAll(mtls);
   }
 

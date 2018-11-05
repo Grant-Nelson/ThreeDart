@@ -53,7 +53,12 @@ class Directional implements Light {
   }
 
   /// The direction the light is pointing.
+  /// Setting direction will override the mover with a constant mover pointing in the given direction.
   Math.Vector3 get direction => this._direction;
+  void set direction(Math.Vector3 vector) {
+    this._mover = new Movers.Constant.lookTowards(
+      new Math.Point3.zero(), new Math.Vector3(0.0, 1.0, 0.0), vector);
+  }
 
   /// The mover to position this light.
   Movers.Mover get mover => this._mover;

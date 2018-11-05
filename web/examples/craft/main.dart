@@ -67,6 +67,8 @@ void main() {
     Timer.run(startCraft);
 }
 
+/// Start the craft game.
+/// This is deferred so that if loading takes a while the page is at least loaded.
 void startCraft() {
   int seed = _getSeed();
   if (seed < 0) seed = _navigateToSeededUrl();
