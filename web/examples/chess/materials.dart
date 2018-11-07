@@ -12,7 +12,7 @@ class Materials {
     //   ..showWireFrame = true;
     
     Lights.Directional topLight = new Lights.Directional()
-      ..color = Math.Color3(1.0, 0.8, 0.8)
+      ..color = Math.Color3(1.0, 0.9, 0.8)
       ..direction = Math.Vector3(0.0, -1.0, -0.25);
       
     Lights.Directional bollomLight = new Lights.Directional()

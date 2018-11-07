@@ -3,8 +3,8 @@ part of chess;
 class Knight extends Piece {
   static ThreeDart.Entity _shapeEntity;
 
-  Knight(ThreeDart.ThreeDart td, Board board, bool white, int row, int column, double angle):
-    super._(board, white, row, column, angle) {
+  Knight(ThreeDart.ThreeDart td, Board board, bool white, int row, int column, double angle, double scalar):
+    super._(board, white, row, column, angle, scalar) {
     if (_shapeEntity == null) {
       _shapeEntity = new ThreeDart.Entity(name: "knight shape");
       IO.ObjType.fromFile("./resources/knight.obj", td.textureLoader).

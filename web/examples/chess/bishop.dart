@@ -3,8 +3,8 @@ part of chess;
 class Bishop extends Piece {
   static ThreeDart.Entity _shapeEntity;
 
-  Bishop(ThreeDart.ThreeDart td, Board board, bool white, int row, int column, double angle):
-    super._(board, white, row, column, angle) {
+  Bishop(ThreeDart.ThreeDart td, Board board, bool white, int row, int column, double angle, double scalar):
+    super._(board, white, row, column, angle, scalar) {
     if (_shapeEntity == null) {
       _shapeEntity = new ThreeDart.Entity(name: "bishop shape");
       IO.ObjType.fromFile("./resources/bishop.obj", td.textureLoader).

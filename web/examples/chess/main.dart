@@ -15,6 +15,7 @@ import '../../common/common.dart' as common;
 
 part 'bishop.dart';
 part 'board.dart';
+part 'edge.dart';
 part 'king.dart';
 part 'knight.dart';
 part 'materials.dart';
@@ -22,6 +23,7 @@ part 'pawn.dart';
 part 'piece.dart';
 part 'queen.dart';
 part 'rook.dart';
+part 'tile.dart';
 
 /// Starts up the 3Dart Chess example
 void main() {

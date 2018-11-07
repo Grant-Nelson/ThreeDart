@@ -4,6 +4,7 @@ abstract class Piece extends ThreeDart.Entity {
   int _row;
   int _column;
   double _angle;
+  double _scalar;
   Movers.Constant _mover;
   Board _board;
   bool _white;
@@ -11,7 +12,7 @@ abstract class Piece extends ThreeDart.Entity {
   bool _dead;
   bool _selected;
 
-  Piece._(this._board, this._white, this._row, this._column, this._angle) {
+  Piece._(this._board, this._white, this._row, this._column, this._angle, this._scalar) {
     this._mover = new Movers.Constant();
     this.mover = this._mover;
     this._hasMoved = false;
@@ -26,7 +27,7 @@ abstract class Piece extends ThreeDart.Entity {
     this._mover.matrix = 
       new Math.Matrix4.translate(this._row.toDouble()-4.5, 0.0, this._column.toDouble()-4.5)*
       new Math.Matrix4.rotateY(this._angle)*
-      new Math.Matrix4.scale(0.8, 0.8, 0.8);
+      new Math.Matrix4.scale(this._scalar, this._scalar, this._scalar);
   }
 
   void _updateTech() {
