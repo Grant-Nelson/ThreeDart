@@ -18,6 +18,6 @@ class Edge extends ThreeDart.Entity {
     this.mover = new Movers.Constant.translate(-4.0, 0.0, -4.0);
     this.name = "edge";
     this.children.add(_shapeEntity);
-    this.technique = this._board.materials.selectedWhitePieceTech;
+    this.technique = this._board.materials.edgeTech;
   }
 }

@@ -44,13 +44,13 @@ class ComponentShift extends Events.Changable {
 
   /// True to wrap the location around the maximum and minimum values,
   /// false to clap to the maximum and minimum values.
-  bool get warp => this._wrap;
+  bool get wrap => this._wrap;
   void set wrap(bool wrap) {
     wrap = wrap ?? true;
     if (this._wrap != wrap) {
       bool prev = this._wrap;
       this._wrap = wrap;
-      this._onChanged(new Events.ValueChangedEventArgs(this, "warp", prev, this._wrap));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "wrap", prev, this._wrap));
     }
   }
 

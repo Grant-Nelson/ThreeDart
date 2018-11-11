@@ -55,8 +55,10 @@ void startChess() {
 
   Scenes.EntityPass scene = new Scenes.EntityPass()
     ..camera.mover = new Movers.Group([
-      new Movers.UserRotater(input: td.userInput),
-      new Movers.UserTranslator(input: td.userInput),
+      new Movers.UserRotater(input: td.userInput)
+        ..pitch.minimumLocation = -Math.PI_2
+        ..pitch.maximumLocation = 0.0
+        ..pitch.wrap = false,
       new Movers.UserZoom(input: td.userInput),
       new Movers.Constant.translate(0.0, 0.0, 15.0)
     ]);
