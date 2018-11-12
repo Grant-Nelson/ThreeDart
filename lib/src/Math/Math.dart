@@ -29,6 +29,9 @@ const double PI = math.pi;
 /// Pi / 2 constant.
 const double PI_2 = PI/2.0;
 
+/// Pi * 3 / 2 constant.
+const double PI3_2 = PI*1.5;
+
 /// Pi / 3 constant.
 const double PI_3 = PI/3.0;
 
