@@ -3,11 +3,13 @@ library chess;
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 import 'package:ThreeDart/IO.dart' as IO;
 import 'package:ThreeDart/Movers.dart' as Movers;
+import 'package:ThreeDart/Shapes.dart' as Shapes;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
 import 'package:ThreeDart/Math.dart' as Math;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Textures.dart' as Textures;
+import 'package:ThreeDart/Views.dart' as Views;
 
 import 'dart:async';
 
@@ -53,19 +55,31 @@ void main() {
 void startChess() {
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("targetCanvas");
 
-  Scenes.EntityPass scene = new Scenes.EntityPass()
-    ..camera.mover = new Movers.Group([
+  Views.Perspective camera = new Views.Perspective(
+    mover: new Movers.Group([
       new Movers.UserRotater(input: td.userInput)
         ..pitch.minimumLocation = -Math.PI_2
         ..pitch.maximumLocation = 0.0
         ..pitch.wrap = false,
-      new Movers.UserZoom(input: td.userInput),
+      new Movers.Constant.scale(1.75, 1.75, 1.75),
       new Movers.Constant.translate(0.0, 0.0, 15.0)
-    ]);
-  td.scene = scene;
+    ]));
+
+  Views.FrontTarget target = new Views.FrontTarget()
+    ..clearColor = false;
   
   Board board = new Board(td);
-  scene.children.add(board);
+
+  Scenes.CoverPass skybox = new Scenes.CoverPass.skybox(board.materials.environment)
+    ..target = target
+    ..camera = camera;
+
+  Scenes.EntityPass mainScene = new Scenes.EntityPass()
+    ..target = target
+    ..camera = camera
+    ..children.add(board);
+
+  td.scene = new Scenes.Compound(passes: [skybox, mainScene]);
 
   common.showFPS(td);
 }

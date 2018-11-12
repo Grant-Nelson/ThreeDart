@@ -30,12 +30,12 @@ class Tile extends ThreeDart.Entity {
   void _updateTech() {
     if (this._white) {
       if (this._selected)
-        this.technique = this._board.materials.selectedWhitePieceTech;
-      else this.technique = this._board.materials.whitePieceTech;
+        this.technique = this._board.materials.selectedWhiteTileTech;
+      else this.technique = this._board.materials.whiteTileTech;
     } else {
       if (this._selected)
-        this.technique = this._board.materials.selectedBlackPieceTech;
-      else this.technique = this._board.materials.blackPieceTech;
+        this.technique = this._board.materials.selectedBlackTileTech;
+      else this.technique = this._board.materials.blackTileTech;
     }
   }
 }

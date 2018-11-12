@@ -59,6 +59,16 @@ class Board extends ThreeDart.Entity {
     this.children.add(new Edge(td, this, 8.0, 0.0, Math.PI_2, 1));
     this.children.add(new Edge(td, this, 8.0, 8.0, Math.PI, 2));
     this.children.add(new Edge(td, this, 0.0, 8.0, Math.PI3_2, 3));
+
+    this.children.add(new ThreeDart.Entity(
+      shape: Shapes.disk(sides: 30),
+      tech: this._mats._tableTech,
+      mover: new Movers.Constant(
+        new Math.Matrix4.translate(0.0, -0.5, 0.0)*
+        new Math.Matrix4.rotateX(-Math.PI_2)*
+        new Math.Matrix4.scale(12.0, 12.0, 12.0)
+      )
+    ));
   }
   
   Materials get materials => this._mats;
