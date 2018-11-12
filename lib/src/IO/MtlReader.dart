@@ -2,23 +2,7 @@ part of ThreeDart.IO;
 
 /// MaterialLight technique loader for loading *.mtl files.
 /// @see https://en.wikipedia.org/wiki/Wavefront_.obj_file#Material_template_library
-class MtlLoader {
-
-  /// Loads a *.mtl from the given [filename].
-  /// [txtLoader] is used to load any textures required by this material.
-  /// [strict] is optional and will print errors for unknown line types.
-  static Future<Map<String, Techniques.MaterialLight>> fromFile(String fileName, Textures.TextureLoader txtLoader, {bool strict: false}) async {
-    try {
-      String dir = getPathTo(fileName);
-      MtlLoader loader = new MtlLoader._(txtLoader);
-      String data = await HttpRequest.getString(fileName);
-      await loader.processMultiline(data, strict: strict, dir: dir);
-      return loader.materials;
-    } catch(e) {
-      print("$fileName: $e");
-      throw new Exception("$fileName: $e");
-    }
-  }
+class _mtlReader {
 
   /// The texture loader to load all required images with.
   Textures.TextureLoader _txtLoader;
@@ -30,7 +14,7 @@ class MtlLoader {
   Techniques.MaterialLight _cur;
 
   /// Creates a new material loader.
-  MtlLoader._(Textures.TextureLoader this._txtLoader) {
+  _mtlReader(Textures.TextureLoader this._txtLoader) {
     this._mtls = new Map<String, Techniques.MaterialLight>();
     this._cur = null;
   }
@@ -141,31 +125,41 @@ class MtlLoader {
 
   /// processes a new ambient map (map_Ka) line of a *.mtl file.
   Future _processAmbientMap(String data, String dir) async {
-    String file = joinPath(dir, data);
-    this._cur.ambient.texture2D = this._txtLoader.load2DFromFile(file);
+    if (this._txtLoader != null) {
+      String file = joinPath(dir, data);
+      this._cur.ambient.texture2D = this._txtLoader.load2DFromFile(file);
+    }
   }
 
   /// processes a new diffuse map (map_Kd) line of a *.mtl file.
   Future _processDiffuseMap(String data, String dir) async {
-    String file = joinPath(dir, data);
-    this._cur.diffuse.texture2D = this._txtLoader.load2DFromFile(file);
+    if (this._txtLoader != null) {
+      String file = joinPath(dir, data);
+      this._cur.diffuse.texture2D = this._txtLoader.load2DFromFile(file);
+    }
   }
 
   /// processes a new specular map (map_Ks) line of a *.mtl file.
   Future _processSpecularMap(String data, String dir) async {
-    String file = joinPath(dir, data);
-    this._cur.specular.texture2D = this._txtLoader.load2DFromFile(file);
+    if (this._txtLoader != null) {
+      String file = joinPath(dir, data);
+      this._cur.specular.texture2D = this._txtLoader.load2DFromFile(file);
+    }
   }
 
   /// processes a new alpha map (map_d) line of a *.mtl file.
   Future _processAlphaMap(String data, String dir) async {
-    String file = joinPath(dir, data);
-    this._cur.alpha.texture2D = this._txtLoader.load2DFromFile(file);
+    if (this._txtLoader != null) {
+      String file = joinPath(dir, data);
+      this._cur.alpha.texture2D = this._txtLoader.load2DFromFile(file);
+    }
   }
 
   /// processes a new bump map (map_bump/bump) line of a *.mtl file.
   Future _processBumpMap(String data, String dir) async {
-    String file = joinPath(dir, data);
-    this._cur.bump.texture2D = this._txtLoader.load2DFromFile(file);
+    if (this._txtLoader != null) {
+      String file = joinPath(dir, data);
+      this._cur.bump.texture2D = this._txtLoader.load2DFromFile(file);
+    }
   }
 }

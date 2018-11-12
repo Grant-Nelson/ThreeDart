@@ -218,8 +218,8 @@ class ThreeDart implements Events.Changable {
       // Make the canvas the same size
       this._canvas.width  = displayWidth;
       this._canvas.height = displayHeight;
+      Timer.run(this.requestRender);
     }
-    Timer.run(this.requestRender);
   }
 
   /// Requests a render to start the next time the main message loop

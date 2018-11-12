@@ -144,10 +144,10 @@ class Entity implements Movers.Movable, Events.Changable {
 
   /// The cache of the current shape in buffers for the current technique.
   Data.TechniqueCache get cache => this._cache;
-  set cache(Data.TechniqueCache cache) => _cache = cache;
+  set cache(Data.TechniqueCache cache) => this._cache = cache;
 
   /// The children Entitys of this Entity.
-  Collections.Collection<Entity> get children => _children;
+  Collections.Collection<Entity> get children => this._children;
 
   /// The shape to draw at this Entity.
   /// May be null to not draw anything, usefull if this Entity
@@ -212,6 +212,29 @@ class Entity implements Movers.Movable, Events.Changable {
 
   /// The matrix for the location and rotation of the entity.
   Math.Matrix4 get matrix => this._matrix;
+
+  /// Finds this or the first child entity with the given name.
+  /// Null is returned if none was found.
+  Entity findFirstByName(String name) {
+    if (this.name == name) return this;
+    for(Entity child in this._children) {
+      Entity result = child.findFirstByName(name);
+      if (result != null) return result;
+    }
+    return null;
+  }
+  
+  /// Finds this and all a children entities with the given name.
+  /// If the optional given entity list is not null,
+  /// then the found entities are added to that list.
+  List<Entity> findAllByName(String name, [List<Entity> entities = null]) {
+    entities ??= new List<Entity>();
+    if (this.name == name) entities.add(this);
+    for(Entity child in this._children) {
+      child.findAllByName(name, entities);
+    }
+    return entities;
+  }
 
   /// Calculates the axial aligned bounding box of this entity and its children.
   Math.Region3 calculateAABB() {
@@ -520,5 +543,24 @@ class Entity implements Movers.Movable, Events.Changable {
       if (entity != null) entity.changed.remove(this.onChildrenModified);
     }
     this.onChanged();
+  }
+
+  /// Gets a string for this entity, the name if it has one.
+  @override
+  String toString() {
+    if ((this._name?.length ?? 0) <= 0) return "Unnamed entity";
+    return this._name;
+  }
+
+  /// Gets a string for the branch of entities from this entity.
+  String outlineString([String indent = "", bool first = true, bool last = true]) {
+    final String lead   = indent+(first?(last?"-":"."):(last?"'":"+"))+"-";
+    final String follow = indent+(last?" ":"|")+" ";
+    String result = lead+this.toString().replaceAll("\n", "\n"+follow);
+    final int count = this.children.length;
+    for (int i = 0; i < count; ++i) {
+      result += "\n"+this.children[i].outlineString(follow, false, i == count-1);
+    }
+    return result;
   }
 }

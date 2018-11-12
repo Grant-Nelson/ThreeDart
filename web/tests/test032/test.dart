@@ -67,7 +67,7 @@ void main() {
   }
 
   Future setEntity(String objFile) async {
-    ThreeDart.Entity entity = await IO.ObjLoader.fromFile(objFile, td.textureLoader);
+    ThreeDart.Entity entity = await IO.ObjType.fromFile(objFile, td.textureLoader);
     entity.resizeCenter(3.5);
     obj.children.clear();
     obj.children.add(entity);

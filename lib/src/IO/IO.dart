@@ -2,15 +2,23 @@ library ThreeDart.IO;
 
 import 'dart:html';
 import 'dart:async';
+import 'dart:io' as io;
 
 import '../Core/Core.dart' as Core;
+import '../Events/Events.dart' as Events;
 import '../Shapes/Shapes.dart' as Shapes;
 import '../Techniques/Techniques.dart' as Techniques;
 import '../Textures/Textures.dart' as Textures;
 import '../Math/Math.dart' as Math;
 
-part 'MtlLoader.dart';
-part 'ObjLoader.dart';
+part 'MtlReader.dart';
+part 'MtlType.dart';
+
+part 'ObjReader.dart';
+part 'ObjType.dart';
+part 'ObjWriter.dart';
+
+part 'ProgressEvent.dart';
 
 /// Gets the path without the file name from the given path with a file name.
 String getPathTo(String file) {

@@ -218,37 +218,17 @@ class Shape implements ShapeBuilder {
     return results;
   }
 
-  /// Finds the matching vertex below the given index and puts the result
-  /// matches and indices into the given lists.
-  bool _findMatching(VertexMatcher matcher, Vertex ver, int index, List<Vertex> matches, List<int> indices) {
-    matches.add(ver);
-    indices.add(index);
-    for (int i = index - 1; i >= 0; --i) {
-      Vertex ver2 = this._vertices[i];
-      if (ver2 != null) {
-        if (matcher.matches(ver, ver2)) {
-          matches.add(ver2);
-          indices.add(i);
-        }
-      }
-    }
-    return vertices.length > 1;
-  }
-
   /// Replaces the vertices at the given indices with the given new vertex.
-  void _replaceVertices(Vertex newVer, List<int> indices) {
-    indices.sort();
+  void _replaceVertices(Vertex newVer, List<Vertex> replacedVers) {
     this.vertices.add(newVer);
-    for (int i = indices.length-1; i >= 0; --i) {
-      int index = indices[i];
-      Vertex ver = this.vertices[index];
+    for (Vertex ver in replacedVers) {
       while (ver.faces.length > 0)
         ver.faces[0].replaceVertex(ver, newVer);
       while (ver.lines.length > 0)
         ver.lines[0].replaceVertex(ver, newVer);
       while (ver.points.length > 0)
         ver.points[0].replaceVertex(ver, newVer);
-      this.vertices.removeAt(index);
+        this.vertices.remove(ver);
     }
   }
 
@@ -259,16 +239,28 @@ class Shape implements ShapeBuilder {
   /// repeat points, lines, and faces are removed.
   void mergeVertices(VertexMatcher matcher, VertexMerger merger) {
     this._changed?.suspend();
-    for (int i = this._vertices.length-1; i >= 0; --i) {
-      Vertex ver = this._vertices[i];
+    List<Vertex> vertices = this._vertices.copyToList();
+    while (vertices.isNotEmpty) {
+      Vertex ver = vertices.first;
+      vertices.removeAt(0);
+
       if (ver != null) {
+        // Find all matches
         List<Vertex> matches = new List<Vertex>();
-        List<int> indices = new List<int>();
-        if (this._findMatching(matcher, ver, i, matches, indices)) {
+        matches.add(ver);
+        for (Vertex otherVer in vertices) {
+          if ((otherVer != null) && matcher.matches(ver, otherVer)) {
+            matches.add(otherVer);
+            vertices.remove(otherVer);
+          }
+        }
+
+        // If there are any matches, merge them.
+        if (matches.length > 1) {
           Vertex newVer = merger.merge(matches);
           if (newVer != null) {
-            this._replaceVertices(newVer, indices);
-            i -= indices.length;
+            this._replaceVertices(newVer, matches);
+            vertices.add(newVer);
           }
         }
       }
