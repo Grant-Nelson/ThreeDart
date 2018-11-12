@@ -9,7 +9,7 @@ class Board extends ThreeDart.Entity {
   Board(ThreeDart.ThreeDart td) {
     this._pieces = new List<Piece>();
     this._tiles = new List<Tile>();
-    this._mats = new Materials();
+    this._mats = new Materials(td);
     this.name = "board";
 
     //    1 2 3 4 5 6 7 8
@@ -55,7 +55,10 @@ class Board extends ThreeDart.Entity {
     this._add(new Queen(td, this, false, 8, 4, 0.0, 1.0));
     this._add(new King(td, this, false, 8, 5, Math.PI_2, 0.9));
     
-    this.children.add(new Edge(td, this));
+    this.children.add(new Edge(td, this, 0.0, 0.0, 0.0, 0));
+    this.children.add(new Edge(td, this, 8.0, 0.0, Math.PI_2, 1));
+    this.children.add(new Edge(td, this, 8.0, 8.0, Math.PI, 2));
+    this.children.add(new Edge(td, this, 0.0, 8.0, Math.PI3_2, 3));
   }
   
   Materials get materials => this._mats;
