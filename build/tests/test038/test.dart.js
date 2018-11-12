@@ -4551,6 +4551,11 @@ for(z=b.length,y=this.gdX(),x=0;x<b.length;b.length===z||(0,H.B)(b),++x){w=b[x]
 if(w!=null){if(w.ga0()==null){v=new D.b4()
 v.d=0
 w.sa0(v)}w.ga0().V(0,y)}}this.a2()},"$2","ghM",8,0,8],
+i:function(a){var z,y
+z=this.a
+y=z.length
+if(y<=0)return"Unnamed entity"
+return z},
 $isaK:1,
 p:{
 ci:function(a,b,c,d,e,f){var z,y
@@ -4665,7 +4670,8 @@ if(typeof y!=="number")return y.k()
 w=C.i.cq(y*z)
 y=this.b
 if(y.width!==x||y.height!==w){y.width=x
-y.height=w}P.eN(C.q,this.gi3())},
+y.height=w
+P.eN(C.q,this.gi3())}},
 i4:[function(){var z,y
 if(!this.ch){this.ch=!0
 z=window
@@ -5964,7 +5970,7 @@ M:function(a){var z=this.y
 if(!(z==null))z.v(a)},
 scH:function(a,b){var z=this.a
 if(z!==b){this.a=b
-z=new D.F("warp",z,b,this,[P.Z])
+z=new D.F("wrap",z,b,this,[P.Z])
 z.b=!0
 this.M(z)}},
 scw:function(a){var z,y

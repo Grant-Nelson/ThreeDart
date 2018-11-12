@@ -4919,6 +4919,11 @@ for(z=b.length,y=this.geG(),x=0;x<b.length;b.length===z||(0,H.C)(b),++x){w=b[x]
 if(w!=null){if(w.ga7()==null){v=new D.bf()
 v.d=0
 w.sa7(v)}w.ga7().U(0,y)}}this.aa()},"$2","giz",8,0,9],
+i:function(a){var z,y
+z=this.a
+y=z.length
+if(y<=0)return"Unnamed entity"
+return z},
 $isaJ:1,
 t:{
 eA:function(a,b,c,d,e,f){var z,y
@@ -5035,7 +5040,8 @@ if(typeof y!=="number")return y.p()
 w=C.i.cM(y*z)
 y=this.b
 if(y.width!==x||y.height!==w){y.width=x
-y.height=w}P.fh(C.q,this.giP())},
+y.height=w
+P.fh(C.q,this.giP())}},
 iQ:[function(){var z,y
 if(!this.ch){this.ch=!0
 z=window

@@ -4622,6 +4622,11 @@ for(z=b.length,y=this.geD(),x=0;x<b.length;b.length===z||(0,H.E)(b),++x){w=b[x]
 if(w!=null){if(w.ga7()==null){v=new D.bu()
 v.d=0
 w.sa7(v)}w.ga7().W(0,y)}}this.a8()},"$2","giV",8,0,8],
+i:function(a){var z,y
+z=this.a
+y=z.length
+if(y<=0)return"Unnamed entity"
+return z},
 $isaX:1,
 p:{
 bt:function(a,b,c,d,e,f){var z,y,x,w,v,u
@@ -4757,7 +4762,8 @@ if(typeof y!=="number")return y.k()
 w=C.i.be(y*z)
 y=this.b
 if(y.width!==x||y.height!==w){y.width=x
-y.height=w}P.dZ(C.n,this.gjc())},
+y.height=w
+P.dZ(C.n,this.gjc())}},
 jd:[function(){var z,y
 if(!this.ch){this.ch=!0
 z=window
@@ -6361,7 +6367,7 @@ I:function(a){var z=this.y
 if(!(z==null))z.C(a)},
 sd7:function(a,b){var z=this.a
 if(z!==b){this.a=b
-z=new D.H("warp",z,b,this,[P.ad])
+z=new D.H("wrap",z,b,this,[P.ad])
 z.b=!0
 this.I(z)}},
 scY:function(a){var z,y

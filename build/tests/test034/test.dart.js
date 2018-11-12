@@ -3209,6 +3209,11 @@ for(z=b.length,y=this.gdE(),x=0;x<b.length;b.length===z||(0,H.w)(b),++x){w=b[x]
 if(w!=null){if(w.gY()==null){v=new D.bM()
 v.d=0
 w.sY(v)}w.gY().O(0,y)}}this.a_()},"$2","gh9",8,0,8],
+i:function(a){var z,y
+z=this.a
+y=z.length
+if(y<=0)return"Unnamed entity"
+return z},
 $isat:1,
 p:{
 dz:function(a,b,c,d,e,f){var z,y
@@ -3325,7 +3330,8 @@ if(typeof y!=="number")return y.l()
 w=C.h.c6(y*z)
 y=this.b
 if(y.width!==x||y.height!==w){y.width=x
-y.height=w}P.eb(C.l,this.ghn())},
+y.height=w
+P.eb(C.l,this.ghn())}},
 ho:[function(){var z,y
 if(!this.ch){this.ch=!0
 z=window

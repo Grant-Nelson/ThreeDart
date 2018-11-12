@@ -3601,6 +3601,11 @@ for(z=b.length,y=this.gdZ(),x=0;x<b.length;b.length===z||(0,H.y)(b),++x){w=b[x]
 if(w!=null){if(w.ga0()==null){v=new D.b5()
 v.d=0
 w.sa0(v)}w.ga0().P(0,y)}}this.a2()},"$2","ghL",8,0,8],
+i:function(a){var z,y
+z=this.a
+y=z.length
+if(y<=0)return"Unnamed entity"
+return z},
 $isaA:1,
 q:{
 e4:function(a,b,c,d,e,f){var z,y
@@ -3717,7 +3722,8 @@ if(typeof y!=="number")return y.n()
 w=C.i.cn(y*z)
 y=this.b
 if(y.width!==x||y.height!==w){y.width=x
-y.height=w}P.eO(C.l,this.gi_())},
+y.height=w
+P.eO(C.l,this.gi_())}},
 i0:[function(){var z,y
 if(!this.ch){this.ch=!0
 z=window

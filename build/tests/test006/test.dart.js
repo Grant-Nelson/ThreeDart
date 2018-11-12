@@ -4930,6 +4930,11 @@ for(z=b.length,y=this.geq(),x=0;x<b.length;b.length===z||(0,H.B)(b),++x){w=b[x]
 if(w!=null){if(w.ga4()==null){v=new D.bi()
 v.d=0
 w.sa4(v)}w.ga4().a0(0,y)}}this.a1()},"$2","giA",8,0,9],
+i:function(a){var z,y
+z=this.a
+y=z.length
+if(y<=0)return"Unnamed entity"
+return z},
 $isaZ:1,
 t:{
 db:function(a,b,c,d,e,f){var z,y
@@ -5063,7 +5068,8 @@ if(typeof y!=="number")return y.p()
 w=C.i.cC(y*z)
 y=this.b
 if(y.width!==x||y.height!==w){y.width=x
-y.height=w}P.fc(C.q,this.giS())},
+y.height=w
+P.fc(C.q,this.giS())}},
 iT:[function(){var z,y
 if(!this.ch){this.ch=!0
 z=window

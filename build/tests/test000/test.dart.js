@@ -3481,6 +3481,11 @@ for(z=b.length,y=this.gbA(),x=0;x<b.length;b.length===z||(0,H.Z)(b),++x){w=b[x]
 if(w!=null){if(w.gL()==null){v=new D.bQ()
 v.d=0
 w.sL(v)}w.gL().N(0,y)}}this.aC()},"$2","gdk",8,0,8],
+h:function(a){var z,y
+z=this.a
+y=z.length
+if(y<=0)return"Unnamed entity"
+return z},
 $isdW:1},hU:{"^":"a;a,b,0c,0d,0e,0f,0r,0x,0y,0z,0Q,0ch,0cx,0cy,0db,0dx,0dy,0fr",
 c0:function(a,b){var z,y
 this.c=512
@@ -3554,7 +3559,8 @@ if(typeof y!=="number")return y.D()
 w=C.c.by(y*z)
 y=this.b
 if(y.width!==x||y.height!==w){y.width=x
-y.height=w}P.c1(C.f,this.gdD())},
+y.height=w
+P.c1(C.f,this.gdD())}},
 dE:[function(){var z,y
 if(!this.ch){this.ch=!0
 z=window

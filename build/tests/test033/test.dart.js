@@ -3231,6 +3231,11 @@ for(z=b.length,y=this.gdI(),x=0;x<b.length;b.length===z||(0,H.x)(b),++x){w=b[x]
 if(w!=null){if(w.gY()==null){v=new D.aT()
 v.d=0
 w.sY(v)}w.gY().L(0,y)}}this.a_()},"$2","ghd",8,0,8],
+i:function(a){var z,y
+z=this.a
+y=z.length
+if(y<=0)return"Unnamed entity"
+return z},
 $isav:1,
 p:{
 c4:function(a,b,c,d,e,f){var z,y
@@ -3348,7 +3353,8 @@ if(typeof y!=="number")return y.l()
 w=C.i.cc(y*z)
 y=this.b
 if(y.width!==x||y.height!==w){y.width=x
-y.height=w}P.ei(C.l,this.ghr())},
+y.height=w
+P.ei(C.l,this.ghr())}},
 hs:[function(){var z,y
 if(!this.ch){this.ch=!0
 z=window
