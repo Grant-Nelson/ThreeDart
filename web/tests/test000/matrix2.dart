@@ -25,7 +25,7 @@ void addMatrix2Tests(TestManager tests) {
   });
 
   tests.add("Matrix2 Identity Test", (TestArgs args) {
-    Math.Matrix2 mat = new Math.Matrix2.identity();
+    Math.Matrix2 mat = Math.Matrix2.identity;
     _matrix2String(args, mat, "[1.000, 0.000,",
                               " 0.000, 1.000]");
     _transPnt2Matrix2(args, mat,   0.0,  0.0,    0.0,  0.0);
@@ -120,7 +120,7 @@ void addMatrix2Tests(TestManager tests) {
   });
 
   tests.add("Matrix2 Inverse Test", (TestArgs args) {
-    _invsMatrix2(args, new Math.Matrix2.identity(),
+    _invsMatrix2(args, Math.Matrix2.identity,
       "[1.000, 0.000,",
       " 0.000, 1.000]");
     _invsMatrix2(args, new Math.Matrix2.scale(2.0, 3.0),
@@ -188,20 +188,20 @@ void _invsMatrix2(TestArgs args, Math.Matrix2 mat, String exp1, String exp2) {
     args.fail();
   }
   Math.Matrix2 ident1 = mat*inv;
-  if (ident1 != new Math.Matrix2.identity()) {
+  if (ident1 != Math.Matrix2.identity) {
     args.error("Unexpected result from Matrix2*Matrix2.inverse(): "+
       "\n   Matrix:   " + mat.format("             ") +
       "\n   Inverted: " + inv.format("             ") +
-      "\n   Expected: " + new Math.Matrix2.identity().format("             ") +
+      "\n   Expected: " + Math.Matrix2.identity.format("             ") +
       "\n   Gotten:   " + ident1.format("             ") + "\n");
     args.fail();
   }
   Math.Matrix2 ident2 = mat*inv;
-  if (ident2 != new Math.Matrix2.identity()) {
+  if (ident2 != Math.Matrix2.identity) {
     args.error("Unexpected result from Matrix2*Matrix2.inverse(): "+
       "\n   Matrix:   " + mat.format("             ") +
       "\n   Inverted: " + inv.format("             ") +
-      "\n   Expected: " + new Math.Matrix2.identity().format("             ") +
+      "\n   Expected: " + Math.Matrix2.identity.format("             ") +
       "\n   Gotten:   " + ident2.format("             ") + "\n");
     args.fail();
   }

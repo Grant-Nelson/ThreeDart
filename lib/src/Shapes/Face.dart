@@ -116,7 +116,7 @@ class Face {
     Math.Vector3 norm1 = this._ver1?.normal;
     Math.Vector3 norm2 = this._ver2?.normal;
     Math.Vector3 norm3 = this._ver3?.normal;
-    Math.Vector3 sum = new Math.Vector3.zero();
+    Math.Vector3 sum = Math.Vector3.zero;
     if (norm1 != null) sum += norm1;
     if (norm2 != null) sum += norm2;
     if (norm3 != null) sum += norm3;
@@ -158,7 +158,7 @@ class Face {
     Math.Vector3 binm1 = this._ver1?.binormal;
     Math.Vector3 binm2 = this._ver2?.binormal;
     Math.Vector3 binm3 = this._ver3?.binormal;
-    Math.Vector3 sum = new Math.Vector3.zero();
+    Math.Vector3 sum = Math.Vector3.zero;
     if (binm1 != null) sum += binm1;
     if (binm2 != null) sum += binm2;
     if (binm3 != null) sum += binm3;

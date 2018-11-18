@@ -37,7 +37,7 @@ void addMatrix3Tests(TestManager tests) {
   });
 
   tests.add("Matrix3 Identity Test", (TestArgs args) {
-    Math.Matrix3 mat = new Math.Matrix3.identity();
+    Math.Matrix3 mat = Math.Matrix3.identity;
     _matrix3String(args, mat, "[1.000, 0.000, 0.000,",
                               " 0.000, 1.000, 0.000,",
                               " 0.000, 0.000, 1.000]");
@@ -233,7 +233,7 @@ void addMatrix3Tests(TestManager tests) {
   });
 
   tests.add("Matrix3 Inverse Test", (TestArgs args) {
-    _invsMatrix3(args, new Math.Matrix3.identity(),
+    _invsMatrix3(args, Math.Matrix3.identity,
       "[1.000, 0.000, 0.000,",
       " 0.000, 1.000, 0.000,",
       " 0.000, 0.000, 1.000]");
@@ -339,20 +339,20 @@ void _invsMatrix3(TestArgs args, Math.Matrix3 mat, String exp1, String exp2, Str
     args.fail();
   }
   Math.Matrix3 ident1 = mat*inv;
-  if (ident1 != new Math.Matrix3.identity()) {
+  if (ident1 != Math.Matrix3.identity) {
     args.error("Unexpected result from Matrix3*Matrix3.inverse(): "+
       "\n   Matrix:   " + mat.format("             ") +
       "\n   Inverted: " + inv.format("             ") +
-      "\n   Expected: " + new Math.Matrix3.identity().format("             ") +
+      "\n   Expected: " + Math.Matrix3.identity.format("             ") +
       "\n   Gotten:   " + ident1.format("             ") + "\n");
     args.fail();
   }
   Math.Matrix3 ident2 = mat*inv;
-  if (ident2 != new Math.Matrix3.identity()) {
+  if (ident2 != Math.Matrix3.identity) {
     args.error("Unexpected result from Matrix3*Matrix3.inverse(): "+
       "\n   Matrix:   " + mat.format("             ") +
       "\n   Inverted: " + inv.format("             ") +
-      "\n   Expected: " + new Math.Matrix3.identity().format("             ") +
+      "\n   Expected: " + Math.Matrix3.identity.format("             ") +
       "\n   Gotten:   " + ident2.format("             ") + "\n");
     args.fail();
   }

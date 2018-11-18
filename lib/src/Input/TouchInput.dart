@@ -38,16 +38,16 @@ class TouchInput {
     this._move = null;
     this._buttons = 0;
     this._startTime = null;
-    this._startPnt = new Math.Point2.zero();
+    this._startPnt = Math.Point2.zero;
     this._prevTime = null;
-    this._prevPnt = new Math.Point2.zero();
+    this._prevPnt = Math.Point2.zero;
   }
 
   /// Gets the locked mouse arguments.
   /// If [setStart] is true then the start point and time are set.
   TouchEventArgs _getMouseArgs(List<Math.Point2> pnts, bool setStart) {
     final DateTime curTime = new DateTime.now();
-    Math.Point2 pnt = (pnts.length > 0)? pnts[0]: new Math.Point2.zero();
+    Math.Point2 pnt = (pnts.length > 0)? pnts[0]: Math.Point2.zero;
     TouchEventArgs args = new TouchEventArgs(this, pnts, this._input.clientRect,
       this._startPnt, this._prevPnt, pnt, this._startTime, this._prevTime, curTime);
     

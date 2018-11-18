@@ -36,8 +36,8 @@ class IdentityCamera implements Camera {
 
   /// Binds this camera to the state.
   void bind(Core.RenderState state) {
-    state.projection.push(new Math.Matrix4.identity());
-    Math.Matrix4 look = new Math.Matrix4.identity();
+    state.projection.push(Math.Matrix4.identity);
+    Math.Matrix4 look = Math.Matrix4.identity;
     if (mover != null) {
       Math.Matrix4 mat = mover.update(state, this);
       if (mat != null) {

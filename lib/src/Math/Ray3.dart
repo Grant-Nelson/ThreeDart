@@ -3,6 +3,13 @@ part of ThreeDart.Math;
 /// A 3D ray is a vector with a starting point.
 class Ray3 {
 
+  /// Gets a [Ray3] at the origin with no vector.
+  static Ray3 get zero {
+    _zeroSingleton ??= new Ray3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    return _zeroSingleton;
+  }
+  static Ray3 _zeroSingleton;
+
   /// The x component of the ray.
   final double x;
 
@@ -23,10 +30,6 @@ class Ray3 {
 
   /// Constructs a new [Ray3].
   Ray3(this.x, this.y, this.z, this.dx, this.dy, this.dz);
-
-  /// Constructs a new [Ray3] at the origin with no vector.
-  factory Ray3.zero() =>
-    new Ray3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
   /// Constructs a new [Ray3] with the given point and vector.
   factory Ray3.fromVertex(Point3 pnt, Vector3 vec) =>

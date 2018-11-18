@@ -56,7 +56,7 @@ class LockedMouseInput {
     this._buttons = 0;
     this._startTime = null;
     this._prevTime = null;
-    this._prevPnt = new Math.Point2.zero();
+    this._prevPnt = Math.Point2.zero;
     this._hSensitivity = 1.0;
     this._vSensitivity = 1.0;
     this._whSensitivity = 1.0;
@@ -72,7 +72,7 @@ class LockedMouseInput {
     final DateTime curTime = new DateTime.now();
     final Math.Point2 pnt = this._prevPnt + Math.Point2(vec.dx*this._hSensitivity, vec.dy*this._vSensitivity);
     MouseEventArgs args = new MouseEventArgs(this, button, this._input.clientRect,
-      new Math.Point2.zero(), this._prevPnt, pnt, this._startTime, this._prevTime, curTime);
+      Math.Point2.zero, this._prevPnt, pnt, this._startTime, this._prevTime, curTime);
     this._prevTime = curTime;
     this._prevPnt = pnt;
     return args;
@@ -121,7 +121,7 @@ class LockedMouseInput {
     final DateTime curTime = new DateTime.now();
     this._lockChanged.emit(new LockedEventArgs(this, locked, button, this._input.clientRect, pnt, curTime));
     this._startTime = curTime;
-    this._prevPnt = new Math.Point2.zero();
+    this._prevPnt = Math.Point2.zero;
   }
 
   /// The horizontal mouse movement sensitivity.

@@ -2,6 +2,16 @@ part of ThreeDart.Math;
 
 /// A math structure for storing and manipulating a Matrix 3x3.
 class Matrix3 {
+  
+  /// Gets a 3x3 identity matrix.
+  static Matrix3 get identity {
+    _identSingleton ??= new Matrix3(
+      1.0, 0.0, 0.0,
+      0.0, 1.0, 0.0,
+      0.0, 0.0, 1.0);
+    return _identSingleton;
+  }
+  static Matrix3 _identSingleton;
 
   /// The 1st row and 1st column of the matrix, XX.
   final double m11;
@@ -34,12 +44,6 @@ class Matrix3 {
   Matrix3(double this.m11, double this.m21, double this.m31,
           double this.m12, double this.m22, double this.m32,
           double this.m13, double this.m23, double this.m33);
-
-  /// Constructs a 3x3 identity matrix.
-  factory Matrix3.identity() =>
-    new Matrix3(1.0, 0.0, 0.0,
-                0.0, 1.0, 0.0,
-                0.0, 0.0, 1.0);
 
   /// Constructs a 3x3 translation matrix.
   factory Matrix3.translate(double tx, double ty) =>
@@ -157,7 +161,7 @@ class Matrix3 {
   /// Gets the inverse of this matrix.
   Matrix3 inverse() {
     double det = this.det();
-    if (Comparer.equals(det, 0.0)) return new Matrix3.identity();
+    if (Comparer.equals(det, 0.0)) return Matrix3.identity;
     double q = 1.0 / det;
     return new Matrix3((this.m22 * this.m33 - this.m23 * this.m32) * q,
                        (this.m23 * this.m31 - this.m21 * this.m33) * q,

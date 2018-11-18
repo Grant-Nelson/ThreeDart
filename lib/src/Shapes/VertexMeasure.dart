@@ -21,7 +21,7 @@ class RadialVertexMeasure extends VertexMeasure {
   /// Creates a new radial measure tool with optional [center] and [scalar].
   RadialVertexMeasure({double scalar: 1.0, Math.Point3 center: null}) {
     this._scalar = scalar;
-    this._center = center ?? new Math.Point3.zero();
+    this._center = center ?? Math.Point3.zero;
   }
 
   /// Determines the distance from the center point to the given vertex scaled.
@@ -42,7 +42,7 @@ class Radial2VertexMeasure extends VertexMeasure {
   /// Creates a new radial 2 measure tool with optional [center] and [scalar].
   Radial2VertexMeasure({double scalar: 1.0, Math.Point3 center: null}) {
     this._scalar = scalar;
-    this._center = center ?? new Math.Point3.zero();
+    this._center = center ?? Math.Point3.zero;
   }
 
   /// Determines the distance  squared from the center point to the given vertex scaled.
@@ -66,8 +66,8 @@ class DirectionalVertexMeasure extends VertexMeasure {
 
   /// Creates a new directional measure tool with optional [center] and [vector].
   DirectionalVertexMeasure({Math.Point3 center: null, Math.Vector3 vector: null}) {
-    this._center = center ?? new Math.Point3.zero();
-    this._vector = vector ?? new Math.Vector3(0.0, 0.0, 1.0);
+    this._center = center ?? Math.Point3.zero;
+    this._vector = vector ?? Math.Vector3.posZ;
     double dist2 = this._vector.length2();
     if (dist2 == 0.0) this._idist2 = 1.0;
     else this._idist2 = 1.0/dist2;

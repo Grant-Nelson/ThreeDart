@@ -3,6 +3,41 @@ part of ThreeDart.Math;
 /// A math structure for storing a 2D vector.
 class Vector2 {
 
+  /// Gets a zeroed [Vector2].
+  static Vector2 get zero {
+    _zeroSingleton ??= new Vector2(0.0, 0.0);
+    return _zeroSingleton;
+  }
+  static Vector2 _zeroSingleton;
+  
+  /// Gets a new positive X [Vector2].
+  static Vector2 get posX {
+    _posXSingleton ??= new Vector2(1.0, 0.0);
+    return _posXSingleton;
+  }
+  static Vector2 _posXSingleton;
+  
+  /// Gets a new negative X [Vector2].
+  static Vector2 get negX {
+    _negXSingleton ??= new Vector2(-1.0, 0.0);
+    return _negXSingleton;
+  }
+  static Vector2 _negXSingleton;
+  
+  /// Gets a new positive Y [Vector2].
+  static Vector2 get posY {
+    _posYSingleton ??= new Vector2(0.0, 1.0);
+    return _posYSingleton;
+  }
+  static Vector2 _posYSingleton;
+  
+  /// Gets a new negative Y [Vector2].
+  static Vector2 get negY {
+    _negYSingleton ??= new Vector2(0.0, -1.0);
+    return _negYSingleton;
+  }
+  static Vector2 _negYSingleton;
+
   /// The dX component of the vector.
   final double dx;
 
@@ -11,10 +46,6 @@ class Vector2 {
 
   /// Constructs a new [Vector2] instance.
   Vector2(double this.dx, double this.dy);
-
-  /// Constructs a new zeroed [Vector2].
-  factory Vector2.zero() =>
-    new Vector2(0.0, 0.0);
 
   /// Constructs a new [Vector2] from a [Vector3].
   ///
@@ -118,7 +149,7 @@ class Vector2 {
 
   /// Creates a new vector inversely scaled by the given [scalar].
   Vector2 operator /(double scalar) {
-    if (Comparer.equals(scalar, 0.0)) return new Vector2.zero();
+    if (Comparer.equals(scalar, 0.0)) return Vector2.zero;
     return new Vector2(this.dx / scalar, this.dy / scalar);
   }
 

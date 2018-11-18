@@ -119,7 +119,7 @@ class Player {
   Movers.Group get location => this._playerLoc;
 
   /// Gets the specific point location of the player in the world.
-  Math.Point3 get point => this._playerLoc.matrix.transPnt3(new Math.Point3.zero());
+  Math.Point3 get point => this._playerLoc.matrix.transPnt3(Math.Point3.zero);
 
   /// The base entity for the player.
   ThreeDart.Entity get entity => this._entity;
@@ -129,7 +129,7 @@ class Player {
     Chunk chunk = this._world.findChunk(Constants.playerStartX.toInt(), Constants.playerStartZ.toInt());
     int y = chunk?.topHit(Constants.playerStartX.toInt(), Constants.playerStartZ.toInt()) ?? 0;
     this._trans.location = new Math.Point3(Constants.playerStartX, y.toDouble()+60.0, Constants.playerStartZ);
-    this._trans.velocity = new Math.Vector3.zero();
+    this._trans.velocity = Math.Vector3.zero;
   }
 
   /// Handles then the player presses the return to origin button.
@@ -273,7 +273,7 @@ class Player {
   Math.Ray3 _playerViewTarget() {
     Math.Matrix4 mat = this._playerLoc.matrix;
     return new Math.Ray3.fromVertex(
-      mat.transPnt3(new Math.Point3.zero()),
+      mat.transPnt3(Math.Point3.zero),
       mat.transVec3(new Math.Vector3(0.0, 0.0, -Constants.highlightDistance)));
   }
 

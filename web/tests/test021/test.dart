@@ -47,7 +47,7 @@ void main() {
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
   ThreeDart.Entity centerObj = new ThreeDart.Entity()
-    ..mover = new Movers.Constant.scale(1.0, 1.0, 1.0)
+    ..mover = new Movers.Constant.identity()
     ..shape = Shapes.toroid();
 
   ThreeDart.Entity room = new ThreeDart.Entity()

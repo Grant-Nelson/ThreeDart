@@ -21,7 +21,7 @@ Shape line({Data.VertexType type: null}) {
   Vertex ver1 = shape.vertices.addNew(
     type:    type,
     loc:     new Math.Point3(-1.0, 0.0, 0.0),
-    txt2D:   new Math.Point2(0.0, 0.0),
+    txt2D:   Math.Point2.zero,
     txtCube: new Math.Vector3(-1.0, -1.0, 0.0).normal(),
     clr:     new Math.Color4(1.0, 0.0, 0.0, 1.0),
     bending: new Math.Point4(1.0, 2.0, 4.0, 6.0));
@@ -68,7 +68,7 @@ Shape square({double width: 2.0, double height: 2.0, double zOffset: 0.0, Data.V
   Vertex ver4 = shape.vertices.addNew(
     type:    type,
     loc:     new Math.Point3(-width*0.5, height*0.5, zOffset),
-    txt2D:   new Math.Point2(0.0, 0.0),
+    txt2D:   Math.Point2.zero,
     txtCube: new Math.Vector3(-1.0, 1.0, 1.0).normal(),
     clr:     new Math.Color4(1.0, 1.0, 0.0, 1.0),
     bending: new Math.Point4(0.0, 2.0, 4.0, 7.0));
@@ -163,7 +163,7 @@ Shape disk({int sides: 8, double height: 0.0, bool flip: false,
       norm:    new Math.Vector3(0.0, 0.0, sign),
       txt2D:   new Math.Point2(0.5, 0.5),
       txtCube: new Math.Vector3(0.0, 0.0, sign).normal(),
-      clr:     new Math.Color4(1.0, 1.0, 1.0),
+      clr:     new Math.Color4.white(),
       bending: new Math.Point4(bending, -1.0, -1.0, -1.0)));
   }
   for (int i = 0; i <= sides; i++) {
@@ -379,9 +379,9 @@ Shape cylindricalPath(int minorCount, int majorCount, double minorRadius, double
     Math.Point3 next = pathHndl(majorAngle + Math.PI/majorCount)*majorRadius;
     Math.Vector3 heading = new Math.Vector3.fromPoint3(next - cur).normal();
 
-    Math.Vector3 other = new Math.Vector3(1.0, 0.0, 0.0);
+    Math.Vector3 other = Math.Vector3.posX;
     if (heading != other) {
-      other = new Math.Vector3(0.0, 0.0, 1.0);
+      other = Math.Vector3.posZ;
     }
     Math.Vector3 cross = heading.cross(other).normal();
     other = cross.cross(heading).normal();

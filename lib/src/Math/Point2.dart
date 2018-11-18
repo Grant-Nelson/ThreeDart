@@ -3,6 +3,13 @@ part of ThreeDart.Math;
 /// A math structure for storing a 2D point.
 class Point2 {
 
+  /// Gets a [Point2] at the origin.
+  static Point2 get zero {
+    _zeroSingleton ??= new Point2(0.0, 0.0);
+    return _zeroSingleton;
+  }
+  static Point2 _zeroSingleton;
+
   /// The x component of the point.
   final double x;
 
@@ -11,10 +18,6 @@ class Point2 {
 
   /// Constructs a new [Point2] instance.
   Point2(double this.x, double this.y);
-
-  /// Constructs a new [Point2] at the origin.
-  factory Point2.zero() =>
-    new Point2(0.0, 0.0);
 
   /// Constructs a new [Point2] from a [Vector2].
   factory Point2.fromVector2(Vector2 vec) =>
@@ -96,7 +99,7 @@ class Point2 {
 
   /// Creates a new point inversely scaled by the given [scalar].
   Point2 operator /(double scalar) {
-    if (Comparer.equals(scalar, 0.0)) return new Point2.zero();
+    if (Comparer.equals(scalar, 0.0)) return Point2.zero;
     return new Point2(this.x / scalar, this.y / scalar);
   }
 

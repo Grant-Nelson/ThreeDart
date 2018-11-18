@@ -3,6 +3,13 @@ part of ThreeDart.Math;
 /// A math structure for storing a quaternion.
 class Quaternion {
 
+  /// Gets a [Quaternion] at the origin.
+  static Quaternion get zero {
+    _zeroSingleton ??= new Quaternion(0.0, 0.0, 0.0, 0.0);
+    return _zeroSingleton;
+  }
+  static Quaternion _zeroSingleton;
+
   /// The imaginary 'i' scalar of the quaternion.
   final double a;
 
@@ -20,10 +27,6 @@ class Quaternion {
   /// [a], [b], and [c] are the scalars on the imaginary 'i', 'j', and 'k' axii repectively.
   /// [t] is the scalar on the real axis.
   Quaternion(double this.a, double this.b, double this.c, double this.t);
-
-  /// Constructs a new [Quaternion] at the origin.
-  factory Quaternion.zero() =>
-    new Quaternion(0.0, 0.0, 0.0, 0.0);
 
   /// Constructs a scaled quaterion of the given [quat] scaled by the given [scalar].
   factory Quaternion.scale(Quaternion quat, double scalar) =>
@@ -101,7 +104,7 @@ class Quaternion {
   /// Gets normalized quaternion of this quaternion.
   Quaternion normal() {
     double length = this.length();
-    if (Comparer.equals(length, 0.0)) return new Quaternion.zero();
+    if (Comparer.equals(length, 0.0)) return Quaternion.zero;
     return new Quaternion.scale(this, 1.0/length);
   }
 
