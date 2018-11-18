@@ -77,7 +77,7 @@ class EntityPass implements RenderPass {
   /// If null is set, the camera is set to a Perspective.
   Views.Camera get camera => this._camera;
   void set camera(Views.Camera camera) {
-    camera = camera ?? new Views.Perspective();
+    camera ??= new Views.Perspective();
     if (this._camera != camera) {
       if (this._camera != null) this._camera.changed.remove(this._onChanged);
       Views.Camera prev = this._camera;
@@ -91,7 +91,7 @@ class EntityPass implements RenderPass {
   /// If null is set, the target is set to an FrontTarget.
   Views.Target get target => this._target;
   void set target(Views.Target target) {
-    target = target ?? new Views.FrontTarget();
+    target ??= new Views.FrontTarget();
     if (this._target != target) {
       if (this._target != null) this._target.changed.remove(this._onChanged);
       Views.Target prev = this._target;

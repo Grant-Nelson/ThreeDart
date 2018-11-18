@@ -11,11 +11,13 @@ class Skybox extends Technique {
   /// Creates a new sky box technique with the given initial values.
   Skybox({double fov: Math.PI_3, Textures.TextureCube boxTexture: null,
           Math.Color3 boxColor: null}) {
-    this._shader    = null;
-    this.fov        = fov;
+    this._shader  = null;
+    this._fov     = fov ?? Math.PI_3;
+    this._boxTxt  = null;
+    this._boxClr  = boxColor ?? new Math.Color3.white();
+    this._changed = null;
+
     this.boxTexture = boxTexture;
-    this.boxColor   = boxColor;
-    this._changed   = null;
   }
 
   /// Indicates that this technique has changed.

@@ -36,6 +36,13 @@ class CoverPass implements RenderPass {
     this._onRender = null;
   }
 
+  /// Creates a new cover render pass preset with a skybox technique.
+  /// The given [boxTexture] is the cube texture of the skybox.
+  factory CoverPass.skybox(Textures.TextureCube boxTexture) {
+    return new CoverPass()
+      ..technique = new Techniques.Skybox(boxTexture: boxTexture);
+  }
+
   /// Event emitted on an render for this pass.
   Events.Event get onRender {
     this._onRender ??= new Events.Event();
@@ -53,18 +60,11 @@ class CoverPass implements RenderPass {
     this._changed?.emit(args);
   }
 
-  /// Creates a new cover render pass preset with a skybox technique.
-  /// The given [boxTexture] is the cube texture of the skybox.
-  factory CoverPass.skybox(Textures.TextureCube boxTexture) {
-    return new CoverPass()
-      ..technique = new Techniques.Skybox(boxTexture: boxTexture);
-  }
-
   /// The camera describing the view of the scene.
   /// If null is set, the camera is set to an IdentityCamera.
   Views.Camera get camera => this._camera;
   void set camera(Views.Camera camera) {
-    camera = camera ?? new Views.IdentityCamera();
+    camera ??= new Views.IdentityCamera();
     if (this._camera != camera) {
       if (this._camera != null) this._camera.changed.remove(this._onChanged);
       Views.Camera prev = this._camera;
@@ -78,7 +78,7 @@ class CoverPass implements RenderPass {
   /// If null is set, the target is set to an FrontTarget.
   Views.Target get target => this._target;
   void set target(Views.Target target) {
-    target = target ?? new Views.FrontTarget();
+    target ??= new Views.FrontTarget();
     if (this._target != target) {
       if (this._target != null) this._target.changed.remove(this._onChanged);
       Views.Target prev = this._target;
