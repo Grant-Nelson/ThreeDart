@@ -2,6 +2,15 @@ part of ThreeDart.Math;
 
 /// A math structure for storing and manipulating a Matrix 2x2.
 class Matrix2 {
+  
+  /// Gets a 2x2 identity matrix.
+  static Matrix2 get identity {
+    _identSingleton ??= new Matrix2(
+      1.0, 0.0,
+      0.0, 1.0);
+    return _identSingleton;
+  }
+  static Matrix2 _identSingleton;
 
   /// The 1st row and 1st column of the matrix, XX.
   final double m11;
@@ -18,11 +27,6 @@ class Matrix2 {
   /// Constructs a new [Matrix2] with the given initial values.
   Matrix2(double this.m11, double this.m21,
           double this.m12, double this.m22);
-
-  /// Constructs a 2x2 identity matrix.
-  factory Matrix2.identity() =>
-    new Matrix2(1.0, 0.0,
-                0.0, 1.0);
 
   /// Constructs a 2x2 scalar matrix.
   ///
@@ -93,7 +97,7 @@ class Matrix2 {
   /// Gets the inverse of this matrix.
   Matrix2 inverse() {
     double det = this.det();
-    if (Comparer.equals(det, 0.0)) return new Matrix2.identity();
+    if (Comparer.equals(det, 0.0)) return Matrix2.identity;
     double q = 1.0 / det;
     return new Matrix2( this.m22 * q, -this.m21 * q,
                        -this.m12 * q,  this.m11 * q);

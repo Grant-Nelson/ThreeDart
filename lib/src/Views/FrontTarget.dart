@@ -25,7 +25,7 @@ class FrontTarget extends Target {
     this._clearDepth   = clearDepth ?? true;
     this._stencil      = stencil ?? 0;
     this._clearStencil = clearStencil ?? false;
-    this._region       = region ?? new Math.Region2(0.0, 0.0, 1.0, 1.0);
+    this._region       = region ?? Math.Region2.unit;
     this._changed      = null;
   }
 
@@ -59,7 +59,7 @@ class FrontTarget extends Target {
   /// Indicates if the color target should be cleared with the clear color.
   bool get clearColor => this._clearColor;
   void set clearColor(bool clearColor) {
-    clearColor = clearColor ?? true;
+    clearColor ??= true;
     if (this._clearColor != clearColor) {
       this._clearColor = clearColor;
       this._onBoolChanged("clearColor", this._clearColor);
@@ -69,7 +69,7 @@ class FrontTarget extends Target {
   /// The clear depth to clear the target to before rendering.
   double get depth => this._depth;
   void set depth(double depth) {
-    depth = depth ?? 2000.0;
+    depth ??= 2000.0;
     if (!Math.Comparer.equals(this._depth, depth)) {
       double prev = this._depth;
       this._depth = depth;
@@ -80,7 +80,7 @@ class FrontTarget extends Target {
   /// Indicates if the depth target should be cleared with the clear depth.
   bool get clearDepth => this._clearDepth;
   void set clearDepth(bool clearDepth) {
-    clearDepth = clearDepth ?? true;
+    clearDepth ??= true;
     if (this._clearDepth = clearDepth) {
       this._clearDepth = clearDepth;
       this._onBoolChanged("clearDepth", this._clearDepth);
@@ -90,7 +90,7 @@ class FrontTarget extends Target {
   /// The clear stencil value to clear the stencil target to before rendering.
   int get stencil => this._stencil;
   void set stencil(int stencil) {
-    stencil = stencil ?? 0;
+    stencil ??= 0;
     if (this._stencil != stencil) {
       int prev = this._stencil;
       this._stencil = stencil;
@@ -101,6 +101,7 @@ class FrontTarget extends Target {
   /// Indicates if the stencil target should be cleared with the clear stencil.
   bool get clearStencil => this._clearStencil;
   void set clearStencil(bool clearStencil) {
+    clearStencil ??= false;
     if (this._clearStencil != clearStencil) {
       this._clearStencil = clearStencil;
       this._onBoolChanged("clearStencil", this._clearStencil);
@@ -111,7 +112,7 @@ class FrontTarget extends Target {
   /// <0, 0> is top left corner and <1, 1> is botton right.
   Math.Region2 get region => this._region;
   set region(Math.Region2 region) {
-    region = region ?? new Math.Region2(0.0, 0.0, 1.0, 1.0);
+    region ??= Math.Region2.unit;
     if (this._region != region) {
       Math.Region2 prev = this._region;
       this._region = region;

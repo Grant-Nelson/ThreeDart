@@ -141,18 +141,18 @@ class TextureLayout extends Shader {
 
   /// Sets the color matrix at the given [index].
   void setColorMatrix(int index, Math.Matrix4 mat) =>
-    this._clrMats[index].setMatrix4(mat ?? new Math.Matrix4.identity());
+    this._clrMats[index].setMatrix4(mat ?? Math.Matrix4.identity);
 
   /// Sets the source rectangle at the given [index].
   void setSourceRect(int index, Math.Region2 rect) {
-    if (rect == null) rect = new Math.Region2(0.0, 0.0, 1.0, 1.0);
+    rect ??= Math.Region2.unit;
     this._srcLocs[index].setValues(rect.x, rect.y);
     this._srcSizes[index].setValues(rect.dx, rect.dy);
   }
 
   /// Sets the destination rectangle at the given [index].
   void setDestinationRect(int index, Math.Region2 rect) {
-    if (rect == null) rect = new Math.Region2(0.0, 0.0, 1.0, 1.0);
+    rect ??= Math.Region2.unit;
     this._destLocs[index].setValues(rect.x, rect.y);
     this._destSizes[index].setValues(rect.dx, rect.dy);
   }

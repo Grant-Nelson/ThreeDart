@@ -13,7 +13,7 @@ class Directional implements Light {
       Math.Color3  color: null}) {
     this._mover     = null;
     this._color     = new Math.Color3.white();
-    this._direction = new Math.Vector3(0.0, 0.0, 1.0);
+    this._direction = Math.Vector3.posZ;
     this._changed   = null;
 
     this.mover = mover;
@@ -33,7 +33,7 @@ class Directional implements Light {
 
   /// Updates the light with the current state.
   void update(Core.RenderState state) {
-    this._direction = new Math.Vector3(0.0, 0.0, 1.0);
+    this._direction = Math.Vector3.posZ;
     if (this._mover != null) {
       Math.Matrix4 mat = this._mover.update(state, this);
       if (mat != null) {
@@ -57,7 +57,7 @@ class Directional implements Light {
   Math.Vector3 get direction => this._direction;
   void set direction(Math.Vector3 vector) {
     this._mover = new Movers.Constant.lookTowards(
-      new Math.Point3.zero(), new Math.Vector3(0.0, 1.0, 0.0), vector);
+      Math.Point3.zero, Math.Vector3.posY, vector);
   }
 
   /// The mover to position this light.

@@ -241,7 +241,7 @@ class ReducedShape implements ShapeBuilder {
   bool calculateCubeTextures() => false;
 
   /// Calculates the axial alligned bounding box of the shape.
-  Math.Region3 calculateAABB() => this._aabb ?? new Math.Region3.zero();
+  Math.Region3 calculateAABB() => this._aabb ?? Math.Region3.zero;
 
   /// Builds a buffer store for caching the shape for rendering.
   /// This requires the buffer [builder] for WebGL or testing,

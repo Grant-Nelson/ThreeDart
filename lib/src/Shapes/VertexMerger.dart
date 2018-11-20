@@ -124,7 +124,7 @@ class NormalAdjuster extends VertexMerger {
   /// Returns null and updates the normal of all
   /// the [vertices] to the average of all the normals.
   Vertex merge(List<Vertex> vertices) {
-    Math.Vector3 avgNorm = new Math.Vector3.zero();
+    Math.Vector3 avgNorm = Math.Vector3.zero;
     for (Vertex ver in vertices) {
       if (ver.normal != null) {
         avgNorm += ver.normal;
@@ -144,7 +144,7 @@ class BinormalAdjuster extends VertexMerger {
   /// Returns null and updates the binormal of all
   /// the [vertices] to the average of all the binormals.
   Vertex merge(List<Vertex> vertices) {
-    Math.Vector3 avgBinorm = new Math.Vector3.zero();
+    Math.Vector3 avgBinorm = Math.Vector3.zero;
     for (Vertex ver in vertices) {
       if (ver.binormal != null) {
         avgBinorm += ver.binormal;

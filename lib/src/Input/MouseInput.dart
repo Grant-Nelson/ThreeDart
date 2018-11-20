@@ -49,9 +49,9 @@ class MouseInput {
 
     this._buttons = 0;
     this._startTime = null;
-    this._startPnt = new Math.Point2.zero();
+    this._startPnt = Math.Point2.zero;
     this._prevTime = null;
-    this._prevPnt = new Math.Point2.zero();
+    this._prevPnt = Math.Point2.zero;
     
     this._whSensitivity = 1.0;
     this._wvSensitivity = 1.0;

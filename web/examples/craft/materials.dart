@@ -46,8 +46,8 @@ class Materials {
 
     // Create the light source attached to most of the textures a used for the world being created.
     this._light = new Lights.Directional(color: new Math.Color3.white(),
-      mover: new Movers.Constant.lookAtTarget(new Math.Point3.zero(),
-      new Math.Vector3(0.0, 0.0, 1.0), new Math.Point3(0.5, -1.0, 0.2)));
+      mover: new Movers.Constant.lookAtTarget(Math.Point3.zero,
+      Math.Vector3.posZ, new Math.Point3(0.5, -1.0, 0.2)));
 
     int boundary       = this._addMat("boundary");
     int brick          = this._addMat("brick");

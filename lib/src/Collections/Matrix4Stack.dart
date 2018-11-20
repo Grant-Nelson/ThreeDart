@@ -39,13 +39,13 @@ class Matrix4Stack implements Events.Changable {
   /// Returns the identity matrix if the stack is empty.
   Math.Matrix4 get matrix {
     if (this._mat.length > 0) return this._mat.last;
-    else return new Math.Matrix4.identity();
+    else return Math.Matrix4.identity;
   }
 
   /// Pushes a new matrix onto the stack.
   /// If null is pushed the identity matrix will be put on the top of the stack.
   void push(Math.Matrix4 mat) {
-    if (mat == null) this._mat.add(new Math.Matrix4.identity());
+    if (mat == null) this._mat.add(Math.Matrix4.identity);
     else this._mat.add(mat);
     this._onChanged();
   }

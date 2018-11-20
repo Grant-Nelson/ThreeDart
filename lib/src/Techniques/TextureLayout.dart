@@ -53,7 +53,7 @@ class TextureLayout extends Technique {
   /// The background color for the layout.
   Math.Color4 get backColor => this._backClr;
   set backColor(Math.Color4 clr) {
-    clr = clr ?? new Math.Color4.transparent();
+    clr ??= new Math.Color4.transparent();
     if (this._backClr != clr) {
       Math.Color4 prev = this._backClr;
       this._backClr = clr;

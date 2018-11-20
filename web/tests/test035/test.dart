@@ -31,14 +31,14 @@ void main() {
     ..diffuse.color = new Math.Color3(0.0, 1.0, 0.0)
     ..specular.color = new Math.Color3(1.0, 0.0, 0.0)
     ..specular.shininess = 10.0
-    ..bendMatrices.add(new Math.Matrix4.identity())
-    ..bendMatrices.add(new Math.Matrix4.identity())
-    ..bendMatrices.add(new Math.Matrix4.identity())
-    ..bendMatrices.add(new Math.Matrix4.identity())
-    ..bendMatrices.add(new Math.Matrix4.identity())
-    ..bendMatrices.add(new Math.Matrix4.identity())
-    ..bendMatrices.add(new Math.Matrix4.identity())
-    ..bendMatrices.add(new Math.Matrix4.identity());
+    ..bendMatrices.add(Math.Matrix4.identity)
+    ..bendMatrices.add(Math.Matrix4.identity)
+    ..bendMatrices.add(Math.Matrix4.identity)
+    ..bendMatrices.add(Math.Matrix4.identity)
+    ..bendMatrices.add(Math.Matrix4.identity)
+    ..bendMatrices.add(Math.Matrix4.identity)
+    ..bendMatrices.add(Math.Matrix4.identity)
+    ..bendMatrices.add(Math.Matrix4.identity);
 
   Movers.Group camMover = new Movers.Group()
     ..add(new Movers.UserRotater(input: td.userInput))

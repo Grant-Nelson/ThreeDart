@@ -123,7 +123,7 @@ class Shape implements ShapeBuilder {
   /// Calculates the axial alligned bounding box of the shape.
   Math.Region3 calculateAABB() {
     final int count = this._vertices.length;
-    if (count <= 0) return new Math.Region3.zero();
+    if (count <= 0) return Math.Region3.zero;
     Math.Region3 result = new Math.Region3.fromPoint(this._vertices[0].location);
     for (int i = count-1; i >= 1; i--)
       result = result.expandWithPoint(this._vertices[i].location);
@@ -320,7 +320,7 @@ class Shape implements ShapeBuilder {
   /// and the shape is centered then offset by the given [offset].
   void resizeCenter([double size = 2.0, Math.Point3 offset = null]) {
     Math.Region3 aabb = this.calculateAABB();
-    offset ??= new Math.Point3.zero();
+    offset ??= Math.Point3.zero;
     offset = offset - aabb.center;
     double maxSize = aabb.dx;
     if (aabb.dy > maxSize) maxSize = aabb.dy;

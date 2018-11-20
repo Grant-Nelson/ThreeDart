@@ -40,11 +40,11 @@ class BackTarget extends Target {
     this._clearColor   = true;
     this._depth        = 2000.0;
     this._clearDepth   = true;
-    this._region       = new Math.Region2(0.0, 0.0, 1.0, 1.0);
+    this._region       = Math.Region2.unit;
     this._changed      = null;
-    
-    this.width  = width ?? 512;
-    this.height = height ?? 512;
+
+    this.width      = width;
+    this.height     = height;
   }
 
   /// Indicates that this target has changed.
@@ -107,6 +107,7 @@ class BackTarget extends Target {
   /// The clear color to clear the target to before rendering.
   Math.Color4 get color => this._color;
   void set color(Math.Color4 color) {
+    color ??= Math.Color4.black();
     if (this._color != color) {
       Math.Color4 prev = this._color;
       this._color = color;
@@ -117,6 +118,7 @@ class BackTarget extends Target {
   /// Indicates if the color target should be cleared with the clear color.
   bool get clearColor => this._clearColor;
   void set clearColor(bool clearColor) {
+    clearColor ??= true;
     if (this._clearColor != clearColor) {
       this._clearColor = clearColor;
       this._onBoolChanged("clearColor", this._clearColor);
@@ -126,6 +128,7 @@ class BackTarget extends Target {
   /// The clear depth to clear the target to before rendering.
   double get depth => this._depth;
   void set depth(double depth) {
+    depth ??= 2000.0;
     if (!Math.Comparer.equals(this._depth, depth)) {
       double prev = this._depth;
       this._depth = depth;
@@ -136,6 +139,7 @@ class BackTarget extends Target {
   /// Indicates if the depth target should be cleared with the clear depth.
   bool get clearDepth => this._clearDepth;
   void set clearDepth(bool clearDepth) {
+    clearDepth ??= true;
     if (this._clearDepth != clearDepth) {
       this._clearDepth = clearDepth;
       this._onBoolChanged("clearDepth", this._clearDepth);
@@ -145,6 +149,7 @@ class BackTarget extends Target {
   /// Indicates if the target buffer should automatically resize to the size of the canvas.
   bool get autoResize => this._autoResize;
   void set autoResize(bool autoResize) {
+    autoResize ??= false;
     if (this._autoResize != autoResize) {
       this._autoResize = autoResize;
       this._onBoolChanged("autoResize", this._autoResize);
@@ -154,6 +159,7 @@ class BackTarget extends Target {
   /// The scalar to apply to the width when an automatic resize occurs.
   double get autoResizeScalarX => this._autoResizeScalarX;
   void set autoResizeScalarX(double scalar) {
+    scalar ??= 1.0;
     if (!Math.Comparer.equals(this._autoResizeScalarX, scalar)) {
       double prev = this._autoResizeScalarX;
       this._autoResizeScalarX = scalar;
@@ -164,6 +170,7 @@ class BackTarget extends Target {
   /// The scalar to apply to the height when an automatic resize occurs.
   double get autoResizeScalarY => this._autoResizeScalarY;
   void set autoResizeScalarY(double scalar) {
+    scalar ??= 1.0;
     if (!Math.Comparer.equals(this._autoResizeScalarY, scalar)) {
       double prev = this._autoResizeScalarY;
       this._autoResizeScalarY = scalar;
@@ -175,6 +182,7 @@ class BackTarget extends Target {
   /// <0, 0> is top left corner and <1, 1> is botton right.
   Math.Region2 get region => this._region;
   void set region(Math.Region2 region) {
+    region ??= Math.Region2.unit;
     if (this._region != region) {
       Math.Region2 prev = this._region;
       this._region = region;

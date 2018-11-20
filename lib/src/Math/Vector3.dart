@@ -3,6 +3,55 @@ part of ThreeDart.Math;
 /// A math structure for storing a 3D vector.
 class Vector3 {
 
+  /// Gets a zeroed [Vector3].
+  static Vector3 get zero {
+    _zeroSingleton ??= new Vector3(0.0, 0.0, 0.0);
+    return _zeroSingleton;
+  }
+  static Vector3 _zeroSingleton;
+  
+  /// Gets a new positive X [Vector3].
+  static Vector3 get posX {
+    _posXSingleton ??= new Vector3(1.0, 0.0, 0.0);
+    return _posXSingleton;
+  }
+  static Vector3 _posXSingleton;
+  
+  /// Gets a new negative X [Vector3].
+  static Vector3 get negX {
+    _negXSingleton ??= new Vector3(-1.0, 0.0, 0.0);
+    return _negXSingleton;
+  }
+  static Vector3 _negXSingleton;
+  
+  /// Gets a new positive Y [Vector3].
+  static Vector3 get posY {
+    _posYSingleton ??= new Vector3(0.0, 1.0, 0.0);
+    return _posYSingleton;
+  }
+  static Vector3 _posYSingleton;
+  
+  /// Gets a new negative Y [Vector3].
+  static Vector3 get negY {
+    _negYSingleton ??= new Vector3(0.0, -1.0, 0.0);
+    return _negYSingleton;
+  }
+  static Vector3 _negYSingleton;
+  
+  /// Gets a new positive Z [Vector3].
+  static Vector3 get posZ {
+    _posZSingleton ??= new Vector3(0.0, 0.0, 1.0);
+    return _posZSingleton;
+  }
+  static Vector3 _posZSingleton;
+  
+  /// Gets a new negative Z [Vector3].
+  static Vector3 get negZ {
+    _negZSingleton ??= new Vector3(0.0, 0.0, -1.0);
+    return _negZSingleton;
+  }
+  static Vector3 _negZSingleton;
+
   /// The dX component of the vector.
   final double dx;
 
@@ -15,17 +64,13 @@ class Vector3 {
   /// Constructs a new [Vector3] instance.
   Vector3(double this.dx, double this.dy, double this.dz);
 
-  /// Constructs a new zeroed [Vector2].
-  factory Vector3.zero() =>
-    new Vector3(0.0, 0.0, 0.0);
-
   /// Constructs a new [Vector3] from a [Vector2].
   ///
   /// The dz component is defaulted to 0.0.
   factory Vector3.fromVector2(Vector2 vec, [double dz = 0.0]) =>
     new Vector3(vec.dx, vec.dy, dz);
 
-  /// Constructs a new [Vector2] from a [Vector4].
+  /// Constructs a new [Vector3] from a [Vector4].
   ///
   /// The dW component is ignored.
   factory Vector3.fromVector4(Vector4 vec) =>
@@ -108,7 +153,7 @@ class Vector3 {
 
   /// Creates a new vector inversely scaled by the given [scalar].
   Vector3 operator /(double scalar) {
-    if (Comparer.equals(scalar, 0.0)) return new Vector3.zero();
+    if (Comparer.equals(scalar, 0.0)) return Vector3.zero;
     return new Vector3(this.dx / scalar, this.dy / scalar, this.dz / scalar);
   }
 

@@ -3,6 +3,13 @@ part of ThreeDart.Math;
 /// A math structure for storing a 4D point.
 class Point4 {
 
+  /// Gets a [Point4] at the origin.
+  static Point4 get zero {
+    _zeroSingleton ??= new Point4(0.0, 0.0, 0.0, 0.0);
+    return _zeroSingleton;
+  }
+  static Point4 _zeroSingleton;
+
   /// The x component of the point.
   final double x;
 
@@ -17,10 +24,6 @@ class Point4 {
 
   /// Constructs a new [Point4] instance.
   Point4(double this.x, double this.y, double this.z, double this.w);
-
-  /// Constructs a new [Point4] at the origin.
-  factory Point4.zero() =>
-    new Point4(0.0, 0.0, 0.0, 0.0);
 
   /// Constructs a new [Point4] from a [Vector2].
   ///
@@ -107,7 +110,7 @@ class Point4 {
 
   /// Creates a new point inversely scaled by the given [scalar].
   Point4 operator /(double scalar) {
-    if (Comparer.equals(scalar, 0.0)) return new Point4.zero();
+    if (Comparer.equals(scalar, 0.0)) return Point4.zero;
     return new Point4(this.x / scalar, this.y / scalar, this.z / scalar, this.w / scalar);
   }
 

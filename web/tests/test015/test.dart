@@ -64,10 +64,10 @@ void main() {
   new common.RadioGroup("controls")
     ..add("Silver", () {
       tech
-        ..ambient.color    = new Math.Color3(0.1, 0.1, 0.1)
-        ..diffuse.color    = new Math.Color3(0.2, 0.2, 0.2)
+        ..ambient.color    = new Math.Color3.gray(0.1)
+        ..diffuse.color    = new Math.Color3.gray(0.2)
         ..refraction.color = new Math.Color3.black()
-        ..reflection.color = new Math.Color3(1.0, 1.0, 1.0);
+        ..reflection.color = new Math.Color3.white();
     }, true)
     ..add("Gold", () {
       tech
@@ -78,58 +78,58 @@ void main() {
     })
     ..add("Glass", () {
       tech
-        ..ambient.color         = new Math.Color3(0.1, 0.1, 0.1)
-        ..diffuse.color         = new Math.Color3(0.1, 0.1, 0.1)
+        ..ambient.color         = new Math.Color3.gray(0.1)
+        ..diffuse.color         = new Math.Color3.gray(0.1)
         ..refraction.deflection = 0.4
-        ..refraction.color      = new Math.Color3(0.6, 0.6, 0.6)
-        ..reflection.color      = new Math.Color3(0.4, 0.4, 0.4);
+        ..refraction.color      = new Math.Color3.gray(0.6)
+        ..reflection.color      = new Math.Color3.gray(0.4);
     })
     ..add("Blue Glass", () {
       tech
-        ..ambient.color         = new Math.Color3(0.1, 0.1, 0.1)
-        ..diffuse.color         = new Math.Color3(0.1, 0.1, 0.1)
+        ..ambient.color         = new Math.Color3.gray(0.1)
+        ..diffuse.color         = new Math.Color3.gray(0.1)
         ..refraction.deflection = 0.4
         ..refraction.color      = new Math.Color3(0.2, 0.3, 1.0)
-        ..reflection.color      = new Math.Color3(0.3, 0.3, 0.3);
+        ..reflection.color      = new Math.Color3.gray(0.3);
     })
     ..add("Water Bubble", () {
       tech
-        ..ambient.color         = new Math.Color3(0.1, 0.1, 0.1)
-        ..diffuse.color         = new Math.Color3(0.1, 0.1, 0.1)
+        ..ambient.color         = new Math.Color3.gray(0.1)
+        ..diffuse.color         = new Math.Color3.gray(0.1)
         ..refraction.deflection = 0.6
-        ..refraction.color      = new Math.Color3(0.8, 0.8, 0.8)
-        ..reflection.color      = new Math.Color3(0.2, 0.2, 0.2);
+        ..refraction.color      = new Math.Color3.gray(0.8)
+        ..reflection.color      = new Math.Color3.gray(0.2);
     })
     ..add("No Reflection", () {
       tech
-        ..ambient.color         = new Math.Color3(0.1, 0.1, 0.1)
-        ..diffuse.color         = new Math.Color3(0.1, 0.1, 0.1)
+        ..ambient.color         = new Math.Color3.gray(0.1)
+        ..diffuse.color         = new Math.Color3.gray(0.1)
         ..refraction.deflection = 0.6
-        ..refraction.color      = new Math.Color3(1.0, 1.0, 1.0)
+        ..refraction.color      = new Math.Color3.white()
         ..reflection.color      = new Math.Color3.black();
     })
     ..add("Pink Distort", () {
       tech
-        ..ambient.color         = new Math.Color3(0.1, 0.1, 0.1)
-        ..diffuse.color         = new Math.Color3(0.1, 0.1, 0.1)
+        ..ambient.color         = new Math.Color3.gray(0.1)
+        ..diffuse.color         = new Math.Color3.gray(0.1)
         ..refraction.deflection = 0.9
         ..refraction.color      = new Math.Color3(1.0, 0.8, 0.8)
         ..reflection.color      = new Math.Color3.black();
     })
     ..add("Cloak", () {
       tech
-        ..ambient.color         = new Math.Color3(0.0, 0.0, 0.0)
-        ..diffuse.color         = new Math.Color3(0.1, 0.1, 0.1)
+        ..ambient.color         = new Math.Color3.black()
+        ..diffuse.color         = new Math.Color3.gray(0.1)
         ..refraction.deflection = 0.99
-        ..refraction.color      = new Math.Color3(0.95, 0.95, 0.95)
+        ..refraction.color      = new Math.Color3.gray(0.95)
         ..reflection.color      = new Math.Color3.black();
     })
     ..add("White and Shiny", () {
       tech
-        ..ambient.color    = new Math.Color3(0.3, 0.3, 0.3)
-        ..diffuse.color    = new Math.Color3(0.5, 0.5, 0.5)
+        ..ambient.color    = new Math.Color3.gray(0.3)
+        ..diffuse.color    = new Math.Color3.gray(0.5)
         ..refraction.color = new Math.Color3.black()
-        ..reflection.color = new Math.Color3(0.3, 0.3, 0.3);
+        ..reflection.color = new Math.Color3.gray(0.3);
     });
 
   new common.Texture2DGroup("bumpMaps", (String fileName) {

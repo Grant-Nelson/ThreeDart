@@ -11,7 +11,7 @@ class Invert implements Mover {
   Invert([Mover mover = null]) {
     this._mover = null;
     this._changed = null;
-    this._mat = new Math.Matrix4.identity();
+    this._mat = Math.Matrix4.identity;
     this._frameNum = 0;
 
     this.mover = mover;
@@ -51,7 +51,7 @@ class Invert implements Mover {
       this._frameNum = state.frameNumber;
       this._changed?.suspend();
       Math.Matrix4 mat = this._mover?.update(state, obj)?.inverse();
-      this._mat = mat ?? new Math.Matrix4.identity();
+      this._mat = mat ?? Math.Matrix4.identity;
       this._changed?.resume();
     }
     return this._mat;

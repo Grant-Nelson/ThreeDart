@@ -13,7 +13,7 @@ class Group extends Collections.Collection<Mover> implements Mover {
       onRemovedHndl: this._onRemoved);
     if (movers != null) this.addAll(movers);
     this._changed = null;
-    this._mat = new Math.Matrix4.identity();
+    this._mat = Math.Matrix4.identity;
     this._frameNum = 0;
   }
 
@@ -75,7 +75,7 @@ class Group extends Collections.Collection<Mover> implements Mover {
           }
         }
       }
-      this._mat = mat ?? new Math.Matrix4.identity();
+      this._mat = mat ?? Math.Matrix4.identity;
       this._changed?.resume();
     }
     return this._mat;

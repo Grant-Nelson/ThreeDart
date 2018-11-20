@@ -33,7 +33,7 @@ class MaterialLightRefractionComponent extends MaterialLightColorComponent {
   /// The refraction scalar for the distortion for the material.
   double get deflection => this._refraction;
   set deflection(double value) {
-    value = value ?? 1.0;
+    value ??= 1.0;
     if (value <= 0.0) this.clear();
     else if (this._type == Shaders.ColorSourceType.None) {
       this._type = Shaders.ColorSourceType.Solid;

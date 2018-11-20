@@ -46,7 +46,7 @@ class Perspective implements Camera {
   /// Feild of view vertically in radians of the camera.
   double get fov => this._fov;
   void set fov(double fov) {
-    fov = fov ?? Math.PI_3;
+    fov ??= Math.PI_3;
     if (!Math.Comparer.equals(this._fov, fov)) {
       double prev = this._fov;
       this._fov = fov;
@@ -57,7 +57,7 @@ class Perspective implements Camera {
   /// The near depth, distance from the camera, to start rendering at.
   double get near => this._near;
   void set near(double near) {
-    near = near ?? 0.1;
+    near ??= 0.1;
     if (!Math.Comparer.equals(this._near, near)) {
       double prev = this._near;
       this._near = near;
@@ -68,7 +68,7 @@ class Perspective implements Camera {
   /// The far depth, distance from the camera, to stop rendering at.
   double get far => this._far;
   void set far(double far) {
-    far = far ?? 2000.0;
+    far ??= 2000.0;
     if (!Math.Comparer.equals(this._far, far)) {
       double prev = this._far;
       this._far = far;
@@ -110,12 +110,11 @@ class Perspective implements Camera {
     }
     state.projection.push(proj);
 
-    if (_lookMat == null) {
-      _lookMat = new Math.Matrix4.lookTowards(
-        new Math.Point3(0.0, 0.0, 0.0),
-        new Math.Vector3(0.0, 1.0, 0.0),
-        new Math.Vector3(0.0, 0.0, -1.0));
-    }
+    _lookMat ??= new Math.Matrix4.lookTowards(
+      Math.Point3.zero,
+      Math.Vector3.posY,
+      Math.Vector3.negZ);
+
     Math.Matrix4 look = _lookMat;
     if (this._mover != null) {
       Math.Matrix4 mat = this._mover.update(state, this);

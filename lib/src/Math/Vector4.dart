@@ -3,6 +3,69 @@ part of ThreeDart.Math;
 /// A math structure for storing a 4D vector.
 class Vector4 {
 
+  /// Gets a zeroed [Vector3].
+  static Vector4 get zero {
+    _zeroSingleton ??= new Vector4(0.0, 0.0, 0.0, 0.0);
+    return _zeroSingleton;
+  }
+  static Vector4 _zeroSingleton;
+  
+  /// Gets a new positive X [Vector4].
+  static Vector4 get posX {
+    _posXSingleton ??= new Vector4(1.0, 0.0, 0.0, 0.0);
+    return _posXSingleton;
+  }
+  static Vector4 _posXSingleton;
+  
+  /// Gets a new negative X [Vector4].
+  static Vector4 get negX {
+    _negXSingleton ??= new Vector4(-1.0, 0.0, 0.0, 0.0);
+    return _negXSingleton;
+  }
+  static Vector4 _negXSingleton;
+  
+  /// Gets a new positive Y [Vector4].
+  static Vector4 get posY {
+    _posYSingleton ??= new Vector4(0.0, 1.0, 0.0, 0.0);
+    return _posYSingleton;
+  }
+  static Vector4 _posYSingleton;
+  
+  /// Gets a new negative Y [Vector4].
+  static Vector4 get negY {
+    _negYSingleton ??= new Vector4(0.0, -1.0, 0.0, 0.0);
+    return _negYSingleton;
+  }
+  static Vector4 _negYSingleton;
+  
+  /// Gets a new positive Z [Vector4].
+  static Vector4 get posZ {
+    _posZSingleton ??= new Vector4(0.0, 0.0, 1.0, 0.0);
+    return _posZSingleton;
+  }
+  static Vector4 _posZSingleton;
+  
+  /// Gets a new negative Z [Vector4].
+  static Vector4 get negZ {
+    _negZSingleton ??= new Vector4(0.0, 0.0, -1.0, 0.0);
+    return _negZSingleton;
+  }
+  static Vector4 _negZSingleton;
+  
+  /// Gets a new positive W [Vector4].
+  static Vector4 get posW {
+    _posWSingleton ??= new Vector4(0.0, 0.0, 0.0, 1.0);
+    return _posWSingleton;
+  }
+  static Vector4 _posWSingleton;
+  
+  /// Gets a new negative W [Vector4].
+  static Vector4 get negW {
+    _negWSingleton ??= new Vector4(0.0, 0.0, 0.0, -1.0);
+    return _negWSingleton;
+  }
+  static Vector4 _negWSingleton;
+
   /// The dX component of the vector.
   final double dx;
 
@@ -17,10 +80,6 @@ class Vector4 {
 
   /// Constructs a new [Vector4] instance.
   Vector4(double this.dx, double this.dy, double this.dz, double this.dw);
-
-  /// Constructs a new zeroed [Vector4].
-  factory Vector4.zero() =>
-    new Vector4(0.0, 0.0, 0.0, 0.0);
 
   /// Constructs a new [Vector4] from a [Vector2].
   ///
@@ -106,7 +165,7 @@ class Vector4 {
 
   /// Creates a new vector inversely scaled by the given [scalar].
   Vector4 operator /(double scalar) {
-    if (Comparer.equals(scalar, 0.0)) return new Vector4.zero();
+    if (Comparer.equals(scalar, 0.0)) return Vector4.zero;
     return new Vector4(this.dx / scalar, this.dy / scalar, this.dz / scalar, this.dw / scalar);
   }
 

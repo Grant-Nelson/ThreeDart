@@ -207,7 +207,7 @@ class Vertex {
   bool calculateNormal() {
     if (this._norm != null) return true;
     if (this._shape != null) this._shape._changed?.suspend();
-    Math.Vector3 normSum = new Math.Vector3.zero();
+    Math.Vector3 normSum = Math.Vector3.zero;
     this._faces.forEach((Face face) {
       Math.Vector3 norm = face?.normal;
       if (norm != null) normSum += norm;
@@ -226,7 +226,7 @@ class Vertex {
   bool calculateBinormal() {
     if (this._binm != null) return true;
     if (this._shape != null) this._shape._changed?.suspend();
-    Math.Vector3 binmSum = new Math.Vector3.zero();
+    Math.Vector3 binmSum = Math.Vector3.zero;
     this._faces.forEach((Face face) {
       Math.Vector3 binm = face?.binormal;
       if(binm != null) binmSum += binm;

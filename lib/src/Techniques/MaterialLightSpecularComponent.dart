@@ -33,7 +33,7 @@ class MaterialLightSpecularComponent extends MaterialLightColorComponent {
   /// The specular color or scalar on the specular texture for the material.
   double get shininess => this._shininess;
   set shininess(double value) {
-    value = value ?? 100.0;
+    value ??= 100.0;
     if (value <= 0.0) this.clear();
     else if (this._type == Shaders.ColorSourceType.None) {
       this._type = Shaders.ColorSourceType.Solid;

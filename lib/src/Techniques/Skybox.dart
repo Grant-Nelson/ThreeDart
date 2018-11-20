@@ -11,11 +11,13 @@ class Skybox extends Technique {
   /// Creates a new sky box technique with the given initial values.
   Skybox({double fov: Math.PI_3, Textures.TextureCube boxTexture: null,
           Math.Color3 boxColor: null}) {
-    this._shader    = null;
-    this._fov       = fov;
+    this._shader  = null;
+    this._fov     = fov ?? Math.PI_3;
+    this._boxTxt  = null;
+    this._boxClr  = boxColor ?? new Math.Color3.white();
+    this._changed = null;
+
     this.boxTexture = boxTexture;
-    this.boxColor   = boxColor;
-    this._changed   = null;
   }
 
   /// Indicates that this technique has changed.
@@ -32,6 +34,7 @@ class Skybox extends Technique {
   /// Feild of view vertically in radians of the camera.
   double get fov => this._fov;
   void set fov(double fov) {
+    fov ??= Math.PI_3;
     if (!Math.Comparer.equals(this._fov, fov)) {
       double prev = this._fov;
       this._fov = fov;
@@ -54,7 +57,7 @@ class Skybox extends Technique {
   /// The sky box color scalar.
   Math.Color3 get boxColor => this._boxClr;
   void set boxColor(Math.Color3 color) {
-    color = color ?? new Math.Color3.white();
+    color ??= new Math.Color3.white();
     if (this._boxClr != color) {
       Math.Color3 prev = this._boxClr;
       this._boxClr = color;

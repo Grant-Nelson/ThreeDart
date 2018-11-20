@@ -138,12 +138,12 @@ class Constants {
   /// The sensitivity of the locked pointer mouse.
   static const double mouseSensitivity = 0.4;
 
-  static final Math.Vector3 topNorm    = new Math.Vector3( 0.0,  1.0,  0.0);
-  static final Math.Vector3 bottomNorm = new Math.Vector3( 0.0, -1.0,  0.0);
-  static final Math.Vector3 leftNorm   = new Math.Vector3( 1.0,  0.0,  0.0);
-  static final Math.Vector3 rightNorm  = new Math.Vector3(-1.0,  0.0,  0.0);
-  static final Math.Vector3 frontNorm  = new Math.Vector3( 0.0,  0.0,  1.0);
-  static final Math.Vector3 backNorm   = new Math.Vector3( 0.0,  0.0, -1.0);
+  static final Math.Vector3 topNorm    = Math.Vector3.posY;
+  static final Math.Vector3 bottomNorm = Math.Vector3.negY;
+  static final Math.Vector3 leftNorm   = Math.Vector3.posX;
+  static final Math.Vector3 rightNorm  = Math.Vector3.negX;
+  static final Math.Vector3 frontNorm  = Math.Vector3.posZ;
+  static final Math.Vector3 backNorm   = Math.Vector3.negZ;
 
   static final Math.Point3 frontTopLeft     = new Math.Point3(-0.5,  0.5,  0.5);
   static final Math.Point3 frontTopRight    = new Math.Point3( 0.5,  0.5,  0.5);

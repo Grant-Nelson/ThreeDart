@@ -3,7 +3,7 @@ part of ThreeDart.test.test000;
 void addRegion3Tests(TestManager tests) {
 
   tests.add("Region3 Point Expand Test", (TestArgs args) {
-    Math.Region3 reg1 = new Math.Region3.zero();
+    Math.Region3 reg1 = Math.Region3.zero;
     _expandReg3(args, reg1,   0.0,  0.0,  0.0,   0.0,  0.0,  0.0,   0.0,  0.0,  0.0);
     _expandReg3(args, reg1,   1.0,  2.0,  3.0,   0.0,  0.0,  0.0,   1.0,  2.0,  3.0);
     _expandReg3(args, reg1,  -1.0, -2.0, -3.0,  -1.0, -2.0, -3.0,   1.0,  2.0,  3.0);

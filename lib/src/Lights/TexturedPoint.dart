@@ -25,7 +25,7 @@ class TexturedPoint implements Light {
     this._attenuation0 = 1.0;
     this._attenuation1 = 0.0;
     this._attenuation2 = 0.0;
-    this._matrix       = new Math.Matrix4.identity();
+    this._matrix       = Math.Matrix4.identity;
     this._changed      = null;
 
     this.mover        = mover;
@@ -49,7 +49,7 @@ class TexturedPoint implements Light {
 
   /// Updates the light with the current state.
   void update(Core.RenderState state) {
-    this._matrix = new Math.Matrix4.identity();
+    this._matrix = Math.Matrix4.identity;
     if (this._mover != null) {
       this._matrix = this._mover.update(state, this);
     }

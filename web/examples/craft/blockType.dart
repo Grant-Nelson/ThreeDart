@@ -172,8 +172,9 @@ class BlockType {
   /// Determines if the side of the block should be drawn.
   static bool drawSide(int value, int neighbor) {
     if (value == neighbor) return false;
-    if (neighbor == Air) return true;
-    if (value == Water) return open(neighbor);
-    return !open(value) && ((neighbor == Water) || open(neighbor));
+    if (neighbor == Air)   return true;
+    if (value    == Water) return open(neighbor);
+    if (neighbor == Water) return !open(value);
+    return !open(value) && open(neighbor);
   }
 }
