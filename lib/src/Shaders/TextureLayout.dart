@@ -145,14 +145,14 @@ class TextureLayout extends Shader {
 
   /// Sets the source rectangle at the given [index].
   void setSourceRect(int index, Math.Region2 rect) {
-    if (rect == null) rect = Math.Region2.unit;
+    rect ??= Math.Region2.unit;
     this._srcLocs[index].setValues(rect.x, rect.y);
     this._srcSizes[index].setValues(rect.dx, rect.dy);
   }
 
   /// Sets the destination rectangle at the given [index].
   void setDestinationRect(int index, Math.Region2 rect) {
-    if (rect == null) rect = Math.Region2.unit;
+    rect ??= Math.Region2.unit;
     this._destLocs[index].setValues(rect.x, rect.y);
     this._destSizes[index].setValues(rect.dx, rect.dy);
   }
