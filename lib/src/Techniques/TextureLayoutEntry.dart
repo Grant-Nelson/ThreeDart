@@ -49,7 +49,7 @@ class TextureLayoutEntry implements Events.Changable {
   /// The color adjustment matrix.
   Math.Matrix4 get colorMatrix => this._clrMat;
   void set colorMatrix(Math.Matrix4 mat) {
-    mat = mat ?? new Math.Matrix4.identity();
+    mat ??= Math.Matrix4.identity;
     if (this._clrMat != mat) {
       Math.Matrix4 prev = this._clrMat;
       this._clrMat = mat;
@@ -60,7 +60,7 @@ class TextureLayoutEntry implements Events.Changable {
   /// The source region of the texture to render with.
   Math.Region2 get source => this._src;
   void set source(Math.Region2 src) {
-    src = src ?? new Math.Region2(0.0, 0.0, 1.0, 1.0);
+    src ??= Math.Region2.unit;
     if (this._src != src) {
       Math.Region2 prev = this._src;
       this._src = src;
@@ -71,7 +71,7 @@ class TextureLayoutEntry implements Events.Changable {
   /// The destination to render the source region into.
   Math.Region2 get destination => this._dest;
   void set destination(Math.Region2 dest) {
-    dest = dest ?? new Math.Region2(0.0, 0.0, 1.0, 1.0);
+    dest ??= Math.Region2.unit;
     if (this._dest != dest) {
       Math.Region2 prev = this._dest;
       this._dest = dest;
@@ -82,6 +82,7 @@ class TextureLayoutEntry implements Events.Changable {
   /// Indicates if the image should be flipped or not.
   bool get flip => this._flip;
   void set flip(bool flip) {
+    flip ??= false;
     if (this._flip != flip) {
       this._flip = flip;
       this._onChanged(new Events.ValueChangedEventArgs(this, "flip", !flip, this._flip));

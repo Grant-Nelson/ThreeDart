@@ -119,7 +119,7 @@ class Player {
   Movers.Group get location => this._playerLoc;
 
   /// Gets the specific point location of the player in the world.
-  Math.Point3 get point => this._playerLoc.matrix.transPnt3(new Math.Point3.zero());
+  Math.Point3 get point => this._playerLoc.matrix.transPnt3(Math.Point3.zero);
 
   /// The base entity for the player.
   ThreeDart.Entity get entity => this._entity;
@@ -129,7 +129,7 @@ class Player {
     Chunk chunk = this._world.findChunk(Constants.playerStartX.toInt(), Constants.playerStartZ.toInt());
     int y = chunk?.topHit(Constants.playerStartX.toInt(), Constants.playerStartZ.toInt()) ?? 0;
     this._trans.location = new Math.Point3(Constants.playerStartX, y.toDouble()+60.0, Constants.playerStartZ);
-    this._trans.velocity = new Math.Vector3.zero();
+    this._trans.velocity = Math.Vector3.zero;
   }
 
   /// Handles then the player presses the return to origin button.
@@ -273,38 +273,38 @@ class Player {
   Math.Ray3 _playerViewTarget() {
     Math.Matrix4 mat = this._playerLoc.matrix;
     return new Math.Ray3.fromVertex(
-      mat.transPnt3(new Math.Point3.zero()),
+      mat.transPnt3(Math.Point3.zero),
       mat.transVec3(new Math.Vector3(0.0, 0.0, -Constants.highlightDistance)));
   }
 
   /// Gets the neighboring block to the given block with the given [ray] pointing at the side to get the neighbor for.
   NeighborBlockInfo _getNeighborBlock(BlockInfo info, Math.Ray3 ray) {
-    double x = info.x.toDouble()+info.chunkX.toDouble();
-    double y = info.y.toDouble();
-    double z = info.z.toDouble()+info.chunkZ.toDouble();
-    Math.Region3 region = new Math.Region3(x, y, z, 1.0, 1.0, 1.0);
+    Math.Region3 region = new Math.Region3(
+      info.x.toDouble()+info.chunkX.toDouble(),
+      info.y.toDouble(),
+      info.z.toDouble()+info.chunkZ.toDouble(),
+      1.0, 1.0, 1.0);
 
     Math.IntersectionRayRegion3 inter = region.rayIntersection(ray);
+    Math.Point3 center = region.center;
+    double x = center.x, y = center.y, z = center.z;
     if (inter == null) return null;
-    else if (inter.region == Math.HitRegion.XNeg) x -= 0.9;
-    else if (inter.region == Math.HitRegion.XPos) x += 1.1;
-    else if (inter.region == Math.HitRegion.YNeg) y -= 0.9;
-    else if (inter.region == Math.HitRegion.YPos) y += 1.1;
-    else if (inter.region == Math.HitRegion.ZNeg) z -= 0.9;
-    else if (inter.region == Math.HitRegion.ZPos) z += 1.1;
+    else if (inter.region == Math.HitRegion.XNeg) x -= 1.0;
+    else if (inter.region == Math.HitRegion.XPos) x += 1.0;
+    else if (inter.region == Math.HitRegion.YNeg) y -= 1.0;
+    else if (inter.region == Math.HitRegion.YPos) y += 1.0;
+    else if (inter.region == Math.HitRegion.ZNeg) z -= 1.0;
+    else if (inter.region == Math.HitRegion.ZPos) z += 1.0;
     else return null;
 
-    return new NeighborBlockInfo(this._world.getBlock(x, y, z), inter.region);
+    BlockInfo block = this._world.getBlock(x, y, z);
+    return new NeighborBlockInfo(block, inter.region);
   }
 
   /// Updates the selection for the highlighted block that can be modified.
   void _updateHighlight(Events.EventArgs _) {
     Math.Ray3 ray = this._playerViewTarget();
     Math.Ray3 back = ray.reverse;
-
-    // TODO: Fix issue where player can't select some edges from
-    //       the edge block directly next chunk. There are dead areas
-    //       in the selection that must be fixed.
 
     int dist = 0;
     BlockInfo info = this._world.getBlock(ray.x, ray.y, ray.z);

@@ -192,7 +192,7 @@ class World {
   /// Updates the world to the player's view.
   void update(Events.EventArgs args) {
     Math.Matrix4 mat = this.player.location.matrix;
-    Math.Point3 loc3 = mat.transPnt3(new Math.Point3(0.0, 0.0, 0.0));
+    Math.Point3 loc3 = mat.transPnt3(Math.Point3.zero);
     Math.Point3 front3 = mat.transPnt3(new Math.Point3(0.0, 0.0, -Constants.chunkSideSize.toDouble()));
     Math.Point2 loc = new Math.Point2(loc3.x, loc3.z);
     Math.Point2 front = new Math.Point2(front3.x, front3.z);

@@ -3,6 +3,17 @@ part of ThreeDart.Math;
 /// A math structure for storing and manipulating a Matrix 4x4.
 class Matrix4 {
 
+  /// Gets a 4x4 identity matrix.
+  static Matrix4 get identity {
+    _identSingleton ??= new Matrix4(
+      1.0, 0.0, 0.0, 0.0,
+      0.0, 1.0, 0.0, 0.0,
+      0.0, 0.0, 1.0, 0.0,
+      0.0, 0.0, 0.0, 1.0);
+    return _identSingleton;
+  }
+  static Matrix4 _identSingleton;
+
   /// The 1st row and 1st column of the matrix, XX.
   final double m11;
 
@@ -56,13 +67,6 @@ class Matrix4 {
           double this.m12, double this.m22, double this.m32, double this.m42,
           double this.m13, double this.m23, double this.m33, double this.m43,
           double this.m14, double this.m24, double this.m34, double this.m44);
-
-  /// Constructs a 4x4 identity matrix.
-  factory Matrix4.identity() =>
-    new Matrix4(1.0, 0.0, 0.0, 0.0,
-                0.0, 1.0, 0.0, 0.0,
-                0.0, 0.0, 1.0, 0.0,
-                0.0, 0.0, 0.0, 1.0);
 
   /// Constructs a 4x4 translation matrix.
   factory Matrix4.translate(double tx, double ty, double tz) =>
@@ -178,9 +182,9 @@ class Matrix4 {
   /// [x]. [y], and [z] is the vector direction.
   /// [upHint] is a hint to help correct the top direction of the rotation.
   factory Matrix4.vectorTowards(double x, double y, double z, {Vector3 upHint: null}) {
-    upHint ??= new Vector3(0.0, 1.0, 0.0);
+    upHint ??= Vector3.posY;
     Vector3 forward = new Vector3(x, y, z);
-    return new Matrix4.lookTowards(new Point3(0.0, 0.0, 0.0), upHint, forward);
+    return new Matrix4.lookTowards(Point3.zero, upHint, forward);
   }
 
   /// Constructs a camera matrix.
@@ -299,7 +303,7 @@ class Matrix4 {
            n = this.m23 * this.m44 - this.m43 * this.m24,
            o = this.m33 * this.m44 - this.m43 * this.m34;
     final double det = (a * o - b * n + c * m + e * l - g * j + h * i);
-    if (Comparer.equals(det, 0.0)) return new Matrix4.identity();
+    if (Comparer.equals(det, 0.0)) return Matrix4.identity;
     final double q = 1.0 / det;
     return new Matrix4(
       ( this.m22 * o - this.m32 * n + this.m42 * m) * q, (-this.m21 * o + this.m31 * n - this.m41 * m) * q,

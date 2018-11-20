@@ -127,7 +127,7 @@ class Sterioscopic implements Scene {
   /// The target defining the storage to render to.
   Views.Target get target => this._target;
   set target(Views.Target target) {
-    target = target ?? new Views.FrontTarget();
+    target ??= new Views.FrontTarget();
     if (this._target != target) {
       if (this._target != null) this._target.changed.remove(this._onChanged);
       Views.Target prev = this._target;
@@ -143,7 +143,7 @@ class Sterioscopic implements Scene {
   /// The distance between the left and right eye.
   double get eyeSpacing => this._eyeSpacing;
   set eyeSpacing(double eyeSpacing) {
-    eyeSpacing = eyeSpacing ?? 0.1;
+    eyeSpacing ??= 0.1;
     if (!Math.Comparer.equals(this._eyeSpacing, eyeSpacing)) {
       double prev = this._eyeSpacing;
       this._eyeSpacing = eyeSpacing;
@@ -155,7 +155,7 @@ class Sterioscopic implements Scene {
   /// The distance to when the left and right image cross.
   double get focusDistance => this._focusDistance;
   set focusDistance(double focusDistance) {
-    focusDistance = focusDistance ?? 12.0;
+    focusDistance ??= 12.0;
     if (!Math.Comparer.equals(this._focusDistance, focusDistance)) {
       double prev = this._focusDistance;
       this._focusDistance = focusDistance;

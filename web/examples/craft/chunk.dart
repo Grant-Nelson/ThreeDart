@@ -103,22 +103,28 @@ class Chunk {
   /// Gets the value of the block at the given location.
   /// This will not check neighbors if the coordinates are outside this chunk.
   int getBlock(int x, int y, int z) {
-    if (y < 0) return BlockType.Boundary;
-    if ((y >= Constants.chunkYSize) ||
-        (x < 0) || (x >= Constants.chunkSideSize) ||
-        (z < 0) || (z >= Constants.chunkSideSize)) return BlockType.Air;
+    if (y < 0)                        return BlockType.Boundary;
+    if (y >= Constants.chunkYSize)    return BlockType.Air;
+    if (x < 0)                        return BlockType.Air;
+    if (x >= Constants.chunkSideSize) return BlockType.Air;
+    if (z < 0)                        return BlockType.Air;
+    if (z >= Constants.chunkSideSize) return BlockType.Air;
     return this._data[this._index(x, y, z)];
   }
+
+  /// Gets the block from the given neighbor, if the neighbor is null air is returned.
+  int _neighborBlock(Chunk neighbor, int x, int y, int z) =>
+    neighbor?.getWorldBlock(x, y, z) ?? BlockType.Air;
 
   /// Gets the value of the block at the given location.
   /// If the coordinates are outside this chunk the neighboring chunk will checked.
   int getWorldBlock(int x, int y, int z) {
     if (y < 0)                        return BlockType.Boundary;
     if (y >= Constants.chunkYSize)    return BlockType.Air;
-    if (x < 0)                        return left?. getWorldBlock(x + Constants.chunkSideSize, y, z) ?? BlockType.Air;
-    if (x >= Constants.chunkSideSize) return right?.getWorldBlock(x - Constants.chunkSideSize, y, z) ?? BlockType.Air;
-    if (z < 0)                        return back?. getWorldBlock(x, y, z + Constants.chunkSideSize) ?? BlockType.Air;
-    if (z >= Constants.chunkSideSize) return front?.getWorldBlock(x, y, z - Constants.chunkSideSize) ?? BlockType.Air;
+    if (x < 0)                        return this._neighborBlock(left,  x + Constants.chunkSideSize, y, z);
+    if (x >= Constants.chunkSideSize) return this._neighborBlock(right, x - Constants.chunkSideSize, y, z);
+    if (z < 0)                        return this._neighborBlock(back,  x, y, z + Constants.chunkSideSize);
+    if (z >= Constants.chunkSideSize) return this._neighborBlock(front, x, y, z - Constants.chunkSideSize);
     return this._data[this._index(x, y, z)];
   }
 
@@ -126,9 +132,12 @@ class Chunk {
   /// This will not set neighbors if the coordinates are outside this chunk.
   /// Returns true if block set, false if not.
   bool setBlock(int x, int y, int z, int value) {
-    if ((y < 0) || (y >= Constants.chunkYSize) ||
-        (x < 0) || (x >= Constants.chunkSideSize) ||
-        (z < 0) || (z >= Constants.chunkSideSize)) return false;
+    if (y < 0)                        return false;
+    if (y >= Constants.chunkYSize)    return false;
+    if (x < 0)                        return false;
+    if (x >= Constants.chunkSideSize) return false;
+    if (z < 0)                        return false;
+    if (z >= Constants.chunkSideSize) return false;
     this._data[this._index(x, y, z)] = value;
     return true;
   }

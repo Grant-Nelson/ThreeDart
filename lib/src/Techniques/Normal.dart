@@ -13,8 +13,8 @@ class Normal extends Technique {
   /// Creates a new material/light technique.
   Normal() {
     this._shader = null;
-    this._txt2DMat = new Math.Matrix3.identity();
-    this._txtCubeMat = new Math.Matrix4.identity();
+    this._txt2DMat = Math.Matrix3.identity;
+    this._txtCubeMat = Math.Matrix4.identity;
     this.clearBump();
     this._changed = null;
   }
@@ -53,7 +53,7 @@ class Normal extends Technique {
   /// The 2D texture modification matrix.
   Math.Matrix3 get texture2DMatrix => this._txt2DMat;
   void set texture2DMatrix(Math.Matrix3 mat) {
-    mat = mat ?? new Math.Matrix3.identity();
+    mat ??= Math.Matrix3.identity;
     if (this._txt2DMat != mat) {
       Math.Matrix3 prev = this._txt2DMat;
       this._txt2DMat = mat;
@@ -64,7 +64,7 @@ class Normal extends Technique {
   /// The cube texture modification matrix.
   Math.Matrix4 get textureCubeMatrix => this._txtCubeMat;
   void set textureCubeMatrix(Math.Matrix4 mat) {
-    mat = mat ?? new Math.Matrix4.identity();
+    mat ??= Math.Matrix4.identity;
     if (this._txtCubeMat != mat) {
       Math.Matrix4 prev = this._txtCubeMat;
       this._txtCubeMat = mat;

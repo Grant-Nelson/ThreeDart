@@ -84,7 +84,7 @@ class MaterialLight extends Technique {
   /// The 2D texture modification matrix.
   Math.Matrix3 get texture2DMatrix => this._txt2DMat;
   set texture2DMatrix(Math.Matrix3 mat) {
-    mat = mat ?? new Math.Matrix3.identity();
+    mat ??= Math.Matrix3.identity;
     if (this._txt2DMat != mat) {
       if (Math.xor(this._txt2DMat == null, mat == null)) this._shader = null;
       Math.Matrix3 prev = this._txt2DMat;
@@ -96,7 +96,7 @@ class MaterialLight extends Technique {
   /// The cube texture modification matrix.
   Math.Matrix4 get textureCubeMatrix => this._txtCubeMat;
   set textureCubeMatrix(Math.Matrix4 mat) {
-    mat = mat ?? new Math.Matrix4.identity();
+    mat ??= Math.Matrix4.identity;
     if (this._txtCubeMat != mat) {
       if (Math.xor(this._txtCubeMat == null, mat == null)) this._shader = null;
       Math.Matrix4 prev = this._txtCubeMat;
@@ -414,8 +414,8 @@ class MaterialLight extends Technique {
           Shaders.UniformTexturedPointLight uniform = this._shader.texturedPointLights[index];
           this._addToTextureList(textures, light.texture);
           Math.Matrix4 viewObjMat = viewMat*light.matrix;
-          uniform.point        = light.matrix.transPnt3(new Math.Point3(0.0, 0.0, 0.0));
-          uniform.viewPoint    = viewObjMat.transPnt3(new Math.Point3(0.0, 0.0, 0.0));
+          uniform.point        = light.matrix.transPnt3(Math.Point3.zero);
+          uniform.viewPoint    = viewObjMat.transPnt3(Math.Point3.zero);
           uniform.inverseViewRotationMatrix = new Math.Matrix3.fromMatrix4(viewObjMat.inverse());
           uniform.color        = light.color;
           uniform.texture      = light.texture;

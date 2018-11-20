@@ -29,7 +29,7 @@ class Orthogonal implements Camera {
   /// The near depth, distance from the camera, to start rendering at.
   double get near => this._near;
   void set near(double near) {
-    near = near ?? 1.0;
+    near ??= 1.0;
     if (!Math.Comparer.equals(this._near, near)) {
       double prev = this._near;
       this._near = near;
@@ -40,7 +40,7 @@ class Orthogonal implements Camera {
   /// The far depth, distance from the camera, to stop rendering at.
   double get far => this._far;
   void set far(double far) {
-    far = far ?? 100.0;
+    far ??= 100.0;
     if (!Math.Comparer.equals(this._far, far)) {
       double prev = this._far;
       this._far = far;
@@ -66,8 +66,8 @@ class Orthogonal implements Camera {
     double height = state.height.toDouble()*0.5;
     state.projection.push(new Math.Matrix4.ortho(-width, width, -height, height, this._near, this._far));
 
-    Math.Matrix4 look = new Math.Matrix4.lookTowards(new Math.Point3.zero(),
-        new Math.Vector3(0.0, 1.0, 0.0), new Math.Vector3(0.0, 0.0, 1.0));
+    Math.Matrix4 look = new Math.Matrix4.lookTowards(Math.Point3.zero,
+        Math.Vector3.posY, Math.Vector3.posZ);
     if (mover != null) {
       Math.Matrix4 mat = mover.update(state, this);
       if (mat != null) look = look*mat;

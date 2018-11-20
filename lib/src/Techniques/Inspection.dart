@@ -55,15 +55,15 @@ class Inspection extends Technique {
     double vectorScale:      1.0,
   }) {
     this._shader = null;
-    this._lightVec = new Math.Vector3(0.0, 0.0, -1.0);
+    this._lightVec = Math.Vector3.negZ;
     this._diffuse1 = new Math.Color4(0.2, 0.3, 0.4);
     this._ambient1 = new Math.Color4(0.1, 0.2, 0.3);
-    this._diffuse2 = new Math.Color4(0.7, 0.7, 0.7);
-    this._ambient2 = new Math.Color4(0.3, 0.3, 0.3);
-    this._diffuse3 = new Math.Color4(0.5, 0.5, 0.5);
-    this._ambient3 = new Math.Color4(0.5, 0.5, 0.5);
-    this._diffuse4 = new Math.Color4(1.0, 1.0, 1.0);
-    this._ambient4 = new Math.Color4(0.8, 0.8, 0.8);
+    this._diffuse2 = new Math.Color4.gray(0.7);
+    this._ambient2 = new Math.Color4.gray(0.3);
+    this._diffuse3 = new Math.Color4.gray(0.5);
+    this._ambient3 = new Math.Color4.gray(0.5);
+    this._diffuse4 = new Math.Color4.white();
+    this._ambient4 = new Math.Color4.gray(0.8);
 
     this._showFilled         = showFilled;
     this._showWireFrame      = showWireFrame;
@@ -287,7 +287,7 @@ class Inspection extends Technique {
   /// The light vector to highlight the shape with.
   Math.Vector3 get lightVector => this._lightVec;
   set lightVector(Math.Vector3 vec) {
-    vec ??= new Math.Vector3(0.0, 0.0, -1.0);
+    vec ??= Math.Vector3.negZ;
     if (this._lightVec != vec) {
       Math.Vector3 prevVec = this._lightVec;
       this._lightVec = vec;
@@ -320,7 +320,7 @@ class Inspection extends Technique {
   /// The second diffuse color, used for the wireframe color.
   Math.Color4 get diffuse2 => this._diffuse2;
   set diffuse2(Math.Color4 clr) {
-    clr ??= new Math.Color4(0.7, 0.7, 0.7);
+    clr ??= new Math.Color4.gray(0.7);
     if (this._diffuse2 != clr) {
       Math.Color4 prevClr = this._diffuse2;
       this._diffuse2 = clr;
@@ -331,7 +331,7 @@ class Inspection extends Technique {
   /// The second ambient color, used for the wireframe color.
   Math.Color4 get ambient2 => this._ambient2;
   set ambient2(Math.Color4 clr) {
-    clr ??= new Math.Color4(0.3, 0.3, 0.3);
+    clr ??= new Math.Color4.gray(0.3);
     if (this._ambient2 != clr) {
       Math.Color4 prevClr = this._ambient2;
       this._ambient2 = clr;
@@ -342,7 +342,7 @@ class Inspection extends Technique {
   /// The third diffuse color.
   Math.Color4 get diffuse3 => this._diffuse3;
   set diffuse3(Math.Color4 clr) {
-    clr ??= new Math.Color4(0.5, 0.5, 0.5);
+    clr ??= new Math.Color4.gray(0.5);
     if (this._diffuse3 != clr) {
       Math.Color4 prevClr = this._diffuse3;
       this._diffuse3 = clr;
@@ -353,7 +353,7 @@ class Inspection extends Technique {
   /// The third ambient color.
   Math.Color4 get ambient3 => this._ambient3;
   set ambient3(Math.Color4 clr) {
-    clr ??= new Math.Color4(0.5, 0.5, 0.5);
+    clr ??= new Math.Color4.gray(0.5);
     if (this._ambient3 != clr) {
       Math.Color4 prevClr = this._ambient3;
       this._ambient3 = clr;
@@ -364,7 +364,7 @@ class Inspection extends Technique {
   /// The fourth diffuse color.
   Math.Color4 get diffuse4 => this._diffuse4;
   set diffuse4(Math.Color4 clr) {
-    clr ??= new Math.Color4(1.0, 1.0, 1.0);
+    clr ??= new Math.Color4.white();
     if (this._diffuse4 != clr) {
       Math.Color4 prevClr = this._diffuse4;
       this._diffuse4 = clr;
@@ -375,7 +375,7 @@ class Inspection extends Technique {
   /// The fourth ambient color.
   Math.Color4 get ambient4 => this._ambient4;
   set ambient4(Math.Color4 clr) {
-    clr ??= new Math.Color4(0.8, 0.8, 0.8);
+    clr ??= new Math.Color4.gray(0.8);
     if (this._ambient4 != clr) {
       Math.Color4 prevClr = this._ambient4;
       this._ambient4 = clr;
@@ -531,7 +531,7 @@ class Inspection extends Technique {
     shape.vertices.forEach((Shapes.Vertex vertex) {
       result.vertices.add(vertex.copy()
         ..color = color
-        ..binormal = new Math.Vector3.zero());
+        ..binormal = Math.Vector3.zero);
     });
     shape.faces.forEach((Shapes.Face face) {
       Shapes.Vertex ver1 = result.vertices[face.vertex1.index];
@@ -549,7 +549,7 @@ class Inspection extends Technique {
     shape.vertices.forEach((Shapes.Vertex vertex) {
       result.vertices.add(vertex.copy()
         ..color = color
-        ..binormal = new Math.Vector3.zero());
+        ..binormal = Math.Vector3.zero);
     });
     void addLine(Shapes.Vertex ver1, Shapes.Vertex ver2) {
       if (ver1.firstLineBetween(ver2) == null) {
@@ -579,7 +579,7 @@ class Inspection extends Technique {
     shape.vertices.forEach((Shapes.Vertex vertex) {
       Shapes.Vertex ver = vertex.copy()
         ..color = color
-        ..binormal = new Math.Vector3.zero();
+        ..binormal = Math.Vector3.zero;
       result.vertices.add(ver);
       result.points.add(ver);
     });
@@ -593,7 +593,7 @@ class Inspection extends Technique {
     shape.vertices.forEach((Shapes.Vertex vertex) {
       Shapes.Vertex ver1 = vertex.copy()
         ..color = color
-        ..binormal = new Math.Vector3.zero();
+        ..binormal = Math.Vector3.zero;
       Shapes.Vertex ver2 = ver1.copy()
         ..binormal = ver1.normal;
       result.vertices.add(ver1);
@@ -610,7 +610,7 @@ class Inspection extends Technique {
     shape.vertices.forEach((Shapes.Vertex vertex) {
       Shapes.Vertex ver1 = vertex.copy()
         ..color = color
-        ..binormal = new Math.Vector3.zero();
+        ..binormal = Math.Vector3.zero;
       Shapes.Vertex ver2 = ver1.copy()
         ..binormal = vertex.binormal;
       result.vertices.add(ver1);
@@ -627,7 +627,7 @@ class Inspection extends Technique {
     shape.vertices.forEach((Shapes.Vertex vertex) {
       Shapes.Vertex ver1 = vertex.copy()
         ..color = color
-        ..binormal = new Math.Vector3.zero();
+        ..binormal = Math.Vector3.zero;
       Shapes.Vertex ver2 = ver1.copy()
         ..binormal = -vertex.binormal.cross(vertex.normal);
       result.vertices.add(ver1);
@@ -644,7 +644,7 @@ class Inspection extends Technique {
     shape.vertices.forEach((Shapes.Vertex vertex) {
       Shapes.Vertex ver1 = vertex.copy()
         ..color = color
-        ..binormal = new Math.Vector3.zero();
+        ..binormal = Math.Vector3.zero;
       Shapes.Vertex ver2 = ver1.copy()
         ..binormal = vertex.textureCube;
       result.vertices.add(ver1);
@@ -662,7 +662,7 @@ class Inspection extends Technique {
       Shapes.Vertex ver = new Shapes.Vertex(
         loc: (face.vertex1.location + face.vertex2.location + face.vertex3.location)/3.0,
         norm: face.normal,
-        binm: new Math.Vector3.zero(),
+        binm: Math.Vector3.zero,
         clr: color);
       result.vertices.add(ver);
       result.points.add(ver);
@@ -678,7 +678,7 @@ class Inspection extends Technique {
       Shapes.Vertex cen1 = new Shapes.Vertex(
         loc: (face.vertex1.location + face.vertex2.location + face.vertex3.location)/3.0,
         norm: face.normal,
-        binm: new Math.Vector3.zero(),
+        binm: Math.Vector3.zero,
         clr: color);
       Shapes.Vertex cen2 = cen1.copy()
         ..binormal = face.normal;
@@ -697,7 +697,7 @@ class Inspection extends Technique {
       Shapes.Vertex cen1 = new Shapes.Vertex(
         loc: (face.vertex1.location + face.vertex2.location + face.vertex3.location)/3.0,
         norm: face.normal,
-        binm: new Math.Vector3.zero(),
+        binm: Math.Vector3.zero,
         clr: color);
       Shapes.Vertex cen2 = cen1.copy()
         ..binormal = face.binormal;
@@ -716,7 +716,7 @@ class Inspection extends Technique {
       Shapes.Vertex cen1 = new Shapes.Vertex(
         loc: (face.vertex1.location + face.vertex2.location + face.vertex3.location)/3.0,
         norm: face.normal,
-        binm: new Math.Vector3.zero(),
+        binm: Math.Vector3.zero,
         clr: color);
       Shapes.Vertex cen2 = cen1.copy()
         ..binormal = -face.binormal.cross(face.normal);
@@ -732,7 +732,7 @@ class Inspection extends Technique {
     Shapes.Shape result = new Shapes.Shape();
     shape.vertices.forEach((Shapes.Vertex vertex) {
       result.vertices.add(vertex.copy()
-        ..binormal = new Math.Vector3.zero());
+        ..binormal = Math.Vector3.zero);
     });
     shape.faces.forEach((Shapes.Face face) {
       Shapes.Vertex ver1 = result.vertices[face.vertex1.index];
@@ -750,7 +750,7 @@ class Inspection extends Technique {
       Math.Point2 txt = vertex.texture2D;
       result.vertices.add(vertex.copy()
         ..color = new Math.Color4(txt.x, txt.y, txt.y)
-        ..binormal = new Math.Vector3.zero());
+        ..binormal = Math.Vector3.zero);
     });
     shape.faces.forEach((Shapes.Face face) {
       Shapes.Vertex ver1 = result.vertices[face.vertex1.index];
@@ -777,7 +777,7 @@ class Inspection extends Technique {
       double spectrum = (vertex.weight-min)/div;
       Math.Color3 clr = new Math.Color3.fromHVS(spectrum*5.0/6.0, 1.0, 1.0);
       result.vertices.add(vertex.copy()
-        ..binormal = new Math.Vector3.zero()
+        ..binormal = Math.Vector3.zero
         ..color = new Math.Color4.fromColor3(clr));
     });
     shape.faces.forEach((Shapes.Face face) {
@@ -794,7 +794,7 @@ class Inspection extends Technique {
     double maxBend = 0.0;
     shape.vertices.forEach((Shapes.Vertex vertex) {
       Math.Point4 bend = vertex.bending;
-      bend ??= new Math.Point4.zero();
+      bend ??= Math.Point4.zero;
       maxBend = math.max(maxBend, bend.x);
       maxBend = math.max(maxBend, bend.y);
       maxBend = math.max(maxBend, bend.z);
@@ -820,14 +820,14 @@ class Inspection extends Technique {
     Shapes.Shape result = new Shapes.Shape();
     shape.vertices.forEach((Shapes.Vertex vertex) {
       Math.Point4 bend = vertex.bending;
-      bend ??= new Math.Point4.zero();
+      bend ??= Math.Point4.zero;
       Math.Color3 clr = new Math.Color3.black();
       clr = clr + this._bendColor(bend.x, maxIndex);
       clr = clr + this._bendColor(bend.y, maxIndex);
       clr = clr + this._bendColor(bend.z, maxIndex);
       clr = clr + this._bendColor(bend.w, maxIndex);
       result.vertices.add(vertex.copy()
-        ..binormal = new Math.Vector3.zero()
+        ..binormal = Math.Vector3.zero
         ..color = new Math.Color4.fromColor3(clr));
     });
     shape.faces.forEach((Shapes.Face face) {
@@ -850,12 +850,12 @@ class Inspection extends Technique {
     var add = (double dx, double dy, double dz) {
       Math.Color4 clr = new Math.Color4(dx, dy, dz);
       Shapes.Vertex ver1 = result.vertices.addNewLoc(0.0, 0.0, 0.0)
-        ..binormal = new Math.Vector3.zero()
-        ..normal = new Math.Vector3(1.0, 0.0, 0.0)
+        ..binormal = Math.Vector3.zero
+        ..normal = Math.Vector3.posX
         ..color = clr;
       Shapes.Vertex ver2 = result.vertices.addNewLoc(dx, dy, dz)
-        ..binormal = new Math.Vector3.zero()
-        ..normal = new Math.Vector3(1.0, 0.0, 0.0)
+        ..binormal = Math.Vector3.zero
+        ..normal = Math.Vector3.posX
         ..color = clr;
       result.lines.add(ver1, ver2);
     };
@@ -877,7 +877,7 @@ class Inspection extends Technique {
     Shapes.Shape result = new Shapes.Shape();
     var add = (double dx, double dy, double dz) {
       return result.vertices.addNewLoc(dx, dy, dz)
-        ..binormal = new Math.Vector3.zero()
+        ..binormal = Math.Vector3.zero
         ..normal = new Math.Vector3(dx, dy, dz);
     };
     Shapes.Vertex ver1 = add(aabb.x,         aabb.y,         aabb.z);

@@ -4,7 +4,7 @@ void addTechniqueTests(TestManager tests) {
 
   tests.add("Matrix4 Point Transposition Test", (TestArgs args) {
     testTechnique(args,
-      new Math.Matrix4.identity(),
+      Math.Matrix4.identity,
       new Math.Matrix4.translate(0.0, 0.0, -5.0),
       [new pointPair( 0.0,  0.0,  0.0,    0.0,                 0.0,                1.020051002550127),
        new pointPair( 1.0,  0.0,  0.0,   -0.3464101615137755,  0.0,                1.020051002550127),

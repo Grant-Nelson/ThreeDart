@@ -13,6 +13,10 @@ class Constant extends Mover {
     this.matrix = mat;
   }
 
+  /// Constructs a 4x4 identity constant mover.
+  factory Constant.identity() =>
+    new Constant(Math.Matrix4.identity);
+
   /// Constructs a 4x4 translation constant mover.
   factory Constant.translate(double tx, double ty, double tz) =>
     new Constant(new Math.Matrix4.translate(tx, ty, tz));
@@ -100,7 +104,7 @@ class Constant extends Mover {
   /// The matrix to apply to an entity or group.
   Math.Matrix4 get matrix => this._mat;
   void set matrix(Math.Matrix4 mat) {
-    mat = mat ?? new Math.Matrix4.identity();
+    mat = mat ?? Math.Matrix4.identity;
     if (this._mat != mat) {
       Math.Matrix4 prev = this._mat;
       this._mat = mat;

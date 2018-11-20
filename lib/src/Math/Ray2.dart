@@ -3,6 +3,13 @@ part of ThreeDart.Math;
 /// A 2D ray is a vector with a starting point.
 class Ray2 {
 
+  /// Gets a [Ray2] at the origin with no vector.
+  static Ray2 get zero {
+    _zeroSingleton ??= new Ray2(0.0, 0.0, 0.0, 0.0);
+    return _zeroSingleton;
+  }
+  static Ray2 _zeroSingleton;
+
   /// The x component of the ray.
   final double x;
 
@@ -17,10 +24,6 @@ class Ray2 {
 
   /// Constructs a new [Ray2].
   Ray2(this.x, this.y, this.dx, this.dy);
-
-  /// Constructs a new [Ray2] at the origin with no vector.
-  factory Ray2.zero() =>
-    new Ray2(0.0, 0.0, 0.0, 0.0);
 
   /// Constructs a new [Ray2] with the given point and vector.
   factory Ray2.fromVertex(Point2 pnt, Vector2 vec) =>

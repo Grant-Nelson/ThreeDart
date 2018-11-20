@@ -38,10 +38,10 @@ class TexturedSpot implements Light {
     this._attenuation0 = 1.0;
     this._attenuation1 = 0.0;
     this._attenuation2 = 0.0;
-    this._position     = new Math.Point3(0.0, 0.0, 0.0);
-    this._direction    = new Math.Vector3(0.0, 0.0, 1.0);
-    this._up           = new Math.Vector3(0.0, 1.0, 0.0);
-    this._right        = new Math.Vector3(-1.0, 0.0, 0.0);
+    this._position     = Math.Point3.zero;
+    this._direction    = Math.Vector3.posZ;
+    this._up           = Math.Vector3.posY;
+    this._right        = Math.Vector3.negX;
     this._changed      = null;
 
     this.mover        = mover;
@@ -67,10 +67,10 @@ class TexturedSpot implements Light {
 
   /// Updates the light with the current state.
   void update(Core.RenderState state) {
-    this._position  = new Math.Point3(0.0, 0.0, 0.0);
-    this._direction = new Math.Vector3(0.0, 0.0, 1.0);
-    this._up        = new Math.Vector3(0.0, 1.0, 0.0);
-    this._right     = new Math.Vector3(-1.0, 0.0, 0.0);
+    this._position  = Math.Point3.zero;
+    this._direction = Math.Vector3.posZ;
+    this._up        = Math.Vector3.posY;
+    this._right     = Math.Vector3.negX;
     if (this._mover != null) {
       Math.Matrix4 mat = this._mover.update(state, this);
       if (mat != null) {

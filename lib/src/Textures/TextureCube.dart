@@ -23,7 +23,7 @@ class TextureCube extends Texture {
   /// Increments the loaded value of the images.
   void _incLoaded() {
     this._loaded++;
-    if (this._loaded == 6)
+    if (this.loaded)
       this._changed?.emit();
   }
 

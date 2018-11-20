@@ -41,7 +41,7 @@ class Depth extends Technique {
   /// The color to draw the object with.
   Math.Color3 get objectColor => this._objClr;
   void set objectColor(Math.Color3 clr) {
-    clr = clr ?? new Math.Color3.white();
+    clr ??= new Math.Color3.white();
     if (this._objClr != clr) {
       Math.Color3 prev = this._objClr;
       this._objClr = clr;
@@ -52,7 +52,7 @@ class Depth extends Technique {
   /// The color to draw the fog with, typically the same color as the background.
   Math.Color3 get fogColor => this._fogClr;
   void set fogColor(Math.Color3 clr) {
-    clr = clr ?? new Math.Color3.black();
+    clr ??= new Math.Color3.black();
     if (this._fogClr != clr) {
       Math.Color3 prev = this._fogClr;
       this._fogClr = clr;
@@ -63,7 +63,7 @@ class Depth extends Technique {
   /// The depth the fog starts. Closer than this has the object color.
   double get fogStart => this._fogStart;
   void set fogStart(double start) {
-    start = start ?? 1.0;
+    start ??= 1.0;
     if (!Math.Comparer.equals(this._fogStart, start)) {
       double prev = this._fogStart;
       this._fogStart = start;
@@ -74,7 +74,7 @@ class Depth extends Technique {
   /// The depth the fog stops. Farther than this has the fog color.
   double get fogStop => this._fogStop;
   void set fogStop(double stop) {
-    stop = stop ?? 10.0;
+    stop ??= 10.0;
     if (!Math.Comparer.equals(this._fogStop, stop)) {
       double prev = this._fogStop;
       this._fogStop = stop;

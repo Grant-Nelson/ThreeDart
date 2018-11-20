@@ -4,6 +4,20 @@ part of ThreeDart.Math;
 /// This is also used for AABBs (axial alligned bounding boxes).
 class Region3 {
 
+  /// Gets a [Region3] at the origin.
+  static Region3 get zero {
+    _zeroSingleton ??= new Region3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    return _zeroSingleton;
+  }
+  static Region3 _zeroSingleton;
+  
+  /// Gets a [Region2] at the origin with a width, height, and depth of 1.
+  static Region3 get unit {
+    _unitSingleton ??= new Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
+    return _unitSingleton;
+  }
+  static Region3 _unitSingleton;
+  
   /// The left edge component of the region.
   final double x;
 
@@ -42,10 +56,6 @@ class Region3 {
     }
     return new Region3._(x, y, z, dx, dy, dz);
   }
-
-  /// Constructs a new [Region3] at the origin.
-  factory Region3.zero() =>
-    new Region3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
   /// Constructs a new [Region3] at the given point, [pnt].
   factory Region3.fromPoint(Point3 pnt, [double dx = 0.0, double dy = 0.0, double dz = 0.0]) =>

@@ -65,7 +65,7 @@ void addMatrix4Tests(TestManager tests) {
   });
 
   tests.add("Matrix4 Identity Test", (TestArgs args) {
-    Math.Matrix4 mat = new Math.Matrix4.identity();
+    Math.Matrix4 mat = Math.Matrix4.identity;
     _matrix4String(args, mat, "[1.000, 0.000, 0.000, 0.000,",
                               " 0.000, 1.000, 0.000, 0.000,",
                               " 0.000, 0.000, 1.000, 0.000,",
@@ -295,7 +295,7 @@ void addMatrix4Tests(TestManager tests) {
   });
 
   tests.add("Matrix4 Inverse Test", (TestArgs args) {
-    _invsMatrix4(args, new Math.Matrix4.identity(),
+    _invsMatrix4(args, Math.Matrix4.identity,
       "[1.000, 0.000, 0.000, 0.000,",
       " 0.000, 1.000, 0.000, 0.000,",
       " 0.000, 0.000, 1.000, 0.000,",
@@ -454,20 +454,20 @@ void _invsMatrix4(TestArgs args, Math.Matrix4 mat, String exp1, String exp2, Str
     args.fail();
   }
   Math.Matrix4 ident1 = mat*inv;
-  if (ident1 != new Math.Matrix4.identity()) {
+  if (ident1 != Math.Matrix4.identity) {
     args.error("Unexpected result from Matrix4*Matrix4.inverse(): "+
       "\n   Matrix:   " + mat.format("             ") +
       "\n   Inverted: " + inv.format("             ") +
-      "\n   Expected: " + new Math.Matrix4.identity().format("             ") +
+      "\n   Expected: " + Math.Matrix4.identity.format("             ") +
       "\n   Gotten:   " + ident1.format("             ") + "\n");
     args.fail();
   }
   Math.Matrix4 ident2 = mat*inv;
-  if (ident2 != new Math.Matrix4.identity()) {
+  if (ident2 != Math.Matrix4.identity) {
     args.error("Unexpected result from Matrix4*Matrix4.inverse(): "+
       "\n   Matrix:   " + mat.format("             ") +
       "\n   Inverted: " + inv.format("             ") +
-      "\n   Expected: " + new Math.Matrix4.identity().format("             ") +
+      "\n   Expected: " + Math.Matrix4.identity.format("             ") +
       "\n   Gotten:   " + ident2.format("             ") + "\n");
     args.fail();
   }

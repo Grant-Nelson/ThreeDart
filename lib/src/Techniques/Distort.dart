@@ -58,7 +58,7 @@ class Distort extends Technique {
   /// The color texture modification matrix.
   Math.Matrix3 get colorTexture2DMatrix => this._colorTxt2DMat;
   void set colorTexture2DMatrix(Math.Matrix3 mat) {
-    mat = mat ?? new Math.Matrix3.identity();
+    mat ??= Math.Matrix3.identity;
     if (this._colorTxt2DMat != mat) {
       this._colorTxt2DMat = mat;
       this._onChanged();
@@ -68,7 +68,7 @@ class Distort extends Technique {
   /// The bump texture modification matrix.
   Math.Matrix3 get bumpTexture2DMatrix => this._bumpTxt2DMat;
   void set bumpTexture2DMatrix(Math.Matrix3 mat) {
-    mat = mat ?? new Math.Matrix3.identity();
+    mat ??= Math.Matrix3.identity;
     if (this._bumpTxt2DMat != mat) {
       this._bumpTxt2DMat = mat;
       this._onChanged();
@@ -78,7 +78,7 @@ class Distort extends Technique {
   /// The matrix to modify the bump normal with.
   Math.Matrix4 get bumpMatrix => this._bumpMat;
   void set bumpMatrix(Math.Matrix4 mat) {
-    this._bumpMat = mat ?? new Math.Matrix4.identity();
+    this._bumpMat = mat ?? Math.Matrix4.identity;
     if (this._bumpMat != mat) {
       this._bumpMat = mat;
       this._onChanged();
