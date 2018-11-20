@@ -64,7 +64,6 @@ examples/index.html
 index.html
 main.dart.js
 packages/$sdk/_internal/ddc_sdk.sum
-packages/$sdk/_internal/spec.sum
 packages/$sdk/_internal/strong.sum
 packages/$sdk/dev_compiler/amd/dart_sdk.js
 packages/$sdk/dev_compiler/amd/require.js
@@ -98,6 +97,8 @@ packages/ThreeDart/src/Views/README.md
 packages/analyzer/src/summary/format.fbs
 packages/build_modules/src/analysis_options.default.yaml
 packages/build_runner/src/server/README.md
+packages/build_runner/src/server/build_updates_client/hot_reload_client.dart.js
+packages/build_runner/src/server/build_updates_client/live_reload_client.js
 packages/build_runner/src/server/graph_viz.html
 packages/build_runner/src/server/graph_viz.js
 packages/build_runner/src/server/graph_viz_main.dart.js
@@ -114,6 +115,7 @@ packages/kernel/analyzer/readme.md
 packages/kernel/binary/readme.md
 packages/kernel/target/readme.md
 packages/kernel/text/readme.md
+packages/pedantic/analysis_options.yaml
 resources/SnowTop.png
 resources/ThreeDart.png
 resources/styles.css
