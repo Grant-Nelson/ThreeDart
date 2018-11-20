@@ -186,10 +186,22 @@ class Player {
 
     int blockType = BlockType.Air;
     if (setBlock) {
-     NeighborBlockInfo neighbor = this._getNeighborBlock(this._highlight, this._playerViewTarget());
-      this._highlight = neighbor.info;
+      NeighborBlockInfo neighbor = this._getNeighborBlock(this._highlight, this._playerViewTarget());
       blockType = BlockType.PlaceableBlocks[this._selectedBlockIndex];
+      int oldValue = this._highlight.value;
+      this._highlight = neighbor.info;
 
+      // Keep a block from being put on the top of a plant.
+      if (neighbor.region.overlaps(Math.HitRegion.YPos)) {
+        if (BlockType.plant(oldValue)) return;
+      }
+
+      // Keep a plant from being put on water or air.
+      if (BlockType.plant(blockType)) {
+        if (!BlockType.solid(new BlockInfo.below(this._highlight).value)) return;
+      }
+
+      // Change the block type based on the side the block is being added to.
       if (blockType == BlockType.TrunkUD) {
         if (neighbor.region.overlaps(Math.HitRegion.XPos|Math.HitRegion.XNeg)) {
           blockType = BlockType.TrunkEW;
@@ -207,7 +219,16 @@ class Player {
 
     Chunk chunk = this._highlight.chunk;
     if (chunk != null) {
+      // Apply the new block type.
       this._highlight.value = blockType;
+
+      // Remove plant if a plant was above a removed block.
+      if (blockType == BlockType.Air) {
+        BlockInfo aboveInfo = new BlockInfo.above(this._highlight);
+        if (BlockType.plant(aboveInfo.value)) aboveInfo.value = BlockType.Air;
+      }
+      
+      // Indicate which chunks need to be updated.
       chunk.needUpdate = true;
       if (this._highlight.x <= 0)                           chunk.left?.needUpdate = true;
       if (this._highlight.z <= 0)                           chunk.back?.needUpdate = true;

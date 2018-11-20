@@ -156,12 +156,17 @@ class BlockType {
 
   /// hard determines if the given block type can not be walked through.
   static bool hard(int value) {
-    return solid(value);
+    return (value >= Boundary) && (value <= WoodEW);
   }
 
   /// solid determines if the given block type can not be seen through.
   static bool solid(int value) {
     return (value >= Boundary) && (value <= WoodEW);
+  }
+
+  /// plant determines if the given block type is a plant.
+  static bool plant(int value) {
+    return (value >= Grass) && (value <= Mushroom);
   }
 
   /// open determines if the given block type can be seen through.
