@@ -26,6 +26,14 @@ class BlockInfo {
   /// Creates a new block info.
   BlockInfo(this.x, this.y, this.z, this.chunkX, this.chunkZ, this.chunk);
 
+  /// Creates a new block info for the one above the given non-null info.
+  factory BlockInfo.above(BlockInfo info) =>
+    new BlockInfo(info.x, info.y+1, info.z, info.chunkX, info.chunkZ, info.chunk);
+
+  /// Creates a new block info for the one below the given non-null info.
+  factory BlockInfo.below(BlockInfo info) =>
+    new BlockInfo(info.x, info.y-1, info.z, info.chunkX, info.chunkZ, info.chunk);
+
   /// Gets the block info string for debugging.
   @override
   String toString() => "$chunk.block($x, $y, $z, ($chunkX, $chunkZ), ${BlockType.string(value)})";
