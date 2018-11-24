@@ -239,55 +239,107 @@ class Player {
 
   /// Handles checking for collision while the player is moving, falling, or jumping.
   Math.Point3 _handleCollide(Math.Point3 prev, Math.Point3 loc) {
-    double x = loc.x, y = loc.y, z = loc.z;
-    double nx = prev.x.floor()+0.5, ny = prev.y.floor()+0.5, nz = prev.z.floor()+0.5;
     this._touchingGround = false;
 
-    // Check if hitting head
-    if (_isHard(x, y-Constants.collisionPad, z)) {
-      y = ny - Constants.collisionPad;
-      this._trans.offsetY.velocity = 0.0;
+    List<Math.Point3> collideOffsets = List<Math.Point3>.from([
+      Math.Point3.zero,
+
+      // new Math.Point3(Constants.collisionPad, -Constants.playerHighOffset, Constants.collisionPad),
+      // new Math.Point3(Constants.collisionPad, -Constants.playerHighOffset, -Constants.collisionPad),
+      // new Math.Point3(-Constants.collisionPad, -Constants.playerHighOffset, -Constants.collisionPad),
+      // new Math.Point3(-Constants.collisionPad, -Constants.playerHighOffset, Constants.collisionPad),
+
+      // new Math.Point3(Constants.collisionPad, -Constants.playerLowOffset, Constants.collisionPad),
+      // new Math.Point3(Constants.collisionPad, -Constants.playerLowOffset, -Constants.collisionPad),
+      // new Math.Point3(-Constants.collisionPad, -Constants.playerLowOffset, -Constants.collisionPad),
+      // new Math.Point3(-Constants.collisionPad, -Constants.playerLowOffset, Constants.collisionPad),
+    ]);
+    final int offsetCount = collideOffsets.length;
+
+    for (int loop1 = 0; loop1 < 5; loop1++) {
+      Math.Ray3 ray = new Math.Ray3.fromPoints(prev, loc);
+      Math.Point3 vec = new Math.Point3.fromVector3(ray.vector.normal()*0.25);
+      ray = new Math.Ray3.fromPoints(prev-vec, loc+vec);
+
+      List<Math.Ray3> backRays = new List<Math.Ray3>();
+      List<NeighborBlockInfo> inters = new List<NeighborBlockInfo>();
+      for (int i = 0; i < offsetCount; i++) {
+        ray = new Math.Ray3.fromVertex(ray.start+collideOffsets[i], ray.vector);
+        backRays.add(ray.reverse);
+
+        BlockInfo info = this._world.getBlock(ray.x, ray.y, ray.z);
+        inters.add(new NeighborBlockInfo(info, Math.HitRegion.None));
+      }
+
+      // Find first block collision with head and feet.
+      int index = -1;
+      for (int loop2 = 0; loop2 < 100; loop2++) {
+        for (int i = 0; i < offsetCount; i++) {
+          BlockInfo info = inters[i]?.info;
+          if ((info == null) || BlockType.hard(info.value)) {
+            index = i;
+            break;
+          }
+          inters[i] = this._getNeighborBlock(info, backRays[i]);
+        }
+      }
+
+      // Check if reached a stopping state.
+      NeighborBlockInfo inter = inters[index];
+      BlockInfo info = inter?.info;
+      if ((info != null) && BlockType.hard(info.value)) {
+        Math.Point3 offset = collideOffsets[index];
+        double x = loc.x, y = loc.y, z = loc.z;
+        print(">> $index, $info, ${inter.region}, $ray, $vec, $offset"); // TODO: REMOVE
+
+        if (inter.region == Math.HitRegion.XNeg) {
+          x = info.x - offset.x;
+          this._trans.offsetX.velocity = 0.0;
+
+        } else if (inter.region == Math.HitRegion.XPos) {
+          x = info.x - offset.x;
+          this._trans.offsetX.velocity = 0.0;
+
+        } else if (inter.region == Math.HitRegion.YNeg) {
+          y = info.y - offset.y;
+          this._trans.offsetY.velocity = 0.0;
+          this._touchingGround = true;
+
+        } else if (inter.region == Math.HitRegion.YPos) {
+          y = info.y - offset.y;
+          this._trans.offsetY.velocity = 0.0;
+          this._touchingGround = true;
+
+        } else if (inter.region == Math.HitRegion.ZNeg) {
+          z = info.z - offset.z;
+          this._trans.offsetZ.velocity = 0.0;
+
+        } else if (inter.region == Math.HitRegion.ZPos) {
+          z = info.z - offset.z;
+          this._trans.offsetZ.velocity = 0.0;
+
+        } else break;
+        Math.Point3 loc2 = new Math.Point3(x, y, z);
+        if (loc2 == loc) break;
+        print(">>>> $loc, $loc2"); // TODO: REMOVE
+        loc = loc2;
+      }
     }
 
-    // Check if touching the ground
-    if (_isHard(x, y-Constants.playerHeight+Constants.collisionPad, z)) {
-      y = ny + Constants.collisionPad;
-      this._trans.offsetY.velocity = 0.0;
-      this._touchingGround = true;
-    }
-
-    // Handle pushing out of left and right walls
-    if (_isHard(x-Constants.collisionPad, y-Constants.playerHeadOffset, z) ||
-        _isHard(x-Constants.collisionPad, y-Constants.playerFootOffset, z)) {
-      x = nx - Constants.collisionPad;
-      this._trans.offsetX.velocity = 0.0;
-    } else if (_isHard(x+Constants.collisionPad, y-Constants.playerHeadOffset, z) ||
-               _isHard(x+Constants.collisionPad, y-Constants.playerFootOffset, z)) {
-      x = nx + Constants.collisionPad;
-      this._trans.offsetX.velocity = 0.0;
-    }
-
-    // Handle pushing out of front and back walls
-    if (_isHard(x, y-Constants.playerHeadOffset, z-Constants.collisionPad) ||
-        _isHard(x, y-Constants.playerFootOffset, z-Constants.collisionPad)) {
-      z = nz - Constants.collisionPad;
-      this._trans.offsetZ.velocity = 0.0;
-    } else if (_isHard(x, y-Constants.playerHeadOffset, z+Constants.collisionPad) ||
-               _isHard(x, y-Constants.playerFootOffset, z+Constants.collisionPad)) {
-      z = nz + Constants.collisionPad;
-      this._trans.offsetZ.velocity = 0.0;
-    }
-
+    /*
     // Check if stuck in the ground and push up until out of the ground.
     // Known bug/feature: Jumping at the bottom of a tree (or any overhang) can result in "quick climbing" the tree.
+    double x = loc.x, y = loc.y, z = loc.z;
+    double ny = prev.y.floor() + 0.5;
     while (_isHard(x, y-Constants.playerHeight+Constants.collisionPad, z) || _isHard(x, y, z)) {
       y = ny + Constants.collisionPad;
       ny += 1.0;
       this._trans.offsetY.velocity = 0.0;
       this._touchingGround = true;
     }
+    */
 
-    return new Math.Point3(x, y, z);
+    return loc;// new Math.Point3(x, y, z);
   }
 
   /// Calcuates the view vector down the center of the screen out away from the player.

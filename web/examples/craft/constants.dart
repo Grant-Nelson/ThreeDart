@@ -129,11 +129,11 @@ class Constants {
   /// The player's height.
   static const double playerHeight = 2.0;
 
-  /// The player's head collision offset.
-  static const double playerHeadOffset = 0.5;
+  /// The player's higher collision offset.
+  static const double playerHighOffset = 0.5;
 
-  /// The player's foot collision offset.
-  static const double playerFootOffset = 1.5;
+  /// The player's lower collision offset.
+  static const double playerLowOffset = 1.1;
 
   /// The sensitivity of the locked pointer mouse.
   static const double mouseSensitivity = 0.4;
