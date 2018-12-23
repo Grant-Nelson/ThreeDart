@@ -234,8 +234,7 @@ class Player {
   bool _isHard(Math.HitRegion region, Math.HitRegion side, x, double y, double z) {
     if (!region.has(side)) return false;
     BlockInfo info = this._world.getBlock(x, y, z);
-    bool hard = BlockType.hard(info.value);
-    return hard; // TODO: REMOVE
+    return BlockType.hard(info.value);
   }
 
   /// Handles checking for collision while the player is moving, falling, or jumping.
