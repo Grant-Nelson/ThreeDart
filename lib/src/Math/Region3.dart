@@ -11,12 +11,19 @@ class Region3 {
   }
   static Region3 _zeroSingleton;
   
-  /// Gets a [Region2] at the origin with a width, height, and depth of 1.
+  /// Gets a [Region3] at the origin with a width, height, and depth of 1.
   static Region3 get unit {
     _unitSingleton ??= new Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
     return _unitSingleton;
   }
   static Region3 _unitSingleton;
+  
+  /// Gets a [Region3] at the origin with a width, height, and depth of 2 centerd on origin.
+  static Region3 get unit2 {
+    _unit2Singleton ??= new Region3(-1.0, -1.0, -1.0, 2.0, 2.0, 2.0);
+    return _unit2Singleton;
+  }
+  static Region3 _unit2Singleton;
   
   /// The left edge component of the region.
   final double x;

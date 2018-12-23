@@ -1,4 +1,4 @@
-part of craft;
+part of craft.game;
 
 // This shows a pseudo wireframe instead of filled shapes.
 // Anything with special shape logic, like mushrooms, might not become wireframe.

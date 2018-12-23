@@ -17,6 +17,13 @@ class Region2 {
     return _unitSingleton;
   }
   static Region2 _unitSingleton;
+  
+  /// Gets a [Region2] at the origin with a width and height of 2 centerd on origin.
+  static Region2 get unit2 {
+    _unit2Singleton ??= new Region2(-1.0, -1.0, 2.0, 2.0);
+    return _unit2Singleton;
+  }
+  static Region2 _unit2Singleton;
 
   /// The left edge component of the region.
   final double x;

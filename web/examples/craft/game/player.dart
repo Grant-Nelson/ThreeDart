@@ -1,4 +1,4 @@
-part of craft;
+part of craft.game;
 
 /// The object defining the player and view of the game.
 class Player {
@@ -137,13 +137,6 @@ class Player {
     this.goHome();
   }
 
-  /// Determines if the block at the given coordinates can not be walked through.
-  bool _isHard(double x, double y, double z) {
-    BlockInfo info = this._world.getBlock(x, y, z);
-    bool hard = BlockType.hard(info.value);
-    return hard;
-  }
-
   /// Handles when the player presses the jump key.
   void _onJump(Events.EventArgs args) {
     if (this._touchingGround)
@@ -236,52 +229,67 @@ class Player {
       if (this._highlight.z >= Constants.chunkSideSize - 1) chunk.front?.needUpdate = true;
     }
   }
+  
+  /// Determines if the block at the given coordinates can not be walked through.
+  bool _isHard(Math.HitRegion region, Math.HitRegion side, x, double y, double z) {
+    if (!region.has(side)) return false;
+    BlockInfo info = this._world.getBlock(x, y, z);
+    bool hard = BlockType.hard(info.value);
+    return hard; // TODO: REMOVE
+  }
 
   /// Handles checking for collision while the player is moving, falling, or jumping.
   Math.Point3 _handleCollide(Math.Point3 prev, Math.Point3 loc) {
     double x = loc.x, y = loc.y, z = loc.z;
-    double nx = prev.x.floor()+0.5, ny = prev.y.floor()+0.5, nz = prev.z.floor()+0.5;
+    double nx = prev.x.floorToDouble()+0.5, ny = prev.y.floorToDouble()+0.5, nz = prev.z.floorToDouble()+0.5;
     this._touchingGround = false;
 
+    // Determine the general direction of movement.
+    Math.Ray3 movement = new Math.Ray3.fromVertex(Math.Point3.zero,
+      new Math.Vector3.fromPoint3(prev-loc).normal()*3.0).reverse;
+    Math.IntersectionRayRegion3 inter = Math.Region3.unit2.rayIntersection(movement);
+    Math.HitRegion region = inter?.region ?? Math.HitRegion.All;
+
     // Check if hitting head
-    if (_isHard(x, y-Constants.collisionPad, z)) {
-      y = ny - Constants.collisionPad;
+    if (_isHard(region, Math.HitRegion.YNeg, x, y-Constants.verticalTestPad, z)) {
+      y = ny - Constants.verticalOffset;
       this._trans.offsetY.velocity = 0.0;
     }
 
     // Check if touching the ground
-    if (_isHard(x, y-Constants.playerHeight+Constants.collisionPad, z)) {
-      y = ny + Constants.collisionPad;
+    if (_isHard(region, Math.HitRegion.YPos, x, y-Constants.playerHeight+Constants.verticalTestPad, z)) {
+      y = ny + Constants.verticalOffset;
       this._trans.offsetY.velocity = 0.0;
       this._touchingGround = true;
     }
 
     // Handle pushing out of left and right walls
-    if (_isHard(x-Constants.collisionPad, y-Constants.playerHeadOffset, z) ||
-        _isHard(x-Constants.collisionPad, y-Constants.playerFootOffset, z)) {
-      x = nx - Constants.collisionPad;
+    if (_isHard(region, Math.HitRegion.XNeg, x-Constants.horizontalPad, y-Constants.playerHeadOffset, z) ||
+        _isHard(region, Math.HitRegion.XNeg, x-Constants.horizontalPad, y-Constants.playerFootOffset, z)) {
+      x = nx - Constants.horizontalPad;
       this._trans.offsetX.velocity = 0.0;
-    } else if (_isHard(x+Constants.collisionPad, y-Constants.playerHeadOffset, z) ||
-               _isHard(x+Constants.collisionPad, y-Constants.playerFootOffset, z)) {
-      x = nx + Constants.collisionPad;
+    } else if (_isHard(region, Math.HitRegion.XPos, x+Constants.horizontalPad, y-Constants.playerHeadOffset, z) ||
+               _isHard(region, Math.HitRegion.XPos, x+Constants.horizontalPad, y-Constants.playerFootOffset, z)) {
+      x = nx + Constants.horizontalPad;
       this._trans.offsetX.velocity = 0.0;
     }
 
     // Handle pushing out of front and back walls
-    if (_isHard(x, y-Constants.playerHeadOffset, z-Constants.collisionPad) ||
-        _isHard(x, y-Constants.playerFootOffset, z-Constants.collisionPad)) {
-      z = nz - Constants.collisionPad;
+    if (_isHard(region, Math.HitRegion.ZNeg, x, y-Constants.playerHeadOffset, z-Constants.horizontalPad) ||
+        _isHard(region, Math.HitRegion.ZNeg, x, y-Constants.playerFootOffset, z-Constants.horizontalPad)) {
+      z = nz - Constants.horizontalPad;
       this._trans.offsetZ.velocity = 0.0;
-    } else if (_isHard(x, y-Constants.playerHeadOffset, z+Constants.collisionPad) ||
-               _isHard(x, y-Constants.playerFootOffset, z+Constants.collisionPad)) {
-      z = nz + Constants.collisionPad;
+    } else if (_isHard(region, Math.HitRegion.ZPos, x, y-Constants.playerHeadOffset, z+Constants.horizontalPad) ||
+               _isHard(region, Math.HitRegion.ZPos, x, y-Constants.playerFootOffset, z+Constants.horizontalPad)) {
+      z = nz + Constants.horizontalPad;
       this._trans.offsetZ.velocity = 0.0;
     }
 
     // Check if stuck in the ground and push up until out of the ground.
     // Known bug/feature: Jumping at the bottom of a tree (or any overhang) can result in "quick climbing" the tree.
-    while (_isHard(x, y-Constants.playerHeight+Constants.collisionPad, z) || _isHard(x, y, z)) {
-      y = ny + Constants.collisionPad;
+    while (_isHard(region, Math.HitRegion.None, x, y-Constants.playerHeight+Constants.verticalTestPad, z) ||
+           _isHard(region, Math.HitRegion.None, x, y, z)) {
+      y = ny + Constants.verticalOffset;
       ny += 1.0;
       this._trans.offsetY.velocity = 0.0;
       this._touchingGround = true;

@@ -1,36 +1,15 @@
 library craft;
 
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
-import 'package:ThreeDart/Shapes.dart' as Shapes;
-import 'package:ThreeDart/Lights.dart' as Lights;
-import 'package:ThreeDart/Movers.dart' as Movers;
 import 'package:ThreeDart/Math.dart' as Math;
-import 'package:ThreeDart/Textures.dart' as Textures;
-import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
-import 'package:ThreeDart/Views.dart' as Views;
-import 'package:ThreeDart/Data.dart' as Data;
-import 'package:ThreeDart/Input.dart' as Input;
-import 'package:ThreeDart/Events.dart' as Events;
-
-import 'package:OpenSimplexNoiseDart/OpenSimplexNoise.dart' as simplex;
 
 import 'dart:math' as math;
-import 'dart:typed_data' as data;
 import 'dart:async';
 import 'dart:html' as html;
 
 import '../../common/common.dart' as common;
-
-part 'blockInfo.dart';
-part 'blockType.dart';
-part 'chunk.dart';
-part 'constants.dart';
-part 'generator.dart';
-part 'materials.dart';
-part 'player.dart';
-part 'shaper.dart';
-part 'world.dart';
+import 'game/game.dart';
 
 /// Starts up the 3Dart Craft example
 void main() {
@@ -64,7 +43,7 @@ void main() {
     ..addPar(["There are tons of ways to contribute. You could even start your own example. ",
       "See the [3Dart Project|https://github.com/Grant-Nelson/ThreeDart] for more."]);
 
-    Timer.run(startCraft);
+  Timer.run(startCraft);
 }
 
 /// Start the craft game.
@@ -75,10 +54,12 @@ void startCraft() {
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("targetCanvas");
   Materials mats = new Materials(td);
-  World world = new World(mats, seed);
+  RandomGenerator gen = new RandomGenerator(seed);
+  World world = new World(mats, gen);
   Player player = new Player(td, world);
 
-  Scenes.EntityPass scene = new Scenes.EntityPass()
+  Scenes.EntityPass scene = new Scenes.EntityPass(
+    clearColor: new Math.Color4(0.576, 0.784, 0.929))
     ..onPreUpdate.add(world.update)
     ..camera.mover = player.camera;
 
@@ -89,9 +70,6 @@ void startCraft() {
   world.player = player;
   td.scene = scene;
   player.goHome();
-
-  // Set background color to sky blue
-  (scene.target as Views.FrontTarget).color = new Math.Color4(0.576, 0.784, 0.929);
 
   // Start debug output
   new Timer.periodic(const Duration(milliseconds: Constants.debugPrintTickMs), (Timer time) {

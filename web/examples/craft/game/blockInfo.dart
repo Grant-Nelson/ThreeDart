@@ -1,4 +1,4 @@
-part of craft;
+part of craft.game;
 
 /// Information about a single block of information.
 class BlockInfo {

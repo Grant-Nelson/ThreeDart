@@ -1,4 +1,4 @@
-part of craft;
+part of craft.game;
 
 /// Defines the world shown in 3Dart craft.
 class World {
@@ -11,8 +11,7 @@ class World {
   Chunk _lastChunk;
 
   /// Creates a new world with the given materials.
-  World(this._mats, [int seed = 0]) {
-    this._gen = new Generator(seed);
+  World(this._mats, this._gen) {
     this._graveyard = new List<Chunk>();
     this._chunks = new List<Chunk>();
     this._entities = new List<ThreeDart.Entity>();

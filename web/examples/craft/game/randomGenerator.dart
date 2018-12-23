@@ -1,7 +1,8 @@
-part of craft;
+part of craft.game;
 
-/// The generator will initialize chunks to create the world.
-class Generator {
+/// The generator will initialize chunks to create a world with randomly generated terrain.
+/// This is the main generator for this game.
+class RandomGenerator implements Generator {
 
   /// The noise generator for the world.
   simplex.OpenSimplexNoise _simplex;
@@ -13,7 +14,7 @@ class Generator {
   Chunk _curChunk;
   
   /// Creates a new generator for the given world.
-  Generator([int seed = 0]) {
+  RandomGenerator([int seed = 0]) {
     this._simplex = new simplex.OpenSimplexNoise(seed);
     this._tempCache = new data.Uint8List(Constants.heightCacheLength);
     this._curChunk = null;
@@ -23,6 +24,7 @@ class Generator {
   void fillChunk(Chunk chunk) {
     if (chunk == null) return;
     this._curChunk = chunk;
+
     this._prepareHeightCache();
     this._clearChunk();
     this._turrain();
@@ -33,6 +35,7 @@ class Generator {
     this._plants();
     this._add3Dart();
     this._towerOfPimps();
+
     chunk.finishGenerate();
   }
 

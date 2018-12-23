@@ -1,4 +1,4 @@
-part of craft;
+part of craft.game;
 
 /// This defines which materials to use on which side of a block.
 /// This will be associated with a block value in a map so that the chunk can pick
