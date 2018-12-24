@@ -12,9 +12,12 @@ import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Shapes.dart' as Shapes;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
+
 import '../../common/common.dart' as common;
+import '../../examples/craft/main.dart' as craft;
 
 part 'bench.dart';
+part 'craft.dart';
 part 'testTools.dart';
 part 'matrix2.dart';
 part 'matrix3.dart';
@@ -28,6 +31,7 @@ void main() {
   html.DivElement elem = new html.DivElement();
   TestManager tests = new TestManager(elem);
 
+  /*
   addBench(tests);
   addVertexTypeTests(tests);
   addMatrix2Tests(tests);
@@ -36,6 +40,9 @@ void main() {
   addRegion2Tests(tests);
   addRegion3Tests(tests);
   addTechniqueTests(tests);
+  */
+
+  addCraftTests(tests);
 
   new common.ShellPage("Unit-tests", false)
     ..addElem(elem)

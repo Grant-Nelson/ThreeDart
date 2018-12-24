@@ -1,4 +1,4 @@
-part of craft.game;
+part of craft;
 
 /// The object defining the player and view of the game.
 class Player {
@@ -21,19 +21,50 @@ class Player {
   List<ThreeDart.Entity> _blockHandEntities;
 
   /// Creates a new player for the world.
-  Player(ThreeDart.ThreeDart td, this._world) {
-    td.userInput.lockOnClick = true;
-    td.userInput.locked
+  Player(Input.UserInput userInput, this._world) {
+    userInput.lockOnClick = true;
+    userInput.locked
       ..horizontalSensitivity = Constants.mouseSensitivity
       ..verticalSensitivity = Constants.mouseSensitivity;
 
-    this._trans = new Movers.UserTranslator(input: td.userInput)
+    // Sets up the key watcher for jumping.
+    new Input.KeyGroup()
+      ..addKey(Input.Key.spacebar)
+      ..attach(userInput)
+      ..keyDown.add(this._onJump);
+    this._touchingGround = true;
+
+    // Sets up the key watcher for changing the selected block value.
+    new Input.KeyGroup()
+      ..addKey(Input.Key.tab)
+      ..addKey(Input.Key.tab, shift: true)
+      ..attach(userInput)
+      ..keyDown.add(this._onBlockCycle);
+
+    // Sets up the watchers for modifying the voxel data of a chunk.
+    new Input.KeyGroup()
+      ..addKey(Input.Key.keyE)
+      ..addKey(Input.Key.keyQ)
+      ..attach(userInput)
+      ..keyDown.add(this._onBlockChange);
+    userInput.locked.down.add(this._onClickBlockChange);
+
+    // Sets up the watcher for returning to the origin.
+    new Input.KeyGroup()
+      ..addKey(Input.Key.keyO)
+      ..attach(userInput)
+      ..keyDown.add(this._onReturnToOrigin);
+
+    // Sets up how the player will move around.
+    this._trans = new Movers.UserTranslator(input: userInput)
       ..offsetX.maximumVelocity = Constants.walkSpeed
       ..offsetY.maximumVelocity = Constants.maxFallSpeed
       ..offsetY.acceleration = Constants.gravity
       ..offsetZ.maximumVelocity = Constants.walkSpeed
       ..collisionHandle = this._handleCollide;
-    this._rot = new Movers.UserRotater.flat(input: td.userInput, locking: true);
+
+    // Sets up how the player will look around.
+    this._rot = new Movers.UserRotater.flat(input: userInput, locking: true);
     this._rot.changed.add((Events.EventArgs args) {
       this._trans.velocityRotation = new Math.Matrix3.rotateY(-this._rot.yaw.location);
     });
@@ -59,33 +90,6 @@ class Player {
       new Movers.Constant.scale(0.005, -0.005, 0.005),
       new Movers.Constant.translate(0.0, 0.0, -0.2),
       this._playerLoc]);
-
-    // Sets up the key watcher for jumping.
-    new Input.KeyGroup()
-      ..addKey(Input.Key.spacebar)
-      ..attach(td.userInput)
-      ..keyDown.add(this._onJump);
-    this._touchingGround = true;
-
-    // Sets up the key watcher for changing the selected block value.
-    new Input.KeyGroup()
-      ..addKey(Input.Key.tab)
-      ..addKey(Input.Key.tab, shift: true)
-      ..attach(td.userInput)
-      ..keyDown.add(this._onBlockCycle);
-
-    // Sets up the key watcher for modifying the voxel data of a chunk.
-    new Input.KeyGroup()
-      ..addKey(Input.Key.keyE)
-      ..addKey(Input.Key.keyQ)
-      ..attach(td.userInput)
-      ..keyDown.add(this._onBlockChange);
-    td.userInput.locked.down.add(this._onClickBlockChange);
-
-    new Input.KeyGroup()
-      ..addKey(Input.Key.keyO)
-      ..attach(td.userInput)
-      ..keyDown.add(this._onReturnToOrigin);
 
     // Creates the cross hair entity for drawing the cross hairs.
     this._crossHairs = new ThreeDart.Entity(

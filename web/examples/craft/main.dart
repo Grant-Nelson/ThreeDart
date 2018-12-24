@@ -1,15 +1,38 @@
 library craft;
 
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
+import 'package:ThreeDart/Shapes.dart' as Shapes;
+import 'package:ThreeDart/Lights.dart' as Lights;
+import 'package:ThreeDart/Movers.dart' as Movers;
 import 'package:ThreeDart/Math.dart' as Math;
+import 'package:ThreeDart/Textures.dart' as Textures;
+import 'package:ThreeDart/Techniques.dart' as Techniques;
+import 'package:ThreeDart/Data.dart' as Data;
+import 'package:ThreeDart/Input.dart' as Input;
+import 'package:ThreeDart/Events.dart' as Events;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
+
+import 'package:OpenSimplexNoiseDart/OpenSimplexNoise.dart' as simplex;
 
 import 'dart:math' as math;
 import 'dart:async';
 import 'dart:html' as html;
+import 'dart:typed_data' as data;
 
 import '../../common/common.dart' as common;
-import 'game/game.dart';
+
+part 'blockInfo.dart';
+part 'blockType.dart';
+part 'checkersGenerator.dart';
+part 'chunk.dart';
+part 'constants.dart';
+part 'generator.dart';
+part 'materials.dart';
+part 'player.dart';
+part 'randomGenerator.dart';
+part 'shaper.dart';
+part 'world.dart';
+
 
 /// Starts up the 3Dart Craft example
 void main() {
@@ -56,7 +79,7 @@ void startCraft() {
   Materials mats = new Materials(td);
   RandomGenerator gen = new RandomGenerator(seed);
   World world = new World(mats, gen);
-  Player player = new Player(td, world);
+  Player player = new Player(td.userInput, world);
 
   Scenes.EntityPass scene = new Scenes.EntityPass(
     clearColor: new Math.Color4(0.576, 0.784, 0.929))
@@ -70,7 +93,12 @@ void startCraft() {
   world.player = player;
   td.scene = scene;
   player.goHome();
-
+  
+  // Start timer for periodically generating chunks and animate.
+  new Timer.periodic(const Duration(milliseconds: Constants.worldTickMs), world.worldTick);
+  new Timer.periodic(const Duration(milliseconds: Constants.generateTickMs), world.generateTick);
+  new Timer.periodic(const Duration(milliseconds: Constants.animationTickMs), world.animationTick);
+  
   // Start debug output
   new Timer.periodic(const Duration(milliseconds: Constants.debugPrintTickMs), (Timer time) {
     String fps = td.fps.toStringAsFixed(2);

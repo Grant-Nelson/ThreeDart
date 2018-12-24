@@ -1,4 +1,4 @@
-part of craft.game;
+part of craft;
 
 /// The generator will initialize chunks to create a world with randomly generated terrain.
 /// This is the main generator for this game.

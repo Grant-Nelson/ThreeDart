@@ -1,4 +1,4 @@
-part of craft.game;
+part of craft;
 
 /// The generator will initialize chunks to create a world flat test world covered
 /// with a checkered pattern. The edges of the chunks can be highlighted.

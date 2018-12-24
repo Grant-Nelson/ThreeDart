@@ -1,4 +1,4 @@
-part of craft.game;
+part of craft;
 
 /// The generator for initializing chunks to create the world.
 abstract class Generator {

@@ -1,4 +1,4 @@
-part of craft.game;
+part of craft;
 
 /// BlockType is the enums for all the voxel block types
 class BlockType {

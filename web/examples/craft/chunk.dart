@@ -1,4 +1,4 @@
-part of craft.game;
+part of craft;
 
 /// A chunk represents the voxal information for a large number of blocks.
 /// This makes up one of the many square areas of the world.

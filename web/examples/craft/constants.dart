@@ -1,4 +1,4 @@
-part of craft.game;
+part of craft;
 
 /// Set of constants for Craft.
 class Constants {
@@ -87,10 +87,10 @@ class Constants {
 
   /// The total X and Z size including borders.
   static const int paddedSize = paddedMax - paddedMin;
-  
+
   /// The number of values in the height cache of the generator.
   static const int heightCacheLength = paddedSize * paddedSize;
-  
+
   //----------------------------------------------
   // World Rendering & Chunk Loading Constants
   //----------------------------------------------
@@ -106,10 +106,10 @@ class Constants {
 
   /// The minimum chunk X and Z distance from the player that chunks should be loaded.
   static const int minChunkDist = chunkSideSize * 4;
-  
+
   /// The initial chunk distance to preload before starting the player.
   static const int initChunkDist = chunkSideSize * 2;
-  
+
   //----------------------------------------------
   // Player Constants
   //----------------------------------------------

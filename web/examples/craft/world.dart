@@ -1,4 +1,4 @@
-part of craft.game;
+part of craft;
 
 /// Defines the world shown in 3Dart craft.
 class World {
@@ -16,8 +16,11 @@ class World {
     this._chunks = new List<Chunk>();
     this._entities = new List<ThreeDart.Entity>();
     this._lastChunk = null;
-    for (Techniques.MaterialLight tech in this._mats.materials)
-      this.entities.add(new ThreeDart.Entity(tech: tech));
+
+    if (this._mats != null) {
+      for (Techniques.MaterialLight tech in this._mats.materials)
+        this.entities.add(new ThreeDart.Entity(tech: tech));
+    }
 
     // Pre-allocate several chunks into the graveyard.
     for (int i = 0; i < Constants.initialGraveyardSize; i++)
@@ -29,11 +32,6 @@ class World {
         this._gen.fillChunk(this._prepareChunk(x, z));
       }
     }
-
-    // Start timer for periodically generating chunks and animate.
-    new Timer.periodic(const Duration(milliseconds: Constants.worldTickMs), this._worldTick);
-    new Timer.periodic(const Duration(milliseconds: Constants.generateTickMs), this._generateTick);
-    new Timer.periodic(const Duration(milliseconds: Constants.animationTickMs), this._animationTick);
   }
 
   /// Gets the random noise generator for this world.
@@ -75,22 +73,25 @@ class World {
 
     return new BlockInfo(bx, by, bz, cx, cz, chunk);
   }
+
+  /// The location of the player in the world.
+  Math.Point3 get _playerPoint => this._player.point ?? Math.Point3.zero;
   
   /// Adds and removes chunks as needed.
-  void _worldTick(Timer timer) {
-    Math.Point3 player = this._player.point;
+  void worldTick(_) {
+    Math.Point3 player = this._playerPoint;
     this._updateLoadedChunks(player);
   }
 
   /// Generates one chunk which is still pending to be loaded.
-  void _generateTick(Timer timer) {
-    Math.Point3 player = this._player.point;
+  void generateTick(_) {
+    Math.Point3 player = this._playerPoint;
     this._generateChunk(player);
     this._refreshDirty(player);
   }
 
   // Animates the water texture.
-  void _animationTick(Timer time) {
+  void animationTick(_) {
     this._mats.waterChanger.nextTexture();
   }
   
@@ -185,7 +186,7 @@ class World {
 
   /// Gets the string for debug information to be printed to the console.
   String debugString() {
-    return "chunks: ${this._chunks.length}, graveyard: ${this._graveyard.length}, player: ${this._player.point}";
+    return "chunks: ${this._chunks.length}, graveyard: ${this._graveyard.length}, player: ${this._playerPoint}";
   }
 
   /// Updates the world to the player's view.
