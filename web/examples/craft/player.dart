@@ -7,7 +7,7 @@ class Player {
   World _world;
   bool _touchingGround;
   int _selectedBlockIndex;
-  BlockInfo _highlight;
+  NeighborBlockInfo _highlight;
 
   Movers.Group _camera;
   Movers.Group _playerLoc;
@@ -19,6 +19,8 @@ class Player {
   ThreeDart.Entity _blockHighlight;
   ThreeDart.Entity _entity;
   List<ThreeDart.Entity> _blockHandEntities;
+
+  Data.Metrics _metrics; // TODO: REMOVE
 
   /// Creates a new player for the world.
   Player(Input.UserInput userInput, this._world) {
@@ -54,6 +56,13 @@ class Player {
       ..addKey(Input.Key.keyO)
       ..attach(userInput)
       ..keyDown.add(this._onReturnToOrigin);
+
+    // TODO: REMOVE
+    this._metrics = new Data.Metrics();
+    new Input.KeyGroup()
+      ..addKey(Input.Key.keyM)
+      ..attach(userInput)
+      ..keyDown.add(this._onToggleMetrics);
 
     // Sets up how the player will move around.
     this._trans = new Movers.UserTranslator(input: userInput)
@@ -136,6 +145,14 @@ class Player {
     this._trans.velocity = Math.Vector3.zero;
   }
 
+  /// TODO: REMOVE
+  void _onToggleMetrics(Events.EventArgs args) {
+    html.document.getElementById("metricsOutput")?.innerHtml =
+      this._metrics.toString().replaceAll("\n", "<br>");
+    this._metrics.enabled = !this._metrics.enabled;
+    this._metrics.clear();
+  }
+
   /// Handles then the player presses the return to origin button.
   void _onReturnToOrigin(Events.EventArgs args) {
     this.goHome();
@@ -179,64 +196,64 @@ class Player {
   /// If [setBlock] is true then the current block in the hand is set on a neighboring side to the 
   /// highlight, if false then the highlighted block is set to air.
   void _changeBlock(bool setBlock) {
-    if (this._highlight == null) return;
+    if (this._highlight?.info == null) return;
+    BlockInfo info = this._highlight.info;
 
     int blockType = BlockType.Air;
     if (setBlock) {
-      NeighborBlockInfo neighbor = this._getNeighborBlock(this._highlight, this._playerViewTarget());
       blockType = BlockType.PlaceableBlocks[this._selectedBlockIndex];
-      int oldValue = this._highlight.value;
-      this._highlight = neighbor.info;
+      int oldValue = this._highlight.info.value;
+      Math.HitRegion region = this._highlight.region;
 
       // Keep a block from being put on the top of a plant.
-      if (neighbor.region.overlaps(Math.HitRegion.YPos)) {
+      if (region.overlaps(Math.HitRegion.YPos)) {
         if (BlockType.plant(oldValue)) return;
       }
 
       // Keep a plant from being put on water or air.
       if (BlockType.plant(blockType)) {
-        if (!BlockType.solid(new BlockInfo.below(this._highlight).value)) return;
+        if (!BlockType.solid(new BlockInfo.below(info).value)) return;
       }
 
       // Change the block type based on the side the block is being added to.
       if (blockType == BlockType.TrunkUD) {
-        if (neighbor.region.overlaps(Math.HitRegion.XPos|Math.HitRegion.XNeg)) {
+        if (region.overlaps(Math.HitRegion.XPos|Math.HitRegion.XNeg)) {
           blockType = BlockType.TrunkEW;
-        } else if (neighbor.region.overlaps(Math.HitRegion.ZPos|Math.HitRegion.ZNeg)) {
+        } else if (region.overlaps(Math.HitRegion.ZPos|Math.HitRegion.ZNeg)) {
           blockType = BlockType.TrunkNS;
         }
       } else if (blockType == BlockType.WoodUD) {
-        if (neighbor.region.overlaps(Math.HitRegion.XPos|Math.HitRegion.XNeg)) {
+        if (region.overlaps(Math.HitRegion.XPos|Math.HitRegion.XNeg)) {
           blockType = BlockType.WoodEW;
-        } else if (neighbor.region.overlaps(Math.HitRegion.ZPos|Math.HitRegion.ZNeg)) {
+        } else if (region.overlaps(Math.HitRegion.ZPos|Math.HitRegion.ZNeg)) {
           blockType = BlockType.WoodNS;
         }
       }
     }
 
-    Chunk chunk = this._highlight.chunk;
+    Chunk chunk = info.chunk;
     if (chunk != null) {
       // Apply the new block type.
-      this._highlight.value = blockType;
+      info.value = blockType;
 
       // Remove plant if a plant was above a removed block.
       if (blockType == BlockType.Air) {
-        BlockInfo aboveInfo = new BlockInfo.above(this._highlight);
+        BlockInfo aboveInfo = new BlockInfo.above(info);
         if (BlockType.plant(aboveInfo.value)) aboveInfo.value = BlockType.Air;
       }
       
       // Indicate which chunks need to be updated.
       chunk.needUpdate = true;
-      if (this._highlight.x <= 0)                           chunk.left?.needUpdate = true;
-      if (this._highlight.z <= 0)                           chunk.back?.needUpdate = true;
-      if (this._highlight.x >= Constants.chunkSideSize - 1) chunk.right?.needUpdate = true;
-      if (this._highlight.z >= Constants.chunkSideSize - 1) chunk.front?.needUpdate = true;
+      if (info.x <= 0)                           chunk.left?.needUpdate = true;
+      if (info.z <= 0)                           chunk.back?.needUpdate = true;
+      if (info.x >= Constants.chunkSideSize - 1) chunk.right?.needUpdate = true;
+      if (info.z >= Constants.chunkSideSize - 1) chunk.front?.needUpdate = true;
     }
   }
   
   /// Determines if the block at the given coordinates can not be walked through.
   bool _isHard(Math.HitRegion region, Math.HitRegion side, x, double y, double z) {
-    if (!region.has(side)) return false;
+    //if (!region.has(side)) return false;
     BlockInfo info = this._world.getBlock(x, y, z);
     return BlockType.hard(info.value);
   }
@@ -244,9 +261,10 @@ class Player {
   /// Handles checking for collision while the player is moving, falling, or jumping.
   Math.Point3 _handleCollide(Math.Point3 prev, Math.Point3 loc) {
     double x = loc.x, y = loc.y, z = loc.z;
-    double nx = prev.x.floorToDouble()+0.5, ny = prev.y.floorToDouble()+0.5, nz = prev.z.floorToDouble()+0.5;
+    double nx = loc.x.floorToDouble(), ny = loc.y.floorToDouble(), nz = loc.z.floorToDouble();
     this._touchingGround = false;
 
+    /*
     // Determine the general direction of movement.
     Math.Ray3 movement = new Math.Ray3.fromVertex(Math.Point3.zero,
       new Math.Vector3.fromPoint3(prev-loc).normal()*3.0).reverse;
@@ -258,14 +276,47 @@ class Player {
       y = ny - Constants.verticalOffset;
       this._trans.offsetY.velocity = 0.0;
     }
+    */
+
+    // TODO: REMOVE
+    if (this._metrics.enabled) {
+      double y2 = y-Constants.playerHeight+Constants.verticalTestPad;
+      BlockInfo info = this._world.getBlock(x, y2, z);
+      this._metrics
+        ..stepFrame()
+        ..addVal("count", this._metrics.frameCount)
+        ..addVal("x", x)
+        ..addVal("y", y)
+        ..addVal("z", z)
+        ..addVal("nx", nx)
+        ..addVal("ny", ny)
+        ..addVal("nz", nz)
+        ..addVal("y2", y2)
+        ..addVal("chunkX", info.chunkX)
+        ..addVal("chunkZ", info.chunkZ)
+        ..addVal("blockX", info.x)
+        ..addVal("blockY", info.y)
+        ..addVal("blockZ", info.z)
+        ..addVal("value", info.value)
+        ..addVal("hard", BlockType.hard(info.value)? 1.0: 0.0);
+    }
 
     // Check if touching the ground
+    Math.HitRegion region = Math.HitRegion.XNeg;
     if (_isHard(region, Math.HitRegion.YPos, x, y-Constants.playerHeight+Constants.verticalTestPad, z)) {
       y = ny + Constants.verticalOffset;
       this._trans.offsetY.velocity = 0.0;
       this._touchingGround = true;
     }
 
+    // TODO: REMOVE
+    if (this._metrics.enabled) {
+      this._metrics
+        ..addVal("dy", this._trans.offsetY.velocity)
+        ..addVal("y3", y);
+    }
+
+    /*
     // Handle pushing out of left and right walls
     if (_isHard(region, Math.HitRegion.XNeg, x-Constants.horizontalPad, y-Constants.playerHeadOffset, z) ||
         _isHard(region, Math.HitRegion.XNeg, x-Constants.horizontalPad, y-Constants.playerFootOffset, z)) {
@@ -297,6 +348,7 @@ class Player {
       this._trans.offsetY.velocity = 0.0;
       this._touchingGround = true;
     }
+    */
 
     return new Math.Point3(x, y, z);
   }
@@ -309,51 +361,20 @@ class Player {
       mat.transVec3(new Math.Vector3(0.0, 0.0, -Constants.highlightDistance)));
   }
 
-  /// Gets the neighboring block to the given block with the given [ray] pointing at the side to get the neighbor for.
-  NeighborBlockInfo _getNeighborBlock(BlockInfo info, Math.Ray3 ray) {
-    Math.Region3 region = new Math.Region3(
-      info.x.toDouble()+info.chunkX.toDouble(),
-      info.y.toDouble(),
-      info.z.toDouble()+info.chunkZ.toDouble(),
-      1.0, 1.0, 1.0);
-
-    Math.IntersectionRayRegion3 inter = region.rayIntersection(ray);
-    Math.Point3 center = region.center;
-    double x = center.x, y = center.y, z = center.z;
-    if (inter == null) return null;
-    else if (inter.region == Math.HitRegion.XNeg) x -= 1.0;
-    else if (inter.region == Math.HitRegion.XPos) x += 1.0;
-    else if (inter.region == Math.HitRegion.YNeg) y -= 1.0;
-    else if (inter.region == Math.HitRegion.YPos) y += 1.0;
-    else if (inter.region == Math.HitRegion.ZNeg) z -= 1.0;
-    else if (inter.region == Math.HitRegion.ZPos) z += 1.0;
-    else return null;
-
-    BlockInfo block = this._world.getBlock(x, y, z);
-    return new NeighborBlockInfo(block, inter.region);
-  }
-
   /// Updates the selection for the highlighted block that can be modified.
   void _updateHighlight(Events.EventArgs _) {
-    Math.Ray3 ray = this._playerViewTarget();
-    Math.Ray3 back = ray.reverse;
+    NeighborBlockInfo neighborInfo = this._world.traverseNeighbors(this._playerViewTarget(),
+      (NeighborBlockInfo neighbor) => (neighbor?.info?.value == BlockType.Air));
 
-    int dist = 0;
-    BlockInfo info = this._world.getBlock(ray.x, ray.y, ray.z);
-    while ((info != null) && (info.value == BlockType.Air)) {
-      info = this._getNeighborBlock(info, back)?.info;
-      dist++;
-    }
-
-    if ((info != null) && ((dist < 1) || (info.value == BlockType.Air) || (info.value == BlockType.Boundary))) info = null;
-    this._highlight = info;
+    BlockInfo info = neighborInfo?.info;
+    if ((info != null) && ((neighborInfo.depth < 1) || (info.value == BlockType.Air) || (info.value == BlockType.Boundary))) neighborInfo = null;
+    this._highlight = neighborInfo;
 
     if (this._highlight == null) {
       this._blockHighlight.enabled = false;
     } else {
       Shaper shaper = new Shaper(null, Data.VertexType.Pos | Data.VertexType.Txt2D);
-      shaper.addCubeToOneShape(this._highlight.chunkX+this._highlight.x, this._highlight.y,
-        this._highlight.chunkZ+this._highlight.z, true, 1.1);
+      shaper.addCubeToOneShape(info.chunkX+info.x, info.y, info.chunkZ+info.z, true, 1.1);
       shaper.finish([this._blockHighlight]);
       this._blockHighlight.enabled = true;
     }

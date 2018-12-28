@@ -65,6 +65,14 @@ class ShellPage {
     this._page.append(textHeaderElem);
   }
 
+  /// Adds a div element with an identifier for outputting custom output to.
+  void addDiv(String id, [String className = "codePar"]) {
+    html.DivElement div = new html.DivElement()
+      ..className = className
+      ..id = id;
+    this._page.append(div);
+  }
+
   /// Adds a paragraph to the page. The body of the paragraph
   /// can be split across several lines as several entries into the list.
   /// If the text is wrapped by asterisks the text will be bolded.

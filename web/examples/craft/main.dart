@@ -44,6 +44,7 @@ void main() {
       "to create a [voxel|https://en.wikipedia.org/wiki/Voxel] environment for browser driven video games. ",
       "This example has no server backing it so none of the changes are persisted. It would take very little ",
       "to turn this into a simple online game."])
+    ..addDiv("metricsOutput") // TODO: REMOVE
     ..addPar(["«[Back to Examples List|../../]"])
     ..addHeader(1, "Controls")
     ..addPar(["• _Currently there are no controls for mobile browsers_"])
@@ -77,7 +78,8 @@ void startCraft() {
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("targetCanvas");
   Materials mats = new Materials(td);
-  RandomGenerator gen = new RandomGenerator(seed);
+  //RandomGenerator gen = new RandomGenerator(seed);
+  CheckersGenerator gen = new CheckersGenerator();
   World world = new World(mats, gen);
   Player player = new Player(td.userInput, world);
 

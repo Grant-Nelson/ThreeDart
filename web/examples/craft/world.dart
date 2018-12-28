@@ -59,15 +59,19 @@ class World {
 
   /// Gets the block closest to thie given location.
   BlockInfo getBlock(double x, double y, double z) {
-    int cx = (x.truncate() ~/ Constants.chunkSideSize) * Constants.chunkSideSize;
-    int cz = (z.truncate() ~/ Constants.chunkSideSize) * Constants.chunkSideSize;
-    if (x < 0.0) cx -= Constants.chunkSideSize;
-    if (z < 0.0) cz -= Constants.chunkSideSize;
+    int tx = x.floor();
+    int ty = y.floor();
+    int tz = z.floor();
+
+    int cx = (tx < 0)? tx - Constants.chunkSideSize + 1: tx;
+    int cz = (tz < 0)? tz - Constants.chunkSideSize + 1: tz;
+    cx = (cx ~/ Constants.chunkSideSize) * Constants.chunkSideSize;
+    cz = (cz ~/ Constants.chunkSideSize) * Constants.chunkSideSize;
     Chunk chunk = this.findChunk(cx, cz);
 
-    int bx = x.floor() - cx;
-    int by = y.floor();
-    int bz = z.floor() - cz;
+    int bx = tx - cx;
+    int by = ty;
+    int bz = tz - cz;
     if (bx < 0) bx += Constants.chunkSideSize;
     if (bz < 0) bz += Constants.chunkSideSize;
 
@@ -182,6 +186,46 @@ class World {
       nearest.dirty = false;
       nearest.needUpdate = true;
     }
+  }
+  
+  /// Gets the neighboring block to the given block with the
+  /// given [ray] pointing at the side to get the neighbor for.
+  NeighborBlockInfo _getNeighborBlock(BlockInfo info, Math.Ray3 ray, int depth) {
+    Math.Region3 region = new Math.Region3(
+      info.x.toDouble()+info.chunkX.toDouble(),
+      info.y.toDouble(),
+      info.z.toDouble()+info.chunkZ.toDouble(),
+      1.0, 1.0, 1.0);
+
+    Math.IntersectionRayRegion3 inter = region.rayIntersection(ray);
+    Math.Point3 center = region.center;
+    double x = center.x, y = center.y, z = center.z;
+    if (inter == null) return null;
+    else if (inter.region == Math.HitRegion.XNeg) x -= 1.0;
+    else if (inter.region == Math.HitRegion.XPos) x += 1.0;
+    else if (inter.region == Math.HitRegion.YNeg) y -= 1.0;
+    else if (inter.region == Math.HitRegion.YPos) y += 1.0;
+    else if (inter.region == Math.HitRegion.ZNeg) z -= 1.0;
+    else if (inter.region == Math.HitRegion.ZPos) z += 1.0;
+    else return null;
+
+    BlockInfo block = this.getBlock(x, y, z);
+    return new NeighborBlockInfo(block, inter.region, depth);
+  }
+
+  /// Updates the selection for the highlighted block that can be modified.
+  /// Returns the neighbor block info this traversal was stopped at.
+  NeighborBlockInfo traverseNeighbors(Math.Ray3 ray, HandleTraverseNeighbor hndl) {
+    Math.Ray3 back = ray.reverse;
+    int depth = 0;
+    BlockInfo info = this.getBlock(ray.x, ray.y, ray.z);
+    NeighborBlockInfo neighbor = new NeighborBlockInfo(info, Math.HitRegion.Inside, 0);
+    while (neighbor?.info != null) {
+      if (hndl(neighbor)) return neighbor;
+      neighbor = this._getNeighborBlock(neighbor.info, back, depth);
+      depth++;
+    }
+    return neighbor;
   }
 
   /// Gets the string for debug information to be printed to the console.

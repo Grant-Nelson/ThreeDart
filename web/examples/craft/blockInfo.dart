@@ -4,12 +4,15 @@ part of craft;
 class BlockInfo {
 
   /// The block's x offset local to the chunk.
+  /// This value is [0..chunkSideSize).
   final int x;
 
   /// The block's y offset local to the chunk.
+  /// This value is [0..chunkSideSize).
   final int y;
 
   /// The block's z offset local to the chunk.
+  /// This value is [0..chunkSideSize).
   final int z;
 
   /// The x location this chunk is at in the world.
@@ -43,6 +46,10 @@ class BlockInfo {
   void set value(int value) { this.chunk?.setBlock(x, y, z, value); }
 }
 
+/// A callback for handling the block information while traversing neighbors.
+/// Return true to continue the traversal, false to break.
+typedef bool HandleTraverseNeighbor(NeighborBlockInfo info);
+
 /// Block information result from finding a neighboring block info.
 class NeighborBlockInfo {
 
@@ -53,6 +60,9 @@ class NeighborBlockInfo {
   /// Will be only XNeg, XPos, YNeg, YPos, ZNeg, or ZPos.
   final Math.HitRegion region;
 
+  /// The count for the number of neighbors which have been traversed. 
+  final int depth;
+
   /// Creates a new neighbor block info result.
-  NeighborBlockInfo(this.info, this.region);
+  NeighborBlockInfo(this.info, this.region, this.depth);
 }

@@ -113,19 +113,6 @@ class Constants {
   //----------------------------------------------
   // Player Constants
   //----------------------------------------------
-  //
-  //  +-------+ --{ y
-  //  |  o,o  | --{ y - pad
-  //  | '---' |
-  //  +-------+
-  //  |       |
-  //  |       | --{ y - height + pad
-  //  +-------+ --{ y - height
-  //    . . .
-  //    | | |
-  //    | |  `----{ x + pad
-  //    |  `------{ x
-  //     `--------{ x - pad
 
   /// The X starting location of the player.
   static const double playerStartX = 0.5;
@@ -146,10 +133,10 @@ class Constants {
   static const double horizontalPad = 0.25;
 
   /// The padding for vertical collision detection.
-  static const double verticalTestPad = 0.25;
+  static const double verticalTestPad = 0.0;
 
   /// The padding for vertical collision offset.
-  static const double verticalOffset = 0.25;
+  static const double verticalOffset = 0.5;
 
   /// The velocity to apply when the player jumps.
   static const double jumpSpeed = 30.0;
