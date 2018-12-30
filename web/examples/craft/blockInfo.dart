@@ -29,13 +29,72 @@ class BlockInfo {
   /// Creates a new block info.
   BlockInfo(this.x, this.y, this.z, this.chunkX, this.chunkZ, this.chunk);
 
-  /// Creates a new block info for the one above the given non-null info.
-  factory BlockInfo.above(BlockInfo info) =>
-    new BlockInfo(info.x, info.y+1, info.z, info.chunkX, info.chunkZ, info.chunk);
+  /// Creates a new block info for the one above this info.
+  BlockInfo get above =>
+    new BlockInfo(this.x, this.y+1, this.z, this.chunkX, this.chunkZ, this.chunk);
 
-  /// Creates a new block info for the one below the given non-null info.
-  factory BlockInfo.below(BlockInfo info) =>
-    new BlockInfo(info.x, info.y-1, info.z, info.chunkX, info.chunkZ, info.chunk);
+  /// Creates a new block info for the one below this info.
+  BlockInfo get below =>
+    new BlockInfo(this.x, this.y-1, this.z, this.chunkX, this.chunkZ, this.chunk);
+
+  /// Creates a new block info for the one to the right of this info.
+  BlockInfo get right {
+    int x = this.x + 1;
+    int chunkX = this.chunkX;
+    Chunk chunk = this.chunk;
+    if (x >= Constants.chunkSideSize) {
+      x = 0;
+      chunkX++;
+      chunk = chunk?.right;
+    }
+    return new BlockInfo(x, this.y, this.z, chunkX, this.chunkZ, chunk);
+  }
+
+  /// Creates a new block info for the one to the left of this info.
+  BlockInfo get left {
+    int x = this.x - 1;
+    int chunkX = this.chunkX;
+    Chunk chunk = this.chunk;
+    if (x < 0) {
+      x = Constants.chunkSideSize-1;
+      chunkX--;
+      chunk = chunk?.left;
+    }
+    return new BlockInfo(x, this.y, this.z, chunkX, this.chunkZ, chunk);
+  }
+
+  /// Creates a new block info for the one to the front of this info.
+  BlockInfo get front {
+    int z = this.z + 1;
+    int chunkZ = this.chunkX;
+    Chunk chunk = this.chunk;
+    if (z >= Constants.chunkSideSize) {
+      z = 0;
+      chunkZ++;
+      chunk = chunk?.right;
+    }
+    return new BlockInfo(this.x, this.y, z, this.chunkX, chunkZ, chunk);
+  }
+  
+  /// Creates a new block info for the one to the back of this info.
+  BlockInfo get back {
+    int z = this.z - 1;
+    int chunkZ = this.chunkZ;
+    Chunk chunk = this.chunk;
+    if (z < 0) {
+      z = Constants.chunkSideSize-1;
+      chunkZ--;
+      chunk = chunk?.left;
+    }
+    return new BlockInfo(this.x, this.y, z, this.chunkX, chunkZ, chunk);
+  }
+
+  /// Gets the region for this info block.
+  Math.Region3 get blockRegion => new Math.Region3(
+    this.x.toDouble()+this.chunkX.toDouble(),
+    this.y.toDouble(),
+    this.z.toDouble()+this.chunkZ.toDouble(),
+    1.0, 1.0, 1.0);
 
   /// Gets the block info string for debugging.
   @override
@@ -44,25 +103,4 @@ class BlockInfo {
   /// Gets or sets the block value for this block.
   int get value => this.chunk?.getBlock(x, y, z) ?? ((y < 0)? BlockType.Boundary: BlockType.Air);
   void set value(int value) { this.chunk?.setBlock(x, y, z, value); }
-}
-
-/// A callback for handling the block information while traversing neighbors.
-/// Return true to continue the traversal, false to break.
-typedef bool HandleTraverseNeighbor(NeighborBlockInfo info);
-
-/// Block information result from finding a neighboring block info.
-class NeighborBlockInfo {
-
-  /// The neighboring block information.
-  final BlockInfo info;
-
-  /// The direction this neighbor was from the other block.
-  /// Will be only XNeg, XPos, YNeg, YPos, ZNeg, or ZPos.
-  final Math.HitRegion region;
-
-  /// The count for the number of neighbors which have been traversed. 
-  final int depth;
-
-  /// Creates a new neighbor block info result.
-  NeighborBlockInfo(this.info, this.region, this.depth);
 }

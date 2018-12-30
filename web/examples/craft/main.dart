@@ -28,6 +28,7 @@ part 'chunk.dart';
 part 'constants.dart';
 part 'generator.dart';
 part 'materials.dart';
+part 'neighborBlockInfo.dart';
 part 'player.dart';
 part 'randomGenerator.dart';
 part 'shaper.dart';

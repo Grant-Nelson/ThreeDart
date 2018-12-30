@@ -190,42 +190,106 @@ class World {
   
   /// Gets the neighboring block to the given block with the
   /// given [ray] pointing at the side to get the neighbor for.
-  NeighborBlockInfo _getNeighborBlock(BlockInfo info, Math.Ray3 ray, int depth) {
-    Math.Region3 region = new Math.Region3(
-      info.x.toDouble()+info.chunkX.toDouble(),
-      info.y.toDouble(),
-      info.z.toDouble()+info.chunkZ.toDouble(),
-      1.0, 1.0, 1.0);
+  NeighborBlockInfo _getNeighborBlock(BlockInfo info, Math.Ray3 ray, Math.Ray3 back, int depth) {
+    Math.Region3 region = info.blockRegion;
+    Math.IntersectionRayRegion3 inter = region.rayIntersection(back);
 
-    Math.IntersectionRayRegion3 inter = region.rayIntersection(ray);
-    Math.Point3 center = region.center;
-    double x = center.x, y = center.y, z = center.z;
     if (inter == null) return null;
-    else if (inter.region == Math.HitRegion.XNeg) x -= 1.0;
-    else if (inter.region == Math.HitRegion.XPos) x += 1.0;
-    else if (inter.region == Math.HitRegion.YNeg) y -= 1.0;
-    else if (inter.region == Math.HitRegion.YPos) y += 1.0;
-    else if (inter.region == Math.HitRegion.ZNeg) z -= 1.0;
-    else if (inter.region == Math.HitRegion.ZPos) z += 1.0;
+    else if (inter.region == Math.HitRegion.XNeg) info = info.left;
+    else if (inter.region == Math.HitRegion.XPos) info = info.right;
+    else if (inter.region == Math.HitRegion.YNeg) info = info.below;
+    else if (inter.region == Math.HitRegion.YPos) info = info.above;
+    else if (inter.region == Math.HitRegion.ZNeg) info = info.back;
+    else if (inter.region == Math.HitRegion.ZPos) info = info.front;
     else return null;
 
-    BlockInfo block = this.getBlock(x, y, z);
-    return new NeighborBlockInfo(block, inter.region, depth);
+    return new NeighborBlockInfo(info, inter.region, ray, depth);
   }
 
   /// Updates the selection for the highlighted block that can be modified.
   /// Returns the neighbor block info this traversal was stopped at.
-  NeighborBlockInfo traverseNeighbors(Math.Ray3 ray, HandleTraverseNeighbor hndl) {
-    Math.Ray3 back = ray.reverse;
+  NeighborBlockInfo traverseNeighbors(List<Math.Ray3> rays, HandleTraverseNeighbor hndl) {
     int depth = 0;
-    BlockInfo info = this.getBlock(ray.x, ray.y, ray.z);
-    NeighborBlockInfo neighbor = new NeighborBlockInfo(info, Math.HitRegion.Inside, 0);
-    while (neighbor?.info != null) {
-      if (hndl(neighbor)) return neighbor;
-      neighbor = this._getNeighborBlock(neighbor.info, back, depth);
+    int count = rays.length;
+
+    List<Math.Ray3> backs = new List<Math.Ray3>.generate(count,
+      (int index) => rays[index].reverse);
+
+    List<NeighborBlockInfo> neighbors = new List<NeighborBlockInfo>.generate(count,
+      (int index) {
+        Math.Ray3 ray = rays[index];
+        BlockInfo info = this.getBlock(ray.x, ray.y, ray.z);
+        return new NeighborBlockInfo(info, Math.HitRegion.Inside, ray, 0);
+      });
+
+    while (true) {
+      for (int i = 0; i < count; i++) {
+        NeighborBlockInfo neighbor = neighbors[i];
+        if (hndl(neighbor)) return neighbor;
+        neighbors[i] = this._getNeighborBlock(neighbor.info, rays[i], backs[i], depth);
+      }
       depth++;
     }
-    return neighbor;
+  }
+  
+  /// TODO: Comment (returns offset start)
+  Math.Point3 collide(List<Math.Point3> starts, Math.Vector3 vector) {
+    int count = starts.length;
+    if (count <= 0) return null;
+
+    while (true) {
+      Math.Point3 loc = starts[0]+new Math.Point3.fromVector3(vector);
+
+      List<Math.Ray3> rays = new List<Math.Ray3>.generate(count,
+        (int index) => new Math.Ray3.fromVertex(starts[index], vector));
+
+      NeighborBlockInfo neighbor = this.traverseNeighbors(rays,
+        (NeighborBlockInfo neighbor) => (neighbor?.info == null) || BlockType.hard(neighbor.info.value));
+
+      Math.Point3 offset;
+      // Handle collision.
+      if (neighbor == null) return loc;
+      else if (neighbor.region == Math.HitRegion.Inside) {
+        // Stuck inside of hard block, push character up.
+        offset = new Math.Point3(0.0, neighbor.info.y + 1.0 - neighbor.ray.y, 0.0);
+        vector = Math.Vector3.zero;
+
+      } else if (neighbor.region == Math.HitRegion.XNeg) {
+        // TODO: IMPLEMENT COLLISION
+        print(">> ${neighbor.region.toString()}");
+        return null;
+
+      } else if (neighbor.region == Math.HitRegion.XPos) {
+        // TODO: IMPLEMENT COLLISION
+        print(">> ${neighbor.region.toString()}");
+        return null;
+
+      } else if (neighbor.region == Math.HitRegion.YNeg) {
+        // Hit ground
+        offset = new Math.Point3(0.0, neighbor.info.y + 1.0 - neighbor.ray.y, 0.0);
+        vector = new Math.Vector3(vector.dx, 0.0, vector.dz);
+
+      } else if (neighbor.region == Math.HitRegion.YPos) {
+        // Hit top
+        offset = new Math.Point3(0.0, neighbor.info.y - neighbor.ray.y, 0.0);
+        vector = new Math.Vector3(vector.dx, 0.0, vector.dz);
+
+      } else if (neighbor.region == Math.HitRegion.ZNeg) {
+        // TODO: IMPLEMENT COLLISION
+        print(">> ${neighbor.region.toString()}");
+        return null;
+
+      } else if (neighbor.region == Math.HitRegion.ZPos) {
+        // TODO: IMPLEMENT COLLISION
+        print(">> ${neighbor.region.toString()}");
+        return null;
+
+      } else return loc;
+
+      // Update start locations and vector to the new offset.
+      for (int i = 0; i < count; i++)
+        starts[i] = starts[i] + offset;
+    }
   }
 
   /// Gets the string for debug information to be printed to the console.

@@ -2,6 +2,7 @@ part of ThreeDart.test.test000;
 
 void addCraftTests(TestManager tests) {
 
+  /*
   tests.add("Test of craft example world getBlock", (TestArgs args) {
     craft.World world = new craft.World(null, new craft.CheckersGenerator());
 
@@ -104,5 +105,40 @@ void addCraftTests(TestManager tests) {
     check( 0.0,    0.0,  -17.0,      0, -32,   0,  0, 15);
     check( 0.0,    0.0,  -18.0,      0, -32,   0,  0, 14);
     check( 0.0,    0.0,  -19.0,      0, -32,   0,  0, 13);
+  });
+  */
+
+  tests.add("Test of craft example world collide with floor", (TestArgs args) {
+    craft.World world = new craft.World(null, new craft.CheckersGenerator());
+
+    void check(Math.Point3 start, Math.Vector3 vector, Math.Point3 expOffset) {
+      Math.Point3 offset = world.collide([start], vector);
+
+      if (offset != expOffset) {
+        args.error("Testing collide($start, $vector): Failed\n");
+        args.error("  Expected: $expOffset\n");
+        args.error("  Gotten:   $offset\n");
+        args.info("\n");
+      } else {
+        args.info("Testing collide($start, $vector): Passed\n");
+        args.info("  Gotten:   $offset\n");
+      }
+    }
+
+    Math.Point3 at12 = new Math.Point3(0.0, 12.0, 0.0);
+    Math.Point3 at11 = new Math.Point3(0.0, 11.0, 0.0);
+    Math.Point3 at10 = new Math.Point3(0.0, 10.0, 0.0);
+    Math.Point3 at9 = new Math.Point3(0.0, 9.0, 0.0);
+    Math.Vector3 go1 = new Math.Vector3(0.0, -1.0, 0.0);
+    Math.Vector3 go2 = new Math.Vector3(0.0, -2.0, 0.0);
+    Math.Vector3 go3 = new Math.Vector3(0.0, -3.0, 0.0);
+
+    check(at12, go1, at11);
+    check(at12, go2, at10);
+    check(at12, go3, at10);
+    check(at11, go3, at10);
+    check(at10, go3, at10);
+    check(at9, go3, at10);
+    
   });
 }

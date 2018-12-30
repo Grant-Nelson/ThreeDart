@@ -212,7 +212,7 @@ class Player {
 
       // Keep a plant from being put on water or air.
       if (BlockType.plant(blockType)) {
-        if (!BlockType.solid(new BlockInfo.below(info).value)) return;
+        if (!BlockType.solid(info.below.value)) return;
       }
 
       // Change the block type based on the side the block is being added to.
@@ -238,7 +238,7 @@ class Player {
 
       // Remove plant if a plant was above a removed block.
       if (blockType == BlockType.Air) {
-        BlockInfo aboveInfo = new BlockInfo.above(info);
+        BlockInfo aboveInfo = info.above;
         if (BlockType.plant(aboveInfo.value)) aboveInfo.value = BlockType.Air;
       }
       
@@ -251,125 +251,37 @@ class Player {
     }
   }
   
-  /// Determines if the block at the given coordinates can not be walked through.
-  bool _isHard(Math.HitRegion region, Math.HitRegion side, x, double y, double z) {
-    //if (!region.has(side)) return false;
-    BlockInfo info = this._world.getBlock(x, y, z);
-    return BlockType.hard(info.value);
-  }
-
   /// Handles checking for collision while the player is moving, falling, or jumping.
   Math.Point3 _handleCollide(Math.Point3 prev, Math.Point3 loc) {
-    double x = loc.x, y = loc.y, z = loc.z;
-    double nx = loc.x.floorToDouble(), ny = loc.y.floorToDouble(), nz = loc.z.floorToDouble();
     this._touchingGround = false;
 
-    /*
-    // Determine the general direction of movement.
-    Math.Ray3 movement = new Math.Ray3.fromVertex(Math.Point3.zero,
-      new Math.Vector3.fromPoint3(prev-loc).normal()*3.0).reverse;
-    Math.IntersectionRayRegion3 inter = Math.Region3.unit2.rayIntersection(movement);
-    Math.HitRegion region = inter?.region ?? Math.HitRegion.All;
+    // Traverse the neighboring blocks using player's movement to find first
+    // hard block checking both head and foot.
+    Math.Point3 foot = new Math.Point3(0.0, -Constants.playerHeight, 0.0);
+    Math.Point3 newOffset = this._world.collide([prev, foot], new Math.Vector3.fromPoint3(loc-prev));
 
-    // Check if hitting head
-    if (_isHard(region, Math.HitRegion.YNeg, x, y-Constants.verticalTestPad, z)) {
-      y = ny - Constants.verticalOffset;
-      this._trans.offsetY.velocity = 0.0;
-    }
-    */
-
-    // TODO: REMOVE
-    if (this._metrics.enabled) {
-      double y2 = y-Constants.playerHeight+Constants.verticalTestPad;
-      BlockInfo info = this._world.getBlock(x, y2, z);
-      this._metrics
-        ..stepFrame()
-        ..addVal("count", this._metrics.frameCount)
-        ..addVal("x", x)
-        ..addVal("y", y)
-        ..addVal("z", z)
-        ..addVal("nx", nx)
-        ..addVal("ny", ny)
-        ..addVal("nz", nz)
-        ..addVal("y2", y2)
-        ..addVal("chunkX", info.chunkX)
-        ..addVal("chunkZ", info.chunkZ)
-        ..addVal("blockX", info.x)
-        ..addVal("blockY", info.y)
-        ..addVal("blockZ", info.z)
-        ..addVal("value", info.value)
-        ..addVal("hard", BlockType.hard(info.value)? 1.0: 0.0);
-    }
-
-    // Check if touching the ground
-    Math.HitRegion region = Math.HitRegion.XNeg;
-    if (_isHard(region, Math.HitRegion.YPos, x, y-Constants.playerHeight+Constants.verticalTestPad, z)) {
-      y = ny + Constants.verticalOffset;
-      this._trans.offsetY.velocity = 0.0;
-      this._touchingGround = true;
-    }
-
-    // TODO: REMOVE
-    if (this._metrics.enabled) {
-      this._metrics
-        ..addVal("dy", this._trans.offsetY.velocity)
-        ..addVal("y3", y);
-    }
-
-    /*
-    // Handle pushing out of left and right walls
-    if (_isHard(region, Math.HitRegion.XNeg, x-Constants.horizontalPad, y-Constants.playerHeadOffset, z) ||
-        _isHard(region, Math.HitRegion.XNeg, x-Constants.horizontalPad, y-Constants.playerFootOffset, z)) {
-      x = nx - Constants.horizontalPad;
-      this._trans.offsetX.velocity = 0.0;
-    } else if (_isHard(region, Math.HitRegion.XPos, x+Constants.horizontalPad, y-Constants.playerHeadOffset, z) ||
-               _isHard(region, Math.HitRegion.XPos, x+Constants.horizontalPad, y-Constants.playerFootOffset, z)) {
-      x = nx + Constants.horizontalPad;
-      this._trans.offsetX.velocity = 0.0;
-    }
-
-    // Handle pushing out of front and back walls
-    if (_isHard(region, Math.HitRegion.ZNeg, x, y-Constants.playerHeadOffset, z-Constants.horizontalPad) ||
-        _isHard(region, Math.HitRegion.ZNeg, x, y-Constants.playerFootOffset, z-Constants.horizontalPad)) {
-      z = nz - Constants.horizontalPad;
-      this._trans.offsetZ.velocity = 0.0;
-    } else if (_isHard(region, Math.HitRegion.ZPos, x, y-Constants.playerHeadOffset, z+Constants.horizontalPad) ||
-               _isHard(region, Math.HitRegion.ZPos, x, y-Constants.playerFootOffset, z+Constants.horizontalPad)) {
-      z = nz + Constants.horizontalPad;
-      this._trans.offsetZ.velocity = 0.0;
-    }
-
-    // Check if stuck in the ground and push up until out of the ground.
-    // Known bug/feature: Jumping at the bottom of a tree (or any overhang) can result in "quick climbing" the tree.
-    while (_isHard(region, Math.HitRegion.None, x, y-Constants.playerHeight+Constants.verticalTestPad, z) ||
-           _isHard(region, Math.HitRegion.None, x, y, z)) {
-      y = ny + Constants.verticalOffset;
-      ny += 1.0;
-      this._trans.offsetY.velocity = 0.0;
-      this._touchingGround = true;
-    }
-    */
-
-    return new Math.Point3(x, y, z);
-  }
-
-  /// Calcuates the view vector down the center of the screen out away from the player.
-  Math.Ray3 _playerViewTarget() {
-    Math.Matrix4 mat = this._playerLoc.matrix;
-    return new Math.Ray3.fromVertex(
-      mat.transPnt3(Math.Point3.zero),
-      mat.transVec3(new Math.Vector3(0.0, 0.0, -Constants.highlightDistance)));
+    return prev + newOffset;
   }
 
   /// Updates the selection for the highlighted block that can be modified.
   void _updateHighlight(Events.EventArgs _) {
-    NeighborBlockInfo neighborInfo = this._world.traverseNeighbors(this._playerViewTarget(),
-      (NeighborBlockInfo neighbor) => (neighbor?.info?.value == BlockType.Air));
+    // Calcuates the view vector down the center of the screen out away from the player.
+    // The ray is scaled to have the maximum highlight length.
+    Math.Matrix4 mat = this._playerLoc.matrix;
+    Math.Ray3 playerViewTarget = new Math.Ray3.fromVertex(
+      mat.transPnt3(Math.Point3.zero),
+      mat.transVec3(new Math.Vector3(0.0, 0.0, -Constants.highlightDistance)));
 
+    // Traverse the neighboring blocks using player's view to find first non-air block.
+    NeighborBlockInfo neighborInfo = this._world.traverseNeighbors([playerViewTarget],
+      (NeighborBlockInfo neighbor) => (neighbor?.info == null) || (neighbor.info.value != BlockType.Air));
+
+    // Check if found block is valid and selectable, if not set to null.
     BlockInfo info = neighborInfo?.info;
     if ((info != null) && ((neighborInfo.depth < 1) || (info.value == BlockType.Air) || (info.value == BlockType.Boundary))) neighborInfo = null;
     this._highlight = neighborInfo;
 
+    // Either remove or create highlight for the new selection.
     if (this._highlight == null) {
       this._blockHighlight.enabled = false;
     } else {
