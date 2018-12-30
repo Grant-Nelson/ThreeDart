@@ -257,12 +257,12 @@ class World {
       } else if (neighbor.region == Math.HitRegion.XNeg) {
         // TODO: IMPLEMENT COLLISION
         print(">> ${neighbor.region.toString()}");
-        return null;
+        return loc;
 
       } else if (neighbor.region == Math.HitRegion.XPos) {
         // TODO: IMPLEMENT COLLISION
         print(">> ${neighbor.region.toString()}");
-        return null;
+        return loc;
 
       } else if (neighbor.region == Math.HitRegion.YNeg) {
         // Hit ground
@@ -277,12 +277,12 @@ class World {
       } else if (neighbor.region == Math.HitRegion.ZNeg) {
         // TODO: IMPLEMENT COLLISION
         print(">> ${neighbor.region.toString()}");
-        return null;
+        return loc;
 
       } else if (neighbor.region == Math.HitRegion.ZPos) {
         // TODO: IMPLEMENT COLLISION
         print(">> ${neighbor.region.toString()}");
-        return null;
+        return loc;
 
       } else return loc;
 

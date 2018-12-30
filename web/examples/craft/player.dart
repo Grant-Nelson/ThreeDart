@@ -258,9 +258,10 @@ class Player {
     // Traverse the neighboring blocks using player's movement to find first
     // hard block checking both head and foot.
     Math.Point3 foot = new Math.Point3(0.0, -Constants.playerHeight, 0.0);
-    Math.Point3 newOffset = this._world.collide([prev, foot], new Math.Vector3.fromPoint3(loc-prev));
+    Math.Point3 newLoc = this._world.collide([prev, prev+foot],
+      new Math.Vector3.fromPoint3(loc-prev));
 
-    return prev + newOffset;
+    return newLoc;
   }
 
   /// Updates the selection for the highlighted block that can be modified.

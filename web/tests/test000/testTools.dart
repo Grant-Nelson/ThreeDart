@@ -40,12 +40,13 @@ class TestBlock extends TestArgs {
   DateTime _end;
   TestHandler _test;
   String _testName;
+  bool _skip;
   bool _started;
   bool _failed;
   bool _finished;
 
   /// Creates a new test block for the given test.
-  TestBlock(this._man, this._test, this._testName) {
+  TestBlock(this._man, this._skip, this._test, this._testName) {
       this._body = new html.DivElement()
         ..className = "test_body body_hidden";
       this._title = new html.DivElement()
@@ -78,7 +79,11 @@ class TestBlock extends TestArgs {
       time = ((end.difference(this._start).inMilliseconds)*0.001).toStringAsFixed(2);
       time ="(${time}s)";
     }
-    if (!this._started) {
+    if (this._skip) {
+      this._title
+        ..className = "test_header skipped"
+        ..text = "Skipped: ${this._testName}";
+    } else if (!this._started) {
       this._title
         ..className = "test_header queued"
         ..text = "Queued: ${this._testName} ${time}";
@@ -105,7 +110,7 @@ class TestBlock extends TestArgs {
       this._update();
     }).then((_){
       this._start = new DateTime.now();
-      this._test(this);
+      if (!this._skip) this._test(this);
       this._end = new DateTime.now();
     }).catchError((exception, stackTrace) {
       this._end = new DateTime.now();
@@ -118,6 +123,7 @@ class TestBlock extends TestArgs {
     });
   }
 
+  /// Adds a log to the output area of the test.
   void _addLog(String text, String type) {
     String log = this._man._escape.convert(text)
       .replaceAll(" ", "&nbsp;")
@@ -154,11 +160,17 @@ class TestBlock extends TestArgs {
     this._update();
   }
 
+  /// Indicates if the test has been stated.
   bool get stated => this._started;
+  
+  /// Indicates if the test has been finished.
   bool get finished => this._finished;
 
   /// Indicates if the test has failed.
   bool get failed => this._failed;
+
+  /// Indicates if the test has been or is to be skipped.
+  bool get skipped => this._skip;
 
   /// Marks this test as failed.
   void fail() {
@@ -263,10 +275,10 @@ class TestManager {
     }
 
     /// Adds a new test to be run.
-    void add(String testName, TestHandler test) {
+    void add(String testName, TestHandler test, {bool skip = false}) {
       if (testName.length <= 0) testName = "$test";
       if (!testName.startsWith(this._prefix)) return;
-      this._tests.add(new TestBlock(this, test, testName));
+      this._tests.add(new TestBlock(this, skip, test, testName));
       this._update();
 
       // If currently none are running, start this one.

@@ -32,6 +32,7 @@ class Constants {
   static const int initialGraveyardSize = 140;
 
   /// The number of blocks wide and deep of every chunk.
+  /// WARNING: unit-tests expect 16, if you change this update the tests.
   static const int chunkSideSize = 16;
 
   /// The number of blocks tall of every chunk.

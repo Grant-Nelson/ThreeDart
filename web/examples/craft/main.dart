@@ -26,12 +26,14 @@ part 'blockType.dart';
 part 'checkersGenerator.dart';
 part 'chunk.dart';
 part 'constants.dart';
+part 'flatGenerator.dart';
 part 'generator.dart';
 part 'materials.dart';
 part 'neighborBlockInfo.dart';
 part 'player.dart';
 part 'randomGenerator.dart';
 part 'shaper.dart';
+part 'testGenerator.dart';
 part 'world.dart';
 
 
@@ -80,7 +82,7 @@ void startCraft() {
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("targetCanvas");
   Materials mats = new Materials(td);
   //RandomGenerator gen = new RandomGenerator(seed);
-  CheckersGenerator gen = new CheckersGenerator();
+  TestGenerator gen = new TestGenerator();
   World world = new World(mats, gen);
   Player player = new Player(td.userInput, world);
 
