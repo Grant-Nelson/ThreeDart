@@ -11,7 +11,10 @@ class FlatGenerator implements Generator {
   int _dirtHeight;
 
   /// Creates a new generator for the given world.
-  FlatGenerator([int this._rockHeight = 8, int this._dirtHeight = 9]);
+  FlatGenerator([int rockHeight, int dirtHeight]) {
+    this._rockHeight = rockHeight ?? 8;
+    this._dirtHeight = dirtHeight ?? 9;
+  }
 
   /// Fills the given chunk with data.
   void fillChunk(Chunk chunk) {

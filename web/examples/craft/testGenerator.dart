@@ -19,14 +19,11 @@ class TestGenerator implements Generator {
 
     this._default();
 
-    if (this._isChunk(1, 1)) this._verticals();
+    if (this._isChunk(0, 1)) this._walls();
+    if (this._isChunk(1, 1)) this._platforms();
 
     chunk.finishGenerate();
   }
-
-  bool _isChunk(int x, int z) =>
-    (this._curChunk.x == x*Constants.chunkSideSize) &&
-    (this._curChunk.z == z*Constants.chunkSideSize);
 
   void _default() {
     const int rockHeight = 8;
@@ -52,23 +49,50 @@ class TestGenerator implements Generator {
     }
   }
 
-  /// Adds a platform to the current chunk in the current location.
-  void _platform(int offsetX, int offsetZ, int xSize, int zSize, int height) {
-    for (int x = 0; x < xSize; x++) {
-      for (int z = 0; z < zSize; z++) {
-        this._curChunk.setBlock(offsetX+x, height, offsetZ+z, BlockType.Brick);
-      }
-    }
+  void _walls() {
+    const int offset = 2;
+    const int length = 12;
+    const int seperation = 4;
+    const int height = 10;
+    const int lowest = 10;
+
+    this._block(offset, lowest, offset+seperation, length, height, 1);
+    this._block(offset+seperation, lowest, offset, 1, height, length);
+    this._block(offset, lowest, offset+seperation*2, length, height, 1);
+    this._block(offset+seperation*2, lowest, offset, 1, height, length);
   }
 
-  void _verticals() {
+  void _platforms() {
     const int offset = 2;
     const int size = 4;
     const int lowest = 10;
-    this._platform(offset, offset, size, size, lowest);
-    this._platform(offset, offset+size, size, size, lowest+1);
-    this._platform(offset, offset+size*2, size, size, lowest+2);
-    this._platform(offset+size, offset, size, size, lowest+2);
-    this._platform(offset+size, offset+size, size, size, lowest+3);
+
+    void platform(int xScale, int zScale, int height) =>
+      this._block(offset+size*xScale, lowest+height, offset+size*zScale, size, 1, size);
+
+    platform(0, 0, 0);
+    platform(0, 1, 1);
+    platform(1, 0, 2);
+    platform(1, 1, 3);
+    platform(1, 1, 3);
+    platform(0, 2, 2);
+    platform(0, 2, 0);
+    platform(1, 2, 3);
+    platform(1, 2, 1);
+  }
+
+  bool _isChunk(int x, int z) =>
+    (this._curChunk.x == x*Constants.chunkSideSize) &&
+    (this._curChunk.z == z*Constants.chunkSideSize);
+
+  /// Adds a platform to the current chunk in the current location.
+  void _block(int offsetX, int offsetY, int offsetZ, int xSize, int ySize, int zSize) {
+    for (int x = 0; x < xSize; x++) {
+      for (int y = 0; y < ySize; y++) {
+        for (int z = 0; z < zSize; z++) {
+          this._curChunk.setBlock(offsetX+x, offsetY+y, offsetZ+z, BlockType.Brick);
+        }
+      }
+    }
   }
 }

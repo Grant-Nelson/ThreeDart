@@ -29,7 +29,7 @@ class World {
     // Preinitialize the starting part of the world.
     for (int x = -Constants.initChunkDist; x < Constants.initChunkDist; x += Constants.chunkSideSize) {
       for (int z = -Constants.initChunkDist; z < Constants.initChunkDist; z += Constants.chunkSideSize) {
-        this._gen.fillChunk(this._prepareChunk(x, z));
+        this._gen.fillChunk(this.prepareChunk(x, z));
       }
     }
   }
@@ -101,11 +101,23 @@ class World {
   
   /// Gets a chunk from the graveyard or creates a new one.
   /// This will prepare the chunk for the given [x] and [z] world location.
-  Chunk _prepareChunk(int x, int z) {
+  Chunk prepareChunk(int x, int z) {
     Chunk chunk = this._graveyard.removeLast() ?? new Chunk(this);
     chunk.prepare(x, z);
     this._chunks.add(chunk);
     return chunk;
+  }
+
+  /// Frees the given chunk and puts it in the graveyard
+  /// if the chunk is non-nil and currently in use.
+  /// Returns true if disposed, false if not.
+  bool disposeChunk(Chunk chunk) {
+    if ((chunk != null) && this._chunks.remove(chunk)) {
+      chunk.freeup();
+      this._graveyard.add(chunk);
+      return true;
+    }
+    return false;
   }
 
   /// Updates chunks which are loaded and removes any loaded chunks
@@ -123,12 +135,8 @@ class World {
       for (int i = this._chunks.length-1; i >= 0; i--) {
         Chunk chunk = this._chunks[i];
         if ((minXOut > chunk.x) || (maxXOut <= chunk.x) ||
-            (minZOut > chunk.z) || (maxZOut <= chunk.z)) {
-          Chunk chunk = this._chunks[i];
-          chunk.freeup();
-          this._chunks.remove(chunk);
-          this._graveyard.add(chunk);
-        }
+            (minZOut > chunk.z) || (maxZOut <= chunk.z))
+          this.disposeChunk(this._chunks[i]);
       }
 
       // Add in any missing chunks.
@@ -137,7 +145,7 @@ class World {
       for (int x = minXIn; x < maxXIn; x += Constants.chunkSideSize) {
         for (int z = minZIn; z < maxZIn; z += Constants.chunkSideSize) {
           Chunk oldChunk = this.findChunk(x, z);
-          if (oldChunk == null) this._prepareChunk(x, z);
+          if (oldChunk == null) this.prepareChunk(x, z);
         }
       }
     }
@@ -233,41 +241,43 @@ class World {
   }
   
   /// TODO: Comment (returns offset start)
-  Math.Point3 collide(List<Math.Point3> starts, Math.Vector3 vector) {
+  CollisionResult collide(List<Math.Point3> starts, Math.Vector3 vector) {
     int count = starts.length;
     if (count <= 0) return null;
+    bool touchingGround = false;
 
     while (true) {
       Math.Point3 loc = starts[0]+new Math.Point3.fromVector3(vector);
-
       List<Math.Ray3> rays = new List<Math.Ray3>.generate(count,
         (int index) => new Math.Ray3.fromVertex(starts[index], vector));
-
       NeighborBlockInfo neighbor = this.traverseNeighbors(rays,
         (NeighborBlockInfo neighbor) => (neighbor?.info == null) || BlockType.hard(neighbor.info.value));
 
+      // Handle the collision with the neighboring block.
       Math.Point3 offset;
-      // Handle collision.
-      if (neighbor == null) return loc;
+      if (neighbor == null) return new CollisionResult(loc, touchingGround);
       else if (neighbor.region == Math.HitRegion.Inside) {
         // Stuck inside of hard block, push character up.
+        // TODO: If up is also solid, check left, right, front and back before moving up.
         offset = new Math.Point3(0.0, neighbor.info.y + 1.0 - neighbor.ray.y, 0.0);
         vector = Math.Vector3.zero;
+        touchingGround = true;
 
       } else if (neighbor.region == Math.HitRegion.XNeg) {
         // TODO: IMPLEMENT COLLISION
         print(">> ${neighbor.region.toString()}");
-        return loc;
+        return new CollisionResult(loc, touchingGround);
 
       } else if (neighbor.region == Math.HitRegion.XPos) {
         // TODO: IMPLEMENT COLLISION
         print(">> ${neighbor.region.toString()}");
-        return loc;
+        return new CollisionResult(loc, touchingGround);
 
       } else if (neighbor.region == Math.HitRegion.YNeg) {
         // Hit ground
         offset = new Math.Point3(0.0, neighbor.info.y + 1.0 - neighbor.ray.y, 0.0);
         vector = new Math.Vector3(vector.dx, 0.0, vector.dz);
+        touchingGround = true;
 
       } else if (neighbor.region == Math.HitRegion.YPos) {
         // Hit top
@@ -277,14 +287,14 @@ class World {
       } else if (neighbor.region == Math.HitRegion.ZNeg) {
         // TODO: IMPLEMENT COLLISION
         print(">> ${neighbor.region.toString()}");
-        return loc;
+        return new CollisionResult(loc, touchingGround);
 
       } else if (neighbor.region == Math.HitRegion.ZPos) {
         // TODO: IMPLEMENT COLLISION
         print(">> ${neighbor.region.toString()}");
-        return loc;
+        return new CollisionResult(loc, touchingGround);
 
-      } else return loc;
+      } else return new CollisionResult(loc, touchingGround);
 
       // Update start locations and vector to the new offset.
       for (int i = 0; i < count; i++)

@@ -253,15 +253,13 @@ class Player {
   
   /// Handles checking for collision while the player is moving, falling, or jumping.
   Math.Point3 _handleCollide(Math.Point3 prev, Math.Point3 loc) {
-    this._touchingGround = false;
-
     // Traverse the neighboring blocks using player's movement to find first
     // hard block checking both head and foot.
     Math.Point3 foot = new Math.Point3(0.0, -Constants.playerHeight, 0.0);
-    Math.Point3 newLoc = this._world.collide([prev, prev+foot],
+    CollisionResult result = this._world.collide([prev, prev+foot],
       new Math.Vector3.fromPoint3(loc-prev));
-
-    return newLoc;
+    this._touchingGround = result.touchingGround;
+    return result.result;
   }
 
   /// Updates the selection for the highlighted block that can be modified.
