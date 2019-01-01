@@ -8,4 +8,9 @@ class CollisionResult {
   final bool touchingGround;
 
   CollisionResult(this.result, this.touchingGround);
+  
+  /// Gets the string for this collision result.
+  @override
+  String toString() =>
+    "CollisionResult($result, $touchingGround)";
 }

@@ -88,12 +88,12 @@ class Chunk {
   /// Indicates that the chunk is finished being generated.
   void finishGenerate() {
     this._needGen = false;
-    this._dirty = true;
+    this._dirty   = true;
     this._enabled = false;
-    this.left?.dirty = true;
+    this.left?.dirty  = true;
     this.right?.dirty = true;
     this.front?.dirty = true;
-    this.back?.dirty = true;
+    this.back?.dirty  = true;
   }
 
   /// Calculates the chunk's data offset for the given x, y, and z location.

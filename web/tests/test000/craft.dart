@@ -84,7 +84,7 @@ void addCraftTests(TestManager tests) {
     _checkGetBlock(args, world,  0.0,    0.0,  -17.0,      0, -32,   0,  0, 15);
     _checkGetBlock(args, world,  0.0,    0.0,  -18.0,      0, -32,   0,  0, 14);
     _checkGetBlock(args, world,  0.0,    0.0,  -19.0,      0, -32,   0,  0, 13);
-  }, skip: true);
+  });
 
   tests.add("Test of craft example world collide with floor", (TestArgs args) {
     craft.World world = new craft.World(null, new craft.FlatGenerator(8, 9));
@@ -114,15 +114,17 @@ void addCraftTests(TestManager tests) {
     craft.World world = new craft.World(null, new craft.TestGenerator());
     world.prepareChunk(0, 16);
     
-    Math.Point3 centerOfWalls = new Math.Point3(8.5, 12.0, 24.5);
+    Math.Point3 centerOfWalls = new Math.Point3(8.0, 12.0, 24.0);
 
     Math.Vector3 left  = new Math.Vector3( 5.0, 0.0,  0.0);
     Math.Vector3 right = new Math.Vector3(-5.0, 0.0,  0.0);
     Math.Vector3 front = new Math.Vector3( 0.0, 0.0,  5.0);
     Math.Vector3 back  = new Math.Vector3( 0.0, 0.0, -5.0);
 
-    _checkCollide(args, world, [centerOfWalls], left, new Math.Point3(6.0, 12.0, 24.5));
-
+    _checkCollide(args, world, [centerOfWalls], left,  new Math.Point3(9.75, 12.0, 24.0));
+    _checkCollide(args, world, [centerOfWalls], right, new Math.Point3(7.25, 12.0, 24.0));
+    _checkCollide(args, world, [centerOfWalls], front, new Math.Point3(8.0,  12.0, 25.75));
+    _checkCollide(args, world, [centerOfWalls], back,  new Math.Point3(8.0,  12.0, 23.25));
   });
 }
 

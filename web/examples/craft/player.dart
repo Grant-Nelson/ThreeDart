@@ -259,6 +259,7 @@ class Player {
     CollisionResult result = this._world.collide([prev, prev+foot],
       new Math.Vector3.fromPoint3(loc-prev));
     this._touchingGround = result.touchingGround;
+    if (this._touchingGround) this._trans.offsetY.velocity = 0.0;
     return result.result;
   }
 
@@ -272,7 +273,7 @@ class Player {
       mat.transVec3(new Math.Vector3(0.0, 0.0, -Constants.highlightDistance)));
 
     // Traverse the neighboring blocks using player's view to find first non-air block.
-    NeighborBlockInfo neighborInfo = this._world.traverseNeighbors([playerViewTarget],
+    NeighborBlockInfo neighborInfo = this._world.traverseNeighbors([playerViewTarget], [0],
       (NeighborBlockInfo neighbor) => (neighbor?.info == null) || (neighbor.info.value != BlockType.Air));
 
     // Check if found block is valid and selectable, if not set to null.

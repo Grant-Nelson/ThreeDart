@@ -29,6 +29,12 @@ class BlockInfo {
   /// Creates a new block info.
   BlockInfo(this.x, this.y, this.z, this.chunkX, this.chunkZ, this.chunk);
 
+  /// Gets the x offset for this block in the world coordinates.
+  int get worldX => this.x + this.chunkX;
+  
+  /// Gets the z offset for this block in the world coordinates.
+  int get worldZ => this.z + this.chunkZ;
+
   /// Creates a new block info for the one above this info.
   BlockInfo get above =>
     new BlockInfo(this.x, this.y+1, this.z, this.chunkX, this.chunkZ, this.chunk);
@@ -66,7 +72,7 @@ class BlockInfo {
   /// Creates a new block info for the one to the front of this info.
   BlockInfo get front {
     int z = this.z + 1;
-    int chunkZ = this.chunkX;
+    int chunkZ = this.chunkZ;
     Chunk chunk = this.chunk;
     if (z >= Constants.chunkSideSize) {
       z = 0;

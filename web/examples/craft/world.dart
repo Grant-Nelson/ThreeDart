@@ -198,7 +198,7 @@ class World {
   
   /// Gets the neighboring block to the given block with the
   /// given [ray] pointing at the side to get the neighbor for.
-  NeighborBlockInfo _getNeighborBlock(BlockInfo info, Math.Ray3 ray, Math.Ray3 back, int depth) {
+  NeighborBlockInfo _getNeighborBlock(BlockInfo info, Math.Ray3 ray, Math.Ray3 back, int pointType, int depth) {
     Math.Region3 region = info.blockRegion;
     Math.IntersectionRayRegion3 inter = region.rayIntersection(back);
 
@@ -211,12 +211,12 @@ class World {
     else if (inter.region == Math.HitRegion.ZPos) info = info.front;
     else return null;
 
-    return new NeighborBlockInfo(info, inter.region, ray, depth);
+    return new NeighborBlockInfo(info, inter.region, ray, pointType, depth);
   }
 
   /// Updates the selection for the highlighted block that can be modified.
   /// Returns the neighbor block info this traversal was stopped at.
-  NeighborBlockInfo traverseNeighbors(List<Math.Ray3> rays, HandleTraverseNeighbor hndl) {
+  NeighborBlockInfo traverseNeighbors(List<Math.Ray3> rays, List<int> pointTypes, HandleTraverseNeighbor hndl) {
     int depth = 0;
     int count = rays.length;
 
@@ -227,77 +227,104 @@ class World {
       (int index) {
         Math.Ray3 ray = rays[index];
         BlockInfo info = this.getBlock(ray.x, ray.y, ray.z);
-        return new NeighborBlockInfo(info, Math.HitRegion.Inside, ray, 0);
+        return new NeighborBlockInfo(info, Math.HitRegion.Inside, ray, pointTypes[index], 0);
       });
 
     while (true) {
       for (int i = 0; i < count; i++) {
         NeighborBlockInfo neighbor = neighbors[i];
         if (hndl(neighbor)) return neighbor;
-        neighbors[i] = this._getNeighborBlock(neighbor.info, rays[i], backs[i], depth);
+        neighbors[i] = this._getNeighborBlock(neighbor.info, rays[i], backs[i], pointTypes[i], depth);
       }
       depth++;
     }
   }
   
   /// TODO: Comment (returns offset start)
-  CollisionResult collide(List<Math.Point3> starts, Math.Vector3 vector) {
-    int count = starts.length;
+  CollisionResult collide(List<Math.Point3> points, Math.Vector3 vector) {
+    int count = points.length;
     if (count <= 0) return null;
-    bool touchingGround = false;
 
+    int fullCount = count * 5;
+    List<Math.Point3> starts = new List<Math.Point3>(fullCount);
+    List<int> pointTypes = new List<int>(fullCount);
+    for (int i = 0, j = 0; i < count; i++, j += 5) {
+      Math.Point3 point = points[i];
+      starts[j] = point;
+      pointTypes[j] = 0;
+      starts[j+1] = point + new Math.Point3(-Constants.horizontalPad, 0.0, 0.0);
+      pointTypes[j+1] = 1;
+      starts[j+2] = point + new Math.Point3(Constants.horizontalPad, 0.0, 0.0);
+      pointTypes[j+2] = 1;
+      starts[j+3] = point + new Math.Point3(0.0, 0.0, -Constants.horizontalPad);
+      pointTypes[j+3] = 2;
+      starts[j+4] = point + new Math.Point3(0.0, 0.0, Constants.horizontalPad);
+      pointTypes[j+4] = 2;
+    }
+    
+    bool touchingGround = false;
     while (true) {
       Math.Point3 loc = starts[0]+new Math.Point3.fromVector3(vector);
-      List<Math.Ray3> rays = new List<Math.Ray3>.generate(count,
+
+      List<Math.Ray3> rays = new List<Math.Ray3>.generate(fullCount,
         (int index) => new Math.Ray3.fromVertex(starts[index], vector));
-      NeighborBlockInfo neighbor = this.traverseNeighbors(rays,
-        (NeighborBlockInfo neighbor) => (neighbor?.info == null) || BlockType.hard(neighbor.info.value));
+
+      NeighborBlockInfo neighbor = this.traverseNeighbors(rays, pointTypes,
+        (NeighborBlockInfo neighbor) {
+          if (neighbor?.info == null) return true;
+          if (!BlockType.hard(neighbor.info.value)) return false;
+          if ((neighbor.region == Math.HitRegion.XPos) || (neighbor.region == Math.HitRegion.XNeg)) return neighbor.pointType == 1;
+          if ((neighbor.region == Math.HitRegion.ZPos) || (neighbor.region == Math.HitRegion.ZNeg)) return neighbor.pointType == 2;
+          return neighbor.pointType == 0;
+        });
 
       // Handle the collision with the neighboring block.
       Math.Point3 offset;
       if (neighbor == null) return new CollisionResult(loc, touchingGround);
-      else if (neighbor.region == Math.HitRegion.Inside) {
-        // Stuck inside of hard block, push character up.
-        // TODO: If up is also solid, check left, right, front and back before moving up.
-        offset = new Math.Point3(0.0, neighbor.info.y + 1.0 - neighbor.ray.y, 0.0);
-        vector = Math.Vector3.zero;
-        touchingGround = true;
+      else if (neighbor.pointType == 0) {
+        if (neighbor.region == Math.HitRegion.Inside) {
+          // Stuck inside of hard block, push character up.
+          // TODO: If up is also solid, check left, right, front and back before moving up.
+          offset = new Math.Point3(0.0, neighbor.info.y + 1.0 - neighbor.ray.y, 0.0);
+          vector = Math.Vector3.zero;
+          touchingGround = true;
 
-      } else if (neighbor.region == Math.HitRegion.XNeg) {
-        // TODO: IMPLEMENT COLLISION
-        print(">> ${neighbor.region.toString()}");
-        return new CollisionResult(loc, touchingGround);
+        } else if (neighbor.region == Math.HitRegion.YNeg) {
+          // Hit ground
+          offset = new Math.Point3(0.0, neighbor.info.y + 1.0 - neighbor.ray.y, 0.0);
+          vector = new Math.Vector3(vector.dx, 0.0, vector.dz);
+          touchingGround = true;
+        } else if (neighbor.region == Math.HitRegion.YPos) {
+          // Hit top
+          offset = new Math.Point3(0.0, neighbor.info.y - neighbor.ray.y, 0.0);
+          vector = new Math.Vector3(vector.dx, 0.0, vector.dz);
+        } else return new CollisionResult(loc, touchingGround);
 
-      } else if (neighbor.region == Math.HitRegion.XPos) {
-        // TODO: IMPLEMENT COLLISION
-        print(">> ${neighbor.region.toString()}");
-        return new CollisionResult(loc, touchingGround);
+      } else if (neighbor.pointType == 1) {
+        if (neighbor.region == Math.HitRegion.XNeg) {
+          // Hit wall to the left
+          offset = new Math.Point3(neighbor.info.worldX + 1.0 - neighbor.ray.x, 0.0, 0.0);
+          vector = new Math.Vector3(0.0, vector.dy, vector.dz);
+        } else if (neighbor.region == Math.HitRegion.XPos) {
+          // Hit wall to the right
+          offset = new Math.Point3(neighbor.info.worldX - neighbor.ray.x, 0.0, 0.0);
+          vector = new Math.Vector3(0.0, vector.dy, vector.dz);
+        } else return new CollisionResult(loc, touchingGround);
 
-      } else if (neighbor.region == Math.HitRegion.YNeg) {
-        // Hit ground
-        offset = new Math.Point3(0.0, neighbor.info.y + 1.0 - neighbor.ray.y, 0.0);
-        vector = new Math.Vector3(vector.dx, 0.0, vector.dz);
-        touchingGround = true;
-
-      } else if (neighbor.region == Math.HitRegion.YPos) {
-        // Hit top
-        offset = new Math.Point3(0.0, neighbor.info.y - neighbor.ray.y, 0.0);
-        vector = new Math.Vector3(vector.dx, 0.0, vector.dz);
-
-      } else if (neighbor.region == Math.HitRegion.ZNeg) {
-        // TODO: IMPLEMENT COLLISION
-        print(">> ${neighbor.region.toString()}");
-        return new CollisionResult(loc, touchingGround);
-
-      } else if (neighbor.region == Math.HitRegion.ZPos) {
-        // TODO: IMPLEMENT COLLISION
-        print(">> ${neighbor.region.toString()}");
-        return new CollisionResult(loc, touchingGround);
-
-      } else return new CollisionResult(loc, touchingGround);
+      } else if (neighbor.pointType == 2) {
+        if (neighbor.region == Math.HitRegion.ZNeg) {
+          // Hit wall to the back
+          offset = new Math.Point3(0.0, 0.0, neighbor.info.worldZ + 1.0 - neighbor.ray.z);
+          vector = new Math.Vector3(vector.dx, vector.dy, 0.0);
+        } else if (neighbor.region == Math.HitRegion.ZPos) {
+          // Hit wall to the front
+          offset = new Math.Point3(0.0, 0.0, neighbor.info.worldZ - neighbor.ray.z);
+          vector = new Math.Vector3(vector.dx, vector.dy, 0.0);
+        } else return new CollisionResult(loc, touchingGround);
+      }
 
       // Update start locations and vector to the new offset.
-      for (int i = 0; i < count; i++)
+      for (int i = 0; i < fullCount; i++)
         starts[i] = starts[i] + offset;
     }
   }
