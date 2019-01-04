@@ -125,6 +125,8 @@ void addCraftTests(TestManager tests) {
     _checkCollide(args, world, [centerOfWalls], right, new Math.Point3(7.25, 12.0, 24.0));
     _checkCollide(args, world, [centerOfWalls], front, new Math.Point3(8.0,  12.0, 25.75));
     _checkCollide(args, world, [centerOfWalls], back,  new Math.Point3(8.0,  12.0, 23.25));
+
+    // TODO: What about when the side sensors are in the inside?
   });
 }
 
@@ -150,15 +152,16 @@ void _checkGetBlock(TestArgs args, craft.World world, double x, double y, double
 
 void _checkCollide(TestArgs args, craft.World world, List<Math.Point3> starts, Math.Vector3 vector,
   Math.Point3 expOffset, [bool touchingGround = false]) {
-  craft.CollisionResult result = world.collide(starts, vector);
+  craft.Collider collider = new craft.Collider(world);
+  collider.collide(starts, vector);
 
-  if ((result.result != expOffset) || (result.touchingGround != touchingGround)) {
+  if ((collider.location != expOffset) || (collider.touchingGround != touchingGround)) {
     args.error("Testing collide($starts, $vector): Failed\n");
-    args.error("  Expected: $expOffset ($touchingGround)\n");
-    args.error("  Gotten:   ${result.result} (${result.touchingGround})\n");
+    args.error("  Expected: CollisionResult($expOffset, $touchingGround)\n");
+    args.error("  Gotten:   $collider\n");
     args.info("\n");
   } else {
     args.info("Testing collide($starts, $vector): Passed\n");
-    args.info("  Gotten:   ${result.result} (${result.touchingGround})\n");
+    args.info("  Gotten:   $collider\n");
   }
 }

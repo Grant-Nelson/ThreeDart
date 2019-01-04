@@ -134,7 +134,7 @@ class Constants {
   static const double horizontalPad = 0.25;
 
   /// The padding for vertical collision offset.
-  static const double verticalPad = 0.0;
+  static const double verticalPad = 0.25;
 
   /// The velocity to apply when the player jumps.
   static const double jumpSpeed = 30.0;

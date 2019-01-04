@@ -25,7 +25,7 @@ part 'blockInfo.dart';
 part 'blockType.dart';
 part 'checkersGenerator.dart';
 part 'chunk.dart';
-part 'collisionResult.dart';
+part 'collider.dart';
 part 'constants.dart';
 part 'flatGenerator.dart';
 part 'generator.dart';

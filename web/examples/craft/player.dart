@@ -8,6 +8,7 @@ class Player {
   bool _touchingGround;
   int _selectedBlockIndex;
   NeighborBlockInfo _highlight;
+  Collider _collider;
 
   Movers.Group _camera;
   Movers.Group _playerLoc;
@@ -115,6 +116,9 @@ class Player {
       this._blockHandEntities.add(entity);
     }
     this._selectedBlockIndex = 0;
+
+    // Setup collider for handling collition detection for player.
+    this._collider = new Collider(this._world);
 
     // Creates the selection highlight to show which
     this._blockHighlight = new ThreeDart.Entity(tech: this._world.materials.selection);
@@ -256,30 +260,23 @@ class Player {
     // Traverse the neighboring blocks using player's movement to find first
     // hard block checking both head and foot.
     Math.Point3 foot = new Math.Point3(0.0, -Constants.playerHeight, 0.0);
-    CollisionResult result = this._world.collide([prev, prev+foot],
-      new Math.Vector3.fromPoint3(loc-prev));
-    this._touchingGround = result.touchingGround;
+    Math.Point3 center = new Math.Point3(0.0, -Constants.playerHeight*0.5, 0.0);
+    this._collider.collide([prev, prev+center, prev+foot], new Math.Vector3.fromPoint3(loc-prev));
+
+    this._touchingGround = this._collider.touchingGround;
     if (this._touchingGround) this._trans.offsetY.velocity = 0.0;
-    return result.result;
+    return this._collider.location;
   }
 
-  /// Updates the selection for the highlighted block that can be modified.
-  void _updateHighlight(Events.EventArgs _) {
-    // Calcuates the view vector down the center of the screen out away from the player.
-    // The ray is scaled to have the maximum highlight length.
-    Math.Matrix4 mat = this._playerLoc.matrix;
-    Math.Ray3 playerViewTarget = new Math.Ray3.fromVertex(
-      mat.transPnt3(Math.Point3.zero),
-      mat.transVec3(new Math.Vector3(0.0, 0.0, -Constants.highlightDistance)));
-
-    // Traverse the neighboring blocks using player's view to find first non-air block.
-    NeighborBlockInfo neighborInfo = this._world.traverseNeighbors([playerViewTarget], [0],
-      (NeighborBlockInfo neighbor) => (neighbor?.info == null) || (neighbor.info.value != BlockType.Air));
+  /// The handler used in update highlight for traversing neighboring blocks.
+  bool _updateHighlightHandler(NeighborBlockInfo neighbor) {
+    // Check if the neighbor is not air or is null.
+    if ((neighbor?.info != null) && (neighbor.info.value == BlockType.Air)) return false;
 
     // Check if found block is valid and selectable, if not set to null.
-    BlockInfo info = neighborInfo?.info;
-    if ((info != null) && ((neighborInfo.depth < 1) || (info.value == BlockType.Air) || (info.value == BlockType.Boundary))) neighborInfo = null;
-    this._highlight = neighborInfo;
+    BlockInfo info = neighbor?.info;
+    if ((info != null) && ((neighbor.depth < 1) || (info.value == BlockType.Air) || (info.value == BlockType.Boundary))) neighbor = null;
+    this._highlight = neighbor;
 
     // Either remove or create highlight for the new selection.
     if (this._highlight == null) {
@@ -289,6 +286,27 @@ class Player {
       shaper.addCubeToOneShape(info.chunkX+info.x, info.y, info.chunkZ+info.z, true, 1.1);
       shaper.finish([this._blockHighlight]);
       this._blockHighlight.enabled = true;
+    }
+    return true;
+  }
+
+  /// Updates the selection for the highlighted block that can be modified.
+  void _updateHighlight(Events.EventArgs _) {
+    // Calcuates the view vector down the center of the screen out away from the player.
+    // The ray is scaled to have the maximum highlight length.
+    Math.Matrix4 mat = this._playerLoc.matrix;
+    Math.Ray3 playerViewTarget = new Math.Ray3.fromVector(
+      mat.transPnt3(Math.Point3.zero),
+      mat.transVec3(new Math.Vector3(0.0, 0.0, -Constants.highlightDistance)));
+    Math.Ray3 back = playerViewTarget.reverse;
+    BlockInfo info = this._world.getBlock(playerViewTarget.x, playerViewTarget.y, playerViewTarget.z);
+    NeighborBlockInfo neighbor = new NeighborBlockInfo(info, Math.HitRegion.Inside, playerViewTarget, 0);
+
+    // Traverse the neighboring blocks using player's view to find first non-air block.
+    int depth = 0;
+    while (!this._updateHighlightHandler(neighbor)) {
+      neighbor = this._world.getNeighborBlock(neighbor.info, playerViewTarget, back, depth);
+      depth++;
     }
   }
 

@@ -32,7 +32,7 @@ class Ray3 {
   Ray3(this.x, this.y, this.z, this.dx, this.dy, this.dz);
 
   /// Constructs a new [Ray3] with the given point and vector.
-  factory Ray3.fromVertex(Point3 pnt, Vector3 vec) =>
+  factory Ray3.fromVector(Point3 pnt, Vector3 vec) =>
     new Ray3(pnt.x, pnt.y, pnt.z, vec.dx, vec.dy, vec.dz);
 
   /// Constructs a new [Ray3] with the two given points.
@@ -65,7 +65,7 @@ class Ray3 {
   Vector3 get vector => new Vector3(this.dx, this.dy, this.dz);
 
   /// Creates a ray heading from the tip of this ray backwards to the origin.
-  Ray3 get reverse => new Ray3.fromVertex(this.end, -this.vector);
+  Ray3 get reverse => new Ray3.fromVector(this.end, -this.vector);
 
   /// Determines if the given [other] variable is a [Ray3] equal to this ray.
   ///

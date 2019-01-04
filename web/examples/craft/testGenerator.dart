@@ -19,8 +19,12 @@ class TestGenerator implements Generator {
 
     this._default();
 
+    if (this._isChunk(-2, 1)) this._sphere();
+    if (this._isChunk(-1, 1)) this._pool();
     if (this._isChunk(0, 1)) this._walls();
     if (this._isChunk(1, 1)) this._platforms();
+    if (this._isChunk(1, 0)) this._pillars();
+    if (this._isChunk(1, -1)) this._pyramid();
 
     chunk.finishGenerate();
   }
@@ -49,13 +53,26 @@ class TestGenerator implements Generator {
     }
   }
 
-  void _walls() {
-    const int offset = 2;
-    const int length = 12;
-    const int seperation = 4;
-    const int height = 10;
-    const int lowest = 10;
+  void _sphere() {
+    int center = 8, size = 6, height = 17, size2 = size*size + 1;
+    for (int x = -size; x <= size; x++) {
+      for (int y = -size; y <= size; y++) {
+        for (int z = -size; z <= size; z++) {
+          if ((x*x + y*y + z*z) <= size2)
+            this._curChunk.setBlock(center+x, height+y, center+z, BlockType.Sand);
+        }
+      }
+    }
+  }
 
+  void _pool() {
+    int lowest = 9;
+    this._block(5, lowest, 3, 7, 2, 11);
+    this._block(6, lowest+1, 4, 5, 1, 9, BlockType.Water);
+  }
+
+  void _walls() {
+    const int offset = 2, length = 12, seperation = 4, height = 10, lowest = 10;
     this._block(offset, lowest, offset+seperation, length, height, 1);
     this._block(offset+seperation, lowest, offset, 1, height, length);
     this._block(offset, lowest, offset+seperation*2, length, height, 1);
@@ -63,34 +80,70 @@ class TestGenerator implements Generator {
   }
 
   void _platforms() {
-    const int offset = 2;
-    const int size = 4;
-    const int lowest = 10;
-
+    const int offset = 2, size = 4, lowest = 10;
     void platform(int xScale, int zScale, int height) =>
       this._block(offset+size*xScale, lowest+height, offset+size*zScale, size, 1, size);
 
     platform(0, 0, 0);
     platform(0, 1, 1);
-    platform(1, 0, 2);
-    platform(1, 1, 3);
-    platform(1, 1, 3);
     platform(0, 2, 2);
-    platform(0, 2, 0);
     platform(1, 2, 3);
-    platform(1, 2, 1);
+    platform(1, 1, 4);
+    platform(1, 0, 5);
+
+    platform(2, 0, 0);
+    platform(2, 0, 2);
+    platform(2, 1, 1);
+    platform(2, 1, 3);
+    platform(2, 2, 2);
+    platform(2, 2, 4);
   }
 
+  void _pillars() {
+    const int offset = 2, size = 4, lowest = 10;
+    void pillar(int xScale, int zScale, int height) =>
+      this._block(offset+size*xScale, lowest, offset+size*zScale, 1, height, 1);
+    
+    pillar(0, 0, 1);
+    pillar(0, 1, 2);
+    pillar(0, 2, 3);
+    pillar(0, 3, 4);
+    
+    pillar(1, 0, 2);
+    pillar(1, 1, 3);
+    pillar(1, 2, 4);
+    pillar(1, 3, 5);
+    
+    pillar(2, 0, 5);
+    pillar(2, 1, 4);
+    pillar(2, 2, 3);
+    pillar(2, 3, 2);
+    
+    pillar(3, 0, 4);
+    pillar(3, 1, 3);
+    pillar(3, 2, 2);
+    pillar(3, 3, 1);
+  }
+
+  void _pyramid() {
+    const int offset = 2, lowest = 10, height = 6;
+    for (int i = 0; i < height; i++) {
+      int size = Constants.chunkSideSize-(offset+i)*2+1;
+      this._block(offset+i, lowest+i, offset+i, size, 1, size);
+    }
+  }
+
+  /// Determines if this chunk is the specified chunk with x and z scalars.
   bool _isChunk(int x, int z) =>
     (this._curChunk.x == x*Constants.chunkSideSize) &&
     (this._curChunk.z == z*Constants.chunkSideSize);
 
   /// Adds a platform to the current chunk in the current location.
-  void _block(int offsetX, int offsetY, int offsetZ, int xSize, int ySize, int zSize) {
+  void _block(int offsetX, int offsetY, int offsetZ, int xSize, int ySize, int zSize, [int type = BlockType.Brick]) {
     for (int x = 0; x < xSize; x++) {
       for (int y = 0; y < ySize; y++) {
         for (int z = 0; z < zSize; z++) {
-          this._curChunk.setBlock(offsetX+x, offsetY+y, offsetZ+z, BlockType.Brick);
+          this._curChunk.setBlock(offsetX+x, offsetY+y, offsetZ+z, type);
         }
       }
     }

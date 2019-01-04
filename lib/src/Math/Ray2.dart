@@ -26,7 +26,7 @@ class Ray2 {
   Ray2(this.x, this.y, this.dx, this.dy);
 
   /// Constructs a new [Ray2] with the given point and vector.
-  factory Ray2.fromVertex(Point2 pnt, Vector2 vec) =>
+  factory Ray2.fromVector(Point2 pnt, Vector2 vec) =>
     new Ray2(pnt.x, pnt.y, vec.dx, vec.dy);
 
   /// Constructs a new [Ray2] with the two given points.

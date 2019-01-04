@@ -18,16 +18,13 @@ class NeighborBlockInfo {
   final Math.Ray3 ray;
 
   /// The count for the number of neighbors which have been traversed. 
-  final int pointType;
-
-  /// The count for the number of neighbors which have been traversed. 
   final int depth;
 
   /// Creates a new neighbor block info result.
-  NeighborBlockInfo(this.info, this.region, this.ray, this.pointType, this.depth);
+  NeighborBlockInfo(this.info, this.region, this.ray, this.depth);
 
   /// Gets the string for this neighbor block info.
   @override
   String toString() =>
-    "NeighborBlockInfo($info, $region, $ray, $pointType, $depth)";
+    "NeighborBlockInfo($info, $region, $ray, $depth)";
 }
