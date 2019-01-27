@@ -4,40 +4,40 @@ part of ThreeDart.Math;
 class HitRegion {
 
   /// [None] indicates no hit region values at all.
-  static HitRegion None = new HitRegion._(0x0000);
+  static final HitRegion None = new HitRegion._(0x0000);
 
   /// [All] indicates all hit region values.
-  static HitRegion All = new HitRegion._(0x01FF);
+  static final HitRegion All = new HitRegion._(0x01FF);
 
   /// [XPos] indicates the positive X hit region.
-  static HitRegion XPos = new HitRegion._(0x0001);
+  static final HitRegion XPos = new HitRegion._(0x0001);
 
   /// [XCenter] indicates the center X hit region.
-  static HitRegion XCenter = new HitRegion._(0x0002);
+  static final HitRegion XCenter = new HitRegion._(0x0002);
 
   /// [XNeg] indicates the negative X hit region.
-  static HitRegion XNeg = new HitRegion._(0x0004);
+  static final HitRegion XNeg = new HitRegion._(0x0004);
 
   /// [YPos] indicates the positive Y hit region.
-  static HitRegion YPos = new HitRegion._(0x0008);
+  static final HitRegion YPos = new HitRegion._(0x0008);
 
   /// [YCenter] indicates the center Y hit region.
-  static HitRegion YCenter = new HitRegion._(0x0010);
+  static final HitRegion YCenter = new HitRegion._(0x0010);
 
   /// [YNeg] indicates the negative Y hit region.
-  static HitRegion YNeg = new HitRegion._(0x0020);
+  static final HitRegion YNeg = new HitRegion._(0x0020);
 
   /// [ZPos] indicates the positive Z hit region.
-  static HitRegion ZPos = new HitRegion._(0x0040);
+  static final HitRegion ZPos = new HitRegion._(0x0040);
 
   /// [ZCenter] indicates the center Z hit region.
-  static HitRegion ZCenter = new HitRegion._(0x0080);
+  static final HitRegion ZCenter = new HitRegion._(0x0080);
 
   /// [ZNeg] indicates the negative Z hit region.
-  static HitRegion ZNeg = new HitRegion._(0x0100);
+  static final HitRegion ZNeg = new HitRegion._(0x0100);
 
   /// [Inside] indicates the inside hit region, XCenter|YCenter|ZCenter
-  static HitRegion Inside = new HitRegion._(0x0092);
+  static final HitRegion Inside = new HitRegion._(0x0092);
 
   /// The combined hit region value.
   final int _value;

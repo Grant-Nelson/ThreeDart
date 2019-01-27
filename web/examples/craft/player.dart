@@ -261,9 +261,21 @@ class Player {
     // hard block checking both head and foot.
     Math.Point3 foot = new Math.Point3(0.0, -Constants.playerHeight, 0.0);
     Math.Point3 center = new Math.Point3(0.0, -Constants.playerHeight*0.5, 0.0);
-    this._collider.collide([prev, prev+center, prev+foot], new Math.Vector3.fromPoint3(loc-prev));
+    Math.Vector3 vector = new Math.Vector3.fromPoint3(loc-prev);
+    this._collider.collide([prev, prev+center, prev+foot], vector);
 
-    this._touchingGround = this._collider.touchingGround;
+    if (this._metrics.enabled) { // TODO: REMOVE
+      this._metrics
+        ..addVal("prevY", prev.y)
+        ..addVal("locY", loc.y)
+        ..addVal("dy", vector.dy)
+        ..addVal("velY", this._trans.offsetY.velocity)
+        ..addVal("touching", this._touchingGround? 1.0: 0.0)
+        ..addVal("resultY", this._collider.location.y)
+        ..stepFrame();
+    }
+
+    this._touchingGround = this._collider.touching.has(Math.HitRegion.YNeg);
     if (this._touchingGround) this._trans.offsetY.velocity = 0.0;
     return this._collider.location;
   }
@@ -275,7 +287,8 @@ class Player {
 
     // Check if found block is valid and selectable, if not set to null.
     BlockInfo info = neighbor?.info;
-    if ((info != null) && ((neighbor.depth < 1) || (info.value == BlockType.Air) || (info.value == BlockType.Boundary))) neighbor = null;
+    if ((info != null) && ((neighbor.depth < 1) || (info.value == BlockType.Air) ||
+      (info.value == BlockType.Boundary))) neighbor = null;
     this._highlight = neighbor;
 
     // Either remove or create highlight for the new selection.

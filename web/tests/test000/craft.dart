@@ -90,24 +90,18 @@ void addCraftTests(TestManager tests) {
     craft.World world = new craft.World(null, new craft.FlatGenerator(8, 9));
     world.prepareChunk(0, 0);
 
-    Math.Point3 at12 = new Math.Point3(0.0, 12.0, 0.0);
-    Math.Point3 at11 = new Math.Point3(0.0, 11.0, 0.0);
-    Math.Point3 at10 = new Math.Point3(0.0, 10.0, 0.0);
-    Math.Point3 at9  = new Math.Point3(0.0,  9.0, 0.0);
-    Math.Point3 at8  = new Math.Point3(0.0,  8.0, 0.0);
-
-    Math.Vector3 go1 = new Math.Vector3(0.0, -1.0, 0.0);
-    Math.Vector3 go2 = new Math.Vector3(0.0, -2.0, 0.0);
-    Math.Vector3 go3 = new Math.Vector3(0.0, -3.0, 0.0);
-
-    _checkCollide(args, world, [at12], go1, at11);
-    _checkCollide(args, world, [at12], go2, at10);
-    _checkCollide(args, world, [at12], go3, at10, true);
-    _checkCollide(args, world, [at11], go3, at10, true);
-    _checkCollide(args, world, [at10], go3, at10, true);
-    _checkCollide(args, world, [at9], go3, at10, true);
-    _checkCollide(args, world, [at11, at10], go3, at11, true);
-    _checkCollide(args, world, [at9, at8], go1, at11, true);
+    _checkCollideY(args, world, 12.0, -1.0, 11.0);
+    _checkCollideY(args, world, 12.0, -2.0, 10.25, true);
+    _checkCollideY(args, world, 12.0, -3.0, 10.25, true);
+    _checkCollideY(args, world, 11.0, -3.0, 10.25, true);
+    _checkCollideY(args, world, 10.5, -3.0, 10.25, true);
+    _checkCollideY(args, world, 10.25, -3.0, 10.25, true);
+    _checkCollideY(args, world, 10.0, -3.0, 10.25, true);
+    _checkCollideY(args, world, 10.0, 0.0, 10.25, true);
+    _checkCollideY(args, world, 9.0, -3.0, 10.25, true);
+    _checkCollideY(args, world, 9.0, 1.0, 10.25, true);
+    // _checkCollide(args, world, [at11, at10], go3, at11, true);
+    // _checkCollide(args, world, [at9, at8], go1, at11, true);
   });
 
   tests.add("Test of craft example world collide with floor", (TestArgs args) {
@@ -154,8 +148,9 @@ void _checkCollide(TestArgs args, craft.World world, List<Math.Point3> starts, M
   Math.Point3 expOffset, [bool touchingGround = false]) {
   craft.Collider collider = new craft.Collider(world);
   collider.collide(starts, vector);
+  Math.HitRegion expTouching = touchingGround? Math.HitRegion.YNeg: Math.HitRegion.None;
 
-  if ((collider.location != expOffset) || (collider.touchingGround != touchingGround)) {
+  if ((collider.location != expOffset) || (collider.touching != expTouching)) {
     args.error("Testing collide($starts, $vector): Failed\n");
     args.error("  Expected: CollisionResult($expOffset, $touchingGround)\n");
     args.error("  Gotten:   $collider\n");
@@ -164,4 +159,10 @@ void _checkCollide(TestArgs args, craft.World world, List<Math.Point3> starts, M
     args.info("Testing collide($starts, $vector): Passed\n");
     args.info("  Gotten:   $collider\n");
   }
+}
+
+void _checkCollideY(TestArgs args, craft.World world, double startY, double dy,
+  double expEndY, [bool touchingGround = false, double x = 0.0, double z = 0.0]) {
+  _checkCollide(args, world, [new Math.Point3(x, startY, z)],
+    new Math.Vector3(x, dy, z), new Math.Point3(x, expEndY, z), touchingGround);
 }
