@@ -9,15 +9,19 @@ final Math.Point3 _zPosPadOffset = new Math.Point3(0.0, 0.0, Constants.horizonta
 
 typedef void HandleCollision(BlockInfo info, Math.Point3 point);
 
+class ColliderTest {
+  Math.Ray3 _ray;
+  Math.Ray3 _back;
+  HandleTraverseNeighbor _isCollision;
+  HandleCollision _collided;
+  NeighborBlockInfo _neighbor;
+}
+
 /// TODO: Comment everything
 class Collider {
 
   World _world;
-  List<Math.Ray3> _rays;
-  List<Math.Ray3> _backs;
-  List<HandleTraverseNeighbor> _isCollision;
-  List<HandleCollision> _collided;
-  List<NeighborBlockInfo> _neighbors;
+  List<ColliderTest> _tests;
   Math.Point3 _loc;
   Math.Point3 _offset;
   Math.Vector3 _vector;
@@ -25,11 +29,7 @@ class Collider {
   int _killCount;
 
   Collider(this._world) {
-    this._rays = new List<Math.Ray3>();
-    this._backs = new List<Math.Ray3>();
-    this._isCollision = new List<HandleTraverseNeighbor>();
-    this._collided = new List<HandleCollision>();
-    this._neighbors = new List<NeighborBlockInfo>();
+    this._tests = new List<ColliderTest>();
     this._loc = null;
     this._offset = null;
     this._vector = null;
@@ -62,10 +62,11 @@ class Collider {
   
   bool _traverseNeighbors() {
     int depth = 0;
-    final int count = this._rays.length;
+    final int count = this._tests.length;
     while (true) {
       for (int i = 0; i < count; i++) {
-        NeighborBlockInfo neighbor = this._neighbors[i];
+        ColliderTest test = this._tests[i];
+        NeighborBlockInfo neighbor = test._neighbor;
         if (neighbor?.info == null) return false;
 
         this._killCount--; // TODO: REMOVE
@@ -75,12 +76,12 @@ class Collider {
         }
 
         if (BlockType.hard(neighbor.info.value)) {
-          if (this._isCollision[i](neighbor)) {
-            this._collided[i](neighbor.info, neighbor.ray.start);
+          if (test._isCollision(neighbor)) {
+            test._collided(neighbor.info, neighbor.ray.start);
             return true;
           }
         }
-        this._neighbors[i] = this._world.getNeighborBlock(neighbor.info, this._rays[i], this._backs[i], depth);
+        test._neighbor = this._world.getNeighborBlock(neighbor.info, test._ray, test._back, depth);
       }
       depth++;
     }
@@ -88,11 +89,7 @@ class Collider {
 
   void _addRays(List<Math.Point3> points, Math.HitRegion prevTouching) {
     this._loc = points[0];
-    this._rays.clear();
-    this._backs.clear();
-    this._isCollision.clear();
-    this._collided.clear();
-    this._neighbors.clear();
+    this._tests.clear();
     this._addRayGroup(points, _yNegPadOffset, this._isCollideYNeg, this._moveYNeg, prevTouching, Math.HitRegion.YNeg);
     this._addRayGroup(points, _yPosPadOffset, this._isCollideYPos, this._moveYPos, prevTouching, Math.HitRegion.YPos);
     this._addRayGroup(points, _xNegPadOffset, this._isCollideXNeg, this._moveXNeg, prevTouching, Math.HitRegion.XNeg);
@@ -120,72 +117,67 @@ class Collider {
     }
   }
 
-
   void _addRay(Math.Point3 point, HandleTraverseNeighbor isCollision, HandleCollision collided, Math.HitRegion region) {
     Math.Ray3 ray = new Math.Ray3.fromVector(point, this._vector);
-    this._rays.add(ray);
-    this._backs.add(ray.reverse);
-    this._isCollision.add(isCollision);
-    this._collided.add(collided);
-
     BlockInfo info = this._world.getBlock(point.x, point.y, point.z);
-    this._neighbors.add(new NeighborBlockInfo(info, Math.HitRegion.Inside, ray, 0));
+    ColliderTest test = new ColliderTest()
+      .._ray         = ray
+      .._back        = ray.reverse
+      .._isCollision = isCollision
+      .._collided    = collided
+      .._neighbor    = new NeighborBlockInfo(info, Math.HitRegion.Inside, ray, 0);
+    this._tests.add(test);
   }
 
   // Update start locations and vector to the new offset.
   void _updateRays() {
     this._loc += this._offset;
     if (this._offset != null) {
-      for (int i = this._rays.length - 1; i >= 0; i--)
+      for (int i = this._tests.length - 1; i >= 0; i--)
         this._updateRay(i);
     }
   }
 
   void _updateRay(int index) {
-    Math.Point3 point = this._rays[index].start + this._offset;
+    ColliderTest test = this._tests[index];
+    Math.Point3 point = test._ray.start + this._offset;
     Math.Ray3 ray = new Math.Ray3.fromVector(point, this._vector);
-    this._rays[index] = ray;
-    this._backs[index] = ray.reverse;
+    test._ray = ray;
+    test._back = ray.reverse;
 
     BlockInfo info = this._world.getBlock(point.x, point.y, point.z);
-    this._neighbors[index] = new NeighborBlockInfo(info, Math.HitRegion.Inside, ray, 0);
+    test._neighbor = new NeighborBlockInfo(info, Math.HitRegion.Inside, ray, 0);
   }
   
-  bool _isCollideXPos(NeighborBlockInfo neighbor) {
-    return !((neighbor.region != Math.HitRegion.XPos) &&
-             (neighbor.region != Math.HitRegion.Inside) &&
-             (this._vector.dx < 0.0));
-  }
+  bool _isCollideXPos(NeighborBlockInfo neighbor) =>
+    ((neighbor.region == Math.HitRegion.XPos) ||
+     (neighbor.region == Math.HitRegion.Inside)) &&
+     (this._vector.dx > 0.0);
 
-  bool _isCollideXNeg(NeighborBlockInfo neighbor) {
-    return !((neighbor.region != Math.HitRegion.XNeg) &&
-             (neighbor.region != Math.HitRegion.Inside) &&
-             (this._vector.dx > 0.0));
-  }
+  bool _isCollideXNeg(NeighborBlockInfo neighbor) =>
+    ((neighbor.region == Math.HitRegion.XNeg) ||
+     (neighbor.region == Math.HitRegion.Inside)) &&
+     (this._vector.dx < 0.0);
 
-  bool _isCollideYPos(NeighborBlockInfo neighbor) {
-    return !((neighbor.region != Math.HitRegion.YPos) &&
-             (neighbor.region != Math.HitRegion.Inside) &&
-             (this._vector.dy < 0.0));
-  }
+  bool _isCollideYPos(NeighborBlockInfo neighbor) =>
+    ((neighbor.region == Math.HitRegion.YPos) ||
+     (neighbor.region == Math.HitRegion.Inside)) &&
+     (this._vector.dy > 0.0);
 
-  bool _isCollideYNeg(NeighborBlockInfo neighbor) {
-    return !((neighbor.region != Math.HitRegion.YNeg) &&
-             (neighbor.region != Math.HitRegion.Inside) &&
-             (this._vector.dy > 0.0));
-  }
+  bool _isCollideYNeg(NeighborBlockInfo neighbor) =>
+    ((neighbor.region == Math.HitRegion.YNeg) ||
+     (neighbor.region == Math.HitRegion.Inside)) &&
+     (this._vector.dy < 0.0);
 
-  bool _isCollideZPos(NeighborBlockInfo neighbor) {
-    return !((neighbor.region != Math.HitRegion.ZPos) &&
-             (neighbor.region != Math.HitRegion.Inside) &&
-             (this._vector.dz < 0.0));
-  }
+  bool _isCollideZPos(NeighborBlockInfo neighbor) =>
+    ((neighbor.region == Math.HitRegion.ZPos) ||
+     (neighbor.region == Math.HitRegion.Inside)) &&
+     (this._vector.dz > 0.0);
 
-  bool _isCollideZNeg(NeighborBlockInfo neighbor) {
-    return !((neighbor.region != Math.HitRegion.ZNeg) &&
-             (neighbor.region != Math.HitRegion.Inside) &&
-             (this._vector.dz > 0.0));
-  }
+  bool _isCollideZNeg(NeighborBlockInfo neighbor) =>
+    ((neighbor.region == Math.HitRegion.ZNeg) ||
+     (neighbor.region == Math.HitRegion.Inside)) &&
+     (this._vector.dz < 0.0);
 
   // Hit wall to the right
   void _moveXPos(BlockInfo info, Math.Point3 point) {
