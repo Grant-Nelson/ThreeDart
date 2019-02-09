@@ -182,42 +182,48 @@ class Collider {
   // Hit wall to the right
   void _moveXPos(BlockInfo info, Math.Point3 point) {
     this._offset = new Math.Point3(info.worldX - point.x, 0.0, 0.0);
-    this._vector = new Math.Vector3(0.0, this._vector.dy, this._vector.dz);
+    if (this._vector.dx > 0.0)
+      this._vector = new Math.Vector3(0.0, this._vector.dy, this._vector.dz);
     this._touching |= Math.HitRegion.XPos;
   }
 
   // Hit wall to the left
   void _moveXNeg(BlockInfo info, Math.Point3 point) {
-    this._offset = new Math.Point3(info.worldX + 1.0 - point.x, 0.0, 0.0);
-    this._vector = new Math.Vector3(0.0, this._vector.dy, this._vector.dz);
+    this._offset = new Math.Point3(point.x - info.worldX - 1.0, 0.0, 0.0);
+    if (this._vector.dx < 0.0)
+      this._vector = new Math.Vector3(0.0, this._vector.dy, this._vector.dz);
     this._touching |= Math.HitRegion.XNeg;
   }
 
   // Hit ceiling
   void _moveYPos(BlockInfo info, Math.Point3 point) {
     this._offset = new Math.Point3(0.0, info.y - point.y, 0.0);
-    this._vector = new Math.Vector3(this._vector.dx, 0.0, this._vector.dz);
+    if (this._vector.dy > 0.0)
+      this._vector = new Math.Vector3(this._vector.dx, 0.0, this._vector.dz);
     this._touching |= Math.HitRegion.YPos;
   }
 
   // Ether hitting the floor or stuck inside of hard block, push character up.
   void _moveYNeg(BlockInfo info, Math.Point3 point) {
     this._offset = new Math.Point3(0.0, info.y + 1.0 - point.y, 0.0);
-    this._vector = new Math.Vector3(this._vector.dx, 0.0, this._vector.dz);
+    if (this._vector.dy < 0.0)
+      this._vector = new Math.Vector3(this._vector.dx, 0.0, this._vector.dz);
     this._touching |= Math.HitRegion.YNeg;
   }
 
   // Hit wall to the front
   void _moveZPos(BlockInfo info, Math.Point3 point) {
     this._offset = new Math.Point3(0.0, 0.0, info.worldZ - point.z);
-    this._vector = new Math.Vector3(this._vector.dx, this._vector.dy, 0.0);
+    if (this._vector.dz > 0.0)
+      this._vector = new Math.Vector3(this._vector.dx, this._vector.dy, 0.0);
     this._touching |= Math.HitRegion.ZPos;
   }
 
   // Hit wall to the back
   void _moveZNeg(BlockInfo info, Math.Point3 point) {
-    this._offset = new Math.Point3(0.0, 0.0, info.worldZ + 1.0 - point.z);
-    this._vector = new Math.Vector3(this._vector.dx, this._vector.dy, 0.0);
+    this._offset = new Math.Point3(0.0, 0.0, point.z - info.worldZ - 1.0);
+    if (this._vector.dz < 0.0)
+      this._vector = new Math.Vector3(this._vector.dx, this._vector.dy, 0.0);
     this._touching |= Math.HitRegion.ZNeg;
   }
   
