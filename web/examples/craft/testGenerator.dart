@@ -19,12 +19,26 @@ class TestGenerator implements Generator {
 
     this._default();
 
+    // +----+----+----+----+
+    // |    |    |    |    |  1
+    // +----+----+----+----+
+    // |    |    |    |    |  0
+    // +----+----o----+----+----
+    // |    |    |    |    | -1
+    // +----+----+----+----+
+    // |    |    |    |    | -2
+    // +----+----+----+----+
+    //   -2   -1 |  0    1
+
     if (this._isChunk(-2, 1)) this._sphere();
     if (this._isChunk(-1, 1)) this._pool();
     if (this._isChunk(0, 1)) this._walls();
     if (this._isChunk(1, 1)) this._platforms();
-    if (this._isChunk(1, 0)) this._pillars();
-    if (this._isChunk(1, -1)) this._pyramid();
+    if (this._isChunk(1, 0)) this._posts();
+    if (this._isChunk(1, -1)) this._pillars();
+    if (this._isChunk(-2, 0)) this._tunnels();
+    if (this._isChunk(-2, -1)) this._narrows();
+    if (this._isChunk(-2, -2)) this._pyramid();
 
     chunk.finishGenerate();
   }
@@ -99,7 +113,7 @@ class TestGenerator implements Generator {
     platform(2, 2, 4);
   }
 
-  void _pillars() {
+  void _posts() {
     const int offset = 2, size = 4, lowest = 10;
     void pillar(int xScale, int zScale, int height) =>
       this._block(offset+size*xScale, lowest, offset+size*zScale, 1, height, 1);
@@ -125,11 +139,38 @@ class TestGenerator implements Generator {
     pillar(3, 3, 1);
   }
 
+  void _pillars() { 
+    const int offset = 2, lowest = 10, width = 20, height = 8; 
+    for (int i = 0; i < width; i+=2) {
+      for (int j = 0; j < width; j+=2) {
+        this._block(offset+i, lowest, offset+j, 1, height, 1);
+      }
+    }
+  }
+
   void _pyramid() {
     const int offset = 2, lowest = 10, height = 6;
     for (int i = 0; i < height; i++) {
       int size = Constants.chunkSideSize-(offset+i)*2+1;
       this._block(offset+i, lowest+i, offset+i, size, 1, size);
+    }
+  }
+
+  void _tunnels() {
+    const int offset = 2, height = 10, length = 12;
+    for (int i = 0; i < 4; i++) {
+      this._block(offset+1, height,     offset+i*3,   length, i+2, 1);
+      this._block(offset+1, height+i+1, offset+i*3+1, length, 1,   2);
+      this._block(offset+1, height,     offset+i*3+3, length, i+2, 1);
+    }
+  }
+
+  void _narrows() {
+    const int offset = 2, height = 10, length = 12;
+    for (int i = 0; i < 6; i++) {
+      this._block(offset+1, height,     offset+i*2,   length, i+2, 1);
+      this._block(offset+1, height+i+1, offset+i*2+1, length, 1,   1);
+      this._block(offset+1, height,     offset+i*2+2, length, i+2, 1);
     }
   }
 

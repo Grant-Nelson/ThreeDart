@@ -77,13 +77,9 @@ void main() {
 /// Start the craft game.
 /// This is deferred so that if loading takes a while the page is at least loaded.
 void startCraft() {
-  int seed = _getSeed();
-  if (seed < 0) seed = _navigateToSeededUrl();
-
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("targetCanvas");
   Materials mats = new Materials(td);
-  //RandomGenerator gen = new RandomGenerator(seed);
-  TestGenerator gen = new TestGenerator();
+  Generator gen = _getGenerator();
   World world = new World(mats, gen);
   Player player = new Player(td.userInput, world);
 
@@ -112,17 +108,21 @@ void startCraft() {
   });
 }
 
-/// Returns the seed provided by the URL's query parameters, or -1 if no seed is found.
-int _getSeed() {
+/// Gets the generator provided by the URL's query parameters.
+/// If no seed was given or it is invalid then a new seed is randomly picked.
+Generator _getGenerator() {
+  int seed = -1;
   String seedQueryParam = Uri.base.queryParameters["seed"];
-  if (seedQueryParam == null) return -1;
-  return int.tryParse(seedQueryParam) ?? -1;
-}
+  if (seedQueryParam != null) {
+    if (seedQueryParam == "test") return new TestGenerator();
+    if (seedQueryParam == "checkers") return new CheckersGenerator();
+    seed = int.tryParse(seedQueryParam) ?? -1;
+  }
 
-/// Navigates the browser to a Url with a seed parameter and returns the seed.
-int _navigateToSeededUrl() {
-  int seed = new math.Random().nextInt(Constants.maxSeed);
-  Uri newUri = Uri.base.replace(queryParameters: {"seed": "$seed"});
-  html.window.history.pushState(null, null, newUri.toString());
-  return seed;
+  if (seed <= 0) {
+    seed = new math.Random().nextInt(Constants.maxSeed);
+    Uri newUri = Uri.base.replace(queryParameters: {"seed": "$seed"});
+    html.window.history.pushState(null, null, newUri.toString());
+  }
+  return new RandomGenerator(seed);
 }
