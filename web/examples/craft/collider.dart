@@ -1,7 +1,6 @@
 part of craft;
 
 abstract class _collisionSensor {
-  String get name;
   Math.HitRegion get hitRegion;
   Math.Point3 get location;
   bool isMoving(Math.Vector3 vel);
@@ -11,7 +10,6 @@ abstract class _collisionSensor {
 
 // Hit wall to the right
 class _xPosSensor implements _collisionSensor {
-  String get name => "xPosSensor";
   Math.HitRegion get hitRegion => Math.HitRegion.XPos;
   Math.Point3 get location => new Math.Point3(Constants.horizontalPad, 0.0, 0.0);
   bool isMoving(Math.Vector3 vel) => vel.dx > 0.0;
@@ -21,7 +19,6 @@ class _xPosSensor implements _collisionSensor {
 
 // Hit wall to the left
 class _xNegSensor implements _collisionSensor {
-  String get name => "xNegSensor";
   Math.HitRegion get hitRegion => Math.HitRegion.XNeg;
   Math.Point3 get location => new Math.Point3(-Constants.horizontalPad, 0.0, 0.0);
   bool isMoving(Math.Vector3 vel) => vel.dx < 0.0;
@@ -31,7 +28,6 @@ class _xNegSensor implements _collisionSensor {
 
 // Hit ceiling
 class _yPosSensor implements _collisionSensor {
-  String get name => "yPosSensor";
   Math.HitRegion get hitRegion => Math.HitRegion.YPos;
   Math.Point3 get location => new Math.Point3(0.0, Constants.verticalPad, 0.0);
   bool isMoving(Math.Vector3 vel) => vel.dy > 0.0;
@@ -41,17 +37,17 @@ class _yPosSensor implements _collisionSensor {
 
 // Ether hitting the floor or stuck inside of hard block, push character up.
 class _yNegSensor implements _collisionSensor {
-  String get name => "yNegSensor";
   Math.HitRegion get hitRegion => Math.HitRegion.YNeg;
   Math.Point3 get location => new Math.Point3(0.0, -Constants.verticalPad, 0.0);
   bool isMoving(Math.Vector3 vel) => vel.dy < 0.0;
   Math.Vector3 stopMovement(Math.Vector3 vel) => new Math.Vector3(vel.dx, 0.0, vel.dz);
-  Math.Point3 getOffset(BlockInfo info, Math.Point3 point) => new Math.Point3(0.0, point.y - info.y - 1.0, 0.0);
+  Math.Point3 getOffset(BlockInfo info, Math.Point3 point) => new Math.Point3(0.0, info.y + 1.0 - point.y, 0.0);
+  // Why not this? > point.z - info.worldZ - 1.0
+  // Why does the order matter for the sensors?
 }
 
 // Hit wall to the front
 class _zPosSensor implements _collisionSensor {
-  String get name => "zPosSensor";
   Math.HitRegion get hitRegion => Math.HitRegion.ZPos;
   Math.Point3 get location => new Math.Point3(0.0, 0.0, Constants.horizontalPad);
   bool isMoving(Math.Vector3 vel) => vel.dz > 0.0;
@@ -61,7 +57,6 @@ class _zPosSensor implements _collisionSensor {
 
 // Hit wall to the back
 class _zNegSensor implements _collisionSensor {
-  String get name => "zNegSensor";
   Math.HitRegion get hitRegion => Math.HitRegion.ZNeg;
   Math.Point3 get location => new Math.Point3(0.0, 0.0, -Constants.horizontalPad);
   bool isMoving(Math.Vector3 vel) => vel.dz < 0.0;
@@ -70,12 +65,12 @@ class _zNegSensor implements _collisionSensor {
 }
 
 final List<_collisionSensor> _allSensors = [
-  new _xPosSensor(),
-  new _xNegSensor(),
-  new _yPosSensor(),
   new _yNegSensor(),
-  new _zPosSensor(),
-  new _zNegSensor()
+  new _yPosSensor(),
+  new _xNegSensor(),
+  new _xPosSensor(),
+  new _zNegSensor(),
+  new _zPosSensor()
 ];
 
 class _colliderTest {
@@ -87,6 +82,7 @@ class _colliderTest {
 
 /// TODO: Comment everything
 class Collider {
+
   World _world;
   List<_colliderTest> _tests;
   Math.Point3 _loc;
@@ -109,15 +105,14 @@ class Collider {
     this._touching = Math.HitRegion.None;
     this._vector = vector;
     this._killCount = 100;
-    //this._offset = Math.Point3.zero; // TODO: Restore
 
     if (points.length <= 0) return false;
-    this._prepare(points, prevTouching);
+    this._addRays(points, prevTouching);
 
     while (true) {
-      this._offset = Math.Point3.zero;
+      this._offset = null;
       if (!this._traverseNeighbors()) break;
-      if (this._offset == Math.Point3.zero) break;
+      if (this._offset == null) break;
       this._updateRays();
     }
 
@@ -128,55 +123,11 @@ class Collider {
   Math.Point3 get location => this._loc;
   Math.HitRegion get touching => this._touching;
   
-  void _prepare(List<Math.Point3> points, Math.HitRegion prevTouching) {
-    this._loc = points[0];
-    this._tests.clear();
-
-    for (_collisionSensor sensor in _allSensors) {
-      this._checkTouchingSensor(sensor, points, prevTouching);
-      this._addTestForSensor(sensor, points);
-    }
-
-    print("sensors: ${this._tests.length}");// TODO: REMOVE
-  }
-
-  // Check to see if previous collision still is occuring.
-  void _checkTouchingSensor(_collisionSensor sensor, List<Math.Point3> points, Math.HitRegion prevTouching) {
-    if (prevTouching.has(sensor.hitRegion)) {
-      for (Math.Point3 point in points) {
-        Math.Point3 testPnt = point + sensor.location;
-        BlockInfo info = this._world.getBlock(testPnt.x, testPnt.y, testPnt.z);
-        if (BlockType.hard(info.value)) {
-          this._performMove(sensor, info, testPnt);
-          break;
-        }
-      }
-    }
-  }
-
-  // Add any tests for sensors which need to be checked.
-  void _addTestForSensor(_collisionSensor sensor, List<Math.Point3> points) {
-    print("add: $_collisionSensor => ${sensor.isMoving(this._vector)} && ${!this._touching.has(sensor.hitRegion)}"); // TODO: REMOVE
-
-    if (sensor.isMoving(this._vector) && !this._touching.has(sensor.hitRegion)) {
-      for (Math.Point3 point in points) {
-        Math.Ray3 ray = new Math.Ray3.fromVector(point, this._vector);
-        BlockInfo info = this._world.getBlock(point.x, point.y, point.z);
-        _colliderTest test = new _colliderTest()
-          .._ray      = ray
-          .._back     = ray.reverse
-          .._sensor   = sensor
-          .._neighbor = new NeighborBlockInfo(info, Math.HitRegion.Inside, ray, 0);
-        this._tests.add(test);
-      }
-    }
-  }
-
   bool _traverseNeighbors() {
     int depth = 0;
     final int count = this._tests.length;
-    while (count > 0) {
-    
+    while (true) {
+
       this._killCount--; // TODO: REMOVE
       if (this._killCount <= 0) {
         print("KILL COUNT EXCEEDED!");
@@ -189,9 +140,8 @@ class Collider {
         if (neighbor?.info == null) return false;
 
         if (BlockType.hard(neighbor.info.value)) {
-          _collisionSensor sensor = test._sensor;
-          if (this._isCollision(sensor, neighbor)) {  
-            this._performMove(sensor, neighbor.info, neighbor.ray.start);
+          if (_isCollision(neighbor, test._sensor)) {
+            _collided(neighbor.info, neighbor.ray.start, test._sensor);
             return true;
           }
         }
@@ -199,14 +149,53 @@ class Collider {
       }
       depth++;
     }
-    //return false; // TODO: Restore
+  }
+
+  void _addRays(List<Math.Point3> points, Math.HitRegion prevTouching) {
+    this._loc = points[0];
+    this._tests.clear();
+
+    for (_collisionSensor sensor in _allSensors) {
+      this._addRayGroup(points, sensor, prevTouching);
+    }
+  }
+
+  void _addRayGroup(List<Math.Point3> points, _collisionSensor sensor, Math.HitRegion prevTouching) {
+    if (prevTouching.has(sensor.hitRegion)) {
+      
+      for (Math.Point3 point in points) {
+        Math.Point3 testPnt = point + sensor.location;
+        BlockInfo info = this._world.getBlock(testPnt.x, testPnt.y, testPnt.z);
+        if (BlockType.hard(info.value)) {
+          _collided(info, testPnt, sensor);
+          break;
+        }
+      }
+    }
+    
+    for (Math.Point3 point in points) {
+      this._addRay(point + sensor.location, sensor);
+    }
+  }
+
+  void _addRay(Math.Point3 point, _collisionSensor sensor) {
+    Math.Ray3 ray = new Math.Ray3.fromVector(point, this._vector);
+    BlockInfo info = this._world.getBlock(point.x, point.y, point.z);
+    _colliderTest test = new _colliderTest()
+      .._ray      = ray
+      .._back     = ray.reverse
+      .._sensor   = sensor
+      .._neighbor = new NeighborBlockInfo(info, Math.HitRegion.Inside, ray, 0);
+    this._tests.add(test);
   }
 
   // Update start locations and vector to the new offset.
   void _updateRays() {
     this._loc += this._offset;
-    for (int i = this._tests.length - 1; i >= 0; i--)
-      this._updateRay(i);
+    if (this._offset != null) {
+      for (int i = this._tests.length - 1; i >= 0; i--)
+        this._updateRay(i);
+    }
   }
 
   void _updateRay(int index) {
@@ -220,13 +209,13 @@ class Collider {
     test._neighbor = new NeighborBlockInfo(info, Math.HitRegion.Inside, ray, 0);
   }
 
-  bool _isCollision(_collisionSensor sensor, NeighborBlockInfo neighbor) =>
-    BlockType.hard(neighbor.info.value) &&
-    (neighbor.region == Math.HitRegion.Inside || neighbor.region == sensor.hitRegion) &&
-    sensor.isMoving(this._vector);
-
-  void _performMove(_collisionSensor sensor, BlockInfo info, Math.Point3 point) {
-    this._offset += sensor.getOffset(info, point);
+  bool _isCollision(NeighborBlockInfo neighbor, _collisionSensor sensor) =>
+    ((neighbor.region == sensor.hitRegion) ||
+     (neighbor.region == Math.HitRegion.Inside)) &&
+     sensor.isMoving(this._vector);
+  
+  void _collided(BlockInfo info, Math.Point3 point, _collisionSensor sensor) {
+    this._offset = sensor.getOffset(info, point);
     if (sensor.isMoving(this._vector))
       this._vector = sensor.stopMovement(this._vector);
     this._touching |= sensor.hitRegion;
