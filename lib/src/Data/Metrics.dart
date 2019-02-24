@@ -9,7 +9,7 @@ class Metrics {
   List<List<double>> _data;
 
   /// Creates a new simple metrics collector.
-  Metrics([bool enabled = true]) {
+  Metrics([bool enabled = false]) {
     this._enabled = enabled;
     this._titles = new List<String>();
     this._data = new List<List<double>>();

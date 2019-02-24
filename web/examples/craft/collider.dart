@@ -42,8 +42,6 @@ class _yNegSensor implements _collisionSensor {
   bool isMoving(Math.Vector3 vel) => vel.dy < 0.0;
   Math.Vector3 stopMovement(Math.Vector3 vel) => new Math.Vector3(vel.dx, 0.0, vel.dz);
   Math.Point3 getOffset(BlockInfo info, Math.Point3 point) => new Math.Point3(0.0, info.y + 1.0 - point.y, 0.0);
-  // Why not this? > point.z - info.worldZ - 1.0
-  // Why does the order matter for the sensors?
 }
 
 // Hit wall to the front

@@ -262,10 +262,9 @@ class Player {
   Math.Point3 _handleCollide(Math.Point3 prev, Math.Point3 loc) {
     // Traverse the neighboring blocks using player's movement to find first
     // hard block checking both head and foot.
-    Math.Point3 foot = new Math.Point3(0.0, -Constants.playerHeight, 0.0);
-    Math.Point3 center = new Math.Point3(0.0, -Constants.playerHeight*0.5, 0.0);
+    Math.Point3 foot = new Math.Point3(0.0, -Constants.playerHeight+1.0, 0.0);
     Math.Vector3 vector = new Math.Vector3.fromPoint3(loc-prev);
-    this._collider.collide([prev, prev+center, prev+foot], vector);
+    this._collider.collide([prev, prev+foot], vector);
 
     if (this._metrics.enabled) { // TODO: REMOVE
       this._metrics
