@@ -233,6 +233,9 @@ class Player {
           blockType = BlockType.WoodNS;
         }
       }
+
+      // Move to the neighbor location.
+      info = info.neighbor(-region);
     }
 
     Chunk chunk = info.chunk;

@@ -50,7 +50,7 @@ class BlockInfo {
     Chunk chunk = this.chunk;
     if (x >= Constants.chunkSideSize) {
       x = 0;
-      chunkX++;
+      chunkX += Constants.chunkSideSize;
       chunk = chunk?.right;
     }
     return new BlockInfo(x, this.y, this.z, chunkX, this.chunkZ, chunk);
@@ -63,7 +63,7 @@ class BlockInfo {
     Chunk chunk = this.chunk;
     if (x < 0) {
       x = Constants.chunkSideSize-1;
-      chunkX--;
+      chunkX -= Constants.chunkSideSize;
       chunk = chunk?.left;
     }
     return new BlockInfo(x, this.y, this.z, chunkX, this.chunkZ, chunk);
@@ -76,8 +76,8 @@ class BlockInfo {
     Chunk chunk = this.chunk;
     if (z >= Constants.chunkSideSize) {
       z = 0;
-      chunkZ++;
-      chunk = chunk?.right;
+      chunkZ += Constants.chunkSideSize;
+      chunk = chunk?.front;
     }
     return new BlockInfo(this.x, this.y, z, this.chunkX, chunkZ, chunk);
   }
@@ -89,10 +89,22 @@ class BlockInfo {
     Chunk chunk = this.chunk;
     if (z < 0) {
       z = Constants.chunkSideSize-1;
-      chunkZ--;
-      chunk = chunk?.left;
+      chunkZ -= Constants.chunkSideSize;
+      chunk = chunk?.back;
     }
     return new BlockInfo(this.x, this.y, z, this.chunkX, chunkZ, chunk);
+  }
+
+  /// Creates a new block info for the one to the given region direction from this info.
+  /// This only works for single direction component, no diagonals.
+  BlockInfo neighbor(Math.HitRegion region) {
+    if (region == Math.HitRegion.XNeg) return this.left;
+    else if (region == Math.HitRegion.XPos) return this.right;
+    else if (region == Math.HitRegion.YNeg) return this.below;
+    else if (region == Math.HitRegion.YPos) return this.above;
+    else if (region == Math.HitRegion.ZNeg) return this.back;
+    else if (region == Math.HitRegion.ZPos) return this.front;
+    else return null;
   }
 
   /// Gets the region for this info block.

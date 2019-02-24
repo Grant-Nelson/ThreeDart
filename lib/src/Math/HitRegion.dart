@@ -39,6 +39,10 @@ class HitRegion {
   /// [Inside] indicates the inside hit region, XCenter|YCenter|ZCenter
   static final HitRegion Inside = new HitRegion._(0x0092);
 
+  /// [Cardinals] is the combination of all cardinal directions,
+  /// XPos|XNeg|YPos|YNeg|ZPos|ZNeg.
+  static final HitRegion Cardinals = new HitRegion._(0x016D);
+
   /// The combined hit region value.
   final int _value;
 
@@ -53,9 +57,19 @@ class HitRegion {
   HitRegion operator&(HitRegion right) =>
     new HitRegion._(this._value&right._value);
 
-  /// Gets the opposite of this hit region value.
+  /// Gets the opposite value of this hit region value.
   HitRegion operator ~() =>
     new HitRegion._(All._value & ~this._value);
+
+  /// Gets the reversed direction of the region.
+  HitRegion operator -() {
+    int value = this._value;
+    int result = 0x0000;
+    if ((0x0005 & value) != 0x0000) result |= (0x0005 - (0x0005 & value));
+    if ((0x0028 & value) != 0x0000) result |= (0x0028 - (0x0028 & value));
+    if ((0x0140 & value) != 0x0000) result |= (0x0140 - (0x0140 & value));
+    return new HitRegion._(result);
+  }
 
   /// The interal value of the hit region value.
   int get value => this._value;

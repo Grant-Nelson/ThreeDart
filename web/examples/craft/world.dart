@@ -203,13 +203,8 @@ class World {
     Math.IntersectionRayRegion3 inter = region.rayIntersection(back);
 
     if (inter == null) return null;
-    else if (inter.region == Math.HitRegion.XNeg) info = info.left;
-    else if (inter.region == Math.HitRegion.XPos) info = info.right;
-    else if (inter.region == Math.HitRegion.YNeg) info = info.below;
-    else if (inter.region == Math.HitRegion.YPos) info = info.above;
-    else if (inter.region == Math.HitRegion.ZNeg) info = info.back;
-    else if (inter.region == Math.HitRegion.ZPos) info = info.front;
-    else return null;
+    else info = info.neighbor(inter.region);
+    if (info == null) return null;
 
     return new NeighborBlockInfo(info, inter.region, ray, depth);
   }
