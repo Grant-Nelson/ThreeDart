@@ -109,6 +109,18 @@ class Region2 {
   /// Gets an list of 4 doubles in the order x, y, dx, then dy.
   List<double> toList() =>
     [this.x, this.y, this.dx, this.dy];
+    
+  /// Gets the value at the zero based index in the order x, y, dx, then dy.
+  /// If out-of-bounds, zero is returned.
+  double atIndex(int i) {
+    switch(i) {
+      case 0: return this.x;
+      case 1: return this.y;
+      case 2: return this.dx;
+      case 3: return this.dy;
+    }
+    return 0.0;
+  }
 
   /// The minimum side of the region.
   double get minSide {

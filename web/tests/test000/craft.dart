@@ -1,5 +1,6 @@
 part of ThreeDart.test.test000;
 
+/*
 void addCraftTests(TestManager tests) {
 
   tests.add("Test of craft example world getBlock", (TestArgs args) {
@@ -166,3 +167,4 @@ void _checkCollideY(TestArgs args, craft.World world, double startY, double dy,
   _checkCollide(args, world, [new Math.Point3(x, startY, z)],
     new Math.Vector3(x, dy, z), new Math.Point3(x, expEndY, z), touchingGround);
 }
+*/

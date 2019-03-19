@@ -14,7 +14,7 @@ import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 
 import '../../common/common.dart' as common;
-import '../../examples/craft/main.dart' as craft;
+//import '../../examples/craft/main.dart' as craft;
 
 part 'bench.dart';
 part 'craft.dart';
@@ -31,18 +31,15 @@ void main() {
   html.DivElement elem = new html.DivElement();
   TestManager tests = new TestManager(elem);
 
-  /*
-  addBench(tests);
-  addVertexTypeTests(tests);
-  addMatrix2Tests(tests);
-  addMatrix3Tests(tests);
-  addMatrix4Tests(tests);
-  addRegion2Tests(tests);
+  //addBench(tests);
+  //addVertexTypeTests(tests);
+  //addMatrix2Tests(tests);
+  //addMatrix3Tests(tests);
+  //addMatrix4Tests(tests);
+  //addRegion2Tests(tests);
   addRegion3Tests(tests);
-  addTechniqueTests(tests);
-  */
-
-  addCraftTests(tests);
+  //addTechniqueTests(tests);
+  //addCraftTests(tests);
 
   new common.ShellPage("Unit-tests", false)
     ..addElem(elem)

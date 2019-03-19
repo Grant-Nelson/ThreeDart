@@ -78,6 +78,18 @@ class Quaternion {
   List<double> toList() =>
     [this.a, this.b, this.c, this.t];
 
+  /// Gets the value at the zero based index in the order a, b, c, then t.
+  /// If out-of-bounds, zero is returned.
+  double atIndex(int i) {
+    switch(i) {
+      case 0: return this.a;
+      case 1: return this.b;
+      case 2: return this.c;
+      case 3: return this.t;
+    }
+    return 0.0;
+  }
+
   /// The length squared of this quaternion.
   double length2() =>
     this.a*this.a + this.b*this.b + this.c*this.c + this.t*this.t;

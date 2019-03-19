@@ -54,6 +54,20 @@ class Ray3 {
   /// Gets an list of 6 doubles in the order x, y, z, dx, dy, then dz.
   List<double> toList() =>
     [this.x, this.y, this.z, this.dx, this.dy, this.dz];
+    
+  /// Gets the value at the zero based index in the order x, y, z, dx, dy, then dz.
+  /// If out-of-bounds, zero is returned.
+  double atIndex(int i) {
+    switch(i) {
+      case 0: return this.x;
+      case 1: return this.y;
+      case 2: return this.z;
+      case 3: return this.dx;
+      case 4: return this.dy;
+      case 5: return this.dz;
+    }
+    return 0.0;
+  }
 
   /// Gets the point at the start of this ray.
   Point3 get start => new Point3(this.x, this.y, this.z);

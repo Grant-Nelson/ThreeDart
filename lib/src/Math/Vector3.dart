@@ -101,7 +101,19 @@ class Vector3 {
   }
 
   /// Gets an list of 3 doubles in the order dX, dY, then dZ.
-  List<double> toList() => [this.dx, this.dy, this.dz];
+  List<double> toList() =>
+    [this.dx, this.dy, this.dz];
+
+  /// Gets the value at the zero based index in the order dX, dY, then dZ.
+  /// If out-of-bounds, zero is returned.
+  double atIndex(int i) {
+    switch(i) {
+      case 0: return this.dx;
+      case 1: return this.dy;
+      case 2: return this.dz;
+    }
+    return 0.0;
+  }
 
   /// The length squared of this vector.
   double length2() => this.dot(this);

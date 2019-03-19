@@ -62,6 +62,17 @@ class Point3 {
   List<double> toList() =>
     [this.x, this.y, this.z];
 
+  /// Gets the value at the zero based index in the order x, y, then z.
+  /// If out-of-bounds, zero is returned.
+  double atIndex(int i) {
+    switch(i) {
+      case 0: return this.x;
+      case 1: return this.y;
+      case 2: return this.z;
+    }
+    return 0.0;
+  }
+
   /// The distance squared between this point and the [other] point.
   double distance2(Point3 other) {
     double dx = this.x - other.x;

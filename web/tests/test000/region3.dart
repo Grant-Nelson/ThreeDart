@@ -15,6 +15,65 @@ void addRegion3Tests(TestManager tests) {
     _expandReg3(args, reg3,   1.0,  1.0,  1.0,  -1.0, -2.0, -3.0,   2.0,  4.0,  6.0);
     _expandReg3(args, reg3,   4.0,  4.0,  4.0,  -1.0, -2.0, -3.0,   5.0,  6.0,  7.0);
   });
+
+  tests.add("Region3 Collision Test", (TestArgs args) {
+    _region3Collision(args,
+      new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
+      new Math.Region3(2.0, 2.0, 2.0, 1.0, 1.0, 1.0),
+      new Math.Vector3(0.0, 0.0, 0.0),
+      null);
+    _region3Collision(args,
+      new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
+      new Math.Region3(2.0, 0.0, 0.0, 1.0, 1.0, 1.0),
+      new Math.Vector3(0.5, 0.0, 0.0),
+      null);
+    _region3Collision(args,
+      new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
+      new Math.Region3(2.0, 0.0, 0.0, 1.0, 1.0, 1.0),
+      new Math.Vector3(1.0, 0.0, 0.0),
+      new Math.IntersectionRegion3(1.0, Math.HitRegion.XPos));
+    _region3Collision(args,
+      new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
+      new Math.Region3(2.0, 0.0, 0.0, 1.0, 1.0, 1.0),
+      new Math.Vector3(4.0, 0.0, 0.0),
+      new Math.IntersectionRegion3(0.25, Math.HitRegion.XPos));
+    _region3Collision(args,
+      new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
+      new Math.Region3(2.0, 0.0, 0.0, 1.0, 1.0, 1.0),
+      new Math.Vector3(-4.0, 0.0, 0.0),
+      null);
+    _region3Collision(args,
+      new Math.Region3(2.0, 0.0, 0.0, 1.0, 1.0, 1.0),
+      new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
+      new Math.Vector3(4.0, 0.0, 0.0),
+      null);
+    _region3Collision(args,
+      new Math.Region3(2.0, 0.0, 0.0, 1.0, 1.0, 1.0),
+      new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
+      new Math.Vector3(-4.0, 0.0, 0.0),
+      new Math.IntersectionRegion3(0.25, Math.HitRegion.XNeg));
+    _region3Collision(args,
+      new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
+      new Math.Region3(2.0, 2.0, 2.0, 1.0, 1.0, 1.0),
+      new Math.Vector3(4.0, 0.0, 0.0),
+      null);
+    _region3Collision(args,
+      new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
+      new Math.Region3(2.0, 2.0, 2.0, 1.0, 1.0, 1.0),
+      new Math.Vector3(2.0, 2.4, 2.8),
+      new Math.IntersectionRegion3(0.5, Math.HitRegion.XPos));
+    _region3Collision(args,
+      new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
+      new Math.Region3(2.0, 2.0, 2.0, 1.0, 1.0, 1.0),
+      new Math.Vector3(2.8, 2.0, 2.4),
+      new Math.IntersectionRegion3(0.5, Math.HitRegion.YPos));
+    _region3Collision(args,
+      new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
+      new Math.Region3(2.0, 2.0, 2.0, 1.0, 1.0, 1.0),
+      new Math.Vector3(2.4, 2.8, 2.0),
+      new Math.IntersectionRegion3(0.5, Math.HitRegion.ZPos));
+
+  });
 }
 
 Math.Region3 _expandReg3(TestArgs args, Math.Region3 reg, double newX, double newY, double newZ,
@@ -32,4 +91,45 @@ Math.Region3 _expandReg3(TestArgs args, Math.Region3 reg, double newX, double ne
     args.info("[$reg] + [$input] => [$newReg]\n");
   }
   return newReg;
+}
+
+void _region3Collision(TestArgs args, Math.Region3 reg, Math.Region3 target,
+  Math.Vector3 vec, Math.IntersectionRegion3 exp) {
+  Math.IntersectionRegion3 result = reg.collision(target, vec);
+  if (exp == null) {
+    if (result == null) {
+      args.info("Results from collision:\n"+
+        "   Original: $reg\n"+
+        "   Target:   $target\n"+
+        "   Vector:   $vec\n"+
+        "   Result:   null\n");
+      return;
+    }
+    args.error("Unexpected result from collision:\n"+
+      "   Original: $reg\n"+
+      "   Target:   $target\n"+
+      "   Vector:   $vec\n"+
+      "   Expected: null\n"+
+      "   Result:   $result\n");
+  } else if (result == null) {
+    args.error("Unexpected result from collision:\n"+
+      "   Original: $reg\n"+
+      "   Target:   $target\n"+
+      "   Vector:   $vec\n"+
+      "   Expected: $exp\n"+
+      "   Result:   null\n");
+  } else if (!Math.Comparer.equals(result.parametric, exp.parametric) || (result.region != exp.region)) {
+    args.error("Unexpected result from collision:\n"+
+      "   Original: $reg\n"+
+      "   Target:   $target\n"+
+      "   Vector:   $vec\n"+
+      "   Expected: $exp\n"+
+      "   Result:   $result\n");
+  } else {
+    args.info("Results from collision:\n"+
+      "   Original: $reg\n"+
+      "   Target:   $target\n"+
+      "   Vector:   $vec\n"+
+      "   Result:   $result\n");
+  }
 }

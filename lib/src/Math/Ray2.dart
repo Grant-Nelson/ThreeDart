@@ -58,6 +58,18 @@ class Ray2 {
   List<double> toList() =>
     [this.x, this.y, this.dx, this.dy];
 
+  /// Gets the value at the zero based index in the order x, y, dx, then dy.
+  /// If out-of-bounds, zero is returned.
+  double atIndex(int i) {
+    switch(i) {
+      case 0: return this.x;
+      case 1: return this.y;
+      case 2: return this.dx;
+      case 3: return this.dy;
+    }
+    return 0.0;
+  }
+
   /// Determines if the given [other] variable is a [Ray2] equal to this ray.
   ///
   /// The equality of the doubles is tested with the current [Comparer] method.

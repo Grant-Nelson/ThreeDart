@@ -86,6 +86,16 @@ class Vector2 {
   /// Gets an list of 2 doubles in the order dX then dY.
   List<double> toList() => [this.dx, this.dy];
 
+  /// Gets the value at the zero based index in the order dX then dY.
+  /// If out-of-bounds, zero is returned.
+  double atIndex(int i) {
+    switch(i) {
+      case 0: return this.dx;
+      case 1: return this.dy;
+    }
+    return 0.0;
+  }
+
   /// The length squared of this vector.
   double length2() => this.dot(this);
 

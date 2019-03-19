@@ -267,6 +267,30 @@ class Matrix4 {
     }
   }
 
+  /// Gets the value at the zero based index in row major order.
+  /// If out-of-bounds, zero is returned.
+  double atIndex(int i) {
+    switch(i) {
+      case  0: return this.m11;
+      case  1: return this.m12;
+      case  2: return this.m13;
+      case  3: return this.m14;
+      case  4: return this.m21;
+      case  5: return this.m22;
+      case  6: return this.m23;
+      case  7: return this.m24;
+      case  8: return this.m31;
+      case  9: return this.m32;
+      case 10: return this.m33;
+      case 11: return this.m34;
+      case 12: return this.m41;
+      case 13: return this.m42;
+      case 14: return this.m43;
+      case 15: return this.m44;
+    }
+    return 0.0;
+  }
+
   /// Gets the determinant of this matrix.
   double det() {
     double a = this.m14 * this.m23 - this.m13 * this.m24;

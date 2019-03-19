@@ -118,7 +118,20 @@ class Vector4 {
   }
 
   /// Gets an list of 4 doubles in the order dX, dY, dZ, then dW.
-  List<double> toList() => [this.dx, this.dy, this.dz, this.dw];
+  List<double> toList() =>
+    [this.dx, this.dy, this.dz, this.dw];
+  
+  /// Gets the value at the zero based index in the order dX, dY, dZ, then dW.
+  /// If out-of-bounds, zero is returned.
+  double atIndex(int i) {
+    switch(i) {
+      case 0: return this.dx;
+      case 1: return this.dy;
+      case 2: return this.dz;
+      case 3: return this.dw;
+    }
+    return 0.0;
+  }
 
   /// The length squared of this vector.
   double length2() => this.dot(this);

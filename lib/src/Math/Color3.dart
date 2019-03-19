@@ -77,6 +77,17 @@ class Color3 {
   List<double> toList() =>
     [this.red, this.green, this.blue];
 
+  /// Gets the value at the zero based index in the order red, green, then blue.
+  /// If out-of-bounds, zero is returned.
+  double atIndex(int i) {
+    switch(i) {
+      case 0: return this.red;
+      case 1: return this.green;
+      case 2: return this.blue;
+    }
+    return 0.0;
+  }
+
   /// Inverts the color, creating the complement color.
   Color3 invert() =>
     new Color3._(1.0 - this.red, 1.0 - this.green, 1.0 - this.blue);
