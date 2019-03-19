@@ -251,6 +251,44 @@ class Region2 {
     }
   }
 
+  /// Determines the collision between this region moving with the given [vector]
+  /// and the other region, the [target], not moving.
+  IntersectionBetweenMovingRegions collision(Region2 target, Vector2 vector) {
+    if (this.overlap(target))
+      return new IntersectionBetweenMovingRegions(0.0, HitRegion.Inside);
+    double t = 100.0;
+    HitRegion region = HitRegion.None;
+
+    if (vector.dx != 0.0) {
+      double d = (vector.dx > 0.0)?
+        (target.x - this.x - this.dx) / vector.dx:
+        (target.x + target.dx - this.x) / vector.dx;
+      if ((d < t) && (d >= 0.0) && (d <= 1.0)) {
+        double y = this.y + vector.dy*d;
+        if ((y + this.dy >= target.y) && (target.y + target.dy >= y)) {
+          t = d;
+          region = (vector.dx > 0.0)? HitRegion.XPos: HitRegion.XNeg;
+        }
+      }
+    }
+       
+    if (vector.dy != 0.0) {
+      double d = (vector.dy > 0.0)?
+        (target.y - this.y - this.dy) / vector.dy:
+        (target.y + target.dy - this.y) / vector.dy;
+      if ((d < t) && (d >= 0.0) && (d <= 1.0)) {
+        double x = this.x + vector.dx*d;
+        if ((x + this.dx >= target.x) && (target.x + target.dx >= x)) {
+          t = d;
+          region = (vector.dy > 0.0)? HitRegion.YPos: HitRegion.YNeg;
+        }
+      }
+    }
+    
+    if (region == HitRegion.None) return null;
+    return new IntersectionBetweenMovingRegions(t, region);
+  }
+
   /// Determines if the given point is contained inside this region.
   bool contains(Point2 a) {
     if (a.x < this.x) return false;

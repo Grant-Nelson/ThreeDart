@@ -315,85 +315,64 @@ class Region3 {
     }
   }
 
-  /// Checks that the X collision between two regions occurs at the given vector offset.
-  /// This is a submethod to the collision method.
-  bool _collideX(Region3 target, Vector3 vector, double d) {
-    double x = this.x + vector.dx*d;
-    return (x + this.dx >= target.x) && (target.x + target.dx >= x);
-  }
-
-  /// Checks that the Y collision between two regions occurs at the given vector offset.
-  /// This is a submethod to the collision method.
-  bool _collideY(Region3 target, Vector3 vector, double d) {
-    double y = this.y + vector.dy*d;
-    return (y + this.dy >= target.y) && (target.y + target.dy >= y);
-  }
-
-  /// Checks that the Z collision between two regions occurs at the given vector offset.
-  /// This is a submethod to the collision method.
-  bool _collideZ(Region3 target, Vector3 vector, double d) {
-    double z = this.z + vector.dz*d;
-    return (z + this.dz >= target.z) && (target.z + target.dz >= z);
-  }
-
   /// Determines the collision between this region moving with the given [vector]
   /// and the other region, the [target], not moving.
-  IntersectionRegion3 collision(Region3 target, Vector3 vector) {
+  IntersectionBetweenMovingRegions collision(Region3 target, Vector3 vector) {
     if (this.overlap(target))
-      return new IntersectionRegion3(0.0, HitRegion.Inside);
+      return new IntersectionBetweenMovingRegions(0.0, HitRegion.Inside);
     double t = 100.0;
     HitRegion region = HitRegion.None;
 
-    if (vector.dx > 0.0) {
-      double d = (target.x - this.x - this.dx) / vector.dx;
-      if ((d < t) && (d >= 0.0) && (d <= 1.0) &&
-        this._collideY(target, vector, d) && this._collideZ(target, vector, d)) {
-        t = d;
-        region = HitRegion.XPos;
-      }
-    } else if (vector.dx < 0.0) {
-      double d = (target.x + target.dx - this.x) / vector.dx;
-      if ((d < t) && (d >= 0.0) && (d <= 1.0) &&
-        this._collideY(target, vector, d) && this._collideZ(target, vector, d)) {
-        t = d;
-        region = HitRegion.XNeg;
-      }
-    }
-    
-    if (vector.dy > 0.0) {
-      double d = (target.y - this.y - this.dy) / vector.dy;
-      if ((d < t) && (d >= 0.0) && (d <= 1.0) &&
-        this._collideX(target, vector, d) && this._collideZ(target, vector, d)) {
-        t = d;
-        region = HitRegion.YPos;
-      }
-    } else if (vector.dy < 0.0) {
-      double d = (target.y + target.dy - this.y) / vector.dy;
-      if ((d < t) && (d >= 0.0) && (d <= 1.0) &&
-        this._collideX(target, vector, d) && this._collideZ(target, vector, d)) {
-        t = d;
-        region = HitRegion.YNeg;
+    if (vector.dx != 0.0) {
+      double d = (vector.dx > 0.0) ?
+        (target.x - this.x - this.dx) / vector.dx: 
+        (target.x + target.dx - this.x) / vector.dx;
+      if ((d < t) && (d >= 0.0) && (d <= 1.0)) {
+        double y = this.y + vector.dy*d;
+        if ((y + this.dy >= target.y) && (target.y + target.dy >= y)) {
+          double z = this.z + vector.dz*d;
+          if ((z + this.dz >= target.z) && (target.z + target.dz >= z)) {
+            t = d;
+            region = (vector.dx > 0.0)? HitRegion.XPos: HitRegion.XNeg;
+          }
+        }
       }
     }
     
-    if (vector.dz > 0.0) {
-      double d = (target.z - this.z - this.dz) / vector.dz;
-      if ((d < t) && (d >= 0.0) && (d <= 1.0) &&
-        this._collideX(target, vector, d) && this._collideY(target, vector, d)) {
-        t = d;
-        region = HitRegion.ZPos;
+    if (vector.dy != 0.0) {
+      double d = (vector.dy > 0.0)?
+         (target.y - this.y - this.dy) / vector.dy:
+         (target.y + target.dy - this.y) / vector.dy;
+      if ((d < t) && (d >= 0.0) && (d <= 1.0)) {
+        double x = this.x + vector.dx*d;
+        if ((x + this.dx >= target.x) && (target.x + target.dx >= x)) {
+          double z = this.z + vector.dz*d;
+          if ((z + this.dz >= target.z) && (target.z + target.dz >= z)) {
+            t = d;
+            region = (vector.dy > 0.0)? HitRegion.YPos: HitRegion.YNeg;
+          }
+        }
       }
-    } else if (vector.dz < 0.0) {
-      double d = (target.z + target.dz - this.z) / vector.dz;
-      if ((d < t) && (d >= 0.0) && (d <= 1.0) &&
-        this._collideX(target, vector, d) && this._collideY(target, vector, d)) {
-        t = d;
-        region = HitRegion.ZNeg;
+    }
+    
+    if (vector.dz != 0.0) {
+      double d = (vector.dz > 0.0)?
+        (target.z - this.z - this.dz) / vector.dz:
+        (target.z + target.dz - this.z) / vector.dz;
+      if ((d < t) && (d >= 0.0) && (d <= 1.0)) {
+        double x = this.x + vector.dx*d;
+        if ((x + this.dx >= target.x) && (target.x + target.dx >= x)) {
+          double y = this.y + vector.dy*d;
+          if ((y + this.dy >= target.y) && (target.y + target.dy >= y)) {
+            t = d;
+            region = (vector.dz > 0.0)? HitRegion.ZPos: HitRegion.ZNeg;
+          }
+        }
       }
     }
 
     if (region == HitRegion.None) return null;
-    return new IntersectionRegion3(t, region);
+    return new IntersectionBetweenMovingRegions(t, region);
   }
 
   /// Determines if the given point is contained inside this region.

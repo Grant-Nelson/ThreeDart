@@ -47,7 +47,7 @@ class IntersectionRayRegion3 {
 }
 
 /// Results from an intersection between two regions.
-class IntersectionRegion3 {
+class IntersectionBetweenMovingRegions {
 
   /// The parametric value between 0 and 1 inclusively of the vector to the intersection point.
   final double parametric;
@@ -56,7 +56,7 @@ class IntersectionRegion3 {
   final HitRegion region;
 
   /// Creates a new intersection result.
-  IntersectionRegion3(this.parametric, this.region);
+  IntersectionBetweenMovingRegions(this.parametric, this.region);
 
   /// Gets the string for this intersection.
   @override

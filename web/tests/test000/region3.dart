@@ -31,12 +31,12 @@ void addRegion3Tests(TestManager tests) {
       new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
       new Math.Region3(2.0, 0.0, 0.0, 1.0, 1.0, 1.0),
       new Math.Vector3(1.0, 0.0, 0.0),
-      new Math.IntersectionRegion3(1.0, Math.HitRegion.XPos));
+      new Math.IntersectionBetweenMovingRegions(1.0, Math.HitRegion.XPos));
     _region3Collision(args,
       new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
       new Math.Region3(2.0, 0.0, 0.0, 1.0, 1.0, 1.0),
       new Math.Vector3(4.0, 0.0, 0.0),
-      new Math.IntersectionRegion3(0.25, Math.HitRegion.XPos));
+      new Math.IntersectionBetweenMovingRegions(0.25, Math.HitRegion.XPos));
     _region3Collision(args,
       new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
       new Math.Region3(2.0, 0.0, 0.0, 1.0, 1.0, 1.0),
@@ -51,7 +51,7 @@ void addRegion3Tests(TestManager tests) {
       new Math.Region3(2.0, 0.0, 0.0, 1.0, 1.0, 1.0),
       new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
       new Math.Vector3(-4.0, 0.0, 0.0),
-      new Math.IntersectionRegion3(0.25, Math.HitRegion.XNeg));
+      new Math.IntersectionBetweenMovingRegions(0.25, Math.HitRegion.XNeg));
     _region3Collision(args,
       new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
       new Math.Region3(2.0, 2.0, 2.0, 1.0, 1.0, 1.0),
@@ -61,18 +61,17 @@ void addRegion3Tests(TestManager tests) {
       new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
       new Math.Region3(2.0, 2.0, 2.0, 1.0, 1.0, 1.0),
       new Math.Vector3(2.0, 2.4, 2.8),
-      new Math.IntersectionRegion3(0.5, Math.HitRegion.XPos));
+      new Math.IntersectionBetweenMovingRegions(0.5, Math.HitRegion.XPos));
     _region3Collision(args,
       new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
       new Math.Region3(2.0, 2.0, 2.0, 1.0, 1.0, 1.0),
       new Math.Vector3(2.8, 2.0, 2.4),
-      new Math.IntersectionRegion3(0.5, Math.HitRegion.YPos));
+      new Math.IntersectionBetweenMovingRegions(0.5, Math.HitRegion.YPos));
     _region3Collision(args,
       new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
       new Math.Region3(2.0, 2.0, 2.0, 1.0, 1.0, 1.0),
       new Math.Vector3(2.4, 2.8, 2.0),
-      new Math.IntersectionRegion3(0.5, Math.HitRegion.ZPos));
-
+      new Math.IntersectionBetweenMovingRegions(0.5, Math.HitRegion.ZPos));
   });
 }
 
@@ -94,8 +93,8 @@ Math.Region3 _expandReg3(TestArgs args, Math.Region3 reg, double newX, double ne
 }
 
 void _region3Collision(TestArgs args, Math.Region3 reg, Math.Region3 target,
-  Math.Vector3 vec, Math.IntersectionRegion3 exp) {
-  Math.IntersectionRegion3 result = reg.collision(target, vec);
+  Math.Vector3 vec, Math.IntersectionBetweenMovingRegions exp) {
+  Math.IntersectionBetweenMovingRegions result = reg.collision(target, vec);
   if (exp == null) {
     if (result == null) {
       args.info("Results from collision:\n"+
