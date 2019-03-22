@@ -118,6 +118,9 @@ class Constants {
   /// The X starting location of the player.
   static const double playerStartX = 0.5;
 
+  /// The Y starting location offset from the highest solid block of the player.
+  static const double playerStartYOffset = 10.0;
+
   /// The Z starting location of the player.
   static const double playerStartZ = 0.5;
 
@@ -129,30 +132,22 @@ class Constants {
 
   /// The maximum speed the player can fall at, terminal velocity.
   static const double maxFallSpeed = 60.0;
-  
-  /// The padding for horizontal collision detection.
-  static const double horizontalPad = 0.25;
-
-  /// The padding for vertical collision offset.
-  static const double verticalPad = 0.25;
 
   /// The velocity to apply when the player jumps.
   static const double jumpSpeed = 30.0;
 
   /// The maximum distance to set a highlight selection from the player.
   static const double highlightDistance = 6.0;
-
-  /// The player's height.
-  static const double playerHeight = 2.0;
-
-  /// The player's head collision offset.
-  static const double playerHeadOffset = 0.5;
-
-  /// The player's foot collision offset.
-  static const double playerFootOffset = 1.5;
-
+  
   /// The sensitivity of the locked pointer mouse.
   static const double mouseSensitivity = 0.4;
+
+  /// The region of the player's bounding box around the camera.
+  /// This is used for collision detection.
+  static final Math.Region3 playerRegion = new Math.Region3(-0.25, -1.5, -0.25, 0.25, 2.0, 0.25);
+
+  /// The maxium volocity in which collision detection is ignored.
+  static const double maxCollisionSpeedSquared = 100.0;
   
   //----------------------------------------------
   // Mathmatical Constants

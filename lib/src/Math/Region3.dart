@@ -133,6 +133,17 @@ class Region3 {
     return new Region3._(x, y, z, dx, dy, dz);
   }
 
+  /// Expands the region to include the given region components.
+  Region3 expandWithRegion(Region3 region) {
+    double x1 = math.min(this.x, region.x);
+    double x2 = math.max(this.x+this.dx, region.x+region.dx);
+    double y1 = math.min(this.y, region.y);
+    double y2 = math.max(this.y+this.dy, region.y+region.dy);
+    double z1 = math.min(this.z, region.z);
+    double z2 = math.max(this.z+this.dz, region.z+region.dz);
+    return new Region3._(x1, y1, z1, x2-x1, y2-y1, z2-z1);
+  }
+
   /// Gets an list of 6 doubles in the order x, y, z, dx, dy, then dz.
   List<double> toList() =>
     [this.x, this.y, this.z, this.dx, this.dy, this.dz];
@@ -318,7 +329,7 @@ class Region3 {
   /// Determines the collision between this region moving with the given [vector]
   /// and the other region, the [target], not moving.
   IntersectionBetweenMovingRegions collision(Region3 target, Vector3 vector) {
-    if (this.overlap(target))
+    if (this.overlap(target, false))
       return new IntersectionBetweenMovingRegions(0.0, HitRegion.Inside);
     double t = 100.0;
     HitRegion region = HitRegion.None;
@@ -390,13 +401,24 @@ class Region3 {
   }
 
   /// Determines if the two regions overlap even partually.
-  bool overlap(Region3 a) =>
+  bool overlap(Region3 a, [bool includeEdges = true]) =>
+    includeEdges?
     (a.x <= this.x + this.dx) &&
     (a.y <= this.y + this.dy) &&
     (a.z <= this.z + this.dz) &&
     (a.x + a.dx >= this.x) &&
     (a.y + a.dy >= this.y) &&
-    (a.z + a.dz >= this.z);
+    (a.z + a.dz >= this.z):
+    (a.x < this.x + this.dx) &&
+    (a.y < this.y + this.dy) &&
+    (a.z < this.z + this.dz) &&
+    (a.x + a.dx > this.x) &&
+    (a.y + a.dy > this.y) &&
+    (a.z + a.dz > this.z);
+    
+  /// Creates a new [Region3] as a translation of the other given region.
+  Region3 translate(Vector3 offset) =>
+    new Region3(this.x+offset.dx, this.y+offset.dy, this.z+offset.dz, this.dx, this.dy, this.dz);
 
   /// Determines if the given [other] variable is a [Region3] equal to this region.
   ///

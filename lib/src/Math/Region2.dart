@@ -106,6 +106,15 @@ class Region2 {
     return new Region2._(x, y, dx, dy);
   }
 
+  /// Expands the region to include the given region components.
+  Region2 expandWithRegion(Region2 region) {
+    double x1 = math.min(this.x, region.x);
+    double x2 = math.max(this.x+this.dx, region.x+region.dx);
+    double y1 = math.min(this.y, region.y);
+    double y2 = math.max(this.y+this.dy, region.y+region.dy);
+    return new Region2._(x1, y1, x2-x1, y2-y1);
+  }
+
   /// Gets an list of 4 doubles in the order x, y, dx, then dy.
   List<double> toList() =>
     [this.x, this.y, this.dx, this.dy];
@@ -301,11 +310,20 @@ class Region2 {
   }
 
   /// Determines if the two regions overlap even partually.
-  bool overlap(Region2 a) =>
+  bool overlap(Region2 a, [bool includeEdges = true]) =>
+    includeEdges?
     (a.x <= this.x + this.dx) &&
     (a.y <= this.y + this.dy) &&
     (a.x + a.dx >= this.x) &&
-    (a.y + a.dy >= this.y);
+    (a.y + a.dy >= this.y):
+    (a.x < this.x + this.dx) &&
+    (a.y < this.y + this.dy) &&
+    (a.x + a.dx > this.x) &&
+    (a.y + a.dy > this.y);
+
+  /// Creates a new [Region2] as a translation of the other given region.
+  Region2 translate(Vector2 offset) =>
+    new Region2(this.x+offset.dx, this.y+offset.dy, this.dx, this.dy);
 
   /// Determines if the given [other] variable is a [Region2] equal to this region.
   /// The equality of the doubles is tested with the current [Comparer] method.

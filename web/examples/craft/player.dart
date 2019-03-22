@@ -145,7 +145,7 @@ class Player {
   void goHome() {
     Chunk chunk = this._world.findChunk(Constants.playerStartX.toInt(), Constants.playerStartZ.toInt());
     int y = chunk?.topHit(Constants.playerStartX.toInt(), Constants.playerStartZ.toInt()) ?? 0;
-    this._trans.location = new Math.Point3(Constants.playerStartX, y.toDouble()+60.0, Constants.playerStartZ);
+    this._trans.location = new Math.Point3(Constants.playerStartX, y.toDouble()+Constants.playerStartYOffset, Constants.playerStartZ);
     this._trans.velocity = Math.Vector3.zero;
   }
 
@@ -262,24 +262,25 @@ class Player {
   Math.Point3 _handleCollide(Math.Point3 prev, Math.Point3 loc) {
     // Traverse the neighboring blocks using player's movement to find first
     // hard block checking both head and foot.
-    Math.Point3 foot = new Math.Point3(0.0, -Constants.playerHeight+1.0, 0.0);
     Math.Vector3 vector = new Math.Vector3.fromPoint3(loc-prev);
-    this._collider.collide([prev, prev+foot], vector);
+    if (vector.length2() < Constants.maxCollisionSpeedSquared) {
+      this._collider.collide(Constants.playerRegion, prev, vector);
+      this._touchingGround = this._collider.touching.has(Math.HitRegion.YNeg);
 
-    if (this._metrics.enabled) { // TODO: REMOVE
-      this._metrics
-        ..addVal("prevY", prev.y)
-        ..addVal("locY", loc.y)
-        ..addVal("dy", vector.dy)
-        ..addVal("velY", this._trans.offsetY.velocity)
-        ..addVal("touching", this._touchingGround? 1.0: 0.0)
-        ..addVal("resultY", this._collider.location.y)
-        ..stepFrame();
+      if (this._metrics.enabled) { // TODO: REMOVE
+        this._metrics
+          ..addVal("prevY", prev.y)
+          ..addVal("locY", loc.y)
+          ..addVal("dy", vector.dy)
+          ..addVal("velY", this._trans.offsetY.velocity)
+          ..addVal("touching", this._touchingGround? 1.0: 0.0)
+          ..addVal("resultY", this._collider.location.y)
+          ..stepFrame();
+      }
+
+      if (this._touchingGround) this._trans.offsetY.velocity = 0.0;
     }
-
-    this._touchingGround = this._collider.touching.has(Math.HitRegion.YNeg);
-    if (this._touchingGround) this._trans.offsetY.velocity = 0.0;
-    return this._collider.location;
+    return this._collider.location ?? loc;
   }
 
   /// The handler used in update highlight for traversing neighboring blocks.
