@@ -51,7 +51,7 @@ class Point2 {
   ///
   /// [values] is a list of doubles are in the order x then y.
   factory Point2.fromList(List<double> values) {
-    assert(values.length == 2, );
+    assert(values.length == 2);
     return new Point2(values[0], values[1]);
   }
 

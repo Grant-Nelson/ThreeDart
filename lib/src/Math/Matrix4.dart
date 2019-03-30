@@ -166,11 +166,11 @@ class Matrix4 {
   /// The [near] and [far] depth of the view.
   factory Matrix4.ortho(double left, double right, double top, double bottom, double near, double far) {
     final double xx = 2.0 / (right - left);
-    final double yy = 2.0 / (top - bottom);
-    final double zz = 2.0 / (far - near);
-    final double wx = -(left + right) / (right - left);
-    final double wy = -(top + bottom) / (top - bottom);
-    final double wz = (far + near) / (far - near);
+    final double yy = 2.0 / (top   - bottom);
+    final double zz = 2.0 / (far   - near);
+    final double wx = -(left + right)  / (right - left);
+    final double wy = -(top  + bottom) / (top   - bottom);
+    final double wz =  (far  + near)   / (far   - near);
     return new Matrix4(xx,  0.0, 0.0, wx,
                        0.0, yy,  0.0, wy,
                        0.0, 0.0, zz,  wz,

@@ -124,7 +124,7 @@ class Vector2 {
   /// Gets the side of the edge the given point is on.
   Side side(Point2 point) {
     double value = this.dx*point.y - this.dy*point.x;
-    if (Comparer.currentEquality(value, 0.0)) return Side.Inside;
+    if (Comparer.equals(value, 0.0)) return Side.Inside;
     if (value < 0.0) return Side.Right;
     return Side.Left;
   }

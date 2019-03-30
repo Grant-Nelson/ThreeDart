@@ -241,23 +241,24 @@ class Region2 {
       }
     }
 
-    if (inside) {
+    if (inside)
       return new IntersectionRayRegion2(ray.start, -ray.vector.normal(), 0.0, HitRegion.Inside);
-    }
 
     // The farthest plane is the plane of intersection.
     if (yt > xt) {
       // intersect with xz plane
       double x = ray.x + ray.dx*yt;
-      if (x < this.x || x > maxx) return null;
-      return new IntersectionRayRegion2(new Point2(x, yp), new Vector2(0.0, yn), yt, yregion);
+      if (inRange(x, this.x, maxx))
+        return new IntersectionRayRegion2(new Point2(x, yp), new Vector2(0.0, yn), yt, yregion);
 
     } else {
       // intersect with yz plane
       double y = ray.y + ray.dy*xt;
-      if (y < this.y || y > maxy) return null;
-      return new IntersectionRayRegion2(new Point2(xp, y), new Vector2(xn, 0.0), xt, xregion);
+      if (inRange(y, this.y, maxy))
+        return new IntersectionRayRegion2(new Point2(xp, y), new Vector2(xn, 0.0), xt, xregion);
     }
+
+    return null;
   }
 
   /// Determines the collision between this region moving with the given [vector]
@@ -265,31 +266,45 @@ class Region2 {
   IntersectionBetweenMovingRegions collision(Region2 target, Vector2 vector) {
     if (this.overlap(target))
       return new IntersectionBetweenMovingRegions(0.0, HitRegion.Inside);
-    double t = 100.0;
-    HitRegion region = HitRegion.None;
+    double t = 100.0, d;
+    HitRegion region = HitRegion.None, edge;
 
     if (vector.dx != 0.0) {
-      double d = (vector.dx > 0.0)?
-        (target.x - this.x - this.dx) / vector.dx:
-        (target.x + target.dx - this.x) / vector.dx;
+      if (vector.dx > 0.0) {
+        edge = HitRegion.XPos;
+        if (Comparer.equals(target.x, this.x + this.dx)) d = 0.0;
+        else d = (target.x - (this.x + this.dx)) / vector.dx;
+      } else {
+        edge = HitRegion.XNeg;
+        if (Comparer.equals(target.x + target.dx, this.x)) d = 0.0;
+        else d = ((target.x + target.dx) - this.x) / vector.dx;
+      }
+
       if ((d < t) && (d >= 0.0) && (d <= 1.0)) {
         double y = this.y + vector.dy*d;
-        if ((y + this.dy >= target.y) && (target.y + target.dy >= y)) {
+        if (rangeOverlap(target.y, target.y + target.dy, y, y + this.dy)) {
           t = d;
-          region = (vector.dx > 0.0)? HitRegion.XPos: HitRegion.XNeg;
+          region = edge;
         }
       }
     }
        
     if (vector.dy != 0.0) {
-      double d = (vector.dy > 0.0)?
-        (target.y - this.y - this.dy) / vector.dy:
-        (target.y + target.dy - this.y) / vector.dy;
+      if (vector.dy > 0.0) {
+        edge = HitRegion.YPos;
+        if (Comparer.equals(target.y, this.y + this.dy)) d = 0.0;
+        else d = (target.y - (this.y + this.dy)) / vector.dy;
+      } else {
+        edge = HitRegion.YNeg;
+        if (Comparer.equals(target.y + target.dy, this.y)) d = 0.0;
+        else d = ((target.y + target.dy) - this.y) / vector.dy;
+      }
+
       if ((d < t) && (d >= 0.0) && (d <= 1.0)) {
         double x = this.x + vector.dx*d;
-        if ((x + this.dx >= target.x) && (target.x + target.dx >= x)) {
+        if (rangeOverlap(target.x, target.x + target.dx, x, x + this.dx)) {
           t = d;
-          region = (vector.dy > 0.0)? HitRegion.YPos: HitRegion.YNeg;
+          region = edge;
         }
       }
     }
@@ -299,27 +314,14 @@ class Region2 {
   }
 
   /// Determines if the given point is contained inside this region.
-  bool contains(Point2 a) {
-    if (a.x < this.x) return false;
-    else if (a.x >= this.x+this.dx) return false;
-
-    if (a.y < this.y) return false;
-    else if (a.y >= this.y+this.dy) return false;
-
-    return true;
-  }
+  bool contains(Point2 a) =>
+    inRange(a.x, this.x, this.x+this.dx) &&
+    inRange(a.y, this.y, this.y+this.dy);
 
   /// Determines if the two regions overlap even partually.
-  bool overlap(Region2 a, [bool includeEdges = true]) =>
-    includeEdges?
-    (a.x <= this.x + this.dx) &&
-    (a.y <= this.y + this.dy) &&
-    (a.x + a.dx >= this.x) &&
-    (a.y + a.dy >= this.y):
-    (a.x < this.x + this.dx) &&
-    (a.y < this.y + this.dy) &&
-    (a.x + a.dx > this.x) &&
-    (a.y + a.dy > this.y);
+  bool overlap(Region2 a) =>
+    rangeOverlap(a.x, a.x + a.dx, this.x, this.x + this.dx) &&
+    rangeOverlap(a.y, a.y + a.dy, this.y, this.y + this.dy);
 
   /// Creates a new [Region2] as a translation of the other given region.
   Region2 translate(Vector2 offset) =>
