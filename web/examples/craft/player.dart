@@ -235,7 +235,7 @@ class Player {
       }
 
       // Move to the neighbor location.
-      info = info.neighbor(-region);
+      info = info.neighbor(region.inverse());
     }
 
     Chunk chunk = info.chunk;

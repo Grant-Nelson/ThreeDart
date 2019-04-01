@@ -114,6 +114,29 @@ class BlockInfo {
     this.z.toDouble()+this.chunkZ.toDouble(),
     1.0, 1.0, 1.0);
 
+  /// Gets the neighbors which are solid.
+  Math.HitRegion solidNeighbors() {
+    Math.HitRegion neighbors = Math.HitRegion.None;
+
+    BlockInfo info = this.left;
+    if ((info != null) && BlockType.solid(info.value)) neighbors |= Math.HitRegion.XNeg;
+    info = this.right;
+    if ((info != null) && BlockType.solid(info.value)) neighbors |= Math.HitRegion.XPos;
+   
+    info = this.below;
+    if ((info != null) && BlockType.solid(info.value)) neighbors |= Math.HitRegion.YNeg;
+    info = this.above;
+    if ((info != null) && BlockType.solid(info.value)) neighbors |= Math.HitRegion.YPos;
+    
+    info = this.back;
+    if ((info != null) && BlockType.solid(info.value)) neighbors |= Math.HitRegion.ZNeg;
+    info = this.front;
+    if ((info != null) && BlockType.solid(info.value)) neighbors |= Math.HitRegion.ZPos;
+
+    return neighbors;
+  }
+  
+
   /// Gets the block info string for debugging.
   @override
   String toString() => "$chunk.block($x, $y, $z, ($chunkX, $chunkZ), ${BlockType.string(value)})";

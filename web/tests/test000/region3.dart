@@ -77,6 +77,11 @@ void addRegion3Tests(TestManager tests) {
       new Math.Region3(0.0,  8.0,  0.0, 0.0, 1.0, 0.0),
       new Math.Vector3(0.0, -2.45, 0.0),
       new Math.IntersectionBetweenMovingRegions(0.869387755102041, Math.HitRegion.YNeg));
+    _region3Collision(args,
+      new Math.Region3(0.25, 10.0, 0.1, 0.25, 2.0, 0.25),
+      new Math.Region3(0.0, 9.0, 0.0, 1.0, 1.0, 1.0),
+      new Math.Vector3(0.0, -1.0, -0.3),
+      new Math.IntersectionBetweenMovingRegions(0.0, Math.HitRegion.YNeg));
   });
 }
 

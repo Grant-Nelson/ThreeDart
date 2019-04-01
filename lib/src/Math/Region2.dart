@@ -263,21 +263,26 @@ class Region2 {
 
   /// Determines the collision between this region moving with the given [vector]
   /// and the other region, the [target], not moving.
-  IntersectionBetweenMovingRegions collision(Region2 target, Vector2 vector) {
+  IntersectionBetweenMovingRegions collision(Region2 target, Vector2 vector, [HitRegion sides = null]) {
+    sides ??= HitRegion.All;
     if (this.overlap(target))
       return new IntersectionBetweenMovingRegions(0.0, HitRegion.Inside);
     double t = 100.0, d;
     HitRegion region = HitRegion.None, edge;
 
-    if (vector.dx != 0.0) {
+    if ((vector.dx != 0.0) && sides.overlaps(HitRegion.XPosNeg))  {
       if (vector.dx > 0.0) {
-        edge = HitRegion.XPos;
-        if (Comparer.equals(target.x, this.x + this.dx)) d = 0.0;
-        else d = (target.x - (this.x + this.dx)) / vector.dx;
+        if (sides.has(HitRegion.XPos)) {
+          edge = HitRegion.XPos;
+          if (Comparer.equals(target.x, this.x + this.dx)) d = 0.0;
+          else d = (target.x - (this.x + this.dx)) / vector.dx;
+        }
       } else {
-        edge = HitRegion.XNeg;
-        if (Comparer.equals(target.x + target.dx, this.x)) d = 0.0;
-        else d = ((target.x + target.dx) - this.x) / vector.dx;
+        if (sides.has(HitRegion.XNeg)) {
+          edge = HitRegion.XNeg;
+          if (Comparer.equals(target.x + target.dx, this.x)) d = 0.0;
+          else d = ((target.x + target.dx) - this.x) / vector.dx;
+        }
       }
 
       if ((d < t) && (d >= 0.0) && (d <= 1.0)) {
@@ -289,15 +294,19 @@ class Region2 {
       }
     }
        
-    if (vector.dy != 0.0) {
+    if ((vector.dy != 0.0) && sides.overlaps(HitRegion.YPosNeg))  {
       if (vector.dy > 0.0) {
-        edge = HitRegion.YPos;
-        if (Comparer.equals(target.y, this.y + this.dy)) d = 0.0;
-        else d = (target.y - (this.y + this.dy)) / vector.dy;
+        if (sides.has(HitRegion.YPos)) {
+          edge = HitRegion.YPos;
+          if (Comparer.equals(target.y, this.y + this.dy)) d = 0.0;
+          else d = (target.y - (this.y + this.dy)) / vector.dy;
+        }
       } else {
-        edge = HitRegion.YNeg;
-        if (Comparer.equals(target.y + target.dy, this.y)) d = 0.0;
-        else d = ((target.y + target.dy) - this.y) / vector.dy;
+        if (sides.has(HitRegion.YNeg)) {
+          edge = HitRegion.YNeg;
+          if (Comparer.equals(target.y + target.dy, this.y)) d = 0.0;
+          else d = ((target.y + target.dy) - this.y) / vector.dy;
+        }
       }
 
       if ((d < t) && (d >= 0.0) && (d <= 1.0)) {

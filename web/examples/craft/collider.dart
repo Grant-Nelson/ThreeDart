@@ -9,6 +9,8 @@ class Collider {
   Math.Vector3 _vector;
   Math.HitRegion _touching;
   List<Math.Region3> _blocks;
+  List<Math.HitRegion> _blockSides;
+  List<bool> _hasHit;
   int _killCountDown;
 
   Collider(this._world) {
@@ -17,7 +19,9 @@ class Collider {
     this._vector = null;
     this._touching = Math.HitRegion.None;
     this._blocks = new List<Math.Region3>();
-    this._killCountDown = 10;
+    this._blockSides = new List<Math.HitRegion>();
+    this._hasHit = new List<bool>();
+    this._killCountDown = 20;
   }
   
   bool collide(Math.Region3 region, Math.Point3 loc, Math.Vector3 vector) {
@@ -51,17 +55,26 @@ class Collider {
     BlockInfo minXYZ = this._world.getBlock(aabb.x, aabb.y, aabb.z);
     BlockInfo maxXYZ = this._world.getBlock(aabb.x+aabb.dx, aabb.y+aabb.dy, aabb.z+aabb.dz);
     int maxWorldX = maxXYZ.worldX, maxWorldZ = maxXYZ.worldZ;
-    print(">> aabb:   ${aabb}");
-    print(">> minXYZ: ${minXYZ.blockRegion}");
-    print(">> maxXYZ: ${maxXYZ.blockRegion}");
+    
+    //print(">>================================================");
+    //print(">> aabb:   ${aabb}");
+    //print(">> minXYZ: ${minXYZ.blockRegion}");
+    //print(">> maxXYZ: ${maxXYZ.blockRegion}");
 
     this._blocks.clear();
+    this._blockSides.clear();
+    this._hasHit.clear();
     for (BlockInfo x = minXYZ; (x != null) && (x.worldX <= maxWorldX); x = x.right) {
       for (BlockInfo y = x; (y != null) && (y.y <= maxXYZ.y); y = y.above) {
         for (BlockInfo z = y; (z != null) && (z.worldZ <= maxWorldZ); z = z.front) {
-          print(">> z: ${z.blockRegion}");
           if (BlockType.hard(z.value)) {
-            this._blocks.add(z.blockRegion);
+            Math.HitRegion sides = z.solidNeighbors().inverse();
+            if (sides != Math.HitRegion.None) {
+              //print(">> z: ${z.blockRegion} $sides");
+              this._blocks.add(z.blockRegion);
+              this._blockSides.add(sides.reverse());
+              this._hasHit.add(false);
+            }
           }
         }
       }
@@ -72,29 +85,38 @@ class Collider {
     if (this._vector.isZero()) return false;
     Math.Region3 region = this._region.translate(new Math.Vector3.fromPoint3(this._loc));
     
+    //this._killCountDown--;
+    //if (this._killCountDown < 0){  
+    //  print(">> Stop");
+    //  throw Exception("OUCH");
+    //}
+
     //print(">>--------------------------------------");
     //print(">> loc:    $_loc");
     //print(">> vector: $_vector");
     //print(">> region: $region");
 
-    //this._killCountDown--;
-    //if (this._killCountDown < 0)
-    //  throw Exception("OUCH");
-
     Math.IntersectionBetweenMovingRegions hit = null;
     Math.Region3 hitBlock = null;
-    for (Math.Region3 block in this._blocks) {
-      //print(">> block: $block");
-      Math.IntersectionBetweenMovingRegions cur = region.collision(block, this._vector);
-      if (cur != null) {
-        if ((hit == null) || (hit.parametric > hit.parametric)) {
-          hit = cur;
-          hitBlock = block;
-          //print(">> hit:   $hit");
+    int hitIndex = -1;
+    for (int i = 0; i < this._blocks.length; i++) {
+      if (!this._hasHit[i]) {
+        Math.Region3 block = this._blocks[i];
+        Math.HitRegion sides = this._blockSides[i];
+        //print(">> block: $block $sides");
+        Math.IntersectionBetweenMovingRegions cur = region.collision(block, this._vector, sides);
+        if (cur != null) {
+          if ((hit == null) || (hit.parametric > cur.parametric)) {
+            hit = cur;
+            hitBlock = block;
+            hitIndex = i;
+            //print(">> hit:   $hit");
+          }
         }
       }
     }
     if (hit == null) return false;
+    this._hasHit[hitIndex] = true;
 
     //print(">> result:   $hit");
     //print(">> hitBlock: $hitBlock");
