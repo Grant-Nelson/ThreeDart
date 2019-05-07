@@ -437,7 +437,7 @@ class Region3 {
     inRange(a.z, this.z, this.z+this.dz);
 
   /// Determines if the two regions overlap even partually.
-  bool overlap(Region3 a) =>
+  bool overlaps(Region3 a) =>
     rangeOverlap(a.x, a.x + a.dx, this.x, this.x + this.dx) &&
     rangeOverlap(a.y, a.y + a.dy, this.y, this.y + this.dy) &&
     rangeOverlap(a.z, a.z + a.dz, this.z, this.z + this.dz);

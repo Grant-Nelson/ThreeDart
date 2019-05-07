@@ -265,7 +265,7 @@ class Region2 {
   /// and the other region, the [target], not moving.
   IntersectionBetweenMovingRegions collision(Region2 target, Vector2 vector, [HitRegion sides = null]) {
     sides ??= HitRegion.All;
-    if (this.overlap(target))
+    if (this.overlaps(target))
       return new IntersectionBetweenMovingRegions(0.0, HitRegion.Inside);
     double t = 100.0, d;
     HitRegion region = HitRegion.None, edge;
@@ -328,7 +328,7 @@ class Region2 {
     inRange(a.y, this.y, this.y+this.dy);
 
   /// Determines if the two regions overlap even partually.
-  bool overlap(Region2 a) =>
+  bool overlaps(Region2 a) =>
     rangeOverlap(a.x, a.x + a.dx, this.x, this.x + this.dx) &&
     rangeOverlap(a.y, a.y + a.dy, this.y, this.y + this.dy);
 

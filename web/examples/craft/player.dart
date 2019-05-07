@@ -219,6 +219,11 @@ class Player {
 
       // Move to the neighbor location.
       info = info.neighbor(region.inverse());
+
+      // Check the block won't be in the player's region.
+      Math.Vector3 playerLoc = new Math.Vector3.fromPoint3(this._trans.location);
+      Math.Region3 playerRect = Constants.playerRegion.translate(playerLoc);
+      if (info.blockRegion.overlaps(playerRect)) return;
     }
 
     Chunk chunk = info.chunk;
@@ -261,7 +266,7 @@ class Player {
 
     // Check if found block is valid and selectable, if not set to null.
     BlockInfo info = neighbor?.info;
-    if ((info != null) && ((neighbor.depth < 1) || (info.value == BlockType.Air) ||
+    if ((info != null) && ((neighbor.depth < 0) || (info.value == BlockType.Air) ||
       (info.value == BlockType.Boundary))) neighbor = null;
     this._highlight = neighbor;
 
