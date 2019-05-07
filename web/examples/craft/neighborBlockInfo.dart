@@ -17,7 +17,7 @@ class NeighborBlockInfo {
   /// The vector that is being traversed neighbor by neighbor.
   final Math.Ray3 ray;
 
-  /// The count for the number of neighbors which have been traversed. 
+  /// The count for the number of neighbors which have been traversed.
   final int depth;
 
   /// Creates a new neighbor block info result.

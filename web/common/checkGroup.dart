@@ -5,10 +5,10 @@ typedef void checkSelectedHndl(bool selected);
 
 /// A group of check boxes.
 class CheckGroup {
-  
+
   /// The name of the element for the check group.
   String _elemId;
-  
+
   /// Indicates if the group should be kept in the URL.
   bool _keepInURL;
 
@@ -47,7 +47,7 @@ class CheckGroup {
     html.LabelElement label = new html.LabelElement()
       ..style.whiteSpace = "nowrap";
     this._elem.children.add(label);
-    
+
     html.CheckboxInputElement checkBox = new html.CheckboxInputElement()
       ..checked = itemIsChecked;
     checkBox.onChange.listen((_) {
@@ -55,7 +55,7 @@ class CheckGroup {
         this._updateUrl(index, checkBox.checked);
       });
     label.children.add(checkBox);
-    
+
     html.SpanElement span = new html.SpanElement()
       ..text = text;
     label.children.add(span);
@@ -65,7 +65,7 @@ class CheckGroup {
     this._checks.add(checkBox);
     if (urlNeedsUpdate) this._updateUrl(index, itemIsChecked);
   }
-  
+
   /// Updates the URL for changes in the check boxes.
   void _updateUrl(int index, bool checked) {
     if (!this._keepInURL) return;

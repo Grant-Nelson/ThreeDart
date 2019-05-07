@@ -8,7 +8,7 @@ void startup3D(String targetName) {
     ..showFilled = true
     ..diffuse1 = new Math.Color4(0.2, 0.3, 0.4, 0.2)
     ..ambient1 = new Math.Color4(0.1, 0.2, 0.3, 0.2);
-    
+
   Techniques.MaterialLight sliceTech = new Techniques.MaterialLight()
     ..emission.color = new Math.Color3(0.8, 0.6, 0.4)
     ..alpha.value = 0.3;
@@ -23,14 +23,14 @@ void startup3D(String targetName) {
   Movers.Group sliceRotation = new Movers.Group()
     ..add(new Movers.Constant.rotateX(0.4))
     ..add(new Movers.Constant.rotateY(0.4));
-    
+
   ThreeDart.Entity cubeSphere = new ThreeDart.Entity()
     ..technique = cubeTech
     ..shape = (new Shapes.Shape()
       ..merge(Shapes.cube())
       ..merge(Shapes.isosphere(2)))
     ..mover = sliceRotation;
-    
+
   ThreeDart.Entity slice = new ThreeDart.Entity()
     ..technique = sliceTech
     ..shape = Shapes.square()
@@ -90,7 +90,7 @@ void startup3D(String targetName) {
       circle.enabled = true;
     }
   });
-    
+
   // Add the two parts of the scene to the ouput.
   td.scene = new Scenes.Compound(passes: [projPass, slicePass]);
 }

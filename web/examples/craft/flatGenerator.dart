@@ -5,7 +5,7 @@ class FlatGenerator implements Generator {
 
   /// The height to build the rock up to.
   int _rockHeight;
-  
+
   /// The height to build the dirt up to.
   /// If this is less than the rock height no dirt will be added.
   int _dirtHeight;

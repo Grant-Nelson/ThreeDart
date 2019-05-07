@@ -2,7 +2,7 @@ part of ThreeDart.Math;
 
 /// A math structure for storing and manipulating a Matrix 2x2.
 class Matrix2 {
-  
+
   /// Gets a 2x2 identity matrix.
   static Matrix2 get identity {
     _identSingleton ??= new Matrix2(

@@ -139,7 +139,7 @@ class Color4 {
     if (!Comparer.equals(clr.alpha, this.alpha)) return false;
     return true;
   }
-  
+
   /// Gets the string for this color.
   String toString() => this.format();
 

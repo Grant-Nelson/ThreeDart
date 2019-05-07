@@ -13,7 +13,7 @@ void addBench(TestManager tests) {
     }
     args.info("$temp");
   });
-  
+
   tests.add("List int bench timing", (TestArgs args) {
     List<int> temp = new List<int>.filled(1000, 0);
     for (int i = 0; i < 100; i++) {

@@ -3,7 +3,7 @@ part of craft;
 /// The generator will initialize chunks to create a world flat test world covered
 /// with a checkered pattern. The edges of the chunks can be highlighted.
 class CheckersGenerator implements Generator {
-  
+
   /// Indicates the edges of chunks should be highlighted with red.
   bool _highlightChunkEdges;
 
@@ -38,12 +38,12 @@ class CheckersGenerator implements Generator {
       // Highlight the x and z is zero edge.
       if (x == 0 || z == 0)
         return (x == 0 && z == 0)? BlockType.YellowShine: BlockType.RedShine;
-        
+
       // Indicate which side of the chunk the highlight is on.
       if (x == 1 && z == 1)
         return BlockType.RedShine;
     }
-    
+
     return ((x+y+z)%2 == 0)? BlockType.BlackShine: BlockType.WhiteShine;
   }
 }

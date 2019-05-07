@@ -21,7 +21,7 @@ class Collider {
     this._blockSides = new List<Math.HitRegion>();
     this._hasHit = new List<bool>();
   }
-  
+
   bool collide(Math.Region3 region, Math.Point3 loc, Math.Vector3 vector) {
     this._loc = loc;
     this._region = region;
@@ -34,17 +34,17 @@ class Collider {
     this._loc += new Math.Point3.fromVector3(this._vector);
     return true;
   }
-  
+
   Math.Point3 get location => this._loc;
   Math.HitRegion get touching => this._touching;
-  
+
   void _collectBlocks() {
     Math.Region3 region = this._region.translate(new Math.Vector3.fromPoint3(this._loc));
     Math.Region3 aabb = region.expandWithRegion(region.translate(this._vector));
     BlockInfo minXYZ = this._world.getBlock(aabb.x, aabb.y, aabb.z);
     BlockInfo maxXYZ = this._world.getBlock(aabb.x+aabb.dx, aabb.y+aabb.dy, aabb.z+aabb.dz);
     int maxWorldX = maxXYZ.worldX, maxWorldZ = maxXYZ.worldZ;
-    
+
     this._blocks.clear();
     this._blockSides.clear();
     this._hasHit.clear();
@@ -67,7 +67,7 @@ class Collider {
   bool _singleCollide() {
     if (this._vector.isZero()) return false;
     Math.Region3 region = this._region.translate(new Math.Vector3.fromPoint3(this._loc));
-    
+
     double parametric = 0.0;
     Math.HitRegion hitRegion = Math.HitRegion.None;
     int hitIndex = -1;
@@ -87,17 +87,6 @@ class Collider {
     }
     if (hitRegion == Math.HitRegion.None) return false;
     this._hasHit[hitIndex] = true;
-
-    if (hitRegion == Math.HitRegion.Inside) {
-      throw Exception("WHAT?!? HOW?!?");
-      // double dy = this._region.x+this._region.dx-hitBlock.x;
-      // Math.Vector3 shift = new Math.Vector3(0.0, dy, 0.0);
-      // this._loc += new Math.Point3.fromVector3(shift);
-      // this._region = this._region.translate(shift);
-      // this._vector = Math.Vector3.zero;
-      // this._touching |= Math.HitRegion.YNeg;
-      // return false; // TODO: handle bump
-    }
 
     Math.Vector3 shift = this._vector * parametric;
     Math.Vector3 remainder = this._vector * (1.0 - parametric);
@@ -121,7 +110,7 @@ class Collider {
     this._touching |= hitRegion;
     return true;
   }
-  
+
   /// Gets the string for this collision result.
   @override
   String toString() =>

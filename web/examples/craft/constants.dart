@@ -2,7 +2,7 @@ part of craft;
 
 /// Set of constants for Craft.
 class Constants {
-  
+
   /// The maximum number, 1<<32 (limited by [nextInt]), allowed for the seed.
   static const int maxSeed = 4294967296;
 
@@ -40,7 +40,7 @@ class Constants {
 
   /// The total number of blocks per chunk.
   static const int chunkDataLength = chunkSideSize * chunkYSize * chunkSideSize;
-  
+
   /// The height of the water.
   static const int waterDepth = 8;
 
@@ -138,7 +138,7 @@ class Constants {
 
   /// The maximum distance to set a highlight selection from the player.
   static const double highlightDistance = 6.0;
-  
+
   /// The sensitivity of the locked pointer mouse.
   static const double mouseSensitivity = 0.4;
 
@@ -148,7 +148,7 @@ class Constants {
 
   /// The maxium volocity in which collision detection is ignored.
   static const double maxCollisionSpeedSquared = 100.0;
-  
+
   //----------------------------------------------
   // Mathmatical Constants
   //----------------------------------------------

@@ -20,7 +20,7 @@ void main() {
     ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
-  
+
   Textures.Texture2D colorTxt = td.textureLoader.load2DFromFile("../resources/gravel/colorLarge.png");
   Textures.Texture2D bump     = td.textureLoader.load2DFromFile("../resources/gravel/bumpLarge.png");
   Textures.Texture2D spec     = td.textureLoader.load2DFromFile("../resources/gravel/specularSmall.png");
@@ -30,17 +30,17 @@ void main() {
     new Movers.Constant.translate(0.0, 0.0, 2.0),
     new Movers.Rotater(deltaYaw: 0.6, deltaPitch: 0.1, deltaRoll: 0.0)
   ]);
-  
+
   ThreeDart.Entity bulb = new ThreeDart.Entity(shape: Shapes.sphere(radius: 0.03))
     ..mover = mover
     ..technique = new Techniques.MaterialLight.glow();
 
   Lights.Point light = new Lights.Point(color: new Math.Color3.white(),
     mover: mover, attenuation0: 0.5, attenuation1: 0.1, attenuation2: 0.0);
-    
+
   Shapes.Shape flatShape = Shapes.square();
   ThreeDart.Entity entity = new ThreeDart.Entity(shape: flatShape);
-  
+
   Shapes.Shape heightShape;
   height.changed.add((_) {
     Textures.TextureReader heightReader = td.textureLoader.readAll(height);
@@ -51,7 +51,7 @@ void main() {
     heightShape.trimFaces(norm: false);
     heightShape.calculateNormals();
   });
-  
+
   Views.Perspective userCamera = new Views.Perspective()
     ..mover = new Movers.Group([
       new Movers.UserRotater(input: td.userInput),
@@ -70,7 +70,7 @@ void main() {
     ..camera = userCamera
     ..target = colorTarget;
 
-  Views.BackTarget depthTarget = new Views.BackTarget(400, 300, 
+  Views.BackTarget depthTarget = new Views.BackTarget(400, 300,
     autoResize: true, autoResizeScalarX: 0.5, autoResizeScalarY: 0.5);
   Scenes.EntityPass depthPass = new Scenes.EntityPass(children: [entity, bulb])
     ..camera = userCamera
@@ -85,7 +85,7 @@ void main() {
     depthLimit: 0.001);
   Scenes.CoverPass blurPass = new Scenes.CoverPass()
     ..technique = blurTech;
-  
+
   Techniques.TextureLayout layoutTech = new Techniques.TextureLayout()
     ..entries.add(new Techniques.TextureLayoutEntry(
       texture: depthTarget.colorTexture,
@@ -96,9 +96,9 @@ void main() {
   Scenes.CoverPass layout = new Scenes.CoverPass()
     ..target = new Views.FrontTarget(clearColor: false)
     ..technique = layoutTech;
-  
+
   td.scene = new Scenes.Compound(passes: [colorPass, depthPass, blurPass, layout]);
-  
+
   new common.CheckGroup("controls")
     ..add("Color",
       (bool show) {

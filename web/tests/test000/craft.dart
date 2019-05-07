@@ -26,7 +26,7 @@ void addCraftTests(TestManager tests) {
     _checkGetBlock(args, world,  0.001,  0.0,   -0.001,    0, -16,   0,  0, 15);
     _checkGetBlock(args, world,  0.0,    0.0,   -0.999,    0, -16,   0,  0, 15);
     _checkGetBlock(args, world,  0.999,  0.0,   -0.999,    0, -16,   0,  0, 15);
- 
+
     _checkGetBlock(args, world, -0.001,  0.0,   -0.001,  -16, -16,  15,  0, 15);
     _checkGetBlock(args, world, -0.999,  0.0,   -0.999,  -16, -16,  15,  0, 15);
     _checkGetBlock(args, world, -0.999,  0.0,   -0.001,  -16, -16,  15,  0, 15);
@@ -43,7 +43,7 @@ void addCraftTests(TestManager tests) {
     _checkGetBlock(args, world,  0.0,    0.0,   -1.0,      0, -16,   0,  0, 15);
     _checkGetBlock(args, world, -1.001,  0.0,    0.0,    -16,   0,  14,  0,  0);
     _checkGetBlock(args, world,  0.0,    0.0,   -1.001,    0, -16,   0,  0, 14);
-    
+
     _checkGetBlock(args, world,  0.0,    0.0,  -14.157,    0, -16,   0,  0,  1);
     _checkGetBlock(args, world,  0.0,    0.0,  -15.157,    0, -16,   0,  0,  0);
     _checkGetBlock(args, world,  0.0,    0.0,  -16.157,    0, -32,   0,  0, 15);
@@ -97,7 +97,7 @@ void addCraftTests(TestManager tests) {
     _checkCollide(args, world,   0.5, 14.0, 0.5,   0.0, -5.0, 0.0,   0.5, 11.5, 0.5,  Math.HitRegion.YPos);
     _checkCollide(args, world,   0.5, 14.0, 0.5,   0.0, -1.0, 0.0,   0.5, 13.0, 0.5,  Math.HitRegion.None);
     _checkCollide(args, world,   0.5, 11.5, 0.5,   0.0, -5.0, 0.0,   0.5, 11.5, 0.5,  Math.HitRegion.YPos);
-    
+
     // Falling at an angle and moving on the ground.
     _checkCollide(args, world,   0.5, 12.0, 0.5,   1.0, -5.0,  1.0,    1.5, 11.5,  1.5,  Math.HitRegion.YPos);
     _checkCollide(args, world,   0.5, 11.5, 0.5,   1.0, -5.0,  1.0,    1.5, 11.5,  1.5,  Math.HitRegion.YPos);
@@ -115,7 +115,7 @@ void addCraftTests(TestManager tests) {
     _checkCollide(args, world,   0.5, 14.0, -0.5,   0.0, -5.0, 0.0,   0.5, 11.5,-0.5,  Math.HitRegion.YPos);
     _checkCollide(args, world,   1.5, 14.0,  0.5,   0.0, -5.0, 0.0,   1.5, 11.5, 0.5,  Math.HitRegion.YPos);
     _checkCollide(args, world,  -0.5, 14.0,  0.5,   0.0, -5.0, 0.0,  -0.5, 11.5, 0.5,  Math.HitRegion.YPos);
-    
+
     // Running into a block.
     _checkCollide(args, world,   2.5, 11.5,  0.5,  -5.0,  0.0,  0.0,   1.25, 11.5,  0.5,   Math.HitRegion.XPos);
     _checkCollide(args, world,   2.5, 11.5,  0.5,  -5.0, -5.0,  0.0,   1.25, 11.5,  0.5,   Math.HitRegion.XPos|Math.HitRegion.YPos);
@@ -153,7 +153,7 @@ void _checkCollide(TestArgs args, craft.World world, double locX, double locY, d
   Math.Vector3 vector = new Math.Vector3(vecX, vecY, vecZ);
   Math.Point3 expLocation = new Math.Point3(expX, expY, expZ);
   collider.collide(region, loc, vector);
-  
+
   if ((collider.location != expLocation) || (collider.touching != expTouching)) {
     args.error("Testing collide: Failed\n");
     args.error("  Region:   $region\n");

@@ -138,7 +138,7 @@ class Color3 {
     if (!Comparer.equals(clr.blue,  this.blue))  return false;
     return true;
   }
-  
+
   /// Gets the string for this color.
   String toString() => this.format();
 

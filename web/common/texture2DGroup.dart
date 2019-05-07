@@ -60,7 +60,7 @@ class Texture2DGroup {
 
     if (itemIsChecked) imgElem.click();
   }
-  
+
   /// Updates the URL for changes in the radio group.
   void _updateUrl(int index) {
     if (!this._keepInURL) return;

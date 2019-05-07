@@ -75,7 +75,7 @@ class Collection<T> implements Iterable<T> {
 
   /// Checks whether any item in this collection satisfies the given [hndl].
   bool any(bool hndl(T item)) => this._list.any(hndl);
-  
+
   /// Provides a view of this iterable as an iterable of [T2] instances.
   Iterable<T2> cast<T2>() => this._list.cast<T2>();
 
@@ -234,7 +234,7 @@ class Collection<T> implements Iterable<T> {
     }
     return items;
   }
-  
+
   /// Returns a new lazy [Iterable] with all elements that have type [T].
   Iterable<T> whereType<T>() => this._list.whereType();
 

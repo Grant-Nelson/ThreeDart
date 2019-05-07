@@ -73,7 +73,7 @@ class Chunk {
 
   /// Gets the entities used for rendering this chunk.
   List<ThreeDart.Entity> get entities => this._entities;
-  
+
   /// Gets or sets if this chunk eventually needs an update.
   bool get dirty => this._dirty && !this._needGen;
   set dirty(bool dirty) => this._dirty = dirty;
@@ -81,7 +81,7 @@ class Chunk {
   /// Gets or sets if this chunk needs an update.
   bool get needUpdate => this._needUpdate;
   set needUpdate(bool update) => this._needUpdate = update;
-  
+
   /// Gets if this chunk needs to be generated.
   bool get needToGenerate => this._needGen;
 

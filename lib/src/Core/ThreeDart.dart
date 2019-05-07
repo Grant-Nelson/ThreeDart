@@ -26,10 +26,10 @@ class ThreeDart implements Events.Changable {
 
   /// Event to indicate something attached to this instance has changed.
   Events.Event _changed;
-  
+
   /// Event to indicate a render is about to occur.
   Events.Event _prerender;
-  
+
   /// Event to indicate a render has just finished.
   Events.Event _postrender;
 
@@ -160,7 +160,7 @@ class ThreeDart implements Events.Changable {
     this._changed?.emit(args);
     if (this._autoRefresh) this.requestRender();
   }
-  
+
   /// Indicates that a render is about to occur.
   Events.Event get prerender {
     this._prerender ??= new Events.Event();

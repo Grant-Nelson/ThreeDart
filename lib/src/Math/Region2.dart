@@ -10,14 +10,14 @@ class Region2 {
     return _zeroSingleton;
   }
   static Region2 _zeroSingleton;
-  
+
   /// Gets a [Region2] at the origin with a width and height of 1.
   static Region2 get unit {
     _unitSingleton ??= new Region2(0.0, 0.0, 1.0, 1.0);
     return _unitSingleton;
   }
   static Region2 _unitSingleton;
-  
+
   /// Gets a [Region2] at the origin with a width and height of 2 centerd on origin.
   static Region2 get unit2 {
     _unit2Singleton ??= new Region2(-1.0, -1.0, 2.0, 2.0);
@@ -118,7 +118,7 @@ class Region2 {
   /// Gets an list of 4 doubles in the order x, y, dx, then dy.
   List<double> toList() =>
     [this.x, this.y, this.dx, this.dy];
-    
+
   /// Gets the value at the zero based index in the order x, y, dx, then dy.
   /// If out-of-bounds, zero is returned.
   double atIndex(int i) {
@@ -272,14 +272,14 @@ class Region2 {
 
     if ((vector.dx != 0.0) && sides.overlaps(HitRegion.XPosNeg))  {
       if (vector.dx > 0.0) {
-        if (sides.has(HitRegion.XPos)) {
-          edge = HitRegion.XPos;
+        if (sides.has(HitRegion.XNeg)) {
+          edge = HitRegion.XNeg;
           if (Comparer.equals(target.x, this.x + this.dx)) d = 0.0;
           else d = (target.x - (this.x + this.dx)) / vector.dx;
         }
       } else {
-        if (sides.has(HitRegion.XNeg)) {
-          edge = HitRegion.XNeg;
+        if (sides.has(HitRegion.XPos)) {
+          edge = HitRegion.XPos;
           if (Comparer.equals(target.x + target.dx, this.x)) d = 0.0;
           else d = ((target.x + target.dx) - this.x) / vector.dx;
         }
@@ -293,17 +293,17 @@ class Region2 {
         }
       }
     }
-       
+
     if ((vector.dy != 0.0) && sides.overlaps(HitRegion.YPosNeg))  {
       if (vector.dy > 0.0) {
-        if (sides.has(HitRegion.YPos)) {
-          edge = HitRegion.YPos;
+        if (sides.has(HitRegion.YNeg)) {
+          edge = HitRegion.YNeg;
           if (Comparer.equals(target.y, this.y + this.dy)) d = 0.0;
           else d = (target.y - (this.y + this.dy)) / vector.dy;
         }
       } else {
-        if (sides.has(HitRegion.YNeg)) {
-          edge = HitRegion.YNeg;
+        if (sides.has(HitRegion.YPos)) {
+          edge = HitRegion.YPos;
           if (Comparer.equals(target.y + target.dy, this.y)) d = 0.0;
           else d = ((target.y + target.dy) - this.y) / vector.dy;
         }
@@ -317,7 +317,7 @@ class Region2 {
         }
       }
     }
-    
+
     if (region == HitRegion.None) return null;
     return new IntersectionBetweenMovingRegions(t, region);
   }

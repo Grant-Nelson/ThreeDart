@@ -2,7 +2,7 @@ part of ThreeDart.Math;
 
 /// A math structure for storing and manipulating a Matrix 3x3.
 class Matrix3 {
-  
+
   /// Gets a 3x3 identity matrix.
   static Matrix3 get identity {
     _identSingleton ??= new Matrix3(
@@ -145,7 +145,7 @@ class Matrix3 {
               this.m13, this.m23, this.m33];
     }
   }
-  
+
   /// Gets the value at the zero based index in row major order.
   /// If out-of-bounds, zero is returned.
   double atIndex(int i) {

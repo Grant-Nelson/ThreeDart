@@ -41,7 +41,7 @@ class HitRegion {
 
   /// [XPosNeg] is the combination of both X cardinal directions, XPos|XNeg.
   static final HitRegion XPosNeg = new HitRegion._(0x0005);
-  
+
   /// [YPosNeg] is the combination of both Y cardinal directions, YPos|YNeg.
   static final HitRegion YPosNeg = new HitRegion._(0x0028);
 

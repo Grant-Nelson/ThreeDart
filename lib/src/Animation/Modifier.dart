@@ -4,7 +4,7 @@ part of ThreeDart.Animation;
 typedef void Setter(double);
 
 // Linear interpolation between the start and goal.
-// The given [i] must be between 0.0 and 1.0. 
+// The given [i] must be between 0.0 and 1.0.
 double Lerp(double start, double goal, double i) => start * (1.0 - i) + goal * i;
 
 /// A double modifier for setting a value for a mover.

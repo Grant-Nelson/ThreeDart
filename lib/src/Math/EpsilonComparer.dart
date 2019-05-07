@@ -7,7 +7,7 @@ class EpsilonComparer implements CustomComparer {
 
   /// Constructs a new epsilong comparer with the given expsilon value.
   EpsilonComparer(double this.epsilon);
-  
+
   /// Determines if the two values are equal.
   bool equals(double a, double b) => (a-b).abs() < epsilon;
 

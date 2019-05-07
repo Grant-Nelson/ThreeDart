@@ -51,8 +51,8 @@ class IntersectionBetweenMovingRegions {
 
   /// The parametric value between 0 and 1 inclusively of the vector to the intersection point.
   final double parametric;
-  
-  /// The side of the target region which was hit. 
+
+  /// The side of the target region which was hit.
   final HitRegion region;
 
   /// Creates a new intersection result.

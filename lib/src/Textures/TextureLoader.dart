@@ -131,7 +131,7 @@ class TextureLoader {
         dynamic data = this._resizeImage(image, this._maxCubeSize, nearest);
         this._gl.bindTexture(WebGL.WebGL.TEXTURE_CUBE_MAP, texture);
         this._gl.pixelStorei(WebGL.WebGL.UNPACK_FLIP_Y_WEBGL, flipY? 1: 0);
-        this._gl.texImage2D(face, 0, WebGL.WebGL.RGBA, WebGL.WebGL.RGBA, WebGL.WebGL.UNSIGNED_BYTE, data);        
+        this._gl.texImage2D(face, 0, WebGL.WebGL.RGBA, WebGL.WebGL.RGBA, WebGL.WebGL.UNSIGNED_BYTE, data);
         this._gl.bindTexture(WebGL.WebGL.TEXTURE_CUBE_MAP, null);
         result._incLoaded();
         this._decLoading();

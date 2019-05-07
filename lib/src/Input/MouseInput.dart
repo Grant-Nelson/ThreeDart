@@ -52,7 +52,7 @@ class MouseInput {
     this._startPnt = Math.Point2.zero;
     this._prevTime = null;
     this._prevPnt = Math.Point2.zero;
-    
+
     this._whSensitivity = 1.0;
     this._wvSensitivity = 1.0;
   }
@@ -63,7 +63,7 @@ class MouseInput {
     final DateTime curTime = new DateTime.now();
     MouseEventArgs args = new MouseEventArgs(this, button, this._input.clientRect,
       this._startPnt, this._prevPnt, pnt, this._startTime, this._prevTime, curTime);
-    
+
     if (setStart) {
       this._startTime = curTime;
       this._startPnt = pnt;

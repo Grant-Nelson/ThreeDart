@@ -10,21 +10,21 @@ class Region3 {
     return _zeroSingleton;
   }
   static Region3 _zeroSingleton;
-  
+
   /// Gets a [Region3] at the origin with a width, height, and depth of 1.
   static Region3 get unit {
     _unitSingleton ??= new Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
     return _unitSingleton;
   }
   static Region3 _unitSingleton;
-  
+
   /// Gets a [Region3] at the origin with a width, height, and depth of 2 centerd on origin.
   static Region3 get unit2 {
     _unit2Singleton ??= new Region3(-1.0, -1.0, -1.0, 2.0, 2.0, 2.0);
     return _unit2Singleton;
   }
   static Region3 _unit2Singleton;
-  
+
   /// The left edge component of the region.
   final double x;
 
@@ -365,7 +365,7 @@ class Region3 {
         }
       }
     }
-    
+
     if (vector.dy != 0.0) {
       edgeTest = false;
       if (vector.dy > 0.0) {
@@ -425,7 +425,7 @@ class Region3 {
         }
       }
     }
-    
+
     if (region == HitRegion.None) return null;
     return new IntersectionBetweenMovingRegions(t, region);
   }
@@ -441,7 +441,7 @@ class Region3 {
     rangeOverlap(a.x, a.x + a.dx, this.x, this.x + this.dx) &&
     rangeOverlap(a.y, a.y + a.dy, this.y, this.y + this.dy) &&
     rangeOverlap(a.z, a.z + a.dz, this.z, this.z + this.dz);
-    
+
   /// Creates a new [Region3] as a translation of the other given region.
   Region3 translate(Vector3 offset) =>
     new Region3(this.x+offset.dx, this.y+offset.dy, this.z+offset.dz, this.dx, this.dy, this.dz);

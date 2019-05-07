@@ -5,7 +5,7 @@ void startup2D(String targetName) {
 
   Techniques.MaterialLight squareTech = new Techniques.MaterialLight()
     ..emission.color = new Math.Color3(0.4, 0.6, 0.8);
-    
+
   Techniques.MaterialLight sliceTech = new Techniques.MaterialLight()
     ..emission.color = new Math.Color3(0.8, 0.6, 0.4)
     ..alpha.value = 0.3;
@@ -17,13 +17,13 @@ void startup2D(String targetName) {
   Movers.Constant sliceMover = new Movers.Constant();
 
   Movers.Constant sphereScalar = new Movers.Constant();
-    
+
   ThreeDart.Entity squareCircle = new ThreeDart.Entity()
     ..technique = squareTech
     ..shape = (new Shapes.Shape()
       ..merge(Shapes.square(frameOnly: true))
       ..merge(Shapes.disk(sides: 36, frameOnly: true)));
-    
+
   ThreeDart.Entity slice = new ThreeDart.Entity()
     ..technique = sliceTech
     ..shape = Shapes.line()
@@ -84,7 +84,7 @@ void startup2D(String targetName) {
       circleLine.enabled = true;
     }
   });
-    
+
   // Add the two parts of the scene to the ouput.
   td.scene = new Scenes.Compound(passes: [projPass, slicePass]);
 }

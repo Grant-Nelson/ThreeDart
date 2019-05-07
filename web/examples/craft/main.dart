@@ -48,7 +48,6 @@ void main() {
       "to create a [voxel|https://en.wikipedia.org/wiki/Voxel] environment for browser driven video games. ",
       "This example has no server backing it so none of the changes are persisted. It would take very little ",
       "to turn this into a simple online game."])
-    ..addDiv("metricsOutput") // TODO: REMOVE
     ..addPar(["«[Back to Examples List|../../]"])
     ..addHeader(1, "Controls")
     ..addPar(["• _Currently there are no controls for mobile browsers_"])
@@ -95,12 +94,12 @@ void startCraft() {
   world.player = player;
   td.scene = scene;
   player.goHome();
-  
+
   // Start timer for periodically generating chunks and animate.
   new Timer.periodic(const Duration(milliseconds: Constants.worldTickMs), world.worldTick);
   new Timer.periodic(const Duration(milliseconds: Constants.generateTickMs), world.generateTick);
   new Timer.periodic(const Duration(milliseconds: Constants.animationTickMs), world.animationTick);
-  
+
   // Start debug output
   new Timer.periodic(const Duration(milliseconds: Constants.debugPrintTickMs), (Timer time) {
     String fps = td.fps.toStringAsFixed(2);

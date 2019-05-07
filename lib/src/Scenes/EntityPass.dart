@@ -53,7 +53,7 @@ class EntityPass implements RenderPass {
     } else if (target is Views.FrontTarget) {
       target.color = clearColor;
     }
-    
+
     this.camera = camera;
     this.target = target;
     this.technique = tech;

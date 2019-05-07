@@ -80,7 +80,7 @@ class World {
 
   /// The location of the player in the world.
   Math.Point3 get _playerPoint => this._player.point ?? Math.Point3.zero;
-  
+
   /// Adds and removes chunks as needed.
   void worldTick(_) {
     Math.Point3 player = this._playerPoint;
@@ -98,7 +98,7 @@ class World {
   void animationTick(_) {
     this._mats.waterChanger.nextTexture();
   }
-  
+
   /// Gets a chunk from the graveyard or creates a new one.
   /// This will prepare the chunk for the given [x] and [z] world location.
   Chunk prepareChunk(int x, int z) {
@@ -195,7 +195,7 @@ class World {
       nearest.needUpdate = true;
     }
   }
-  
+
   /// Gets the neighboring block to the given block with the
   /// given [ray] pointing at the side to get the neighbor for.
   NeighborBlockInfo getNeighborBlock(BlockInfo info, Math.Ray3 ray, Math.Ray3 back, int depth) {

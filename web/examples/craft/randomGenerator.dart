@@ -12,7 +12,7 @@ class RandomGenerator implements Generator {
 
   /// The current chunk that is being worked on.
   Chunk _curChunk;
-  
+
   /// Creates a new generator for the given world.
   RandomGenerator([int seed = 0]) {
     this._simplex = new simplex.OpenSimplexNoise(seed);
@@ -42,7 +42,7 @@ class RandomGenerator implements Generator {
   /// Get the scaled 2D noise offset for the given chunk.
   double _noise(int x, int z, double scale) =>
     this._simplex.eval2D((x + this._curChunk.x)*scale, (z + this._curChunk.z)*scale)*0.5 + 0.5;
-    
+
   /// Gets the height of the turrain from the prepared height cache.
   int _turrainHeight(int x, int z) =>
     this._tempCache[(x+Constants.borderSize)*Constants.paddedSize + (z+Constants.borderSize)];
@@ -239,7 +239,7 @@ class RandomGenerator implements Generator {
         (this._curChunk.z + Constants.chunkSideSize < -Constants.pyramidSize) ||
         (this._curChunk.z > Constants.pyramidSize))
       return;
-      
+
     var put = (int dx, int dy, int dz, int value) {
       this._curChunk.setBlock(dx - this._curChunk.x, dy, dz - this._curChunk.z, value);
     };

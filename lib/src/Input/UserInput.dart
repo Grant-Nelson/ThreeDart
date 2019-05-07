@@ -55,19 +55,19 @@ class UserInput {
       html.document.exitPointerLock();
     }
   }
-  
+
   /// Key handler for the user keyboard input.
   KeyInput get key => this._key;
-  
+
   /// Mouse handler for the user mouse input.
   MouseInput get mouse => this._mouse;
-  
+
   /// Locked mouse handler for the user locked mouse input.
   LockedMouseInput get locked => this._locked;
-  
+
   /// Touch pad handler for the user touch or mobile input.
   TouchInput get touch => this._touch;
-  
+
   /// Gets or sets if the mouse should lock the pointer on click.
   bool get lockOnClick => this._lockOnClick;
   void set lockOnClick(bool enable) { this._lockOnClick = enable; }
@@ -194,7 +194,7 @@ class UserInput {
   void _onMouseUp(html.MouseEvent msEvent) {
     this._setMouseModifiers(msEvent);
     final Button button = this._convertButton(msEvent);
-    
+
     if (this._pointerLocked) {
       final Math.Vector2 vec = this._rawMove(msEvent);
       if (this._locked.performUp(button, vec))
@@ -214,7 +214,7 @@ class UserInput {
     if (!this._mouseContained(msEvent)) {
       this._setMouseModifiers(msEvent);
       final Button button = this._convertButton(msEvent);
-      
+
       if (this._pointerLocked) {
         final Math.Vector2 vec = this._rawMove(msEvent);
         if (this._locked.performUp(button, vec))
@@ -233,7 +233,7 @@ class UserInput {
   void _onMouseMove(html.MouseEvent msEvent) {
     this._setMouseModifiers(msEvent);
     final Button button = this._convertButton(msEvent);
-    
+
     if (this._pointerLocked) {
       final Math.Vector2 vec = this._rawMove(msEvent);
       if (this._locked.performMove(button, vec))
@@ -253,7 +253,7 @@ class UserInput {
     if (!this._mouseContained(msEvent)) {
       this._setMouseModifiers(msEvent);
       final Button button = this._convertButton(msEvent);
-      
+
       if (this._pointerLocked) {
         final Math.Vector2 vec = this._rawMove(msEvent);
         if (this._locked.performMove(button, vec))
@@ -284,7 +284,7 @@ class UserInput {
     if (this._mouse.performWheel(wheel, pnt))
       msEvent.preventDefault();
   }
-  
+
   /// Handles the mouse lock and unlock on the canvas.
   void _onPointerLockChanged(html.Event _) {
     bool locked = (html.document.pointerLockElement == this._elem);

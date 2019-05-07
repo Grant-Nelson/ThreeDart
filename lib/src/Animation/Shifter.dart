@@ -16,7 +16,7 @@ class Shifter {
 
   /// The smoother effects the rate of change
   final Smoother _smoother;
-  
+
   /// Indicates the shifter is done.
   bool _done;
 

@@ -3,7 +3,7 @@ part of craft;
 /// The generator will initialize chunks to create a world test world,
 /// for cehcking collision detection, block selection and replacement, and more.
 class TestGenerator implements Generator {
-  
+
   /// The current chunk that is being worked on.
   Chunk _curChunk;
 
@@ -117,30 +117,30 @@ class TestGenerator implements Generator {
     const int offset = 2, size = 4, lowest = 10;
     void pillar(int xScale, int zScale, int height) =>
       this._block(offset+size*xScale, lowest, offset+size*zScale, 1, height, 1);
-    
+
     pillar(0, 0, 1);
     pillar(0, 1, 2);
     pillar(0, 2, 3);
     pillar(0, 3, 4);
-    
+
     pillar(1, 0, 2);
     pillar(1, 1, 3);
     pillar(1, 2, 4);
     pillar(1, 3, 5);
-    
+
     pillar(2, 0, 5);
     pillar(2, 1, 4);
     pillar(2, 2, 3);
     pillar(2, 3, 2);
-    
+
     pillar(3, 0, 4);
     pillar(3, 1, 3);
     pillar(3, 2, 2);
     pillar(3, 3, 1);
   }
 
-  void _pillars() { 
-    const int offset = 2, lowest = 10, width = 20, height = 8; 
+  void _pillars() {
+    const int offset = 2, lowest = 10, width = 20, height = 8;
     for (int i = 0; i < width; i+=2) {
       for (int j = 0; j < width; j+=2) {
         this._block(offset+i, lowest, offset+j, 1, height, 1);

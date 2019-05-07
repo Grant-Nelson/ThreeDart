@@ -180,7 +180,7 @@ class Player {
   }
 
   /// Modify the voxal values of a chunk.
-  /// If [setBlock] is true then the current block in the hand is set on a neighboring side to the 
+  /// If [setBlock] is true then the current block in the hand is set on a neighboring side to the
   /// highlight, if false then the highlighted block is set to air.
   void _changeBlock(bool setBlock) {
     if (this._highlight?.info == null) return;
@@ -236,7 +236,7 @@ class Player {
         BlockInfo aboveInfo = info.above;
         if (BlockType.plant(aboveInfo.value)) aboveInfo.value = BlockType.Air;
       }
-      
+
       // Indicate which chunks need to be updated.
       chunk.needUpdate = true;
       if (info.x <= 0)                           chunk.left?.needUpdate = true;
@@ -245,7 +245,7 @@ class Player {
       if (info.z >= Constants.chunkSideSize - 1) chunk.front?.needUpdate = true;
     }
   }
-  
+
   /// Handles checking for collision while the player is moving, falling, or jumping.
   Math.Point3 _handleCollide(Math.Point3 prev, Math.Point3 loc) {
     // Traverse the neighboring blocks using player's movement to find first

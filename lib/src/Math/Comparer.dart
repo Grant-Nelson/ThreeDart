@@ -8,7 +8,7 @@ class Comparer {
 
   /// The current comparer instance to use for comparing doubles.
   static CustomComparer currentComparer = defaultComparer;
-    
+
   /// Determines if the two values are equal.
   static bool equals(double a, double b) => currentComparer.equals(a, b);
 

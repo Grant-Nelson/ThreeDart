@@ -31,7 +31,7 @@ class BlockInfo {
 
   /// Gets the x offset for this block in the world coordinates.
   int get worldX => this.x + this.chunkX;
-  
+
   /// Gets the z offset for this block in the world coordinates.
   int get worldZ => this.z + this.chunkZ;
 
@@ -81,7 +81,7 @@ class BlockInfo {
     }
     return new BlockInfo(this.x, this.y, z, this.chunkX, chunkZ, chunk);
   }
-  
+
   /// Creates a new block info for the one to the back of this info.
   BlockInfo get back {
     int z = this.z - 1;
@@ -122,12 +122,12 @@ class BlockInfo {
     if ((info != null) && BlockType.solid(info.value)) neighbors |= Math.HitRegion.XNeg;
     info = this.right;
     if ((info != null) && BlockType.solid(info.value)) neighbors |= Math.HitRegion.XPos;
-   
+
     info = this.below;
     if ((info != null) && BlockType.solid(info.value)) neighbors |= Math.HitRegion.YNeg;
     info = this.above;
     if ((info != null) && BlockType.solid(info.value)) neighbors |= Math.HitRegion.YPos;
-    
+
     info = this.back;
     if ((info != null) && BlockType.solid(info.value)) neighbors |= Math.HitRegion.ZNeg;
     info = this.front;
@@ -135,7 +135,7 @@ class BlockInfo {
 
     return neighbors;
   }
-  
+
 
   /// Gets the block info string for debugging.
   @override

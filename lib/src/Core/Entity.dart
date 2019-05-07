@@ -223,7 +223,7 @@ class Entity implements Movers.Movable, Events.Changable {
     }
     return null;
   }
-  
+
   /// Finds this and all a children entities with the given name.
   /// If the optional given entity list is not null,
   /// then the found entities are added to that list.

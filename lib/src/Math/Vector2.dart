@@ -9,28 +9,28 @@ class Vector2 {
     return _zeroSingleton;
   }
   static Vector2 _zeroSingleton;
-  
+
   /// Gets a new positive X [Vector2].
   static Vector2 get posX {
     _posXSingleton ??= new Vector2(1.0, 0.0);
     return _posXSingleton;
   }
   static Vector2 _posXSingleton;
-  
+
   /// Gets a new negative X [Vector2].
   static Vector2 get negX {
     _negXSingleton ??= new Vector2(-1.0, 0.0);
     return _negXSingleton;
   }
   static Vector2 _negXSingleton;
-  
+
   /// Gets a new positive Y [Vector2].
   static Vector2 get posY {
     _posYSingleton ??= new Vector2(0.0, 1.0);
     return _posYSingleton;
   }
   static Vector2 _posYSingleton;
-  
+
   /// Gets a new negative Y [Vector2].
   static Vector2 get negY {
     _negYSingleton ??= new Vector2(0.0, -1.0);

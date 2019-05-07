@@ -72,7 +72,7 @@ void main() {
     ..technique = colorTech
     ..children.add(group);
 
-  Views.BackTarget depthTarget = new Views.BackTarget(400, 300, 
+  Views.BackTarget depthTarget = new Views.BackTarget(400, 300,
     autoResize: true, autoResizeScalarX: 0.5, autoResizeScalarY: 0.5);
   Scenes.EntityPass depthPass = new Scenes.EntityPass()
     ..camera = userCamera

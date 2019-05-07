@@ -162,7 +162,7 @@ class TestBlock extends TestArgs {
 
   /// Indicates if the test has been stated.
   bool get stated => this._started;
-  
+
   /// Indicates if the test has been finished.
   bool get finished => this._finished;
 
