@@ -68,8 +68,8 @@ class Collider {
     if (this._vector.isZero()) return false;
     Math.Region3 region = this._region.translate(new Math.Vector3.fromPoint3(this._loc));
     
-    Math.IntersectionBetweenMovingRegions hit = null;
-    Math.Region3 hitBlock = null;
+    double parametric = 0.0;
+    Math.HitRegion hitRegion = Math.HitRegion.None;
     int hitIndex = -1;
     for (int i = 0; i < this._blocks.length; i++) {
       if (!this._hasHit[i]) {
@@ -77,18 +77,18 @@ class Collider {
         Math.HitRegion sides = this._blockSides[i];
         Math.IntersectionBetweenMovingRegions cur = region.collision(block, this._vector, sides);
         if (cur != null) {
-          if ((hit == null) || (hit.parametric > cur.parametric)) {
-            hit = cur;
-            hitBlock = block;
+          if ((hitRegion == Math.HitRegion.None) || (parametric > cur.parametric)) {
+            hitRegion = cur.region;
+            parametric = cur.parametric;
             hitIndex = i;
           }
         }
       }
     }
-    if (hit == null) return false;
+    if (hitRegion == Math.HitRegion.None) return false;
     this._hasHit[hitIndex] = true;
 
-    if (hit.region == Math.HitRegion.Inside) {
+    if (hitRegion == Math.HitRegion.Inside) {
       throw Exception("WHAT?!? HOW?!?");
       // double dy = this._region.x+this._region.dx-hitBlock.x;
       // Math.Vector3 shift = new Math.Vector3(0.0, dy, 0.0);
@@ -99,26 +99,26 @@ class Collider {
       // return false; // TODO: handle bump
     }
 
-    Math.Vector3 shift = this._vector * hit.parametric;
-    Math.Vector3 remainder = this._vector * (1.0 - hit.parametric);
+    Math.Vector3 shift = this._vector * parametric;
+    Math.Vector3 remainder = this._vector * (1.0 - parametric);
 
-    if ((hit.region == Math.HitRegion.XPos) || (hit.region == Math.HitRegion.XNeg)) {
+    if ((hitRegion == Math.HitRegion.XPos) || (hitRegion == Math.HitRegion.XNeg)) {
       double x = this._loc.x+shift.dx;
       this._loc = new Math.Point3(x, this._loc.y+shift.dy, this._loc.z+shift.dz);
       this._vector = new Math.Vector3(0.0, remainder.dy, remainder.dz);
 
-    } else if ((hit.region == Math.HitRegion.YPos) || (hit.region == Math.HitRegion.YNeg)) {
+    } else if ((hitRegion == Math.HitRegion.YPos) || (hitRegion == Math.HitRegion.YNeg)) {
       double y = this._loc.y+shift.dy;
       this._loc = new Math.Point3(this._loc.x+shift.dx, y, this._loc.z+shift.dz);
       this._vector = new Math.Vector3(remainder.dx, 0.0, remainder.dz);
 
-    } else if ((hit.region == Math.HitRegion.ZPos) || (hit.region == Math.HitRegion.ZNeg)) {
+    } else if ((hitRegion == Math.HitRegion.ZPos) || (hitRegion == Math.HitRegion.ZNeg)) {
       double z = this._loc.z+shift.dz;
       this._loc = new Math.Point3(this._loc.x+shift.dx, this._loc.y+shift.dy, z);
       this._vector = new Math.Vector3(remainder.dx, remainder.dy, 0.0);
     }
 
-    this._touching |= hit.region;
+    this._touching |= hitRegion;
     return true;
   }
   

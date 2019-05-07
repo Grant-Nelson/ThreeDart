@@ -21,8 +21,6 @@ class Player {
   ThreeDart.Entity _entity;
   List<ThreeDart.Entity> _blockHandEntities;
 
-  Data.Metrics _metrics; // TODO: REMOVE
-
   /// Creates a new player for the world.
   Player(Input.UserInput userInput, this._world) {
     userInput.lockOnClick = true;
@@ -57,13 +55,6 @@ class Player {
       ..addKey(Input.Key.keyO)
       ..attach(userInput)
       ..keyDown.add(this._onReturnToOrigin);
-
-    // TODO: REMOVE
-    this._metrics = new Data.Metrics();
-    new Input.KeyGroup()
-      ..addKey(Input.Key.keyM)
-      ..attach(userInput)
-      ..keyDown.add(this._onToggleMetrics);
 
     // Sets up how the player will move around.
     this._trans = new Movers.UserTranslator(input: userInput)
@@ -147,14 +138,6 @@ class Player {
     int y = chunk?.topHit(Constants.playerStartX.toInt(), Constants.playerStartZ.toInt()) ?? 0;
     this._trans.location = new Math.Point3(Constants.playerStartX, y.toDouble()+Constants.playerStartYOffset, Constants.playerStartZ);
     this._trans.velocity = Math.Vector3.zero;
-  }
-
-  /// TODO: REMOVE
-  void _onToggleMetrics(Events.EventArgs args) {
-    html.document.getElementById("metricsOutput")?.innerHtml =
-      this._metrics.toString().replaceAll("\n", "<br>");
-    this._metrics.enabled = !this._metrics.enabled;
-    this._metrics.clear();
   }
 
   /// Handles then the player presses the return to origin button.
@@ -266,18 +249,6 @@ class Player {
     if (vector.length2() < Constants.maxCollisionSpeedSquared) {
       this._collider.collide(Constants.playerRegion, prev, vector);
       this._touchingGround = this._collider.touching.has(Math.HitRegion.YPos);
-
-      if (this._metrics.enabled) { // TODO: REMOVE
-        this._metrics
-          ..addVal("prevY", prev.y)
-          ..addVal("locY", loc.y)
-          ..addVal("dy", vector.dy)
-          ..addVal("velY", this._trans.offsetY.velocity)
-          ..addVal("touching", this._touchingGround? 1.0: 0.0)
-          ..addVal("resultY", this._collider.location.y)
-          ..stepFrame();
-      }
-
       if (this._touchingGround) this._trans.offsetY.velocity = 0.0;
     }
     return this._collider.location ?? loc;
