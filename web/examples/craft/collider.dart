@@ -11,7 +11,6 @@ class Collider {
   List<Math.Region3> _blocks;
   List<Math.HitRegion> _blockSides;
   List<bool> _hasHit;
-  int _killCountDown;
 
   Collider(this._world) {
     this._loc = null;
@@ -21,7 +20,6 @@ class Collider {
     this._blocks = new List<Math.Region3>();
     this._blockSides = new List<Math.HitRegion>();
     this._hasHit = new List<bool>();
-    this._killCountDown = 20;
   }
   
   bool collide(Math.Region3 region, Math.Point3 loc, Math.Vector3 vector) {
@@ -30,19 +28,10 @@ class Collider {
     this._vector = vector;
     this._touching = Math.HitRegion.None;
 
-    //print(">>======================================");
-    //print(">> loc:    $_loc");
-    //print(">> vector: $_vector");
-    //print(">> region: $_region");
-
     this._collectBlocks();
     while (this._singleCollide());
 
     this._loc += new Math.Point3.fromVector3(this._vector);
-    
-    //print(">> loc:    $_loc");
-    //print(">> vector: $_vector");
-    //print(">> region: $_region");
     return true;
   }
   
@@ -56,11 +45,6 @@ class Collider {
     BlockInfo maxXYZ = this._world.getBlock(aabb.x+aabb.dx, aabb.y+aabb.dy, aabb.z+aabb.dz);
     int maxWorldX = maxXYZ.worldX, maxWorldZ = maxXYZ.worldZ;
     
-    //print(">>================================================");
-    //print(">> aabb:   ${aabb}");
-    //print(">> minXYZ: ${minXYZ.blockRegion}");
-    //print(">> maxXYZ: ${maxXYZ.blockRegion}");
-
     this._blocks.clear();
     this._blockSides.clear();
     this._hasHit.clear();
@@ -70,11 +54,6 @@ class Collider {
           if (BlockType.hard(z.value)) {
             Math.HitRegion sides = z.solidNeighbors();
             if (sides != Math.HitRegion.Cardinals) {
-              // print(">>--------------------------------------");
-              // print(">> Solids:  $sides");
-              // print(">> Inverse: ${sides.inverse()}");
-              // print(">> Not:     ${Math.HitRegion.Cardinals & ~sides}");
-              //print(">> z: ${z.blockRegion} $sides");
               this._blocks.add(z.blockRegion);
               this._blockSides.add(Math.HitRegion.Cardinals & ~sides);
               this._hasHit.add(false);
@@ -89,17 +68,6 @@ class Collider {
     if (this._vector.isZero()) return false;
     Math.Region3 region = this._region.translate(new Math.Vector3.fromPoint3(this._loc));
     
-    //this._killCountDown--;
-    //if (this._killCountDown < 0){  
-    //  print(">> Stop");
-    //  throw Exception("OUCH");
-    //}
-
-    //print(">>--------------------------------------");
-    // print(">> loc:    $_loc");
-    // print(">> vector: $_vector");
-    // print(">> region: $region");
-
     Math.IntersectionBetweenMovingRegions hit = null;
     Math.Region3 hitBlock = null;
     int hitIndex = -1;
@@ -107,14 +75,12 @@ class Collider {
       if (!this._hasHit[i]) {
         Math.Region3 block = this._blocks[i];
         Math.HitRegion sides = this._blockSides[i];
-        //print(">> block: $block $sides");
         Math.IntersectionBetweenMovingRegions cur = region.collision(block, this._vector, sides);
         if (cur != null) {
           if ((hit == null) || (hit.parametric > cur.parametric)) {
             hit = cur;
             hitBlock = block;
             hitIndex = i;
-            //print(">> hit:   $hit");
           }
         }
       }
@@ -122,8 +88,6 @@ class Collider {
     if (hit == null) return false;
     this._hasHit[hitIndex] = true;
 
-    // print(">> result:   $hit");
-    // print(">> hitBlock: $hitBlock");
     if (hit.region == Math.HitRegion.Inside) {
       throw Exception("WHAT?!? HOW?!?");
       // double dy = this._region.x+this._region.dx-hitBlock.x;
@@ -139,17 +103,17 @@ class Collider {
     Math.Vector3 remainder = this._vector * (1.0 - hit.parametric);
 
     if ((hit.region == Math.HitRegion.XPos) || (hit.region == Math.HitRegion.XNeg)) {
-      double x = this._trim(this._loc.x+shift.dx);
+      double x = this._loc.x+shift.dx;
       this._loc = new Math.Point3(x, this._loc.y+shift.dy, this._loc.z+shift.dz);
       this._vector = new Math.Vector3(0.0, remainder.dy, remainder.dz);
 
     } else if ((hit.region == Math.HitRegion.YPos) || (hit.region == Math.HitRegion.YNeg)) {
-      double y = this._trim(this._loc.y+shift.dy);
+      double y = this._loc.y+shift.dy;
       this._loc = new Math.Point3(this._loc.x+shift.dx, y, this._loc.z+shift.dz);
       this._vector = new Math.Vector3(remainder.dx, 0.0, remainder.dz);
 
     } else if ((hit.region == Math.HitRegion.ZPos) || (hit.region == Math.HitRegion.ZNeg)) {
-      double z = this._trim(this._loc.z+shift.dz);
+      double z = this._loc.z+shift.dz;
       this._loc = new Math.Point3(this._loc.x+shift.dx, this._loc.y+shift.dy, z);
       this._vector = new Math.Vector3(remainder.dx, remainder.dy, 0.0);
     }
@@ -157,8 +121,6 @@ class Collider {
     this._touching |= hit.region;
     return true;
   }
-
-  double _trim(double value) => value;// (value*100.0).roundToDouble()/100.0;
   
   /// Gets the string for this collision result.
   @override

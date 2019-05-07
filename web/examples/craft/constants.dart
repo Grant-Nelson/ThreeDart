@@ -144,7 +144,7 @@ class Constants {
 
   /// The region of the player's bounding box around the camera.
   /// This is used for collision detection.
-  static final Math.Region3 playerRegion = new Math.Region3(-0.25, -1.5, -0.25, 0.25, 2.0, 0.25);
+  static final Math.Region3 playerRegion = new Math.Region3(-0.25, -1.5, -0.25, 0.5, 2.0, 0.5);
 
   /// The maxium volocity in which collision detection is ignored.
   static const double maxCollisionSpeedSquared = 100.0;

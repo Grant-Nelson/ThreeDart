@@ -31,14 +31,14 @@ void main() {
   html.DivElement elem = new html.DivElement();
   TestManager tests = new TestManager(elem);
 
-  //addBench(tests);
-  //addVertexTypeTests(tests);
-  //addMatrix2Tests(tests);
-  //addMatrix3Tests(tests);
-  //addMatrix4Tests(tests);
-  //addRegion2Tests(tests);
-  //addRegion3Tests(tests);
-  //addTechniqueTests(tests);
+  addBench(tests);
+  addVertexTypeTests(tests);
+  addMatrix2Tests(tests);
+  addMatrix3Tests(tests);
+  addMatrix4Tests(tests);
+  addRegion2Tests(tests);
+  addRegion3Tests(tests);
+  addTechniqueTests(tests);
   addCraftTests(tests);
 
   new common.ShellPage("Unit-tests", false)

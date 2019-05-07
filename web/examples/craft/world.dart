@@ -210,9 +210,8 @@ class World {
   }
 
   /// Gets the string for debug information to be printed to the console.
-  String debugString() {
-    return "chunks: ${this._chunks.length}, graveyard: ${this._graveyard.length}, player: ${this._playerPoint}";
-  }
+  String debugString() =>
+    "chunks: ${this._chunks.length}, graveyard: ${this._graveyard.length}, player: ${this._playerPoint}";
 
   /// Updates the world to the player's view.
   void update(Events.EventArgs args) {

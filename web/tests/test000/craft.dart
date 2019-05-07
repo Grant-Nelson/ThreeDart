@@ -2,7 +2,6 @@ part of ThreeDart.test.test000;
 
 void addCraftTests(TestManager tests) {
 
-  /*
   tests.add("Test of craft example world getBlock", (TestArgs args) {
     craft.World world = new craft.World(null, new craft.CheckersGenerator());
 
@@ -88,7 +87,6 @@ void addCraftTests(TestManager tests) {
     _checkGetBlock(args, world,  0.0,    0.0,  -18.0,      0, -32,   0,  0, 14);
     _checkGetBlock(args, world,  0.0,    0.0,  -19.0,      0, -32,   0,  0, 13);
   });
-  */
 
   tests.add("Test of craft example world collide with floor", (TestArgs args) {
     craft.World world = new craft.World(null, new craft.FlatGenerator(8, 9));
@@ -119,12 +117,14 @@ void addCraftTests(TestManager tests) {
     _checkCollide(args, world,  -0.5, 14.0,  0.5,   0.0, -5.0, 0.0,  -0.5, 11.5, 0.5,  Math.HitRegion.YPos);
     
     // Running into a block.
-    _checkCollide(args, world,   2.5, 11.5,  0.5,  -5.0,  0.0, 0.0,   1.25, 11.5, 0.5,  Math.HitRegion.XPos);
-
+    _checkCollide(args, world,   2.5, 11.5,  0.5,  -5.0,  0.0,  0.0,   1.25, 11.5,  0.5,   Math.HitRegion.XPos);
+    _checkCollide(args, world,   2.5, 11.5,  0.5,  -5.0, -5.0,  0.0,   1.25, 11.5,  0.5,   Math.HitRegion.XPos|Math.HitRegion.YPos);
+    _checkCollide(args, world,  -1.5, 11.5,  0.5,   5.0,  0.0,  0.0,  -0.25, 11.5,  0.5,   Math.HitRegion.XNeg);
+    _checkCollide(args, world,   0.5, 11.5,  2.5,   0.0,  0.0, -5.0,   0.5,  11.5,  1.25,  Math.HitRegion.ZPos);
+    _checkCollide(args, world,   0.5, 11.5, -1.5,   0.0,  0.0,  5.0,   0.5,  11.5, -0.25,  Math.HitRegion.ZNeg);
   });
 }
 
-/*
 void _checkGetBlock(TestArgs args, craft.World world, double x, double y, double z,
   int expChunkX, int expChunkZ, int expBlockX, int expBlockY, int expBlockZ) {
   craft.BlockInfo block = world.getBlock(x, y, z);
@@ -144,12 +144,11 @@ void _checkGetBlock(TestArgs args, craft.World world, double x, double y, double
     args.info("Testing getBlock($x, $y, $z): Passed\n");
   }
 }
-*/
 
 void _checkCollide(TestArgs args, craft.World world, double locX, double locY, double locZ,
   double vecX, double vecY, double vecZ, double expX, double expY, double expZ, Math.HitRegion expTouching) {
   craft.Collider collider = new craft.Collider(world);
-  Math.Region3 region = new Math.Region3(-0.25, -1.5, -0.25, 0.25, 2.0, 0.25);
+  Math.Region3 region = new Math.Region3(-0.25, -1.5, -0.25, 0.5, 2.0, 0.5);
   Math.Point3 loc = new Math.Point3(locX, locY, locZ);
   Math.Vector3 vector = new Math.Vector3(vecX, vecY, vecZ);
   Math.Point3 expLocation = new Math.Point3(expX, expY, expZ);
