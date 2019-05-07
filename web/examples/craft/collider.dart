@@ -1,6 +1,6 @@
 part of craft;
 
-/// TODO: Comment everything
+/// A collider for determining a region colliding with the world.
 class Collider {
 
   World _world;
@@ -12,6 +12,7 @@ class Collider {
   List<Math.HitRegion> _blockSides;
   List<bool> _hasHit;
 
+  /// Creates a new collider object.
   Collider(this._world) {
     this._loc = null;
     this._region = null;
@@ -22,6 +23,8 @@ class Collider {
     this._hasHit = new List<bool>();
   }
 
+  /// Performs a collision between the given region at the given location
+  /// moving at the given vector and the solid blocks in the world.
   bool collide(Math.Region3 region, Math.Point3 loc, Math.Vector3 vector) {
     this._loc = loc;
     this._region = region;
@@ -35,9 +38,13 @@ class Collider {
     return true;
   }
 
+  /// Gets the location after the collision.
   Math.Point3 get location => this._loc;
+
+  /// Gets the resulting touching sides of the collisions.
   Math.HitRegion get touching => this._touching;
 
+  /// Handles collecting the blocks from the world for the collision.
   void _collectBlocks() {
     Math.Region3 region = this._region.translate(new Math.Vector3.fromPoint3(this._loc));
     Math.Region3 aabb = region.expandWithRegion(region.translate(this._vector));
@@ -64,6 +71,7 @@ class Collider {
     }
   }
 
+  /// Handles a collition of a single edge.
   bool _singleCollide() {
     if (this._vector.isZero()) return false;
     Math.Region3 region = this._region.translate(new Math.Vector3.fromPoint3(this._loc));
