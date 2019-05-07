@@ -339,15 +339,15 @@ class Region3 {
     if (vector.dx != 0.0) {
       edgeTest = false;
       if (vector.dx > 0.0) {
-        if (sides.has(HitRegion.XPos)) {
-          edge = HitRegion.XPos;
+        if (sides.has(HitRegion.XNeg)) {
+          edge = HitRegion.XNeg;
           edgeTest = true;
           if (Comparer.equals(target.x, this.x + this.dx)) d = 0.0;
           else d = (target.x - (this.x + this.dx)) / vector.dx;
         }
       } else {
-        if (sides.has(HitRegion.XNeg)) {
-          edge = HitRegion.XNeg;
+        if (sides.has(HitRegion.XPos)) {
+          edge = HitRegion.XPos;
           edgeTest = true;
           if (Comparer.equals(target.x + target.dx, this.x)) d = 0.0;
           else d = ((target.x + target.dx) - this.x) / vector.dx;
@@ -369,15 +369,15 @@ class Region3 {
     if (vector.dy != 0.0) {
       edgeTest = false;
       if (vector.dy > 0.0) {
-        if (sides.has(HitRegion.YPos)) {
-          edge = HitRegion.YPos;
+        if (sides.has(HitRegion.YNeg)) {
+          edge = HitRegion.YNeg;
           edgeTest = true;
           if (Comparer.equals(target.y, this.y + this.dy)) d = 0.0;
           else d = (target.y - (this.y + this.dy)) / vector.dy;
         }
       } else {
-        if (sides.has(HitRegion.YNeg)) {
-          edge = HitRegion.YNeg;
+        if (sides.has(HitRegion.YPos)) {
+          edge = HitRegion.YPos;
           edgeTest = true;
           if (Comparer.equals(target.y + target.dy, this.y)) d = 0.0;
           else d = ((target.y + target.dy) - this.y) / vector.dy;
@@ -399,15 +399,15 @@ class Region3 {
     if (vector.dz != 0.0) {
       edgeTest = false;
       if (vector.dz > 0.0) {
-        if (sides.has(HitRegion.ZPos)) {
-          edge = HitRegion.ZPos;
+        if (sides.has(HitRegion.ZNeg)) {
+          edge = HitRegion.ZNeg;
           edgeTest = true;
           if (Comparer.equals(target.z, this.z + this.dz)) d = 0.0;
           else d = (target.z - (this.z + this.dz)) / vector.dz;
         }
       } else {
-        if (sides.has(HitRegion.ZNeg)) {
-          edge = HitRegion.ZNeg;
+        if (sides.has(HitRegion.ZPos)) {
+          edge = HitRegion.ZPos;
           edgeTest = true;
           if (Comparer.equals(target.z + target.dz, this.z)) d = 0.0;
           else d = ((target.z + target.dz) - this.z) / vector.dz;

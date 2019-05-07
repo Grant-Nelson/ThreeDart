@@ -14,7 +14,7 @@ import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 
 import '../../common/common.dart' as common;
-//import '../../examples/craft/main.dart' as craft;
+import '../../examples/craft/main.dart' as craft;
 
 part 'bench.dart';
 part 'craft.dart';
@@ -37,9 +37,9 @@ void main() {
   //addMatrix3Tests(tests);
   //addMatrix4Tests(tests);
   //addRegion2Tests(tests);
-  addRegion3Tests(tests);
+  //addRegion3Tests(tests);
   //addTechniqueTests(tests);
-  //addCraftTests(tests);
+  addCraftTests(tests);
 
   new common.ShellPage("Unit-tests", false)
     ..addElem(elem)

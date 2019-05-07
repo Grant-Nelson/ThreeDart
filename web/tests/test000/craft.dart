@@ -1,11 +1,13 @@
 part of ThreeDart.test.test000;
 
-/*
 void addCraftTests(TestManager tests) {
 
+  /*
   tests.add("Test of craft example world getBlock", (TestArgs args) {
     craft.World world = new craft.World(null, new craft.CheckersGenerator());
 
+    //                            start location         exp chunk   exp block
+    //                           z       y       z         x    z    x   y   z
     _checkGetBlock(args, world,  0.0,    0.0,    0.0,      0,   0,   0,  0,  0);
     _checkGetBlock(args, world,  0.001,  0.0,    0.0,      0,   0,   0,  0,  0);
     _checkGetBlock(args, world,  0.0,    0.001,  0.0,      0,   0,   0,  0,  0);
@@ -86,45 +88,43 @@ void addCraftTests(TestManager tests) {
     _checkGetBlock(args, world,  0.0,    0.0,  -18.0,      0, -32,   0,  0, 14);
     _checkGetBlock(args, world,  0.0,    0.0,  -19.0,      0, -32,   0,  0, 13);
   });
+  */
 
   tests.add("Test of craft example world collide with floor", (TestArgs args) {
     craft.World world = new craft.World(null, new craft.FlatGenerator(8, 9));
     world.prepareChunk(0, 0);
 
-    _checkCollideY(args, world, 12.0, -1.0, 11.0);
-    _checkCollideY(args, world, 12.0, -2.0, 10.25, true);
-    _checkCollideY(args, world, 12.0, -3.0, 10.25, true);
-    _checkCollideY(args, world, 11.0, -3.0, 10.25, true);
-    _checkCollideY(args, world, 10.5, -3.0, 10.25, true);
-    _checkCollideY(args, world, 10.25, -3.0, 10.25, true);
-    _checkCollideY(args, world, 10.0, -3.0, 10.25, true);
-    _checkCollideY(args, world, 10.0, 0.0, 10.25, true);
-    _checkCollideY(args, world, 9.0, -3.0, 10.25, true);
-    _checkCollideY(args, world, 9.0, 1.0, 10.25, true);
-    // _checkCollide(args, world, [at11, at10], go3, at11, true);
-    // _checkCollide(args, world, [at9, at8], go1, at11, true);
-  });
-
-  tests.add("Test of craft example world collide with floor", (TestArgs args) {
-    craft.World world = new craft.World(null, new craft.TestGenerator());
-    world.prepareChunk(0, 16);
+    // Falling straight down to the ground and standing on ground.
+    _checkCollide(args, world,   0.5, 12.0, 0.5,   0.0, -5.0, 0.0,   0.5, 11.5, 0.5,  Math.HitRegion.YPos);
+    _checkCollide(args, world,   0.5, 14.0, 0.5,   0.0, -5.0, 0.0,   0.5, 11.5, 0.5,  Math.HitRegion.YPos);
+    _checkCollide(args, world,   0.5, 14.0, 0.5,   0.0, -1.0, 0.0,   0.5, 13.0, 0.5,  Math.HitRegion.None);
+    _checkCollide(args, world,   0.5, 11.5, 0.5,   0.0, -5.0, 0.0,   0.5, 11.5, 0.5,  Math.HitRegion.YPos);
     
-    Math.Point3 centerOfWalls = new Math.Point3(8.0, 12.0, 24.0);
+    // Falling at an angle and moving on the ground.
+    _checkCollide(args, world,   0.5, 12.0, 0.5,   1.0, -5.0,  1.0,    1.5, 11.5,  1.5,  Math.HitRegion.YPos);
+    _checkCollide(args, world,   0.5, 11.5, 0.5,   1.0, -5.0,  1.0,    1.5, 11.5,  1.5,  Math.HitRegion.YPos);
+    _checkCollide(args, world,   0.5, 12.0, 0.5,   1.0, -5.0, -1.0,    1.5, 11.5, -0.5,  Math.HitRegion.YPos);
+    _checkCollide(args, world,   0.5, 11.5, 0.5,   1.0, -5.0, -1.0,    1.5, 11.5, -0.5,  Math.HitRegion.YPos);
+    _checkCollide(args, world,   0.5, 12.0, 0.5,  -1.0, -5.0,  1.0,   -0.5, 11.5,  1.5,  Math.HitRegion.YPos);
+    _checkCollide(args, world,   0.5, 11.5, 0.5,  -1.0, -5.0,  1.0,   -0.5, 11.5,  1.5,  Math.HitRegion.YPos);
+    _checkCollide(args, world,   0.5, 12.0, 0.5,  -1.0, -5.0, -1.0,   -0.5, 11.5, -0.5,  Math.HitRegion.YPos);
+    _checkCollide(args, world,   0.5, 11.5, 0.5,  -1.0, -5.0, -1.0,   -0.5, 11.5, -0.5,  Math.HitRegion.YPos);
 
-    Math.Vector3 left  = new Math.Vector3( 5.0, 0.0,  0.0);
-    Math.Vector3 right = new Math.Vector3(-5.0, 0.0,  0.0);
-    Math.Vector3 front = new Math.Vector3( 0.0, 0.0,  5.0);
-    Math.Vector3 back  = new Math.Vector3( 0.0, 0.0, -5.0);
+    // Falling onto a block and falling beside a block.
+    world.getBlock(0.0, 10.0, 0.0).value=craft.BlockType.Turf;
+    _checkCollide(args, world,   0.5, 14.0,  0.5,   0.0, -5.0, 0.0,   0.5, 12.5, 0.5,  Math.HitRegion.YPos);
+    _checkCollide(args, world,   0.5, 14.0,  1.5,   0.0, -5.0, 0.0,   0.5, 11.5, 1.5,  Math.HitRegion.YPos);
+    _checkCollide(args, world,   0.5, 14.0, -0.5,   0.0, -5.0, 0.0,   0.5, 11.5,-0.5,  Math.HitRegion.YPos);
+    _checkCollide(args, world,   1.5, 14.0,  0.5,   0.0, -5.0, 0.0,   1.5, 11.5, 0.5,  Math.HitRegion.YPos);
+    _checkCollide(args, world,  -0.5, 14.0,  0.5,   0.0, -5.0, 0.0,  -0.5, 11.5, 0.5,  Math.HitRegion.YPos);
+    
+    // Running into a block.
+    _checkCollide(args, world,   2.5, 11.5,  0.5,  -5.0,  0.0, 0.0,   1.25, 11.5, 0.5,  Math.HitRegion.XPos);
 
-    _checkCollide(args, world, [centerOfWalls], left,  new Math.Point3(9.75, 12.0, 24.0));
-    _checkCollide(args, world, [centerOfWalls], right, new Math.Point3(7.25, 12.0, 24.0));
-    _checkCollide(args, world, [centerOfWalls], front, new Math.Point3(8.0,  12.0, 25.75));
-    _checkCollide(args, world, [centerOfWalls], back,  new Math.Point3(8.0,  12.0, 23.25));
-
-    // TODO: What about when the side sensors are in the inside?
   });
 }
 
+/*
 void _checkGetBlock(TestArgs args, craft.World world, double x, double y, double z,
   int expChunkX, int expChunkZ, int expBlockX, int expBlockY, int expBlockZ) {
   craft.BlockInfo block = world.getBlock(x, y, z);
@@ -144,27 +144,31 @@ void _checkGetBlock(TestArgs args, craft.World world, double x, double y, double
     args.info("Testing getBlock($x, $y, $z): Passed\n");
   }
 }
+*/
 
-void _checkCollide(TestArgs args, craft.World world, List<Math.Point3> starts, Math.Vector3 vector,
-  Math.Point3 expOffset, [bool touchingGround = false]) {
+void _checkCollide(TestArgs args, craft.World world, double locX, double locY, double locZ,
+  double vecX, double vecY, double vecZ, double expX, double expY, double expZ, Math.HitRegion expTouching) {
   craft.Collider collider = new craft.Collider(world);
-  collider.collide(starts, vector);
-  Math.HitRegion expTouching = touchingGround? Math.HitRegion.YNeg: Math.HitRegion.None;
-
-  if ((collider.location != expOffset) || (collider.touching != expTouching)) {
-    args.error("Testing collide($starts, $vector): Failed\n");
-    args.error("  Expected: CollisionResult($expOffset, $touchingGround)\n");
+  Math.Region3 region = new Math.Region3(-0.25, -1.5, -0.25, 0.25, 2.0, 0.25);
+  Math.Point3 loc = new Math.Point3(locX, locY, locZ);
+  Math.Vector3 vector = new Math.Vector3(vecX, vecY, vecZ);
+  Math.Point3 expLocation = new Math.Point3(expX, expY, expZ);
+  collider.collide(region, loc, vector);
+  
+  if ((collider.location != expLocation) || (collider.touching != expTouching)) {
+    args.error("Testing collide: Failed\n");
+    args.error("  Region:   $region\n");
+    args.error("  Start:    $loc\n");
+    args.error("  Vector:   $vector\n");
+    args.error("  Expected: Collider($expLocation, $expTouching)\n");
     args.error("  Gotten:   $collider\n");
     args.info("\n");
   } else {
-    args.info("Testing collide($starts, $vector): Passed\n");
+    args.info("Testing collide: Passed\n");
+    args.info("  Region:   $region\n");
+    args.info("  Start:    $loc\n");
+    args.info("  Vector:   $vector\n");
     args.info("  Gotten:   $collider\n");
+    args.info("\n");
   }
 }
-
-void _checkCollideY(TestArgs args, craft.World world, double startY, double dy,
-  double expEndY, [bool touchingGround = false, double x = 0.0, double z = 0.0]) {
-  _checkCollide(args, world, [new Math.Point3(x, startY, z)],
-    new Math.Vector3(x, dy, z), new Math.Point3(x, expEndY, z), touchingGround);
-}
-*/

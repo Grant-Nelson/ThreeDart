@@ -68,11 +68,15 @@ class Collider {
       for (BlockInfo y = x; (y != null) && (y.y <= maxXYZ.y); y = y.above) {
         for (BlockInfo z = y; (z != null) && (z.worldZ <= maxWorldZ); z = z.front) {
           if (BlockType.hard(z.value)) {
-            Math.HitRegion sides = z.solidNeighbors().inverse();
-            if (sides != Math.HitRegion.None) {
+            Math.HitRegion sides = z.solidNeighbors();
+            if (sides != Math.HitRegion.Cardinals) {
+              // print(">>--------------------------------------");
+              // print(">> Solids:  $sides");
+              // print(">> Inverse: ${sides.inverse()}");
+              // print(">> Not:     ${Math.HitRegion.Cardinals & ~sides}");
               //print(">> z: ${z.blockRegion} $sides");
               this._blocks.add(z.blockRegion);
-              this._blockSides.add(sides.reverse());
+              this._blockSides.add(Math.HitRegion.Cardinals & ~sides);
               this._hasHit.add(false);
             }
           }
@@ -92,9 +96,9 @@ class Collider {
     //}
 
     //print(">>--------------------------------------");
-    //print(">> loc:    $_loc");
-    //print(">> vector: $_vector");
-    //print(">> region: $region");
+    // print(">> loc:    $_loc");
+    // print(">> vector: $_vector");
+    // print(">> region: $region");
 
     Math.IntersectionBetweenMovingRegions hit = null;
     Math.Region3 hitBlock = null;
@@ -118,8 +122,8 @@ class Collider {
     if (hit == null) return false;
     this._hasHit[hitIndex] = true;
 
-    //print(">> result:   $hit");
-    //print(">> hitBlock: $hitBlock");
+    // print(">> result:   $hit");
+    // print(">> hitBlock: $hitBlock");
     if (hit.region == Math.HitRegion.Inside) {
       throw Exception("WHAT?!? HOW?!?");
       // double dy = this._region.x+this._region.dx-hitBlock.x;

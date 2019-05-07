@@ -66,7 +66,7 @@ class HitRegion {
   HitRegion operator&(HitRegion right) =>
     new HitRegion._(this._value&right._value);
 
-  /// Gets the opposite value of this hit region value.
+  /// Gets the opposite value of this hit region value from All.
   HitRegion operator ~() =>
     new HitRegion._(All._value & ~this._value);
 
@@ -77,19 +77,6 @@ class HitRegion {
     if ((0x0005 & value) != 0x0000) result |= (0x0005 - (0x0005 & value));
     if ((0x0028 & value) != 0x0000) result |= (0x0028 - (0x0028 & value));
     if ((0x0140 & value) != 0x0000) result |= (0x0140 - (0x0140 & value));
-    return new HitRegion._(result);
-  }
-
-  /// Gets the reversed direction of the region.
-  HitRegion reverse() {
-    int value = this._value;
-    int result = 0x0000;
-    if ((0x0001 & value) != 0x0000) result |= 0x0004;
-    if ((0x0004 & value) != 0x0000) result |= 0x0001;
-    if ((0x0008 & value) != 0x0000) result |= 0x0020;
-    if ((0x0020 & value) != 0x0000) result |= 0x0008;
-    if ((0x0040 & value) != 0x0000) result |= 0x0100;
-    if ((0x0100 & value) != 0x0000) result |= 0x0040;
     return new HitRegion._(result);
   }
 

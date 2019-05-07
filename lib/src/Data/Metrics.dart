@@ -43,6 +43,8 @@ class Metrics {
 
   /// Gets the entry in the data for the given name.
   List<double> _getData(String name) {
+    if (name == "frame")
+      throw new Exception("\"frame\" is a reserved name");
     int index = this._titles.indexOf(name);
     if (index >= 0) return this._data[index];
 
@@ -73,14 +75,14 @@ class Metrics {
   String toString() {
     int width = this._data.length;
     if (width <= 0) return "";
-    String result = this._titles.join(", ");
+    String result = "frame, "+this._titles.join(", ");
     int count = this._data[0].length;
     for (int i = 0; i < count; i++) {
       List<String> parts = new List<String>.filled(width, "");
       for (int j = 0; j < width; j++) {
         parts[j] = this._data[j][i].toString();
       }
-      result += "\n"+parts.join(", ");
+      result += "\n"+i.toString()+", "+parts.join(", ");
     }
     return result;
   }

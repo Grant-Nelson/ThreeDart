@@ -265,7 +265,7 @@ class Player {
     Math.Vector3 vector = new Math.Vector3.fromPoint3(loc-prev);
     if (vector.length2() < Constants.maxCollisionSpeedSquared) {
       this._collider.collide(Constants.playerRegion, prev, vector);
-      this._touchingGround = this._collider.touching.has(Math.HitRegion.YNeg);
+      this._touchingGround = this._collider.touching.has(Math.HitRegion.YPos);
 
       if (this._metrics.enabled) { // TODO: REMOVE
         this._metrics

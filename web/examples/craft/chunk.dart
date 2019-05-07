@@ -210,4 +210,22 @@ class Chunk {
     bool enabled = dot > 0.0;
     this._enabled = enabled;
   }
+
+  // TODO: REMOVE
+  // /// Gets a string filled with X's where hard blocks are in the given y layer.
+  // String layerToString(int y) {
+  //   if (y < 0)                     return "";
+  //   if (y >= Constants.chunkYSize) return "";
+  //   String result = "";
+  //   result += "0, $y, 0 => ${this._index(x, y, z)}\n";
+
+  //   for (int z = 0; z < Constants.chunkSideSize; z++) {
+  //     for (int x = 0; x < Constants.chunkSideSize; x++) {
+  //       bool hard = BlockType.hard(this._data[this._index(x, y, z)]);
+  //       result += hard? "X": " ";
+  //     }
+  //     result += "\n";
+  //   }
+  //   return result;
+  // }
 }
