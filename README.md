@@ -9,7 +9,7 @@
 ## Setup
 
 - Clone this repo locally
-- Install [Dart 2.0](https://webdev.dartlang.org/)
+- Install [Dart 2.1.1](https://webdev.dartlang.org/)
 - Run `pub get`
 
 ## Running

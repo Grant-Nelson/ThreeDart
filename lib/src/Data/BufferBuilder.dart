@@ -14,7 +14,7 @@ abstract class BufferBuilder {
 class WebGLBufferBuilder implements BufferBuilder {
 
   /// The rendering context to create buffers for.
-  WebGL.RenderingContext _gl;
+  WebGL.RenderingContext2 _gl;
 
   /// Creates a new WebGL buffer builder.
   WebGLBufferBuilder(this._gl);

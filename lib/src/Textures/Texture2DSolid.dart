@@ -26,7 +26,7 @@ class Texture2DSolid extends Texture2D {
   }
 
   /// Creates a new 2D image from the given [width] and [height].
-  factory Texture2DSolid.fromSize(WebGL.RenderingContext gl, int width, int height, {bool wrapEdges: false}) {
+  factory Texture2DSolid.fromSize(WebGL.RenderingContext2 gl, int width, int height, {bool wrapEdges: false}) {
     int maxSize = gl.getParameter(WebGL.WebGL.MAX_TEXTURE_SIZE);
     int aWidth  = Math.nearestPower(width);
     int aHeight = Math.nearestPower(height);

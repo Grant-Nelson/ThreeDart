@@ -60,7 +60,7 @@ class Skybox extends Shader {
   }
 
   /// Compiles this shader for the given rendering context.
-  Skybox(WebGL.RenderingContext gl): super(gl, defaultName) {
+  Skybox(WebGL.RenderingContext2 gl): super(gl, defaultName) {
     this.initialize(_vertexSource, _fragmentSource);
     this._posAttr = this.attributes["posAttr"];
     this._fov     = this.uniforms["fov"] as Uniform1f;

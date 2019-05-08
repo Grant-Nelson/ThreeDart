@@ -4,7 +4,7 @@ part of ThreeDart.Shaders;
 abstract class Uniform {
 
   /// The rendering context for the uniform variable.
-  final WebGL.RenderingContext _gl;
+  final WebGL.RenderingContext2 _gl;
 
   /// The program for the shader.
   final WebGL.Program _program;
