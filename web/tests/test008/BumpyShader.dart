@@ -81,7 +81,7 @@ class BumpyShader extends Shaders.Shader {
   }
 
   /// Compiles this shader for the given rendering context.
-  BumpyShader(WebGL.RenderingContext gl): super(gl, defaultName) {
+  BumpyShader(WebGL.RenderingContext2 gl): super(gl, defaultName) {
     this.initialize(_vertexSource, _fragmentSource);
     this._posAttr      = this.attributes["posAttr"];
     this._normAttr     = this.attributes["normAttr"];

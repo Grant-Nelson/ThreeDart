@@ -78,7 +78,7 @@ class Inspection extends Shader {
   }
 
   /// Compiles this shader for the given rendering context.
-  Inspection(WebGL.RenderingContext gl): super(gl, defaultName) {
+  Inspection(WebGL.RenderingContext2 gl): super(gl, defaultName) {
     this.initialize(_vertexSource, _fragmentSource);
     this._posAttr           = this.attributes["posAttr"];
     this._normAttr          = this.attributes["normAttr"];

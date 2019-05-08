@@ -20,7 +20,7 @@ class WebGLBuffer implements Buffer {
 
   /// Creates a new WebGL buffer from a double list of data.
   /// Typically used for creating a vertex buffer, ARRAY_BUFFER.
-  factory WebGLBuffer.fromDoubleList(WebGL.RenderingContext gl, int bufType, List<double> data) {
+  factory WebGLBuffer.fromDoubleList(WebGL.RenderingContext2 gl, int bufType, List<double> data) {
     WebGL.Buffer buffer = gl.createBuffer();
     gl.bindBuffer(bufType, buffer);
     gl.bufferData(bufType, new Typed.Float32List.fromList(data), WebGL.WebGL.STATIC_DRAW);
@@ -30,7 +30,7 @@ class WebGLBuffer implements Buffer {
 
   /// Creates a new WebGL buffer from a integer list of data.
   /// Typically used for creating an index buffer, ELEMENT_ARRAY_BUFFER.
-  factory WebGLBuffer.fromIntList(WebGL.RenderingContext gl, int bufType, List<int> data) {
+  factory WebGLBuffer.fromIntList(WebGL.RenderingContext2 gl, int bufType, List<int> data) {
     WebGL.Buffer buffer = gl.createBuffer();
     gl.bindBuffer(bufType, buffer);
     gl.bufferData(bufType, new Typed.Int16List.fromList(data), WebGL.WebGL.STATIC_DRAW);

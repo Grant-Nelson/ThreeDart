@@ -33,7 +33,7 @@ class Normal extends Shader {
   }
 
   /// Compiles this shader for the given rendering context.
-  Normal(NormalConfig cfg,  WebGL.RenderingContext gl): super(gl, cfg.name) {
+  Normal(NormalConfig cfg,  WebGL.RenderingContext2 gl): super(gl, cfg.name) {
     this._cfg = cfg;
     String vertexSource = this._cfg.createVertexSource();
     String fragmentSource = this._cfg.createFragmentSource();

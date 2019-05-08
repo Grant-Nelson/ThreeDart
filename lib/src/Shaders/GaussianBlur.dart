@@ -113,7 +113,7 @@ class GaussianBlur extends Shader {
   }
 
   /// Compiles this shader for the given rendering context.
-  GaussianBlur(WebGL.RenderingContext gl): super(gl, defaultName) {
+  GaussianBlur(WebGL.RenderingContext2 gl): super(gl, defaultName) {
     this.initialize(_vertexSource, _fragmentSource);
     this._posAttr        = this.attributes["posAttr"];
     this._txtAttr        = this.attributes["txtAttr"];

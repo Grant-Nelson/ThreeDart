@@ -10,7 +10,7 @@ class ThreeDart implements Events.Changable {
   html.CanvasElement _canvas;
 
   /// The rendering context to draw with.
-  WebGL.RenderingContext _gl;
+  WebGL.RenderingContext2 _gl;
 
   /// The current scene to draw.
   Scenes.Scene _scene;
@@ -96,8 +96,8 @@ class ThreeDart implements Events.Changable {
     if (canvas == null) {
       throw new Exception("May not create a manager from a null canvas.");
     }
-    WebGL.RenderingContext gl = canvas.getContext3d(
-        alpha: alpha, depth: depth, stencil: stencil, antialias: antialias);
+    WebGL.RenderingContext2 gl = canvas.getContext("webgl2",
+        {"alpha": alpha, "depth": depth, "stencil": stencil, "antialias": antialias});
     if (gl == null) {
       throw new Exception("Failed to get the rendering context for WebGL.");
     }

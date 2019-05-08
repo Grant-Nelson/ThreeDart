@@ -7,12 +7,12 @@ class TextureReader {
   int _height;
 
   /// Reads the entire given [texture] into the reader buffer.
-  factory TextureReader.readAll(WebGL.RenderingContext gl, Texture2D texture) {
+  factory TextureReader.readAll(WebGL.RenderingContext2 gl, Texture2D texture) {
     return new TextureReader.read(gl, texture, 0, 0, texture.actualWidth, texture.actualHeight);
   }
 
   /// Reads the given range of the given [texture] into the reader buffer.
-  factory TextureReader.read(WebGL.RenderingContext gl, Texture2D texture, int x, int y, int width, int height) {
+  factory TextureReader.read(WebGL.RenderingContext2 gl, Texture2D texture, int x, int y, int width, int height) {
     WebGL.Framebuffer fb = gl.createFramebuffer();
     gl.bindFramebuffer(WebGL.WebGL.FRAMEBUFFER, fb);
     gl.framebufferTexture2D(WebGL.WebGL.FRAMEBUFFER, WebGL.WebGL.COLOR_ATTACHMENT0, WebGL.WebGL.TEXTURE_2D, texture.texture, 0);
