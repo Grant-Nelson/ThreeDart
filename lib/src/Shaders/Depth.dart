@@ -61,7 +61,7 @@ class Depth extends Shader {
   }
 
   /// Compiles this shader for the given rendering context.
-  Depth(WebGL.RenderingContext gl): super(gl, defaultName) {
+  Depth(WebGL.RenderingContext2 gl): super(gl, defaultName) {
     this.initialize(_vertexSource, _fragmentSource);
     this._posAttr    = this.attributes["posAttr"];
     this._objClr     = this.uniforms["objClr"] as Uniform3f;

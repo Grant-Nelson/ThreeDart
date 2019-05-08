@@ -191,7 +191,7 @@ class BackTarget extends Target {
   }
 
   /// Initializes the back target.
-  void _initialize(WebGL.RenderingContext gl) {
+  void _initialize(WebGL.RenderingContext2 gl) {
     // Setup color buffer
     this._colorTxt.replace(new Textures.Texture2DSolid.fromSize(gl, this._width, this._height));
     this._colorBuffer  = this._colorTxt.texture;

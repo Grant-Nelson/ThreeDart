@@ -100,7 +100,7 @@ class TextureLayout extends Shader {
   }
 
   /// Compiles this shader for the given rendering context.
-  TextureLayout(int maxTxtCount, WebGL.RenderingContext gl):
+  TextureLayout(int maxTxtCount, WebGL.RenderingContext2 gl):
       super(gl, _getName(maxTxtCount)) {
     this.initialize(_vertexSource(), _fragmentSource(maxTxtCount));
     this._posAttr   = this.attributes["posAttr"];

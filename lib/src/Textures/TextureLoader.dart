@@ -2,7 +2,7 @@ part of ThreeDart.Textures;
 
 /// A loader for loading textures.
 class TextureLoader {
-  WebGL.RenderingContext _gl;
+  WebGL.RenderingContext2 _gl;
   int _max2DSize;
   int _maxCubeSize;
   int _imageCount;

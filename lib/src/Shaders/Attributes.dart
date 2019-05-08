@@ -4,7 +4,7 @@ part of ThreeDart.Shaders;
 class Attribute {
 
   /// The rendering context for the shader.
-  final WebGL.RenderingContext _gl;
+  final WebGL.RenderingContext2 _gl;
 
   /// The name of the attribute in the shader code.
   final String name;

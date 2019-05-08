@@ -441,13 +441,6 @@ class Inspection extends Technique {
     state.gl.enable(WebGL.WebGL.BLEND);
     state.gl.blendFunc(WebGL.WebGL.SRC_ALPHA, WebGL.WebGL.ONE_MINUS_SRC_ALPHA);
 
-    // TODO: Why does POINTS not respect depth tests?
-    // Once they do move these two below with the other DEPTH_TEST disabled.
-    if (this._showVertices)
-      this._render(state, store, obj.shape, 'vertices', this._vertices, this._ambient2, this._diffuse2);
-    if (this._showFaceCenters)
-      this._render(state, store, obj.shape, 'faceCenters', this._faceCenters, this._ambient2, this._diffuse2);
-
     if (this._showFilled)
       this._render(state, store, obj.shape, 'shapeFill', this._shapeFill, this._ambient1, this._diffuse1);
     if (this._showColorFill)
@@ -461,7 +454,12 @@ class Inspection extends Technique {
 
     state.gl.disable(WebGL.WebGL.DEPTH_TEST);
     state.gl.blendFunc(WebGL.WebGL.ONE, WebGL.WebGL.ONE);
-
+    
+    if (this._showVertices)
+      this._render(state, store, obj.shape, 'vertices', this._vertices, this._ambient2, this._diffuse2);
+    if (this._showFaceCenters)
+      this._render(state, store, obj.shape, 'faceCenters', this._faceCenters, this._ambient2, this._diffuse2);
+    
     if (this._showWireFrame)
       this._render(state, store, obj.shape, 'wireFrame', this._wireFrame, this._ambient2, this._diffuse2);
     if (this._showNormals)

@@ -4,7 +4,7 @@ part of ThreeDart.Core;
 class RenderState {
 
   /// The rendering context for this render.
-  WebGL.RenderingContext _gl;
+  WebGL.RenderingContext2 _gl;
 
   /// The canvas being rendered to.
   html.CanvasElement _canvas;
@@ -115,7 +115,7 @@ class RenderState {
   }
 
   /// The rendering context for the render.
-  WebGL.RenderingContext get gl => this._gl;
+  WebGL.RenderingContext2 get gl => this._gl;
 
   /// The canvas being rendered onto.
   html.CanvasElement get canvas => this._canvas;

@@ -2,7 +2,7 @@ part of ThreeDart.Shaders;
 
 /// The base shader object.
 abstract class Shader extends Core.Bindable {
-  WebGL.RenderingContext _gl;
+  WebGL.RenderingContext2 _gl;
   String _name;
 
   String _vertexSourceCode;
