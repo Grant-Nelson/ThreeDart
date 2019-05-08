@@ -157,7 +157,7 @@ class MaterialLight extends Technique {
 
   /// The alpha value or scalar on the alpha texture for the material.
   MaterialLightAlphaComponent get alpha => this._alpha;
-  
+
   /// Gets the vertex source code used for the shader used by this techinique.
   String get vertexSourceCode => this._shader?.vertexSourceCode;
 

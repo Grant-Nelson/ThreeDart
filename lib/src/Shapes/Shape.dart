@@ -436,7 +436,7 @@ class Shape implements ShapeBuilder {
     return store;
   }
 
-  /// Gets the string for the shape 
+  /// Gets the string for the shape
   String toString() => this.format();
 
   /// Gets the formatted string for this shape with and optional [indent].

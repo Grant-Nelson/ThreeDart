@@ -54,7 +54,7 @@ class Board extends ThreeDart.Entity {
     this._add(new King(td, this, true, 1, 5, Math.PI_2, 0.9));
     this._add(new Queen(td, this, false, 8, 4, 0.0, 1.0));
     this._add(new King(td, this, false, 8, 5, Math.PI_2, 0.9));
-    
+
     this.children.add(new Edge(td, this, 0.0, 0.0, 0.0, 0));
     this.children.add(new Edge(td, this, 8.0, 0.0, Math.PI_2, 1));
     this.children.add(new Edge(td, this, 8.0, 8.0, Math.PI, 2));
@@ -70,7 +70,7 @@ class Board extends ThreeDart.Entity {
       )
     ));
   }
-  
+
   Materials get materials => this._mats;
 
   void _add(Piece piece) {

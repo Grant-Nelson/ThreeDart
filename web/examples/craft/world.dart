@@ -11,14 +11,16 @@ class World {
   Chunk _lastChunk;
 
   /// Creates a new world with the given materials.
-  World(this._mats, [int seed = 0]) {
-    this._gen = new Generator(seed);
+  World(this._mats, this._gen) {
     this._graveyard = new List<Chunk>();
     this._chunks = new List<Chunk>();
     this._entities = new List<ThreeDart.Entity>();
     this._lastChunk = null;
-    for (Techniques.MaterialLight tech in this._mats.materials)
-      this.entities.add(new ThreeDart.Entity(tech: tech));
+
+    if (this._mats != null) {
+      for (Techniques.MaterialLight tech in this._mats.materials)
+        this.entities.add(new ThreeDart.Entity(tech: tech));
+    }
 
     // Pre-allocate several chunks into the graveyard.
     for (int i = 0; i < Constants.initialGraveyardSize; i++)
@@ -27,14 +29,9 @@ class World {
     // Preinitialize the starting part of the world.
     for (int x = -Constants.initChunkDist; x < Constants.initChunkDist; x += Constants.chunkSideSize) {
       for (int z = -Constants.initChunkDist; z < Constants.initChunkDist; z += Constants.chunkSideSize) {
-        this._gen.fillChunk(this._prepareChunk(x, z));
+        this._gen.fillChunk(this.prepareChunk(x, z));
       }
     }
-
-    // Start timer for periodically generating chunks and animate.
-    new Timer.periodic(const Duration(milliseconds: Constants.worldTickMs), this._worldTick);
-    new Timer.periodic(const Duration(milliseconds: Constants.generateTickMs), this._generateTick);
-    new Timer.periodic(const Duration(milliseconds: Constants.animationTickMs), this._animationTick);
   }
 
   /// Gets the random noise generator for this world.
@@ -62,46 +59,65 @@ class World {
 
   /// Gets the block closest to thie given location.
   BlockInfo getBlock(double x, double y, double z) {
-    int cx = (x.truncate() ~/ Constants.chunkSideSize) * Constants.chunkSideSize;
-    int cz = (z.truncate() ~/ Constants.chunkSideSize) * Constants.chunkSideSize;
-    if (x < 0.0) cx -= Constants.chunkSideSize;
-    if (z < 0.0) cz -= Constants.chunkSideSize;
+    int tx = x.floor();
+    int ty = y.floor();
+    int tz = z.floor();
+
+    int cx = (tx < 0)? tx - Constants.chunkSideSize + 1: tx;
+    int cz = (tz < 0)? tz - Constants.chunkSideSize + 1: tz;
+    cx = (cx ~/ Constants.chunkSideSize) * Constants.chunkSideSize;
+    cz = (cz ~/ Constants.chunkSideSize) * Constants.chunkSideSize;
     Chunk chunk = this.findChunk(cx, cz);
 
-    int bx = x.floor() - cx;
-    int by = y.floor();
-    int bz = z.floor() - cz;
+    int bx = tx - cx;
+    int by = ty;
+    int bz = tz - cz;
     if (bx < 0) bx += Constants.chunkSideSize;
     if (bz < 0) bz += Constants.chunkSideSize;
 
     return new BlockInfo(bx, by, bz, cx, cz, chunk);
   }
-  
+
+  /// The location of the player in the world.
+  Math.Point3 get _playerPoint => this._player.point ?? Math.Point3.zero;
+
   /// Adds and removes chunks as needed.
-  void _worldTick(Timer timer) {
-    Math.Point3 player = this._player.point;
+  void worldTick(_) {
+    Math.Point3 player = this._playerPoint;
     this._updateLoadedChunks(player);
   }
 
   /// Generates one chunk which is still pending to be loaded.
-  void _generateTick(Timer timer) {
-    Math.Point3 player = this._player.point;
+  void generateTick(_) {
+    Math.Point3 player = this._playerPoint;
     this._generateChunk(player);
     this._refreshDirty(player);
   }
 
   // Animates the water texture.
-  void _animationTick(Timer time) {
+  void animationTick(_) {
     this._mats.waterChanger.nextTexture();
   }
-  
+
   /// Gets a chunk from the graveyard or creates a new one.
   /// This will prepare the chunk for the given [x] and [z] world location.
-  Chunk _prepareChunk(int x, int z) {
+  Chunk prepareChunk(int x, int z) {
     Chunk chunk = this._graveyard.removeLast() ?? new Chunk(this);
     chunk.prepare(x, z);
     this._chunks.add(chunk);
     return chunk;
+  }
+
+  /// Frees the given chunk and puts it in the graveyard
+  /// if the chunk is non-nil and currently in use.
+  /// Returns true if disposed, false if not.
+  bool disposeChunk(Chunk chunk) {
+    if ((chunk != null) && this._chunks.remove(chunk)) {
+      chunk.freeup();
+      this._graveyard.add(chunk);
+      return true;
+    }
+    return false;
   }
 
   /// Updates chunks which are loaded and removes any loaded chunks
@@ -119,12 +135,8 @@ class World {
       for (int i = this._chunks.length-1; i >= 0; i--) {
         Chunk chunk = this._chunks[i];
         if ((minXOut > chunk.x) || (maxXOut <= chunk.x) ||
-            (minZOut > chunk.z) || (maxZOut <= chunk.z)) {
-          Chunk chunk = this._chunks[i];
-          chunk.freeup();
-          this._chunks.remove(chunk);
-          this._graveyard.add(chunk);
-        }
+            (minZOut > chunk.z) || (maxZOut <= chunk.z))
+          this.disposeChunk(this._chunks[i]);
       }
 
       // Add in any missing chunks.
@@ -133,7 +145,7 @@ class World {
       for (int x = minXIn; x < maxXIn; x += Constants.chunkSideSize) {
         for (int z = minZIn; z < maxZIn; z += Constants.chunkSideSize) {
           Chunk oldChunk = this.findChunk(x, z);
-          if (oldChunk == null) this._prepareChunk(x, z);
+          if (oldChunk == null) this.prepareChunk(x, z);
         }
       }
     }
@@ -184,10 +196,22 @@ class World {
     }
   }
 
-  /// Gets the string for debug information to be printed to the console.
-  String debugString() {
-    return "chunks: ${this._chunks.length}, graveyard: ${this._graveyard.length}, player: ${this._player.point}";
+  /// Gets the neighboring block to the given block with the
+  /// given [ray] pointing at the side to get the neighbor for.
+  NeighborBlockInfo getNeighborBlock(BlockInfo info, Math.Ray3 ray, Math.Ray3 back, int depth) {
+    Math.Region3 region = info.blockRegion;
+    Math.IntersectionRayRegion3 inter = region.rayIntersection(back);
+
+    if (inter == null) return null;
+    else info = info.neighbor(inter.region);
+    if (info == null) return null;
+
+    return new NeighborBlockInfo(info, inter.region, ray, depth);
   }
+
+  /// Gets the string for debug information to be printed to the console.
+  String debugString() =>
+    "chunks: ${this._chunks.length}, graveyard: ${this._graveyard.length}, player: ${this._playerPoint}";
 
   /// Updates the world to the player's view.
   void update(Events.EventArgs args) {

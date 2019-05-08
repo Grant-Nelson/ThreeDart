@@ -4,7 +4,9 @@ import 'dart:math' as math;
 
 part 'Color3.dart';
 part 'Color4.dart';
+part 'CustomComparer.dart';
 part 'Comparer.dart';
+part 'EpsilonComparer.dart';
 part 'HitRegion.dart';
 part 'Intersection.dart';
 part 'Matrix2.dart';
@@ -66,6 +68,16 @@ double wrapVal(double v, [double min = 0.0, double max = 1.0]) {
   return v + min;
 }
 
+/// Determines if the given [v] value is in the given range [min] inclusive and [max] exclusive.
+bool inRange(double v, double min, double max) =>
+  Comparer.lessThanEquals(min, v) &&
+  Comparer.lessThan(v, max);
+
+/// Determines if the given range A overlaps range B at any point.
+bool rangeOverlap(double minA, double maxA, double minB, double maxB) =>
+  Comparer.lessThanEquals(minB, maxA) &&
+  Comparer.lessThanEquals(minA, maxB);
+
 /// Determines the difference between the two times in seconds.
 ///
 /// [a] is the older time and [b] is the newer time.
@@ -79,7 +91,7 @@ double diffInSecs(DateTime a, DateTime b) =>
 /// [whole] is the padding to put to the left of the number.
 String formatDouble(double v, [int fraction = 3, int whole = 0]) {
   if (v == null) return "null".padLeft(whole);
-  if (Comparer.currentEquality(v, 0.0)) v = 0.0;
+  if (Comparer.equals(v, 0.0)) v = 0.0;
   return v.toStringAsFixed(fraction).padLeft(whole + fraction + 1);
 }
 

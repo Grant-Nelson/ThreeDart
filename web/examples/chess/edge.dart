@@ -13,8 +13,8 @@ class Edge extends ThreeDart.Entity {
           _shapeEntity.shape = loadedEntity.shape;
         });
     }
-    
-    this.mover = new Movers.Constant( 
+
+    this.mover = new Movers.Constant(
       new Math.Matrix4.translate(dx-4.0, 0.0, dz-4.0)*
       new Math.Matrix4.rotateY(angle));
     this.name = "edge";

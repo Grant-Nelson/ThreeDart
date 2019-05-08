@@ -20,13 +20,13 @@ class Materials {
     Lights.Directional topLight = new Lights.Directional()
       ..color = Math.Color3(1.0, 0.9, 0.8)
       ..direction = Math.Vector3(0.0, -1.0, -0.25);
-      
+
     Lights.Directional bollomLight = new Lights.Directional()
       ..color = Math.Color3(0.0, 0.1, 0.3)
       ..direction = Math.Vector3(0.0, 1.0, 0.25);
 
     Math.Color3 pieceReflection = new Math.Color3.gray(0.15);
-    
+
     this._whitePieceTech = Techniques.MaterialLight()
       ..diffuse.color = new Math.Color3.gray(0.6)
       ..ambient.color = new Math.Color3.gray(0.4)
@@ -36,7 +36,7 @@ class Materials {
       ..reflection.color = pieceReflection
       ..lights.add(topLight)
       ..lights.add(bollomLight);
-      
+
     this._blackPieceTech = Techniques.MaterialLight()
       ..diffuse.color = new Math.Color3.gray(0.2)
       ..ambient.color = new Math.Color3.gray(0.1)
@@ -46,7 +46,7 @@ class Materials {
       ..reflection.color = pieceReflection
       ..lights.add(topLight)
       ..lights.add(bollomLight);
-      
+
     this._selectedWhitePieceTech = Techniques.MaterialLight()
       ..diffuse.color = new Math.Color3(0.6, 0.0, 0.0)
       ..ambient.color = new Math.Color3(0.8, 0.0, 0.0)
@@ -56,7 +56,7 @@ class Materials {
       ..reflection.color = pieceReflection
       ..lights.add(topLight)
       ..lights.add(bollomLight);
-      
+
     this._selectedBlackPieceTech = Techniques.MaterialLight()
       ..diffuse.color = new Math.Color3(0.2, 0.0, 0.0)
       ..ambient.color = new Math.Color3(0.6, 0.0, 0.0)
@@ -66,7 +66,7 @@ class Materials {
       ..reflection.color = pieceReflection
       ..lights.add(topLight)
       ..lights.add(bollomLight);
-    
+
     Math.Color3 tileReflection = new Math.Color3.gray(0.075);
 
     this._whiteTileTech = Techniques.MaterialLight()
@@ -78,7 +78,7 @@ class Materials {
       ..reflection.color = tileReflection
       ..lights.add(topLight)
       ..lights.add(bollomLight);
-      
+
     this._blackTileTech = Techniques.MaterialLight()
       ..diffuse.color = new Math.Color3.gray(0.2)
       ..ambient.color = new Math.Color3.gray(0.1)
@@ -88,7 +88,7 @@ class Materials {
       ..reflection.color = tileReflection
       ..lights.add(topLight)
       ..lights.add(bollomLight);
-      
+
     this._selectedWhiteTileTech = Techniques.MaterialLight()
       ..diffuse.color = new Math.Color3(0.6, 0.0, 0.0)
       ..ambient.color = new Math.Color3(0.8, 0.0, 0.0)
@@ -98,7 +98,7 @@ class Materials {
       ..reflection.color = tileReflection
       ..lights.add(topLight)
       ..lights.add(bollomLight);
-      
+
     this._selectedBlackTileTech = Techniques.MaterialLight()
       ..diffuse.color = new Math.Color3(0.2, 0.0, 0.0)
       ..ambient.color = new Math.Color3(0.6, 0.0, 0.0)

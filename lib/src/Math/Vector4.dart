@@ -9,56 +9,56 @@ class Vector4 {
     return _zeroSingleton;
   }
   static Vector4 _zeroSingleton;
-  
+
   /// Gets a new positive X [Vector4].
   static Vector4 get posX {
     _posXSingleton ??= new Vector4(1.0, 0.0, 0.0, 0.0);
     return _posXSingleton;
   }
   static Vector4 _posXSingleton;
-  
+
   /// Gets a new negative X [Vector4].
   static Vector4 get negX {
     _negXSingleton ??= new Vector4(-1.0, 0.0, 0.0, 0.0);
     return _negXSingleton;
   }
   static Vector4 _negXSingleton;
-  
+
   /// Gets a new positive Y [Vector4].
   static Vector4 get posY {
     _posYSingleton ??= new Vector4(0.0, 1.0, 0.0, 0.0);
     return _posYSingleton;
   }
   static Vector4 _posYSingleton;
-  
+
   /// Gets a new negative Y [Vector4].
   static Vector4 get negY {
     _negYSingleton ??= new Vector4(0.0, -1.0, 0.0, 0.0);
     return _negYSingleton;
   }
   static Vector4 _negYSingleton;
-  
+
   /// Gets a new positive Z [Vector4].
   static Vector4 get posZ {
     _posZSingleton ??= new Vector4(0.0, 0.0, 1.0, 0.0);
     return _posZSingleton;
   }
   static Vector4 _posZSingleton;
-  
+
   /// Gets a new negative Z [Vector4].
   static Vector4 get negZ {
     _negZSingleton ??= new Vector4(0.0, 0.0, -1.0, 0.0);
     return _negZSingleton;
   }
   static Vector4 _negZSingleton;
-  
+
   /// Gets a new positive W [Vector4].
   static Vector4 get posW {
     _posWSingleton ??= new Vector4(0.0, 0.0, 0.0, 1.0);
     return _posWSingleton;
   }
   static Vector4 _posWSingleton;
-  
+
   /// Gets a new negative W [Vector4].
   static Vector4 get negW {
     _negWSingleton ??= new Vector4(0.0, 0.0, 0.0, -1.0);
@@ -118,7 +118,20 @@ class Vector4 {
   }
 
   /// Gets an list of 4 doubles in the order dX, dY, dZ, then dW.
-  List<double> toList() => [this.dx, this.dy, this.dz, this.dw];
+  List<double> toList() =>
+    [this.dx, this.dy, this.dz, this.dw];
+
+  /// Gets the value at the zero based index in the order dX, dY, dZ, then dW.
+  /// If out-of-bounds, zero is returned.
+  double atIndex(int i) {
+    switch(i) {
+      case 0: return this.dx;
+      case 1: return this.dy;
+      case 2: return this.dz;
+      case 3: return this.dw;
+    }
+    return 0.0;
+  }
 
   /// The length squared of this vector.
   double length2() => this.dot(this);

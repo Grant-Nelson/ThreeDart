@@ -73,6 +73,18 @@ class Color4 {
   List<double> toList() =>
       [this.red, this.green, this.blue, this.alpha];
 
+  /// Gets the value at the zero based index in the order red, green, blue, then alpha.
+  /// If out-of-bounds, zero is returned.
+  double atIndex(int i) {
+    switch(i) {
+      case 0: return this.red;
+      case 1: return this.green;
+      case 2: return this.blue;
+      case 3: return this.alpha;
+    }
+    return 0.0;
+  }
+
   /// Inverts the color, creating the complement color and inverted translucency.
   Color4 invert() =>
     new Color4._(1.0 - this.red, 1.0 - this.green, 1.0 - this.blue, 1.0 - this.alpha);
@@ -127,7 +139,7 @@ class Color4 {
     if (!Comparer.equals(clr.alpha, this.alpha)) return false;
     return true;
   }
-  
+
   /// Gets the string for this color.
   String toString() => this.format();
 

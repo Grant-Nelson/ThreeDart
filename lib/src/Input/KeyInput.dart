@@ -55,7 +55,7 @@ class KeyInput {
 
   /// The set of key codes which arecurrently pressed.
   Set<int> get pressed => this._pressed;
-  
+
   /// Indicates if the modifier keys currently pressed.
   Modifiers get modifiers => this._mods;
 

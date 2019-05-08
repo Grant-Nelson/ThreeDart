@@ -10,14 +10,21 @@ class Region3 {
     return _zeroSingleton;
   }
   static Region3 _zeroSingleton;
-  
-  /// Gets a [Region2] at the origin with a width, height, and depth of 1.
+
+  /// Gets a [Region3] at the origin with a width, height, and depth of 1.
   static Region3 get unit {
     _unitSingleton ??= new Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
     return _unitSingleton;
   }
   static Region3 _unitSingleton;
-  
+
+  /// Gets a [Region3] at the origin with a width, height, and depth of 2 centerd on origin.
+  static Region3 get unit2 {
+    _unit2Singleton ??= new Region3(-1.0, -1.0, -1.0, 2.0, 2.0, 2.0);
+    return _unit2Singleton;
+  }
+  static Region3 _unit2Singleton;
+
   /// The left edge component of the region.
   final double x;
 
@@ -126,9 +133,34 @@ class Region3 {
     return new Region3._(x, y, z, dx, dy, dz);
   }
 
+  /// Expands the region to include the given region components.
+  Region3 expandWithRegion(Region3 region) {
+    double x1 = math.min(this.x, region.x);
+    double x2 = math.max(this.x+this.dx, region.x+region.dx);
+    double y1 = math.min(this.y, region.y);
+    double y2 = math.max(this.y+this.dy, region.y+region.dy);
+    double z1 = math.min(this.z, region.z);
+    double z2 = math.max(this.z+this.dz, region.z+region.dz);
+    return new Region3._(x1, y1, z1, x2-x1, y2-y1, z2-z1);
+  }
+
   /// Gets an list of 6 doubles in the order x, y, z, dx, dy, then dz.
   List<double> toList() =>
     [this.x, this.y, this.z, this.dx, this.dy, this.dz];
+
+  /// Gets the value at the zero based index in the order x, y, z, dx, dy, then dz.
+  /// If out-of-bounds, zero is returned.
+  double atIndex(int i) {
+    switch(i) {
+      case 0: return this.x;
+      case 1: return this.y;
+      case 2: return this.z;
+      case 3: return this.dx;
+      case 4: return this.dy;
+      case 5: return this.dz;
+    }
+    return 0.0;
+  }
 
   /// The minimum side of the region.
   double get minSide {
@@ -273,49 +305,146 @@ class Region3 {
     switch (which) {
     case 0: // intersect with yz plane
       double y = ray.y + ray.dy*xt;
-      if (y < this.y || y > maxy) return null;
+      if (!inRange(y, this.y, maxy)) return null;
       double z = ray.z + ray.dz*xt;
-      if (z < this.z || z > maxz) return null;
+      if (!inRange(z, this.z, maxz)) return null;
       return new IntersectionRayRegion3(new Point3(xp, y, z), new Vector3(xn, 0.0, 0.0), xt, xregion);
 
     case 1: // intersect with xz plane
       double x = ray.x + ray.dx*yt;
-      if (x < this.x || x > maxx) return null;
+      if (!inRange(x, this.x, maxx)) return null;
       double z = ray.z + ray.dz*yt;
-      if (z < this.z || z > maxz) return null;
+      if (!inRange(z, this.z, maxz)) return null;
       return new IntersectionRayRegion3(new Point3(x, yp, z), new Vector3(0.0, yn, 0.0), yt, yregion);
 
     default: // 2, intersect with xy plane
       double x = ray.x + ray.dx*zt;
-      if (x < this.x || x > maxx) return null;
+      if (!inRange(x, this.x, maxx)) return null;
       double y = ray.y + ray.dy*zt;
-      if (y < this.y || y > maxy) return null;
+      if (!inRange(y, this.y, maxy)) return null;
       return new IntersectionRayRegion3(new Point3(x, y, zp), new Vector3(0.0, 0.0, zn), zt, zregion);
     }
   }
 
-  /// Determines if the given point is contained inside this region.
-  bool contains(Point3 a) {
-    if (a.x < this.x) return false;
-    else if (a.x >= this.x+this.dx) return false;
+  /// Determines the collision between this region moving with the given [vector]
+  /// and the other region, the [target], not moving.
+  /// This will not detect collisions where the two rectangles are already within
+  /// eachother, this is so that "already hit" can be handled as needed.
+  IntersectionBetweenMovingRegions collision(Region3 target, Vector3 vector, [HitRegion sides = null]) {
+    sides ??= HitRegion.All;
+    double t = 100.0, d;
+    HitRegion region = HitRegion.None, edge;
+    bool edgeTest;
 
-    if (a.y < this.y) return false;
-    else if (a.y >= this.y+this.dy) return false;
+    if (vector.dx != 0.0) {
+      edgeTest = false;
+      if (vector.dx > 0.0) {
+        if (sides.has(HitRegion.XNeg)) {
+          edge = HitRegion.XNeg;
+          edgeTest = true;
+          if (Comparer.equals(target.x, this.x + this.dx)) d = 0.0;
+          else d = (target.x - (this.x + this.dx)) / vector.dx;
+        }
+      } else {
+        if (sides.has(HitRegion.XPos)) {
+          edge = HitRegion.XPos;
+          edgeTest = true;
+          if (Comparer.equals(target.x + target.dx, this.x)) d = 0.0;
+          else d = ((target.x + target.dx) - this.x) / vector.dx;
+        }
+      }
 
-    if (a.z < this.z) return false;
-    else if (a.z >= this.z+this.dz) return false;
+      if (edgeTest && (d < t) && (d >= 0.0) && (d <= 1.0)) {
+        double y = this.y + vector.dy*d;
+        if (rangeOverlap(target.y, target.y + target.dy, y, y + this.dy)) {
+          double z = this.z + vector.dz*d;
+          if (rangeOverlap(target.z, target.z + target.dz, z, z + this.dz)) {
+            t = d;
+            region = edge;
+          }
+        }
+      }
+    }
 
-    return true;
+    if (vector.dy != 0.0) {
+      edgeTest = false;
+      if (vector.dy > 0.0) {
+        if (sides.has(HitRegion.YNeg)) {
+          edge = HitRegion.YNeg;
+          edgeTest = true;
+          if (Comparer.equals(target.y, this.y + this.dy)) d = 0.0;
+          else d = (target.y - (this.y + this.dy)) / vector.dy;
+        }
+      } else {
+        if (sides.has(HitRegion.YPos)) {
+          edge = HitRegion.YPos;
+          edgeTest = true;
+          if (Comparer.equals(target.y + target.dy, this.y)) d = 0.0;
+          else d = ((target.y + target.dy) - this.y) / vector.dy;
+        }
+      }
+
+      if (edgeTest && (d < t) && (d >= 0.0) && (d <= 1.0)) {
+        double x = this.x + vector.dx*d;
+        if (rangeOverlap(target.x, target.x + target.dx, x, x + this.dx)) {
+          double z = this.z + vector.dz*d;
+          if (rangeOverlap(target.z, target.z + target.dz, z, z + this.dz)) {
+            t = d;
+            region = edge;
+          }
+        }
+      }
+    }
+
+    if (vector.dz != 0.0) {
+      edgeTest = false;
+      if (vector.dz > 0.0) {
+        if (sides.has(HitRegion.ZNeg)) {
+          edge = HitRegion.ZNeg;
+          edgeTest = true;
+          if (Comparer.equals(target.z, this.z + this.dz)) d = 0.0;
+          else d = (target.z - (this.z + this.dz)) / vector.dz;
+        }
+      } else {
+        if (sides.has(HitRegion.ZPos)) {
+          edge = HitRegion.ZPos;
+          edgeTest = true;
+          if (Comparer.equals(target.z + target.dz, this.z)) d = 0.0;
+          else d = ((target.z + target.dz) - this.z) / vector.dz;
+        }
+      }
+
+      if (edgeTest && (d < t) && (d >= 0.0) && (d <= 1.0)) {
+        double x = this.x + vector.dx*d;
+        if (rangeOverlap(target.x, target.x + target.dx, x, x + this.dx)) {
+          double y = this.y + vector.dy*d;
+          if (rangeOverlap(target.y, target.y + target.dy, y, y + this.dy)) {
+            t = d;
+            region = edge;
+          }
+        }
+      }
+    }
+
+    if (region == HitRegion.None) return null;
+    return new IntersectionBetweenMovingRegions(t, region);
   }
 
+  /// Determines if the given point is contained inside this region.
+  bool contains(Point3 a) =>
+    inRange(a.x, this.x, this.x+this.dx) &&
+    inRange(a.y, this.y, this.y+this.dy) &&
+    inRange(a.z, this.z, this.z+this.dz);
+
   /// Determines if the two regions overlap even partually.
-  bool overlap(Region3 a) =>
-    (a.x <= this.x + this.dx) &&
-    (a.y <= this.y + this.dy) &&
-    (a.z <= this.z + this.dz) &&
-    (a.x + a.dx >= this.x) &&
-    (a.y + a.dy >= this.y) &&
-    (a.z + a.dz >= this.z);
+  bool overlaps(Region3 a) =>
+    rangeOverlap(a.x, a.x + a.dx, this.x, this.x + this.dx) &&
+    rangeOverlap(a.y, a.y + a.dy, this.y, this.y + this.dy) &&
+    rangeOverlap(a.z, a.z + a.dz, this.z, this.z + this.dz);
+
+  /// Creates a new [Region3] as a translation of the other given region.
+  Region3 translate(Vector3 offset) =>
+    new Region3(this.x+offset.dx, this.y+offset.dy, this.z+offset.dz, this.dx, this.dy, this.dz);
 
   /// Determines if the given [other] variable is a [Region3] equal to this region.
   ///

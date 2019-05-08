@@ -79,7 +79,7 @@ class Key {
 
   /// The key modifiers.
   final Modifiers modifiers;
-  
+
   /// The control key modifier.
   bool get ctrl => this.modifiers.ctrl;
 

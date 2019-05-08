@@ -23,7 +23,7 @@ class Tile extends ThreeDart.Entity {
     this._selected = false;
     this.name = (this._white?"white":"black")+" tile ${this._row} ${this._column}";
     this.children.add(_shapeEntity);
-    
+
     this._updateTech();
   }
 

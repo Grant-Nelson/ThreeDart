@@ -230,7 +230,7 @@ class UserRotater implements Mover, Input.Interactable {
       this._pitch.velocity = -this._prevVal.dy*10.0*this._pitchScalar;
       this._onChanged();
     }
-  }  
+  }
 
   /// Handle the change in the mouse pointer lock.
   void _lockChangedHandle(Events.EventArgs args) {
@@ -268,13 +268,13 @@ class UserRotater implements Mover, Input.Interactable {
   /// Handle the touch screen move.
   void _touchMoveHandle(Events.EventArgs args) {
     Input.TouchEventArgs targs = (args as Input.TouchEventArgs);
-    
+
     if (!this._pressed) return;
     if (this._inDeadBand) {
       if (targs.rawOffset.length2() < this._deadBand2) return;
       this._inDeadBand = false;
     }
-    
+
     if (this._cumulative) {
       this._prevVal = this._getInverses(targs.adjustedOffset);
       this._yaw.velocity   = -this._prevVal.dx*10.0*this._yawScalar;

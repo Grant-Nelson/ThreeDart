@@ -7,7 +7,8 @@ class Player {
   World _world;
   bool _touchingGround;
   int _selectedBlockIndex;
-  BlockInfo _highlight;
+  NeighborBlockInfo _highlight;
+  Collider _collider;
 
   Movers.Group _camera;
   Movers.Group _playerLoc;
@@ -21,19 +22,50 @@ class Player {
   List<ThreeDart.Entity> _blockHandEntities;
 
   /// Creates a new player for the world.
-  Player(ThreeDart.ThreeDart td, this._world) {
-    td.userInput.lockOnClick = true;
-    td.userInput.locked
+  Player(Input.UserInput userInput, this._world) {
+    userInput.lockOnClick = true;
+    userInput.locked
       ..horizontalSensitivity = Constants.mouseSensitivity
       ..verticalSensitivity = Constants.mouseSensitivity;
 
-    this._trans = new Movers.UserTranslator(input: td.userInput)
+    // Sets up the key watcher for jumping.
+    new Input.KeyGroup()
+      ..addKey(Input.Key.spacebar)
+      ..attach(userInput)
+      ..keyDown.add(this._onJump);
+    this._touchingGround = true;
+
+    // Sets up the key watcher for changing the selected block value.
+    new Input.KeyGroup()
+      ..addKey(Input.Key.tab)
+      ..addKey(Input.Key.tab, shift: true)
+      ..attach(userInput)
+      ..keyDown.add(this._onBlockCycle);
+
+    // Sets up the watchers for modifying the voxel data of a chunk.
+    new Input.KeyGroup()
+      ..addKey(Input.Key.keyE)
+      ..addKey(Input.Key.keyQ)
+      ..attach(userInput)
+      ..keyDown.add(this._onBlockChange);
+    userInput.locked.down.add(this._onClickBlockChange);
+
+    // Sets up the watcher for returning to the origin.
+    new Input.KeyGroup()
+      ..addKey(Input.Key.keyO)
+      ..attach(userInput)
+      ..keyDown.add(this._onReturnToOrigin);
+
+    // Sets up how the player will move around.
+    this._trans = new Movers.UserTranslator(input: userInput)
       ..offsetX.maximumVelocity = Constants.walkSpeed
       ..offsetY.maximumVelocity = Constants.maxFallSpeed
       ..offsetY.acceleration = Constants.gravity
       ..offsetZ.maximumVelocity = Constants.walkSpeed
       ..collisionHandle = this._handleCollide;
-    this._rot = new Movers.UserRotater.flat(input: td.userInput, locking: true);
+
+    // Sets up how the player will look around.
+    this._rot = new Movers.UserRotater.flat(input: userInput, locking: true);
     this._rot.changed.add((Events.EventArgs args) {
       this._trans.velocityRotation = new Math.Matrix3.rotateY(-this._rot.yaw.location);
     });
@@ -60,33 +92,6 @@ class Player {
       new Movers.Constant.translate(0.0, 0.0, -0.2),
       this._playerLoc]);
 
-    // Sets up the key watcher for jumping.
-    new Input.KeyGroup()
-      ..addKey(Input.Key.spacebar)
-      ..attach(td.userInput)
-      ..keyDown.add(this._onJump);
-    this._touchingGround = true;
-
-    // Sets up the key watcher for changing the selected block value.
-    new Input.KeyGroup()
-      ..addKey(Input.Key.tab)
-      ..addKey(Input.Key.tab, shift: true)
-      ..attach(td.userInput)
-      ..keyDown.add(this._onBlockCycle);
-
-    // Sets up the key watcher for modifying the voxel data of a chunk.
-    new Input.KeyGroup()
-      ..addKey(Input.Key.keyE)
-      ..addKey(Input.Key.keyQ)
-      ..attach(td.userInput)
-      ..keyDown.add(this._onBlockChange);
-    td.userInput.locked.down.add(this._onClickBlockChange);
-
-    new Input.KeyGroup()
-      ..addKey(Input.Key.keyO)
-      ..attach(td.userInput)
-      ..keyDown.add(this._onReturnToOrigin);
-
     // Creates the cross hair entity for drawing the cross hairs.
     this._crossHairs = new ThreeDart.Entity(
       mover: this._crossHairLoc,
@@ -102,6 +107,9 @@ class Player {
       this._blockHandEntities.add(entity);
     }
     this._selectedBlockIndex = 0;
+
+    // Setup collider for handling collition detection for player.
+    this._collider = new Collider(this._world);
 
     // Creates the selection highlight to show which
     this._blockHighlight = new ThreeDart.Entity(tech: this._world.materials.selection);
@@ -128,20 +136,13 @@ class Player {
   void goHome() {
     Chunk chunk = this._world.findChunk(Constants.playerStartX.toInt(), Constants.playerStartZ.toInt());
     int y = chunk?.topHit(Constants.playerStartX.toInt(), Constants.playerStartZ.toInt()) ?? 0;
-    this._trans.location = new Math.Point3(Constants.playerStartX, y.toDouble()+60.0, Constants.playerStartZ);
+    this._trans.location = new Math.Point3(Constants.playerStartX, y.toDouble()+Constants.playerStartYOffset, Constants.playerStartZ);
     this._trans.velocity = Math.Vector3.zero;
   }
 
   /// Handles then the player presses the return to origin button.
   void _onReturnToOrigin(Events.EventArgs args) {
     this.goHome();
-  }
-
-  /// Determines if the block at the given coordinates can not be walked through.
-  bool _isHard(double x, double y, double z) {
-    BlockInfo info = this._world.getBlock(x, y, z);
-    bool hard = BlockType.hard(info.value);
-    return hard;
   }
 
   /// Handles when the player presses the jump key.
@@ -179,172 +180,125 @@ class Player {
   }
 
   /// Modify the voxal values of a chunk.
-  /// If [setBlock] is true then the current block in the hand is set on a neighboring side to the 
+  /// If [setBlock] is true then the current block in the hand is set on a neighboring side to the
   /// highlight, if false then the highlighted block is set to air.
   void _changeBlock(bool setBlock) {
-    if (this._highlight == null) return;
+    if (this._highlight?.info == null) return;
+    BlockInfo info = this._highlight.info;
 
     int blockType = BlockType.Air;
     if (setBlock) {
-      NeighborBlockInfo neighbor = this._getNeighborBlock(this._highlight, this._playerViewTarget());
       blockType = BlockType.PlaceableBlocks[this._selectedBlockIndex];
-      int oldValue = this._highlight.value;
-      this._highlight = neighbor.info;
+      int oldValue = this._highlight.info.value;
+      Math.HitRegion region = this._highlight.region;
 
       // Keep a block from being put on the top of a plant.
-      if (neighbor.region.overlaps(Math.HitRegion.YPos)) {
+      if (region.overlaps(Math.HitRegion.YPos)) {
         if (BlockType.plant(oldValue)) return;
       }
 
       // Keep a plant from being put on water or air.
       if (BlockType.plant(blockType)) {
-        if (!BlockType.solid(new BlockInfo.below(this._highlight).value)) return;
+        if (!BlockType.solid(info.below.value)) return;
       }
 
       // Change the block type based on the side the block is being added to.
       if (blockType == BlockType.TrunkUD) {
-        if (neighbor.region.overlaps(Math.HitRegion.XPos|Math.HitRegion.XNeg)) {
+        if (region.overlaps(Math.HitRegion.XPos|Math.HitRegion.XNeg)) {
           blockType = BlockType.TrunkEW;
-        } else if (neighbor.region.overlaps(Math.HitRegion.ZPos|Math.HitRegion.ZNeg)) {
+        } else if (region.overlaps(Math.HitRegion.ZPos|Math.HitRegion.ZNeg)) {
           blockType = BlockType.TrunkNS;
         }
       } else if (blockType == BlockType.WoodUD) {
-        if (neighbor.region.overlaps(Math.HitRegion.XPos|Math.HitRegion.XNeg)) {
+        if (region.overlaps(Math.HitRegion.XPos|Math.HitRegion.XNeg)) {
           blockType = BlockType.WoodEW;
-        } else if (neighbor.region.overlaps(Math.HitRegion.ZPos|Math.HitRegion.ZNeg)) {
+        } else if (region.overlaps(Math.HitRegion.ZPos|Math.HitRegion.ZNeg)) {
           blockType = BlockType.WoodNS;
         }
       }
+
+      // Move to the neighbor location.
+      info = info.neighbor(region.inverse());
+
+      // Check the block won't be in the player's region.
+      Math.Vector3 playerLoc = new Math.Vector3.fromPoint3(this._trans.location);
+      Math.Region3 playerRect = Constants.playerRegion.translate(playerLoc);
+      if (info.blockRegion.overlaps(playerRect)) return;
     }
 
-    Chunk chunk = this._highlight.chunk;
+    Chunk chunk = info.chunk;
     if (chunk != null) {
       // Apply the new block type.
-      this._highlight.value = blockType;
+      info.value = blockType;
 
       // Remove plant if a plant was above a removed block.
       if (blockType == BlockType.Air) {
-        BlockInfo aboveInfo = new BlockInfo.above(this._highlight);
+        BlockInfo aboveInfo = info.above;
         if (BlockType.plant(aboveInfo.value)) aboveInfo.value = BlockType.Air;
       }
-      
+
       // Indicate which chunks need to be updated.
       chunk.needUpdate = true;
-      if (this._highlight.x <= 0)                           chunk.left?.needUpdate = true;
-      if (this._highlight.z <= 0)                           chunk.back?.needUpdate = true;
-      if (this._highlight.x >= Constants.chunkSideSize - 1) chunk.right?.needUpdate = true;
-      if (this._highlight.z >= Constants.chunkSideSize - 1) chunk.front?.needUpdate = true;
+      if (info.x <= 0)                           chunk.left?.needUpdate = true;
+      if (info.z <= 0)                           chunk.back?.needUpdate = true;
+      if (info.x >= Constants.chunkSideSize - 1) chunk.right?.needUpdate = true;
+      if (info.z >= Constants.chunkSideSize - 1) chunk.front?.needUpdate = true;
     }
   }
 
   /// Handles checking for collision while the player is moving, falling, or jumping.
   Math.Point3 _handleCollide(Math.Point3 prev, Math.Point3 loc) {
-    double x = loc.x, y = loc.y, z = loc.z;
-    double nx = prev.x.floor()+0.5, ny = prev.y.floor()+0.5, nz = prev.z.floor()+0.5;
-    this._touchingGround = false;
-
-    // Check if hitting head
-    if (_isHard(x, y-Constants.collisionPad, z)) {
-      y = ny - Constants.collisionPad;
-      this._trans.offsetY.velocity = 0.0;
+    // Traverse the neighboring blocks using player's movement to find first
+    // hard block checking both head and foot.
+    Math.Vector3 vector = new Math.Vector3.fromPoint3(loc-prev);
+    if (vector.length2() < Constants.maxCollisionSpeedSquared) {
+      this._collider.collide(Constants.playerRegion, prev, vector);
+      this._touchingGround = this._collider.touching.has(Math.HitRegion.YPos);
+      if (this._touchingGround) this._trans.offsetY.velocity = 0.0;
     }
-
-    // Check if touching the ground
-    if (_isHard(x, y-Constants.playerHeight+Constants.collisionPad, z)) {
-      y = ny + Constants.collisionPad;
-      this._trans.offsetY.velocity = 0.0;
-      this._touchingGround = true;
-    }
-
-    // Handle pushing out of left and right walls
-    if (_isHard(x-Constants.collisionPad, y-Constants.playerHeadOffset, z) ||
-        _isHard(x-Constants.collisionPad, y-Constants.playerFootOffset, z)) {
-      x = nx - Constants.collisionPad;
-      this._trans.offsetX.velocity = 0.0;
-    } else if (_isHard(x+Constants.collisionPad, y-Constants.playerHeadOffset, z) ||
-               _isHard(x+Constants.collisionPad, y-Constants.playerFootOffset, z)) {
-      x = nx + Constants.collisionPad;
-      this._trans.offsetX.velocity = 0.0;
-    }
-
-    // Handle pushing out of front and back walls
-    if (_isHard(x, y-Constants.playerHeadOffset, z-Constants.collisionPad) ||
-        _isHard(x, y-Constants.playerFootOffset, z-Constants.collisionPad)) {
-      z = nz - Constants.collisionPad;
-      this._trans.offsetZ.velocity = 0.0;
-    } else if (_isHard(x, y-Constants.playerHeadOffset, z+Constants.collisionPad) ||
-               _isHard(x, y-Constants.playerFootOffset, z+Constants.collisionPad)) {
-      z = nz + Constants.collisionPad;
-      this._trans.offsetZ.velocity = 0.0;
-    }
-
-    // Check if stuck in the ground and push up until out of the ground.
-    // Known bug/feature: Jumping at the bottom of a tree (or any overhang) can result in "quick climbing" the tree.
-    while (_isHard(x, y-Constants.playerHeight+Constants.collisionPad, z) || _isHard(x, y, z)) {
-      y = ny + Constants.collisionPad;
-      ny += 1.0;
-      this._trans.offsetY.velocity = 0.0;
-      this._touchingGround = true;
-    }
-
-    return new Math.Point3(x, y, z);
+    return this._collider.location ?? loc;
   }
 
-  /// Calcuates the view vector down the center of the screen out away from the player.
-  Math.Ray3 _playerViewTarget() {
-    Math.Matrix4 mat = this._playerLoc.matrix;
-    return new Math.Ray3.fromVertex(
-      mat.transPnt3(Math.Point3.zero),
-      mat.transVec3(new Math.Vector3(0.0, 0.0, -Constants.highlightDistance)));
-  }
+  /// The handler used in update highlight for traversing neighboring blocks.
+  bool _updateHighlightHandler(NeighborBlockInfo neighbor) {
+    // Check if the neighbor is not air or is null.
+    if ((neighbor?.info != null) && (neighbor.info.value == BlockType.Air)) return false;
 
-  /// Gets the neighboring block to the given block with the given [ray] pointing at the side to get the neighbor for.
-  NeighborBlockInfo _getNeighborBlock(BlockInfo info, Math.Ray3 ray) {
-    Math.Region3 region = new Math.Region3(
-      info.x.toDouble()+info.chunkX.toDouble(),
-      info.y.toDouble(),
-      info.z.toDouble()+info.chunkZ.toDouble(),
-      1.0, 1.0, 1.0);
+    // Check if found block is valid and selectable, if not set to null.
+    BlockInfo info = neighbor?.info;
+    if ((info != null) && ((neighbor.depth < 0) || (info.value == BlockType.Air) ||
+      (info.value == BlockType.Boundary))) neighbor = null;
+    this._highlight = neighbor;
 
-    Math.IntersectionRayRegion3 inter = region.rayIntersection(ray);
-    Math.Point3 center = region.center;
-    double x = center.x, y = center.y, z = center.z;
-    if (inter == null) return null;
-    else if (inter.region == Math.HitRegion.XNeg) x -= 1.0;
-    else if (inter.region == Math.HitRegion.XPos) x += 1.0;
-    else if (inter.region == Math.HitRegion.YNeg) y -= 1.0;
-    else if (inter.region == Math.HitRegion.YPos) y += 1.0;
-    else if (inter.region == Math.HitRegion.ZNeg) z -= 1.0;
-    else if (inter.region == Math.HitRegion.ZPos) z += 1.0;
-    else return null;
-
-    BlockInfo block = this._world.getBlock(x, y, z);
-    return new NeighborBlockInfo(block, inter.region);
-  }
-
-  /// Updates the selection for the highlighted block that can be modified.
-  void _updateHighlight(Events.EventArgs _) {
-    Math.Ray3 ray = this._playerViewTarget();
-    Math.Ray3 back = ray.reverse;
-
-    int dist = 0;
-    BlockInfo info = this._world.getBlock(ray.x, ray.y, ray.z);
-    while ((info != null) && (info.value == BlockType.Air)) {
-      info = this._getNeighborBlock(info, back)?.info;
-      dist++;
-    }
-
-    if ((info != null) && ((dist < 1) || (info.value == BlockType.Air) || (info.value == BlockType.Boundary))) info = null;
-    this._highlight = info;
-
+    // Either remove or create highlight for the new selection.
     if (this._highlight == null) {
       this._blockHighlight.enabled = false;
     } else {
       Shaper shaper = new Shaper(null, Data.VertexType.Pos | Data.VertexType.Txt2D);
-      shaper.addCubeToOneShape(this._highlight.chunkX+this._highlight.x, this._highlight.y,
-        this._highlight.chunkZ+this._highlight.z, true, 1.1);
+      shaper.addCubeToOneShape(info.chunkX+info.x, info.y, info.chunkZ+info.z, true, 1.1);
       shaper.finish([this._blockHighlight]);
       this._blockHighlight.enabled = true;
+    }
+    return true;
+  }
+
+  /// Updates the selection for the highlighted block that can be modified.
+  void _updateHighlight(Events.EventArgs _) {
+    // Calcuates the view vector down the center of the screen out away from the player.
+    // The ray is scaled to have the maximum highlight length.
+    Math.Matrix4 mat = this._playerLoc.matrix;
+    Math.Ray3 playerViewTarget = new Math.Ray3.fromVector(
+      mat.transPnt3(Math.Point3.zero),
+      mat.transVec3(new Math.Vector3(0.0, 0.0, -Constants.highlightDistance)));
+    Math.Ray3 back = playerViewTarget.reverse;
+    BlockInfo info = this._world.getBlock(playerViewTarget.x, playerViewTarget.y, playerViewTarget.z);
+    NeighborBlockInfo neighbor = new NeighborBlockInfo(info, Math.HitRegion.Inside, playerViewTarget, 0);
+
+    // Traverse the neighboring blocks using player's view to find first non-air block.
+    int depth = 0;
+    while (!this._updateHighlightHandler(neighbor)) {
+      neighbor = this._world.getNeighborBlock(neighbor.info, playerViewTarget, back, depth);
+      depth++;
     }
   }
 

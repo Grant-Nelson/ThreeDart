@@ -18,13 +18,13 @@ abstract class Piece extends ThreeDart.Entity {
     this._hasMoved = false;
     this._dead = false;
     this._selected = false;
-    
+
     this._updateLocation();
     this._updateTech();
   }
 
   void _updateLocation() {
-    this._mover.matrix = 
+    this._mover.matrix =
       new Math.Matrix4.translate(this._row.toDouble()-4.5, 0.0, this._column.toDouble()-4.5)*
       new Math.Matrix4.rotateY(this._angle)*
       new Math.Matrix4.scale(this._scalar, this._scalar, this._scalar);

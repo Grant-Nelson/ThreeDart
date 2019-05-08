@@ -26,7 +26,7 @@ class Ray2 {
   Ray2(this.x, this.y, this.dx, this.dy);
 
   /// Constructs a new [Ray2] with the given point and vector.
-  factory Ray2.fromVertex(Point2 pnt, Vector2 vec) =>
+  factory Ray2.fromVector(Point2 pnt, Vector2 vec) =>
     new Ray2(pnt.x, pnt.y, vec.dx, vec.dy);
 
   /// Constructs a new [Ray2] with the two given points.
@@ -57,6 +57,18 @@ class Ray2 {
   /// Gets an list of 4 doubles in the order x, y, dx, then dy.
   List<double> toList() =>
     [this.x, this.y, this.dx, this.dy];
+
+  /// Gets the value at the zero based index in the order x, y, dx, then dy.
+  /// If out-of-bounds, zero is returned.
+  double atIndex(int i) {
+    switch(i) {
+      case 0: return this.x;
+      case 1: return this.y;
+      case 2: return this.dx;
+      case 3: return this.dy;
+    }
+    return 0.0;
+  }
 
   /// Determines if the given [other] variable is a [Ray2] equal to this ray.
   ///

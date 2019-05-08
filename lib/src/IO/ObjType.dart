@@ -27,7 +27,7 @@ class ObjType {
   /// [normal] indicates normal vector is written.
   /// [txtCube] indicates the texture cube coordinates
   /// should be written instead of texture 2D coordinates.
-  static List<String> toLines(Core.Entity entity, 
+  static List<String> toLines(Core.Entity entity,
     {bool normal = true, bool texture = true, bool txtCube = false, int decimals = 16}) {
     _objWriter writer = new _objWriter(normal, texture, txtCube, decimals);
     writer.addEntity(entity);

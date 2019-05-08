@@ -166,11 +166,11 @@ class Matrix4 {
   /// The [near] and [far] depth of the view.
   factory Matrix4.ortho(double left, double right, double top, double bottom, double near, double far) {
     final double xx = 2.0 / (right - left);
-    final double yy = 2.0 / (top - bottom);
-    final double zz = 2.0 / (far - near);
-    final double wx = -(left + right) / (right - left);
-    final double wy = -(top + bottom) / (top - bottom);
-    final double wz = (far + near) / (far - near);
+    final double yy = 2.0 / (top   - bottom);
+    final double zz = 2.0 / (far   - near);
+    final double wx = -(left + right)  / (right - left);
+    final double wy = -(top  + bottom) / (top   - bottom);
+    final double wz =  (far  + near)   / (far   - near);
     return new Matrix4(xx,  0.0, 0.0, wx,
                        0.0, yy,  0.0, wy,
                        0.0, 0.0, zz,  wz,
@@ -265,6 +265,30 @@ class Matrix4 {
               this.m13, this.m23, this.m33, this.m43,
               this.m14, this.m24, this.m34, this.m44];
     }
+  }
+
+  /// Gets the value at the zero based index in row major order.
+  /// If out-of-bounds, zero is returned.
+  double atIndex(int i) {
+    switch(i) {
+      case  0: return this.m11;
+      case  1: return this.m12;
+      case  2: return this.m13;
+      case  3: return this.m14;
+      case  4: return this.m21;
+      case  5: return this.m22;
+      case  6: return this.m23;
+      case  7: return this.m24;
+      case  8: return this.m31;
+      case  9: return this.m32;
+      case 10: return this.m33;
+      case 11: return this.m34;
+      case 12: return this.m41;
+      case 13: return this.m42;
+      case 14: return this.m43;
+      case 15: return this.m44;
+    }
+    return 0.0;
   }
 
   /// Gets the determinant of this matrix.
