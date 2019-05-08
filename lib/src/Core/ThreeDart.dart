@@ -96,6 +96,9 @@ class ThreeDart implements Events.Changable {
     if (canvas == null) {
       throw new Exception("May not create a manager from a null canvas.");
     }
+
+    // Create a WebGL 2.0 render target
+    // https://www.khronos.org/registry/webgl/specs/latest/2.0/
     WebGL.RenderingContext2 gl = canvas.getContext("webgl2",
         {"alpha": alpha, "depth": depth, "stencil": stencil, "antialias": antialias});
     if (gl == null) {
