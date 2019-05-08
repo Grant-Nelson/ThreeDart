@@ -40,7 +40,7 @@ class Texture2DChanger extends Texture2D {
 
   /// The height of the image in pixels allowed by this machine's architecture.
   int get actualHeight => this._bound?.actualHeight ?? this._current?.actualHeight ?? 0;
-  
+
   /// Emitted when the texture has finished being loaded or replaced.
   ///
   /// On change typically indicates a new render is needed.

@@ -10,13 +10,20 @@ class Region2 {
     return _zeroSingleton;
   }
   static Region2 _zeroSingleton;
-  
+
   /// Gets a [Region2] at the origin with a width and height of 1.
   static Region2 get unit {
     _unitSingleton ??= new Region2(0.0, 0.0, 1.0, 1.0);
     return _unitSingleton;
   }
   static Region2 _unitSingleton;
+
+  /// Gets a [Region2] at the origin with a width and height of 2 centerd on origin.
+  static Region2 get unit2 {
+    _unit2Singleton ??= new Region2(-1.0, -1.0, 2.0, 2.0);
+    return _unit2Singleton;
+  }
+  static Region2 _unit2Singleton;
 
   /// The left edge component of the region.
   final double x;
@@ -99,9 +106,30 @@ class Region2 {
     return new Region2._(x, y, dx, dy);
   }
 
+  /// Expands the region to include the given region components.
+  Region2 expandWithRegion(Region2 region) {
+    double x1 = math.min(this.x, region.x);
+    double x2 = math.max(this.x+this.dx, region.x+region.dx);
+    double y1 = math.min(this.y, region.y);
+    double y2 = math.max(this.y+this.dy, region.y+region.dy);
+    return new Region2._(x1, y1, x2-x1, y2-y1);
+  }
+
   /// Gets an list of 4 doubles in the order x, y, dx, then dy.
   List<double> toList() =>
     [this.x, this.y, this.dx, this.dy];
+
+  /// Gets the value at the zero based index in the order x, y, dx, then dy.
+  /// If out-of-bounds, zero is returned.
+  double atIndex(int i) {
+    switch(i) {
+      case 0: return this.x;
+      case 1: return this.y;
+      case 2: return this.dx;
+      case 3: return this.dy;
+    }
+    return 0.0;
+  }
 
   /// The minimum side of the region.
   double get minSide {
@@ -213,42 +241,100 @@ class Region2 {
       }
     }
 
-    if (inside) {
+    if (inside)
       return new IntersectionRayRegion2(ray.start, -ray.vector.normal(), 0.0, HitRegion.Inside);
-    }
 
     // The farthest plane is the plane of intersection.
     if (yt > xt) {
       // intersect with xz plane
       double x = ray.x + ray.dx*yt;
-      if (x < this.x || x > maxx) return null;
-      return new IntersectionRayRegion2(new Point2(x, yp), new Vector2(0.0, yn), yt, yregion);
+      if (inRange(x, this.x, maxx))
+        return new IntersectionRayRegion2(new Point2(x, yp), new Vector2(0.0, yn), yt, yregion);
 
     } else {
       // intersect with yz plane
       double y = ray.y + ray.dy*xt;
-      if (y < this.y || y > maxy) return null;
-      return new IntersectionRayRegion2(new Point2(xp, y), new Vector2(xn, 0.0), xt, xregion);
+      if (inRange(y, this.y, maxy))
+        return new IntersectionRayRegion2(new Point2(xp, y), new Vector2(xn, 0.0), xt, xregion);
     }
+
+    return null;
+  }
+
+  /// Determines the collision between this region moving with the given [vector]
+  /// and the other region, the [target], not moving.
+  IntersectionBetweenMovingRegions collision(Region2 target, Vector2 vector, [HitRegion sides = null]) {
+    sides ??= HitRegion.All;
+    if (this.overlaps(target))
+      return new IntersectionBetweenMovingRegions(0.0, HitRegion.Inside);
+    double t = 100.0, d;
+    HitRegion region = HitRegion.None, edge;
+
+    if ((vector.dx != 0.0) && sides.overlaps(HitRegion.XPosNeg))  {
+      if (vector.dx > 0.0) {
+        if (sides.has(HitRegion.XNeg)) {
+          edge = HitRegion.XNeg;
+          if (Comparer.equals(target.x, this.x + this.dx)) d = 0.0;
+          else d = (target.x - (this.x + this.dx)) / vector.dx;
+        }
+      } else {
+        if (sides.has(HitRegion.XPos)) {
+          edge = HitRegion.XPos;
+          if (Comparer.equals(target.x + target.dx, this.x)) d = 0.0;
+          else d = ((target.x + target.dx) - this.x) / vector.dx;
+        }
+      }
+
+      if ((d < t) && (d >= 0.0) && (d <= 1.0)) {
+        double y = this.y + vector.dy*d;
+        if (rangeOverlap(target.y, target.y + target.dy, y, y + this.dy)) {
+          t = d;
+          region = edge;
+        }
+      }
+    }
+
+    if ((vector.dy != 0.0) && sides.overlaps(HitRegion.YPosNeg))  {
+      if (vector.dy > 0.0) {
+        if (sides.has(HitRegion.YNeg)) {
+          edge = HitRegion.YNeg;
+          if (Comparer.equals(target.y, this.y + this.dy)) d = 0.0;
+          else d = (target.y - (this.y + this.dy)) / vector.dy;
+        }
+      } else {
+        if (sides.has(HitRegion.YPos)) {
+          edge = HitRegion.YPos;
+          if (Comparer.equals(target.y + target.dy, this.y)) d = 0.0;
+          else d = ((target.y + target.dy) - this.y) / vector.dy;
+        }
+      }
+
+      if ((d < t) && (d >= 0.0) && (d <= 1.0)) {
+        double x = this.x + vector.dx*d;
+        if (rangeOverlap(target.x, target.x + target.dx, x, x + this.dx)) {
+          t = d;
+          region = edge;
+        }
+      }
+    }
+
+    if (region == HitRegion.None) return null;
+    return new IntersectionBetweenMovingRegions(t, region);
   }
 
   /// Determines if the given point is contained inside this region.
-  bool contains(Point2 a) {
-    if (a.x < this.x) return false;
-    else if (a.x >= this.x+this.dx) return false;
-
-    if (a.y < this.y) return false;
-    else if (a.y >= this.y+this.dy) return false;
-
-    return true;
-  }
+  bool contains(Point2 a) =>
+    inRange(a.x, this.x, this.x+this.dx) &&
+    inRange(a.y, this.y, this.y+this.dy);
 
   /// Determines if the two regions overlap even partually.
-  bool overlap(Region2 a) =>
-    (a.x <= this.x + this.dx) &&
-    (a.y <= this.y + this.dy) &&
-    (a.x + a.dx >= this.x) &&
-    (a.y + a.dy >= this.y);
+  bool overlaps(Region2 a) =>
+    rangeOverlap(a.x, a.x + a.dx, this.x, this.x + this.dx) &&
+    rangeOverlap(a.y, a.y + a.dy, this.y, this.y + this.dy);
+
+  /// Creates a new [Region2] as a translation of the other given region.
+  Region2 translate(Vector2 offset) =>
+    new Region2(this.x+offset.dx, this.y+offset.dy, this.dx, this.dy);
 
   /// Determines if the given [other] variable is a [Region2] equal to this region.
   /// The equality of the doubles is tested with the current [Comparer] method.

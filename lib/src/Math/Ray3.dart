@@ -32,7 +32,7 @@ class Ray3 {
   Ray3(this.x, this.y, this.z, this.dx, this.dy, this.dz);
 
   /// Constructs a new [Ray3] with the given point and vector.
-  factory Ray3.fromVertex(Point3 pnt, Vector3 vec) =>
+  factory Ray3.fromVector(Point3 pnt, Vector3 vec) =>
     new Ray3(pnt.x, pnt.y, pnt.z, vec.dx, vec.dy, vec.dz);
 
   /// Constructs a new [Ray3] with the two given points.
@@ -55,6 +55,20 @@ class Ray3 {
   List<double> toList() =>
     [this.x, this.y, this.z, this.dx, this.dy, this.dz];
 
+  /// Gets the value at the zero based index in the order x, y, z, dx, dy, then dz.
+  /// If out-of-bounds, zero is returned.
+  double atIndex(int i) {
+    switch(i) {
+      case 0: return this.x;
+      case 1: return this.y;
+      case 2: return this.z;
+      case 3: return this.dx;
+      case 4: return this.dy;
+      case 5: return this.dz;
+    }
+    return 0.0;
+  }
+
   /// Gets the point at the start of this ray.
   Point3 get start => new Point3(this.x, this.y, this.z);
 
@@ -65,7 +79,7 @@ class Ray3 {
   Vector3 get vector => new Vector3(this.dx, this.dy, this.dz);
 
   /// Creates a ray heading from the tip of this ray backwards to the origin.
-  Ray3 get reverse => new Ray3.fromVertex(this.end, -this.vector);
+  Ray3 get reverse => new Ray3.fromVector(this.end, -this.vector);
 
   /// Determines if the given [other] variable is a [Ray3] equal to this ray.
   ///

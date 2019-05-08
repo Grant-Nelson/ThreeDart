@@ -11,7 +11,7 @@ class RadioGroup {
 
   /// Indicates if the group should be kept in the URL.
   bool _keepInURL;
-  
+
   /// The element to fill with radio buttons.
   html.Element _elem;
 

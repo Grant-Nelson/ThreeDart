@@ -65,6 +65,14 @@ class ShellPage {
     this._page.append(textHeaderElem);
   }
 
+  /// Adds a div element with an identifier for outputting custom output to.
+  void addDiv(String id, [String className = "codePar"]) {
+    html.DivElement div = new html.DivElement()
+      ..className = className
+      ..id = id;
+    this._page.append(div);
+  }
+
   /// Adds a paragraph to the page. The body of the paragraph
   /// can be split across several lines as several entries into the list.
   /// If the text is wrapped by asterisks the text will be bolded.
@@ -290,7 +298,7 @@ class ShellPage {
       ..text = "0.00 fps"
       ..className = "fps";
     this._page.append(textElem);
-    
+
     new Timer.periodic(const Duration(milliseconds: 5000), (Timer time) {
       String fps = td.fps.toStringAsFixed(2);
       textElem.text = "$fps fps";
@@ -307,7 +315,7 @@ class ShellPage {
       ..display = "block"
       ..clear   = "both";
     elemContainer.append(endPage);
-    
+
     this._page.append(elemContainer);
   }
 

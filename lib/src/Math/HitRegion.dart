@@ -4,40 +4,53 @@ part of ThreeDart.Math;
 class HitRegion {
 
   /// [None] indicates no hit region values at all.
-  static HitRegion None = new HitRegion._(0x0000);
+  static final HitRegion None = new HitRegion._(0x0000);
 
   /// [All] indicates all hit region values.
-  static HitRegion All = new HitRegion._(0x01FF);
+  static final HitRegion All = new HitRegion._(0x01FF);
 
   /// [XPos] indicates the positive X hit region.
-  static HitRegion XPos = new HitRegion._(0x0001);
+  static final HitRegion XPos = new HitRegion._(0x0001);
 
   /// [XCenter] indicates the center X hit region.
-  static HitRegion XCenter = new HitRegion._(0x0002);
+  static final HitRegion XCenter = new HitRegion._(0x0002);
 
   /// [XNeg] indicates the negative X hit region.
-  static HitRegion XNeg = new HitRegion._(0x0004);
+  static final HitRegion XNeg = new HitRegion._(0x0004);
 
   /// [YPos] indicates the positive Y hit region.
-  static HitRegion YPos = new HitRegion._(0x0008);
+  static final HitRegion YPos = new HitRegion._(0x0008);
 
   /// [YCenter] indicates the center Y hit region.
-  static HitRegion YCenter = new HitRegion._(0x0010);
+  static final HitRegion YCenter = new HitRegion._(0x0010);
 
   /// [YNeg] indicates the negative Y hit region.
-  static HitRegion YNeg = new HitRegion._(0x0020);
+  static final HitRegion YNeg = new HitRegion._(0x0020);
 
   /// [ZPos] indicates the positive Z hit region.
-  static HitRegion ZPos = new HitRegion._(0x0040);
+  static final HitRegion ZPos = new HitRegion._(0x0040);
 
   /// [ZCenter] indicates the center Z hit region.
-  static HitRegion ZCenter = new HitRegion._(0x0080);
+  static final HitRegion ZCenter = new HitRegion._(0x0080);
 
   /// [ZNeg] indicates the negative Z hit region.
-  static HitRegion ZNeg = new HitRegion._(0x0100);
+  static final HitRegion ZNeg = new HitRegion._(0x0100);
 
   /// [Inside] indicates the inside hit region, XCenter|YCenter|ZCenter
-  static HitRegion Inside = new HitRegion._(0x0092);
+  static final HitRegion Inside = new HitRegion._(0x0092);
+
+  /// [XPosNeg] is the combination of both X cardinal directions, XPos|XNeg.
+  static final HitRegion XPosNeg = new HitRegion._(0x0005);
+
+  /// [YPosNeg] is the combination of both Y cardinal directions, YPos|YNeg.
+  static final HitRegion YPosNeg = new HitRegion._(0x0028);
+
+  /// [ZPosNeg] is the combination of both Z cardinal directions, ZPos|ZNeg.
+  static final HitRegion ZPosNeg = new HitRegion._(0x0140);
+
+  /// [Cardinals] is the combination of all cardinal directions,
+  /// XPos|XNeg|YPos|YNeg|ZPos|ZNeg.
+  static final HitRegion Cardinals = new HitRegion._(0x016D);
 
   /// The combined hit region value.
   final int _value;
@@ -53,9 +66,19 @@ class HitRegion {
   HitRegion operator&(HitRegion right) =>
     new HitRegion._(this._value&right._value);
 
-  /// Gets the opposite of this hit region value.
+  /// Gets the opposite value of this hit region value from All.
   HitRegion operator ~() =>
     new HitRegion._(All._value & ~this._value);
+
+  /// Gets the opposite of all the directions of the region.
+  HitRegion inverse() {
+    int value = this._value;
+    int result = 0x0000;
+    if ((0x0005 & value) != 0x0000) result |= (0x0005 - (0x0005 & value));
+    if ((0x0028 & value) != 0x0000) result |= (0x0028 - (0x0028 & value));
+    if ((0x0140 & value) != 0x0000) result |= (0x0140 - (0x0140 & value));
+    return new HitRegion._(result);
+  }
 
   /// The interal value of the hit region value.
   int get value => this._value;

@@ -51,12 +51,22 @@ class Point2 {
   ///
   /// [values] is a list of doubles are in the order x then y.
   factory Point2.fromList(List<double> values) {
-    assert(values.length == 2, );
+    assert(values.length == 2);
     return new Point2(values[0], values[1]);
   }
 
   /// Gets an list of 2 doubles in the order x then y.
   List<double> toList() => [this.x, this.y];
+
+  /// Gets the value at the zero based index in the order x then y.
+  /// If out-of-bounds, zero is returned.
+  double atIndex(int i) {
+    switch(i) {
+      case 0: return this.x;
+      case 1: return this.y;
+    }
+    return 0.0;
+  }
 
   /// The distance squared between this point and the [other] point.
   double distance2(Point2 other) {

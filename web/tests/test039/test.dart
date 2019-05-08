@@ -35,7 +35,7 @@ void main() {
     ]));
 
   Timer.periodic(new Duration(milliseconds: 500), (_) => color.nextTexture());
- 
+
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
     ..lights.add(new Lights.Directional(
           mover: new Movers.Constant.vectorTowards(1.0, -1.0, -3.0),

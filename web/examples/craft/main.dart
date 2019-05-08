@@ -7,30 +7,36 @@ import 'package:ThreeDart/Movers.dart' as Movers;
 import 'package:ThreeDart/Math.dart' as Math;
 import 'package:ThreeDart/Textures.dart' as Textures;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
-import 'package:ThreeDart/Scenes.dart' as Scenes;
-import 'package:ThreeDart/Views.dart' as Views;
 import 'package:ThreeDart/Data.dart' as Data;
 import 'package:ThreeDart/Input.dart' as Input;
 import 'package:ThreeDart/Events.dart' as Events;
+import 'package:ThreeDart/Scenes.dart' as Scenes;
 
 import 'package:OpenSimplexNoiseDart/OpenSimplexNoise.dart' as simplex;
 
 import 'dart:math' as math;
-import 'dart:typed_data' as data;
 import 'dart:async';
 import 'dart:html' as html;
+import 'dart:typed_data' as data;
 
 import '../../common/common.dart' as common;
 
 part 'blockInfo.dart';
 part 'blockType.dart';
+part 'checkersGenerator.dart';
 part 'chunk.dart';
+part 'collider.dart';
 part 'constants.dart';
+part 'flatGenerator.dart';
 part 'generator.dart';
 part 'materials.dart';
+part 'neighborBlockInfo.dart';
 part 'player.dart';
+part 'randomGenerator.dart';
 part 'shaper.dart';
+part 'testGenerator.dart';
 part 'world.dart';
+
 
 /// Starts up the 3Dart Craft example
 void main() {
@@ -64,21 +70,20 @@ void main() {
     ..addPar(["There are tons of ways to contribute. You could even start your own example. ",
       "See the [3Dart Project|https://github.com/Grant-Nelson/ThreeDart] for more."]);
 
-    Timer.run(startCraft);
+  Timer.run(startCraft);
 }
 
 /// Start the craft game.
 /// This is deferred so that if loading takes a while the page is at least loaded.
 void startCraft() {
-  int seed = _getSeed();
-  if (seed < 0) seed = _navigateToSeededUrl();
-
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("targetCanvas");
   Materials mats = new Materials(td);
-  World world = new World(mats, seed);
-  Player player = new Player(td, world);
+  Generator gen = _getGenerator();
+  World world = new World(mats, gen);
+  Player player = new Player(td.userInput, world);
 
-  Scenes.EntityPass scene = new Scenes.EntityPass()
+  Scenes.EntityPass scene = new Scenes.EntityPass(
+    clearColor: new Math.Color4(0.576, 0.784, 0.929))
     ..onPreUpdate.add(world.update)
     ..camera.mover = player.camera;
 
@@ -90,8 +95,10 @@ void startCraft() {
   td.scene = scene;
   player.goHome();
 
-  // Set background color to sky blue
-  (scene.target as Views.FrontTarget).color = new Math.Color4(0.576, 0.784, 0.929);
+  // Start timer for periodically generating chunks and animate.
+  new Timer.periodic(const Duration(milliseconds: Constants.worldTickMs), world.worldTick);
+  new Timer.periodic(const Duration(milliseconds: Constants.generateTickMs), world.generateTick);
+  new Timer.periodic(const Duration(milliseconds: Constants.animationTickMs), world.animationTick);
 
   // Start debug output
   new Timer.periodic(const Duration(milliseconds: Constants.debugPrintTickMs), (Timer time) {
@@ -100,17 +107,21 @@ void startCraft() {
   });
 }
 
-/// Returns the seed provided by the URL's query parameters, or -1 if no seed is found.
-int _getSeed() {
+/// Gets the generator provided by the URL's query parameters.
+/// If no seed was given or it is invalid then a new seed is randomly picked.
+Generator _getGenerator() {
+  int seed = -1;
   String seedQueryParam = Uri.base.queryParameters["seed"];
-  if (seedQueryParam == null) return -1;
-  return int.tryParse(seedQueryParam) ?? -1;
-}
+  if (seedQueryParam != null) {
+    if (seedQueryParam == "test") return new TestGenerator();
+    if (seedQueryParam == "checkers") return new CheckersGenerator();
+    seed = int.tryParse(seedQueryParam) ?? -1;
+  }
 
-/// Navigates the browser to a Url with a seed parameter and returns the seed.
-int _navigateToSeededUrl() {
-  int seed = new math.Random().nextInt(Constants.maxSeed);
-  Uri newUri = Uri.base.replace(queryParameters: {"seed": "$seed"});
-  html.window.history.pushState(null, null, newUri.toString());
-  return seed;
+  if (seed <= 0) {
+    seed = new math.Random().nextInt(Constants.maxSeed);
+    Uri newUri = Uri.base.replace(queryParameters: {"seed": "$seed"});
+    html.window.history.pushState(null, null, newUri.toString());
+  }
+  return new RandomGenerator(seed);
 }

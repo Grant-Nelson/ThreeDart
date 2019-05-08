@@ -5,33 +5,6 @@ class Constants {
 
   /// The maximum number, 1<<32 (limited by [nextInt]), allowed for the seed.
   static const int maxSeed = 4294967296;
-  
-  /// The number of chunks to preallocate.
-  static const int initialGraveyardSize = 140;
-
-  /// The number of blocks wide and deep of every chunk.
-  static const int chunkSideSize = 16;
-
-  /// The number of blocks tall of every chunk.
-  static const int chunkYSize = 48;
-
-  /// The total number of blocks per chunk.
-  static const int chunkDataLength = chunkSideSize * chunkYSize * chunkSideSize;
-
-  /// The minimum number of blocks away from the player to always render a chunck.
-  static const double minDrawDist2 = 10.0 * 10.0;
-
-  /// The maximum number of blocks away from the player to render before not drawing a chunck.
-  static const double maxDrawDist2 = 80.0 * 80.0;
-
-  /// The maximum chunk X and Z distance from the player to keep chunks.
-  static const int maxChunkDist = chunkSideSize * 8;
-
-  /// The minimum chunk X and Z distance from the player that chunks should be loaded.
-  static const int minChunkDist = chunkSideSize * 4;
-  
-  /// The initial chunk distance to preload before starting the player.
-  static const int initChunkDist = chunkSideSize * 2;
 
   /// The time in milliseconds between world chunk updates.
   static const int worldTickMs = 750;
@@ -50,6 +23,23 @@ class Constants {
 
   /// The file extension for all textures.
   static const String fileExt = ".png";
+
+  //----------------------------------------------
+  // World Generation Constants
+  //----------------------------------------------
+
+  /// The number of chunks to preallocate.
+  static const int initialGraveyardSize = 140;
+
+  /// The number of blocks wide and deep of every chunk.
+  /// WARNING: unit-tests expect 16, if you change this update the tests.
+  static const int chunkSideSize = 16;
+
+  /// The number of blocks tall of every chunk.
+  static const int chunkYSize = 48;
+
+  /// The total number of blocks per chunk.
+  static const int chunkDataLength = chunkSideSize * chunkYSize * chunkSideSize;
 
   /// The height of the water.
   static const int waterDepth = 8;
@@ -98,12 +88,38 @@ class Constants {
 
   /// The total X and Z size including borders.
   static const int paddedSize = paddedMax - paddedMin;
-  
+
   /// The number of values in the height cache of the generator.
   static const int heightCacheLength = paddedSize * paddedSize;
 
+  //----------------------------------------------
+  // World Rendering & Chunk Loading Constants
+  //----------------------------------------------
+
+  /// The minimum number of blocks away from the player to always render a chunck.
+  static const double minDrawDist2 = 10.0 * 10.0;
+
+  /// The maximum number of blocks away from the player to render before not drawing a chunck.
+  static const double maxDrawDist2 = 80.0 * 80.0;
+
+  /// The maximum chunk X and Z distance from the player to keep chunks.
+  static const int maxChunkDist = chunkSideSize * 8;
+
+  /// The minimum chunk X and Z distance from the player that chunks should be loaded.
+  static const int minChunkDist = chunkSideSize * 4;
+
+  /// The initial chunk distance to preload before starting the player.
+  static const int initChunkDist = chunkSideSize * 2;
+
+  //----------------------------------------------
+  // Player Constants
+  //----------------------------------------------
+
   /// The X starting location of the player.
   static const double playerStartX = 0.5;
+
+  /// The Y starting location offset from the highest solid block of the player.
+  static const double playerStartYOffset = 10.0;
 
   /// The Z starting location of the player.
   static const double playerStartZ = 0.5;
@@ -117,26 +133,25 @@ class Constants {
   /// The maximum speed the player can fall at, terminal velocity.
   static const double maxFallSpeed = 60.0;
 
-  /// The padding for collision detection.
-  static const double collisionPad = 0.25;
-
   /// The velocity to apply when the player jumps.
   static const double jumpSpeed = 30.0;
 
   /// The maximum distance to set a highlight selection from the player.
   static const double highlightDistance = 6.0;
 
-  /// The player's height.
-  static const double playerHeight = 2.0;
-
-  /// The player's head collision offset.
-  static const double playerHeadOffset = 0.5;
-
-  /// The player's foot collision offset.
-  static const double playerFootOffset = 1.5;
-
   /// The sensitivity of the locked pointer mouse.
   static const double mouseSensitivity = 0.4;
+
+  /// The region of the player's bounding box around the camera.
+  /// This is used for collision detection.
+  static final Math.Region3 playerRegion = new Math.Region3(-0.25, -1.5, -0.25, 0.5, 1.9, 0.5);
+
+  /// The maxium volocity in which collision detection is ignored.
+  static const double maxCollisionSpeedSquared = 100.0;
+
+  //----------------------------------------------
+  // Mathmatical Constants
+  //----------------------------------------------
 
   static final Math.Vector3 topNorm    = Math.Vector3.posY;
   static final Math.Vector3 bottomNorm = Math.Vector3.negY;

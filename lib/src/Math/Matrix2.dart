@@ -2,7 +2,7 @@ part of ThreeDart.Math;
 
 /// A math structure for storing and manipulating a Matrix 2x2.
 class Matrix2 {
-  
+
   /// Gets a 2x2 identity matrix.
   static Matrix2 get identity {
     _identSingleton ??= new Matrix2(
@@ -83,6 +83,18 @@ class Matrix2 {
       return [this.m11, this.m21,
               this.m12, this.m22];
     }
+  }
+
+  /// Gets the value at the zero based index in row major order.
+  /// If out-of-bounds, zero is returned.
+  double atIndex(int i) {
+    switch(i) {
+      case 0: return this.m11;
+      case 1: return this.m12;
+      case 2: return this.m21;
+      case 3: return this.m22;
+    }
+    return 0.0;
   }
 
   /// Gets the determinant of this matrix.

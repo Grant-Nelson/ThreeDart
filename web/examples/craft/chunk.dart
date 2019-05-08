@@ -73,7 +73,7 @@ class Chunk {
 
   /// Gets the entities used for rendering this chunk.
   List<ThreeDart.Entity> get entities => this._entities;
-  
+
   /// Gets or sets if this chunk eventually needs an update.
   bool get dirty => this._dirty && !this._needGen;
   set dirty(bool dirty) => this._dirty = dirty;
@@ -81,19 +81,19 @@ class Chunk {
   /// Gets or sets if this chunk needs an update.
   bool get needUpdate => this._needUpdate;
   set needUpdate(bool update) => this._needUpdate = update;
-  
+
   /// Gets if this chunk needs to be generated.
   bool get needToGenerate => this._needGen;
 
   /// Indicates that the chunk is finished being generated.
   void finishGenerate() {
     this._needGen = false;
-    this._dirty = true;
+    this._dirty   = true;
     this._enabled = false;
-    this.left?.dirty = true;
+    this.left?.dirty  = true;
     this.right?.dirty = true;
     this.front?.dirty = true;
-    this.back?.dirty = true;
+    this.back?.dirty  = true;
   }
 
   /// Calculates the chunk's data offset for the given x, y, and z location.

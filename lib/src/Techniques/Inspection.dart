@@ -294,7 +294,7 @@ class Inspection extends Technique {
       this._onChanged(new Events.ValueChangedEventArgs(this, "lightVector", prevVec, vec));
     }
   }
-  
+
   /// The first diffuse color, used for the fill color.
   Math.Color4 get diffuse1 => this._diffuse1;
   set diffuse1(Math.Color4 clr) {
@@ -305,7 +305,7 @@ class Inspection extends Technique {
       this._onChanged(new Events.ValueChangedEventArgs(this, "diffuse1", prevClr, clr));
     }
   }
-  
+
   /// The first ambient color, used for the fill color.
   Math.Color4 get ambient1 => this._ambient1;
   set ambient1(Math.Color4 clr) {
@@ -316,7 +316,7 @@ class Inspection extends Technique {
       this._onChanged(new Events.ValueChangedEventArgs(this, "ambient1", prevClr, clr));
     }
   }
-  
+
   /// The second diffuse color, used for the wireframe color.
   Math.Color4 get diffuse2 => this._diffuse2;
   set diffuse2(Math.Color4 clr) {
@@ -327,7 +327,7 @@ class Inspection extends Technique {
       this._onChanged(new Events.ValueChangedEventArgs(this, "diffuse2", prevClr, clr));
     }
   }
-  
+
   /// The second ambient color, used for the wireframe color.
   Math.Color4 get ambient2 => this._ambient2;
   set ambient2(Math.Color4 clr) {
@@ -338,7 +338,7 @@ class Inspection extends Technique {
       this._onChanged(new Events.ValueChangedEventArgs(this, "ambient2", prevClr, clr));
     }
   }
-  
+
   /// The third diffuse color.
   Math.Color4 get diffuse3 => this._diffuse3;
   set diffuse3(Math.Color4 clr) {
@@ -349,7 +349,7 @@ class Inspection extends Technique {
       this._onChanged(new Events.ValueChangedEventArgs(this, "diffuse3", prevClr, clr));
     }
   }
-  
+
   /// The third ambient color.
   Math.Color4 get ambient3 => this._ambient3;
   set ambient3(Math.Color4 clr) {
@@ -360,7 +360,7 @@ class Inspection extends Technique {
       this._onChanged(new Events.ValueChangedEventArgs(this, "ambient3", prevClr, clr));
     }
   }
-  
+
   /// The fourth diffuse color.
   Math.Color4 get diffuse4 => this._diffuse4;
   set diffuse4(Math.Color4 clr) {

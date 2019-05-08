@@ -46,7 +46,7 @@ class NearVertexLocationMatcher extends VertexMatcher {
 
   /// The square of the epsilon value.
   final double epsilon2;
-  
+
   /// Creates a new near vertex location matcher.
   NearVertexLocationMatcher._(this.epsilon, this.epsilon2);
 

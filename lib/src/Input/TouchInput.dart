@@ -18,7 +18,7 @@ class TouchInput {
 
   /// Indicates if the touch equivalent buttons which are pressed or not.
   int _buttons;
-  
+
   /// The point, in pixels, in which the mouse button was last pressed or released.
   Math.Point2 _startPnt;
 
@@ -50,7 +50,7 @@ class TouchInput {
     Math.Point2 pnt = (pnts.length > 0)? pnts[0]: Math.Point2.zero;
     TouchEventArgs args = new TouchEventArgs(this, pnts, this._input.clientRect,
       this._startPnt, this._prevPnt, pnt, this._startTime, this._prevTime, curTime);
-    
+
     if (setStart) {
       this._startTime = curTime;
       this._startPnt = pnt;

@@ -24,7 +24,7 @@ class LockedMouseInput {
 
   /// Indicates if the mouse buttons which are pressed or not.
   int _buttons;
-  
+
   /// The point, in pixels, of the last mouse event.
   Math.Point2 _prevPnt;
 
@@ -36,7 +36,7 @@ class LockedMouseInput {
 
   /// The horizontal mouse movement sensitivity.
   double _hSensitivity;
-  
+
   /// The vertical mouse movement sensitivity.
   double _vSensitivity;
 
@@ -77,7 +77,7 @@ class LockedMouseInput {
     this._prevPnt = pnt;
     return args;
   }
-  
+
   // Performs a locked mouse press down event.
   // This also sets the button code currently pressed.
   // Returns true if any events were called, false if none were called.
@@ -114,7 +114,7 @@ class LockedMouseInput {
       new DateTime.now(), new Math.Vector2(wheel.dx*this._whSensitivity, wheel.dy*this._wvSensitivity)));
     return true;
   }
-  
+
   /// Handles the mouse lock and unlock on the canvas.
   void _onLockChanged(Button button, Math.Point2 pnt, bool locked) {
     if (this._lockChanged == null) return;
@@ -127,7 +127,7 @@ class LockedMouseInput {
   /// The horizontal mouse movement sensitivity.
   double get horizontalSensitivity => this._hSensitivity;
   void set horizontalSensitivity(double sensitivity) => this._hSensitivity = sensitivity;
-  
+
   /// The vertical mouse movement sensitivity.
   double get verticalSensitivity => this._vSensitivity;
   void set verticalSensitivity(double sensitivity) => this._vSensitivity = sensitivity;

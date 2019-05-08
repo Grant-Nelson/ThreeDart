@@ -9,42 +9,42 @@ class Vector3 {
     return _zeroSingleton;
   }
   static Vector3 _zeroSingleton;
-  
+
   /// Gets a new positive X [Vector3].
   static Vector3 get posX {
     _posXSingleton ??= new Vector3(1.0, 0.0, 0.0);
     return _posXSingleton;
   }
   static Vector3 _posXSingleton;
-  
+
   /// Gets a new negative X [Vector3].
   static Vector3 get negX {
     _negXSingleton ??= new Vector3(-1.0, 0.0, 0.0);
     return _negXSingleton;
   }
   static Vector3 _negXSingleton;
-  
+
   /// Gets a new positive Y [Vector3].
   static Vector3 get posY {
     _posYSingleton ??= new Vector3(0.0, 1.0, 0.0);
     return _posYSingleton;
   }
   static Vector3 _posYSingleton;
-  
+
   /// Gets a new negative Y [Vector3].
   static Vector3 get negY {
     _negYSingleton ??= new Vector3(0.0, -1.0, 0.0);
     return _negYSingleton;
   }
   static Vector3 _negYSingleton;
-  
+
   /// Gets a new positive Z [Vector3].
   static Vector3 get posZ {
     _posZSingleton ??= new Vector3(0.0, 0.0, 1.0);
     return _posZSingleton;
   }
   static Vector3 _posZSingleton;
-  
+
   /// Gets a new negative Z [Vector3].
   static Vector3 get negZ {
     _negZSingleton ??= new Vector3(0.0, 0.0, -1.0);
@@ -101,7 +101,19 @@ class Vector3 {
   }
 
   /// Gets an list of 3 doubles in the order dX, dY, then dZ.
-  List<double> toList() => [this.dx, this.dy, this.dz];
+  List<double> toList() =>
+    [this.dx, this.dy, this.dz];
+
+  /// Gets the value at the zero based index in the order dX, dY, then dZ.
+  /// If out-of-bounds, zero is returned.
+  double atIndex(int i) {
+    switch(i) {
+      case 0: return this.dx;
+      case 1: return this.dy;
+      case 2: return this.dz;
+    }
+    return 0.0;
+  }
 
   /// The length squared of this vector.
   double length2() => this.dot(this);

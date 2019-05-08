@@ -62,7 +62,7 @@ class BlockType {
 
   /// A block of leaves on the top of the tree
   static const int Leaves = 114;
-  
+
   /// Wood block of a wooden planks placed up right (up/down)
   static const int WoodUD = 115;
 

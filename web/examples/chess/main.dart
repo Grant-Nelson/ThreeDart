@@ -69,7 +69,7 @@ void startChess() {
 
   Views.FrontTarget target = new Views.FrontTarget()
     ..clearColor = false;
-  
+
   Board board = new Board(td);
 
   Scenes.CoverPass skybox = new Scenes.CoverPass.skybox(board.materials.environment)

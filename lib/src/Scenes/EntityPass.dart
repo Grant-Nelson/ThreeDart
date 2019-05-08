@@ -28,11 +28,13 @@ class EntityPass implements RenderPass {
   Events.Event _changed;
 
   /// Creates a new render pass.
+  /// The given clear color is only used if target is null or a FrontTarget.
   EntityPass({
       Views.Camera camera: null,
       Views.Target target: null,
       Techniques.Technique tech: null,
-      List<Core.Entity> children: null
+      List<Core.Entity> children: null,
+      Math.Color4 clearColor: null,
     }) {
     this._camera = null;
     this._target = null;
@@ -45,6 +47,12 @@ class EntityPass implements RenderPass {
     this._onPostUpdate = null;
     this._onRender = null;
     this._changed  = null;
+
+    if (target == null) {
+      target = new Views.FrontTarget(color: clearColor);
+    } else if (target is Views.FrontTarget) {
+      target.color = clearColor;
+    }
 
     this.camera = camera;
     this.target = target;

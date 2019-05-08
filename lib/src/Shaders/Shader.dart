@@ -39,7 +39,7 @@ abstract class Shader extends Core.Bindable {
 
   /// The name of the shader.
   String get name => this._name;
-  
+
   /// Gets the vertex source code used for this shader.
   String get vertexSourceCode => this._vertexSourceCode;
 
