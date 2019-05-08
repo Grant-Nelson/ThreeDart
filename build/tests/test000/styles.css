@@ -1,3 +1,8 @@
+.skipped {
+  color: #000000;
+  background-color: #DD8800;
+}
+
 .queued {
   color: #336799;
   background-color: #C7DDF5;

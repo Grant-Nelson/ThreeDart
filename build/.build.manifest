@@ -195,7 +195,6 @@ tests/resources/tree/bottom.jpg
 tests/resources/tree/top.jpg
 tests/resources/tree/tree.mtl
 tests/resources/tree/tree.obj
-tests/styles.css
 tests/test.dart.js
 tests/test000/index.html
 tests/test000/styles.css
