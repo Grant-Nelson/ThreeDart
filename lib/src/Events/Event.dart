@@ -70,14 +70,22 @@ class Event {
       return true;
     }
 
-    this._hndls?.forEach((EventHandler hndl) {
-      if (args.propagate) hndl(args);
-    });
+    if (this._hndls != null) {
+      // Create a copy so that if this event is modified
+      // inside of it's handler it doesn't cause a problem.
+      List<EventHandler> copy = new List<EventHandler>.from(this._hndls);
+      copy.forEach((EventHandler hndl) {
+        if (args.propagate) hndl(args);
+      });
+    }
 
-    this._onceHndls?.forEach((EventHandler hndl) {
-      if (args.propagate) hndl(args);
-    });
-    this._onceHndls?.clear();
+    if (this._onceHndls != null) {
+      List<EventHandler> lastOnce = this._onceHndls;
+      this._onceHndls = new List<EventHandler>();
+      lastOnce.forEach((EventHandler hndl) {
+        if (args.propagate) hndl(args);
+      });
+    }
     return true;
   }
 
