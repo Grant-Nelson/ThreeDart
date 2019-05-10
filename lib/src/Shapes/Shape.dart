@@ -248,10 +248,11 @@ class Shape implements ShapeBuilder {
         // Find all matches
         List<Vertex> matches = new List<Vertex>();
         matches.add(ver);
-        for (Vertex otherVer in vertices) {
+        for (int i = vertices.length-1; i >= 0; i--) {
+          Vertex otherVer = vertices[i];
           if ((otherVer != null) && matcher.matches(ver, otherVer)) {
             matches.add(otherVer);
-            vertices.remove(otherVer);
+            vertices.removeAt(i);
           }
         }
 
