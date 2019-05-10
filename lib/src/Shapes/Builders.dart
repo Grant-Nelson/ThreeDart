@@ -373,6 +373,7 @@ Shape knot({int minorCount: 12, int majorCount: 120, double minorRadius: 0.3, do
 
 /// Creates a cylindrical path is a bend cylinder with no cap.
 Shape cylindricalPath(int minorCount, int majorCount, double minorRadius, double majorRadius, func1PntHandle pathHndl) {
+  print("FLAG 1\n"); // TODO: Remove
   Shape shape = surface(minorCount, majorCount, (Vertex ver, double u, double v) {
     double majorAngle = u*Math.TAU;
     Math.Point3 cur = pathHndl(majorAngle)*majorRadius;
@@ -392,8 +393,11 @@ Shape cylindricalPath(int minorCount, int majorCount, double minorRadius, double
     ver.location = cur + new Math.Point3.fromVector3(other*minorCos - cross*minorSin);
   });
   if (shape == null) return null;
+  print("FLAG 2\n"); // TODO: Remove
   shape.calculateNormals();
+  print("FLAG 3\n"); // TODO: Remove
   shape.adjustNormals();
+  print("FLAG 4\n"); // TODO: Remove
   return shape;
 }
 
@@ -416,6 +420,7 @@ Shape surface(int widthDiv, int heightDiv, ver2Handle vertexHndl, [Data.VertexTy
   if (heightDiv < 1) return null;
   Shape shape = new Shape();
   List<Vertex> vers = new List<Vertex>();
+  print("FLAG A\n"); // TODO: Remove
   for (int i = 0; i <= heightDiv; i++) {
     double u = i.toDouble()/heightDiv.toDouble();
     Vertex ver = shape.vertices.addNew(
@@ -424,6 +429,7 @@ Shape surface(int widthDiv, int heightDiv, ver2Handle vertexHndl, [Data.VertexTy
     vertexHndl(ver, u, 0.0);
     vers.add(ver.copy(type));
   }
+  print("FLAG B\n"); // TODO: Remove
   for (int i = 1; i <= widthDiv; i++) {
     double v = i.toDouble()/widthDiv.toDouble();
     for (int j = 0; j <= heightDiv; j++) {
@@ -435,6 +441,8 @@ Shape surface(int widthDiv, int heightDiv, ver2Handle vertexHndl, [Data.VertexTy
       vers.add(ver.copy(type));
     }
   }
+  print("FLAG C\n"); // TODO: Remove
   shape.faces.addGrid(widthDiv+1, heightDiv+1, vers);
+  print("FLAG D\n"); // TODO: Remove
   return shape;
 }
