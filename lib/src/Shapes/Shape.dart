@@ -252,7 +252,7 @@ class Shape implements ShapeBuilder {
           Vertex otherVer = vertices[i];
           if ((otherVer != null) && matcher.matches(ver, otherVer)) {
             matches.add(otherVer);
-            vertices.remove(otherVer);
+            vertices.removeAt(i);
           }
         }
 
