@@ -238,8 +238,11 @@ class Shape implements ShapeBuilder {
   /// After merger collapsed lines and faces are removed and
   /// repeat points, lines, and faces are removed.
   void mergeVertices(VertexMatcher matcher, VertexMerger merger) {
+    print("FLAG 1\n"); // TODO: Remove
     this._changed?.suspend();
+    print("FLAG 2\n"); // TODO: Remove
     List<Vertex> vertices = this._vertices.copyToList();
+    print("FLAG 3\n"); // TODO: Remove
     while (vertices.isNotEmpty) {
       Vertex ver = vertices.first;
       vertices.removeAt(0);
@@ -265,14 +268,22 @@ class Shape implements ShapeBuilder {
         }
       }
     }
+    print("FLAG 4\n"); // TODO: Remove
 
     this._vertices._updateIndices();
+    print("FLAG 5\n"); // TODO: Remove
     this._lines.removeCollapsed();
+    print("FLAG 6\n"); // TODO: Remove
     this._faces.removeCollapsed();
+    print("FLAG 7\n"); // TODO: Remove
     this._points.removeRepeats();
+    print("FLAG 8\n"); // TODO: Remove
     this._lines.removeVertexRepeats(new UndirectedLineMatcher());
+    print("FLAG 9\n"); // TODO: Remove
     this._faces.removeVertexRepeats(new SimilarFaceMatcher());
+    print("FLAG 10\n"); // TODO: Remove
     this._changed?.resume();
+    print("FLAG 11\n"); // TODO: Remove
   }
 
   /// Joins seams in the shape by joining vertices.
