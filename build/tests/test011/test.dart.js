@@ -10657,7 +10657,7 @@ C.a.h(a.b.b,r)
 p=1}else p=0
 if(p>0){r=r.a.a.e
 if(r!=null)r.K(null)}}this.a.I(0,s)}},
-eW:function(a,b){var u,t,s,r,q,p,o,n
+eW:function(a,b){var u,t,s,r,q,p,o
 P.aA("FLAG 1\n")
 u=this.e
 if(u!=null)++u.d
@@ -10669,11 +10669,12 @@ for(u=[F.ad];t.length!==0;){s=C.a.gky(t)
 C.a.l7(t,0)
 if(s!=null){r=H.d([],u)
 C.a.h(r,s)
-for(q=t.length,p=0;p<t.length;t.length===q||(0,H.D)(t),++p){o=t[p]
-if(o!=null&&a.b2(0,s,o)){C.a.h(r,o)
-C.a.I(t,o)}}if(r.length>1){n=b.b3(r)
-if(n!=null){this.iQ(n,r)
-C.a.h(t,n)}}}}P.aA("FLAG 4\n")
+for(q=t.length-1;q>=0;--q){if(q>=t.length)return H.h(t,q)
+p=t[q]
+if(p!=null&&a.b2(0,s,p)){C.a.h(r,p)
+C.a.I(t,p)}}if(r.length>1){o=b.b3(r)
+if(o!=null){this.iQ(o,r)
+C.a.h(t,o)}}}}P.aA("FLAG 4\n")
 this.a.D()
 P.aA("FLAG 5\n")
 this.c.bU()

@@ -7970,7 +7970,7 @@ if(!this.a.aC())t=!1
 u=this.e
 if(u!=null)u.ar(0)
 return t},
-iN:function(a,b){var u,t,s,r,q,p,o
+iN:function(a,b){var u,t,s,r,q,p
 P.aj("FLAG 1\n")
 u=this.e
 if(u!=null)++u.d
@@ -7982,9 +7982,10 @@ for(u=[F.at];t.length!==0;){s=C.a.giA(t)
 C.a.j4(t,0)
 if(s!=null){r=H.c([],u)
 C.a.h(r,s)
-for(q=t.length,p=0;p<t.length;t.length===q||(0,H.C)(t),++p){o=t[p]
-if(o!=null&&a.c2(0,s,o)){C.a.h(r,o)
-C.a.O(t,o)}}if(r.length>1)b.iM(r)}}P.aj("FLAG 4\n")
+for(q=t.length-1;q>=0;--q){if(q>=t.length)return H.i(t,q)
+p=t[q]
+if(p!=null&&a.c2(0,s,p)){C.a.h(r,p)
+C.a.O(t,p)}}if(r.length>1)b.iM(r)}}P.aj("FLAG 4\n")
 this.a.J()
 P.aj("FLAG 5\n")
 this.c.c6()

@@ -5929,7 +5929,7 @@ F.dc.prototype={
 gA:function(){var u=this.e
 if(u==null){u=D.aP()
 this.e=u}return u},
-fn:function(a,b){var u,t,s,r,q,p,o
+fn:function(a,b){var u,t,s,r,q,p
 P.a7("FLAG 1\n")
 u=this.e
 if(u!=null)++u.d
@@ -5941,9 +5941,10 @@ for(u=[F.ag];t.length!==0;){s=C.a.gf9(t)
 C.a.fI(t,0)
 if(s!=null){r=H.c([],u)
 C.a.h(r,s)
-for(q=t.length,p=0;p<t.length;t.length===q||(0,H.H)(t),++p){o=t[p]
-if(o!=null&&a.b9(0,s,o)){C.a.h(r,o)
-C.a.I(t,o)}}if(r.length>1)b.fm(r)}}P.a7("FLAG 4\n")
+for(q=t.length-1;q>=0;--q){if(q>=t.length)return H.k(t,q)
+p=t[q]
+if(p!=null&&a.b9(0,s,p)){C.a.h(r,p)
+C.a.I(t,p)}}if(r.length>1)b.fm(r)}}P.a7("FLAG 4\n")
 this.a.E()
 P.a7("FLAG 5\n")
 this.c.bc()

@@ -10806,7 +10806,7 @@ if(!this.a.au())t=!1
 u=this.e
 if(u!=null)u.ax(0)
 return t},
-kT:function(a,b){var u,t,s,r,q,p,o
+kT:function(a,b){var u,t,s,r,q,p
 P.aC("FLAG 1\n")
 u=this.e
 if(u!=null)++u.d
@@ -10818,9 +10818,10 @@ for(u=[F.ag];t.length!==0;){s=C.a.gkC(t)
 C.a.lb(t,0)
 if(s!=null){r=H.d([],u)
 C.a.h(r,s)
-for(q=t.length,p=0;p<t.length;t.length===q||(0,H.C)(t),++p){o=t[p]
-if(o!=null&&a.bo(0,s,o)){C.a.h(r,o)
-C.a.O(t,o)}}if(r.length>1)b.bp(r)}}P.aC("FLAG 4\n")
+for(q=t.length-1;q>=0;--q){if(q>=t.length)return H.h(t,q)
+p=t[q]
+if(p!=null&&a.bo(0,s,p)){C.a.h(r,p)
+C.a.O(t,p)}}if(r.length>1)b.bp(r)}}P.aC("FLAG 4\n")
 this.a.D()
 P.aC("FLAG 5\n")
 this.c.di()

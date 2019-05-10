@@ -8853,7 +8853,7 @@ C.a.h(a.b.b,r)
 p=1}else p=0
 if(p>0){r=r.a.a.e
 if(r!=null)r.E(null)}}this.a.v(0,s)}},
-jB:function(a,b){var u,t,s,r,q,p,o,n
+jB:function(a,b){var u,t,s,r,q,p,o
 P.aw("FLAG 1\n")
 u=this.e
 if(u!=null)++u.d
@@ -8865,11 +8865,12 @@ for(u=[F.Q];t.length!==0;){s=C.a.gjr(t)
 C.a.jU(t,0)
 if(s!=null){r=H.c([],u)
 C.a.h(r,s)
-for(q=t.length,p=0;p<t.length;t.length===q||(0,H.B)(t),++p){o=t[p]
-if(o!=null&&a.aU(0,s,o)){C.a.h(r,o)
-C.a.v(t,o)}}if(r.length>1){n=b.aF(r)
-this.i2(n,r)
-C.a.h(t,n)}}}P.aw("FLAG 4\n")
+for(q=t.length-1;q>=0;--q){if(q>=t.length)return H.h(t,q)
+p=t[q]
+if(p!=null&&a.aU(0,s,p)){C.a.h(r,p)
+C.a.v(t,p)}}if(r.length>1){o=b.aF(r)
+this.i2(o,r)
+C.a.h(t,o)}}}P.aw("FLAG 4\n")
 this.a.p()
 P.aw("FLAG 5\n")
 this.c.cM()

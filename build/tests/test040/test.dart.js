@@ -10433,7 +10433,7 @@ r=s[t]
 r.d=null}u=this.e
 if(u!=null)u.ag(0)},
 l2:function(a){return this.l3(!0,a)},
-ks:function(a,b){var u,t,s,r,q,p,o
+ks:function(a,b){var u,t,s,r,q,p
 P.av("FLAG 1\n")
 u=this.e
 if(u!=null)++u.d
@@ -10445,9 +10445,10 @@ for(u=[F.al];t.length!==0;){s=C.a.gke(t)
 C.a.kN(t,0)
 if(s!=null){r=H.d([],u)
 C.a.h(r,s)
-for(q=t.length,p=0;p<t.length;t.length===q||(0,H.E)(t),++p){o=t[p]
-if(o!=null&&a.bd(0,s,o)){C.a.h(r,o)
-C.a.G(t,o)}}if(r.length>1)b.cN(r)}}P.av("FLAG 4\n")
+for(q=t.length-1;q>=0;--q){if(q>=t.length)return H.e(t,q)
+p=t[q]
+if(p!=null&&a.bd(0,s,p)){C.a.h(r,p)
+C.a.G(t,p)}}if(r.length>1)b.cN(r)}}P.av("FLAG 4\n")
 this.a.w()
 P.av("FLAG 5\n")
 this.c.cT()
