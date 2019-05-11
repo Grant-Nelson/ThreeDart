@@ -4,6 +4,7 @@ import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 import 'package:ThreeDart/Shapes.dart' as Shapes;
 import 'package:ThreeDart/Movers.dart' as Movers;
 import 'package:ThreeDart/Math.dart' as Math;
+import 'package:ThreeDart/Views.dart' as Views;
 import 'package:ThreeDart/Textures.dart' as Textures;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
@@ -51,7 +52,7 @@ void main() {
 
   ThreeDart.Entity bulbObj = new ThreeDart.Entity()
     ..mover = mover
-    ..shape = Shapes.sphere()
+    ..shape = Shapes.sphere(radius: 0.6)
     ..technique = (new Techniques.MaterialLight()
                 ..emission.color = Math.Color3.white());
   
@@ -62,6 +63,14 @@ void main() {
     ..mover = mover
     ..shape = Shapes.cylinder(topRadius: 1.2, bottomRadius: 1.2, sides: 16)
     ..technique = (new Techniques.MaterialLight()
+                ..diffuse.textureCube = shadeTxt
+                ..alpha.textureCube = shadeTxt);
+  ThreeDart.Entity shadeInsideObj = new ThreeDart.Entity()
+    ..mover = mover
+    ..shape = (Shapes.cylinder(topRadius: 1.2, bottomRadius: 1.2, sides: 16)
+              ..flip())
+    ..technique = (new Techniques.MaterialLight()
+                ..ambient.color = Math.Color3.gray(0.6)
                 ..diffuse.textureCube = shadeTxt
                 ..alpha.textureCube = shadeTxt);
 
@@ -92,13 +101,27 @@ void main() {
     ..specular.color = new Math.Color3.black() // TODO: Fix No specular in this setup.
     ..specular.shininess = 100.0;
 
-  Scenes.EntityPass pass = new Scenes.EntityPass()
+  Views.BackTarget colorTarget = new Views.BackTarget(800, 600, autoResize: true)
+    ..clearColor = false;
+  Scenes.EntityPass colorPass = new Scenes.EntityPass()
     ..technique = tech
     ..children.add(room)
     ..children.add(bulbObj)
+    ..children.add(shadeInsideObj)
     ..children.add(shadeObj)
-    ..camera.mover = camMover;
-  td.scene = pass;
+    ..camera.mover = camMover
+    ..target = colorTarget;
+
+  Techniques.GaussianBlur blurTech = new Techniques.GaussianBlur(
+      colorTxt: colorTarget.colorTexture,
+      blurTxt: colorTarget.colorTexture,
+      highOffset: 0.0,
+      lowOffset: 3.0,
+      blurLimit: 0.001);
+  Scenes.CoverPass blurPass = new Scenes.CoverPass()
+    ..technique = blurTech;
+
+  td.scene = new Scenes.Compound(passes: [colorPass, blurPass]);;
 
   common.showFPS(td);
 }

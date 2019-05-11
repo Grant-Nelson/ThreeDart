@@ -82,10 +82,10 @@ void main() {
 
   Techniques.GaussianBlur blurTech = new Techniques.GaussianBlur(
       colorTxt: colorTarget.colorTexture,
-      depthTxt: depthTarget.colorTexture,
+      blurTxt: depthTarget.colorTexture,
       highOffset: 0.0,
       lowOffset: 3.0,
-      depthLimit: 0.001);
+      blurLimit: 0.001);
   Scenes.CoverPass blurPass = new Scenes.CoverPass()
     ..technique = blurTech;
 

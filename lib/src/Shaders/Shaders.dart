@@ -17,6 +17,7 @@ part 'Uniforms.dart';
 part 'Depth.dart';
 part 'Distort.dart';
 part 'GaussianBlur.dart';
+part 'GaussianBlurConfig.dart';
 part 'Inspection.dart';
 part 'MaterialLight.dart';
 part 'MaterialLightConfig.dart';
