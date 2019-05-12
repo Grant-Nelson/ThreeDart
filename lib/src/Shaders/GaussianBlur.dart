@@ -20,11 +20,8 @@ class GaussianBlur extends Shader {
 
   Uniform1f _width;
   Uniform1f _height;
-  Uniform1f _minBlur;
-  Uniform1f _blurWidth;
-  Uniform1f _highOffset;
-  Uniform1f _lowOffset;
-  Uniform1f _blurLimit;
+  Uniform1f _highBlur;
+  Uniform1f _lowBlur;
 
   /// Checks for the shader in the shader cache in the given [state],
   /// if it is not found then this shader is compiled and added
@@ -61,11 +58,8 @@ class GaussianBlur extends Shader {
     if (cfg.blurTxt) {
       this._blurTxt     = this.uniforms["blurTxt"] as UniformSampler2D;
       this._nullBlurTxt = this.uniforms["nullBlurTxt"] as Uniform1i;
-      this._minBlur     = this.uniforms["minBlur"] as Uniform1f;
-      this._blurWidth   = this.uniforms["blurWidth"] as Uniform1f;
-      this._highOffset  = this.uniforms["highOffset"] as Uniform1f;
-      this._lowOffset   = this.uniforms["lowOffset"] as Uniform1f;
-      this._blurLimit   = this.uniforms["blurLimit"] as Uniform1f;
+      this._highBlur    = this.uniforms["highBlur"] as Uniform1f;
+      this._lowBlur     = this.uniforms["lowBlur"] as Uniform1f;
     } else {
       this._blurValue = this.uniforms["blurValue"] as Uniform1f;
     }
@@ -119,22 +113,10 @@ class GaussianBlur extends Shader {
   set height(double value) => this._height.setValue(value);
 
   /// The offset value for the blur at it's highest value.
-  double get highOffset => this._highOffset.getValue();
-  set highOffset(double value) => this._highOffset.setValue(value);
+  double get highBlur => this._highBlur.getValue();
+  set highBlur(double value) => this._highBlur.setValue(value);
 
   /// The offset value for the blur at it's lowest value.
-  double get lowOffset => this._lowOffset.getValue();
-  set lowOffset(double value) => this._lowOffset.setValue(value);
-
-  /// The value of blur to be used for the lowest offset.
-  double get minBlur => this._minBlur.getValue();
-  set minBlur(double value) => this._minBlur.setValue(value);
-  
-  /// The range of blue to be used between the lowest and highest offset.
-  double get blurWidth => this._blurWidth.getValue();
-  set blurWidth(double value) => this._blurWidth.setValue(value);
-
-  /// The limit for higher blur to be excluded from the blur.
-  double get blurLimit => this._blurLimit.getValue();
-  set blurLimit(double value) => this._blurLimit.setValue(value);
+  double get lowBlur => this._lowBlur.getValue();
+  set lowBlur(double value) => this._lowBlur.setValue(value);
 }

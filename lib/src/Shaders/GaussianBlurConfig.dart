@@ -56,14 +56,12 @@ class GaussianBlurConfig {
     buf.writeln("uniform float width;");
     buf.writeln("uniform float height;");
     buf.writeln("");
+
     if (this.blurTxt) {
       buf.writeln("uniform sampler2D blurTxt;");
       buf.writeln("uniform int nullBlurTxt;");
-      buf.writeln("uniform float minBlur;");
-      buf.writeln("uniform float blurWidth;");
       buf.writeln("uniform float highBlur;");
       buf.writeln("uniform float lowBlur;");
-      buf.writeln("uniform float blurLimit;");
     } else {
       buf.writeln("uniform float blurValue;");
     }
@@ -75,46 +73,35 @@ class GaussianBlurConfig {
     buf.writeln("vec4 color;");
     buf.writeln("");
 
-    if (this.blurTxt) {
-      buf.writeln("float getBlurFromTxt(vec2 txtOffset)");
-      buf.writeln("{");
-      buf.writeln("   if(nullBlurTxt > 0) return 1.0;");
-      buf.writeln("   float blur = texture2D(blurTxt, txtOffset).r;");
-      buf.writeln("   blur = (blur - minBlur) / blurWidth;");
-      buf.writeln("   return clamp(blur, 0.0, 1.0)");
-      buf.writeln("}");
-      buf.writeln("");
-    }
-
-    buf.writeln("void offsetColor(float baseBlur, float tu, float tv)");
+    if (this.blurTxt)
+      buf.writeln("void offsetColor(float baseBlur, float tu, float tv)");
+    else buf.writeln("void offsetColor(float tu, float tv)");
     buf.writeln("{");
     buf.writeln("   vec2 txtOffset = vec2(txt2D.x + tu/width,");
-    buf.writeln("                         txt2D.y + tv/height)");
-    if (this.blurTxt) {
-      buf.writeln("   blur = getBlurFromTxt(txtOffset)");
-      buf.writeln("   if(blur - blurLimit > baseBlur) return;");
-    }
+    buf.writeln("                         txt2D.y + tv/height);");
     buf.writeln("   div += 1.0;");
-    buf.writeln("   color += texture2D(colorTxt, txtOffset)");
+    buf.writeln("   color += texture2D(colorTxt, txtOffset);");
     buf.writeln("}");
     buf.writeln("");
 
-    buf.writeln("void main(");
+    buf.writeln("void main()");
     buf.writeln("{");
-    buf.writeln("   if(nullColorTxt > 0)");
+    if (this.blurTxt)
+      buf.writeln("   if((nullColorTxt > 0) || (nullBlurTxt > 0))");
+    else buf.writeln("   if(nullColorTxt > 0)");
     buf.writeln("   {");
-    buf.writeln("      gl_FragColor = vec4(1.0)");
+    buf.writeln("      gl_FragColor = vec4(1.0);");
     buf.writeln("      return;");
     buf.writeln("   }");
-    buf.writeln("   color = texture2D(colorTxt, txt2D)");
+    buf.writeln("   color = texture2D(colorTxt, txt2D);");
     buf.writeln("");
 
     if (this.blurTxt) {
-      buf.writeln("   float baseBlur = getBlurFromTxt(blurTxt, txt2D).r;");
-      buf.writeln("   float blurValue = mix(lowOffset, highOffset, baseBlur)");
-      buf.writeln("   blurValue = abs(blurValue)");
+      buf.writeln("   float baseBlur = texture2D(blurTxt, txt2D).r;");
+      buf.writeln("   float blurValue = mix(lowBlur, highBlur, baseBlur);");
+      buf.writeln("   blurValue = abs(blurValue);");
+      buf.writeln("");
     }
-    buf.writeln("");
 
     /// TODO: Update using the mathmatics from
     /// http://rastergrid.com/blog/2010/09/efficient-gaussian-blur-with-linear-sampling/
@@ -128,10 +115,17 @@ class GaussianBlurConfig {
     buf.writeln("         for(float y=0.0; y<MAX_BLUR_RANGE; y+=BLUR_STEP)");
     buf.writeln("         {");
     buf.writeln("            if(y > blurValue) break;");
-    buf.writeln("            offsetColor(baseBlur,  x,  y)");
-    buf.writeln("            offsetColor(baseBlur,  x, -y)");
-    buf.writeln("            offsetColor(baseBlur, -x,  y)");
-    buf.writeln("            offsetColor(baseBlur, -x, -y)");
+    if (this.blurTxt) {
+      buf.writeln("            offsetColor(baseBlur,  x,  y);");
+      buf.writeln("            offsetColor(baseBlur,  x, -y);");
+      buf.writeln("            offsetColor(baseBlur, -x,  y);");
+      buf.writeln("            offsetColor(baseBlur, -x, -y);");
+    } else {
+      buf.writeln("            offsetColor( x,  y);");
+      buf.writeln("            offsetColor( x, -y);");
+      buf.writeln("            offsetColor(-x,  y);");
+      buf.writeln("            offsetColor(-x, -y);");
+    }
     buf.writeln("         }");
     buf.writeln("      }");
     buf.writeln("   }");

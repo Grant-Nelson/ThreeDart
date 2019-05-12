@@ -7,11 +7,8 @@ class GaussianBlur extends Technique {
   Textures.Texture2D _colorTxt;
   Textures.Texture2D _blurTxt;
   double _blurValue;
-  double _highOffset;
-  double _lowOffset;
-  double _minBlur;
-  double _maxBlur;
-  double _blurLimit;
+  double _highBlur;
+  double _lowBlur;
   Events.Event _changed;
 
   /// Creates a new cover Gaussian blur technique with the given initial values.
@@ -19,32 +16,23 @@ class GaussianBlur extends Technique {
                 Textures.Texture2D blurTxt:  null,
                 Math.Matrix3       txtMat:   null,
                 double blurValue:  0.0,
-                double highOffset: 0.0,
-                double lowOffset:  4.0,
-                double minBlur:    0.0,
-                double maxBlur:    1.0,
-                double blurLimit:  0.001}) {
+                double highBlur:   0.0,
+                double lowBlur:    4.0}) {
     this._shader     = null;
     this._txtMat     = null;
     this._colorTxt   = null;
     this._blurTxt    = null;
     this._blurValue  = 0.0;
-    this._highOffset = 0.0;
-    this._lowOffset  = 4.0;
-    this._minBlur    = 0.0;
-    this._maxBlur    = 1.0;
-    this._blurLimit  = 0.001;
+    this._highBlur   = 0.0;
+    this._lowBlur    = 4.0;
     this._changed    = null;
 
     this.textureMatrix = txtMat;
     this.colorTexture  = colorTxt;
     this.blurTexture   = blurTxt;
     this.blurValue     = blurValue;
-    this.highOffset    = highOffset;
-    this.lowOffset     = lowOffset;
-    this.minimumBlur   = minBlur;
-    this.maximumBlur   = maxBlur;
-    this.blurLimit     = blurLimit;
+    this.highBlur      = highBlur;
+    this.lowBlur       = lowBlur;
   }
 
   /// Indicates that this technique has changed.
@@ -57,64 +45,34 @@ class GaussianBlur extends Technique {
   void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
+  
+  /// Resets the shader when a component has changed.
+  void _resetShader([Events.EventArgs args = null]) {
+    this._shader = null;
+    this._onChanged(args);
+  }
 
   /// The offset value for the blur at it's highest value.
   /// This only has effect when using a blur texture.
-  double get highOffset => this._highOffset;
-  void set highOffset(double value) {
+  double get highBlur => this._highBlur;
+  void set highBlur(double value) {
     value ??= 0.0;
-    if (!Math.Comparer.equals(this._highOffset, value)) {
-      double prev = this._highOffset;
-      this._highOffset = value;
-      this._onChanged(new Events.ValueChangedEventArgs(this, "highOffset", prev, this._highOffset));
+    if (!Math.Comparer.equals(this._highBlur, value)) {
+      double prev = this._highBlur;
+      this._highBlur = value;
+      this._onChanged(new Events.ValueChangedEventArgs(this, "highBlur", prev, this._highBlur));
     }
   }
 
   /// The offset value for the blur at it's lowest value.
   /// This only has effect when using a blur texture.
-  double get lowOffset => this._lowOffset;
-  void set lowOffset(double value) {
+  double get lowBlur => this._lowBlur;
+  void set lowBlur(double value) {
     value ??= 4.0;
-    if (!Math.Comparer.equals(this._lowOffset, value)) {
-      double prev = this._lowOffset;
-      this._lowOffset = value;
-      this._onChanged(new Events.ValueChangedEventArgs(this, "lowOffset", prev, this._lowOffset));
-    }
-  }
-
-  /// The minimum blur value which has the lowest offset.
-  /// This only has effect when using a blur texture.
-  double get minimumBlur => this._minBlur;
-  void set minimumBlur(double value) {
-    value ??= 0.0;
-    if (!Math.Comparer.equals(this._minBlur, value)) {
-      double prev = this._minBlur;
-      this._minBlur = value;
-      this._onChanged(new Events.ValueChangedEventArgs(this, "minimumBlur", prev, this._minBlur));
-    }
-  }
-
-  /// The maximum blur value which has the highest offset.
-  /// This only has effect when using a blur texture.
-  double get maximumBlur => this._maxBlur;
-  void set maximumBlur(double value) {
-    value ??= 1.0;
-    if (!Math.Comparer.equals(this._maxBlur, value)) {
-      double prev = this._maxBlur;
-      this._maxBlur = value;
-      this._onChanged(new Events.ValueChangedEventArgs(this, "maximumBlur", prev, this._maxBlur));
-    }
-  }
-
-  /// The limit for higher blur to be excluded from the blur.
-  /// This only has effect when using a blur texture.
-  double get blurLimit => this._blurLimit;
-  void set blurLimit(double value) {
-    value ??= 0.001;
-    if (!Math.Comparer.equals(this._blurLimit, value)) {
-      double prev = this._blurLimit;
-      this._blurLimit = value;
-      this._onChanged(new Events.ValueChangedEventArgs(this, "blurLimit", prev, this._blurLimit));
+    if (!Math.Comparer.equals(this._lowBlur, value)) {
+      double prev = this._lowBlur;
+      this._lowBlur = value;
+      this._onChanged(new Events.ValueChangedEventArgs(this, "lowBlur", prev, this._lowBlur));
     }
   }
 
@@ -150,6 +108,9 @@ class GaussianBlur extends Technique {
       this._blurTxt = txt;
       if (this._blurTxt != null) this._blurTxt.changed.add(this._onChanged);
       this._onChanged(new Events.ValueChangedEventArgs(this, "blurTexture", prev, this._blurTxt));
+      if (((this._blurTxt == null) && (prev != null)) ||
+          ((this._blurTxt != null) && (prev == null)))
+        this._resetShader();
     }
   }
 
@@ -188,7 +149,7 @@ class GaussianBlur extends Technique {
   /// Renders this technique for the given state and entity.
   void render(Core.RenderState state, Core.Entity obj) {
     if (this._shader == null) {
-      bool hasBlurTxt = blurTexture == null;
+      bool hasBlurTxt = blurTexture != null;
       Shaders.GaussianBlurConfig cfg = new Shaders.GaussianBlurConfig(hasBlurTxt);
       this._shader = new Shaders.GaussianBlur.cached(cfg, state);
       obj.clearCache();
@@ -211,20 +172,17 @@ class GaussianBlur extends Technique {
 
     this._shader
       ..bind(state)
-      ..colorTexture = this._colorTxt
+      ..colorTexture  = this._colorTxt
       ..textureMatrix = this._txtMat
       ..projectViewObjectMatrix = state.projectionViewObjectMatrix;
 
     if (cfg.blurTxt) {
       this._shader
         ..blurTexture = this._blurTxt
-        ..width = state.width.toDouble()
-        ..height = state.height.toDouble()
-        ..highOffset = this._highOffset
-        ..lowOffset = this._lowOffset
-        ..minBlur = this._minBlur
-        ..blurWidth = this._maxBlur-this._minBlur
-        ..blurLimit = this._blurLimit;
+        ..width       = state.width.toDouble()
+        ..height      = state.height.toDouble()
+        ..highBlur    = this._highBlur
+        ..lowBlur     = this._lowBlur;
     } else {
       this._shader
         ..blurValue = this._blurValue;

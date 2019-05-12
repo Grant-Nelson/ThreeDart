@@ -115,9 +115,8 @@ void main() {
   Techniques.GaussianBlur blurTech = new Techniques.GaussianBlur(
       colorTxt: colorTarget.colorTexture,
       blurTxt: colorTarget.colorTexture,
-      highOffset: 0.0,
-      lowOffset: 3.0,
-      blurLimit: 0.001);
+      highBlur: 9.0,
+      lowBlur: 0.0);
   Scenes.CoverPass blurPass = new Scenes.CoverPass()
     ..technique = blurTech;
 

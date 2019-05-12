@@ -75,14 +75,11 @@ void main() {
   Scenes.EntityPass depthPass = new Scenes.EntityPass(children: [entity, bulb])
     ..camera = userCamera
     ..target = depthTarget
-    ..technique = new Techniques.Depth(fogStart: 1.0, fogStop: 4.0);
+    ..technique = new Techniques.Depth(fogStart: 0.5, fogStop: 5.5);
 
   Techniques.GaussianBlur blurTech = new Techniques.GaussianBlur(
     colorTxt: colorTarget.colorTexture,
-    blurTxt: depthTarget.colorTexture,
-    highOffset: 0.0,
-    lowOffset: 3.0,
-    blurLimit: 0.001);
+    blurTxt: depthTarget.colorTexture);
   Scenes.CoverPass blurPass = new Scenes.CoverPass()
     ..technique = blurTech;
 
