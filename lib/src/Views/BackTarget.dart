@@ -43,8 +43,8 @@ class BackTarget extends Target {
     this._region       = Math.Region2.unit;
     this._changed      = null;
 
-    this.width      = width;
-    this.height     = height;
+    this.width  = width;
+    this.height = height;
   }
 
   /// Indicates that this target has changed.

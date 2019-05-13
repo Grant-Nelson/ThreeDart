@@ -80,7 +80,7 @@ class GaussianBlur extends Technique {
   double get blurValue => this._blurValue;
   void set blurValue(double value) {
     value ??= 0.0;
-    if (this._blurValue != value) {
+    if (!Math.Comparer.equals(this._blurValue, value)) {
       double prev = this._blurValue;
       this._blurValue = value;
       this._onChanged(new Events.ValueChangedEventArgs(this, "blurValue", prev, this._blurValue));
@@ -174,15 +174,15 @@ class GaussianBlur extends Technique {
       ..bind(state)
       ..colorTexture  = this._colorTxt
       ..textureMatrix = this._txtMat
+      ..highBlur      = this._highBlur
+      ..lowBlur       = this._lowBlur
+      ..width         = state.width.toDouble()
+      ..height        = state.height.toDouble()
       ..projectViewObjectMatrix = state.projectionViewObjectMatrix;
 
     if (cfg.blurTxt) {
       this._shader
-        ..blurTexture = this._blurTxt
-        ..width       = state.width.toDouble()
-        ..height      = state.height.toDouble()
-        ..highBlur    = this._highBlur
-        ..lowBlur     = this._lowBlur;
+        ..blurTexture = this._blurTxt;
     } else {
       this._shader
         ..blurValue = this._blurValue;

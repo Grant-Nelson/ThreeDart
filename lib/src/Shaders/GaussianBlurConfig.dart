@@ -60,11 +60,11 @@ class GaussianBlurConfig {
     if (this.blurTxt) {
       buf.writeln("uniform sampler2D blurTxt;");
       buf.writeln("uniform int nullBlurTxt;");
-      buf.writeln("uniform float highBlur;");
-      buf.writeln("uniform float lowBlur;");
     } else {
       buf.writeln("uniform float blurValue;");
     }
+    buf.writeln("uniform float highBlur;");
+    buf.writeln("uniform float lowBlur;");
     buf.writeln("");
 
     buf.writeln("varying vec2 txt2D;");
@@ -73,9 +73,7 @@ class GaussianBlurConfig {
     buf.writeln("vec4 color;");
     buf.writeln("");
 
-    if (this.blurTxt)
-      buf.writeln("void offsetColor(float baseBlur, float tu, float tv)");
-    else buf.writeln("void offsetColor(float tu, float tv)");
+    buf.writeln("void offsetColor(float tu, float tv)");
     buf.writeln("{");
     buf.writeln("   vec2 txtOffset = vec2(txt2D.x + tu/width,");
     buf.writeln("                         txt2D.y + tv/height);");
@@ -95,37 +93,28 @@ class GaussianBlurConfig {
     buf.writeln("   }");
     buf.writeln("   color = texture2D(colorTxt, txt2D);");
     buf.writeln("");
-
     if (this.blurTxt) {
-      buf.writeln("   float baseBlur = texture2D(blurTxt, txt2D).r;");
-      buf.writeln("   float blurValue = mix(lowBlur, highBlur, baseBlur);");
-      buf.writeln("   blurValue = abs(blurValue);");
-      buf.writeln("");
+      buf.writeln("   float blurValue = texture2D(blurTxt, txt2D).r;");
     }
+    buf.writeln("   float blurOffset = abs(mix(lowBlur, highBlur, blurValue));");
+    buf.writeln("");
 
     /// TODO: Update using the mathmatics from
     /// http://rastergrid.com/blog/2010/09/efficient-gaussian-blur-with-linear-sampling/
     /// instead of using for-loops
     buf.writeln("   div = 1.0;");
-    buf.writeln("   if(blurValue >= 1.0)");
+    buf.writeln("   if(blurOffset >= 1.0)");
     buf.writeln("   {");
     buf.writeln("      for(float x=0.0; x<MAX_BLUR_RANGE; x+=BLUR_STEP)");
     buf.writeln("      {");
-    buf.writeln("         if(x > blurValue) break;");
+    buf.writeln("         if(x > blurOffset) break;");
     buf.writeln("         for(float y=0.0; y<MAX_BLUR_RANGE; y+=BLUR_STEP)");
     buf.writeln("         {");
-    buf.writeln("            if(y > blurValue) break;");
-    if (this.blurTxt) {
-      buf.writeln("            offsetColor(baseBlur,  x,  y);");
-      buf.writeln("            offsetColor(baseBlur,  x, -y);");
-      buf.writeln("            offsetColor(baseBlur, -x,  y);");
-      buf.writeln("            offsetColor(baseBlur, -x, -y);");
-    } else {
-      buf.writeln("            offsetColor( x,  y);");
-      buf.writeln("            offsetColor( x, -y);");
-      buf.writeln("            offsetColor(-x,  y);");
-      buf.writeln("            offsetColor(-x, -y);");
-    }
+    buf.writeln("            if(y > blurOffset) break;");
+    buf.writeln("            offsetColor( x,  y);");
+    buf.writeln("            offsetColor( x, -y);");
+    buf.writeln("            offsetColor(-x,  y);");
+    buf.writeln("            offsetColor(-x, -y);");
     buf.writeln("         }");
     buf.writeln("      }");
     buf.writeln("   }");

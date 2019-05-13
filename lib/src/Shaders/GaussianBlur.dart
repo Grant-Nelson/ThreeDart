@@ -54,12 +54,12 @@ class GaussianBlur extends Shader {
     this._nullColorTxt   = this.uniforms["nullColorTxt"] as Uniform1i;
     this._width          = this.uniforms["width"] as Uniform1f;
     this._height         = this.uniforms["height"] as Uniform1f;
+    this._highBlur       = this.uniforms["highBlur"] as Uniform1f;
+    this._lowBlur        = this.uniforms["lowBlur"] as Uniform1f;
 
     if (cfg.blurTxt) {
       this._blurTxt     = this.uniforms["blurTxt"] as UniformSampler2D;
       this._nullBlurTxt = this.uniforms["nullBlurTxt"] as Uniform1i;
-      this._highBlur    = this.uniforms["highBlur"] as Uniform1f;
-      this._lowBlur     = this.uniforms["lowBlur"] as Uniform1f;
     } else {
       this._blurValue = this.uniforms["blurValue"] as Uniform1f;
     }

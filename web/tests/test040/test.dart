@@ -64,6 +64,7 @@ void main() {
     ..ambient.color = new Math.Color3.gray(0.3)
     ..diffuse.color = new Math.Color3.white()
     ..specular.shininess = 40.0;
+
   Views.BackTarget colorTarget = new Views.BackTarget(800, 600, autoResize: true);
   Scenes.EntityPass colorPass = new Scenes.EntityPass(children: [entity, bulb])
     ..technique = colorTech
@@ -72,14 +73,17 @@ void main() {
 
   Views.BackTarget depthTarget = new Views.BackTarget(400, 300,
     autoResize: true, autoResizeScalarX: 0.5, autoResizeScalarY: 0.5);
+
   Scenes.EntityPass depthPass = new Scenes.EntityPass(children: [entity, bulb])
     ..camera = userCamera
     ..target = depthTarget
     ..technique = new Techniques.Depth(fogStart: 0.5, fogStop: 5.5);
 
   Techniques.GaussianBlur blurTech = new Techniques.GaussianBlur(
+    blurValue: 1.0,
     colorTxt: colorTarget.colorTexture,
     blurTxt: depthTarget.colorTexture);
+
   Scenes.CoverPass blurPass = new Scenes.CoverPass()
     ..technique = blurTech;
 
@@ -90,6 +94,7 @@ void main() {
     ..entries.add(new Techniques.TextureLayoutEntry(
       texture: colorTarget.colorTexture,
       destination: new Math.Region2(0.0, 0.6, 0.2, 0.2)));
+
   Scenes.CoverPass layout = new Scenes.CoverPass()
     ..target = new Views.FrontTarget(clearColor: false)
     ..technique = layoutTech;

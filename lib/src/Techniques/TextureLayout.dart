@@ -70,7 +70,9 @@ class TextureLayout extends Technique {
   /// the current number of textures. This helps reduce and reuse
   /// shaders with similar number of attributes.
   int _lengthLimit(int count) {
-    return ((count + 3) ~/ 4) * 4;
+    count = ((count + 3) ~/ 4) * 4;
+    if (count <= 0) return 4;
+    return count;
   }
 
   /// Checks if the texture is in the list and if not, sets it's index and adds it to the list.
