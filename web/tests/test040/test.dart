@@ -79,13 +79,22 @@ void main() {
     ..target = depthTarget
     ..technique = new Techniques.Depth(fogStart: 0.5, fogStop: 5.5);
 
-  Techniques.GaussianBlur blurTech = new Techniques.GaussianBlur(
-    blurValue: 1.0,
+  Math.Vector4 blurAdj = new Math.Vector4(-1.0, 0.0, 0.0, 1.0);
+  Views.BackTarget horzBlurTarget = new Views.BackTarget(400, 300, autoResize: true);
+  Techniques.GaussianBlur horzBlurTech = new Techniques.GaussianBlur(
+    blurAdj: blurAdj,
     colorTxt: colorTarget.colorTexture,
     blurTxt: depthTarget.colorTexture);
-
-  Scenes.CoverPass blurPass = new Scenes.CoverPass()
-    ..technique = blurTech;
+  Scenes.CoverPass horzBlurPass = new Scenes.CoverPass()
+    ..target = horzBlurTarget
+    ..technique = horzBlurTech;
+    
+  Techniques.GaussianBlur vertBlurTech = new Techniques.GaussianBlur(
+    blurAdj: blurAdj,
+    colorTxt: horzBlurTarget.colorTexture,
+    blurTxt: depthTarget.colorTexture);
+  Scenes.CoverPass vertBlurPass = new Scenes.CoverPass()
+    ..technique = vertBlurTech;
 
   Techniques.TextureLayout layoutTech = new Techniques.TextureLayout()
     ..entries.add(new Techniques.TextureLayoutEntry(
@@ -99,7 +108,7 @@ void main() {
     ..target = new Views.FrontTarget(clearColor: false)
     ..technique = layoutTech;
 
-  td.scene = new Scenes.Compound(passes: [colorPass, depthPass, blurPass, layout]);
+  td.scene = new Scenes.Compound(passes: [colorPass, depthPass, horzBlurPass, vertBlurPass, layout]);
 
   new common.CheckGroup("controls")
     ..add("Color",
@@ -122,7 +131,8 @@ void main() {
       }, false)
     ..add("Blur",
       (bool show) {
-        blurTech.blurTexture = show? depthTarget.colorTexture: null;
+        horzBlurTech.blurTexture = show? depthTarget.colorTexture: null;
+        vertBlurTech.blurTexture = show? depthTarget.colorTexture: null;
       }, false)
     ..add("Passes",
       (bool show) {

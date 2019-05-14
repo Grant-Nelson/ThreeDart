@@ -10,6 +10,8 @@ class GaussianBlur extends Shader {
 
   UniformMat4 _projViewObjMat;
   UniformMat3 _txt2DMat;
+  Uniform4f _blurAdj;
+  Uniform2f _blurScale;
 
   UniformSampler2D _colorTxt;
   Uniform1i _nullColorTxt;
@@ -17,11 +19,6 @@ class GaussianBlur extends Shader {
   UniformSampler2D _blurTxt;
   Uniform1i _nullBlurTxt;
   Uniform1f _blurValue;
-
-  Uniform1f _width;
-  Uniform1f _height;
-  Uniform1f _highBlur;
-  Uniform1f _lowBlur;
 
   /// Checks for the shader in the shader cache in the given [state],
   /// if it is not found then this shader is compiled and added
@@ -52,14 +49,12 @@ class GaussianBlur extends Shader {
     this._txt2DMat       = this.uniforms["txt2DMat"] as UniformMat3;
     this._colorTxt       = this.uniforms["colorTxt"] as UniformSampler2D;
     this._nullColorTxt   = this.uniforms["nullColorTxt"] as Uniform1i;
-    this._width          = this.uniforms["width"] as Uniform1f;
-    this._height         = this.uniforms["height"] as Uniform1f;
-    this._highBlur       = this.uniforms["highBlur"] as Uniform1f;
-    this._lowBlur        = this.uniforms["lowBlur"] as Uniform1f;
+    this._blurScale      = this.uniforms["blurScale"] as Uniform2f;
 
     if (cfg.blurTxt) {
       this._blurTxt     = this.uniforms["blurTxt"] as UniformSampler2D;
       this._nullBlurTxt = this.uniforms["nullBlurTxt"] as Uniform1i;
+      this._blurAdj     = this.uniforms["blurAdj"] as Uniform4f;
     } else {
       this._blurValue = this.uniforms["blurValue"] as Uniform1f;
     }
@@ -91,6 +86,14 @@ class GaussianBlur extends Shader {
   /// The width of the target in pixels.
   Math.Matrix3 get textureMatrix => this._txt2DMat.getMatrix3();
   set textureMatrix(Math.Matrix3 mat) => this._txt2DMat.setMatrix3(mat);
+  
+  /// The color adjustment to apply to the blur texture colors to get the blur value with a texture.
+  Math.Vector4 get blurAdjust => this._blurAdj.getVector4();
+  set blurAdjust(Math.Vector4 vec) => this._blurAdj.setVector4(vec);
+  
+  /// The direction of the blur divided by the textures width and height.
+  Math.Vector2 get blurScalar => this._blurScale.getVector2();
+  set blurScalar(Math.Vector2 vec) => this._blurScale.setVector2(vec);
 
   /// The color texture to cover with.
   set colorTexture(Textures.Texture2D txt) =>
@@ -103,20 +106,4 @@ class GaussianBlur extends Shader {
   /// The blur value to use when not using a texture.
   double get blurValue => this._blurValue.getValue();
   set blurValue(double value) => this._blurValue.setValue(value);
-
-  /// The width of the target in pixels.
-  double get width => this._width.getValue();
-  set width(double value) => this._width.setValue(value);
-
-  /// The height of the target in pixels.
-  double get height => this._height.getValue();
-  set height(double value) => this._height.setValue(value);
-
-  /// The offset value for the blur at it's highest value.
-  double get highBlur => this._highBlur.getValue();
-  set highBlur(double value) => this._highBlur.setValue(value);
-
-  /// The offset value for the blur at it's lowest value.
-  double get lowBlur => this._lowBlur.getValue();
-  set lowBlur(double value) => this._lowBlur.setValue(value);
 }

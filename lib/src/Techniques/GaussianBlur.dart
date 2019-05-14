@@ -4,35 +4,35 @@ part of ThreeDart.Techniques;
 class GaussianBlur extends Technique {
   Shaders.GaussianBlur _shader;
   Math.Matrix3 _txtMat;
+  Math.Vector4 _blurAdj;
+  Math.Vector2 _blurDir;
   Textures.Texture2D _colorTxt;
   Textures.Texture2D _blurTxt;
   double _blurValue;
-  double _highBlur;
-  double _lowBlur;
   Events.Event _changed;
 
   /// Creates a new cover Gaussian blur technique with the given initial values.
   GaussianBlur({Textures.Texture2D colorTxt: null,
                 Textures.Texture2D blurTxt:  null,
                 Math.Matrix3       txtMat:   null,
-                double blurValue:  0.0,
-                double highBlur:   0.0,
-                double lowBlur:    4.0}) {
+                Math.Vector4       blurAdj:  null,
+                Math.Vector2       blurDir:  null,
+                double blurValue:  0.0}) {
     this._shader     = null;
     this._txtMat     = null;
+    this._blurAdj    = null;
+    this._blurDir    = null;
     this._colorTxt   = null;
     this._blurTxt    = null;
     this._blurValue  = 0.0;
-    this._highBlur   = 0.0;
-    this._lowBlur    = 4.0;
     this._changed    = null;
 
     this.textureMatrix = txtMat;
+    this.blurAdjust    = blurAdj;
+    this.blurDirection = blurDir;
     this.colorTexture  = colorTxt;
     this.blurTexture   = blurTxt;
     this.blurValue     = blurValue;
-    this.highBlur      = highBlur;
-    this.lowBlur       = lowBlur;
   }
 
   /// Indicates that this technique has changed.
@@ -50,30 +50,6 @@ class GaussianBlur extends Technique {
   void _resetShader([Events.EventArgs args = null]) {
     this._shader = null;
     this._onChanged(args);
-  }
-
-  /// The offset value for the blur at it's highest value.
-  /// This only has effect when using a blur texture.
-  double get highBlur => this._highBlur;
-  void set highBlur(double value) {
-    value ??= 0.0;
-    if (!Math.Comparer.equals(this._highBlur, value)) {
-      double prev = this._highBlur;
-      this._highBlur = value;
-      this._onChanged(new Events.ValueChangedEventArgs(this, "highBlur", prev, this._highBlur));
-    }
-  }
-
-  /// The offset value for the blur at it's lowest value.
-  /// This only has effect when using a blur texture.
-  double get lowBlur => this._lowBlur;
-  void set lowBlur(double value) {
-    value ??= 4.0;
-    if (!Math.Comparer.equals(this._lowBlur, value)) {
-      double prev = this._lowBlur;
-      this._lowBlur = value;
-      this._onChanged(new Events.ValueChangedEventArgs(this, "lowBlur", prev, this._lowBlur));
-    }
   }
 
   /// The blur value, this will overrided by blur texture.
@@ -122,6 +98,30 @@ class GaussianBlur extends Technique {
       Math.Matrix3 prev = this._txtMat;
       this._txtMat = mat;
       this._onChanged(new Events.ValueChangedEventArgs(this, "textureMatrix", prev, this._txtMat));
+    }
+  }
+
+  /// The blur value modification vector.
+  /// This is the vector to apply to the color from the blur texture
+  /// to get the blur value from the blur texture, by default it just uses red.
+  Math.Vector4 get blurAdjust => this._blurAdj;
+  void set blurAdjust(Math.Vector4 vec) {
+    vec ??= Math.Vector4.posX;
+    if (this._blurAdj != vec) {
+      Math.Vector4 prev = this._blurAdj;
+      this._blurAdj = vec;
+      this._onChanged(new Events.ValueChangedEventArgs(this, "blurAdjust", prev, this._blurAdj));
+    }
+  }
+
+  /// The direction to apply the direction, by default it is horizontal.
+  Math.Vector2 get blurDirection => this._blurDir;
+  void set blurDirection(Math.Vector2 vec) {
+    vec ??= Math.Vector2.posX;
+    if (this._blurDir != vec) {
+      Math.Vector2 prev = this._blurDir;
+      this._blurDir = vec;
+      this._onChanged(new Events.ValueChangedEventArgs(this, "blurDirection", prev, this._blurDir));
     }
   }
 
@@ -174,15 +174,13 @@ class GaussianBlur extends Technique {
       ..bind(state)
       ..colorTexture  = this._colorTxt
       ..textureMatrix = this._txtMat
-      ..highBlur      = this._highBlur
-      ..lowBlur       = this._lowBlur
-      ..width         = state.width.toDouble()
-      ..height        = state.height.toDouble()
+      ..blurScalar = new Math.Vector2(this._blurDir.dx/state.width.toDouble(), this._blurDir.dy/state.height.toDouble())
       ..projectViewObjectMatrix = state.projectionViewObjectMatrix;
 
     if (cfg.blurTxt) {
       this._shader
-        ..blurTexture = this._blurTxt;
+        ..blurTexture = this._blurTxt
+        ..blurAdjust  = this._blurAdj;
     } else {
       this._shader
         ..blurValue = this._blurValue;

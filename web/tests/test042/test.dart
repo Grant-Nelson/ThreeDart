@@ -97,9 +97,7 @@ void main() {
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
     ..lights.add(lightPoint)
     ..ambient.color = new Math.Color3.white()
-    ..diffuse.color = new Math.Color3.white()
-    ..specular.color = new Math.Color3.black() // TODO: Fix No specular in this setup.
-    ..specular.shininess = 100.0;
+    ..diffuse.color = new Math.Color3.white();
 
   Views.BackTarget colorTarget = new Views.BackTarget(800, 600, autoResize: true)
     ..clearColor = false;
@@ -113,10 +111,8 @@ void main() {
     ..target = colorTarget;
 
   Techniques.GaussianBlur blurTech = new Techniques.GaussianBlur(
-      colorTxt: colorTarget.colorTexture,
-      blurTxt: colorTarget.colorTexture,
-      highBlur: 9.0,
-      lowBlur: 0.0);
+    colorTxt: colorTarget.colorTexture,
+    blurTxt: colorTarget.colorTexture);
   Scenes.CoverPass blurPass = new Scenes.CoverPass()
     ..technique = blurTech;
 

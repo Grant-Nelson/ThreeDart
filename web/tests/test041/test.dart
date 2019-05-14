@@ -46,56 +46,64 @@ void main() {
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
   
-  Movers.Group firstMover =new Movers.Group()
-    ..add(new Movers.Rotater())
+  Movers.Group mover = new Movers.Group()
+    ..add(new Movers.UserRotater(input: td.userInput))
+    ..add(new Movers.UserRoller(ctrl: true, input: td.userInput))
+    ..add(new Movers.UserZoom(input: td.userInput))
     ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));
+  Views.Perspective userCamera = new Views.Perspective(mover: mover);
 
-  Views.Perspective rotaterCamera = new Views.Perspective(mover: firstMover);
+  Techniques.MaterialLight tech = new Techniques.MaterialLight()
+    ..ambient.color = new Math.Color3.gray(0.3)
+    ..diffuse.color = new Math.Color3.gray(0.8)
+    ..diffuse.texture2D = td.textureLoader.load2DFromFile("../resources/Test.png");
 
   Views.BackTarget backTarget = new Views.BackTarget(1024, 1024, autoResize: true)
     ..clearColor = false;
 
+  Scenes.EntityPass colorPass = new Scenes.EntityPass()
+    ..children.add(new ThreeDart.Entity(shape: Shapes.cube()))
+    ..technique = tech
+    ..target = backTarget
+    ..camera = userCamera;
+
   Scenes.CoverPass skybox = new Scenes.CoverPass.skybox(
     td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg"))
     ..target = backTarget
-    ..camera = rotaterCamera;
+    ..camera = userCamera;
+    
+  Views.BackTarget horzBlurTarget = new Views.BackTarget(1024, 1024, autoResize: true)
+    ..clearColor = false;
 
-  ThreeDart.Entity firstObj = new ThreeDart.Entity()
-    ..shape = Shapes.toroid();
-
-  Techniques.MaterialLight firstTech = new Techniques.MaterialLight()
-    ..lights.add(new Lights.Directional(
-          mover: new Movers.Constant.vectorTowards(0.0, -1.0, -1.0),
-          color: new Math.Color3.white()))
-    ..ambient.color = new Math.Color3(0.0, 0.0, 1.0)
-    ..diffuse.color = new Math.Color3(0.0, 1.0, 0.0)
-    ..specular.color = new Math.Color3(1.0, 0.0, 0.0)
-    ..specular.shininess = 10.0;
-
-  Scenes.EntityPass firstPass = new Scenes.EntityPass()
-    ..camera = rotaterCamera
-    ..technique = firstTech
-    ..target = backTarget
-    ..children.add(firstObj);
-
-  Techniques.GaussianBlur blurTech = new Techniques.GaussianBlur(
+  Techniques.GaussianBlur horzBlurTech = new Techniques.GaussianBlur(
       colorTxt: backTarget.colorTexture,
-      blurValue: 0.0,
-      lowBlur: 0.0,
-      highBlur: 5.0);
+      blurValue: 0.0);
 
-  Scenes.CoverPass blurPass = new Scenes.CoverPass()
-    ..technique = blurTech;
+  Scenes.CoverPass horzBlurPass = new Scenes.CoverPass()
+    ..target = horzBlurTarget
+    ..technique = horzBlurTech;
+  
+Techniques.GaussianBlur vertBlurTech = new Techniques.GaussianBlur(
+      colorTxt: horzBlurTarget.colorTexture,
+      blurDir: Math.Vector2.posY);
 
-  td.scene = new Scenes.Compound(passes: [skybox, firstPass, blurPass]);
+  Scenes.CoverPass vertBlurPass = new Scenes.CoverPass()
+    ..technique = vertBlurTech;
+
+  td.scene = new Scenes.Compound(passes: [skybox, colorPass, horzBlurPass, vertBlurPass]);
+
+  var setBlur = (double blurValue) {
+    horzBlurTech.blurValue = blurValue;
+    vertBlurTech.blurValue = blurValue;
+  };
 
   new common.RadioGroup("blurValue")
-    ..add("0", () { blurTech.blurValue = 0.0; }, true)
-    ..add("1", () { blurTech.blurValue = 0.2; })
-    ..add("2", () { blurTech.blurValue = 0.4; })
-    ..add("3", () { blurTech.blurValue = 0.6; })
-    ..add("4", () { blurTech.blurValue = 0.8; })
-    ..add("5", () { blurTech.blurValue = 1.0; });
+    ..add("0.0", () { setBlur(0.0); }, true)
+    ..add("0.2", () { setBlur(0.2); })
+    ..add("0.4", () { setBlur(0.4); })
+    ..add("0.6", () { setBlur(0.6); })
+    ..add("0.8", () { setBlur(0.8); })
+    ..add("1.0", () { setBlur(1.0); });
 
   common.showFPS(td);
 }
