@@ -79,22 +79,10 @@ void main() {
     ..technique = new Techniques.Depth(fogStart: 3.5, fogStop: 5.5)
     ..children.add(group);
   
-  Math.Vector4 blurAdj = new Math.Vector4(-1.0, 0.0, 0.0, 1.0);
-  Views.BackTarget horzBlurTarget = new Views.BackTarget(autoResize: true);
-  Techniques.GaussianBlur horzBlurTech = new Techniques.GaussianBlur(
-      blurAdj: blurAdj,
-      colorTxt: colorTarget.colorTexture,
-      blurTxt: depthTarget.colorTexture);
-  Scenes.CoverPass horzBlurPass = new Scenes.CoverPass()
-    ..target = horzBlurTarget
-    ..technique = horzBlurTech;
-    
-  Techniques.GaussianBlur vertBlurTech = new Techniques.GaussianBlur(
-      blurAdj: blurAdj,
-      colorTxt: horzBlurTarget.colorTexture,
-      blurTxt: depthTarget.colorTexture);
-  Scenes.CoverPass vertBlurPass = new Scenes.CoverPass()
-    ..technique = vertBlurTech;
+  Scenes.GaussianBlur blurPass = new Scenes.GaussianBlur(
+    blurAdj: new Math.Vector4(-1.0, 0.0, 0.0, 1.0),
+    colorTxt: colorTarget.colorTexture,
+    blurTxt: depthTarget.colorTexture);
 
   Techniques.TextureLayout layoutTech = new Techniques.TextureLayout()
     ..entries.add(new Techniques.TextureLayoutEntry(
@@ -107,12 +95,7 @@ void main() {
     ..target = new Views.FrontTarget(clearColor: false)
     ..technique = layoutTech;
 
-  td.scene = new Scenes.Compound(passes: [skybox, colorPass, depthPass, horzBlurPass, vertBlurPass, layout]);
+  td.scene = new Scenes.Compound(passes: [skybox, colorPass, depthPass, blurPass, layout]);
 
-  td.postrender.once((_){
-    page
-      ..addCode("Vertex Shader for blur", "glsl", 0, horzBlurTech.vertexSourceCode.split("\n"))
-      ..addCode("Fragment Shader for blur", "glsl", 0, horzBlurTech.fragmentSourceCode.split("\n"));
-  });
   common.showFPS(td);
 }

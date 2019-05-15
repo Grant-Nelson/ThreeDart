@@ -109,11 +109,9 @@ void main() {
     ..camera.mover = camMover
     ..target = colorTarget;
 
-  Techniques.GaussianBlur blurTech = new Techniques.GaussianBlur(
+  Scenes.GaussianBlur blurPass = new Scenes.GaussianBlur(
     colorTxt: colorTarget.colorTexture,
     blurTxt: colorTarget.colorTexture);
-  Scenes.CoverPass blurPass = new Scenes.CoverPass()
-    ..technique = blurTech;
 
   td.scene = new Scenes.Compound(passes: [colorPass, blurPass]);
 

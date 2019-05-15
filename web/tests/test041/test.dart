@@ -70,28 +70,14 @@ void main() {
     td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg"))
     ..target = backTarget
     ..camera = userCamera;
-
-  Views.BackTarget horzBlurTarget = new Views.BackTarget(autoResize: true, clearColor: false);
-
-  Techniques.GaussianBlur horzBlurTech = new Techniques.GaussianBlur(
+    
+  Scenes.GaussianBlur blurPass = new Scenes.GaussianBlur(
       colorTxt: backTarget.colorTexture);
 
-  Scenes.CoverPass horzBlurPass = new Scenes.CoverPass()
-    ..target = horzBlurTarget
-    ..technique = horzBlurTech;
-  
-Techniques.GaussianBlur vertBlurTech = new Techniques.GaussianBlur(
-      colorTxt: horzBlurTarget.colorTexture,
-      blurDir: Math.Vector2.posY);
-
-  Scenes.CoverPass vertBlurPass = new Scenes.CoverPass()
-    ..technique = vertBlurTech;
-
-  td.scene = new Scenes.Compound(passes: [skybox, colorPass, horzBlurPass, vertBlurPass]);
+  td.scene = new Scenes.Compound(passes: [skybox, colorPass, blurPass]);
 
   var setBlur = (double blurValue) {
-    horzBlurTech.blurValue = blurValue;
-    vertBlurTech.blurValue = blurValue;
+    blurPass.blurValue = blurValue;
   };
 
   new common.RadioGroup("blurValue")
