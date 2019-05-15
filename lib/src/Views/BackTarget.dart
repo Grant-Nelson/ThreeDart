@@ -22,35 +22,46 @@ class BackTarget extends Target {
   Events.Event _changed;
 
   /// Creates a new back target.
-  BackTarget(int width, int height, {bool hasDepth: true,
-    bool autoResize: false, double autoResizeScalarX: 1.0, double autoResizeScalarY: 1.0}) {
-    this._width        = 512;
-    this._height       = 512;
-    this._actualWidth  = 512;
-    this._actualHeight = 512;
-    this._hasDepth     = hasDepth ?? true;
-    this._autoResize   = autoResize ?? false;
-    this._autoResizeScalarX = autoResizeScalarX ?? 1.0;
-    this._autoResizeScalarY = autoResizeScalarY ?? 1.0;
-    this._framebuffer  = null;
-    this._colorBuffer  = null;
-    this._depthBuffer  = null;
-    this._colorTxt     = new Textures.Texture2DSolid();
-    this._color        = new Math.Color4.black();
-    this._clearColor   = true;
-    this._depth        = 2000.0;
-    this._clearDepth   = true;
-    this._region       = Math.Region2.unit;
-    this._changed      = null;
+  BackTarget({int          width:             512,
+              int          height:            512,
+              bool         hasDepth:          true,
+              bool         autoResize:        false,
+              double       autoResizeScalarX: 1.0,
+              double       autoResizeScalarY: 1.0,
+              Math.Color4  color:             null,
+              bool         clearColor:        true,
+              double       depth:             2000.0,
+              bool         clearDepth:        true,
+              Math.Region2 region:            null}) {
+    this._width             = 512;
+    this._height            = 512;
+    this._actualWidth       = 512;
+    this._actualHeight      = 512;
+    this._hasDepth          = true;
+    this._autoResize        = false;
+    this._autoResizeScalarX = 1.0;
+    this._autoResizeScalarY = 1.0;
+    this._framebuffer       = null;
+    this._colorBuffer       = null;
+    this._depthBuffer       = null;
+    this._colorTxt          = new Textures.Texture2DSolid();
+    this._color             = new Math.Color4.black();
+    this._clearColor        = true;
+    this._depth             = 2000.0;
+    this._clearDepth        = true;
+    this._region            = Math.Region2.unit;
+    this._changed           = null;
 
-    this.width  = width;
-    this.height = height;
-  }
-
-  /// Creates a new back target which auto resizes.
-  factory BackTarget.autoResize({double autoResizeScalarX: 1.0, double autoResizeScalarY: 1.0}) {
-    return new BackTarget(1024, 1024, autoResize: true,
-      autoResizeScalarX: autoResizeScalarX, autoResizeScalarY: autoResizeScalarY);
+    this.width             = width;
+    this.height            = height;
+    this.color             = color;
+    this.clearColor        = clearColor;
+    this.depth             = depth;
+    this.clearDepth        = clearDepth;
+    this.autoResize        = autoResize;
+    this.autoResizeScalarX = autoResizeScalarX;
+    this.autoResizeScalarY = autoResizeScalarY;
+    this.region            = region;
   }
 
   /// Indicates that this target has changed.

@@ -65,13 +65,13 @@ void main() {
     ..diffuse.color = new Math.Color3.white()
     ..specular.shininess = 40.0;
 
-  Views.BackTarget colorTarget = new Views.BackTarget.autoResize();
+  Views.BackTarget colorTarget = new Views.BackTarget(autoResize: true);
   Scenes.EntityPass colorPass = new Scenes.EntityPass(children: [entity, bulb])
     ..technique = colorTech
     ..camera = userCamera
     ..target = colorTarget;
 
-  Views.BackTarget depthTarget = new Views.BackTarget.autoResize(
+  Views.BackTarget depthTarget = new Views.BackTarget(autoResize: true,
     autoResizeScalarX: 0.5, autoResizeScalarY: 0.5);
 
   Scenes.EntityPass depthPass = new Scenes.EntityPass(children: [entity, bulb])
@@ -80,7 +80,7 @@ void main() {
     ..technique = new Techniques.Depth(fogStart: 0.5, fogStop: 5.5);
 
   Math.Vector4 blurAdj = new Math.Vector4(-1.0, 0.0, 0.0, 1.0);
-  Views.BackTarget horzBlurTarget = new Views.BackTarget.autoResize();
+  Views.BackTarget horzBlurTarget = new Views.BackTarget(autoResize: true);
   Techniques.GaussianBlur horzBlurTech = new Techniques.GaussianBlur(
     blurAdj: blurAdj,
     colorTxt: colorTarget.colorTexture,

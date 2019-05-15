@@ -58,8 +58,7 @@ void main() {
     ..diffuse.color = new Math.Color3.gray(0.8)
     ..diffuse.texture2D = td.textureLoader.load2DFromFile("../resources/Test.png");
 
-  Views.BackTarget backTarget = new Views.BackTarget.autoResize()
-    ..clearColor = false;
+  Views.BackTarget backTarget = new Views.BackTarget(autoResize: true, clearColor: false);
 
   Scenes.EntityPass colorPass = new Scenes.EntityPass()
     ..children.add(new ThreeDart.Entity(shape: Shapes.cube()))
@@ -72,8 +71,7 @@ void main() {
     ..target = backTarget
     ..camera = userCamera;
 
-  Views.BackTarget horzBlurTarget = new Views.BackTarget.autoResize()
-    ..clearColor = false;
+  Views.BackTarget horzBlurTarget = new Views.BackTarget(autoResize: true, clearColor: false);
 
   Techniques.GaussianBlur horzBlurTech = new Techniques.GaussianBlur(
       colorTxt: backTarget.colorTexture);

@@ -32,8 +32,8 @@ void main() {
   Techniques.Normal normalTech = new Techniques.Normal()
     ..bumpyTextureCube = td.textureLoader.loadCubeFromPath("../resources/diceBumpMap");
 
-  Views.BackTarget normalTarget = new Views.BackTarget.autoResize()
-    ..color = new Math.Color4(0.5, 0.5, 1.0, 1.0);
+  Views.BackTarget normalTarget = new Views.BackTarget(autoResize: true,
+    color: new Math.Color4(0.5, 0.5, 1.0, 1.0));
 
   Scenes.EntityPass normalPass = new Scenes.EntityPass()
     ..technique = normalTech
@@ -47,8 +47,7 @@ void main() {
   ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));
   Views.Perspective userCamera = new Views.Perspective(mover: secondMover);
 
-  Views.BackTarget colorTarget = new Views.BackTarget.autoResize()
-    ..clearColor = false;
+  Views.BackTarget colorTarget = new Views.BackTarget(autoResize: true, clearColor: false);
 
   ThreeDart.Entity colorObj = new ThreeDart.Entity()
     ..shape = Shapes.toroid();

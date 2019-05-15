@@ -24,7 +24,7 @@ class GaussianBlur implements Scene {
     this._loopProtection = false;
     this._changed        = null;
 
-    this._horzBlurTarget = new Views.BackTarget.autoResize()
+    this._horzBlurTarget = new Views.BackTarget(autoResize: true)
       ..clearColor = false;
 
     this._horzBlurTech = new Techniques.GaussianBlur();
@@ -51,6 +51,41 @@ class GaussianBlur implements Scene {
   /// Handles changes to the scene.
   void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
+  }
+
+  /// The blur value, this will overrided by blur texture.
+  double get blurValue => this._horzBlurTech.blurValue;
+  void set blurValue(double value) {
+    this._horzBlurTech.blurValue = value;
+  }
+
+  /// The color texture.
+  Textures.Texture2D get colorTexture => this._horzBlurTech.colorTexture;
+  void set colorTexture(Textures.Texture2D txt) {
+    this._horzBlurTech.colorTexture = txt;
+  }
+
+  /// The blur texture, this will override the blur value.
+  Textures.Texture2D get blurTexture => this._horzBlurTech.blurTexture;
+  void set blurTexture(Textures.Texture2D txt) {
+    this._horzBlurTech.blurTexture = txt;
+    this._vertBlurTech.blurTexture = txt;
+  }
+
+  /// The texture modification matrix.
+  Math.Matrix3 get textureMatrix => this._horzBlurTech.textureMatrix;
+  void set textureMatrix(Math.Matrix3 mat) {
+    this._horzBlurTech.textureMatrix = mat;
+    this._vertBlurTech.textureMatrix = mat;
+  }
+
+  /// The blur value modification vector.
+  /// This is the vector to apply to the color from the blur texture
+  /// to get the blur value from the blur texture, by default it just uses red.
+  Math.Vector4 get blurAdjust => this._horzBlurTech.blurAdjust;
+  void set blurAdjust(Math.Vector4 vec) {
+    this._horzBlurTech.blurAdjust = vec;
+    this._vertBlurTech.blurAdjust = vec;
   }
 
   /// Renders the scenes with the given [state].

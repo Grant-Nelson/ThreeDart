@@ -58,8 +58,7 @@ void main() {
     ..specular.shininess = 10.0
     ..bump.textureCube = td.textureLoader.loadCubeFromPath("../resources/diceBumpMap");
 
-  Views.BackTarget colorTarget = new Views.BackTarget.autoResize()
-    ..clearColor = false;
+  Views.BackTarget colorTarget = new Views.BackTarget(autoResize: true, clearColor: false);
 
   Scenes.CoverPass skybox = new Scenes.CoverPass.skybox(
     td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg"))
@@ -72,7 +71,7 @@ void main() {
     ..technique = colorTech
     ..children.add(group);
 
-  Views.BackTarget depthTarget = new Views.BackTarget.autoResize(
+  Views.BackTarget depthTarget = new Views.BackTarget(autoResize: true,
     autoResizeScalarX: 0.5, autoResizeScalarY: 0.5);
   Scenes.EntityPass depthPass = new Scenes.EntityPass()
     ..camera = userCamera
@@ -81,7 +80,7 @@ void main() {
     ..children.add(group);
   
   Math.Vector4 blurAdj = new Math.Vector4(-1.0, 0.0, 0.0, 1.0);
-  Views.BackTarget horzBlurTarget = new Views.BackTarget.autoResize();
+  Views.BackTarget horzBlurTarget = new Views.BackTarget(autoResize: true);
   Techniques.GaussianBlur horzBlurTech = new Techniques.GaussianBlur(
       blurAdj: blurAdj,
       colorTxt: colorTarget.colorTexture,
