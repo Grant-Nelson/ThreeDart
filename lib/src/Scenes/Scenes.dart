@@ -15,6 +15,7 @@ import '../Math/Math.dart' as Math;
 part 'Compound.dart';
 part 'CoverPass.dart';
 part 'RenderPass.dart';
+part 'GaussianBlur.dart';
 part 'EntityPass.dart';
 part 'Scene.dart';
 part 'Sterioscopic.dart';

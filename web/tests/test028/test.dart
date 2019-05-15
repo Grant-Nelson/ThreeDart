@@ -58,7 +58,7 @@ void main() {
     ..specular.shininess = 10.0
     ..bump.textureCube = td.textureLoader.loadCubeFromPath("../resources/diceBumpMap");
 
-  Views.BackTarget colorTarget = new Views.BackTarget(800, 600, autoResize: true)
+  Views.BackTarget colorTarget = new Views.BackTarget.autoResize()
     ..clearColor = false;
 
   Scenes.CoverPass skybox = new Scenes.CoverPass.skybox(
@@ -72,8 +72,8 @@ void main() {
     ..technique = colorTech
     ..children.add(group);
 
-  Views.BackTarget depthTarget = new Views.BackTarget(400, 300,
-    autoResize: true, autoResizeScalarX: 0.5, autoResizeScalarY: 0.5);
+  Views.BackTarget depthTarget = new Views.BackTarget.autoResize(
+    autoResizeScalarX: 0.5, autoResizeScalarY: 0.5);
   Scenes.EntityPass depthPass = new Scenes.EntityPass()
     ..camera = userCamera
     ..target = depthTarget
@@ -81,7 +81,7 @@ void main() {
     ..children.add(group);
   
   Math.Vector4 blurAdj = new Math.Vector4(-1.0, 0.0, 0.0, 1.0);
-  Views.BackTarget horzBlurTarget = new Views.BackTarget(400, 300, autoResize: true);
+  Views.BackTarget horzBlurTarget = new Views.BackTarget.autoResize();
   Techniques.GaussianBlur horzBlurTech = new Techniques.GaussianBlur(
       blurAdj: blurAdj,
       colorTxt: colorTarget.colorTexture,

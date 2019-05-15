@@ -99,7 +99,7 @@ void main() {
     ..ambient.color = new Math.Color3.white()
     ..diffuse.color = new Math.Color3.white();
 
-  Views.BackTarget colorTarget = new Views.BackTarget(800, 600, autoResize: true)
+  Views.BackTarget colorTarget = new Views.BackTarget.autoResize()
     ..clearColor = false;
   Scenes.EntityPass colorPass = new Scenes.EntityPass()
     ..technique = tech

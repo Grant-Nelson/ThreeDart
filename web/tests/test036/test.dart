@@ -25,7 +25,7 @@ void main() {
     ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));
   Views.Perspective userCamera = new Views.Perspective(mover: secondMover);
 
-  Views.BackTarget back = new Views.BackTarget(800, 600, autoResize: true)
+  Views.BackTarget back = new Views.BackTarget.autoResize()
     ..color = new Math.Color4.transparent();
 
   ThreeDart.Entity obj = new ThreeDart.Entity()

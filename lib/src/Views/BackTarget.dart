@@ -47,6 +47,12 @@ class BackTarget extends Target {
     this.height = height;
   }
 
+  /// Creates a new back target which auto resizes.
+  factory BackTarget.autoResize({double autoResizeScalarX: 1.0, double autoResizeScalarY: 1.0}) {
+    return new BackTarget(1024, 1024, autoResize: true,
+      autoResizeScalarX: autoResizeScalarX, autoResizeScalarY: autoResizeScalarY);
+  }
+
   /// Indicates that this target has changed.
   Events.Event get changed {
     this._changed ??= new Events.Event();

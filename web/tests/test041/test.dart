@@ -40,7 +40,7 @@ void addLightBall(Techniques.MaterialLight tech, Scenes.EntityPass pass,
 void main() {
   new common.ShellPage("Test 041")
     ..addLargeCanvas("testCanvas")
-    ..addPar(["Test of the Gaussian blur technique."])
+    ..addPar(["Test of the Gaussian blur technique with a solid blur value for the whole image."])
     ..addControlBoxes(["blurValue"])
     ..addPar(["«[Back to Tests|../]"]);
 
@@ -58,7 +58,7 @@ void main() {
     ..diffuse.color = new Math.Color3.gray(0.8)
     ..diffuse.texture2D = td.textureLoader.load2DFromFile("../resources/Test.png");
 
-  Views.BackTarget backTarget = new Views.BackTarget(1024, 1024, autoResize: true)
+  Views.BackTarget backTarget = new Views.BackTarget.autoResize()
     ..clearColor = false;
 
   Scenes.EntityPass colorPass = new Scenes.EntityPass()
@@ -71,13 +71,12 @@ void main() {
     td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg"))
     ..target = backTarget
     ..camera = userCamera;
-    
-  Views.BackTarget horzBlurTarget = new Views.BackTarget(1024, 1024, autoResize: true)
+
+  Views.BackTarget horzBlurTarget = new Views.BackTarget.autoResize()
     ..clearColor = false;
 
   Techniques.GaussianBlur horzBlurTech = new Techniques.GaussianBlur(
-      colorTxt: backTarget.colorTexture,
-      blurValue: 0.0);
+      colorTxt: backTarget.colorTexture);
 
   Scenes.CoverPass horzBlurPass = new Scenes.CoverPass()
     ..target = horzBlurTarget
@@ -98,12 +97,11 @@ Techniques.GaussianBlur vertBlurTech = new Techniques.GaussianBlur(
   };
 
   new common.RadioGroup("blurValue")
-    ..add("0.0", () { setBlur(0.0); }, true)
-    ..add("0.2", () { setBlur(0.2); })
-    ..add("0.4", () { setBlur(0.4); })
-    ..add("0.6", () { setBlur(0.6); })
-    ..add("0.8", () { setBlur(0.8); })
-    ..add("1.0", () { setBlur(1.0); });
+    ..add("0.0",  () { setBlur(0.0); }, true)
+    ..add("0.25", () { setBlur(0.25); })
+    ..add("0.5",  () { setBlur(0.5); })
+    ..add("0.75", () { setBlur(0.75); })
+    ..add("1.0",  () { setBlur(1.0); });
 
   common.showFPS(td);
 }
