@@ -8,6 +8,7 @@ import 'package:ThreeDart/Views.dart' as Views;
 import 'package:ThreeDart/Textures.dart' as Textures;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
+import 'package:ThreeDart/Shaders.dart' as Shaders;
 import 'package:ThreeDart/Lights.dart' as Lights;
 import '../../common/common.dart' as common;
 
@@ -108,12 +109,33 @@ void main() {
     ..children.add(shadeObj)
     ..camera.mover = camMover
     ..target = colorTarget;
+  
+  Techniques.TextureLayout brightTrimTech = new Techniques.TextureLayout()
+    ..blend = Shaders.ColorBlendType.Additive
+    ..entries.add(new Techniques.TextureLayoutEntry(
+      texture: colorTarget.colorTexture,
+      colorMatrix: new Math.Matrix4(
+        1.0, 0.0, 0.0, 0.0,
+        0.0, 0.0, 0.0, 0.0,
+        0.0, 0.0, 0.0, 0.0,
+        0.0, 0.0, 0.0, 1.0)))
+    ..entries.add(new Techniques.TextureLayoutEntry(
+      texture: colorTarget.colorTexture,
+      colorMatrix: new Math.Matrix4(
+        3.0, 3.0, 3.0, -8.0,
+        3.0, 3.0, 3.0, -8.0,
+        3.0, 3.0, 3.0, -8.0,
+        0.0, 0.0, 0.0,  1.0)))
+      ;
 
-  Scenes.GaussianBlur blurPass = new Scenes.GaussianBlur(
-    colorTxt: colorTarget.colorTexture,
-    blurTxt: colorTarget.colorTexture);
+  Scenes.CoverPass brightTrim = new Scenes.CoverPass()
+    ..technique = brightTrimTech;
 
-  td.scene = new Scenes.Compound(passes: [colorPass, blurPass]);
+  // Scenes.GaussianBlur blurPass = new Scenes.GaussianBlur(
+  //   colorTxt: colorTarget.colorTexture,
+  //   blurTxt: colorTarget.colorTexture);
+
+  td.scene = new Scenes.Compound(passes: [colorPass, brightTrim]);
 
   common.showFPS(td);
 }

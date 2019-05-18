@@ -6,6 +6,7 @@ import 'package:ThreeDart/Movers.dart' as Movers;
 import 'package:ThreeDart/Math.dart' as Math;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
+import 'package:ThreeDart/Shaders.dart' as Shaders;
 import 'package:ThreeDart/Views.dart' as Views;
 import 'package:ThreeDart/Lights.dart' as Lights;
 import '../../common/common.dart' as common;
@@ -80,6 +81,7 @@ void main() {
     ..technique = distortTech;
 
   Techniques.TextureLayout layoutTech = new Techniques.TextureLayout()
+    ..blend = Shaders.ColorBlendType.Overwrite
     ..entries.add(new Techniques.TextureLayoutEntry(
       texture: normalTarget.colorTexture,
       destination: new Math.Region2(0.0, 0.8, 0.2, 0.2),

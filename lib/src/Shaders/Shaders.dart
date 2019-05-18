@@ -45,6 +45,24 @@ enum ColorSourceType {
 /// Gets the string to indicate a source type used for the name of the material light.
 String stringForComponentType(ColorSourceType type) => type.index.toString();
 
+/// The type of blending of multiple colors together.
+enum ColorBlendType {
+  /// Overwrite means that the last color is shown.
+  Overwrite,
+
+  /// The colors are added up.
+  Additive,
+
+  /// The colors are added up then divided by the number of added colors.
+  Average,
+
+  /// The current alpha is used to blend with previous color.
+  AlphaBlend
+}
+
+/// Gets the string to indicate a color blend type used for the name of the material light.
+String stringForColorBlendType(ColorBlendType type) => type.index.toString();
+
 /// Inserts a number for each line in the given [text].
 String numberLines(String text) {
   List<String> lines = text.split("\n");

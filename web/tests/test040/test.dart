@@ -7,6 +7,7 @@ import 'package:ThreeDart/Movers.dart' as Movers;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Textures.dart' as Textures;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
+import 'package:ThreeDart/Shaders.dart' as Shaders;
 import 'package:ThreeDart/Lights.dart' as Lights;
 import 'package:ThreeDart/Data.dart' as Data;
 import 'package:ThreeDart/Views.dart' as Views;
@@ -85,6 +86,7 @@ void main() {
     blurTxt: depthTarget.colorTexture);
 
   Techniques.TextureLayout layoutTech = new Techniques.TextureLayout()
+    ..blend = Shaders.ColorBlendType.Overwrite
     ..entries.add(new Techniques.TextureLayoutEntry(
       texture: depthTarget.colorTexture,
       destination: new Math.Region2(0.0, 0.8, 0.2, 0.2)))
@@ -108,23 +110,23 @@ void main() {
     ..add("Specular",
       (bool show) {
         colorTech.specular.texture2D = show? spec: null;
-      }, false)
+      })
     ..add("Bump",
       (bool show) {
         colorTech.bump.texture2D = show? bump: null;
-      }, false)
+      })
     ..add("Height",
       (bool show) {
         entity.shape = show? heightShape: flatShape;
-      }, false)
+      })
     ..add("Blur",
       (bool show) {
         blurPass.blurTexture = show? depthTarget.colorTexture: null;
-      }, false)
+      })
     ..add("Passes",
       (bool show) {
         layout.technique = show? layoutTech: null;
-      }, false);
+      });
 
   common.showFPS(td);
 }
