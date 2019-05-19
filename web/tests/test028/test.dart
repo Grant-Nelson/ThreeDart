@@ -9,6 +9,7 @@ import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Textures.dart' as Textures;
 import 'package:ThreeDart/Lights.dart' as Lights;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
+import 'package:ThreeDart/Shaders.dart' as Shaders;
 import '../../common/common.dart' as common;
 
 void main() {
@@ -58,8 +59,7 @@ void main() {
     ..specular.shininess = 10.0
     ..bump.textureCube = td.textureLoader.loadCubeFromPath("../resources/diceBumpMap");
 
-  Views.BackTarget colorTarget = new Views.BackTarget(800, 600, autoResize: true)
-    ..clearColor = false;
+  Views.BackTarget colorTarget = new Views.BackTarget(autoResize: true, clearColor: false);
 
   Scenes.CoverPass skybox = new Scenes.CoverPass.skybox(
     td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg"))
@@ -72,24 +72,21 @@ void main() {
     ..technique = colorTech
     ..children.add(group);
 
-  Views.BackTarget depthTarget = new Views.BackTarget(400, 300,
-    autoResize: true, autoResizeScalarX: 0.5, autoResizeScalarY: 0.5);
+  Views.BackTarget depthTarget = new Views.BackTarget(autoResize: true,
+    autoResizeScalarX: 0.5, autoResizeScalarY: 0.5);
   Scenes.EntityPass depthPass = new Scenes.EntityPass()
     ..camera = userCamera
     ..target = depthTarget
     ..technique = new Techniques.Depth(fogStart: 3.5, fogStop: 5.5)
     ..children.add(group);
-
-  Techniques.GaussianBlur blurTech = new Techniques.GaussianBlur(
-      colorTxt: colorTarget.colorTexture,
-      depthTxt: depthTarget.colorTexture,
-      highOffset: 0.0,
-      lowOffset: 3.0,
-      depthLimit: 0.001);
-  Scenes.CoverPass blurPass = new Scenes.CoverPass()
-    ..technique = blurTech;
+  
+  Scenes.GaussianBlur blurPass = new Scenes.GaussianBlur(
+    blurAdj: new Math.Vector4(-1.0, 0.0, 0.0, 1.0),
+    colorTxt: colorTarget.colorTexture,
+    blurTxt: depthTarget.colorTexture);
 
   Techniques.TextureLayout layoutTech = new Techniques.TextureLayout()
+    ..blend = Shaders.ColorBlendType.Overwrite
     ..entries.add(new Techniques.TextureLayoutEntry(
       texture: depthTarget.colorTexture,
       destination: new Math.Region2(0.0, 0.8, 0.2, 0.2)))
@@ -102,10 +99,5 @@ void main() {
 
   td.scene = new Scenes.Compound(passes: [skybox, colorPass, depthPass, blurPass, layout]);
 
-  td.postrender.once((_){
-    page
-      ..addCode("Vertex Shader for blur", "glsl", 0, blurTech.vertexSourceCode.split("\n"))
-      ..addCode("Fragment Shader for blur", "glsl", 0, blurTech.fragmentSourceCode.split("\n"));
-  });
   common.showFPS(td);
 }

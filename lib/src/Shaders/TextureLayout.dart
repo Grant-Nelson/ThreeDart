@@ -4,7 +4,8 @@ part of ThreeDart.Shaders;
 class TextureLayout extends Shader {
 
   /// The name for this shader.
-  static String _getName(maxTxtCount) => "TextureLayout_$maxTxtCount";
+  static String _getName(int maxTxtCount, ColorBlendType blend) =>
+    "TextureLayout_${maxTxtCount}_${stringForColorBlendType(blend)}";
 
   /// The vertex shader source code in glsl.
   static String _vertexSource() {
@@ -22,7 +23,7 @@ class TextureLayout extends Shader {
   }
 
   /// The fragment shader source code in glsl.
-  static String _fragmentSource(int maxTxtCount) {
+  static String _fragmentSource(int maxTxtCount, ColorBlendType blend) {
     StringBuffer buf = new StringBuffer();
     buf.writeln("precision mediump float;");
     buf.writeln("");
@@ -41,7 +42,12 @@ class TextureLayout extends Shader {
       buf.writeln("uniform int flip$i;");
     }
     buf.writeln("");
-    buf.writeln("vec4 layout(vec4 clrAccum, sampler2D txt, mat4 clrMat,");
+    buf.writeln("vec4 clrAccum;");
+    if ((blend == ColorBlendType.Average) || (blend == ColorBlendType.Overwrite)) {
+      buf.writeln("float colorCount;");
+    }
+      buf.writeln("");
+    buf.writeln("void layout(sampler2D txt, mat4 clrMat,");
     buf.writeln("            vec2 srcLoc, vec2 srcSize, vec2 destLoc, vec2 destSize, int flip)");
     buf.writeln("{");
     buf.writeln("   vec2 txtPnt = (pos - destLoc)*srcSize/destSize;");
@@ -50,28 +56,53 @@ class TextureLayout extends Shader {
     buf.writeln("   {");
     buf.writeln("      if(flip != 0) txtPnt.y = srcSize.y - txtPnt.y;");
     buf.writeln("      vec4 color = clrMat*texture2D(txt, txtPnt + srcLoc);");
-    buf.writeln("      clrAccum = mix(clrAccum, color, color.a);");
-
-      /// If no image is drawn quit.
+    buf.writeln("      color = clamp(color, vec4(0.0), vec4(1.0));");
+    if (blend == ColorBlendType.Additive) {
+      buf.writeln("      clrAccum += color;");
+    } else if (blend == ColorBlendType.AlphaBlend) {
+      buf.writeln("      clrAccum = mix(clrAccum, color, color.a);");
+    } else if (blend == ColorBlendType.Average) {
+      buf.writeln("      clrAccum += color;");
+      buf.writeln("      colorCount += 1.0;");
+    } else { // ColorBlendType.Overwrite
+      buf.writeln("      clrAccum = color;");
+      buf.writeln("      colorCount = 1.0;");
+    }
     buf.writeln("   }");
-    buf.writeln("   return clrAccum;");
     buf.writeln("}");
     buf.writeln("");
-    buf.writeln("vec4 layoutAll()");
+    buf.writeln("void layoutAll()");
     buf.writeln("{");
-    buf.writeln("   vec4 clrAccum = backClr;");
-    for (int i = 0; i < maxTxtCount; ++i) {
-      buf.writeln("   if(txtCount <= $i) return clrAccum;");
-      buf.writeln("   clrAccum = layout(clrAccum, txt$i, clrMat$i, srcLoc$i, srcSize$i, destLoc$i, destSize$i, flip$i);");
+    if (blend == ColorBlendType.Overwrite) {
+      for (int i = maxTxtCount-1; i >= 0; --i) {
+        buf.writeln("   if(txtCount > $i)");
+        buf.writeln("   {");
+        buf.writeln("     layout(txt$i, clrMat$i, srcLoc$i, srcSize$i, destLoc$i, destSize$i, flip$i);");
+        buf.writeln("     if(colorCount > 0.0) return;");
+        buf.writeln("   }");
+      }
+    } else {
+      for (int i = 0; i < maxTxtCount; ++i) {
+        buf.writeln("   if(txtCount <= $i) return;");
+        buf.writeln("   layout(txt$i, clrMat$i, srcLoc$i, srcSize$i, destLoc$i, destSize$i, flip$i);");
+      }
     }
-    buf.writeln("   return clrAccum;");
     buf.writeln("}");
     buf.writeln("");
     buf.writeln("void main()");
     buf.writeln("{");
-    buf.writeln("   vec4 color = layoutAll();");
-    buf.writeln("   if(color.a <= 0.0) discard;");
-    buf.writeln("   gl_FragColor = color;");
+    buf.writeln("   clrAccum = backClr;");
+    if (blend == ColorBlendType.Average) {
+      buf.writeln("   colorCount = 1.0;");
+    } else if (blend == ColorBlendType.Overwrite) {
+      buf.writeln("   colorCount = 0.0;");
+    }
+    buf.writeln("   layoutAll();");
+    if (blend == ColorBlendType.Average) {
+      buf.writeln("   clrAccum = clrAccum/colorCount;");
+    }
+    buf.writeln("   if(clrAccum.a <= 0.0) discard;");
+    buf.writeln("   gl_FragColor = clrAccum;");
     buf.writeln("}");
     return buf.toString();
   }
@@ -90,19 +121,19 @@ class TextureLayout extends Shader {
   /// Checks for the shader in the shader cache in the given [state],
   /// if it is not found then this shader is compiled and added
   /// to the shader cache before being returned.
-  factory TextureLayout.cached(int maxTxtCount, Core.RenderState state) {
-    TextureLayout shader = state.shader(_getName(maxTxtCount));
+  factory TextureLayout.cached(int maxTxtCount, ColorBlendType blend, Core.RenderState state) {
+    TextureLayout shader = state.shader(_getName(maxTxtCount, blend));
     if (shader == null) {
-      shader = new TextureLayout(maxTxtCount, state.gl);
+      shader = new TextureLayout(maxTxtCount, blend, state.gl);
       state.addShader(shader);
     }
     return shader;
   }
 
   /// Compiles this shader for the given rendering context.
-  TextureLayout(int maxTxtCount, WebGL.RenderingContext2 gl):
-      super(gl, _getName(maxTxtCount)) {
-    this.initialize(_vertexSource(), _fragmentSource(maxTxtCount));
+  TextureLayout(int maxTxtCount, ColorBlendType blend, WebGL.RenderingContext2 gl):
+      super(gl, _getName(maxTxtCount, blend)) {
+    this.initialize(_vertexSource(), _fragmentSource(maxTxtCount, blend));
     this._posAttr   = this.attributes["posAttr"];
     this._txtCount  = this.uniforms.required("txtCount") as Uniform1i;
     this._backClr   = this.uniforms.required("backClr") as Uniform4f;

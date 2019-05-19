@@ -7,6 +7,7 @@ import 'package:ThreeDart/Movers.dart' as Movers;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Textures.dart' as Textures;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
+import 'package:ThreeDart/Shaders.dart' as Shaders;
 import 'package:ThreeDart/Lights.dart' as Lights;
 import 'package:ThreeDart/Data.dart' as Data;
 import 'package:ThreeDart/Views.dart' as Views;
@@ -64,35 +65,35 @@ void main() {
     ..ambient.color = new Math.Color3.gray(0.3)
     ..diffuse.color = new Math.Color3.white()
     ..specular.shininess = 40.0;
-  Views.BackTarget colorTarget = new Views.BackTarget(800, 600, autoResize: true);
+
+  Views.BackTarget colorTarget = new Views.BackTarget(autoResize: true);
   Scenes.EntityPass colorPass = new Scenes.EntityPass(children: [entity, bulb])
     ..technique = colorTech
     ..camera = userCamera
     ..target = colorTarget;
 
-  Views.BackTarget depthTarget = new Views.BackTarget(400, 300,
-    autoResize: true, autoResizeScalarX: 0.5, autoResizeScalarY: 0.5);
+  Views.BackTarget depthTarget = new Views.BackTarget(autoResize: true,
+    autoResizeScalarX: 0.5, autoResizeScalarY: 0.5);
+
   Scenes.EntityPass depthPass = new Scenes.EntityPass(children: [entity, bulb])
     ..camera = userCamera
     ..target = depthTarget
-    ..technique = new Techniques.Depth(fogStart: 1.0, fogStop: 4.0);
-
-  Techniques.GaussianBlur blurTech = new Techniques.GaussianBlur(
+    ..technique = new Techniques.Depth(fogStart: 0.5, fogStop: 5.5);
+    
+  Scenes.GaussianBlur blurPass = new Scenes.GaussianBlur(
+    blurAdj: new Math.Vector4(-1.0, 0.0, 0.0, 1.0),
     colorTxt: colorTarget.colorTexture,
-    depthTxt: depthTarget.colorTexture,
-    highOffset: 0.0,
-    lowOffset: 3.0,
-    depthLimit: 0.001);
-  Scenes.CoverPass blurPass = new Scenes.CoverPass()
-    ..technique = blurTech;
+    blurTxt: depthTarget.colorTexture);
 
   Techniques.TextureLayout layoutTech = new Techniques.TextureLayout()
+    ..blend = Shaders.ColorBlendType.Overwrite
     ..entries.add(new Techniques.TextureLayoutEntry(
       texture: depthTarget.colorTexture,
       destination: new Math.Region2(0.0, 0.8, 0.2, 0.2)))
     ..entries.add(new Techniques.TextureLayoutEntry(
       texture: colorTarget.colorTexture,
       destination: new Math.Region2(0.0, 0.6, 0.2, 0.2)));
+
   Scenes.CoverPass layout = new Scenes.CoverPass()
     ..target = new Views.FrontTarget(clearColor: false)
     ..technique = layoutTech;
@@ -109,23 +110,23 @@ void main() {
     ..add("Specular",
       (bool show) {
         colorTech.specular.texture2D = show? spec: null;
-      }, false)
+      })
     ..add("Bump",
       (bool show) {
         colorTech.bump.texture2D = show? bump: null;
-      }, false)
+      })
     ..add("Height",
       (bool show) {
         entity.shape = show? heightShape: flatShape;
-      }, false)
+      })
     ..add("Blur",
       (bool show) {
-        blurTech.depthTexture = show? depthTarget.colorTexture: null;
-      }, false)
+        blurPass.blurTexture = show? depthTarget.colorTexture: null;
+      })
     ..add("Passes",
       (bool show) {
         layout.technique = show? layoutTech: null;
-      }, false);
+      });
 
   common.showFPS(td);
 }
