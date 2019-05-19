@@ -191,6 +191,7 @@ class MaterialLightConfig {
                   (invDiffuse != ColorSourceType.None) ||
                   (specular   != ColorSourceType.None);
     bool viewPos = (specular != ColorSourceType.None) ||
+                   ((pointLight + txtPointLight) > 0) ||
                     enviromental;
     bool norm = (diffuse    != ColorSourceType.None) ||
                 (invDiffuse != ColorSourceType.None) ||

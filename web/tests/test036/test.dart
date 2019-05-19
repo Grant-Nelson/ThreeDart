@@ -7,6 +7,7 @@ import 'package:ThreeDart/Math.dart' as Math;
 import 'package:ThreeDart/Views.dart' as Views;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
+import 'package:ThreeDart/Shaders.dart' as Shaders;
 import 'package:ThreeDart/Lights.dart' as Lights;
 import '../../common/common.dart' as common;
 
@@ -14,6 +15,7 @@ void main() {
   new common.ShellPage("Test 036")
     ..addLargeCanvas("testCanvas")
     ..addPar(["Test of the texture layout cover technique."])
+    ..addControlBoxes(["blends"])
     ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
@@ -25,8 +27,8 @@ void main() {
     ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));
   Views.Perspective userCamera = new Views.Perspective(mover: secondMover);
 
-  Views.BackTarget back = new Views.BackTarget(800, 600, autoResize: true)
-    ..color = new Math.Color4.transparent();
+  Views.BackTarget back = new Views.BackTarget(autoResize: true,
+    color: new Math.Color4.transparent());
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..shape = Shapes.toroid();
@@ -60,7 +62,12 @@ void main() {
     }
   }
   layout.entries.add(new Techniques.TextureLayoutEntry()
-    ..texture = back.colorTexture);
+    ..texture = back.colorTexture
+    ..colorMatrix = new Math.Matrix4(
+      0.0, 1.0, 0.0, 0.0,
+      0.0, 0.0, 1.0, 0.0,
+      1.0, 0.0, 0.0, 0.0,
+      0.0, 0.0, 0.0, 1.0));
 
   Views.FrontTarget front = new Views.FrontTarget(color: new Math.Color4.black());
   Scenes.CoverPass layoutCover = new Scenes.CoverPass()
@@ -68,6 +75,12 @@ void main() {
     ..target = front;
 
   td.scene = new Scenes.Compound(passes: [pass, layoutCover]);
+
+  new common.RadioGroup("blends")
+    ..add("Additive",   () { layout.blend = Shaders.ColorBlendType.Additive; })
+    ..add("AlphaBlend", () { layout.blend = Shaders.ColorBlendType.AlphaBlend; }, true)
+    ..add("Average",    () { layout.blend = Shaders.ColorBlendType.Average; })
+    ..add("Overwrite",  () { layout.blend = Shaders.ColorBlendType.Overwrite; });
 
   common.showFPS(td);
 }

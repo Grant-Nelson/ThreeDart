@@ -1,38 +1,38 @@
 part of ThreeDart.Techniques;
 
-/// A technique for a cover pass with a Gaussian blurred image based off depth.
+/// A technique for a cover pass with a Gaussian blurred image based off of a file.
 class GaussianBlur extends Technique {
   Shaders.GaussianBlur _shader;
   Math.Matrix3 _txtMat;
+  Math.Vector4 _blurAdj;
+  Math.Vector2 _blurDir;
   Textures.Texture2D _colorTxt;
-  Textures.Texture2D _depthTxt;
-  double _highOffset;
-  double _lowOffset;
-  double _depthLimit;
+  Textures.Texture2D _blurTxt;
+  double _blurValue;
   Events.Event _changed;
 
   /// Creates a new cover Gaussian blur technique with the given initial values.
   GaussianBlur({Textures.Texture2D colorTxt: null,
-                Textures.Texture2D depthTxt: null,
+                Textures.Texture2D blurTxt:  null,
                 Math.Matrix3       txtMat:   null,
-                double highOffset: 0.0,
-                double lowOffset:  4.0,
-                double depthLimit: 0.001}) {
+                Math.Vector4       blurAdj:  null,
+                Math.Vector2       blurDir:  null,
+                double blurValue:  0.0}) {
     this._shader     = null;
     this._txtMat     = null;
+    this._blurAdj    = null;
+    this._blurDir    = null;
     this._colorTxt   = null;
-    this._depthTxt   = null;
-    this._highOffset = 0.0;
-    this._lowOffset  = 4.0;
-    this._depthLimit = 0.001;
+    this._blurTxt    = null;
+    this._blurValue  = 0.0;
     this._changed    = null;
 
     this.textureMatrix = txtMat;
+    this.blurAdjust    = blurAdj;
+    this.blurDirection = blurDir;
     this.colorTexture  = colorTxt;
-    this.depthTexture  = depthTxt;
-    this.highOffset    = highOffset;
-    this.lowOffset     = lowOffset;
-    this.depthLimit    = depthLimit;
+    this.blurTexture   = blurTxt;
+    this.blurValue     = blurValue;
   }
 
   /// Indicates that this technique has changed.
@@ -45,37 +45,21 @@ class GaussianBlur extends Technique {
   void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
+  
+  /// Resets the shader when a component has changed.
+  void _resetShader([Events.EventArgs args = null]) {
+    this._shader = null;
+    this._onChanged(args);
+  }
 
-  /// The offset value for the depth at it's highest value.
-  double get highOffset => this._highOffset;
-  void set highOffset(double value) {
+  /// The blur value, this will overrided by blur texture.
+  double get blurValue => this._blurValue;
+  void set blurValue(double value) {
     value ??= 0.0;
-    if (!Math.Comparer.equals(this._highOffset, value)) {
-      double prev = this._highOffset;
-      this._highOffset = value;
-      this._onChanged(new Events.ValueChangedEventArgs(this, "highOffset", prev, this._highOffset));
-    }
-  }
-
-  /// The offset value for the depth at it's lowest value.
-  double get lowOffset => this._lowOffset;
-  void set lowOffset(double value) {
-    value ??= 4.0;
-    if (!Math.Comparer.equals(this._lowOffset, value)) {
-      double prev = this._lowOffset;
-      this._lowOffset = value;
-      this._onChanged(new Events.ValueChangedEventArgs(this, "lowOffset", prev, this._lowOffset));
-    }
-  }
-
-  /// The limit for higher depth to be excluded from the blur.
-  double get depthLimit => this._depthLimit;
-  void set depthLimit(double value) {
-    value ??= 0.001;
-    if (!Math.Comparer.equals(this._depthLimit, value)) {
-      double prev = this._depthLimit;
-      this._depthLimit = value;
-      this._onChanged(new Events.ValueChangedEventArgs(this, "depthLimit", prev, this._depthLimit));
+    if (!Math.Comparer.equals(this._blurValue, value)) {
+      double prev = this._blurValue;
+      this._blurValue = value;
+      this._onChanged(new Events.ValueChangedEventArgs(this, "blurValue", prev, this._blurValue));
     }
   }
 
@@ -91,15 +75,18 @@ class GaussianBlur extends Technique {
     }
   }
 
-  /// The depth texture.
-  Textures.Texture2D get depthTexture => this._depthTxt;
-  void set depthTexture(Textures.Texture2D txt) {
-    if (this._depthTxt != txt) {
-      if (this._depthTxt != null) this._depthTxt.changed.remove(this._onChanged);
-      Textures.Texture2D prev = this._depthTxt;
-      this._depthTxt = txt;
-      if (this._depthTxt != null) this._depthTxt.changed.add(this._onChanged);
-      this._onChanged(new Events.ValueChangedEventArgs(this, "depthTexture", prev, this._depthTxt));
+  /// The blur texture, this will override the blur value.
+  Textures.Texture2D get blurTexture => this._blurTxt;
+  void set blurTexture(Textures.Texture2D txt) {
+    if (this._blurTxt != txt) {
+      if (this._blurTxt != null) this._blurTxt.changed.remove(this._onChanged);
+      Textures.Texture2D prev = this._blurTxt;
+      this._blurTxt = txt;
+      if (this._blurTxt != null) this._blurTxt.changed.add(this._onChanged);
+      this._onChanged(new Events.ValueChangedEventArgs(this, "blurTexture", prev, this._blurTxt));
+      if (((this._blurTxt == null) && (prev != null)) ||
+          ((this._blurTxt != null) && (prev == null)))
+        this._resetShader();
     }
   }
 
@@ -110,7 +97,31 @@ class GaussianBlur extends Technique {
     if (this._txtMat != mat) {
       Math.Matrix3 prev = this._txtMat;
       this._txtMat = mat;
-      this._onChanged(new Events.ValueChangedEventArgs(this, "textureMatrix", prev, this._depthTxt));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "textureMatrix", prev, this._txtMat));
+    }
+  }
+
+  /// The blur value modification vector.
+  /// This is the vector to apply to the color from the blur texture
+  /// to get the blur value from the blur texture, by default it just uses red.
+  Math.Vector4 get blurAdjust => this._blurAdj;
+  void set blurAdjust(Math.Vector4 vec) {
+    vec ??= Math.Vector4.posX;
+    if (this._blurAdj != vec) {
+      Math.Vector4 prev = this._blurAdj;
+      this._blurAdj = vec;
+      this._onChanged(new Events.ValueChangedEventArgs(this, "blurAdjust", prev, this._blurAdj));
+    }
+  }
+
+  /// The direction to apply the direction, by default it is horizontal.
+  Math.Vector2 get blurDirection => this._blurDir;
+  void set blurDirection(Math.Vector2 vec) {
+    vec ??= Math.Vector2.posX;
+    if (this._blurDir != vec) {
+      Math.Vector2 prev = this._blurDir;
+      this._blurDir = vec;
+      this._onChanged(new Events.ValueChangedEventArgs(this, "blurDirection", prev, this._blurDir));
     }
   }
 
@@ -137,8 +148,15 @@ class GaussianBlur extends Technique {
 
   /// Renders this technique for the given state and entity.
   void render(Core.RenderState state, Core.Entity obj) {
-    this._shader ??= new Shaders.GaussianBlur.cached(state);
+    if (this._shader == null) {
+      bool hasBlurTxt = blurTexture != null;
+      Shaders.GaussianBlurConfig cfg = new Shaders.GaussianBlurConfig(hasBlurTxt);
+      this._shader = new Shaders.GaussianBlur.cached(cfg, state);
+      obj.clearCache();
+    }
 
+    Shaders.GaussianBlurConfig cfg = this._shader.configuration;
+    if (obj.cache is! Data.BufferStore) obj.clearCache();
     if (obj.cacheNeedsUpdate) {
       obj.cache = obj.shapeBuilder.build(new Data.WebGLBufferBuilder(state.gl), Data.VertexType.Pos|Data.VertexType.Txt2D)
         ..findAttribute(Data.VertexType.Pos).attr = this._shader.posAttr.loc
@@ -147,22 +165,26 @@ class GaussianBlur extends Technique {
 
     List<Textures.Texture> textures = new List<Textures.Texture>();
     this._addToTextureList(textures, this._colorTxt);
-    this._addToTextureList(textures, this._depthTxt);
+    if (cfg.blurTxt) this._addToTextureList(textures, this._blurTxt);
     for (int i = 0; i < textures.length; i++) {
       textures[i].bind(state);
     }
 
     this._shader
       ..bind(state)
-      ..colorTexture = this._colorTxt
-      ..depthTexture = this._depthTxt
+      ..colorTexture  = this._colorTxt
       ..textureMatrix = this._txtMat
-      ..projectViewObjectMatrix = state.projectionViewObjectMatrix
-      ..width = state.width.toDouble()
-      ..height = state.height.toDouble()
-      ..highOffset = this._highOffset
-      ..lowOffset = this._lowOffset
-      ..depthLimit = this._depthLimit;
+      ..blurScalar = new Math.Vector2(this._blurDir.dx/state.width.toDouble(), this._blurDir.dy/state.height.toDouble())
+      ..projectViewObjectMatrix = state.projectionViewObjectMatrix;
+
+    if (cfg.blurTxt) {
+      this._shader
+        ..blurTexture = this._blurTxt
+        ..blurAdjust  = this._blurAdj;
+    } else {
+      this._shader
+        ..blurValue = this._blurValue;
+    }
 
     if (obj.cache is Data.BufferStore) {
       (obj.cache as Data.BufferStore)

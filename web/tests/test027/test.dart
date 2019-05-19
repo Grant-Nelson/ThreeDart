@@ -27,8 +27,7 @@ void main() {
     ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));
   Views.Perspective rotaterCamera = new Views.Perspective(mover: firstMover);
 
-  Views.BackTarget backTarget = new Views.BackTarget(512, 512)
-    ..clearColor = false;
+  Views.BackTarget backTarget = new Views.BackTarget(width: 512, height: 512, clearColor: false);
 
   Scenes.CoverPass skybox = new Scenes.CoverPass.skybox(
     td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg"))
