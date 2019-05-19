@@ -53,6 +53,12 @@ class GaussianBlur implements Scene {
     this.blurAdjust    = blurAdj;
     this.target        = target;
   }
+  
+  /// Gets the vertex source code used for the shader used by the blur techinique.
+  String get vertexSourceCode => this._horzBlurTech?.vertexSourceCode;
+
+  /// Gets the fragment source code used for the shader used by the blur techinique.
+  String get fragmentSourceCode => this._horzBlurTech?.fragmentSourceCode;
 
   /// The event emitted when the scene has changed.
   Events.Event get changed {

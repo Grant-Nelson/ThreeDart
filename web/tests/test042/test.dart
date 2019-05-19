@@ -95,14 +95,14 @@ void main() {
     ..add(new Movers.UserZoom(input: td.userInput))
     ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));
 
-  Techniques.MaterialLight tech = new Techniques.MaterialLight()
+  Techniques.MaterialLight colorTech = new Techniques.MaterialLight()
     ..lights.add(lightPoint)
-    ..ambient.color = new Math.Color3.white()
-    ..diffuse.color = new Math.Color3.white();
+    ..ambient.color = new Math.Color3.gray(0.3)
+    ..diffuse.color = new Math.Color3.gray(0.7);
 
-  Views.BackTarget colorTarget = new Views.BackTarget(autoResize: true, clearColor: false);
+  Views.BackTarget colorTarget = new Views.BackTarget(autoResize: true);
   Scenes.EntityPass colorPass = new Scenes.EntityPass()
-    ..technique = tech
+    ..technique = colorTech
     ..children.add(room)
     ..children.add(bulbObj)
     ..children.add(shadeInsideObj)
@@ -110,32 +110,46 @@ void main() {
     ..camera.mover = camMover
     ..target = colorTarget;
   
+  Views.BackTarget brightTarget = new Views.BackTarget(
+    autoResize: true, clearColor: false);
   Techniques.TextureLayout brightTrimTech = new Techniques.TextureLayout()
-    ..blend = Shaders.ColorBlendType.Additive
-    ..entries.add(new Techniques.TextureLayoutEntry(
-      texture: colorTarget.colorTexture,
-      colorMatrix: new Math.Matrix4(
-        1.0, 0.0, 0.0, 0.0,
-        0.0, 0.0, 0.0, 0.0,
-        0.0, 0.0, 0.0, 0.0,
-        0.0, 0.0, 0.0, 1.0)))
     ..entries.add(new Techniques.TextureLayoutEntry(
       texture: colorTarget.colorTexture,
       colorMatrix: new Math.Matrix4(
         3.0, 3.0, 3.0, -8.0,
         3.0, 3.0, 3.0, -8.0,
         3.0, 3.0, 3.0, -8.0,
-        0.0, 0.0, 0.0,  1.0)))
-      ;
-
+        0.0, 0.0, 0.0,  1.0)));
   Scenes.CoverPass brightTrim = new Scenes.CoverPass()
+    ..target = brightTarget
     ..technique = brightTrimTech;
 
-  // Scenes.GaussianBlur blurPass = new Scenes.GaussianBlur(
-  //   colorTxt: colorTarget.colorTexture,
-  //   blurTxt: colorTarget.colorTexture);
+  Views.BackTarget bloomTarget = brightTarget;
+  Scenes.Compound bloomScene = new Scenes.Compound();
 
-  td.scene = new Scenes.Compound(passes: [colorPass, brightTrim]);
+  for (int i = 0; i < 4; ++i) {
+    Views.BackTarget blurTarget = new Views.BackTarget(
+      autoResize: true, clearColor: false,
+      autoResizeScalarX: 0.25, autoResizeScalarY: 0.25);
+    Scenes.GaussianBlur blurPass = new Scenes.GaussianBlur(
+      target: blurTarget,
+      blurAdj: Math.Vector4(10.0, 10.0, 10.0, 1.0),
+      colorTxt: bloomTarget.colorTexture,
+      blurTxt: brightTarget.colorTexture);
+    bloomTarget = blurTarget;
+    bloomScene.add(blurPass);
+  }
+  
+  Techniques.TextureLayout layoutTech = new Techniques.TextureLayout()
+    ..blend = Shaders.ColorBlendType.Additive
+    ..entries.add(new Techniques.TextureLayoutEntry(
+      texture: colorTarget.colorTexture))
+    ..entries.add(new Techniques.TextureLayoutEntry(
+      texture: bloomTarget.colorTexture));
+  Scenes.CoverPass layout = new Scenes.CoverPass()
+    ..technique = layoutTech;
+
+  td.scene = new Scenes.Compound(passes: [colorPass, brightTrim, bloomScene, layout]);
 
   common.showFPS(td);
 }

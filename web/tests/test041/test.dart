@@ -38,7 +38,7 @@ void addLightBall(Techniques.MaterialLight tech, Scenes.EntityPass pass,
 }
 
 void main() {
-  new common.ShellPage("Test 041")
+  common.ShellPage page = new common.ShellPage("Test 041")
     ..addLargeCanvas("testCanvas")
     ..addPar(["Test of the Gaussian blur technique with a solid blur value for the whole image."])
     ..addControlBoxes(["blurValue"])
@@ -81,11 +81,22 @@ void main() {
   };
 
   new common.RadioGroup("blurValue")
-    ..add("0.0",  () { setBlur(0.0); }, true)
-    ..add("0.25", () { setBlur(0.25); })
-    ..add("0.5",  () { setBlur(0.5); })
-    ..add("0.75", () { setBlur(0.75); })
-    ..add("1.0",  () { setBlur(1.0); });
+    ..add("0.0", () { setBlur(0.0); }, true)
+    ..add("0.1", () { setBlur(0.1); })
+    ..add("0.2", () { setBlur(0.2); })
+    ..add("0.3", () { setBlur(0.3); })
+    ..add("0.4", () { setBlur(0.4); })
+    ..add("0.5", () { setBlur(0.5); })
+    ..add("0.6", () { setBlur(0.6); })
+    ..add("0.7", () { setBlur(0.7); })
+    ..add("0.8", () { setBlur(0.8); })
+    ..add("0.9", () { setBlur(0.9); })
+    ..add("1.0", () { setBlur(1.0); });
 
+  td.postrender.once((_){
+    page
+      ..addCode("Vertex Shader", "glsl", 0, blurPass.vertexSourceCode.split("\n"))
+      ..addCode("Fragment Shader", "glsl", 0, blurPass.fragmentSourceCode.split("\n"));
+  });
   common.showFPS(td);
 }

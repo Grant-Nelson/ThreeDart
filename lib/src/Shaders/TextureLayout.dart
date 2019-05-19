@@ -56,6 +56,7 @@ class TextureLayout extends Shader {
     buf.writeln("   {");
     buf.writeln("      if(flip != 0) txtPnt.y = srcSize.y - txtPnt.y;");
     buf.writeln("      vec4 color = clrMat*texture2D(txt, txtPnt + srcLoc);");
+    buf.writeln("      color = clamp(color, vec4(0.0), vec4(1.0));");
     if (blend == ColorBlendType.Additive) {
       buf.writeln("      clrAccum += color;");
     } else if (blend == ColorBlendType.AlphaBlend) {
