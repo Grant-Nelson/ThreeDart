@@ -140,6 +140,8 @@ tests/resources/ScrewBumpMap.png
 tests/resources/ScrewColor.png
 tests/resources/ScrewHeightMap.png
 tests/resources/ScrewSpecular.png
+tests/resources/Stars.png
+tests/resources/StarsCan.png
 tests/resources/Test.png
 tests/resources/Wolf.obj
 tests/resources/diceBumpMap/negx.png
@@ -320,6 +322,12 @@ tests/test039/test.png
 tests/test040/index.html
 tests/test040/test.dart.js
 tests/test040/test.png
+tests/test041/index.html
+tests/test041/test.dart.js
+tests/test041/test.png
+tests/test042/index.html
+tests/test042/test.dart.js
+tests/test042/test.png
 tutorials/index.html
 tutorials/tutorial1/index.html
 tutorials/tutorial1/main.dart.js
