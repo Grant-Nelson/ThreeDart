@@ -106,21 +106,12 @@ class TextureLoader {
   }
 
   /// Reads the entire given [texture] into the reader buffer.
-  TextureReader readAll(Texture2D texture) {
-    return this.read(texture, 0, 0, texture.actualWidth, texture.actualHeight);
-  }
+  TextureReader readAll(Texture2D texture) =>
+    new TextureReader._readAll(this._gl, texture);
 
   /// Reads the given range of the given [texture] into the reader buffer.
-  TextureReader read(Texture2D texture, int x, int y, int width, int height) {
-    WebGL.Framebuffer fb = this._gl.createFramebuffer();
-    this._gl.bindFramebuffer(WebGL.WebGL.FRAMEBUFFER, fb);
-    this._gl.framebufferTexture2D(WebGL.WebGL.FRAMEBUFFER, WebGL.WebGL.COLOR_ATTACHMENT0, WebGL.WebGL.TEXTURE_2D, texture.texture, 0);
-
-    Typed.Uint8List data = new Typed.Uint8List(width*height*4);
-    this._gl.readPixels(x, y, width, height, WebGL.WebGL.RGBA, WebGL.WebGL.UNSIGNED_BYTE, data);
-    this._gl.bindFramebuffer(WebGL.WebGL.FRAMEBUFFER, null);
-    return new TextureReader._(data, width, height);
-  }
+  TextureReader read(Texture2D texture, int x, int y, int width, int height) =>
+    new TextureReader._read(this._gl, texture, x, y, width, height);
 
   /// Loads a face from the given path.
   /// The image will load asynchronously.
