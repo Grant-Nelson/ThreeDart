@@ -92,6 +92,16 @@ class Color3 {
   Color3 invert() =>
     new Color3._(1.0 - this.red, 1.0 - this.green, 1.0 - this.blue);
 
+  /// Trims the color into 24 bit space range.
+  Color3 trim24() =>
+    new Color3._(trimColor8(this.red),  trimColor8(this.green), trimColor8(this.blue));
+                 
+  /// Converts this color to an RGB 24 bit color integer.
+  int toRGB24() =>
+    ((this.red  *255.0).floor() << 16) +
+    ((this.green*255.0).floor() <<  8) +
+     (this.blue *255.0).floor();
+
   /// Creates the linear interpolation between this color and the [other] color.
   ///
   /// The [i] is interpolation factor. 0.0 or less will return this color.

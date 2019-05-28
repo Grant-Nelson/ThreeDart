@@ -3,6 +3,9 @@ part of ThreeDart.Scenes;
 /// The render pass renders a single scene.
 class Sterioscopic implements Scene {
 
+  /// Indicates if the scene is rendered or not.
+  bool _enabled;
+
   /// The left constant for offseting the camera.
   Movers.Constant _leftConstMat;
 
@@ -47,35 +50,37 @@ class Sterioscopic implements Scene {
 
   /// Creates a new render pass.
   Sterioscopic({
-      Movers.Mover mover: null,
-      Views.Target target: null,
-      List<RenderPass> passes: null,
-      double eyeSpacing: 0.1,
-      double focusDistance: 12.0
-    }) {
-    this._leftConstMat = new Movers.Constant();
+    bool             enabled: true,
+    Movers.Mover     mover:   null,
+    Views.Target     target:  null,
+    List<RenderPass> passes:  null,
+    double           eyeSpacing:    0.1,
+    double           focusDistance: 12.0
+  }) {
+    this._enabled       = enabled;
+    this._leftConstMat  = new Movers.Constant();
     this._rightConstMat = new Movers.Constant();
-    this._leftMovGroup = new Movers.Group([null, this._leftConstMat]);
+    this._leftMovGroup  = new Movers.Group([null, this._leftConstMat]);
     this._rightMovGroup = new Movers.Group([null, this._rightConstMat]);
-    this._leftCamera = new Views.Perspective(mover: this._leftMovGroup);
-    this._rightCamera = new Views.Perspective(mover: this._rightMovGroup);
-    this._leftRegion = new Math.Region2(0.0, 0.0, 0.5, 1.0);
-    this._rightRegion = new Math.Region2(0.5, 0.0, 0.5, 1.0);
+    this._leftCamera    = new Views.Perspective(mover: this._leftMovGroup);
+    this._rightCamera   = new Views.Perspective(mover: this._rightMovGroup);
+    this._leftRegion    = new Math.Region2(0.0, 0.0, 0.5, 1.0);
+    this._rightRegion   = new Math.Region2(0.5, 0.0, 0.5, 1.0);
     this._target = null;
     this._passes = new Collections.Collection<RenderPass>();
     this._passes.setHandlers(
       onAddedHndl: this._onAddedRenderPass,
       onRemovedHndl: this._onRemovedRenderPass);
     if (passes != null) this._passes.addAll(passes);
-    this._eyeSpacing = 0.1;
+    this._eyeSpacing    = 0.1;
     this._focusDistance = 12.0;
     this._onRender = null;
-    this._changed = null;
+    this._changed  = null;
 
     this.cameraMover = mover;
-    this.target = target;
+    this.target      = target;
     if (passes != null) this._passes.addAll(passes);
-    this._eyeSpacing = eyeSpacing;
+    this._eyeSpacing    = eyeSpacing;
     this._focusDistance = focusDistance;
     this._updateConstMats();
   }
@@ -111,6 +116,17 @@ class Sterioscopic implements Scene {
       if (pass != null) pass.changed.remove(this._onChanged);
     }
     this._onChanged(new Events.ItemsRemovedEventArgs(this, index, passes));
+  }
+  
+  /// Indicates if this scene should be rendered or not.
+  bool get enabled => this._enabled;
+  set enabled(bool enable) {
+    enable ??= true;
+    if (this._enabled != enable) {
+      bool prev = this._enabled;
+      this._enabled = enable;
+      this._onChanged(new Events.ValueChangedEventArgs(this, "enabled", prev, this._enabled));
+    }
   }
 
   /// The camera mover describing the view of the scene.
@@ -177,6 +193,8 @@ class Sterioscopic implements Scene {
 
   /// Render the scene with the given [state].
   void render(Core.RenderState state) {
+    if (!this._enabled) return;
+
     this.target.region = this._leftRegion;
     for (RenderPass pass in this._passes) {
       pass.target = this.target;

@@ -3,6 +3,9 @@ part of ThreeDart.Scenes;
 /// A scene for applying a vertical and horizontal blur to the given texture.
 class GaussianBlur implements Scene {
 
+  /// Indicates if the scene is rendered or not.
+  bool _enabled;
+
   /// Emits when any scene in the list chagnes.
   Events.Event _changed;
 
@@ -22,12 +25,16 @@ class GaussianBlur implements Scene {
   CoverPass _vertBlurPass;
 
   /// Creates a new gaussian blue scene.
-  GaussianBlur({double             blurValue: 0.0,
-                Textures.Texture2D colorTxt:  null,
-                Textures.Texture2D blurTxt:   null,
-                Math.Matrix3       txtMatrix: null,
-                Math.Vector4       blurAdj:   null,
-                Views.Target       target:    null}) {
+  GaussianBlur({
+    bool               enabled:   true,
+    double             blurValue: 0.0,
+    Textures.Texture2D colorTxt:  null,
+    Textures.Texture2D blurTxt:   null,
+    Math.Matrix3       txtMatrix: null,
+    Math.Vector4       blurAdj:   null,
+    Views.Target       target:    null
+  }) {
+    this._enabled = enabled;
     this._changed = null;
 
     this._horzBlurTarget = new Views.BackTarget(autoResize: true, clearColor: false);
@@ -112,8 +119,20 @@ class GaussianBlur implements Scene {
   void set target(Views.Target target) =>
     this._vertBlurPass.target = target;
 
+  /// Indicates if this scene should be rendered or not.
+  bool get enabled => this._enabled;
+  set enabled(bool enable) {
+    enable ??= true;
+    if (this._enabled != enable) {
+      bool prev = this._enabled;
+      this._enabled = enable;
+      this._onChanged(new Events.ValueChangedEventArgs(this, "enabled", prev, this._enabled));
+    }
+  }
+
   /// Renders the scenes with the given [state].
   void render(Core.RenderState state) {
+    if (!this._enabled) return;
     this._horzBlurPass?.render(state);
     this._vertBlurPass?.render(state);
   }
