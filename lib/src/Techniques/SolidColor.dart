@@ -7,12 +7,12 @@ class SolidColor extends Technique {
   Events.Event _changed;
 
   /// Creates a new solid color technique with the given initial values.
-  SolidColor({Math.Color4 clr: null}) {
+  SolidColor({Math.Color4 color: null}) {
     this._shader  = null;
     this._clr     = null;
     this._changed = null;
 
-    this.color = clr;
+    this.color = color;
   }
 
   /// Indicates that this technique has changed.

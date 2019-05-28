@@ -5,22 +5,31 @@ class TextureReader {
   Typed.Uint8List _data;
   final int _width;
   final int _height;
-
-  /// Reads the entire given [texture] into the reader buffer.
-  factory TextureReader._readAll(WebGL.RenderingContext2 gl, Texture2D texture) =>
-    new TextureReader._read(gl, texture, 0, 0, texture.actualWidth, texture.actualHeight);
-
+  
   /// Reads the given range of the given [texture] into the reader buffer.
   /// The x, y, width, and height are based on actual buffer size.
-  factory TextureReader._read(WebGL.RenderingContext2 gl, Texture2D texture, int x, int y, int width, int height) {
+  factory TextureReader._read(WebGL.RenderingContext2 gl, Texture2D texture,
+    {int x, int y, int width, int height, bool flipY: false}) {
+    x ??= 0;
+    y ??= 0;
+    width ??= texture.actualWidth;
+    height ??= texture.actualHeight;
+
+    if (flipY) y = texture.actualHeight-height-y;
+
     WebGL.Framebuffer fb = gl.createFramebuffer();
     gl.bindFramebuffer(WebGL.WebGL.FRAMEBUFFER, fb);
+    gl.readBuffer(WebGL.WebGL.COLOR_ATTACHMENT0);
     gl.framebufferTexture2D(WebGL.WebGL.FRAMEBUFFER, WebGL.WebGL.COLOR_ATTACHMENT0, WebGL.WebGL.TEXTURE_2D, texture.texture, 0);
 
     Typed.Uint8List data = new Typed.Uint8List(width*height*4);
     gl.readPixels(x, y, width, height, WebGL.WebGL.RGBA, WebGL.WebGL.UNSIGNED_BYTE, data);
     gl.bindFramebuffer(WebGL.WebGL.FRAMEBUFFER, null);
-    return new TextureReader._(data, width, height);
+    TextureReader reader = new TextureReader._(data, width, height);
+
+    // Update once WebGL allows a readPixels flag setting similar to "UNPACK_FLIP_Y_WEBGL".
+    if (flipY) reader._flipYInternal();
+    return reader;
   }
 
   /// Creates a new 2D texture reader.
@@ -65,8 +74,8 @@ class TextureReader {
     return new TextureReader._(data, this._width, this._height);
   }
 
-  /// Flips the image's Y axis.
-  void flipY() {
+  /// Flips the image's Y axis within this own reader.
+  void _flipYInternal() {
     for(int y = this._height~/2; y >= 0; --y) {
       int y1 = this._width*4*y;
       int y2 = this._width*4*(this._height-1-y);

@@ -104,14 +104,23 @@ class TextureLoader {
     this._loadCubeFace(result, texture, negZPath, WebGL.WebGL.TEXTURE_CUBE_MAP_NEGATIVE_Z, flipY, false);
     return result;
   }
-
+    
   /// Reads the entire given [texture] into the reader buffer.
-  TextureReader readAll(Texture2D texture) =>
-    new TextureReader._readAll(this._gl, texture);
+  TextureReader readAll(Texture2D texture, [bool flipY = true]) =>
+    new TextureReader._read(this._gl, texture, flipY: flipY);
 
   /// Reads the given range of the given [texture] into the reader buffer.
-  TextureReader read(Texture2D texture, int x, int y, int width, int height) =>
-    new TextureReader._read(this._gl, texture, x, y, width, height);
+  /// The x, y, width, and height are based on actual buffer size.
+  TextureReader read(Texture2D texture, int x, int y, int width, int height, [bool flipY = true]) =>
+    new TextureReader._read(this._gl, texture, x: x, y: y, width: width, height: height, flipY: flipY);
+
+  /// Reads a color out of the given texture.
+  Math.Color4 pickColor(Texture2D texture, Math.Vector2 loc, [bool flipY = true]) {
+    int adjX = (loc.dx*(texture.actualWidth-1)).floor();
+    int adjY = (loc.dy*(texture.actualHeight-1)).floor();
+    TextureReader reader = this.read(texture, adjX, adjY, 1, 1, flipY);
+    return reader.at(0, 0);
+  }
 
   /// Loads a face from the given path.
   /// The image will load asynchronously.

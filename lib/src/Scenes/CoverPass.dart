@@ -28,12 +28,16 @@ class CoverPass implements RenderPass {
       Techniques.Technique tech: null
   }) {
     this._changed  = null;
-    this.camera    = camera;
-    this.target    = target;
-    this.technique = tech;
+    this._camera   = null;
+    this._target   = null;
+    this._tech     = null;
     this._box      = new Core.Entity()
       ..shape      = Shapes.square();
     this._onRender = null;
+    
+    this.camera    = camera;
+    this.target    = target;
+    this.technique = tech;
   }
 
   /// Creates a new cover render pass preset with a skybox technique.
