@@ -89,6 +89,18 @@ class Color4 {
   Color4 invert() =>
     new Color4._(1.0 - this.red, 1.0 - this.green, 1.0 - this.blue, 1.0 - this.alpha);
 
+  /// Trims the color into 32 bit space range.
+  Color4 trim32() =>
+    new Color4._(trimColor8(this.red),  trimColor8(this.green),
+                 trimColor8(this.blue), trimColor8(this.alpha));
+                 
+  /// Converts this color to an ARGB 32 bit color integer.
+  int toARGB32() =>
+    ((this.alpha*255.0).floor() << 24) +
+    ((this.red  *255.0).floor() << 16) +
+    ((this.green*255.0).floor() <<  8) +
+     (this.blue *255.0).floor();
+
   /// Creates the linear interpolation between this color and the [other] color.
   ///
   /// The [i] is interpolation factor. 0.0 or less will return this color.

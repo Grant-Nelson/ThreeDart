@@ -114,6 +114,9 @@ List<String> formatColumn(List<double> vals, [int fraction = 3, int whole = 0]) 
   return results;
 }
 
+/// Trims the given color component into what would fit into an 8 bit value. 
+double trimColor8(double value) => (value*255.0).floorToDouble()/255.0;
+
 /// Formats the given integer into a string.
 ///
 /// [v] is the number to get a string for.

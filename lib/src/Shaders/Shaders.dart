@@ -25,6 +25,7 @@ part 'MaterialLightUniforms.dart';
 part 'Normal.dart';
 part 'NormalConfig.dart';
 part 'Skybox.dart';
+part 'SolidColor.dart';
 part 'TextureLayout.dart';
 
 /// Source of colors type for different shader components.

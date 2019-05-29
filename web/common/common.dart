@@ -7,6 +7,7 @@ import 'dart:async';
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 import 'package:ThreeDart/Tokenizer.dart' as Tokenizer;
 
+part 'buttonGroup.dart';
 part 'checkGroup.dart';
 part 'codeParser.dart';
 part 'dartParser.dart';
