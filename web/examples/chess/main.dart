@@ -2,6 +2,7 @@ library chess;
 
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 import 'package:ThreeDart/IO.dart' as IO;
+import 'package:ThreeDart/Events.dart' as Events;
 import 'package:ThreeDart/Movers.dart' as Movers;
 import 'package:ThreeDart/Shapes.dart' as Shapes;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
@@ -62,26 +63,56 @@ void startChess() {
       new Movers.UserRotater(input: td.userInput)
         ..pitch.minimumLocation = -Math.PI_2
         ..pitch.maximumLocation = 0.0
+        ..pitch.location = -0.5
         ..pitch.wrap = false,
       new Movers.Constant.scale(1.75, 1.75, 1.75),
       new Movers.Constant.translate(0.0, 0.0, 15.0)
     ]));
 
-  Views.FrontTarget target = new Views.FrontTarget()
+  Views.FrontTarget frontTarget = new Views.FrontTarget()
     ..clearColor = false;
 
   Board board = new Board(td);
 
   Scenes.CoverPass skybox = new Scenes.CoverPass.skybox(board.materials.environment)
-    ..target = target
+    ..target = frontTarget
     ..camera = camera;
 
   Scenes.EntityPass mainScene = new Scenes.EntityPass()
-    ..target = target
+    ..target = frontTarget
+    ..camera = camera
+    ..children.add(board);
+  
+  Views.BackTarget pickTarget = new Views.BackTarget(autoResize: true,
+    autoResizeScalarX: 0.5, autoResizeScalarY: 0.5);
+  Scenes.EntityPass pickScene = new Scenes.EntityPass()
+    ..target = pickTarget
     ..camera = camera
     ..children.add(board);
 
-  td.scene = new Scenes.Compound(passes: [skybox, mainScene]);
+  new Textures.ColorPicker(td.textureLoader, input: td.userInput, txt: pickTarget.colorTexture)
+    ..onPreUpdate.add((_) {
+      board.showPick = true;
+      td.render(pickScene);
+      board.showPick = false;
+      td.requestRender();
+    })
+    ..colorPicked.add((Events.EventArgs args) {
+      Textures.ColorPickerEventArgs pickArgs = args as Textures.ColorPickerEventArgs;
+      Math.Color4 color = pickArgs.color.trim32();
+      board.pick(color);
+    });
+
+  Techniques.TextureLayout layout = new Techniques.TextureLayout();
+  layout.entries.add(new Techniques.TextureLayoutEntry()
+    ..destination = new Math.Region2(0.0, 0.75, 0.25, 0.25)
+    ..texture = pickTarget.colorTexture);
+
+  Scenes.CoverPass layoutCover = new Scenes.CoverPass()
+    ..technique = layout
+    ..target = frontTarget;
+
+  td.scene = new Scenes.Compound(passes: [skybox, mainScene, layoutCover]);
 
   common.showFPS(td);
 }

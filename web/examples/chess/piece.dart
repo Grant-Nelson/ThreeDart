@@ -11,17 +11,57 @@ abstract class Piece extends ThreeDart.Entity {
   bool _hasMoved;
   bool _dead;
   bool _selected;
+  bool _showPick;
+  Techniques.SolidColor _pickTech;
+  ThreeDart.Entity _colorEntity;
+  ThreeDart.Entity _pickEntity;
 
   Piece._(this._board, this._white, this._row, this._column, this._angle, this._scalar) {
     this._mover = new Movers.Constant();
-    this.mover = this._mover;
     this._hasMoved = false;
     this._dead = false;
     this._selected = false;
+    this._showPick = false;
+  }
+
+  void _initialize(String name, ThreeDart.Entity colorShapeEntity, ThreeDart.Entity pickShapeEntity) {
+    this._pickTech = this._board.nextpickTech();
+    
+    this._colorEntity = new ThreeDart.Entity(
+      children: [colorShapeEntity], name: "color "+name);
+
+    this._pickEntity = new ThreeDart.Entity(
+      children: [pickShapeEntity], name: "pick "+name,
+      tech: this._pickTech, enabled: false);
+
+    this.mover = this._mover;
+    this.name = name;
+    this.children.add(this._colorEntity);
+    this.children.add(this._pickEntity);
 
     this._updateLocation();
-    this._updateTech();
+    this._updateColorTech();
   }
+
+  bool get showPick => this._showPick;
+  set showPick(bool show) {
+    if (show != this._showPick) {
+      this._showPick = show;
+      this._colorEntity.enabled = !show;
+      this._pickEntity.enabled = show;
+    }
+  }
+
+  bool get selected => this._selected;
+  set selected(bool selected) {
+    if (selected != this._selected) {
+      this._selected = selected;
+      this._updateColorTech();
+    }
+  }
+  
+  bool isPick(Math.Color4 pick) =>
+    this._pickTech.color == pick;
 
   void _updateLocation() {
     this._mover.matrix =
@@ -30,7 +70,7 @@ abstract class Piece extends ThreeDart.Entity {
       new Math.Matrix4.scale(this._scalar, this._scalar, this._scalar);
   }
 
-  void _updateTech() {
+  void _updateColorTech() {
     if (this._white) {
       if (this._selected)
         this.technique = this._board.materials.selectedWhitePieceTech;

@@ -15,8 +15,14 @@ class ColorPicker implements Input.Interactable, Events.Changable {
   /// The texture to pick colors from.
   Texture2D _txt;
 
-  /// Event for handling changes to this mover.
+  /// Event for handling changes to this picker.
   Events.Event _changed;
+  
+  /// Event emitted before an update for this picker.
+  Events.Event _preUpdate;
+
+  /// Event emitted after an update for this picker.
+  Events.Event _postUpdate;
   
   /// Event for handling when a color has been picked.
   Events.Event _colorPicked;
@@ -38,6 +44,8 @@ class ColorPicker implements Input.Interactable, Events.Changable {
     this._mods        = null;
     this._txt         = null;
     this._changed     = null;
+    this._preUpdate   = null;
+    this._postUpdate  = null;
     this._colorPicked = null;
     this._mouseDown   = true;
 
@@ -47,21 +55,43 @@ class ColorPicker implements Input.Interactable, Events.Changable {
     this.attach(input);
   }
 
-  /// Emits when the mover has changed.
+  /// Emits when the picker has changed.
   Events.Event get changed {
     this._changed ??= new Events.Event();
     return this._changed;
   }
 
-  /// Handles a child mover being changed.
+  /// Handles a child picker being changed.
   void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
 
-  /// Emits when the mover has changed.
+  /// Event emitted before an update for this picker.
+  Events.Event get onPreUpdate {
+    this._preUpdate ??= new Events.Event();
+    return this._preUpdate;
+  }
+
+  /// Event emitted after an update for this picker.
+  Events.Event get onPostUpdate {
+    this._postUpdate ??= new Events.Event();
+    return this._postUpdate;
+  }
+
+  /// Emits when the picker has changed.
   Events.Event get colorPicked {
     this._colorPicked ??= new Events.Event();
     return this._colorPicked;
+  }
+
+  /// Handles prior to a color being picked.
+  void _onPreUpdate([Events.EventArgs args = null]) {
+    this._preUpdate?.emit(args);
+  }
+  
+  /// Handles after a color being picked.
+  void _onPostUpdate([Events.EventArgs args = null]) {
+    this._postUpdate?.emit(args);
   }
 
   /// Handles a color being picked.
@@ -103,7 +133,7 @@ class ColorPicker implements Input.Interactable, Events.Changable {
     }
   }
 
-  /// Attaches this mover to the user input.
+  /// Attaches this picker to the user input.
   bool attach(Input.UserInput input) {
     if (input == null) return false;
     if (this._input != null) return false;
@@ -113,7 +143,7 @@ class ColorPicker implements Input.Interactable, Events.Changable {
     return true;
   }
 
-  /// Detaches this mover from the user input.
+  /// Detaches this picker from the user input.
   void detach() {
     if (this._input != null) {
       this._input.mouse.down.remove(this._mouseDownHandle);
@@ -137,10 +167,12 @@ class ColorPicker implements Input.Interactable, Events.Changable {
   void _pickColor(Events.EventArgs args) {
     Input.MouseEventArgs margs = args as Input.MouseEventArgs;
     if (margs.button.modifiers != this._mods) return;
+    this._onPreUpdate(new Events.EventArgs(this));
     double dx = margs.rawPoint.x/margs.size.dx;
     double dy = margs.rawPoint.y/margs.size.dy;
     Math.Vector2 loc = new Math.Vector2(dx, dy);
     Math.Color4 clr = this._loader.pickColor(this._txt, loc);
     this._onColorPicked(new ColorPickerEventArgs(this, loc, clr));
+    _onPostUpdate(new Events.EventArgs(this));
   }
 }
