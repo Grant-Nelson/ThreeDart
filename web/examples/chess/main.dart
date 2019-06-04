@@ -19,6 +19,7 @@ import '../../common/common.dart' as common;
 part 'bishop.dart';
 part 'board.dart';
 part 'edge.dart';
+part 'game.dart';
 part 'king.dart';
 part 'knight.dart';
 part 'materials.dart';
@@ -73,6 +74,7 @@ void startChess() {
     ..clearColor = false;
 
   Board board = new Board(td);
+  Game game = new Game(board);
 
   Scenes.CoverPass skybox = new Scenes.CoverPass.skybox(board.materials.environment)
     ..target = frontTarget
@@ -99,20 +101,10 @@ void startChess() {
     })
     ..colorPicked.add((Events.EventArgs args) {
       Textures.ColorPickerEventArgs pickArgs = args as Textures.ColorPickerEventArgs;
-      Math.Color4 color = pickArgs.color.trim32();
-      board.pick(color);
+      game.pick(pickArgs.color.trim32());
     });
 
-  Techniques.TextureLayout layout = new Techniques.TextureLayout();
-  layout.entries.add(new Techniques.TextureLayoutEntry()
-    ..destination = new Math.Region2(0.0, 0.75, 0.25, 0.25)
-    ..texture = pickTarget.colorTexture);
-
-  Scenes.CoverPass layoutCover = new Scenes.CoverPass()
-    ..technique = layout
-    ..target = frontTarget;
-
-  td.scene = new Scenes.Compound(passes: [skybox, mainScene, layoutCover]);
+  td.scene = new Scenes.Compound(passes: [skybox, mainScene]);
 
   common.showFPS(td);
 }

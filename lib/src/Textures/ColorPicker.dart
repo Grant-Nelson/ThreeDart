@@ -10,7 +10,7 @@ class ColorPicker implements Input.Interactable, Events.Changable {
   Input.UserInput _input;
 
   /// Indicates if the modifier keys which must be pressed or released.
-  Input.Modifiers _mods;
+  Input.Modifiers _modPressed;
 
   /// The texture to pick colors from.
   Texture2D _txt;
@@ -27,30 +27,40 @@ class ColorPicker implements Input.Interactable, Events.Changable {
   /// Event for handling when a color has been picked.
   Events.Event _colorPicked;
 
-  /// Indicates if the color picker should trigger on mouse down or mouse up.
-  bool _mouseDown;
+  /// The range, in pixels, of the dead band.
+  double _deadBand;
+
+  /// The dead band squared.
+  double _deadBand2;
+
+  /// True indicating the mouse is pressed, false for released.
+  bool _pressed;
+
+  /// Indicates if the mouse has left the dead band area yet.
+  bool _inDeadBand;
 
   /// Creates a new user rotater instance.
   ColorPicker(TextureLoader loader, {
       bool ctrl:      false,
       bool alt:       false,
       bool shift:     false,
-      bool mouseDown: true,
       Texture2D       txt:    null,
       Input.Modifiers mod:    null,
       Input.UserInput input:  null}) {
     this._loader      = loader;
     this._input       = null;
-    this._mods        = null;
+    this._modPressed  = null;
     this._txt         = null;
     this._changed     = null;
     this._preUpdate   = null;
     this._postUpdate  = null;
     this._colorPicked = null;
-    this._mouseDown   = true;
+    this._deadBand    = 2.0;
+    this._deadBand2   = 4.0;
+    this._pressed     = false;
+    this._inDeadBand  = false;
 
     this.modifiers = mod ?? new Input.Modifiers(ctrl, alt, shift);
-    this.mouseDown = mouseDown;
     this.texture   = txt;
     this.attach(input);
   }
@@ -112,24 +122,26 @@ class ColorPicker implements Input.Interactable, Events.Changable {
   }
 
   /// Indicates if the modifiers keys must be pressed or released.
-  Input.Modifiers get modifiers => this._mods;
+  Input.Modifiers get modifiers => this._modPressed;
   void set modifiers(Input.Modifiers mods) {
     mods = mods ?? new Input.Modifiers.none();
-    if (this._mods != mods) {
-      Input.Modifiers prev = this._mods;
-      this._mods = mods;
+    if (this._modPressed != mods) {
+      Input.Modifiers prev = this._modPressed;
+      this._modPressed = mods;
       this._onChanged(new Events.ValueChangedEventArgs(this, "modifiers", prev, mods));
     }
   }
 
-  /// Indicates if the color picker should trigger on mouse down or mouse up.
-  bool get mouseDown => this._mouseDown;
-  void set mouseDown(bool down) {
-    down = down ?? true;
-    if (this._mouseDown != down) {
-      bool prev = this._mouseDown;
-      this._mouseDown = down;
-      this._onChanged(new Events.ValueChangedEventArgs(this, "mouseDown", prev, down));
+  /// The dead-band, in pixels, before any movement is made.
+  /// This does not apply when the mouse is locked.
+  double get deadBand => this._deadBand;
+  void set deadBand(double value) {
+    value = value ?? 0.0;
+    if (!Math.Comparer.equals(this._deadBand, value)) {
+      double prev = this._deadBand;
+      this._deadBand = value;
+      this._deadBand2 = this._deadBand * this._deadBand;
+      this._onChanged(new Events.ValueChangedEventArgs(this, "deadBand", prev, this._deadBand));
     }
   }
 
@@ -139,7 +151,11 @@ class ColorPicker implements Input.Interactable, Events.Changable {
     if (this._input != null) return false;
     this._input = input;
     this._input.mouse.down.add(this._mouseDownHandle);
+    this._input.mouse.move.add(this._mouseMoveHandle);
     this._input.mouse.up.add(this._mouseUpHandle);
+    this._input.touch.start.add(this._touchStartHandle);
+    this._input.touch.move.add(this._touchMoveHandle);
+    this._input.touch.end.add(this._touchEndHandle);
     return true;
   }
 
@@ -147,32 +163,75 @@ class ColorPicker implements Input.Interactable, Events.Changable {
   void detach() {
     if (this._input != null) {
       this._input.mouse.down.remove(this._mouseDownHandle);
+      this._input.mouse.move.remove(this._mouseMoveHandle);
       this._input.mouse.up.remove(this._mouseUpHandle);
+      this._input.touch.start.remove(this._touchStartHandle);
+      this._input.touch.move.remove(this._touchMoveHandle);
+      this._input.touch.end.remove(this._touchEndHandle);
       this._input = null;
     }
   }
 
   /// Handles the mouse down event.
   void _mouseDownHandle(Events.EventArgs args) {
-    if (this._mouseDown) this._pickColor(args);
+    Input.MouseEventArgs margs = (args as Input.MouseEventArgs);
+    if (margs.button.modifiers != this._modPressed) return;
+    this._pressed = true;
+    this._inDeadBand = true;
+  }
+  
+  /// Handles the mouse move event.
+  void _mouseMoveHandle(Events.EventArgs args) {
+    if (!this._pressed) return;
+    if (this._inDeadBand) {
+      Input.MouseEventArgs margs = (args as Input.MouseEventArgs);
+      if (margs.rawOffset.length2() < this._deadBand2) return;
+      this._inDeadBand = false;
+    }
   }
 
   /// Handle the mouse up event.
   void _mouseUpHandle(Events.EventArgs args) {
-    if (!this._mouseDown) this._pickColor(args);
+    if (!this._pressed) return;
+    this._pressed = false;
+    if (!this._inDeadBand) return;
+    this._pickColor(args);
+  }
+  
+  /// Handle the touch screen touch start.
+  void _touchStartHandle(Events.EventArgs args) {
+    this._pressed = true;
+    this._inDeadBand = true;
+  }
+  
+  /// Handle the touch screen move.
+  void _touchMoveHandle(Events.EventArgs args) {
+    if (!this._pressed) return;
+    if (this._inDeadBand) {
+      Input.TouchEventArgs targs = (args as Input.TouchEventArgs);
+      if (targs.rawOffset.length2() < this._deadBand2) return;
+      this._inDeadBand = false;
+    }
+  }
+
+  /// Handle the touch screen end.
+  void _touchEndHandle(Events.EventArgs args) {
+    if (!this._pressed) return;
+    this._pressed = false;
+    if (!this._inDeadBand) return;
+    this._pickColor(args);
   }
 
   /// This handles determining the color for the location and
   /// emitting a color picker event arguments.
   void _pickColor(Events.EventArgs args) {
     Input.MouseEventArgs margs = args as Input.MouseEventArgs;
-    if (margs.button.modifiers != this._mods) return;
     this._onPreUpdate(new Events.EventArgs(this));
     double dx = margs.rawPoint.x/margs.size.dx;
     double dy = margs.rawPoint.y/margs.size.dy;
     Math.Vector2 loc = new Math.Vector2(dx, dy);
     Math.Color4 clr = this._loader.pickColor(this._txt, loc);
     this._onColorPicked(new ColorPickerEventArgs(this, loc, clr));
-    _onPostUpdate(new Events.EventArgs(this));
+    this._onPostUpdate(new Events.EventArgs(this));
   }
 }

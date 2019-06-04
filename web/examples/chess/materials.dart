@@ -142,6 +142,12 @@ class Materials {
       ..lights.add(bollomLight);
   }
 
+  Techniques.SolidColor nextpickTech(int index) {
+    const int max = 96;
+    Math.Color4 color = Math.Color4.fromHVS(index/max, 1.0, 1.0);
+    return Techniques.SolidColor(color: color.trim32());
+  }
+
   Textures.TextureCube get environment => this._environment;
 
   Techniques.MaterialLight get whitePieceTech => this._whitePieceTech;

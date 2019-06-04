@@ -80,25 +80,30 @@ class Board extends ThreeDart.Entity {
 
   Materials get materials => this._mats;
 
+  Techniques.SolidColor nextpickTech() =>
+    this._mats.nextpickTech(this.children.length);
+
   void _add(Piece piece) {
     this._pieces.add(piece);
     this.children.add(piece);
   }
 
-  void pick(Math.Color4 color) {
+  Piece pickPiece(Math.Color4 color) {
     for (int i = 0; i < this._pieces.length; ++i) {
       if (this._pieces[i].isPick(color)) {
-        this._pieces[i].selected = !this._pieces[i].selected;
-        break;
+        return this._pieces[i];
       }
     }
-    
+    return null;
+  }
+
+  Tile pickTile(Math.Color4 color) {
     for (int i = 0; i < this._tiles.length; ++i) {
       if (this._tiles[i].isPick(color)) {
-        this._tiles[i].selected = !this._tiles[i].selected;
-        break;
+        return this._tiles[i];
       }
     }
+    return null;
   }
 
   bool get showPick => this._showPick;
@@ -112,12 +117,5 @@ class Board extends ThreeDart.Entity {
       for(Tile tile in this._tiles)
         tile.showPick = show;
     }
-  }
-
-  Techniques.SolidColor nextpickTech() {
-    const int max = 96;
-    int index = this.children.length;
-    Math.Color4 color = Math.Color4.fromHVS(index/max, 1.0, 1.0);
-    return Techniques.SolidColor(color: color.trim32());
   }
 }
