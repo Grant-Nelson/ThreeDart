@@ -10,6 +10,7 @@ class Tile extends ThreeDart.Entity {
   Board _board;
   bool _white;
   bool _selected;
+  bool _highlighted;
   bool _showPick;
   Techniques.SolidColor _pickTech;
   ThreeDart.Entity _colorEntity;
@@ -26,8 +27,9 @@ class Tile extends ThreeDart.Entity {
         });
     }
 
-    this._selected = false;
-    this._showPick = false;
+    this._selected    = false;
+    this._highlighted = false;
+    this._showPick    = false;
 
     String name = (this._white?"white":"black")+" tile ${this._row} ${this._column}";
     this._pickTech = this._board.nextpickTech();
@@ -46,6 +48,9 @@ class Tile extends ThreeDart.Entity {
 
     this._updateColorTech();
   }
+  
+  int get row => this._row;
+  int get column => this._column;
 
   bool get showPick => this._showPick;
   set showPick(bool show) {
@@ -58,8 +63,18 @@ class Tile extends ThreeDart.Entity {
 
   bool get selected => this._selected;
   set selected(bool selected) {
-    if (selected != this._selected) {
+    if (selected != this.selected) {
       this._selected = selected;
+      this._highlighted = false;
+      this._updateColorTech();
+    }
+  }
+
+  bool get highlighted => this._highlighted;
+  set highlighted(bool highlighted) {
+    if (highlighted != this._highlighted) {
+      this._highlighted = highlighted;
+      this._selected = false;
       this._updateColorTech();
     }
   }
@@ -71,10 +86,14 @@ class Tile extends ThreeDart.Entity {
     if (this._white) {
       if (this._selected)
         this.technique = this._board.materials.selectedWhiteTileTech;
+      else if (this._highlighted)
+        this.technique = this._board.materials.highlightedWhiteTileTech;
       else this.technique = this._board.materials.whiteTileTech;
     } else {
       if (this._selected)
         this.technique = this._board.materials.selectedBlackTileTech;
+      else if (this._highlighted)
+        this.technique = this._board.materials.highlightedBlackTileTech;
       else this.technique = this._board.materials.blackTileTech;
     }
   }

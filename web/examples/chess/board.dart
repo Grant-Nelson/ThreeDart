@@ -1,6 +1,6 @@
 part of chess;
 
-///
+/// TODO: Comment
 class Board extends ThreeDart.Entity {
   List<Piece> _pieces;
   List<Tile> _tiles;
@@ -16,7 +16,7 @@ class Board extends ThreeDart.Entity {
     this.name = "board";
     this._showPick = false;
 
-    //    1 2 3 4 5 6 7 8
+    //    1 2 3 4 5 6 7 8 < Column
     // 1 |R|H|B|Q|K|B|H|R| White
     // 2 |P|P|P|P|P|P|P|P|
     // 3 | | | | | | | | |
@@ -89,21 +89,47 @@ class Board extends ThreeDart.Entity {
   }
 
   Piece pickPiece(Math.Color4 color) {
-    for (int i = 0; i < this._pieces.length; ++i) {
-      if (this._pieces[i].isPick(color)) {
-        return this._pieces[i];
-      }
+    for (Piece piece in this._pieces) {
+      if (piece.isPick(color)) return piece;
     }
     return null;
   }
 
   Tile pickTile(Math.Color4 color) {
-    for (int i = 0; i < this._tiles.length; ++i) {
-      if (this._tiles[i].isPick(color)) {
-        return this._tiles[i];
-      }
+    for (Tile tile in this._tiles) {
+      if (tile.isPick(color)) return tile;
     }
     return null;
+  }
+  
+  Piece findPiece(int row, int column) {
+    for (Piece piece in this._pieces) {
+      if ((piece.row == row) && (piece.column == column))
+        return piece;
+    }
+    return null;
+  }
+
+  Tile findTile(int row, int column) {
+    for (Tile tile in this._tiles) {
+      if ((tile.row == row) && (tile.column == column))
+        return tile;
+    }
+    return null;
+  }
+
+  void clearHighlights() {
+    for (Piece piece in this._pieces)
+      piece.highlighted = false;
+    for (Tile tile in this._tiles)
+      tile.highlighted = false;
+  }
+
+  void clearSelections() {
+    for (Piece piece in this._pieces)
+      piece.selected = false;
+    for (Tile tile in this._tiles)
+      tile.selected = false;
   }
 
   bool get showPick => this._showPick;
@@ -117,5 +143,33 @@ class Board extends ThreeDart.Entity {
       for(Tile tile in this._tiles)
         tile.showPick = show;
     }
+  }
+
+  bool _onBoard(int row, int column) =>
+    (row >= 1) && (row <= 8) && (column >= 1) && (column <= 8);
+
+  bool _highlightIfOpponent(bool white, int row, int column) {
+    if (this._onBoard(row, column)) {
+      Piece piece = this.findPiece(row, column);
+      if ((piece != null) && (piece._white != white)) {
+        piece.highlighted = true;
+        Tile tile = this.findTile(row, column);
+        tile.highlighted = true;
+        return true;
+      }
+    }
+    return false;
+  }
+  
+  bool _highlightIfEmpty(int row, int column) {
+    if (this._onBoard(row, column)) {
+      Piece piece = this.findPiece(row, column);
+      if (piece == null) {
+        Tile tile = this.findTile(row, column);
+        tile.highlighted = true;
+        return true;
+      }
+    }
+    return false;
   }
 }

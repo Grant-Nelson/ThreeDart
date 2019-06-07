@@ -17,4 +17,14 @@ class Pawn extends Piece {
     }
     this._initialize((this._white?"white":"black")+" pawn ${this._column}", _colorShapeEntity, _pickShapeEntity);
   }
+
+  @override
+  void setMovement() {
+    int dir = this._white? 1: -1;
+    this._board._highlightIfOpponent(this._white, this._row+dir, this._column+1);
+    this._board._highlightIfOpponent(this._white, this._row+dir, this._column-1);
+    if (this._board._highlightIfEmpty(this._row+dir, this._column)) {
+      if (!this._hasMoved) this._board._highlightIfEmpty(this._row+dir+dir, this._column);
+    }
+  }
 }

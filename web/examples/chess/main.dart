@@ -1,5 +1,7 @@
 library chess;
 
+import 'dart:math';
+
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 import 'package:ThreeDart/IO.dart' as IO;
 import 'package:ThreeDart/Events.dart' as Events;

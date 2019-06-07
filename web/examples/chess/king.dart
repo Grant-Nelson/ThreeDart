@@ -17,4 +17,9 @@ class King extends Piece {
     }
     this._initialize((this._white?"white":"black")+" king ${this._column}", _colorShapeEntity, _pickShapeEntity);
   }
+
+  @override
+  void setMovement() {
+    // TODO: Implement
+  }
 }

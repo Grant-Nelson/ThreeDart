@@ -17,4 +17,9 @@ class Bishop extends Piece {
     }
     this._initialize((this._white?"white":"black")+" bishop ${this._column}", _colorShapeEntity, _pickShapeEntity);
   }
+
+  @override
+  void setMovement() {
+    // TODO: Implement
+  }
 }

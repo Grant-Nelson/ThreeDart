@@ -17,4 +17,9 @@ class Rook extends Piece {
     }
     this._initialize((this._white?"white":"black")+" rook ${this._column}", _colorShapeEntity, _pickShapeEntity);
   }
+
+  @override
+  void setMovement() {
+    // TODO: Implement
+  }
 }
