@@ -1,7 +1,16 @@
 part of chess;
 
+/// Bishop is a piece which the player starts with two of.
+/// Bishops move diagonally with no restriction to the distance.
+/// https://en.wikipedia.org/wiki/Bishop_(chess)
 class Bishop extends Piece {
+
+  /// The singleton for the shape of the bishop with the render cache for the color shader.
+  /// Used for rendering to the screen.
   static ThreeDart.Entity _colorShapeEntity;
+
+  /// The singleton for the shape of the bishop with the render cache for the picker shader.
+  /// Used for determining which piece or tile was clicked on.
   static ThreeDart.Entity _pickShapeEntity;
 
   Bishop(ThreeDart.ThreeDart td, Board board, bool white, int row, int column, double angle, double scalar):
