@@ -20,6 +20,20 @@ class Bishop extends Piece {
 
   @override
   void setMovement() {
-    // TODO: Implement
+    for (int i = 1; i < 8; ++i) {
+      if (this._board._highlightPath(this._white, this._row+i, this._column+i)) break;
+    }
+    
+    for (int i = 1; i < 8; ++i) {
+      if (this._board._highlightPath(this._white, this._row-i, this._column+i)) break;
+    }
+    
+    for (int i = 1; i < 8; ++i) {
+      if (this._board._highlightPath(this._white, this._row+i, this._column-i)) break;
+    }
+    
+    for (int i = 1; i < 8; ++i) {
+      if (this._board._highlightPath(this._white, this._row-i, this._column-i)) break;
+    }
   }
 }

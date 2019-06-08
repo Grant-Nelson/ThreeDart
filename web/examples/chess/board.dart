@@ -172,4 +172,20 @@ class Board extends ThreeDart.Entity {
     }
     return false;
   }
+
+  bool _highlightPath(bool white,int row, int column) {
+    if (this._onBoard(row, column)) {
+      Piece piece = this.findPiece(row, column);
+      Tile tile = this.findTile(row, column);
+      if (piece == null) {
+        tile.highlighted = true;
+        return false;
+      }
+      if (piece._white != white) {
+        piece.highlighted = true;
+        tile.highlighted = true;
+      }
+    }
+    return true;
+  }
 }

@@ -20,6 +20,13 @@ class King extends Piece {
 
   @override
   void setMovement() {
-    // TODO: Implement
+    this._board._highlightPath(this._white, this._row+1, this._column+1);
+    this._board._highlightPath(this._white, this._row-1, this._column+1);
+    this._board._highlightPath(this._white, this._row+1, this._column-1);
+    this._board._highlightPath(this._white, this._row-1, this._column-1);
+    this._board._highlightPath(this._white, this._row+1, this._column);
+    this._board._highlightPath(this._white, this._row-1, this._column);
+    this._board._highlightPath(this._white, this._row, this._column+1);
+    this._board._highlightPath(this._white, this._row, this._column-1);
   }
 }
