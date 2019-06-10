@@ -8,8 +8,7 @@ abstract class Piece extends ThreeDart.Entity {
   Movers.Constant _mover;
   Board _board;
   bool _white;
-  bool _hasMoved;
-  bool _dead;
+  int _stateItem;
   bool _selected;
   bool _highlighted;
   bool _showPick;
@@ -17,17 +16,19 @@ abstract class Piece extends ThreeDart.Entity {
   ThreeDart.Entity _colorEntity;
   ThreeDart.Entity _pickEntity;
 
-  Piece._(this._board, this._white, this._row, this._column, this._angle, this._scalar) {
-    this._mover = new Movers.Constant();
-    this._hasMoved    = false;
-    this._dead        = false;
+  Piece._(this._board, this._white, this._angle, this._scalar) {
+    this._row         = 0;
+    this._column      = 0;
+    this._mover       = new Movers.Constant();
+    this._stateItem   = 0;
     this._selected    = false;
     this._highlighted = false;
     this._showPick    = false;
   }
 
-  void _initialize(String name, ThreeDart.Entity colorShapeEntity, ThreeDart.Entity pickShapeEntity) {
+  void _initialize(String name, int stateItem, ThreeDart.Entity colorShapeEntity, ThreeDart.Entity pickShapeEntity) {
     this._pickTech = this._board.nextpickTech();
+    this._stateItem = stateItem;
     
     this._colorEntity = new ThreeDart.Entity(
       children: [colorShapeEntity], name: "color "+name);
@@ -45,9 +46,9 @@ abstract class Piece extends ThreeDart.Entity {
     this._updateColorTech();
   }
 
-  void setMovement();
-
   bool get white => this._white;
+
+  int get stateItem => this._stateItem;
 
   bool get showPick => this._showPick;
   set showPick(bool show) {
@@ -77,15 +78,6 @@ abstract class Piece extends ThreeDart.Entity {
   bool isPick(Math.Color4 pick) =>
     this._pickTech.color == pick;
 
-  bool get dead => this._dead;
-
-  void kill() {
-    this._dead = true;
-    this._row = 0;
-    this._column = 0;
-    this.enabled = false;
-  }
-
   int get row => this._row;
   int get column => this._column;
 
@@ -93,7 +85,6 @@ abstract class Piece extends ThreeDart.Entity {
     if ((this._row != row) || (this._column != column)) {
       this._row = row;
       this._column = column;
-      this._hasMoved = true;
       this._updateLocation();
     }
   }

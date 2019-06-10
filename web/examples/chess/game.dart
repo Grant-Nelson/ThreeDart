@@ -51,7 +51,7 @@ class Game {
         this._selected.selected = true;
         Tile tile = this._board.findTile(this._selected.row, this._selected.column);
         tile.selected = true;
-        this._selected.setMovement();
+        // TODO: set movement highlights
       }
     }
   }
@@ -61,7 +61,7 @@ class Game {
     this._board.clearSelections();
 
     Piece piece = this._board.findPiece(row, column);
-    if (piece != null) piece.kill();
+    //if (piece != null) piece.kill();
 
     this._selected.setLocation(row, column);
     this._selected = null;

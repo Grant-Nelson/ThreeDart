@@ -16,16 +16,6 @@ class Board extends ThreeDart.Entity {
     this.name = "board";
     this._showPick = false;
 
-    //    1 2 3 4 5 6 7 8 < Column
-    // 1 |R|H|B|Q|K|B|H|R| White
-    // 2 |P|P|P|P|P|P|P|P|
-    // 3 | | | | | | | | |
-    // 4 | | | | | | | | |
-    // 5 | | | | | | | | |
-    // 6 | | | | | | | | |
-    // 7 |P|P|P|P|P|P|P|P|
-    // 8 |R|H|B|Q|K|B|H|R| Black
-
     for (int i = 1; i <= 8; i++) {
       for (int j = 1; j <= 8; j++) {
         Tile tile = new Tile(td, this, ((i+j)%2) == 0, i, j);
@@ -35,29 +25,30 @@ class Board extends ThreeDart.Entity {
     }
 
     for (int i = 1; i <= 8; i++) {
-      this._add(new Pawn(td, this, true, 2, i, 0.0, 0.7));
-      this._add(new Pawn(td, this, false, 7, i, 0.0, 0.7));
+      this._add(new Pawn(td, this, true,  i, 0.0, 0.7));
+      this._add(new Pawn(td, this, false, i, 0.0, 0.7));
     }
 
-    this._add(new Rook(td, this, true, 1, 1, 0.0, 0.7));
-    this._add(new Rook(td, this, true, 1, 8, 0.0, 0.7));
-    this._add(new Rook(td, this, false, 8, 1, 0.0, 0.7));
-    this._add(new Rook(td, this, false, 8, 8, 0.0, 0.7));
+    this._add(new Rook(td, this, true,  0, 0.0, 0.7));
+    this._add(new Rook(td, this, true,  1, 0.0, 0.7));
+    this._add(new Rook(td, this, false, 0, 0.0, 0.7));
+    this._add(new Rook(td, this, false, 1, 0.0, 0.7));
 
-    this._add(new Knight(td, this, true, 1, 2, 0.0, 0.7));
-    this._add(new Knight(td, this, true, 1, 7, Math.PI, 0.7));
-    this._add(new Knight(td, this, false, 8, 2, 0.0, 0.7));
-    this._add(new Knight(td, this, false, 8, 7, Math.PI, 0.7));
+    this._add(new Knight(td, this, true,  0, 0.0,     0.7));
+    this._add(new Knight(td, this, true,  1, Math.PI, 0.7));
+    this._add(new Knight(td, this, false, 0, 0.0,     0.7));
+    this._add(new Knight(td, this, false, 1, Math.PI, 0.7));
 
-    this._add(new Bishop(td, this, true, 1, 3, -Math.PI_2, 0.8));
-    this._add(new Bishop(td, this, true, 1, 6, Math.PI_2, 0.8));
-    this._add(new Bishop(td, this, false, 8, 3, -Math.PI_2, 0.8));
-    this._add(new Bishop(td, this, false, 8, 6, Math.PI_2, 0.8));
+    this._add(new Bishop(td, this, true,  0, -Math.PI_2, 0.8));
+    this._add(new Bishop(td, this, true,  1,  Math.PI_2, 0.8));
+    this._add(new Bishop(td, this, false, 0, -Math.PI_2, 0.8));
+    this._add(new Bishop(td, this, false, 1,  Math.PI_2, 0.8));
 
-    this._add(new Queen(td, this, true, 1, 4, 0.0, 1.0));
-    this._add(new King(td, this, true, 1, 5, Math.PI_2, 0.9));
-    this._add(new Queen(td, this, false, 8, 4, 0.0, 1.0));
-    this._add(new King(td, this, false, 8, 5, Math.PI_2, 0.9));
+    this._add(new Queen(td, this, true,  0, 0.0, 1.0));
+    this._add(new Queen(td, this, false, 0, 0.0, 1.0));
+
+    this._add(new King(td,  this, true,  0, Math.PI_2, 0.9));
+    this._add(new King(td,  this, false, 0, Math.PI_2, 0.9));
 
     this._edges = new ThreeDart.Entity();
     this.children.add(this._edges);
@@ -145,47 +136,25 @@ class Board extends ThreeDart.Entity {
     }
   }
 
-  bool _onBoard(int row, int column) =>
+  bool onBoard(int row, int column) =>
     (row >= 1) && (row <= 8) && (column >= 1) && (column <= 8);
 
-  bool _highlightIfOpponent(bool white, int row, int column) {
-    if (this._onBoard(row, column)) {
-      Piece piece = this.findPiece(row, column);
-      if ((piece != null) && (piece._white != white)) {
-        piece.highlighted = true;
-        Tile tile = this.findTile(row, column);
-        tile.highlighted = true;
-        return true;
+  void setLocations(State state) {
+    for (Piece piece in this._pieces) {
+      int index = state.indexOf(piece.stateItem);
+      if (index < 0) {
+        piece.setLocation(0, 0);
+        piece.enabled = false;
+      } else {
+        int row = state.rowForIndex(index);
+        int column = state.columnForIndex(index);
+        piece.setLocation(row, column);
+        piece.enabled = true;
       }
     }
-    return false;
-  }
-  
-  bool _highlightIfEmpty(int row, int column) {
-    if (this._onBoard(row, column)) {
-      Piece piece = this.findPiece(row, column);
-      if (piece == null) {
-        Tile tile = this.findTile(row, column);
-        tile.highlighted = true;
-        return true;
-      }
-    }
-    return false;
   }
 
-  bool _highlightPath(bool white,int row, int column) {
-    if (this._onBoard(row, column)) {
-      Piece piece = this.findPiece(row, column);
-      Tile tile = this.findTile(row, column);
-      if (piece == null) {
-        tile.highlighted = true;
-        return false;
-      }
-      if (piece._white != white) {
-        piece.highlighted = true;
-        tile.highlighted = true;
-      }
-    }
-    return true;
+  void setHighlights(State state) {
+
   }
 }
