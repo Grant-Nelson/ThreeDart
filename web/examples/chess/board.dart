@@ -18,7 +18,7 @@ class Board extends ThreeDart.Entity {
 
     for (int i = 1; i <= 8; i++) {
       for (int j = 1; j <= 8; j++) {
-        Tile tile = new Tile(td, this, ((i+j)%2) == 0, i, j);
+        Tile tile = new Tile(td, this, ((i+j)%2) == 0, new Loaction(i, j));
         this._tiles.add(tile);
         this.children.add(tile);
       }
@@ -93,18 +93,16 @@ class Board extends ThreeDart.Entity {
     return null;
   }
   
-  Piece findPiece(int row, int column) {
+  Piece findPiece(Location loc) {
     for (Piece piece in this._pieces) {
-      if ((piece.row == row) && (piece.column == column))
-        return piece;
+      if (piece.location == loc) return piece;
     }
     return null;
   }
 
-  Tile findTile(int row, int column) {
+  Tile findTile(Location loc) {
     for (Tile tile in this._tiles) {
-      if ((tile.row == row) && (tile.column == column))
-        return tile;
+      if (tile.location == loc) return tile;
     }
     return null;
   }
@@ -141,20 +139,16 @@ class Board extends ThreeDart.Entity {
 
   void setLocations(State state) {
     for (Piece piece in this._pieces) {
-      int index = state.indexOf(piece.stateItem);
-      if (index < 0) {
-        piece.setLocation(0, 0);
-        piece.enabled = false;
-      } else {
-        int row = state.rowForIndex(index);
-        int column = state.columnForIndex(index);
-        piece.setLocation(row, column);
-        piece.enabled = true;
-      }
+      Location loc = state.findItem(piece.stateItem);
+      piece.setLocation(loc);
+      piece.enabled = loc.onBoard;
     }
   }
 
-  void setHighlights(State state) {
-
+  void setHighlights(List<Movement> movements) {
+    for (Movement movement in movements) {
+      Tile tile = this.findTile(movement.destination);
+      tile.highlighted = true;
+    }
   }
 }

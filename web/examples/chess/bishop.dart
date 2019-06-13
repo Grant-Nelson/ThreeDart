@@ -25,6 +25,6 @@ class Bishop extends Piece {
         });
     }
     this._initialize((this._white?"white":"black") + " bishop $index",
-      (this._white?State.White:State.Black) & State.Bishop & index, _colorShapeEntity, _pickShapeEntity);
+      (this._white?State.White:State.Black)|State.Bishop|index, _colorShapeEntity, _pickShapeEntity);
   }
 }

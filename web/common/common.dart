@@ -23,6 +23,6 @@ part 'texture2DGroup.dart';
 void showFPS(ThreeDart.ThreeDart td) {
   new Timer.periodic(const Duration(milliseconds: 5000), (Timer time) {
     String fps = td.fps.toStringAsFixed(2);
-    print("$fps fps");
+    if (fps != "0.00") print("$fps fps");
   });
 }

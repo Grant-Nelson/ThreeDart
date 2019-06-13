@@ -16,6 +16,6 @@ class Knight extends Piece {
         });
     }
     this._initialize((this._white?"white":"black") + " knight $index", 
-      (this._white?State.White:State.Black) & State.Knight & index, _colorShapeEntity, _pickShapeEntity);
+      (this._white?State.White:State.Black)|State.Knight|index, _colorShapeEntity, _pickShapeEntity);
   }
 }

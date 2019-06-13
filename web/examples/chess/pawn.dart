@@ -16,6 +16,6 @@ class Pawn extends Piece {
         });
     }
     this._initialize((this._white?"white":"black") + " pawn $index", 
-      (this._white?State.White:State.Black) & State.Pawn & index, _colorShapeEntity, _pickShapeEntity);
+      (this._white?State.White:State.Black)|State.Pawn|index, _colorShapeEntity, _pickShapeEntity);
   }
 }

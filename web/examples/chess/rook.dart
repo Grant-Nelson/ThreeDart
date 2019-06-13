@@ -16,6 +16,6 @@ class Rook extends Piece {
         });
     }
     this._initialize((this._white?"white":"black") + " rook $index",
-      (this._white?State.White:State.Black) & State.Rook & index, _colorShapeEntity, _pickShapeEntity);
+      (this._white?State.White:State.Black)|State.Rook|index, _colorShapeEntity, _pickShapeEntity);
   }
 }

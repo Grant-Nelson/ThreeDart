@@ -16,6 +16,6 @@ class King extends Piece {
         });
     }
     this._initialize((this._white?"white":"black") + " king $index",
-      (this._white?State.White:State.Black) & State.King & index, _colorShapeEntity, _pickShapeEntity);
+      (this._white?State.White:State.Black)|State.King|index, _colorShapeEntity, _pickShapeEntity);
   }
 }

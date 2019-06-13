@@ -1,8 +1,7 @@
 part of chess;
 
 abstract class Piece extends ThreeDart.Entity {
-  int _row;
-  int _column;
+  Location _loc;
   double _angle;
   double _scalar;
   Movers.Constant _mover;
@@ -17,8 +16,7 @@ abstract class Piece extends ThreeDart.Entity {
   ThreeDart.Entity _pickEntity;
 
   Piece._(this._board, this._white, this._angle, this._scalar) {
-    this._row         = 0;
-    this._column      = 0;
+    this._loc         = new Location(0, 0);
     this._mover       = new Movers.Constant();
     this._stateItem   = 0;
     this._selected    = false;
@@ -78,20 +76,18 @@ abstract class Piece extends ThreeDart.Entity {
   bool isPick(Math.Color4 pick) =>
     this._pickTech.color == pick;
 
-  int get row => this._row;
-  int get column => this._column;
+  Location get location => this._loc;
 
-  void setLocation(int row, int column) {
-    if ((this._row != row) || (this._column != column)) {
-      this._row = row;
-      this._column = column;
+  void setLocation(Location loc) {
+    if (this._loc != loc) {
+      this._loc = loc;
       this._updateLocation();
     }
   }
 
   void _updateLocation() =>
     this._mover.matrix =
-      new Math.Matrix4.translate(this._row.toDouble()-4.5, 0.0, this._column.toDouble()-4.5)*
+      new Math.Matrix4.translate(this._loc.row.toDouble()-4.5, 0.0, this._loc.column.toDouble()-4.5)*
       new Math.Matrix4.rotateY(this._angle)*
       new Math.Matrix4.scale(this._scalar, this._scalar, this._scalar);
 
