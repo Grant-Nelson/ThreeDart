@@ -1,4 +1,4 @@
-part of chess;
+part of graphics;
 
 class Knight extends Piece {
   static ThreeDart.Entity _colorShapeEntity;
@@ -15,7 +15,9 @@ class Knight extends Piece {
           _pickShapeEntity.shape = loadedEntity.shape;
         });
     }
-    this._initialize((this._white?"white":"black") + " knight $index", 
-      (this._white?State.White:State.Black)|State.Knight|index, _colorShapeEntity, _pickShapeEntity);
+
+    String name = (this._white?"white":"black") + " knight $index";
+    int value = (this._white?game.State.White:game.State.Black)|game.State.Knight|index;
+    this._initialize(name, value, _colorShapeEntity, _pickShapeEntity);
   }
 }

@@ -1,4 +1,4 @@
-part of chess;
+part of graphics;
 
 class Edge extends ThreeDart.Entity {
   static ThreeDart.Entity _shapeEntity;

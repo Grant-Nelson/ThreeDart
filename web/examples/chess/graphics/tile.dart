@@ -1,10 +1,10 @@
-part of chess;
+part of graphics;
 
 class Tile extends ThreeDart.Entity {
   static ThreeDart.Entity _colorShapeEntity;
   static ThreeDart.Entity _pickShapeEntity;
 
-  Location _loc;
+  game.Location _loc;
   Movers.Constant _mover;
   Board _board;
   bool _white;
@@ -15,7 +15,7 @@ class Tile extends ThreeDart.Entity {
   ThreeDart.Entity _colorEntity;
   ThreeDart.Entity _pickEntity;
 
-  Tile(ThreeDart.ThreeDart td, this._board, this._white, this._loc) {
+  Tile(ThreeDart.ThreeDart td, Board this._board, bool this._white, game.Location this._loc) {
     if (_colorShapeEntity == null) {
       _colorShapeEntity = new ThreeDart.Entity(name: "color tile shape");
       _pickShapeEntity = new ThreeDart.Entity(name: "pick tile shape");
@@ -48,7 +48,7 @@ class Tile extends ThreeDart.Entity {
     this._updateColorTech();
   }
   
-  Location get location => this._loc;
+  game.Location get location => this._loc;
 
   bool get showPick => this._showPick;
   set showPick(bool show) {

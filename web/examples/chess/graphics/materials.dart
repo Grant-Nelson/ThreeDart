@@ -1,6 +1,5 @@
-part of chess;
+part of graphics;
 
-///
 class Materials {
   Textures.TextureCube _environment;
   Techniques.MaterialLight _whitePieceTech;

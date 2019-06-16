@@ -1,7 +1,7 @@
-part of chess;
+part of graphics;
 
 abstract class Piece extends ThreeDart.Entity {
-  Location _loc;
+  game.Location _loc;
   double _angle;
   double _scalar;
   Movers.Constant _mover;
@@ -16,7 +16,7 @@ abstract class Piece extends ThreeDart.Entity {
   ThreeDart.Entity _pickEntity;
 
   Piece._(this._board, this._white, this._angle, this._scalar) {
-    this._loc         = new Location(0, 0);
+    this._loc         = new game.Location(0, 0);
     this._mover       = new Movers.Constant();
     this._stateItem   = 0;
     this._selected    = false;
@@ -76,9 +76,9 @@ abstract class Piece extends ThreeDart.Entity {
   bool isPick(Math.Color4 pick) =>
     this._pickTech.color == pick;
 
-  Location get location => this._loc;
+  game.Location get location => this._loc;
 
-  void setLocation(Location loc) {
+  void setLocation(game.Location loc) {
     if (this._loc != loc) {
       this._loc = loc;
       this._updateLocation();

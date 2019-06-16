@@ -1,4 +1,4 @@
-part of chess;
+part of graphics;
 
 /// Bishop is a piece which the player starts with two of.
 /// Bishops move diagonally with no restriction to the distance.
@@ -24,7 +24,9 @@ class Bishop extends Piece {
           _pickShapeEntity.shape = loadedEntity.shape;
         });
     }
-    this._initialize((this._white?"white":"black") + " bishop $index",
-      (this._white?State.White:State.Black)|State.Bishop|index, _colorShapeEntity, _pickShapeEntity);
+
+    String name = (this._white?"white":"black") + " bishop $index";
+    int value = (this._white?game.State.White:game.State.Black)|game.State.Bishop|index;
+    this._initialize(name, value, _colorShapeEntity, _pickShapeEntity);
   }
 }

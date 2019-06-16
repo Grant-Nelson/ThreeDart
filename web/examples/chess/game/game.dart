@@ -1,46 +1,41 @@
-part of chess;
+library game;
+
+import 'package:ThreeDart/Events.dart' as Events;
+
+part 'location.dart';
+part 'movement.dart';
+part 'state.dart';
 
 class Game {
 
-  Board _board;
   bool _whiteTurn;
-  Piece _selected;
+  int _selected;
+  int _condition;
   State _state;
+  Events.Event _changed;
 
-  Game(Board this._board) {
+  Game() {
     this._whiteTurn = true;
-    this._selected = null;
+    this._selected = State.Empty;
+    this._condition = State.None;
     this._state = new State.initial();
-    this._board.setLocations(this._state);
+    this._changed = null;
   }
 
-  void pick(Math.Color4 color) {
-    Piece piece = this._board.pickPiece(color);
-    if (piece != null) {
-      if (piece.white == this._whiteTurn) {
-        this._pieceSelected(piece);
-        return;
-      }
-      if (piece.highlighted) {
-        //this._moveTo(piece.row, piece.column); TODO
-        return;
-      }
-    }
-    
-    Tile tile = this._board.pickTile(color);
-    if (tile != null) {
-      Piece piece = this._board.findPiece(tile.location);
-      if ((piece != null) && (piece.white == this._whiteTurn)) {
-        this._pieceSelected(piece);
-        return;
-      }
-      if (tile.highlighted) {
-        //this._moveTo(tile.row, tile.column); TODO
-        return;
-      }
-    }
+  bool get whiteTurn => this._whiteTurn;
+  int get selected => this._selected;
+  int get condition => this._condition;
+  State get state => this._state;
+
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
+    return this._changed;
   }
 
+  void 
+
+
+  /*
   void _pieceSelected(Piece piece) {
     if (this._selected != piece) {
       if (this._selected != null) {
@@ -56,7 +51,7 @@ class Game {
         tile.selected = true;
 
         List<Movement> movements = this._state.getMovementsForPiece(this._selected.stateItem);
-        // TODO: set movement highlights
+        this._board.setHighlights(movements);
       }
     }
   }
@@ -73,4 +68,5 @@ class Game {
 
     this._whiteTurn = !this._whiteTurn;
   }
+  */
 }

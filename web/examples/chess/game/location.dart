@@ -1,4 +1,4 @@
-part of chess;
+part of game;
 
 class Location {
   final int row;
@@ -21,7 +21,11 @@ class Location {
 
   int get index => (this.row-1) + (this.column-1)*8;
 
-  String toString() => "$row $column";
+  String toString() {
+    String c = (this.column >= 1) && (this.column <= 8)?
+      String.fromCharCode("a".codeUnitAt(0)+column): " $column";
+    return "$row$c";
+  }
 
   bool operator ==(var other) {
     if (identical(this, other)) return true;
