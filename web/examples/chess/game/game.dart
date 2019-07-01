@@ -12,28 +12,68 @@ class Game {
   int _selected;
   int _condition;
   State _state;
-  Events.Event _changed;
+  List<Movement> _movements;
+  Events.Event _changedSelected;
+  Events.Event _changedCondition;
+  Events.Event _changedState;
+  Events.Event _changedMovements;
 
   Game() {
     this._whiteTurn = true;
-    this._selected = State.Empty;
+    this._selected  = State.Empty;
     this._condition = State.None;
-    this._state = new State.initial();
-    this._changed = null;
+    this._state     = new State.initial();
+    this._changedSelected  = null;
+    this._changedCondition = null;
+    this._changedState     = null;
+    this._changedMovements = null;
   }
 
   bool get whiteTurn => this._whiteTurn;
   int get selected => this._selected;
   int get condition => this._condition;
   State get state => this._state;
+  List<Movement> get movements => this._movements;
 
-  Events.Event get changed {
-    this._changed ??= new Events.Event();
-    return this._changed;
+  Events.Event get changedSelected {
+    this._changedSelected ??= new Events.Event();
+    return this._changedSelected;
   }
 
-  void 
+  Events.Event get changedCondition {
+    this._changedCondition ??= new Events.Event();
+    return this._changedCondition;
+  }
 
+  Events.Event get changedState {
+    this._changedState ??= new Events.Event();
+    return this._changedState;
+  }
+
+  Events.Event get changedMovements {
+    this._changedMovements ??= new Events.Event();
+    return this._changedMovements;
+  }
+  
+  void _onChangedSelected([Events.EventArgs args = null]) {
+    this._changedSelected?.emit(args);
+  }
+  
+  void _onChangedCondition([Events.EventArgs args = null]) {
+    this._changedCondition?.emit(args);
+  }
+
+  void _onChangedState([Events.EventArgs args = null]) {
+    this._changedState?.emit(args);
+  }
+
+  void _onChangedMovements([Events.EventArgs args = null]) {
+    this._changedMovements?.emit(args);
+  }
+
+  void pick(Location loc) {
+    // TODO: Implement
+  }
 
   /*
   void _pieceSelected(Piece piece) {

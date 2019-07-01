@@ -26,8 +26,8 @@ class Board extends ThreeDart.Entity {
     }
 
     for (int i = 1; i <= 8; i++) {
-      this._add(new Pawn(td, this, true,  i, 0.0, 0.7));
-      this._add(new Pawn(td, this, false, i, 0.0, 0.7));
+      this._add(new Pawn(td, this, true,  i-1, 0.0, 0.7));
+      this._add(new Pawn(td, this, false, i-1, 0.0, 0.7));
     }
 
     this._add(new Rook(td, this, true,  0, 0.0, 0.7));
@@ -80,55 +80,37 @@ class Board extends ThreeDart.Entity {
     this.children.add(piece);
   }
   
-  Piece _pickPiece(Math.Color4 color) {
-    for (Piece piece in this._pieces) {
-      if (piece.isPick(color)) return piece;
-    }
-    return null;
-  }
-
-  Tile _pickTile(Math.Color4 color) {
-    for (Tile tile in this._tiles) {
-      if (tile.isPick(color)) return tile;
-    }
-    return null;
-  }
-  
   void pick(Math.Color4 color) {
-    Piece piece = this._pickPiece(color);
-    if (piece != null) {
-      if (piece.white == this._game.whiteTurn) {
-        this._pieceSelected(piece);
-        return;
-      }
-      if (piece.highlighted) {
-        //this._moveTo(piece.row, piece.column); TODO
+    for (Piece piece in this._pieces) {
+      if (piece.isPick(color)) {
+        this._game.pick(piece.location);
         return;
       }
     }
     
-    Tile tile = this._pickTile(color);
-    if (tile != null) {
-      Piece piece = this._board.findPiece(tile.location);
-      if ((piece != null) && (piece.white == this._whiteTurn)) {
-        this._pieceSelected(piece);
-        return;
-      }
-      if (tile.highlighted) {
-        //this._moveTo(tile.row, tile.column); TODO
+    for (Tile tile in this._tiles) {
+      if (tile.isPick(color)) {
+        this._game.pick(tile.location);
         return;
       }
     }
   }
   
-  Piece findPiece(game.Location loc) {
+  Piece findPiece(int stateValue) {
+    for (Piece piece in this._pieces) {
+      if (piece.stateItem == stateValue) return piece;
+    }
+    return null;
+  }
+  
+  Piece pieceAt(game.Location loc) {
     for (Piece piece in this._pieces) {
       if (piece.location == loc) return piece;
     }
     return null;
   }
 
-  Tile findTile(game.Location loc) {
+  Tile tileAt(game.Location loc) {
     for (Tile tile in this._tiles) {
       if (tile.location == loc) return tile;
     }
@@ -162,8 +144,14 @@ class Board extends ThreeDart.Entity {
     }
   }
 
-  bool onBoard(int row, int column) =>
-    (row >= 1) && (row <= 8) && (column >= 1) && (column <= 8);
+  void setSelection(int stateItem) {
+    Piece piece = this.findPiece(stateItem);
+    if (piece != null) {
+      piece.selected = true;
+      Tile tile = this.tileAt(piece.location);
+      tile?.selected = true;
+    }
+  }
 
   void setLocations(game.State state) {
     for (Piece piece in this._pieces) {
@@ -174,14 +162,11 @@ class Board extends ThreeDart.Entity {
   }
 
   void setHighlights(List<game.Movement> movements) {
-    print("=============");
     for (game.Movement movement in movements) {
-      print(movement.toString());
-
-      Tile tile = this.findTile(movement.destination);
+      Tile tile = this.tileAt(movement.destination);
       tile.highlighted = true;
       //if (movement.opponent != null) {
-      //  Piece piece = this.findPiece(movement.opponent);
+      //  Piece piece = this.pieceAt(movement.opponent);
       //  piece.highlighted = true;
       //}
     }

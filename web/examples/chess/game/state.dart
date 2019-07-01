@@ -122,7 +122,7 @@ class State {
 
   Location findItem(int item) {
     for (int i = 0; i < this._data.length; ++i) {
-      int value = this._data[i] & (Piece|Color);
+      int value = this._data[i] & (Piece|Color|Count);
       if (value == item) return new Location.fromIndex(i);
     }
     return new Location(0, 0);
@@ -375,8 +375,6 @@ class State {
         }
       }
     }
-
-
     return movers;
   }
 
