@@ -7,6 +7,7 @@ import 'package:ThreeDart/Events.dart' as Events;
 part 'location.dart';
 part 'movement.dart';
 part 'state.dart';
+part 'stringGrid.dart';
 part 'tileValue.dart';
 
 class Game {

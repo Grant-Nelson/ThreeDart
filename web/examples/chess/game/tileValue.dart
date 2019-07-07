@@ -46,14 +46,17 @@ class TileValue {
   factory TileValue.parse(String str) {
     if (str.length < 1) return Empty;
     TileValue value = Empty;
+
     if (str[0] == '+') {
       value |= Moved;
       str = str.substring(1);
     }
     if (str.length < 2) return Empty;
+
     value |= new TileValue.colorFromLetter(str[0]) |
              new TileValue.pieceFromLetter(str[1]);
-    if (str.length >= 3)
+
+    if (str.length > 2)
       value |= new TileValue(int.parse(str[2])).count;
     return value;
   }
@@ -65,8 +68,8 @@ class TileValue {
   factory TileValue.rook(bool white, int count)        => new TileValue._piece(Rook, white, count);
   factory TileValue.knight(bool white, int count)      => new TileValue._piece(Knight, white, count);
   factory TileValue.bishop(bool white, int count)      => new TileValue._piece(Bishop, white, count);
-  factory TileValue.queen(bool white, [int count = 0]) => new TileValue._piece(Queen, white, count);
-  factory TileValue.king(bool white)                   => new TileValue._piece(Queen, white, 0);
+  factory TileValue.queen(bool white, [int count = 1]) => new TileValue._piece(Queen, white, count);
+  factory TileValue.king(bool white)                   => new TileValue._piece(King, white, 1);
 
   TileValue operator |(TileValue other) => new TileValue(this.value | other.value);
   TileValue operator &(TileValue other) => new TileValue(this.value & other.value);
@@ -76,9 +79,10 @@ class TileValue {
   TileValue get color => new TileValue(this.value & Color.value);
   TileValue get piece => new TileValue(this.value & Piece.value);
   TileValue get count => new TileValue(this.value & Count.value);
+  TileValue get item  => new TileValue(this.value & ItemMask.value);
 
   bool get outOfBounds => this.value == OOB.value;
-  bool get empty => this.value == Empty;
+  bool get empty => this.value == Empty.value;
   bool get moved => this.has(Moved);
   bool get white => this.has(White);
   bool get black => this.has(Black);
@@ -89,8 +93,10 @@ class TileValue {
   bool sameItem(TileValue other) =>
     (this.value & ItemMask.value) == (other.value & ItemMask.value);
  
-  bool operator ==(dynamic other) =>
-    this.value == (other as TileValue)?.value;
+  bool operator ==(dynamic other) {
+    if (other is! TileValue) return false;
+    return this.value == (other as TileValue)?.value;
+  }
     
   String get colorLetter {
     TileValue color = this.color;
@@ -127,12 +133,10 @@ class TileValue {
     return "Empty";
   }
 
-  String toString({bool showMoved: false, bool showCount: false}) {
-    if (this.empty) return "  " + (showMoved? " ": "") + (showCount? " ": "");
+  String toString({bool showMoved: true, bool showCount: true}) {
+    if (this.empty) return "";
     String result = "";
-    if (showMoved) {
-      result += this.moved? "+": " ";
-    }
+    if (showMoved) result += this.moved? "+": " ";
     result += this.colorLetter;
     result += this.pieceLetter;
     if (showCount) result += this.numberLetter;

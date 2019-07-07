@@ -30,41 +30,41 @@ class State {
     // 8 |R0|H0|B0|K0|Q0|B1|H1|R1| White
     State state = new State();
 
-    state.setValue(new Location(1, 1), new TileValue.rook(false, 0));
-    state.setValue(new Location(1, 2), new TileValue.knight(false, 0));
-    state.setValue(new Location(1, 3), new TileValue.bishop(false, 0));
+    state.setValue(new Location(1, 1), new TileValue.rook(false, 1));
+    state.setValue(new Location(1, 2), new TileValue.knight(false, 1));
+    state.setValue(new Location(1, 3), new TileValue.bishop(false, 1));
     state.setValue(new Location(1, 4), new TileValue.king(false));
-    state.setValue(new Location(1, 5), new TileValue.queen(false, 0));
-    state.setValue(new Location(1, 6), new TileValue.bishop(false, 1));
-    state.setValue(new Location(1, 7), new TileValue.knight(false, 1));
-    state.setValue(new Location(1, 8), new TileValue.rook(false, 1));
+    state.setValue(new Location(1, 5), new TileValue.queen(false, 1));
+    state.setValue(new Location(1, 6), new TileValue.bishop(false, 2));
+    state.setValue(new Location(1, 7), new TileValue.knight(false, 2));
+    state.setValue(new Location(1, 8), new TileValue.rook(false, 2));
 
-    state.setValue(new Location(2, 1), new TileValue.pawn(false, 0));
-    state.setValue(new Location(2, 2), new TileValue.pawn(false, 1));
-    state.setValue(new Location(2, 3), new TileValue.pawn(false, 2));
-    state.setValue(new Location(2, 4), new TileValue.pawn(false, 3));
-    state.setValue(new Location(2, 5), new TileValue.pawn(false, 4));
-    state.setValue(new Location(2, 6), new TileValue.pawn(false, 5));
-    state.setValue(new Location(2, 7), new TileValue.pawn(false, 6));
-    state.setValue(new Location(2, 8), new TileValue.pawn(false, 7));
+    state.setValue(new Location(2, 1), new TileValue.pawn(false, 1));
+    state.setValue(new Location(2, 2), new TileValue.pawn(false, 2));
+    state.setValue(new Location(2, 3), new TileValue.pawn(false, 3));
+    state.setValue(new Location(2, 4), new TileValue.pawn(false, 4));
+    state.setValue(new Location(2, 5), new TileValue.pawn(false, 5));
+    state.setValue(new Location(2, 6), new TileValue.pawn(false, 6));
+    state.setValue(new Location(2, 7), new TileValue.pawn(false, 7));
+    state.setValue(new Location(2, 8), new TileValue.pawn(false, 8));
 
-    state.setValue(new Location(7, 1), new TileValue.pawn(true, 0));
-    state.setValue(new Location(7, 2), new TileValue.pawn(true, 1));
-    state.setValue(new Location(7, 3), new TileValue.pawn(true, 2));
-    state.setValue(new Location(7, 4), new TileValue.pawn(true, 3));
-    state.setValue(new Location(7, 5), new TileValue.pawn(true, 4));
-    state.setValue(new Location(7, 6), new TileValue.pawn(true, 5));
-    state.setValue(new Location(7, 7), new TileValue.pawn(true, 6));
-    state.setValue(new Location(7, 8), new TileValue.pawn(true, 7));
+    state.setValue(new Location(7, 1), new TileValue.pawn(true, 1));
+    state.setValue(new Location(7, 2), new TileValue.pawn(true, 2));
+    state.setValue(new Location(7, 3), new TileValue.pawn(true, 3));
+    state.setValue(new Location(7, 4), new TileValue.pawn(true, 4));
+    state.setValue(new Location(7, 5), new TileValue.pawn(true, 5));
+    state.setValue(new Location(7, 6), new TileValue.pawn(true, 6));
+    state.setValue(new Location(7, 7), new TileValue.pawn(true, 7));
+    state.setValue(new Location(7, 8), new TileValue.pawn(true, 8));
 
-    state.setValue(new Location(8, 1), new TileValue.rook(true, 0));
-    state.setValue(new Location(8, 2), new TileValue.knight(true, 0));
-    state.setValue(new Location(8, 3), new TileValue.bishop(true, 0));
+    state.setValue(new Location(8, 1), new TileValue.rook(true, 1));
+    state.setValue(new Location(8, 2), new TileValue.knight(true, 1));
+    state.setValue(new Location(8, 3), new TileValue.bishop(true, 1));
     state.setValue(new Location(8, 4), new TileValue.king(true));
-    state.setValue(new Location(8, 5), new TileValue.queen(true, 0));
-    state.setValue(new Location(8, 6), new TileValue.bishop(true, 1));
-    state.setValue(new Location(8, 7), new TileValue.knight(true, 1));
-    state.setValue(new Location(8, 8), new TileValue.rook(true, 1));
+    state.setValue(new Location(8, 5), new TileValue.queen(true, 1));
+    state.setValue(new Location(8, 6), new TileValue.bishop(true, 2));
+    state.setValue(new Location(8, 7), new TileValue.knight(true, 2));
+    state.setValue(new Location(8, 8), new TileValue.rook(true, 2));
 
     return state;
   }
@@ -72,30 +72,41 @@ class State {
   /// This will load a state from a string repressenting the board.
   /// This string is the same as `toString(false)` of a state.
   /// This will return false if there aren't 128 color peice letter pairs.
-  factory State.parse(String data, {bool hasMoved: false}) {
+  factory State.parse(String data) {
     State state = new State();
-    Map<TileValue, int> used = new Map<TileValue, int>();
-    data = data.replaceAll("\n", "").replaceAll("|", "");
+    Map<int, bool> used = new Map<int, bool>();
+    StringGrid grid = new StringGrid.parse(data);
+    if ((grid.rows != 8) || (grid.columns != 8)) return null;
 
-    int expLength = 128;
-    if (hasMoved) expLength += 64;
-    if (data.length != expLength) return null;
-    int stride = (hasMoved)? 3: 2;
-
-    for (int r = 1, i = 0; r <= 8; ++r) {
-      for (int c = 1; c <= 8; ++c, i += stride) {
-        TileValue value = new TileValue.parse(data.substring(i, i+stride));
-        if (value != None) {
-          TileValue base = value & (TileValue.Color|TileValue.Piece);
-          int count = used[base] ?? 0;
-          used[base] = count + 1;
-          value |= new TileValue(count);
-
-          int index = new Location(r, c).index;
-          state._data[index] = value;
+    // Parse the cells of the given data into tile values.
+    for (int r = 0; r < 8; ++r) {
+      for (int c = 0; c < 8; ++c) {
+        String value = grid.getCell(r, c).trim();
+        TileValue tile = new TileValue.parse(value);
+        if (!tile.empty) {
+          if (!tile.count.empty) used[tile.item.value] = true;
+          int index = new Location(r+1, c+1).index;
+          state._data[index] = tile;
         }
       }
     }
+
+    // Set any counts which haven't been set yet.
+    for (int i = 0; i < 64; ++i) {
+      TileValue tile = state._data[i];
+      if ((!tile.empty) && tile.count.empty) {
+        for (int count = 1; count < 64; ++count) {
+          TileValue check = tile|new TileValue(count);
+          if (!(used[check.item.value] ?? false)) {
+            used[check.item.value] = true;
+            state._data[i] = check;
+            break;
+          }
+        }
+      }
+    }
+    
+
     return state;
   }
 
@@ -370,30 +381,25 @@ class State {
   }
 
   @override
-  String toString([bool showNumbers = true, bool showCount = false, bool showMoved = false]) {
-    List<String> rows = new List<String>();
-    if (showNumbers) {
-      String spacing = "  ";
-      if (showCount) spacing += " ";
-      if (showMoved) spacing += " ";
-      rows.add("   1${spacing}2${spacing}3${spacing}4${spacing}5${spacing}6${spacing}7${spacing}8");
-    }
-
-    for (int r = 0; r < 8; ++r) {
-      String row = "";
-      if (showNumbers) row += "${r+1} ";
-
-      for (int c = 0; c < 8; ++c) {
-        if (showNumbers || c != 0) row += "|";
-
-        int i = new Location(r+1, c+1).index;
-        TileValue value = this._data[i];        
-        row += value.toString(showMoved: showMoved, showCount: showCount);
+  String toString({bool showLabels: true, bool showCount: false}) {
+    bool hasMoved = false;
+    for (int i = 0; i < 64; ++i) {
+      if (this._data[i].moved) {
+        hasMoved = true;
+        break;
       }
-
-      if (showNumbers) row += "|";
-      rows.add(row);
     }
-    return rows.join("\n");
+    
+    StringGrid grid = new StringGrid();
+    grid.showLabels = showLabels;
+    for (int r = 0; r < 8; ++r) {
+      for (int c = 0; c < 8; ++c) {
+        int i = new Location(r+1, c+1).index;
+        TileValue value = this._data[i];
+        String str = value.toString(showMoved: hasMoved, showCount: showCount);
+        grid.setCell(r, c, str);
+      }
+    }
+    return grid.toString();
   }
 }

@@ -19,7 +19,7 @@ class Location {
   bool get onBoard =>
     (this.row >= 1) && (this.row <= 8) && (this.column >= 1) && (this.column <= 8);
 
-  int get index => (this.row-1) + (this.column-1)*8;
+  int get index => (this.row-1)*8 + (this.column-1);
 
   String toString() {
     String c = (this.column >= 1) && (this.column <= 8)?
