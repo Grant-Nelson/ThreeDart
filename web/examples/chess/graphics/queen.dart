@@ -17,7 +17,7 @@ class Queen extends Piece {
     }
 
     String name = (this._white?"white":"black") + " queen $index";
-    int value = (this._white?game.State.White:game.State.Black)|game.State.Queen|index;
+    game.TileValue value = new game.TileValue.queen(this._white, index);
     this._initialize(name, value, _colorShapeEntity, _pickShapeEntity);
   }
 }

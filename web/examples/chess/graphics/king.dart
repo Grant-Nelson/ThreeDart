@@ -4,7 +4,7 @@ class King extends Piece {
   static ThreeDart.Entity _colorShapeEntity;
   static ThreeDart.Entity _pickShapeEntity;
 
-  King(ThreeDart.ThreeDart td, Board board, bool white, int index, double angle, double scalar):
+  King(ThreeDart.ThreeDart td, Board board, bool white, double angle, double scalar):
     super._(board, white, angle, scalar) {
     if (_colorShapeEntity == null) {
       _colorShapeEntity = new ThreeDart.Entity(name: "color king shape");
@@ -16,8 +16,8 @@ class King extends Piece {
         });
     }
 
-    String name = (this._white?"white":"black") + " king $index";
-    int value = (this._white?game.State.White:game.State.Black)|game.State.King|index;
+    String name = (this._white?"white":"black") + " king";
+    game.TileValue value = new game.TileValue.king(this._white);
     this._initialize(name, value, _colorShapeEntity, _pickShapeEntity);
   }
 }

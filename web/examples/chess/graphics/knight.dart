@@ -17,7 +17,7 @@ class Knight extends Piece {
     }
 
     String name = (this._white?"white":"black") + " knight $index";
-    int value = (this._white?game.State.White:game.State.Black)|game.State.Knight|index;
+    game.TileValue value = new game.TileValue.knight(this._white, index);
     this._initialize(name, value, _colorShapeEntity, _pickShapeEntity);
   }
 }

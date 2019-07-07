@@ -1,36 +1,18 @@
 part of game;
 
 class State {
+  static final int None      = 0;
+  static final int Check     = 1;
+  static final int Checkmate = 2;
+  static final int Stalemate = 3;
 
-  static const int OOB    = -1;
-  static const int Empty  = 0x0000;
-  static const int Count  = 0x000F;
-  static const int Moved  = 0x1000;
-
-  static const int Black  = 0x0100;
-  static const int White  = 0x0200;
-  static const int Color  = 0x0300;
-
-  static const int Pawn   = 0x0010;
-  static const int Rook   = 0x0020;
-  static const int Knight = 0x0030;
-  static const int Bishop = 0x0040;
-  static const int Queen  = 0x0050;
-  static const int King   = 0x0060;
-  static const int Piece  = 0x00F0;
-
-  static const int None      = 0;
-  static const int Check     = 1;
-  static const int Checkmate = 2;
-  static const int Stalemate = 3;
-
-  List<int> _data;
+  List<TileValue> _data;
   State _next;
   State _prev;
 
   State() {
-    this._data = new List<int>(64);
-    this._data.fillRange(0, 64, 0);
+    this._data = new List<TileValue>(64);
+    this._data.fillRange(0, 64, TileValue.Empty);
     this._next = null;
     this._prev = null;
   }
@@ -48,42 +30,72 @@ class State {
     // 8 |R0|H0|B0|K0|Q0|B1|H1|R1| White
     State state = new State();
 
-    state.setValue(new Location(1, 1), 0|Black|Rook);
-    state.setValue(new Location(1, 2), 0|Black|Knight);
-    state.setValue(new Location(1, 3), 0|Black|Bishop);
-    state.setValue(new Location(1, 4), 0|Black|King);
-    state.setValue(new Location(1, 5), 0|Black|Queen);
-    state.setValue(new Location(1, 6), 1|Black|Bishop);
-    state.setValue(new Location(1, 7), 1|Black|Knight);
-    state.setValue(new Location(1, 8), 1|Black|Rook);
-    
-    state.setValue(new Location(2, 1), 0|Black|Pawn);
-    state.setValue(new Location(2, 2), 1|Black|Pawn);
-    state.setValue(new Location(2, 3), 2|Black|Pawn);
-    state.setValue(new Location(2, 4), 3|Black|Pawn);
-    state.setValue(new Location(2, 5), 4|Black|Pawn);
-    state.setValue(new Location(2, 6), 5|Black|Pawn);
-    state.setValue(new Location(2, 7), 6|Black|Pawn);
-    state.setValue(new Location(2, 8), 7|Black|Pawn);
-    
-    state.setValue(new Location(7, 1), 0|White|Pawn);
-    state.setValue(new Location(7, 2), 1|White|Pawn);
-    state.setValue(new Location(7, 3), 2|White|Pawn);
-    state.setValue(new Location(7, 4), 3|White|Pawn);
-    state.setValue(new Location(7, 5), 4|White|Pawn);
-    state.setValue(new Location(7, 6), 5|White|Pawn);
-    state.setValue(new Location(7, 7), 6|White|Pawn);
-    state.setValue(new Location(7, 8), 7|White|Pawn);
-    
-    state.setValue(new Location(8, 1), 0|White|Rook);
-    state.setValue(new Location(8, 2), 0|White|Knight);
-    state.setValue(new Location(8, 3), 0|White|Bishop);
-    state.setValue(new Location(8, 4), 0|White|King);
-    state.setValue(new Location(8, 5), 0|White|Queen);
-    state.setValue(new Location(8, 6), 1|White|Bishop);
-    state.setValue(new Location(8, 7), 1|White|Knight);
-    state.setValue(new Location(8, 8), 1|White|Rook);
+    state.setValue(new Location(1, 1), new TileValue.rook(false, 0));
+    state.setValue(new Location(1, 2), new TileValue.knight(false, 0));
+    state.setValue(new Location(1, 3), new TileValue.bishop(false, 0));
+    state.setValue(new Location(1, 4), new TileValue.king(false));
+    state.setValue(new Location(1, 5), new TileValue.queen(false, 0));
+    state.setValue(new Location(1, 6), new TileValue.bishop(false, 1));
+    state.setValue(new Location(1, 7), new TileValue.knight(false, 1));
+    state.setValue(new Location(1, 8), new TileValue.rook(false, 1));
 
+    state.setValue(new Location(2, 1), new TileValue.pawn(false, 0));
+    state.setValue(new Location(2, 2), new TileValue.pawn(false, 1));
+    state.setValue(new Location(2, 3), new TileValue.pawn(false, 2));
+    state.setValue(new Location(2, 4), new TileValue.pawn(false, 3));
+    state.setValue(new Location(2, 5), new TileValue.pawn(false, 4));
+    state.setValue(new Location(2, 6), new TileValue.pawn(false, 5));
+    state.setValue(new Location(2, 7), new TileValue.pawn(false, 6));
+    state.setValue(new Location(2, 8), new TileValue.pawn(false, 7));
+
+    state.setValue(new Location(7, 1), new TileValue.pawn(true, 0));
+    state.setValue(new Location(7, 2), new TileValue.pawn(true, 1));
+    state.setValue(new Location(7, 3), new TileValue.pawn(true, 2));
+    state.setValue(new Location(7, 4), new TileValue.pawn(true, 3));
+    state.setValue(new Location(7, 5), new TileValue.pawn(true, 4));
+    state.setValue(new Location(7, 6), new TileValue.pawn(true, 5));
+    state.setValue(new Location(7, 7), new TileValue.pawn(true, 6));
+    state.setValue(new Location(7, 8), new TileValue.pawn(true, 7));
+
+    state.setValue(new Location(8, 1), new TileValue.rook(true, 0));
+    state.setValue(new Location(8, 2), new TileValue.knight(true, 0));
+    state.setValue(new Location(8, 3), new TileValue.bishop(true, 0));
+    state.setValue(new Location(8, 4), new TileValue.king(true));
+    state.setValue(new Location(8, 5), new TileValue.queen(true, 0));
+    state.setValue(new Location(8, 6), new TileValue.bishop(true, 1));
+    state.setValue(new Location(8, 7), new TileValue.knight(true, 1));
+    state.setValue(new Location(8, 8), new TileValue.rook(true, 1));
+
+    return state;
+  }
+
+  /// This will load a state from a string repressenting the board.
+  /// This string is the same as `toString(false)` of a state.
+  /// This will return false if there aren't 128 color peice letter pairs.
+  factory State.parse(String data, {bool hasMoved: false}) {
+    State state = new State();
+    Map<TileValue, int> used = new Map<TileValue, int>();
+    data = data.replaceAll("\n", "").replaceAll("|", "");
+
+    int expLength = 128;
+    if (hasMoved) expLength += 64;
+    if (data.length != expLength) return null;
+    int stride = (hasMoved)? 3: 2;
+
+    for (int r = 1, i = 0; r <= 8; ++r) {
+      for (int c = 1; c <= 8; ++c, i += stride) {
+        TileValue value = new TileValue.parse(data.substring(i, i+stride));
+        if (value != None) {
+          TileValue base = value & (TileValue.Color|TileValue.Piece);
+          int count = used[base] ?? 0;
+          used[base] = count + 1;
+          value |= new TileValue(count);
+
+          int index = new Location(r, c).index;
+          state._data[index] = value;
+        }
+      }
+    }
     return state;
   }
 
@@ -109,20 +121,20 @@ class State {
 
   State get prev => this._prev;
   
-  int getValue(Location loc) {
-    if (!loc.onBoard) return OOB;
+  TileValue getValue(Location loc) {
+    if (!loc.onBoard) return TileValue.OOB;
     return this._data[loc.index];
   }
 
-  bool setValue(Location loc, int value) {
+  bool setValue(Location loc, TileValue value) {
     if (!loc.onBoard) return false;
     this._data[loc.index] = value;
     return true;
   }
 
-  Location findItem(int item) {
+  Location findItem(TileValue item) {
     for (int i = 0; i < this._data.length; ++i) {
-      int value = this._data[i] & (Piece|Color|Count);
+      TileValue value = this._data[i] & (TileValue.Piece|TileValue.Color|TileValue.Count);
       if (value == item) return new Location.fromIndex(i);
     }
     return new Location(0, 0);
@@ -136,40 +148,19 @@ class State {
 
   }*/
 
-  bool _empty(int value) => value == Empty;
-
-  bool _opponent(bool white, int value) =>
-    !this._empty(value) && this._isWhite(value) != white;
-
-  bool _isWhite(int value) => value & White == White;
-
-  bool _hasMoved(int value) => value & Moved == Moved;
-
-  String _name(int value) {
-    switch(value & Piece) {
-      case Pawn:   return "Pawn";
-      case Rook:   return "Rook";
-      case Knight: return "Knight";
-      case Bishop: return "Bishop";
-      case Queen:  return "Queen";
-      case King:   return "King";
-    }
-    return "Empty";
-  }
-
-  List<Movement> getMovementsForPiece(int item) {
-    Location loc = this.findItem(item);
-    bool white = this._isWhite(item);
-    bool moved = this._hasMoved(item);
+  List<Movement> getMovementsForPiece(TileValue value) {
+    Location loc = this.findItem(value);
+    bool white = value.white;
+    bool moved = value.moved;
     List<Movement> movers = new List<Movement>();
-    switch(item & Piece) {
-      case Pawn:   movers = this._pawnMovement(  white, moved, loc); break;
-      case Rook:   movers = this._rookMovement(  white, moved, loc); break;
-      case Knight: movers = this._knightMovement(white, moved, loc); break;
-      case Bishop: movers = this._bishopMovement(white, moved, loc); break;
-      case Queen:  movers = this._queenMovement( white, moved, loc); break;
-      case King:   movers = this._kingMovement(  white, moved, loc); break;
-    }
+
+    TileValue piece = value.piece;
+    if      (piece == TileValue.Pawn)   movers = this._pawnMovement(  white, moved, loc);
+    else if (piece == TileValue.Rook)   movers = this._rookMovement(  white, moved, loc);
+    else if (piece == TileValue.Knight) movers = this._knightMovement(white, moved, loc);
+    else if (piece == TileValue.Bishop) movers = this._bishopMovement(white, moved, loc);
+    else if (piece == TileValue.Queen)  movers = this._queenMovement( white, moved, loc);
+    else if (piece == TileValue.King)   movers = this._kingMovement(  white, moved, loc);
 
     // TODO: remove any movements which case check.
     return movers;
@@ -190,15 +181,15 @@ class State {
 
     // Check forward movement for vacancies
     Location dest = loc.offset(dir, 0);
-    int value = this.getValue(dest);
-    if (this._empty(value)) {
+    TileValue value = this.getValue(dest);
+    if (value.empty) {
       String desc = "Pawn move to $dest";
       movers.add(new Movement(desc, loc, dest));
 
       if (!moved) {
         dest = loc.offset(dir+dir, 0);
         value = this.getValue(dest);
-        if (this._empty(value)) {
+        if (value.empty) {
           desc = "Pawn move to $dest";
           movers.add(new Movement(desc, loc, dest));
         }
@@ -208,15 +199,15 @@ class State {
     // Check for opponents on the diagonalls
     dest = loc.offset(dir, -1);
     value = this.getValue(dest);
-    if (this._opponent(white, value)) {
-      String desc = "Pawn take ${this._name(value)} at $dest";
+    if (value.opponent(white)) {
+      String desc = "Pawn take ${value.pieceName} at $dest";
       movers.add(new Movement(desc, loc, dest, dest));
     }
 
     dest = loc.offset(dir, 1);
     value = this.getValue(dest);
-    if (this._opponent(white, value)) {
-      String desc = "Pawn take ${this._name(value)} at $dest";
+    if (value.opponent(white)) {
+      String desc = "Pawn take ${value.pieceName} at $dest";
       movers.add(new Movement(desc, loc, dest, dest));
     }
 
@@ -225,10 +216,10 @@ class State {
       dest = loc.offset(dir, -1);
       Location oppLoc = loc.offset(0, -1);
       value = this.getValue(oppLoc);
-      if (this._opponent(white, value) && this._empty(this.getValue(dest))) {
-        int lastLoc = this._prev.getValue(oppLoc.offset(dir+dir, 0));
-        if (this._hasMoved(lastLoc) && (lastLoc|Moved == value)) {
-          String desc = "Pawn en passent ${this._name(value)} at $dest";
+      if (value.opponent(white) && this.getValue(dest).empty) {
+        TileValue lastLoc = this._prev.getValue(oppLoc.offset(dir+dir, 0));
+        if (lastLoc.moved && lastLoc.sameItem(value)) {
+          String desc = "Pawn en passent ${value.pieceName} at $dest";
           movers.add(new Movement(desc, loc, dest, oppLoc));
         }
       }
@@ -236,10 +227,10 @@ class State {
       dest = loc.offset(dir, 1);
       oppLoc = loc.offset(0, 1);
       value = this.getValue(oppLoc);
-      if (this._opponent(white, value) && this._empty(this.getValue(dest))) {
-        int lastLoc = this._prev.getValue(oppLoc.offset(dir+dir, 0));
-        if (this._hasMoved(lastLoc) && (lastLoc|Moved == value)) {
-          String desc = "Pawn en passent ${this._name(value)} at $dest";
+      if (value.opponent(white) && this.getValue(dest).empty) {
+        TileValue lastLoc = this._prev.getValue(oppLoc.offset(dir+dir, 0));
+        if (lastLoc.moved && lastLoc.sameItem(value)) {
+          String desc = "Pawn en passent ${value.pieceName} at $dest";
           movers.add(new Movement(desc, loc, dest, oppLoc));
         }
       }
@@ -250,17 +241,17 @@ class State {
   bool _movement(bool white, Location source, int deltaRow, int deltaColumn, List<Movement> movers) {
       Location dest = source.offset(deltaRow, deltaColumn);
       if (!dest.onBoard) return true;
-      int srcValue = this.getValue(source);
-      int destValue = this.getValue(dest);
+      TileValue srcValue = this.getValue(source);
+      TileValue destValue = this.getValue(dest);
 
-      if (this._empty(destValue)) {
-        String desc = "${this._name(srcValue)} move to $dest";
+      if (destValue.empty) {
+        String desc = "${srcValue.pieceName} move to $dest";
         movers.add(new Movement(desc, source, dest));
         return false;
       }
       
-      if (this._opponent(white, destValue)) {
-        String desc = "${this._name(srcValue)} take ${this._name(destValue)} at $dest";
+      if (destValue.opponent(white)) {
+        String desc = "${srcValue.pieceName} take ${destValue.pieceName} at $dest";
         movers.add(new Movement(desc, source, dest, dest));
       }
       
@@ -283,12 +274,12 @@ class State {
     // Check for castle condition
     if (!moved) {
       Location kingLoc = new Location(white? 8: 1, 4);
-      int kingVal = this.getValue(kingLoc);
-      if ((kingVal & Piece == King) && !this._hasMoved(kingVal)) {
+      TileValue kingVal = this.getValue(kingLoc);
+      if ((kingVal.piece == TileValue.King) && !kingVal.moved) {
         bool allEmpty = true;
         int dir = (loc.column > kingLoc.column)? -1: 1;
         for (int i = loc.column + dir; i != kingLoc.column; i += dir) {
-          if (!this._empty(this.getValue(loc))) {
+          if (!this.getValue(loc).empty) {
             allEmpty = false;
             break;
           }
@@ -355,12 +346,12 @@ class State {
     if (!moved) {
       for (int i = 1; i <= 8; i += 7) {
         Location rookLoc = new Location(i, 4);
-        int rookVal = this.getValue(rookLoc);
-        if ((rookVal & Piece == Rook) && !this._hasMoved(rookVal)) {
+        TileValue rookVal = this.getValue(rookLoc);
+        if ((rookVal.piece == TileValue.Rook) && !rookVal.moved) {
           bool allEmpty = true;
           int dir = (loc.column > rookLoc.column)? -1: 1;
           for (int i = loc.column + dir; i != rookLoc.column; i += dir) {
-            if (!this._empty(this.getValue(loc))) {
+            if (!this.getValue(loc).empty) {
               allEmpty = false;
               break;
             }
@@ -379,28 +370,28 @@ class State {
   }
 
   @override
-  String toString() {
+  String toString([bool showNumbers = true, bool showCount = false, bool showMoved = false]) {
     List<String> rows = new List<String>();
-    rows.add("    1   2   3   4   5   6   7   8");
-    for (int r = 0, i = 0; r < 8; ++r) {
-      String row = "${r+1} ";
-      for (int c = 0; c < 8; ++c, ++i) {
-        int value = this._data[i];
-        switch (value & Color) {
-          case White: row += "[W"; break;
-          case Black: row += "[B"; break;
-          default:    row += "[ "; break;
-        }
-        switch (value & Piece) {
-          case Pawn:   row += "P]"; break;
-          case Rook:   row += "R]"; break;
-          case Knight: row += "H]"; break;
-          case Bishop: row += "B]"; break;
-          case Queen:  row += "Q]"; break;
-          case King:   row += "K]"; break;
-          default:     row += " ]"; break;
-        }
+    if (showNumbers) {
+      String spacing = "  ";
+      if (showCount) spacing += " ";
+      if (showMoved) spacing += " ";
+      rows.add("   1${spacing}2${spacing}3${spacing}4${spacing}5${spacing}6${spacing}7${spacing}8");
+    }
+
+    for (int r = 0; r < 8; ++r) {
+      String row = "";
+      if (showNumbers) row += "${r+1} ";
+
+      for (int c = 0; c < 8; ++c) {
+        if (showNumbers || c != 0) row += "|";
+
+        int i = new Location(r+1, c+1).index;
+        TileValue value = this._data[i];        
+        row += value.toString(showMoved: showMoved, showCount: showCount);
       }
+
+      if (showNumbers) row += "|";
       rows.add(row);
     }
     return rows.join("\n");

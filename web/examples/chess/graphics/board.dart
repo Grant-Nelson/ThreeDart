@@ -48,8 +48,8 @@ class Board extends ThreeDart.Entity {
     this._add(new Queen(td, this, true,  0, 0.0, 1.0));
     this._add(new Queen(td, this, false, 0, 0.0, 1.0));
 
-    this._add(new King(td,  this, true,  0, Math.PI_2, 0.9));
-    this._add(new King(td,  this, false, 0, Math.PI_2, 0.9));
+    this._add(new King(td,  this, true,  Math.PI_2, 0.9));
+    this._add(new King(td,  this, false, Math.PI_2, 0.9));
 
     this._edges = new ThreeDart.Entity();
     this.children.add(this._edges);
@@ -96,7 +96,7 @@ class Board extends ThreeDart.Entity {
     }
   }
   
-  Piece findPiece(int stateValue) {
+  Piece findPiece(game.TileValue stateValue) {
     for (Piece piece in this._pieces) {
       if (piece.stateItem == stateValue) return piece;
     }
@@ -144,7 +144,7 @@ class Board extends ThreeDart.Entity {
     }
   }
 
-  void setSelection(int stateItem) {
+  void setSelection(game.TileValue stateItem) {
     Piece piece = this.findPiece(stateItem);
     if (piece != null) {
       piece.selected = true;

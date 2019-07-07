@@ -17,7 +17,7 @@ class Pawn extends Piece {
     }
 
     String name = (this._white?"white":"black") + " pawn $index";
-    int value = (this._white?game.State.White:game.State.Black)|game.State.Pawn|index;
+    game.TileValue value = new game.TileValue.pawn(this._white, index);
     this._initialize(name, value, _colorShapeEntity, _pickShapeEntity);
   }
 }

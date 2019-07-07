@@ -1,15 +1,18 @@
 library game;
 
+import 'dart:collection';
+
 import 'package:ThreeDart/Events.dart' as Events;
 
 part 'location.dart';
 part 'movement.dart';
 part 'state.dart';
+part 'tileValue.dart';
 
 class Game {
 
   bool _whiteTurn;
-  int _selected;
+  TileValue _selected;
   int _condition;
   State _state;
   List<Movement> _movements;
@@ -20,7 +23,7 @@ class Game {
 
   Game() {
     this._whiteTurn = true;
-    this._selected  = State.Empty;
+    this._selected  = TileValue.Empty;
     this._condition = State.None;
     this._state     = new State.initial();
     this._changedSelected  = null;
@@ -30,7 +33,7 @@ class Game {
   }
 
   bool get whiteTurn => this._whiteTurn;
-  int get selected => this._selected;
+  TileValue get selected => this._selected;
   int get condition => this._condition;
   State get state => this._state;
   List<Movement> get movements => this._movements;

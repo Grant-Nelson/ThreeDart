@@ -26,7 +26,7 @@ class Bishop extends Piece {
     }
 
     String name = (this._white?"white":"black") + " bishop $index";
-    int value = (this._white?game.State.White:game.State.Black)|game.State.Bishop|index;
+    game.TileValue value = new game.TileValue.bishop(this._white, index);
     this._initialize(name, value, _colorShapeEntity, _pickShapeEntity);
   }
 }

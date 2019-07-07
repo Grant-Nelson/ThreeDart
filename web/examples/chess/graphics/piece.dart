@@ -7,7 +7,7 @@ abstract class Piece extends ThreeDart.Entity {
   Movers.Constant _mover;
   Board _board;
   bool _white;
-  int _stateItem;
+  game.TileValue _stateItem;
   bool _selected;
   bool _highlighted;
   bool _showPick;
@@ -18,13 +18,13 @@ abstract class Piece extends ThreeDart.Entity {
   Piece._(this._board, this._white, this._angle, this._scalar) {
     this._loc         = new game.Location(0, 0);
     this._mover       = new Movers.Constant();
-    this._stateItem   = 0;
+    this._stateItem   = game.TileValue.Empty;
     this._selected    = false;
     this._highlighted = false;
     this._showPick    = false;
   }
 
-  void _initialize(String name, int stateItem, ThreeDart.Entity colorShapeEntity, ThreeDart.Entity pickShapeEntity) {
+  void _initialize(String name, game.TileValue stateItem, ThreeDart.Entity colorShapeEntity, ThreeDart.Entity pickShapeEntity) {
     this._pickTech = this._board.nextpickTech();
     this._stateItem = stateItem;
     
@@ -46,7 +46,7 @@ abstract class Piece extends ThreeDart.Entity {
 
   bool get white => this._white;
 
-  int get stateItem => this._stateItem;
+  game.TileValue get stateItem => this._stateItem;
 
   bool get showPick => this._showPick;
   set showPick(bool show) {
