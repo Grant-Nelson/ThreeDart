@@ -7,14 +7,14 @@ class State {
   static final int Stalemate = 3;
 
   List<TileValue> _data;
-  State _next;
-  State _prev;
+  State next;
+  State prev;
 
   State() {
     this._data = new List<TileValue>(64);
     this._data.fillRange(0, 64, TileValue.Empty);
-    this._next = null;
-    this._prev = null;
+    this.next = null;
+    this.prev = null;
   }
 
   factory State.initial() {
@@ -72,7 +72,7 @@ class State {
   /// This will load a state from a string repressenting the board.
   /// This string is the same as `toString(false)` of a state.
   /// This will return false if there aren't 128 color peice letter pairs.
-  factory State.parse(String data) {
+  factory State.parse(List<String> data) {
     State state = new State();
     Map<int, bool> used = new Map<int, bool>();
     StringGrid grid = new StringGrid.parse(data);
@@ -123,14 +123,10 @@ class State {
   /// The copy will have this state as it's previous state.
   State pushState() {
     State state = this.copy();
-    state._prev = this;
-    this._next = state;
+    state.prev = this;
+    this.next = state;
     return state;
   }
-  
-  State get next => this._next;
-
-  State get prev => this._prev;
   
   TileValue getValue(Location loc) {
     if (!loc.onBoard) return TileValue.OOB;
@@ -145,8 +141,8 @@ class State {
 
   Location findItem(TileValue item) {
     for (int i = 0; i < this._data.length; ++i) {
-      TileValue value = this._data[i] & (TileValue.Piece|TileValue.Color|TileValue.Count);
-      if (value == item) return new Location.fromIndex(i);
+      TileValue other = this._data[i].item;
+      if (other == item) return new Location.fromIndex(i);
     }
     return new Location(0, 0);
   }
@@ -160,11 +156,13 @@ class State {
   }*/
 
   List<Movement> getMovementsForPiece(TileValue value) {
+    List<Movement> movers = new List<Movement>();
     Location loc = this.findItem(value);
+    value = this.getValue(loc);
+    if (!loc.onBoard) return movers;
     bool white = value.white;
     bool moved = value.moved;
-    List<Movement> movers = new List<Movement>();
-
+  
     TileValue piece = value.piece;
     if      (piece == TileValue.Pawn)   movers = this._pawnMovement(  white, moved, loc);
     else if (piece == TileValue.Rook)   movers = this._rookMovement(  white, moved, loc);
@@ -192,15 +190,15 @@ class State {
 
     // Check forward movement for vacancies
     Location dest = loc.offset(dir, 0);
-    TileValue value = this.getValue(dest);
-    if (value.empty) {
+    TileValue otherVal = this.getValue(dest);
+    if (otherVal.empty) {
       String desc = "Pawn move to $dest";
       movers.add(new Movement(desc, loc, dest));
 
       if (!moved) {
         dest = loc.offset(dir+dir, 0);
-        value = this.getValue(dest);
-        if (value.empty) {
+        otherVal = this.getValue(dest);
+        if (otherVal.empty) {
           desc = "Pawn move to $dest";
           movers.add(new Movement(desc, loc, dest));
         }
@@ -209,40 +207,44 @@ class State {
 
     // Check for opponents on the diagonalls
     dest = loc.offset(dir, -1);
-    value = this.getValue(dest);
-    if (value.opponent(white)) {
-      String desc = "Pawn take ${value.pieceName} at $dest";
+    otherVal = this.getValue(dest);
+    if ((!otherVal.outOfBounds) && otherVal.opponent(white)) {
+      String desc = "Pawn take ${otherVal.pieceName} at $dest";
       movers.add(new Movement(desc, loc, dest, dest));
     }
 
     dest = loc.offset(dir, 1);
-    value = this.getValue(dest);
-    if (value.opponent(white)) {
-      String desc = "Pawn take ${value.pieceName} at $dest";
+    otherVal = this.getValue(dest);
+    if ((!otherVal.outOfBounds) && otherVal.opponent(white)) {
+      String desc = "Pawn take ${otherVal.pieceName} at $dest";
       movers.add(new Movement(desc, loc, dest, dest));
     }
 
     // Check for en passent condition
-    if ((this._prev != null) && (loc.row == (white? 5: 4))) {
+    if ((this.prev != null) && (loc.row == (white? 4: 5))) {
       dest = loc.offset(dir, -1);
-      Location oppLoc = loc.offset(0, -1);
-      value = this.getValue(oppLoc);
-      if (value.opponent(white) && this.getValue(dest).empty) {
-        TileValue lastLoc = this._prev.getValue(oppLoc.offset(dir+dir, 0));
-        if (lastLoc.moved && lastLoc.sameItem(value)) {
-          String desc = "Pawn en passent ${value.pieceName} at $dest";
-          movers.add(new Movement(desc, loc, dest, oppLoc));
+      if (dest.onBoard && this.getValue(dest).empty) {
+        Location oppLoc = loc.offset(0, -1);
+        otherVal = this.getValue(oppLoc);
+        if (otherVal.opponent(white)) {
+          TileValue lastVal = this.prev.getValue(oppLoc.offset(dir+dir, 0));
+          if ((!lastVal.moved) && lastVal.sameItem(otherVal)) {
+            String desc = "Pawn en passent ${otherVal.pieceName} at $dest";
+            movers.add(new Movement(desc, loc, dest, oppLoc));
+          }
         }
       }
 
       dest = loc.offset(dir, 1);
-      oppLoc = loc.offset(0, 1);
-      value = this.getValue(oppLoc);
-      if (value.opponent(white) && this.getValue(dest).empty) {
-        TileValue lastLoc = this._prev.getValue(oppLoc.offset(dir+dir, 0));
-        if (lastLoc.moved && lastLoc.sameItem(value)) {
-          String desc = "Pawn en passent ${value.pieceName} at $dest";
-          movers.add(new Movement(desc, loc, dest, oppLoc));
+      if (dest.onBoard && this.getValue(dest).empty) {
+        Location oppLoc = loc.offset(0, 1);
+        otherVal = this.getValue(oppLoc);
+        if (otherVal.opponent(white)) {
+          TileValue lastVal = this.prev.getValue(oppLoc.offset(dir+dir, 0));
+          if ((!lastVal.moved) && lastVal.sameItem(otherVal)) {
+            String desc = "Pawn en passent ${otherVal.pieceName} at $dest";
+            movers.add(new Movement(desc, loc, dest, oppLoc));
+          }
         }
       }
     }
@@ -289,8 +291,8 @@ class State {
       if ((kingVal.piece == TileValue.King) && !kingVal.moved) {
         bool allEmpty = true;
         int dir = (loc.column > kingLoc.column)? -1: 1;
-        for (int i = loc.column + dir; i != kingLoc.column; i += dir) {
-          if (!this.getValue(loc).empty) {
+        for (int c = loc.column + dir; c != kingLoc.column; c += dir) {
+          if (!this.getValue(new Location(loc.row, c)).empty) {
             allEmpty = false;
             break;
           }
@@ -300,7 +302,7 @@ class State {
           String desc = "Rook castles with King";
           Location dest = new Location(kingLoc.row, kingLoc.column-dir-dir);
           Location otherDest = new Location(dest.row, dest.column+dir);
-          movers.add(new Movement(desc, loc, dest, kingLoc, otherDest));
+          movers.add(new Movement(desc, loc, otherDest, kingLoc, dest));
         }
       }
     }
@@ -355,14 +357,14 @@ class State {
     
     // Check for castle condition
     if (!moved) {
-      for (int i = 1; i <= 8; i += 7) {
-        Location rookLoc = new Location(i, 4);
+      for (int c = 1; c <= 8; c += 7) {
+        Location rookLoc = new Location(loc.row, c);
         TileValue rookVal = this.getValue(rookLoc);
         if ((rookVal.piece == TileValue.Rook) && !rookVal.moved) {
           bool allEmpty = true;
           int dir = (loc.column > rookLoc.column)? -1: 1;
           for (int i = loc.column + dir; i != rookLoc.column; i += dir) {
-            if (!this.getValue(loc).empty) {
+            if (!this.getValue(new Location(loc.row, i)).empty) {
               allEmpty = false;
               break;
             }

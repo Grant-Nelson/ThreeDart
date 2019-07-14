@@ -88,7 +88,7 @@ class TileValue {
   bool get black => this.has(Black);
   
   bool opponent(bool white) =>
-    !this.empty && (this.color != TileValue.White);
+    (!this.empty) && (this.white != white);
 
   bool sameItem(TileValue other) =>
     (this.value & ItemMask.value) == (other.value & ItemMask.value);

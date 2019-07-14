@@ -19,6 +19,6 @@ class Movement {
     String other = "";
     if (this.otherSource != null)
       other = ", ${this.otherSource} => ${this.otherDestination}";
-    return "${this.description} ${this.source} => ${this.destination}$other";
+    return "${this.description}, ${this.source} => ${this.destination}$other";
   }
 }

@@ -14,8 +14,7 @@ class StringGrid {
     this._content = new List(this.rows * this.columns);
   }
 
-  factory StringGrid.parse(String data) {
-    List<String> rows = data.split("\n");
+  factory StringGrid.parse(List<String> rows) {
     List<List<String>> cells = new List<List<String>>();
     int maxColumns = 0;
     for (int r = 0; r < rows.length; ++r) {

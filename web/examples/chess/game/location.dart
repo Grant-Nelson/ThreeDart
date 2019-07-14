@@ -8,8 +8,8 @@ class Location {
 
   factory Location.fromIndex(int index) {
     if (index < 0) return new Location(0, 0);
-    int row = index%8 + 1;
-    int column = index~/8 + 1;
+    int row = index~/8 + 1;
+    int column = index%8 + 1;
     return new Location(row, column);
   }
 
@@ -21,11 +21,7 @@ class Location {
 
   int get index => (this.row-1)*8 + (this.column-1);
 
-  String toString() {
-    String c = (this.column >= 1) && (this.column <= 8)?
-      String.fromCharCode("a".codeUnitAt(0)+column): " $column";
-    return "$row$c";
-  }
+  String toString() => "$row $column";
 
   bool operator ==(var other) {
     if (identical(this, other)) return true;
