@@ -10,6 +10,8 @@ part 'state.dart';
 part 'stringGrid.dart';
 part 'tileValue.dart';
 
+typedef MovementCallback = void Function(Movement move);
+
 class Game {
 
   bool _whiteTurn;

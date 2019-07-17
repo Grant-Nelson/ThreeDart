@@ -12,6 +12,35 @@ void addChessTests(TestManager tests) {
     }
   }
   
+  void checkIsChecked(TestArgs args, bool expIsCheckedWhite, bool expIsCheckedBlack, List<String> data) {
+    chess.State state = new chess.State.parse(data);
+    args.info("State:\n$state\n");
+    if (state.isChecked(true) != expIsCheckedWhite)
+      args.error("Expected IsChecked(white) to return $expIsCheckedWhite but it wasn't.\n");
+    if (state.isChecked(false) != expIsCheckedBlack)
+      args.error("Expected IsChecked(black) to return $expIsCheckedBlack but it wasn't\n");
+  }
+  
+  void checkMovements(TestArgs args, chess.State state, String itemStr, List<String> expMovements) {
+    args.info("moving $itemStr\n");
+
+    chess.TileValue item = new chess.TileValue.parse(itemStr);
+    chess.Location loc = state.findItem(item);
+    List<chess.Movement> moves = state.getMovementsForPiece(item);
+
+    List<String> parts = new List(moves.length);
+    chess.StringGrid grid = new chess.StringGrid();
+    grid.setCell(loc.row-1, loc.column-1, "O");
+    for (int i = moves.length - 1; i >= 0; --i) {
+      chess.Movement move = moves[i];
+      parts[i] = move.toString();
+      grid.setCell(move.destination.row-1, move.destination.column-1, "X");
+    }
+    args.info("Movements:\n$grid\n");
+
+    _checkLines(args, parts.join("\n"), expMovements);
+  }
+
   tests.add("Test of chess state parse and toString", (TestArgs args) {
     chess.State state = new chess.State.initial();
     _checkLines(args, state.toString(),
@@ -106,25 +135,71 @@ void addChessTests(TestManager tests) {
        "8 |WR2|WH2|WB2|WK1|WQ1|WB1|WH1|WR1|"]);
   });
 
-  void checkMovements(TestArgs args, chess.State state, String itemStr, List<String> expMovements) {
-    args.info("moving $itemStr\n");
-
-    chess.TileValue item = new chess.TileValue.parse(itemStr);
-    chess.Location loc = state.findItem(item);
-    List<chess.Movement> moves = state.getMovementsForPiece(item);
-
-    List<String> parts = new List(moves.length);
-    chess.StringGrid grid = new chess.StringGrid();
-    grid.setCell(loc.row-1, loc.column-1, "O");
-    for (int i = moves.length - 1; i >= 0; --i) {
-      chess.Movement move = moves[i];
-      parts[i] = move.toString();
-      grid.setCell(move.destination.row-1, move.destination.column-1, "X");
-    }
-    args.info("Movements:\n$grid\n");
-
-    _checkLines(args, parts.join("\n"), expMovements);
-  }
+  tests.add("Test of chess checked condition determination", (TestArgs args) {
+    checkIsChecked(args, false, false,
+      ["  |  |  |BK|  |  |  |  ",
+       "  |  |  |  |  |  |  |  ",
+       "  |  |  |  |  |  |  |  ",
+       "  |  |  |  |  |  |  |  ",
+       "  |  |  |  |  |  |  |  ",
+       "  |  |  |  |  |  |  |  ",
+       "  |  |  |  |  |  |  |  ",
+       "  |  |  |WK|  |  |  |  "]);
+    checkIsChecked(args, true, true,
+      ["  |  |  |  |  |  |  |  ",
+       "  |  |  |  |  |  |  |  ",
+       "  |  |  |  |  |  |  |  ",
+       "  |  |  |BK|  |  |  |  ",
+       "  |  |  |WK|  |  |  |  ",
+       "  |  |  |  |  |  |  |  ",
+       "  |  |  |  |  |  |  |  ",
+       "  |  |  |  |  |  |  |  "]);
+    checkIsChecked(args, false, true,
+      ["  |  |  |  |  |  |  |  ",
+       "  |  |  |  |  |  |BK|  ",
+       "  |  |  |  |  |  |  |  ",
+       "  |  |  |  |  |  |  |  ",
+       "  |  |  |WQ|  |  |  |  ",
+       "  |  |  |  |  |  |  |  ",
+       "  |WK|  |  |  |  |  |  ",
+       "  |  |  |  |  |  |  |  "]);
+    checkIsChecked(args, false, true,
+      ["  |  |  |  |  |  |  |  ",
+       "  |  |  |  |  |  |BK|  ",
+       "  |  |  |  |  |  |  |  ",
+       "  |  |  |  |  |  |  |  ",
+       "  |  |  |  |  |  |  |  ",
+       "  |  |BR|  |  |  |  |  ",
+       "  |WK|  |  |  |  |WR|  ",
+       "  |  |  |  |  |  |  |  "]);
+    checkIsChecked(args, false, true,
+      ["  |  |  |  |  |  |  |  ",
+       "  |  |  |  |  |  |BK|  ",
+       "  |  |  |  |  |  |  |  ",
+       "  |  |  |  |  |  |  |  ",
+       "  |  |  |  |  |  |  |  ",
+       "  |  |WB|  |  |  |  |  ",
+       "  |WK|  |  |  |  |BB|  ",
+       "  |  |  |  |  |  |  |  "]);
+    checkIsChecked(args, true, true,
+      ["  |  |  |  |  |  |  |  ",
+       "  |  |  |  |  |  |BK|  ",
+       "  |  |  |  |  |WP|  |  ",
+       "  |  |  |  |  |  |  |  ",
+       "  |  |  |  |  |  |  |  ",
+       "  |  |BP|  |  |  |  |  ",
+       "  |WK|  |  |  |  |  |  ",
+       "  |  |  |  |  |  |  |  "]);
+    checkIsChecked(args, true, true,
+      ["  |  |  |  |  |  |  |  ",
+       "  |  |  |  |  |  |BK|  ",
+       "  |  |  |  |  |  |  |  ",
+       "  |  |  |  |  |WH|  |  ",
+       "  |  |  |  |BH|  |  |  ",
+       "  |  |WK|  |  |  |  |  ",
+       "  |  |  |  |  |  |  |  ",
+       "  |  |  |  |  |  |  |  "]);
+  });
 
   tests.add("Test of chess state movements of pawns", (TestArgs args) {
     chess.State state = new chess.State.initial();
@@ -192,6 +267,18 @@ void addChessTests(TestManager tests) {
     checkMovements(args, state2, "WP8",
       ["Pawn move to 3 8, 4 8 => 3 8",
        "Pawn en passent Pawn at 3 7, 4 8 => 3 7, 4 7 => null"]);
+
+    state = new chess.State.parse(
+      ["  |  |  |  |  |  |  |  ",
+       "  |  |  |  |  |  |  |  ",
+       "  |  |  |  |  |  |  |  ",
+       "  |  |  |  |  |  |  |  ",
+       "  |  |  |  |  |  |  |  ",
+       "BQ|  |  |  |WK|  |  |  ",
+       "  |  |  |WP|  |  |  |  ",
+       "  |  |  |  |  |  |  |  "]);
+    checkMovements(args, state, "WP1",
+      ["Pawn move to 6 4, 7 4 => 6 4"]);
   });
   
   tests.add("Test of chess state movements of knights", (TestArgs args) {
@@ -229,6 +316,19 @@ void addChessTests(TestManager tests) {
       ["Knight take Pawn at 4 3, 2 2 => 4 3, 4 3 => null",
        "Knight move to 4 1, 2 2 => 4 1",
        "Knight move to 1 4, 2 2 => 1 4"]);
+
+    state = new chess.State.parse(
+      ["  |  |  |  |  |  |  |  ",
+       "  |  |  |  |  |  |  |  ",
+       "BQ|  |  |  |  |  |WK|  ",
+       "  |  |  |WH|  |  |  |  ",
+       "  |  |  |  |  |  |  |  ",
+       "  |  |  |  |  |  |  |  ",
+       "  |  |  |  |  |  |  |  ",
+       "  |  |  |  |  |  |  |  "]);
+    checkMovements(args, state, "WH1",
+      ["Knight move to 3 6, 4 4 => 3 6",
+       "Knight move to 3 2, 4 4 => 3 2"]);
   });
   
   tests.add("Test of chess state movements of bishops", (TestArgs args) {
@@ -516,5 +616,19 @@ void addChessTests(TestManager tests) {
        "Queen take Pawn at 5 3, 5 4 => 5 3, 5 3 => null",
        "Queen move to 4 3, 5 4 => 4 3",
        "Queen take Pawn at 3 2, 5 4 => 3 2, 3 2 => null"]);
+
+    state = new chess.State.parse(
+      ["BQ|  |  |  |  |  |WK|  ",
+       "  |  |  |  |  |  |  |  ",
+       "  |  |  |WQ|  |  |  |  ",
+       "  |  |  |  |  |  |  |  ",
+       "  |  |  |  |  |  |  |  ",
+       "  |  |  |  |  |  |  |  ",
+       "  |  |  |  |  |  |  |  ",
+       "  |  |  |  |  |  |  |  "]);
+    checkMovements(args, state, "WQ1",
+      ["Queen move to 1 2, 3 4 => 1 2",
+       "Queen move to 1 4, 3 4 => 1 4",
+       "Queen move to 1 6, 3 4 => 1 6"]);
   });
 }
