@@ -5,6 +5,7 @@ class Board extends ThreeDart.Entity {
   game.Game _game;
   List<Piece> _pieces;
   List<Tile> _tiles;
+  List<game.Movement> _moves;
   ThreeDart.Entity _table;
   ThreeDart.Entity _edges;
   Materials _mats;
@@ -13,6 +14,7 @@ class Board extends ThreeDart.Entity {
   Board(ThreeDart.ThreeDart td, game.Game this._game) {
     this._pieces = new List<Piece>();
     this._tiles = new List<Tile>();
+    this._moves = new List<game.Movement>();
     this._mats = new Materials(td);
     this.name = "board";
     this._showPick = false;
@@ -26,30 +28,30 @@ class Board extends ThreeDart.Entity {
     }
 
     for (int i = 1; i <= 8; i++) {
-      this._add(new Pawn(td, this, true,  i-1, 0.0, 0.7));
-      this._add(new Pawn(td, this, false, i-1, 0.0, 0.7));
+      this._add(new Pawn(td, this, true,  i, 0.0, 0.7));
+      this._add(new Pawn(td, this, false, i, 0.0, 0.7));
     }
 
-    this._add(new Rook(td, this, true,  0, 0.0, 0.7));
     this._add(new Rook(td, this, true,  1, 0.0, 0.7));
-    this._add(new Rook(td, this, false, 0, 0.0, 0.7));
+    this._add(new Rook(td, this, true,  2, 0.0, 0.7));
     this._add(new Rook(td, this, false, 1, 0.0, 0.7));
+    this._add(new Rook(td, this, false, 2, 0.0, 0.7));
 
-    this._add(new Knight(td, this, true,  0, 0.0,     0.7));
-    this._add(new Knight(td, this, true,  1, Math.PI, 0.7));
-    this._add(new Knight(td, this, false, 0, 0.0,     0.7));
-    this._add(new Knight(td, this, false, 1, Math.PI, 0.7));
+    this._add(new Knight(td, this, true,  1, 0.0,     0.7));
+    this._add(new Knight(td, this, true,  2, Math.PI, 0.7));
+    this._add(new Knight(td, this, false, 1, 0.0,     0.7));
+    this._add(new Knight(td, this, false, 2, Math.PI, 0.7));
 
-    this._add(new Bishop(td, this, true,  0, -Math.PI_2, 0.8));
-    this._add(new Bishop(td, this, true,  1,  Math.PI_2, 0.8));
-    this._add(new Bishop(td, this, false, 0, -Math.PI_2, 0.8));
-    this._add(new Bishop(td, this, false, 1,  Math.PI_2, 0.8));
+    this._add(new Bishop(td, this, true,  1, -Math.PI_2, 0.8));
+    this._add(new Bishop(td, this, true,  2,  Math.PI_2, 0.8));
+    this._add(new Bishop(td, this, false, 1, -Math.PI_2, 0.8));
+    this._add(new Bishop(td, this, false, 2,  Math.PI_2, 0.8));
 
-    this._add(new Queen(td, this, true,  0, 0.0, 1.0));
-    this._add(new Queen(td, this, false, 0, 0.0, 1.0));
+    this._add(new Queen(td, this, true,  1, 0.0, 1.0));
+    this._add(new Queen(td, this, false, 1, 0.0, 1.0));
 
-    this._add(new King(td,  this, true,  Math.PI_2, 0.9));
-    this._add(new King(td,  this, false, Math.PI_2, 0.9));
+    this._add(new King(td, this, true,  Math.PI_2, 0.9));
+    this._add(new King(td, this, false, Math.PI_2, 0.9));
 
     this._edges = new ThreeDart.Entity();
     this.children.add(this._edges);
@@ -68,6 +70,8 @@ class Board extends ThreeDart.Entity {
       )
     );
     this.children.add(this._table);
+    this._game.changed.add(_onGameChange);
+    this.setLocations(this._game.state);
   }
 
   Materials get materials => this._mats;
@@ -83,22 +87,55 @@ class Board extends ThreeDart.Entity {
   void pick(Math.Color4 color) {
     for (Piece piece in this._pieces) {
       if (piece.isPick(color)) {
-        this._game.pick(piece.location);
+        this._pickLoc(piece.location);
         return;
       }
     }
     
     for (Tile tile in this._tiles) {
       if (tile.isPick(color)) {
-        this._game.pick(tile.location);
+        this._pickLoc(tile.location);
         return;
       }
     }
   }
+
+  void _pickLoc(game.Location loc) {
+    // Check if a movement location was picked
+    for (game.Movement move in this._moves) {
+      if (move.destination == loc) {
+        this._game.makeMove(move);
+        this._moves.clear();
+        return;
+      }
+    }
+
+    // TODO: Make it possible to click on other source of movement to handle castle and en pesant.
+    // TODO: Add unselect if the selected piece was picked.
+
+    // Check if a peice was picked.
+    game.TileValue stateItem = this._game.getValue(loc);
+    if (stateItem.empty || stateItem.white != this._game.whiteTurn) return;
+    this.clearHighlights();
+    this.clearSelections();
+    this.setSelection(stateItem);
+    this._moves = this._game.getMovements(stateItem);
+    this.setHighlights(this._moves);
+  }
+
+  void _onGameChange(Events.EventArgs args) {
+    this.clearHighlights();
+    this.clearSelections();
+    this.setLocations(this._game.state);
+    // TODO: Update condition information
+    // TODO: Update whose turn indication
+    // TODO: Update undo/redo buttons
+  }
   
   Piece findPiece(game.TileValue stateValue) {
+    game.TileValue item = stateValue.item;
     for (Piece piece in this._pieces) {
-      if (piece.stateItem == stateValue) return piece;
+      if (piece.stateItem == item) return piece;
     }
     return null;
   }
@@ -165,10 +202,10 @@ class Board extends ThreeDart.Entity {
     for (game.Movement movement in movements) {
       Tile tile = this.tileAt(movement.destination);
       tile.highlighted = true;
-      //if (movement.opponent != null) {
-      //  Piece piece = this.pieceAt(movement.opponent);
-      //  piece.highlighted = true;
-      //}
+      if (movement.otherSource != null) {
+        Piece piece = this.pieceAt(movement.otherSource);
+        piece.highlighted = true;
+      }
     }
   }
 }

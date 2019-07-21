@@ -76,22 +76,5 @@ void startGraphics(game.Game game) {
 
   td.scene = new Scenes.Compound(passes: [skybox, mainScene]);
 
-  game.changedSelected.add((_) {
-    board.clearSelections();
-    board.setSelection(game.selected);
-  });
-  game.changedState.add((_) {
-    board.setLocations(game.state);
-  });
-  game.changedMovements.add((_) {
-    board.clearHighlights();
-    board.setHighlights(game.movements);
-  });
-  game.changedCondition.add((_) {
-    // TODO: Implement use for this event.
-  });
-  // Initialize board locations
-  board.setLocations(game.state);
-
   common.showFPS(td);
 }

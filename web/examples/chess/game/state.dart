@@ -140,7 +140,8 @@ class State {
     return true;
   }
 
-  Location findItem(TileValue item) {
+  Location findItem(TileValue value) {
+    TileValue item = value.item;
     for (int i = 0; i < this._data.length; ++i) {
       TileValue other = this._data[i].item;
       if (other == item) return new Location.fromIndex(i);
@@ -149,24 +150,33 @@ class State {
   }
 
   void applyMovement(Movement move) {
+    // Get both values before any piece has been moved.
     TileValue piece = this.getValue(move.source);
-    this.setValue(move.source, TileValue.Empty);
-    this.setValue(move.destination, piece|TileValue.Moved);
+    TileValue other = null;
+    if (move.otherSource != null) other = this.getValue(move.otherSource);
 
-    if (move.otherSource != null) {
-      TileValue other = this.getValue(move.otherSource);
-      this.setValue(move.otherSource, TileValue.Empty);
-      if (move.otherDestination != null)
+    // Clear out both locations.
+    this.setValue(move.source, TileValue.Empty);
+    if (other != null) this.setValue(move.otherSource, TileValue.Empty);
+
+    // Apply value to both locations.
+    this.setValue(move.destination, piece|TileValue.Moved);
+    if ((other != null) && (move.otherDestination != null)) {
         this.setValue(move.otherDestination, other|TileValue.Moved);
       // else the that other piece was taken
     }
   }
 
-  /*
   int condition(bool white) {
-    this.isChecked(white);
-
-  }*/
+    // TODO: Determine Stalemate
+    if (this.isChecked(white)) {
+      if (!hasAnyMovements(white)) {
+        return Checkmate;
+      }
+      return Check;
+    }
+    return None;
+  }
 
   bool isChecked(bool white) {
     TileValue value = new TileValue.king(white);
@@ -262,10 +272,11 @@ class State {
 
   List<Movement> getAllMovements(bool white, [List<Movement> movers = null]) {
     movers ??= new List<Movement>();
-    this._data.map((TileValue value) {
-      if (value.empty || value.white != white) return;
-      this.getMovementsForPiece(value, movers);
-    });
+    for (int i = 0; i < 64; ++i) {
+      TileValue value = this._data[i];
+      if (!value.empty && value.white == white)
+        this.getMovementsForPiece(value, movers);
+    };
     return movers;
   }
 
@@ -275,6 +286,37 @@ class State {
     return movers;
   }
   
+  bool hasAnyMovements(bool white) {
+    for (int i = 0; i < 64; ++i) {
+      TileValue value = this._data[i];
+      if (!value.empty && value.white == white) {
+        if (this.hasPieceMovements(value)) return true;
+      }
+    }
+    return false;
+  }
+
+  bool hasPieceMovements(TileValue value) {
+    bool hadMovement = false;
+    this.foreachMovementsForPiece((Movement move) { hadMovement = true; }, value);
+    return hadMovement;
+  }
+
+  bool isValidMovement(Movement move) {
+    if (move == null) return false;
+    TileValue piece = this.getValue(move.source);
+    bool movementFound = false;
+    this.foreachMovementsForPiece((Movement other) {
+      if (movementFound) return;
+      if ((other.source == move.source) &&
+          (other.destination == move.destination) &&
+          (other.otherSource == move.otherSource) &&
+          (other.otherDestination == move.otherDestination))
+        movementFound = true;
+    }, piece);
+    return movementFound;
+  }
+
   void foreachMovementsForPiece(MovementCallback hndl, TileValue value) {
     Location loc = this.findItem(value);
     value = this.getValue(loc);

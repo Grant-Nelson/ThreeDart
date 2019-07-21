@@ -1,8 +1,8 @@
 library game;
 
-import 'dart:collection';
-
 import 'package:ThreeDart/Events.dart' as Events;
+
+import '../graphics/graphics.dart';
 
 part 'location.dart';
 part 'movement.dart';
@@ -15,104 +15,92 @@ typedef MovementCallback = void Function(Movement move);
 class Game {
 
   bool _whiteTurn;
-  TileValue _selected;
   int _condition;
   State _state;
-  List<Movement> _movements;
-  Events.Event _changedSelected;
-  Events.Event _changedCondition;
-  Events.Event _changedState;
-  Events.Event _changedMovements;
+  Events.Event _changed;
 
   Game() {
     this._whiteTurn = true;
-    this._selected  = TileValue.Empty;
     this._condition = State.None;
     this._state     = new State.initial();
-    this._changedSelected  = null;
-    this._changedCondition = null;
-    this._changedState     = null;
-    this._changedMovements = null;
+    this._changed   = null;
   }
 
   bool get whiteTurn => this._whiteTurn;
-  TileValue get selected => this._selected;
   int get condition => this._condition;
   State get state => this._state;
-  List<Movement> get movements => this._movements;
+  bool get hasUndo => this._state.prev != null;
+  bool get hasRedo => this._state.next != null;
 
-  Events.Event get changedSelected {
-    this._changedSelected ??= new Events.Event();
-    return this._changedSelected;
-  }
-
-  Events.Event get changedCondition {
-    this._changedCondition ??= new Events.Event();
-    return this._changedCondition;
-  }
-
-  Events.Event get changedState {
-    this._changedState ??= new Events.Event();
-    return this._changedState;
-  }
-
-  Events.Event get changedMovements {
-    this._changedMovements ??= new Events.Event();
-    return this._changedMovements;
+  Events.Event get changed {
+    this._changed ??= new Events.Event();
+    return this._changed;
   }
   
-  void _onChangedSelected([Events.EventArgs args = null]) {
-    this._changedSelected?.emit(args);
+  void _onChanged([Events.EventArgs args = null]) =>
+    this._changed?.emit(args);
+
+  TileValue getValue(Location loc) =>
+    this._state.getValue(loc);
+
+  Location findItem(TileValue item) =>
+    this._state.findItem(item);
+
+  List<Movement> getAllMovements() =>
+    this._state.getAllMovements(this._whiteTurn);
+
+  List<Movement> getMovements(TileValue piece) {
+    if (piece.outOfBounds)
+      throw new Exception("may not get movements for an out-of-bounds piece");
+    if (piece.white != this._whiteTurn)
+      throw new Exception("may not get movements out-of-turn");
+    return this._state.getMovementsForPiece(piece);
   }
-  
-  void _onChangedCondition([Events.EventArgs args = null]) {
-    this._changedCondition?.emit(args);
+
+  void makeMove(Movement move) {
+    TileValue piece = this._state.getValue(move.source);
+    if (piece.white != this._whiteTurn)
+      throw new Exception("may not make a move movement out-of-turn");
+    if (!this._state.isValidMovement(move))
+      throw new Exception("not a valid move: "+move.toString());
+      
+    print(">> perform move: $move");
+    this._state = this._state.pushState();
+    this._state.applyMovement(move);
+    this._whiteTurn = !this._whiteTurn;
+    this._condition = this._state.condition(this.whiteTurn);
+    this._onChanged();
   }
 
-  void _onChangedState([Events.EventArgs args = null]) {
-    this._changedState?.emit(args);
-  }
+  void undo([int steps = 1]) {
+    bool changed = false;
+    for (int i = 0; i < steps; ++i) {
+      State prev = this._state.prev;
+      if (prev == null) break;
 
-  void _onChangedMovements([Events.EventArgs args = null]) {
-    this._changedMovements?.emit(args);
-  }
-
-  void pick(Location loc) {
-    // TODO: Implement
-  }
-
-  /*
-  void _pieceSelected(Piece piece) {
-    if (this._selected != piece) {
-      if (this._selected != null) {
-        this._selected.selected = false;
-        this._board.clearHighlights();
-        this._board.clearSelections();
-      }
-
-      this._selected = piece;
-      if (this._selected != null) {
-        this._selected.selected = true;
-        Tile tile = this._board.findTile(this._selected.location);
-        tile.selected = true;
-
-        List<Movement> movements = this._state.getMovementsForPiece(this._selected.stateItem);
-        this._board.setHighlights(movements);
-      }
+      changed = true;
+      this._state = prev;
+      this._whiteTurn = !this._whiteTurn;
+    }
+    if (changed) {
+      this._condition = this._state.condition(this.whiteTurn);
+      this._onChanged();
     }
   }
 
-  void _moveTo(Location loc) {
-    this._board.clearHighlights();
-    this._board.clearSelections();
+  void redo([int steps = 1]) {
+    bool changed = false;
+    for (int i = 0; i < steps; ++i) {
+      State next = this._state.next;
+      if (next == null) break;
 
-    //Piece piece = this._board.findPiece(loc);
-    //if (piece != null) piece.kill();
-
-    this._selected.setLocation(loc);
-    this._selected = null;
-
-    this._whiteTurn = !this._whiteTurn;
+      changed = true;
+      this._state = next;
+      this._whiteTurn = !this._whiteTurn;
+    }
+    if (changed) {
+      this._condition = this._state.condition(this.whiteTurn);
+      this._onChanged();
+    }
   }
-  */
 }

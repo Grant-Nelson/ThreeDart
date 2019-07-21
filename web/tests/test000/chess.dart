@@ -541,6 +541,9 @@ void addChessTests(TestManager tests) {
        "King move to 6 3, 5 4 => 6 3",
        "King take Pawn at 5 3, 5 4 => 5 3, 5 3 => null",
        "King move to 4 3, 5 4 => 4 3"]);
+
+    // TODO: Check that the correct side for castle is picked,
+    //       It seams the non-empty one is the one picked.
   });
   
   tests.add("Test of chess state movements of queens", (TestArgs args) {
