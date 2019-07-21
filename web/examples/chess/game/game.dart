@@ -2,8 +2,6 @@ library game;
 
 import 'package:ThreeDart/Events.dart' as Events;
 
-import '../graphics/graphics.dart';
-
 part 'location.dart';
 part 'movement.dart';
 part 'state.dart';
@@ -63,8 +61,6 @@ class Game {
       throw new Exception("may not make a move movement out-of-turn");
     if (!this._state.isValidMovement(move))
       throw new Exception("not a valid move: "+move.toString());
-      
-    print(">> perform move: $move");
     this._state = this._state.pushState();
     this._state.applyMovement(move);
     this._whiteTurn = !this._whiteTurn;

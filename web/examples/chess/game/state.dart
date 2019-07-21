@@ -184,9 +184,9 @@ class State {
     if (!loc.onBoard) return false;
 
     // Check for pawns
-    int pawnSide = white? 1: -1;
-    if (this._hasValue(loc.offset( 1, pawnSide), !white, [TileValue.Pawn])) return true;
-    if (this._hasValue(loc.offset(-1, pawnSide), !white, [TileValue.Pawn])) return true;
+    int pawnSide = white? -1: 1;
+    if (this._hasValue(loc.offset(pawnSide,  1), !white, [TileValue.Pawn])) return true;
+    if (this._hasValue(loc.offset(pawnSide, -1), !white, [TileValue.Pawn])) return true;
 
     // Check for knights
     if (this._hasValue(loc.offset( 2,  1), !white, [TileValue.Knight])) return true;
@@ -511,8 +511,8 @@ class State {
     
     // Check for castle condition
     if (!moved) {
-      for (int c = 1; c <= 8; c += 7) {
-        Location rookLoc = new Location(loc.row, c);
+      for (int rookCol = 1; rookCol <= 8; rookCol += 7) {
+        Location rookLoc = new Location(loc.row, rookCol);
         TileValue rookVal = this.getValue(rookLoc);
         if ((rookVal.piece == TileValue.Rook) && !rookVal.moved) {
           bool allEmpty = true;
@@ -525,9 +525,9 @@ class State {
           }
 
           if (allEmpty) {
-            String desc = "King castles with Root";
-            Location dest = new Location(loc.row, loc.column-dir-dir);
-            Location otherDest = new Location(dest.row, dest.column+dir);
+            String desc = "King castles with Rook";
+            Location dest = new Location(loc.row, loc.column+dir+dir);
+            Location otherDest = new Location(dest.row, dest.column-dir);
             hndl(new Movement(desc, loc, dest, rookLoc, otherDest));
           }
         }

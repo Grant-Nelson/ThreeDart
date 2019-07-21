@@ -103,24 +103,23 @@ class Board extends ThreeDart.Entity {
   void _pickLoc(game.Location loc) {
     // Check if a movement location was picked
     for (game.Movement move in this._moves) {
-      if (move.destination == loc) {
+      if ((move.destination == loc) || (move.otherSource == loc)) {
         this._game.makeMove(move);
         this._moves.clear();
         return;
       }
     }
 
-    // TODO: Make it possible to click on other source of movement to handle castle and en pesant.
-    // TODO: Add unselect if the selected piece was picked.
-
     // Check if a peice was picked.
     game.TileValue stateItem = this._game.getValue(loc);
     if (stateItem.empty || stateItem.white != this._game.whiteTurn) return;
     this.clearHighlights();
     this.clearSelections();
-    this.setSelection(stateItem);
-    this._moves = this._game.getMovements(stateItem);
-    this.setHighlights(this._moves);
+    if (!this.isSelected(stateItem)) {
+      this.setSelection(stateItem);
+      this._moves = this._game.getMovements(stateItem);
+      this.setHighlights(this._moves);
+    }
   }
 
   void _onGameChange(Events.EventArgs args) {
@@ -179,6 +178,11 @@ class Board extends ThreeDart.Entity {
       for(Tile tile in this._tiles)
         tile.showPick = show;
     }
+  }
+  
+  bool isSelected(game.TileValue stateItem) {
+    Piece piece = this.findPiece(stateItem);
+    return (piece != null) && piece.selected;
   }
 
   void setSelection(game.TileValue stateItem) {

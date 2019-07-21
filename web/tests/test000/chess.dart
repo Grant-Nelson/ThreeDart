@@ -190,6 +190,15 @@ void addChessTests(TestManager tests) {
        "  |  |BP|  |  |  |  |  ",
        "  |WK|  |  |  |  |  |  ",
        "  |  |  |  |  |  |  |  "]);
+    checkIsChecked(args, false, false,
+      ["  |  |  |  |  |  |  |  ",
+       "  |  |  |  |  |  |WK|  ",
+       "  |  |  |  |  |BP|  |  ",
+       "  |  |  |  |  |  |  |  ",
+       "  |  |  |  |  |  |  |  ",
+       "  |  |WP|  |  |  |  |  ",
+       "  |BK|  |  |  |  |  |  ",
+       "  |  |  |  |  |  |  |  "]);
     checkIsChecked(args, true, true,
       ["  |  |  |  |  |  |  |  ",
        "  |  |  |  |  |  |BK|  ",
@@ -491,16 +500,16 @@ void addChessTests(TestManager tests) {
        "King move to 2 3, 1 4 => 2 3",
        "King move to 1 3, 1 4 => 1 3",
        "King move to 1 5, 1 4 => 1 5",
-       "King castles with Root, 1 4 => 1 6, 1 1 => 1 5",
-       "King castles with Root, 1 4 => 1 2, 1 8 => 1 3"]);
+       "King castles with Rook, 1 4 => 1 2, 1 1 => 1 3",
+       "King castles with Rook, 1 4 => 1 6, 1 8 => 1 5"]);
     checkMovements(args, state, "WK1",
       ["King move to 8 3, 8 4 => 8 3",
        "King move to 7 3, 8 4 => 7 3",
        "King move to 7 4, 8 4 => 7 4",
        "King move to 7 5, 8 4 => 7 5",
        "King move to 8 5, 8 4 => 8 5",
-       "King castles with Root, 8 4 => 8 6, 8 1 => 8 5",
-       "King castles with Root, 8 4 => 8 2, 8 8 => 8 3"]);
+       "King castles with Rook, 8 4 => 8 2, 8 1 => 8 3",
+       "King castles with Rook, 8 4 => 8 6, 8 8 => 8 5"]);
 
     state = new chess.State.parse(
       [" BR1|   |   |+BK1|   |   |   | BR2",
@@ -537,13 +546,47 @@ void addChessTests(TestManager tests) {
     args.info("State:\n$state\n");
     checkMovements(args, state, "WK1",
       ["King take Pawn at 6 5, 5 4 => 6 5, 6 5 => null",
-       "King take Pawn at 6 4, 5 4 => 6 4, 6 4 => null",
        "King move to 6 3, 5 4 => 6 3",
        "King take Pawn at 5 3, 5 4 => 5 3, 5 3 => null",
        "King move to 4 3, 5 4 => 4 3"]);
 
-    // TODO: Check that the correct side for castle is picked,
-    //       It seams the non-empty one is the one picked.
+    state = new chess.State.parse(
+      ["BR1|BB1|   |BK1|   |   |   |BR2",
+       "BP1|   |BP3|BP4|BP5|   |   |BP8",
+       "   |   |   |   |   |   |   |   ",
+       "   |   |   |   |   |   |   |   ",
+       "   |   |   |   |   |   |   |   ",
+       "   |   |   |   |   |   |   |   ",
+       "WP1|   |WP3|WP4|WP5|   |   |WP8",
+       "WR1|WB1|   |WK1|   |   |   |WR2"]);
+    args.info("State:\n$state\n");
+    checkMovements(args, state, "BK1",
+      ["King move to 1 3, 1 4 => 1 3",
+       "King move to 1 5, 1 4 => 1 5",
+       "King castles with Rook, 1 4 => 1 6, 1 8 => 1 5"]);
+    checkMovements(args, state, "WK1",
+      ["King move to 8 3, 8 4 => 8 3",
+       "King move to 8 5, 8 4 => 8 5",
+       "King castles with Rook, 8 4 => 8 6, 8 8 => 8 5"]);
+       
+    state = new chess.State.parse(
+      ["BR1|   |   |BK1|   |   |BB2|BR2",
+       "BP1|   |BP3|BP4|BP5|   |   |BP8",
+       "   |   |   |   |   |   |   |   ",
+       "   |   |   |   |   |   |   |   ",
+       "   |   |   |   |   |   |   |   ",
+       "   |   |   |   |   |   |   |   ",
+       "WP1|   |WP3|WP4|WP5|   |   |WP8",
+       "WR1|   |   |WK1|   |   |WB2|WR2"]);
+    args.info("State:\n$state\n");
+    checkMovements(args, state, "BK1",
+      ["King move to 1 3, 1 4 => 1 3",
+       "King move to 1 5, 1 4 => 1 5",
+       "King castles with Rook, 1 4 => 1 2, 1 1 => 1 3"]);
+    checkMovements(args, state, "WK1",
+      ["King move to 8 3, 8 4 => 8 3",
+       "King move to 8 5, 8 4 => 8 5",
+       "King castles with Rook, 8 4 => 8 2, 8 1 => 8 3"]);
   });
   
   tests.add("Test of chess state movements of queens", (TestArgs args) {
