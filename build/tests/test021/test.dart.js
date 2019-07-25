@@ -2860,7 +2860,7 @@ if(!(Math.abs(r-0.15)<$.L().a)){t.f=0.15
 r=new D.K("attenuation2",r,0.15,[P.q])
 r.b=!0
 t.ac(r)}a.dx.h(0,t)
-b.d.h(0,u)},
+b.e.h(0,u)},
 mK:function(){var u,t,s,r,q,p,o,n,m,l,k,j,i,h,g,f,e="testCanvas",d=null,c="modifiers",b=V.o1("Test 021"),a=W.lD()
 a.className="pageLargeCanvas"
 a.id=e
@@ -2987,9 +2987,10 @@ n=p.a
 n.a=null
 n.ad(d)}p.cj(100)
 h=new M.dA()
+h.a=!0
 h.sfN(0,O.kP(E.an))
-h.d.bh(h.ghl(),h.ghn())
-h.x=h.r=h.f=h.e=null
+h.e.bh(h.ghl(),h.ghn())
+h.y=h.x=h.r=h.f=null
 g=X.nx(d)
 f=new X.dU()
 f.c=1.0471975511965976
@@ -3008,25 +3009,25 @@ f.aN(p)}p=f.e
 if(!(Math.abs(p-2000)<$.L().a)){f.e=2000
 p=new D.K("far",p,2000,[P.q])
 p.b=!0
-f.aN(p)}p=h.a
+f.aN(p)}p=h.b
 if(p!==f){if(p!=null)p.gB().O(0,h.gau())
-j=h.a
-h.a=f
-f.gB().h(0,h.gau())
-p=new D.K("camera",j,h.a,[X.dt])
-p.b=!0
-h.aB(p)}p=h.b
-if(p!==g){if(p!=null)p.gB().O(0,h.gau())
 j=h.b
-h.b=g
+h.b=f
+f.gB().h(0,h.gau())
+p=new D.K("camera",j,h.b,[X.dt])
+p.b=!0
+h.aB(p)}p=h.c
+if(p!==g){if(p!=null)p.gB().O(0,h.gau())
+j=h.c
+h.c=g
 g.gB().h(0,h.gau())
-p=new D.K("target",j,h.b,[X.e3])
+p=new D.K("target",j,h.c,[X.e3])
 p.b=!0
 h.aB(p)}h.sbd(d)
 h.sbd(i)
-h.d.h(0,q)
-h.d.h(0,r)
-h.a.saI(o)
+h.e.h(0,q)
+h.e.h(0,r)
+h.b.saI(o)
 p=s.d
 if(p!==h){if(p!=null)p.gB().O(0,s.gd3())
 s.d=h
@@ -3059,7 +3060,7 @@ kB:function kB(a){this.a=a},
 kC:function kC(a){this.a=a},
 kD:function kD(a,b){this.a=a
 this.b=b}},M={dA:function dA(){var _=this
-_.x=_.r=_.f=_.e=_.d=_.c=_.b=_.a=null}},A={
+_.y=_.x=_.r=_.f=_.e=_.d=_.c=_.b=_.a=null}},A={
 nK:function(a,b){var u=a.an,t=new A.ht(b,u)
 t.ff(b,u)
 t.fc(a,b)
@@ -6266,11 +6267,12 @@ u=window
 t=H.n(new E.iy(this),{func:1,ret:-1,args:[P.ab]})
 C.I.fV(u)
 C.I.i7(u,W.my(t,P.ab))}},
-jU:function(){var u,t,s,r,q,p=this
+jU:function(){var u,t,s,r,q,p=this,o=null
 try{++p.cy
 p.ch=!1
 p.dD()
-if(p.d!=null){s=p.e;++s.e
+if(o==null)o=p.d
+if(o!=null){s=p.e;++s.e
 s.r=s.x
 r=Date.now()
 s.x=new P.ay(r,!1)
@@ -6286,7 +6288,7 @@ C.a.sl(r.a,0)
 r.aM()
 r=s.dy;(r&&C.a).sl(r,0)
 s=s.dy;(s&&C.a).h(s,null)
-p.d.aX(p.e)}s=p.z
+o.aX(p.e)}s=p.z
 if(s!=null)s.H(null)}catch(q){u=H.ak(q)
 t=H.ck(q)
 P.lp("Error: "+H.l(u))
@@ -7640,7 +7642,7 @@ $iac:1}
 M.dA.prototype={
 aB:function(a){var u
 H.f(a,"$iA")
-u=this.x
+u=this.y
 if(u!=null)u.H(a)},
 fv:function(){return this.aB(null)},
 hm:function(a,b){var u,t,s,r,q,p,o,n=E.an
@@ -7663,19 +7665,19 @@ for(u=b.gV(b),t=this.gau();u.E();)u.gM(u).gB().O(0,t)
 s=new D.c1([s])
 s.b=!0
 this.aB(s)},
-sbd:function(a){var u,t=this,s=t.c
+sbd:function(a){var u,t=this,s=t.d
 if(s!=a){if(s!=null)s.gB().O(0,t.gau())
-u=t.c
-t.c=a
+u=t.d
+t.d=a
 if(a!=null)a.gB().h(0,t.gau())
-s=new D.K("technique",u,t.c,[O.bM])
+s=new D.K("technique",u,t.d,[O.bM])
 s.b=!0
 t.aB(s)}},
-gB:function(){var u=this.x
-return u==null?this.x=D.X():u},
+gB:function(){var u=this.y
+return u==null?this.y=D.X():u},
 aX:function(a2){var u,t,s,r,q,p,o,n,m,l,k,j,i,h,g,f,e,d,c,b,a,a0,a1=this
-a2.eI(a1.c)
-u=a1.b
+a2.eI(a1.d)
+u=a1.c
 u.toString
 t=a2.a
 t.bindFramebuffer(36160,null)
@@ -7700,7 +7702,7 @@ t.clearDepth(u.c)
 u=u.a
 t.clearColor(u.a,u.b,u.c,u.d)
 t.clear(16640)
-u=a1.a
+u=a1.b
 t=a2.c
 q=a2.d
 p=u.c
@@ -7731,16 +7733,16 @@ a=t}else a=t
 t=u.b
 if(t!=null){a0=t.ar(0,a2,u)
 if(a0!=null)a=a0.t(0,a)}a2.db.eH(a)
-u=a1.c
+u=a1.d
 if(u!=null)u.aq(0,a2)
-for(u=a1.d.a,u=new J.au(u,u.length,[H.t(u,0)]);u.E();)u.d.aq(0,a2)
-for(u=a1.d.a,u=new J.au(u,u.length,[H.t(u,0)]);u.E();)u.d.aX(a2)
-a1.a.toString
+for(u=a1.e.a,u=new J.au(u,u.length,[H.t(u,0)]);u.E();)u.d.aq(0,a2)
+for(u=a1.e.a,u=new J.au(u,u.length,[H.t(u,0)]);u.E();)u.d.aX(a2)
+a1.b.toString
 a2.cy.cQ()
 a2.db.cQ()
-a1.b.toString
+a1.c.toString
 a2.eG()},
-sfN:function(a,b){this.d=H.k(b,"$ia5",[E.an],"$aa5")},
+sfN:function(a,b){this.e=H.k(b,"$ia5",[E.an],"$aa5")},
 $ipn:1}
 A.dn.prototype={}
 A.fp.prototype={
@@ -11074,8 +11076,10 @@ t=q.c
 for(t=(t==null?q.c=q.bq():t).eS(u),s=t.length,r=0;r<t.length;t.length===s||(0,H.F)(t),++r)q.bL(t[r])},
 sc2:function(a){this.d=H.k(a,"$ib",[[P.b,W.aE]],"$ab")}}
 V.kG.prototype={
-$1:function(a){H.f(a,"$ibb")
-P.lp(C.e.eR(this.a.gjr(),2)+" fps")},
+$1:function(a){var u
+H.f(a,"$ibb")
+u=C.e.eR(this.a.gjr(),2)
+if(u!=="0.00")P.lp(u+" fps")},
 $S:49}
 V.fJ.prototype={
 bL:function(a){var u=this

@@ -1949,9 +1949,10 @@ r=s.a
 r.a=null
 r.a_(f)}s.bC(10)
 l=new M.d7()
+l.a=!0
 l.se8(0,O.jw(u))
-l.d.bk(l.geZ(),l.gf0())
-l.x=l.r=l.f=l.e=null
+l.e.bk(l.geZ(),l.gf0())
+l.y=l.x=l.r=l.f=null
 k=X.lG(f)
 j=new X.ds()
 j.c=1.0471975511965976
@@ -1970,24 +1971,24 @@ j.ar(u)}u=j.e
 if(!(Math.abs(u-2000)<$.Q().a)){j.e=2000
 u=new D.W("far",u,2000,[P.y])
 u.b=!0
-j.ar(u)}u=l.a
+j.ar(u)}u=l.b
 if(u!==j){if(u!=null)u.gA().O(0,l.ga8())
-m=l.a
-l.a=j
-j.gA().h(0,l.ga8())
-u=new D.W("camera",m,l.a,[X.d2])
-u.b=!0
-l.af(u)}u=l.b
-if(u!==k){if(u!=null)u.gA().O(0,l.ga8())
 m=l.b
-l.b=k
+l.b=j
+j.gA().h(0,l.ga8())
+u=new D.W("camera",m,l.b,[X.d2])
+u.b=!0
+l.af(u)}u=l.c
+if(u!==k){if(u!=null)u.gA().O(0,l.ga8())
+m=l.c
+l.c=k
 k.gA().h(0,l.ga8())
-u=new D.W("target",m,l.b,[X.dE])
+u=new D.W("target",m,l.c,[X.dE])
 u.b=!0
 l.af(u)}l.sdC(f)
 l.sdC(q)
-l.d.h(0,t)
-l.a.saK(U.kb(V.b8(1,0,0,0,0,1,0,0,0,0,1,5,0,0,0,1)))
+l.e.h(0,t)
+l.b.saK(U.kb(V.b8(1,0,0,0,0,1,0,0,0,0,1,5,0,0,0,1)))
 i=document.getElementById(g)
 if(i==null)H.v(P.t("Failed to find an element with the identifier, testCanvas."))
 h=E.m3(i,!0,!0,!0,!1)
@@ -2156,7 +2157,7 @@ d3:function d3(){this.b=this.a=null},
 bL:function bL(){},
 dy:function dy(){var _=this
 _.y=_.x=_.r=_.f=_.e=_.d=_.c=_.b=_.a=null}},M={d7:function d7(){var _=this
-_.x=_.r=_.f=_.e=_.d=_.c=_.b=_.a=null}},A={
+_.y=_.x=_.r=_.f=_.e=_.d=_.c=_.b=_.a=null}},A={
 lO:function(a,b){var u=a.a5,t=new A.fO(b,u)
 t.e2(b,u)
 t.e_(a,b)
@@ -4633,11 +4634,12 @@ u=window
 t=H.l(new E.hP(this),{func:1,ret:-1,args:[P.a8]})
 C.z.eE(u)
 C.z.fM(u,W.kU(t,P.a8))}},
-ij:function(){var u,t,s,r,q,p=this
+ij:function(){var u,t,s,r,q,p=this,o=null
 try{++p.cy
 p.ch=!1
 p.cE()
-if(p.d!=null){s=p.e;++s.e
+if(o==null)o=p.d
+if(o!=null){s=p.e;++s.e
 s.r=s.x
 r=Date.now()
 s.x=new P.bp(r,!1)
@@ -4653,7 +4655,7 @@ C.a.sl(r.a,0)
 r.aq()
 r=s.dy;(r&&C.a).sl(r,0)
 s=s.dy;(s&&C.a).h(s,null)
-p.d.aC(p.e)}s=p.z
+o.aC(p.e)}s=p.z
 if(s!=null)s.V(null)}catch(q){u=H.ap(q)
 t=H.c0(q)
 P.k_("Error: "+H.k(u))
@@ -5377,7 +5379,7 @@ return"Rotater: ["+V.O(u.a,3,0)+", "+V.O(u.b,3,0)+", "+V.O(u.c,3,0)+"], ["+V.O(u
 M.d7.prototype={
 af:function(a){var u
 H.n(a,"$iE")
-u=this.x
+u=this.y
 if(u!=null)u.V(a)},
 e9:function(){return this.af(null)},
 f_:function(a,b){var u,t,s,r,q,p,o,n=E.ag
@@ -5400,19 +5402,19 @@ for(u=b.gN(b),t=this.ga8();u.u();)u.gD(u).gA().O(0,t)
 s=new D.cg([s])
 s.b=!0
 this.af(s)},
-sdC:function(a){var u,t=this,s=t.c
+sdC:function(a){var u,t=this,s=t.d
 if(s!=a){if(s!=null)s.gA().O(0,t.ga8())
-u=t.c
-t.c=a
+u=t.d
+t.d=a
 if(a!=null)a.gA().h(0,t.ga8())
-s=new D.W("technique",u,t.c,[O.bT])
+s=new D.W("technique",u,t.d,[O.bT])
 s.b=!0
 t.af(s)}},
-gA:function(){var u=this.x
-return u==null?this.x=D.ax():u},
+gA:function(){var u=this.y
+return u==null?this.y=D.ax():u},
 aC:function(a){var u,t,s,r,q,p,o,n,m,l,k,j,i,h,g,f=this
-a.du(f.c)
-u=f.b
+a.du(f.d)
+u=f.c
 u.toString
 t=a.a
 t.bindFramebuffer(36160,null)
@@ -5437,7 +5439,7 @@ t.clearDepth(u.c)
 u=u.a
 t.clearColor(u.a,u.b,u.c,u.d)
 t.clear(16640)
-u=f.a
+u=f.b
 t=a.c
 q=a.d
 p=u.c
@@ -5458,16 +5460,16 @@ h=t}else h=t
 u=u.b
 if(u!=null){g=u.a
 if(g!=null)h=g.L(0,h)}a.db.dt(h)
-u=f.c
+u=f.d
 if(u!=null)u.bh(0,a)
-for(u=f.d.a,u=new J.aq(u,u.length,[H.x(u,0)]);u.u();)u.d.bh(0,a)
-for(u=f.d.a,u=new J.aq(u,u.length,[H.x(u,0)]);u.u();)u.d.aC(a)
-f.a.toString
+for(u=f.e.a,u=new J.aq(u,u.length,[H.x(u,0)]);u.u();)u.d.bh(0,a)
+for(u=f.e.a,u=new J.aq(u,u.length,[H.x(u,0)]);u.u();)u.d.aC(a)
+f.b.toString
 a.cy.bZ()
 a.db.bZ()
-f.b.toString
+f.c.toString
 a.ds()},
-se8:function(a,b){this.d=H.m(b,"$ia1",[E.ag],"$aa1")},
+se8:function(a,b){this.e=H.m(b,"$ia1",[E.ag],"$aa1")},
 $in3:1}
 A.cX.prototype={}
 A.eQ.prototype={
@@ -8549,8 +8551,10 @@ t=q.c
 for(t=(t==null?q.c=q.aZ():t).dF(u),s=t.length,r=0;r<t.length;t.length===s||(0,H.C)(t),++r)q.bg(t[r])},
 sbu:function(a){this.d=H.m(a,"$ib",[[P.b,W.ar]],"$ab")}}
 V.jq.prototype={
-$1:function(a){H.n(a,"$iaX")
-P.k_(C.d.dE(this.a.ghS(),2)+" fps")},
+$1:function(a){var u
+H.n(a,"$iaX")
+u=C.d.dE(this.a.ghS(),2)
+if(u!=="0.00")P.k_(u+" fps")},
 $S:38}
 V.f4.prototype={
 bg:function(a){var u=this

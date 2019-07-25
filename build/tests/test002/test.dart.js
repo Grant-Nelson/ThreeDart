@@ -2518,9 +2518,10 @@ i.r1=i.k4=i.k3=i.k2=i.k1=i.id=i.go=i.fy=i.fx=i.fr=i.dy=i.dx=i.db=i.cy=i.cx=i.ch=
 i.r2=1
 i.sa3(0.4)
 p=new M.d0()
+p.a=!0
 p.sdU(0,O.lT(q))
-p.d.bh(p.geW(),p.geY())
-p.x=p.r=p.f=p.e=null
+p.e.bh(p.geW(),p.geY())
+p.y=p.x=p.r=p.f=null
 h=X.nO(d)
 g=new X.dh()
 g.c=1.0471975511965976
@@ -2539,24 +2540,24 @@ g.as(q)}q=g.e
 if(!(Math.abs(q-2000)<$.Q().a)){g.e=2000
 q=new D.E("far",q,2000,[P.r])
 q.b=!0
-g.as(q)}q=p.a
+g.as(q)}q=p.b
 if(q!==g){if(q!=null)q.gC().F(0,p.gac())
-j=p.a
-p.a=g
-g.gC().h(0,p.gac())
-q=new D.E("camera",j,p.a,[X.cU])
-q.b=!0
-p.ah(q)}q=p.b
-if(q!==h){if(q!=null)q.gC().F(0,p.gac())
 j=p.b
-p.b=h
+p.b=g
+g.gC().h(0,p.gac())
+q=new D.E("camera",j,p.b,[X.cU])
+q.b=!0
+p.ah(q)}q=p.c
+if(q!==h){if(q!=null)q.gC().F(0,p.gac())
+j=p.c
+p.c=h
 h.gC().h(0,p.gac())
-q=new D.E("target",j,p.b,[X.dq])
+q=new D.E("target",j,p.c,[X.dq])
 q.b=!0
 p.ah(q)}p.sdB(d)
 p.sdB(i)
-p.d.h(0,r)
-q=p.a
+p.e.h(0,r)
+q=p.b
 f=V.bc(1,0,0,0,0,1,0,0,0,0,1,5,0,0,0,1)
 o=new U.cW()
 o.a=f
@@ -2958,7 +2959,7 @@ dD:function dD(){var _=this
 _.fx=_.fr=_.dy=_.dx=_.db=_.cy=_.cx=_.ch=_.Q=_.y=_.x=_.r=_.f=_.e=_.d=_.c=_.b=_.a=null},
 dE:function dE(){var _=this
 _.r=_.f=_.e=_.d=_.c=_.b=_.a=null}},M={d0:function d0(){var _=this
-_.x=_.r=_.f=_.e=_.d=_.c=_.b=_.a=null}},A={
+_.y=_.x=_.r=_.f=_.e=_.d=_.c=_.b=_.a=null}},A={
 lm:function(a,b,c,d,e){var u=new A.ie(a,c,e)
 u.f=d
 u.sh6(P.nW(d,0,P.p))
@@ -5921,11 +5922,12 @@ u=window
 t=H.f(new E.i2(this),{func:1,ret:-1,args:[P.a9]})
 C.x.em(u)
 C.x.fG(u,W.mS(t,P.a9))}},
-i_:function(){var u,t,s,r,q,p=this
+i_:function(){var u,t,s,r,q,p=this,o=null
 try{++p.cy
 p.ch=!1
 p.cL()
-if(p.d!=null){s=p.e;++s.e
+if(o==null)o=p.d
+if(o!=null){s=p.e;++s.e
 s.r=s.x
 r=Date.now()
 s.x=new P.as(r,!1)
@@ -5941,7 +5943,7 @@ C.a.sk(r.a,0)
 r.ar()
 r=s.dy;(r&&C.a).sk(r,0)
 s=s.dy;(s&&C.a).h(s,null)
-p.d.aF(p.e)}}catch(q){u=H.aG(q)
+o.aF(p.e)}}catch(q){u=H.aG(q)
 t=H.bV(q)
 P.lH("Error: "+H.k(u))
 P.lH("Stack: "+H.k(t))
@@ -7292,7 +7294,7 @@ $iac:1}
 M.d0.prototype={
 ah:function(a){var u
 H.d(a,"$iC")
-u=this.x
+u=this.y
 if(u!=null)u.K(a)},
 dV:function(){return this.ah(null)},
 eX:function(a,b){var u,t,s,r,q,p,o,n=E.an
@@ -7315,19 +7317,19 @@ for(u=b.ga_(b),t=this.gac();u.E();)u.gM(u).gC().F(0,t)
 s=new D.d5([s])
 s.b=!0
 this.ah(s)},
-sdB:function(a){var u,t=this,s=t.c
+sdB:function(a){var u,t=this,s=t.d
 if(s!=a){if(s!=null)s.gC().F(0,t.gac())
-u=t.c
-t.c=a
+u=t.d
+t.d=a
 if(a!=null)a.gC().h(0,t.gac())
-s=new D.E("technique",u,t.c,[O.bO])
+s=new D.E("technique",u,t.d,[O.bO])
 s.b=!0
 t.ah(s)}},
-gC:function(){var u=this.x
-return u==null?this.x=D.a2():u},
+gC:function(){var u=this.y
+return u==null?this.y=D.a2():u},
 aF:function(a2){var u,t,s,r,q,p,o,n,m,l,k,j,i,h,g,f,e,d,c,b,a,a0,a1=this
-a2.dt(a1.c)
-u=a1.b
+a2.dt(a1.d)
+u=a1.c
 u.toString
 t=a2.a
 t.bindFramebuffer(36160,null)
@@ -7352,7 +7354,7 @@ t.clearDepth(u.c)
 u=u.a
 t.clearColor(u.a,u.b,u.c,u.d)
 t.clear(16640)
-u=a1.a
+u=a1.b
 t=a2.c
 q=a2.d
 p=u.c
@@ -7382,14 +7384,14 @@ a=t}else a=t
 u=u.b
 if(u!=null){a0=u.a
 if(a0!=null)a=a0.u(0,a)}a2.db.ds(a)
-for(u=a1.d.a,u=new J.av(u,u.length,[H.u(u,0)]);u.E();)u.d.aH(0,a2)
-for(u=a1.d.a,u=new J.av(u,u.length,[H.u(u,0)]);u.E();)u.d.aF(a2)
-a1.a.toString
+for(u=a1.e.a,u=new J.av(u,u.length,[H.u(u,0)]);u.E();)u.d.aH(0,a2)
+for(u=a1.e.a,u=new J.av(u,u.length,[H.u(u,0)]);u.E();)u.d.aF(a2)
+a1.b.toString
 a2.cy.c0()
 a2.db.c0()
-a1.b.toString
+a1.c.toString
 a2.dr()},
-sdU:function(a,b){this.d=H.n(b,"$iaa",[E.an],"$aaa")},
+sdU:function(a,b){this.e=H.n(b,"$iaa",[E.an],"$aaa")},
 $ipw:1}
 A.cP.prototype={}
 A.eK.prototype={
@@ -9312,8 +9314,10 @@ u.b.$1(t.checked)
 u.a.cQ(u.d,t.checked)},
 $S:17}
 V.l2.prototype={
-$1:function(a){H.d(a,"$ib3")
-P.lH(C.c.dD(this.a.ghB(),2)+" fps")},
+$1:function(a){var u
+H.d(a,"$ib3")
+u=C.c.dD(this.a.ghB(),2)
+if(u!=="0.00")P.lH(u+" fps")},
 $S:49}
 V.hx.prototype={
 a0:function(a,b,c,d){var u,t,s,r,q,p,o,n,m=this

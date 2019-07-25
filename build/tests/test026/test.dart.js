@@ -2817,7 +2817,7 @@ e1:function e1(){var _=this
 _.y=_.x=_.r=_.f=_.e=_.d=_.c=_.b=_.a=null},
 em:function em(){var _=this
 _.fx=_.fr=_.dy=_.dx=_.db=_.cy=_.cx=_.ch=_.Q=_.y=_.x=_.r=_.f=_.e=_.d=_.c=_.b=_.a=null}},M={dD:function dD(){var _=this
-_.x=_.r=_.f=_.e=_.d=_.c=_.b=_.a=null}},A={
+_.y=_.x=_.r=_.f=_.e=_.d=_.c=_.b=_.a=null}},A={
 nS:function(a,b){var u=a.al,t=new A.hw(b,u)
 t.f3(b,u)
 t.f0(a,b)
@@ -3347,9 +3347,10 @@ j.h(0,U.dz(V.b6(1,0,0,0,0,1,0,0,0,0,1,5,0,0,0,1)))
 i=U.m5(0.5,0.7,0.3)
 h=U.m5(0,0.1,0)
 o=new M.dD()
+o.a=!0
 o.sfv(0,O.kY(E.ao))
-o.d.bc(o.gha(),o.ghc())
-o.x=o.r=o.f=o.e=null
+o.e.bc(o.gha(),o.ghc())
+o.y=o.x=o.r=o.f=null
 g=X.nF(c)
 f=new X.dX()
 f.c=1.0471975511965976
@@ -3368,27 +3369,27 @@ f.aO(n)}n=f.e
 if(!(Math.abs(n-2000)<$.M().a)){f.e=2000
 n=new D.O("far",n,2000,[P.r])
 n.b=!0
-f.aO(n)}n=o.a
+f.aO(n)}n=o.b
 if(n!==f){if(n!=null)n.gA().N(0,o.gaq())
-e=o.a
-o.a=f
-f.gA().h(0,o.gaq())
-n=new D.O("camera",e,o.a,[X.dx])
-n.b=!0
-o.aA(n)}n=o.b
-if(n!==g){if(n!=null)n.gA().N(0,o.gaq())
 e=o.b
-o.b=g
+o.b=f
+f.gA().h(0,o.gaq())
+n=new D.O("camera",e,o.b,[X.dx])
+n.b=!0
+o.aA(n)}n=o.c
+if(n!==g){if(n!=null)n.gA().N(0,o.gaq())
+e=o.c
+o.c=g
 g.gA().h(0,o.gaq())
-n=new D.O("target",e,o.b,[X.e8])
+n=new D.O("target",e,o.c,[X.e8])
 n.b=!0
 o.aA(n)}o.seC(c)
 o.seC(p)
-o.d.h(0,l)
-o.d.h(0,k)
-o.a.sae(j)
-n=o.e
-if(n==null)n=o.e=D.Z()
+o.e.h(0,l)
+o.e.h(0,k)
+o.b.sae(j)
+n=o.f
+if(n==null)n=o.f=D.Z()
 n.h(0,new K.kE(p,i,h))
 n=s.d
 if(n!==o){if(n!=null)n.gA().N(0,s.gcV())
@@ -6237,11 +6238,12 @@ u=window
 t=H.n(new E.iE(this),{func:1,ret:-1,args:[P.ac]})
 C.I.fF(u)
 C.I.hX(u,W.mH(t,P.ac))}},
-jR:function(){var u,t,s,r,q,p=this
+jR:function(){var u,t,s,r,q,p=this,o=null
 try{++p.cy
 p.ch=!1
 p.ds()
-if(p.d!=null){s=p.e;++s.e
+if(o==null)o=p.d
+if(o!=null){s=p.e;++s.e
 s.r=s.x
 r=Date.now()
 s.x=new P.ay(r,!1)
@@ -6257,7 +6259,7 @@ C.a.sl(r.a,0)
 r.aN()
 r=s.dy;(r&&C.a).sl(r,0)
 s=s.dy;(s&&C.a).h(s,null)
-p.d.aV(p.e)}s=p.z
+o.aV(p.e)}s=p.z
 if(s!=null)s.K(null)}catch(q){u=H.aj(q)
 t=H.ck(q)
 P.lv("Error: "+H.l(u))
@@ -7497,7 +7499,7 @@ $ial:1}
 M.dD.prototype={
 aA:function(a){var u
 H.f(a,"$iB")
-u=this.x
+u=this.y
 if(u!=null)u.K(a)},
 fa:function(){return this.aA(null)},
 hb:function(a,b){var u,t,s,r,q,p,o,n=E.ao
@@ -7520,22 +7522,22 @@ for(u=b.gV(b),t=this.gaq();u.E();)u.gL(u).gA().N(0,t)
 s=new D.c0([s])
 s.b=!0
 this.aA(s)},
-seC:function(a){var u,t=this,s=t.c
+seC:function(a){var u,t=this,s=t.d
 if(s!=a){if(s!=null)s.gA().N(0,t.gaq())
-u=t.c
-t.c=a
+u=t.d
+t.d=a
 if(a!=null)a.gA().h(0,t.gaq())
-s=new D.O("technique",u,t.c,[O.c9])
+s=new D.O("technique",u,t.d,[O.c9])
 s.b=!0
 t.aA(s)}},
-gA:function(){var u=this.x
-return u==null?this.x=D.Z():u},
+gA:function(){var u=this.y
+return u==null?this.y=D.Z():u},
 aV:function(a){var u,t,s,r,q,p,o,n,m,l,k,j,i,h,g,f=this,e=new E.e6(a)
 e.b=!0
-u=f.e
+u=f.f
 if(u!=null)u.K(e)
-a.ev(f.c)
-u=f.b
+a.ev(f.d)
+u=f.c
 u.toString
 t=a.a
 t.bindFramebuffer(36160,null)
@@ -7560,7 +7562,7 @@ t.clearDepth(u.c)
 u=u.a
 t.clearColor(u.a,u.b,u.c,u.d)
 t.clear(16640)
-u=f.a
+u=f.b
 t=a.c
 q=a.d
 p=u.c
@@ -7581,16 +7583,16 @@ h=t}else h=t
 t=u.b
 if(t!=null){g=t.ay(0,a,u)
 if(g!=null)h=g.D(0,h)}a.db.eu(h)
-u=f.c
+u=f.d
 if(u!=null)u.aK(0,a)
-for(u=f.d.a,u=new J.ax(u,u.length,[H.u(u,0)]);u.E();)u.d.aK(0,a)
-for(u=f.d.a,u=new J.ax(u,u.length,[H.u(u,0)]);u.E();)u.d.aV(a)
-f.a.toString
+for(u=f.e.a,u=new J.ax(u,u.length,[H.u(u,0)]);u.E();)u.d.aK(0,a)
+for(u=f.e.a,u=new J.ax(u,u.length,[H.u(u,0)]);u.E();)u.d.aV(a)
+f.b.toString
 a.cy.cH()
 a.db.cH()
-f.b.toString
+f.c.toString
 a.es()},
-sfv:function(a,b){this.d=H.k(b,"$ia6",[E.ao],"$aa6")},
+sfv:function(a,b){this.e=H.k(b,"$ia6",[E.ao],"$aa6")},
 $ipB:1}
 A.ds.prototype={}
 A.ft.prototype={
@@ -10989,8 +10991,10 @@ t=q.c
 for(t=(t==null?q.c=q.bn():t).eG(u),s=t.length,r=0;r<t.length;t.length===s||(0,H.D)(t),++r)q.bF(t[r])},
 sbW:function(a){this.d=H.k(a,"$ib",[[P.b,W.aE]],"$ab")}}
 V.kO.prototype={
-$1:function(a){H.f(a,"$iba")
-P.lv(C.e.eF(this.a.gjo(),2)+" fps")},
+$1:function(a){var u
+H.f(a,"$iba")
+u=C.e.eF(this.a.gjo(),2)
+if(u!=="0.00")P.lv(u+" fps")},
 $S:50}
 V.fN.prototype={
 bF:function(a){var u=this

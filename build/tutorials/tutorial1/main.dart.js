@@ -1879,7 +1879,7 @@ fT:function fT(a){this.a=a},
 fS:function fS(a){this.a=a},
 fU:function fU(a){this.a=a}},U={cG:function cG(){this.b=this.a=null},bW:function bW(){},d5:function d5(){var _=this
 _.y=_.x=_.r=_.f=_.e=_.d=_.c=_.b=_.a=null}},M={cK:function cK(){var _=this
-_.x=_.r=_.f=_.e=_.d=_.c=_.b=_.a=null}},A={
+_.y=_.x=_.r=_.f=_.e=_.d=_.c=_.b=_.a=null}},A={
 j0:function(a,b,c,d,e){var u=new A.hm(a,c,e)
 u.f=d
 u.sdZ(P.l4(d,0,P.y))
@@ -2163,9 +2163,10 @@ r=new D.Q("fogStop",r,6,[P.x])
 r.b=!0
 f.as(r)}t.sc6(f)
 n=new M.cK()
+n.a=!0
 n.scA(0,O.ju(e))
-n.d.bd(n.gd4(),n.gd6())
-n.x=n.r=n.f=n.e=null
+n.e.bd(n.gd4(),n.gd6())
+n.y=n.x=n.r=n.f=null
 m=X.kZ(g)
 l=new X.d0()
 l.c=1.0471975511965976
@@ -2184,28 +2185,28 @@ l.a8(f)}f=l.e
 if(!(Math.abs(f-2000)<$.M().a)){l.e=2000
 f=new D.Q("far",f,2000,[P.x])
 f.b=!0
-l.a8(f)}f=n.a
+l.a8(f)}f=n.b
 if(f!==l){if(f!=null)f.gv().J(0,n.ga6())
-o=n.a
-n.a=l
-l.gv().h(0,n.ga6())
-f=new D.Q("camera",o,n.a,[X.cF])
-f.b=!0
-n.a7(f)}f=n.b
-if(f!==m){if(f!=null)f.gv().J(0,n.ga6())
 o=n.b
-n.b=m
-m.gv().h(0,n.ga6())
-f=new D.Q("target",o,n.b,[X.da])
+n.b=l
+l.gv().h(0,n.ga6())
+f=new D.Q("camera",o,n.b,[X.cF])
 f.b=!0
-n.a7(f)}f=n.d
+n.a7(f)}f=n.c
+if(f!==m){if(f!=null)f.gv().J(0,n.ga6())
+o=n.c
+n.c=m
+m.gv().h(0,n.ga6())
+f=new D.Q("target",o,n.c,[X.da])
+f.b=!0
+n.a7(f)}f=n.e
 e=H.u(f,0)
 H.B(t,e)
 e=[e]
 if(H.D(f.dA(H.c([t],e)))){r=f.a
 k=r.length
 C.a.h(r,t)
-f.d1(k,H.c([t],e))}f=n.a
+f.d1(k,H.c([t],e))}f=n.b
 j=V.b2(1,0,0,0,0,1,0,0,0,0,1,5,0,0,0,1)
 e=new U.cG()
 e.a=j
@@ -4422,11 +4423,12 @@ u=window
 t=H.k(new E.ha(this),{func:1,ret:-1,args:[P.Z]})
 C.u.cP(u)
 C.u.dL(u,W.kb(t,P.Z))}},
-eK:function(){var u,t,s,r,q,p=this
+eK:function(){var u,t,s,r,q,p=this,o=null
 try{++p.cy
 p.ch=!1
 p.bG()
-if(p.d!=null){s=p.e;++s.e
+if(o==null)o=p.d
+if(o!=null){s=p.e;++s.e
 s.r=s.x
 r=Date.now()
 s.x=new P.bP(r,!1)
@@ -4442,7 +4444,7 @@ C.a.sl(r.a,0)
 r.a5()
 r=s.dy;(r&&C.a).sl(r,0)
 s=s.dy;(s&&C.a).h(s,null)
-p.d.ag(p.e)}}catch(q){u=H.ab(q)
+o.ag(p.e)}}catch(q){u=H.ab(q)
 t=H.bx(q)
 P.km("Error: "+H.h(u))
 P.km("Stack: "+H.h(t))
@@ -5044,7 +5046,7 @@ return"Rotater: ["+V.E(u.a,3,0)+", "+V.E(u.b,3,0)+", "+V.E(u.c,3,0)+"], ["+V.E(u
 M.cK.prototype={
 a7:function(a){var u
 H.n(a,"$iF")
-u=this.x
+u=this.y
 if(u!=null)u.S(a)},
 cB:function(){return this.a7(null)},
 d5:function(a,b){var u,t,s,r,q,p,o,n=E.a3
@@ -5067,11 +5069,11 @@ for(u=b.gE(b),t=this.ga6();u.p();)u.gw(u).gv().J(0,t)
 s=new D.f_([s])
 s.b=!0
 this.a7(s)},
-gv:function(){var u=this.x
-return u==null?this.x=D.aY():u},
+gv:function(){var u=this.y
+return u==null?this.y=D.aY():u},
 ag:function(a2){var u,t,s,r,q,p,o,n,m,l,k,j,i,h,g,f,e,d,c,b,a,a0,a1=this
-a2.c1(a1.c)
-u=a1.b
+a2.c1(a1.d)
+u=a1.c
 u.toString
 t=a2.a
 t.bindFramebuffer(36160,null)
@@ -5096,7 +5098,7 @@ t.clearDepth(u.c)
 u=u.a
 t.clearColor(u.a,u.b,u.c,u.d)
 t.clear(16640)
-u=a1.a
+u=a1.b
 t=a2.c
 q=a2.d
 p=u.c
@@ -5128,14 +5130,14 @@ a=t}else a=t
 u=u.b
 if(u!=null){a0=u.a
 if(a0!=null)a=a0.P(0,a)}a2.db.c0(a)
-for(u=a1.d.a,u=new J.ac(u,u.length,[H.u(u,0)]);u.p();)u.d.cd(0,a2)
-for(u=a1.d.a,u=new J.ac(u,u.length,[H.u(u,0)]);u.p();)u.d.ag(a2)
-a1.a.toString
+for(u=a1.e.a,u=new J.ac(u,u.length,[H.u(u,0)]);u.p();)u.d.cd(0,a2)
+for(u=a1.e.a,u=new J.ac(u,u.length,[H.u(u,0)]);u.p();)u.d.ag(a2)
+a1.b.toString
 a2.cy.ba()
 a2.db.ba()
-a1.b.toString
+a1.c.toString
 a2.c_()},
-scA:function(a,b){this.d=H.r(b,"$iaV",[E.a3],"$aaV")},
+scA:function(a,b){this.e=H.r(b,"$iaV",[E.a3],"$aaV")},
 $imb:1}
 A.cz.prototype={}
 A.eh.prototype={
