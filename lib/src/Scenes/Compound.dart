@@ -3,6 +3,9 @@ part of ThreeDart.Scenes;
 /// A scene which is a composite of several other scenes used as passes.
 class Compound extends Collections.Collection<Scene> implements Scene {
 
+  /// Indicates if the scene is rendered or not.
+  bool _enabled;
+
   /// The control to stop infinite loops by a compound containing itself.
   bool _loopProtection;
 
@@ -10,7 +13,11 @@ class Compound extends Collections.Collection<Scene> implements Scene {
   Events.Event _changed;
 
   /// Creates a new compound scene.
-  Compound({List<Scene> passes: null}) {
+  Compound({
+    bool enabled: true,
+    List<Scene> passes: null
+  }) {
+    this._enabled        = enabled;
     this._loopProtection = false;
     this._changed        = null;
 
@@ -47,8 +54,20 @@ class Compound extends Collections.Collection<Scene> implements Scene {
     this._onChanged(new Events.ItemsRemovedEventArgs(this, index, scenes));
   }
 
+  /// Indicates if this scene should be rendered or not.
+  bool get enabled => this._enabled;
+  set enabled(bool enable) {
+    enable ??= true;
+    if (this._enabled != enable) {
+      bool prev = this._enabled;
+      this._enabled = enable;
+      this._onChanged(new Events.ValueChangedEventArgs(this, "enabled", prev, this._enabled));
+    }
+  }
+
   /// Renders the scenes with the given [state].
   void render(Core.RenderState state) {
+    if (!this._enabled) return;
     if (this._loopProtection) return;
     this._loopProtection = true;
 

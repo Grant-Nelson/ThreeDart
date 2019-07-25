@@ -27,6 +27,7 @@ part 'MaterialLightSpecularComponent.dart';
 part 'MaterialLight.dart';
 part 'Normal.dart';
 part 'Skybox.dart';
+part 'SolidColor.dart';
 part 'Technique.dart';
 part 'TextureLayout.dart';
 part 'TextureLayoutEntry.dart';

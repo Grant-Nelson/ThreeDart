@@ -3,6 +3,9 @@ part of ThreeDart.Scenes;
 /// The render pass renders a cover over the whole scene.
 class CoverPass implements RenderPass {
 
+  /// Indicates if the scene is rendered or not.
+  bool _enabled;
+
   /// The camera describing the view of the scene.
   Views.Camera _camera;
 
@@ -23,17 +26,23 @@ class CoverPass implements RenderPass {
 
   /// Creates a new cover render pass.
   CoverPass({
-      Views.Camera camera: null,
-      Views.Target target: null,
-      Techniques.Technique tech: null
+    bool enabled: true,
+    Views.Camera camera: null,
+    Views.Target target: null,
+    Techniques.Technique tech: null
   }) {
+    this._enabled  = enabled;
     this._changed  = null;
-    this.camera    = camera;
-    this.target    = target;
-    this.technique = tech;
+    this._camera   = null;
+    this._target   = null;
+    this._tech     = null;
     this._box      = new Core.Entity()
       ..shape      = Shapes.square();
     this._onRender = null;
+    
+    this.camera    = camera;
+    this.target    = target;
+    this.technique = tech;
   }
 
   /// Creates a new cover render pass preset with a skybox technique.
@@ -58,6 +67,17 @@ class CoverPass implements RenderPass {
   /// Handles changes to the scene.
   void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
+  }
+
+  /// Indicates if this scene should be rendered or not.
+  bool get enabled => this._enabled;
+  set enabled(bool enable) {
+    enable ??= true;
+    if (this._enabled != enable) {
+      bool prev = this._enabled;
+      this._enabled = enable;
+      this._onChanged(new Events.ValueChangedEventArgs(this, "enabled", prev, this._enabled));
+    }
   }
 
   /// The camera describing the view of the scene.
@@ -102,6 +122,7 @@ class CoverPass implements RenderPass {
 
   /// Render the scene with the given [state].
   void render(Core.RenderState state) {
+    if (!this._enabled) return;
     state.pushTechnique(this._tech);
     this._target.bind(state);
     this._camera.bind(state);

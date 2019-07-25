@@ -60,8 +60,8 @@ void main() {
 
   Scenes.CoverPass skybox = new Scenes.CoverPass.skybox(
     td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg"))
-  ..target = target
-  ..camera = userCamera;
+    ..target = target
+    ..camera = userCamera;
 
   td.scene = new Scenes.Compound(passes: [skybox, pass]);
 

@@ -1,11 +1,14 @@
-part of chess;
+part of graphics;
 
+/// An entity for rendering the edge of the chess board.
 class Edge extends ThreeDart.Entity {
+
+  /// The singleton for the shape of the edge with the render cache for the color shader.
+  /// Used for rendering to the screen.
   static ThreeDart.Entity _shapeEntity;
 
-  Board _board;
-
-  Edge(ThreeDart.ThreeDart td, this._board, double dx, double dz, double angle, int textureIndex) {
+  /// Creates a new edge entity.
+  Edge(ThreeDart.ThreeDart td, Board board, double dx, double dz, double angle, int textureIndex) {
     if (_shapeEntity == null) {
       _shapeEntity = new ThreeDart.Entity(name: "edge shape");
       IO.ObjType.fromFile("./resources/edge.obj", td.textureLoader).
@@ -19,6 +22,6 @@ class Edge extends ThreeDart.Entity {
       new Math.Matrix4.rotateY(angle));
     this.name = "edge";
     this.children.add(_shapeEntity);
-    this.technique = this._board.materials.edgeTechs[textureIndex];
+    this.technique = board.materials.edgeTechs[textureIndex];
   }
 }

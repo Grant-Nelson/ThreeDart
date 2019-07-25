@@ -7,6 +7,7 @@ import 'dart:async';
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 import 'package:ThreeDart/Tokenizer.dart' as Tokenizer;
 
+part 'buttonGroup.dart';
 part 'checkGroup.dart';
 part 'codeParser.dart';
 part 'dartParser.dart';
@@ -22,6 +23,6 @@ part 'texture2DGroup.dart';
 void showFPS(ThreeDart.ThreeDart td) {
   new Timer.periodic(const Duration(milliseconds: 5000), (Timer time) {
     String fps = td.fps.toStringAsFixed(2);
-    print("$fps fps");
+    if (fps != "0.00") print("$fps fps");
   });
 }

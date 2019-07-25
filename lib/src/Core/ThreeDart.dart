@@ -241,15 +241,19 @@ class ThreeDart implements Events.Changable {
   }
 
   /// Renders the scene to the canvas.
-  void render() {
+  /// An optional diffent scene can be provided but
+  /// typically the scene attached to this object should be used.
+  /// If the scene parameter isn't set, the attached scene is used.
+  void render([Scenes.Scene scene = null]) {
     try {
       this._frameCount++;
       this._pendingRender = false;
       this._resize();
       this._onPrerender();
-      if (this._scene != null) {
+      scene ??= this._scene;
+      if (scene != null) {
         this._state.reset();
-        this._scene.render(this._state);
+        scene.render(this._state);
       }
       this._onPostrender();
     } catch(exception, stackTrace) {

@@ -3,6 +3,9 @@ part of ThreeDart.Scenes;
 /// The render pass renders a single scene.
 class EntityPass implements RenderPass {
 
+  /// Indicates if the scene is rendered or not.
+  bool _enabled;
+
   /// The camera describing the view of the scene.
   Views.Camera _camera;
 
@@ -30,15 +33,17 @@ class EntityPass implements RenderPass {
   /// Creates a new render pass.
   /// The given clear color is only used if target is null or a FrontTarget.
   EntityPass({
-      Views.Camera camera: null,
-      Views.Target target: null,
-      Techniques.Technique tech: null,
-      List<Core.Entity> children: null,
-      Math.Color4 clearColor: null,
-    }) {
-    this._camera = null;
-    this._target = null;
-    this._tech   = null;
+    bool enabled: true,
+    Views.Camera camera: null,
+    Views.Target target: null,
+    Techniques.Technique tech: null,
+    List<Core.Entity> children: null,
+    Math.Color4 clearColor: null,
+  }) {
+    this._enabled  = enabled;
+    this._camera   = null;
+    this._target   = null;
+    this._tech     = null;
     this._children = new Collections.Collection<Core.Entity>();
     this._children.setHandlers(
       onAddedHndl: this._onChildrenAdded,
@@ -79,6 +84,17 @@ class EntityPass implements RenderPass {
       if (entity != null) entity.changed.remove(this._onChanged);
     }
     this._onChanged(new Events.ItemsRemovedEventArgs(this, index, entities));
+  }
+
+  /// Indicates if this scene should be rendered or not.
+  bool get enabled => this._enabled;
+  set enabled(bool enable) {
+    enable ??= true;
+    if (this._enabled != enable) {
+      bool prev = this._enabled;
+      this._enabled = enable;
+      this._onChanged(new Events.ValueChangedEventArgs(this, "enabled", prev, this._enabled));
+    }
   }
 
   /// The camera describing the view of the scene.
@@ -150,6 +166,7 @@ class EntityPass implements RenderPass {
 
   /// Render the scene with the given [state].
   void render(Core.RenderState state) {
+    if (!this._enabled) return;
     Core.StateEventArgs args = new Core.StateEventArgs(this, state);
     this._onPreUpdate?.emit(args);
 
