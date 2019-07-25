@@ -15,8 +15,10 @@ import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 
 import '../../common/common.dart' as common;
 import '../../examples/craft/main.dart' as craft;
+import '../../examples/chess/game/game.dart' as chess;
 
 part 'bench.dart';
+part 'chess.dart';
 part 'craft.dart';
 part 'testTools.dart';
 part 'matrix2.dart';
@@ -40,6 +42,7 @@ void main() {
   addRegion3Tests(tests);
   addTechniqueTests(tests);
   addCraftTests(tests);
+  addChessTests(tests);
 
   new common.ShellPage("Unit-tests", false)
     ..addElem(elem)
