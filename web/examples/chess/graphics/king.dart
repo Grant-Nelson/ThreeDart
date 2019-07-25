@@ -1,9 +1,19 @@
 part of graphics;
 
+/// King is a piece which the player only has one of.
+/// Kings move diagonally, vertically, and horizontally only one tile.
+/// https://en.wikipedia.org/wiki/King_(chess)
 class King extends Piece {
+  
+  /// The singleton for the shape of the king with the render cache for the color shader.
+  /// Used for rendering to the screen.
   static ThreeDart.Entity _colorShapeEntity;
+  
+  /// The singleton for the shape of the king with the render cache for the picker shader.
+  /// Used for determining which piece or tile was clicked on.
   static ThreeDart.Entity _pickShapeEntity;
 
+  /// Creates a new king entity.
   King(ThreeDart.ThreeDart td, Board board, bool white, double angle, double scalar):
     super._(board, white, angle, scalar) {
     if (_colorShapeEntity == null) {

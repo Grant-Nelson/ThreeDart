@@ -26,7 +26,7 @@ void addChessTests(TestManager tests) {
 
     chess.TileValue item = new chess.TileValue.parse(itemStr);
     chess.Location loc = state.findItem(item);
-    List<chess.Movement> moves = state.getMovementsForPiece(item);
+    List<chess.Movement> moves = state.getMovements(loc);
 
     List<String> parts = new List(moves.length);
     chess.StringGrid grid = new chess.StringGrid();
@@ -40,6 +40,36 @@ void addChessTests(TestManager tests) {
 
     _checkLines(args, parts.join("\n"), expMovements);
   }
+
+  void checkLoc(TestArgs args, int row, int column, bool expOnBoard, int expIndex, String expNotation) {
+    chess.Location loc = new chess.Location(row, column);
+    if (loc.row != row) args.error("Unexpected row: ${loc.row} != $row\n");
+    if (loc.column != column) args.error("Unexpected column: ${loc.column} != $column\n");
+    if (loc.onBoard != expOnBoard) args.error("Unexpected onBoard: ${loc.onBoard} != $expOnBoard\n");
+    if (loc.index != expIndex) args.error("Unexpected index: ${loc.index} != $expIndex\n");
+    if (loc.toNotation() != expNotation) args.error("Unexpected notation: ${loc.toNotation()} != $expNotation\n");
+    
+    int row2 = row, column2 = column;
+    if (!loc.onBoard) row2 = column2 = 0;
+    chess.Location loc2 = new chess.Location.fromIndex(expIndex);
+    if (loc2.row != row2) args.error("Unexpected row from index: ${loc2.row} != $row2\n");
+    if (loc2.column != column2) args.error("Unexpected column from index: ${loc2.column} != $column2\n");
+  }
+
+  tests.add("Test of chess location", (TestArgs args) {
+    checkLoc(args, 0, 0, false, -1, "xx");
+    checkLoc(args, 1, 1, true, 0, "a8");
+    checkLoc(args, 2, 2, true, 9, "b7");
+    checkLoc(args, 3, 3, true, 18, "c6");
+    checkLoc(args, 4, 4, true, 27, "d5");
+    checkLoc(args, 5, 5, true, 36, "e4");
+    checkLoc(args, 6, 6, true, 45, "f3");
+    checkLoc(args, 7, 7, true, 54, "g2");
+    checkLoc(args, 8, 8, true, 63, "h1");
+    checkLoc(args, 4, 7, true, 30, "g5");
+    checkLoc(args, 9, 1, false, -1, "xx");
+    checkLoc(args, 1, 9, false, -1, "xx");
+  });
 
   tests.add("Test of chess state parse and toString", (TestArgs args) {
     chess.State state = new chess.State.initial();

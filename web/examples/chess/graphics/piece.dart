@@ -1,5 +1,6 @@
 part of graphics;
 
+/// The abstract base entity for all chess pieces.
 abstract class Piece extends ThreeDart.Entity {
   game.Location _loc;
   double _angle;
@@ -15,6 +16,7 @@ abstract class Piece extends ThreeDart.Entity {
   ThreeDart.Entity _colorEntity;
   ThreeDart.Entity _pickEntity;
 
+  /// Creates a new piece.
   Piece._(this._board, this._white, this._angle, this._scalar) {
     this._loc         = new game.Location(0, 0);
     this._mover       = new Movers.Constant();
@@ -24,6 +26,7 @@ abstract class Piece extends ThreeDart.Entity {
     this._showPick    = false;
   }
 
+  /// Must be called by the inheriting piece kind to finish initialize the piece.
   void _initialize(String name, game.TileValue stateItem, ThreeDart.Entity colorShapeEntity, ThreeDart.Entity pickShapeEntity) {
     this._pickTech = this._board.nextpickTech();
     this._stateItem = stateItem;

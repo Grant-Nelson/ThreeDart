@@ -13,6 +13,7 @@ class Bishop extends Piece {
   /// Used for determining which piece or tile was clicked on.
   static ThreeDart.Entity _pickShapeEntity;
 
+  /// Creates a new bishop entity.
   Bishop(ThreeDart.ThreeDart td, Board board, bool white, int index, double angle, double scalar):
     super._(board, white, angle, scalar) {
     if (_colorShapeEntity == null) {

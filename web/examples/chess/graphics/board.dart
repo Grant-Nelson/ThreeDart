@@ -113,9 +113,10 @@ class Board extends ThreeDart.Entity {
     // Check if a peice was picked.
     game.TileValue stateItem = this._game.getValue(loc);
     if (stateItem.empty || stateItem.white != this._game.whiteTurn) return;
+    bool selected = this.isSelected(stateItem);
     this.clearHighlights();
     this.clearSelections();
-    if (!this.isSelected(stateItem)) {
+    if (!selected) {
       this.setSelection(stateItem);
       this._moves = this._game.getMovements(stateItem);
       this.setHighlights(this._moves);
@@ -134,7 +135,7 @@ class Board extends ThreeDart.Entity {
   Piece findPiece(game.TileValue stateValue) {
     game.TileValue item = stateValue.item;
     for (Piece piece in this._pieces) {
-      if (piece.stateItem == item) return piece;
+      if (piece.stateItem.item == item) return piece;
     }
     return null;
   }
