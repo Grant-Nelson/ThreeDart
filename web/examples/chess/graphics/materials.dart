@@ -1,5 +1,6 @@
 part of graphics;
 
+/// The collection of material techniques used for chess.
 class Materials {
   Textures.TextureCube _environment;
   Techniques.MaterialLight _whitePieceTech;
@@ -17,6 +18,7 @@ class Materials {
   List<Techniques.MaterialLight> _edgeTechs;
   Techniques.MaterialLight _tableTech;
 
+  /// Creates a new collection of materials techniques.
   Materials(ThreeDart.ThreeDart td) {
     this._environment = td.textureLoader.loadCubeFromPath("resources");
 
@@ -185,12 +187,14 @@ class Materials {
       ..lights.add(bollomLight);
   }
 
-  Techniques.SolidColor nextpickTech(int index) {
+  /// Creates a new pick color technique using the given index.
+  Techniques.SolidColor nextPickTech(int index) {
     const int max = 96;
     Math.Color4 color = Math.Color4.fromHVS(index/max, 1.0, 1.0);
     return Techniques.SolidColor(color: color.trim32());
   }
 
+  /// Gets the enviroment texture cube used for background and reflections.
   Textures.TextureCube get environment => this._environment;
 
   Techniques.MaterialLight get whitePieceTech => this._whitePieceTech;

@@ -12,9 +12,9 @@ void main() {
     ..addPar(["This example is in development and may still have a few issues and glitches."])
     ..addLargeCanvas("targetCanvas")
     ..addHeader(1, "About")
-    ..addPar(["Just started (WIP). Currently you can rotate the camera but game piece selection ",
-      "and movement have not been implemented yet. Click and drag with mouse to see the board from ",
-      "different angles."])
+    ..addPar(["Click and drag to see the board from different angles.",
+      "Click without dragging to select a piece, unselect a piece, or pick which movement should be made.",
+      "The game will start with white's turn."])
     ..addPar(["3Dart Chess is an example of how [3Dart|https://github.com/Grant-Nelson/ThreeDart] can be used ",
       "to create simple browser driven video games. ",
       "This example has no server backing it so currently there is no networked two player mode. ",

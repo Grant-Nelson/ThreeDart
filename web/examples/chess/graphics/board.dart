@@ -1,6 +1,6 @@
 part of graphics;
 
-/// TODO: Comment
+/// The board entity which contains tiles, pieces, and edges.
 class Board extends ThreeDart.Entity {
   game.Game _game;
   List<Piece> _pieces;
@@ -11,6 +11,7 @@ class Board extends ThreeDart.Entity {
   Materials _mats;
   bool _showPick;
 
+  /// Creates a board for the given game.
   Board(ThreeDart.ThreeDart td, game.Game this._game) {
     this._pieces = new List<Piece>();
     this._tiles = new List<Tile>();
@@ -74,16 +75,22 @@ class Board extends ThreeDart.Entity {
     this.setLocations(this._game.state);
   }
 
+  /// The collection of material techinques to use for this game.
   Materials get materials => this._mats;
 
-  Techniques.SolidColor nextpickTech() =>
-    this._mats.nextpickTech(this.children.length);
+  /// Gets the next unique pick color material techinque.
+  Techniques.SolidColor nextPickTech() =>
+    this._mats.nextPickTech(this.children.length);
 
+  /// Adds the given piece to the board.
   void _add(Piece piece) {
     this._pieces.add(piece);
     this.children.add(piece);
   }
-  
+
+  /// Handles a picked color being clicked on causing either
+  /// a selection of a piece, performs a movement, or has no effect
+  /// based on what is piece or tile was clicked on.
   void pick(Math.Color4 color) {
     for (Piece piece in this._pieces) {
       if (piece.isPick(color)) {
@@ -100,6 +107,7 @@ class Board extends ThreeDart.Entity {
     }
   }
 
+  /// Handles a location being clicked on.
   void _pickLoc(game.Location loc) {
     // Check if a movement location was picked
     for (game.Movement move in this._moves) {
@@ -123,6 +131,7 @@ class Board extends ThreeDart.Entity {
     }
   }
 
+  /// Handles when a state changes has occurred in the game.
   void _onGameChange(Events.EventArgs args) {
     this.clearHighlights();
     this.clearSelections();
@@ -131,7 +140,8 @@ class Board extends ThreeDart.Entity {
     // TODO: Update whose turn indication
     // TODO: Update undo/redo buttons
   }
-  
+
+  /// Finds the piece entity with the given piece value or null if not found.
   Piece findPiece(game.TileValue stateValue) {
     game.TileValue item = stateValue.item;
     for (Piece piece in this._pieces) {
@@ -139,7 +149,8 @@ class Board extends ThreeDart.Entity {
     }
     return null;
   }
-  
+
+  /// Gets the piece entity at the given location or null if that location is empty.
   Piece pieceAt(game.Location loc) {
     for (Piece piece in this._pieces) {
       if (piece.location == loc) return piece;
@@ -147,6 +158,7 @@ class Board extends ThreeDart.Entity {
     return null;
   }
 
+  /// Gets the tile entity at the given location or null if out of bounds.
   Tile tileAt(game.Location loc) {
     for (Tile tile in this._tiles) {
       if (tile.location == loc) return tile;
@@ -154,6 +166,7 @@ class Board extends ThreeDart.Entity {
     return null;
   }
 
+  /// Clears all highlights from pieces and tiles.
   void clearHighlights() {
     for (Piece piece in this._pieces)
       piece.highlighted = false;
@@ -161,6 +174,7 @@ class Board extends ThreeDart.Entity {
       tile.highlighted = false;
   }
 
+  /// Clears all selection from pieces and tiles.
   void clearSelections() {
     for (Piece piece in this._pieces)
       piece.selected = false;
@@ -168,6 +182,9 @@ class Board extends ThreeDart.Entity {
       tile.selected = false;
   }
 
+  /// Gets or sets if the board should render the pick colors.
+  /// Typically this is set so the board's pick colors can be rendered to a back buffer
+  /// to determine which piece or tile was picked before resetting to normal color rendering.
   bool get showPick => this._showPick;
   set showPick(bool show) {
     if (show != this._showPick) {
@@ -180,12 +197,14 @@ class Board extends ThreeDart.Entity {
         tile.showPick = show;
     }
   }
-  
+
+  /// Determines if the piece with the given game piece value is currently selected.
   bool isSelected(game.TileValue stateItem) {
     Piece piece = this.findPiece(stateItem);
     return (piece != null) && piece.selected;
   }
 
+  /// Sets the piece with the given game piece value and the tile it is on as selected.
   void setSelection(game.TileValue stateItem) {
     Piece piece = this.findPiece(stateItem);
     if (piece != null) {
@@ -195,14 +214,16 @@ class Board extends ThreeDart.Entity {
     }
   }
 
+  /// Sets the location of the pieces based on the current board state.
   void setLocations(game.State state) {
     for (Piece piece in this._pieces) {
       game.Location loc = state.findItem(piece.stateItem);
-      piece.setLocation(loc);
+      piece.location = loc;
       piece.enabled = loc.onBoard;
     }
   }
 
+  /// Sets the highlights for all the given movements.
   void setHighlights(List<game.Movement> movements) {
     for (game.Movement movement in movements) {
       Tile tile = this.tileAt(movement.destination);

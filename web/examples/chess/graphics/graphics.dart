@@ -27,6 +27,7 @@ part 'queen.dart';
 part 'rook.dart';
 part 'tile.dart';
 
+/// Starts the graphics for the chess game.
 void startGraphics(game.Game game) {
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("targetCanvas");
 

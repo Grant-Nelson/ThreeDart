@@ -58,7 +58,7 @@ class Tile extends ThreeDart.Entity {
     this._showPick    = false;
 
     String name = (this._white?"white":"black")+" tile ${this._loc.row} ${this._loc.column}";
-    this._pickTech = this._board.nextpickTech();
+    this._pickTech = this._board.nextPickTech();
 
     this._colorEntity = new ThreeDart.Entity(
       children: [_colorShapeEntity], name: "color "+name);
@@ -108,7 +108,7 @@ class Tile extends ThreeDart.Entity {
     }
   }
 
-  /// Checks if the given color is this tiles pick color.
+  /// Checks if the given color is this tile's pick color.
   bool isPick(Math.Color4 pick) =>
     this._pickTech.color == pick;
 
