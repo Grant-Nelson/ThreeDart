@@ -355,7 +355,7 @@ class MaterialLightConfig {
     buf.writeln("vec2 getTxt2D()");
     buf.writeln("{");
     if (this.txt2DMat) buf.writeln("   return (txt2DMat*vec3(txt2DAttr, 1.0)).xy;");
-    else               buf.writeln("   return vec3(txt2DAttr, 1.0).xy;");
+    else               buf.writeln("   return txt2DAttr;");
     buf.writeln("}");
     buf.writeln("");
   }
@@ -370,7 +370,7 @@ class MaterialLightConfig {
     buf.writeln("vec3 getTxtCube()");
     buf.writeln("{");
     if (this.txtCubeMat) buf.writeln("   return (txtCubeMat*vec4(txtCubeAttr, 1.0)).xyz;");
-    else                 buf.writeln("   return vec4(txtCubeAttr, 1.0).xyz;");
+    else                 buf.writeln("   return txtCubeAttr;");
     buf.writeln("}");
     buf.writeln("");
   }
@@ -492,6 +492,9 @@ class MaterialLightConfig {
   /// Writes the ambient material component to the fragment shader [buf].
   void _writeAmbient(StringBuffer buf) {
     if (this.ambient == ColorSourceType.None) return;
+
+    // TODO: Write a "setAmbientColor" similar to "setSpecularColor".
+
     buf.writeln("// === Ambient ===");
     buf.writeln("");
     this._fragmentSrcTypeVars(buf, this.ambient, "ambient");
