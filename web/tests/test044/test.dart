@@ -1,47 +1,47 @@
-library ThreeDart.test.test044;
-
-import 'dart:web_gl' as WebGL;
+library ThreeDart.test.test005;
 
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 import 'package:ThreeDart/Shapes.dart' as Shapes;
-import 'package:ThreeDart/Shaders.dart' as Shaders;
 import 'package:ThreeDart/Movers.dart' as Movers;
 import 'package:ThreeDart/Math.dart' as Math;
-import 'package:ThreeDart/Events.dart' as Events;
-import 'package:ThreeDart/Data.dart' as Data;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
-import 'package:ThreeDart/Textures.dart' as Textures;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
+import 'package:ThreeDart/Lights.dart' as Lights;
+import 'package:ThreeDart/Textures.dart' as Textures;
 import '../../common/common.dart' as common;
-
-part 'DeepTextureShader.dart';
-part 'DeepTextureTechnique.dart';
 
 void main() {
   common.ShellPage page = new common.ShellPage("Test 044")
     ..addLargeCanvas("testCanvas")
-    ..addPar(["TBD"]) // TODO: Add descriptions
+    ..addPar(["A test of the Material Lighting shader with fog. ",
+      "This test is similar to test 005 except with fog."])
     ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
-  DeepTextureTechnique tech = new DeepTextureTechnique()
-    ..colorTexture = td.textureLoader.load2DFromFile("../resources/Dirt.png")
-    ..depthTexture = td.textureLoader.load2DFromFile("../resources/HeightMap4.png");
+  ThreeDart.Entity obj = new ThreeDart.Entity()
+    ..shape = (Shapes.cube()..adjustNormals())
+    ..mover = new Movers.Rotater();
 
-  ThreeDart.Entity objTech = new ThreeDart.Entity()
-    ..shape = Shapes.square()
-    ..technique = tech;
-
-  ThreeDart.Entity group = new ThreeDart.Entity()
-    ..children.add(objTech)
-    ..mover = (new Movers.Group()
-      ..add(new Movers.UserRotater(input: td.userInput, invertY: true))
-      ..add(new Movers.UserRoller(input: td.userInput, ctrl: true))
-      ..add(new Movers.UserZoom(input: td.userInput)));
+  Textures.Texture2D color = td.textureLoader.load2DFromFile("../resources/CtrlPnlColor.png");
+  Techniques.MaterialLight tech = new Techniques.MaterialLight()
+    ..fog.color = new Math.Color4(1.0, 1.0, 1.0)
+    ..fog.start = 4.0
+    ..fog.stop  = 5.0
+    ..lights.add(new Lights.Directional(
+          mover: new Movers.Constant.vectorTowards(1.0, -1.0, -3.0),
+          color: new Math.Color3.white()))
+    ..emission.texture2D = td.textureLoader.load2DFromFile("../resources/CtrlPnlEmission.png")
+    ..ambient.color = new Math.Color3(0.2, 0.2, 0.2)
+    ..diffuse.color = new Math.Color3(0.8, 0.8, 0.8)
+    ..ambient.texture2D = color
+    ..diffuse.texture2D = color
+    ..specular.texture2D = td.textureLoader.load2DFromFile("../resources/CtrlPnlSpecular.png")
+    ..specular.shininess = 10.0;
 
   td.scene = new Scenes.EntityPass()
-    ..children.add(group)
+    ..technique = tech
+    ..children.add(obj)
     ..camera.mover = new Movers.Constant.translate(0.0, 0.0, 5.0);
 
   td.postrender.once((_){

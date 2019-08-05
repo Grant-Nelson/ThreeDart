@@ -22,6 +22,7 @@ part 'MaterialLightAlphaComponent.dart';
 part 'MaterialLightBaseComponent.dart';
 part 'MaterialLightBumpComponent.dart';
 part 'MaterialLightColorComponent.dart';
+part 'MaterialLightFogComponent.dart';
 part 'MaterialLightRefractionComponent.dart';
 part 'MaterialLightSpecularComponent.dart';
 part 'MaterialLight.dart';

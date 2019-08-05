@@ -19,14 +19,12 @@ abstract class MaterialLightBaseComponent {
   }
 
   /// Handles changes in the component.
-  void _onChanged([Events.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs args = null]) =>
     this._owner._onChanged(args);
-  }
 
   /// Handles type changes to the component.
-  void _onTypeChanged() {
+  void _onTypeChanged() =>
     this._owner._resetShader();
-  }
 
   /// Is called when the component is cleared.
   void _onClear() {

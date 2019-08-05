@@ -497,27 +497,25 @@ class MaterialLightConfig {
   /// Writes the ambient material component to the fragment shader [buf].
   void _writeAmbient(StringBuffer buf) {
     if (this.ambient == ColorSourceType.None) return;
-
-    // TODO: Write a "setAmbientColor" similar to "setSpecularColor".
-
     buf.writeln("// === Ambient ===");
     buf.writeln("");
     this._fragmentSrcTypeVars(buf, this.ambient, "ambient");
+    buf.writeln("vec3 ambientColor;");
     buf.writeln("");
-    buf.writeln("vec3 ambient()");
+    buf.writeln("void setAmbientColor()");
     buf.writeln("{");
     switch (this.ambient) {
       case ColorSourceType.None: break;
       case ColorSourceType.Solid:
-        buf.writeln("   return ambientClr;");
+        buf.writeln("   ambientColor = ambientClr;");
         break;
       case ColorSourceType.Texture2D:
-        buf.writeln("   if(nullAmbientTxt > 0) return ambientClr;");
-        buf.writeln("   return ambientClr*texture2D(ambientTxt, txt2D).rgb;");
+        buf.writeln("   if(nullAmbientTxt > 0) ambientColor = ambientClr;");
+        buf.writeln("   ambientColor = ambientClr*texture2D(ambientTxt, txt2D).rgb;");
         break;
       case ColorSourceType.TextureCube:
-        buf.writeln("   if(nullAmbientTxt > 0) return ambientClr;");
-        buf.writeln("   return ambientClr*textureCube(ambientTxt, txtCube).rgb;");
+        buf.writeln("   if(nullAmbientTxt > 0) ambientColor = ambientClr;");
+        buf.writeln("   ambientColor = ambientClr*textureCube(ambientTxt, txtCube).rgb;");
         break;
     }
     buf.writeln("}");
@@ -1091,6 +1089,11 @@ class MaterialLightConfig {
 
     if (this.colorMat)   buf.writeln("uniform mat4 colorMat;");
     if (this.invViewMat) buf.writeln("uniform mat4 invViewMat;");
+    if (this.fog) {
+      buf.writeln("uniform vec4 fogColor;");
+      buf.writeln("uniform float fogStop;");
+      buf.writeln("uniform float fogWidth;");
+    }
     buf.writeln("");
 
     this._writeEmission(buf);
@@ -1117,7 +1120,7 @@ class MaterialLightConfig {
       buf.writeln("{");
       buf.writeln("   if ((litClr.r < 0.001) && (litClr.g < 0.001) && (litClr.b < 0.001)) return litClr;");
       List<String> parts = new List<String>();
-      if (this.ambient    != ColorSourceType.None) parts.add("ambient()");
+      if (this.ambient    != ColorSourceType.None) parts.add("ambientColor");
       if (this.diffuse    != ColorSourceType.None) parts.add("diffuse(norm, litVec)");
       if (this.invDiffuse != ColorSourceType.None) parts.add("invDiffuse(norm, litVec)");
       if (this.specular   != ColorSourceType.None) parts.add("specular(norm, litVec)");
@@ -1147,6 +1150,7 @@ class MaterialLightConfig {
     if (this.lights) {
       buf.writeln("   vec3 lightAccum = vec3(0.0, 0.0, 0.0);");
       fragParts.add("lightAccum");
+      if (this.ambient    != ColorSourceType.None) buf.writeln("   setAmbientColor();");
       if (this.diffuse    != ColorSourceType.None) buf.writeln("   setDiffuseColor();");
       if (this.invDiffuse != ColorSourceType.None) buf.writeln("   setInvDiffuseColor();");
       if (this.specular   != ColorSourceType.None) buf.writeln("   setSpecularColor();");
@@ -1162,9 +1166,13 @@ class MaterialLightConfig {
     if (this.reflection != ColorSourceType.None) fragParts.add("reflect(refl)");
     if (this.refraction != ColorSourceType.None) fragParts.add("refract(refl)");
     if (fragParts.length <= 0) fragParts.add("vec3(0.0, 0.0, 0.0)");
-    String colorComp = "vec4(" + fragParts.join(" + ") + ", alpha);";
-    if (this.colorMat) buf.writeln("   gl_FragColor = colorMat*" + colorComp);
-    else               buf.writeln("   gl_FragColor = " + colorComp);
+    buf.writeln("   vec4 objClr = vec4(" + fragParts.join(" + ") + ", alpha);");
+    if (this.colorMat) buf.writeln("   objClr = colorMat*objClr;");
+    if (this.fog) {
+      buf.writeln("   float fogFactor = (viewPos.z-fogStop) / fogWidth;");
+      buf.writeln("   objClr = mix(fogColor, objClr, clamp(fogFactor, 0.0, 1.0));");
+    }
+    buf.writeln("   gl_FragColor = objClr;");
     buf.writeln("}");
     return buf.toString();
   }

@@ -92,6 +92,10 @@ class MaterialLight extends Shader {
   Uniform1i _txtSpotLightCount;
   List<UniformTexturedSpotLight> _txtSpotLights;
 
+  Uniform4f _fogClr;
+  Uniform1f _fogStop;
+  Uniform1f _fogWidth;
+
   /// Checks for the shader in the shader cache in the given [state],
   /// if it is not found then this shader is compiled and added
   /// to the shader cache before being returned.
@@ -386,6 +390,12 @@ class MaterialLight extends Shader {
           this._txtSpotLights.add(new UniformTexturedSpotLight._(i, objPnt, objDir, objUp, objRight, viewPnt, txt, nullTxt, color, tuScalar, tvScalar, att0, att1, att2));
         }
       }
+
+      if (cfg.fog) {
+        this._fogClr   = this.uniforms.required("fogColor");
+        this._fogStop  = this.uniforms.required("fogStop");
+        this._fogWidth = this.uniforms.required("fogWidth");
+      }
     }
   }
 
@@ -633,4 +643,16 @@ class MaterialLight extends Shader {
 
   /// The list of textured spot lights.
   List<UniformTexturedSpotLight> get texturedSpotLights => this._txtSpotLights;
+
+  /// The color of the fog.
+  Math.Color4 get fogColor => this._fogClr.getColor4();
+  set fogColor(Math.Color4 clr) => this._fogClr.setColor4(clr);
+
+  /// The fog stop is the minimum depth at which fog stops being applied.
+  double get fogStop => this._fogStop.getValue();
+  set fogStop(double value) => this._fogStop.setValue(value);
+
+  /// The fog width from the fog stop to when the only color returned is the fog color.
+  double get fogWidth => this._fogWidth.getValue();
+  set fogWidth(double value) => this._fogWidth.setValue(value);
 }
