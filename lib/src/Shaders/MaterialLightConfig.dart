@@ -108,6 +108,9 @@ class MaterialLightConfig {
   /// Indicates the color matrix is needed by the fragment shader.
   final bool colorMat;
 
+  /// Indicates that fog is enabled.
+  final bool fog;
+
   /// The total number of bend matrices allowed by this shader.
   final int bendMats;
 
@@ -135,14 +138,14 @@ class MaterialLightConfig {
     bool this.viewPos, bool this.norm, bool this.binm,
     bool this.txt2D, bool this.txtCube, bool this.bending,
     bool this.txt2DMat, bool this.txtCubeMat,
-    bool this.colorMat, int this.bendMats,
+    bool this.colorMat, bool this.fog, int this.bendMats,
     String this.name, Data.VertexType this.vertexType);
 
   /// Creates a new material light configuration.
   /// The configuration for the material light shader.
   factory MaterialLightConfig(
     bool txt2DMat, bool txtCubeMat, bool colorMat,
-    int bendMats, ColorSourceType emission,
+    bool fog, int bendMats, ColorSourceType emission,
     ColorSourceType ambient, ColorSourceType diffuse,
     ColorSourceType invDiffuse, ColorSourceType specular,
     ColorSourceType bumpy, ColorSourceType reflection,
@@ -165,6 +168,7 @@ class MaterialLightConfig {
     buf.write(txt2DMat?   "1": "0");
     buf.write(txtCubeMat? "1": "0");
     buf.write(colorMat?   "1": "0");
+    buf.write(fog?        "1": "0");
     buf.write("_");
     buf.write(bendMats);
     buf.write("_");
@@ -217,12 +221,13 @@ class MaterialLightConfig {
                    (reflection == ColorSourceType.TextureCube) ||
                    (refraction == ColorSourceType.TextureCube) ||
                    (alpha      == ColorSourceType.TextureCube);
-    bool objPos = (pointLight + txtPointLight + txtDirLight +
-                   spotLight + txtSpotLight) > 0;
+    bool hasLight = (pointLight + txtPointLight + txtDirLight +
+                     spotLight + txtSpotLight) > 0;
+    bool objPos  = hasLight || fog;
     bool bending = bendMats > 0;
     bool objMat  = objPos;
-    bool viewObjMat = norm || binm || viewPos;
-    bool viewMat    = false;
+    bool viewObjMat = norm || binm || viewPos || fog;
+    bool viewMat        = false;
     bool projViewObjMat = true;
     bool projViewMat    = false;
     txt2DMat   = txt2DMat   && txt2D;
@@ -242,7 +247,7 @@ class MaterialLightConfig {
       invViewMat, objMat, viewObjMat, projViewObjMat,
       viewMat, projViewMat, lights, objPos, viewPos,
       norm, binm, txt2D, txtCube, bending, txt2DMat, txtCubeMat,
-      colorMat, bendMats, name, vertexType);
+      colorMat, fog, bendMats, name, vertexType);
   }
 
   //=====================================================================
@@ -355,7 +360,7 @@ class MaterialLightConfig {
     buf.writeln("vec2 getTxt2D()");
     buf.writeln("{");
     if (this.txt2DMat) buf.writeln("   return (txt2DMat*vec3(txt2DAttr, 1.0)).xy;");
-    else               buf.writeln("   return vec3(txt2DAttr, 1.0).xy;");
+    else               buf.writeln("   return txt2DAttr;");
     buf.writeln("}");
     buf.writeln("");
   }
@@ -370,7 +375,7 @@ class MaterialLightConfig {
     buf.writeln("vec3 getTxtCube()");
     buf.writeln("{");
     if (this.txtCubeMat) buf.writeln("   return (txtCubeMat*vec4(txtCubeAttr, 1.0)).xyz;");
-    else                 buf.writeln("   return vec4(txtCubeAttr, 1.0).xyz;");
+    else                 buf.writeln("   return txtCubeAttr;");
     buf.writeln("}");
     buf.writeln("");
   }
@@ -492,6 +497,9 @@ class MaterialLightConfig {
   /// Writes the ambient material component to the fragment shader [buf].
   void _writeAmbient(StringBuffer buf) {
     if (this.ambient == ColorSourceType.None) return;
+
+    // TODO: Write a "setAmbientColor" similar to "setSpecularColor".
+
     buf.writeln("// === Ambient ===");
     buf.writeln("");
     this._fragmentSrcTypeVars(buf, this.ambient, "ambient");
