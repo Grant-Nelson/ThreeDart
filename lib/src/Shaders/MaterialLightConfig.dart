@@ -108,6 +108,9 @@ class MaterialLightConfig {
   /// Indicates the color matrix is needed by the fragment shader.
   final bool colorMat;
 
+  /// Indicates that fog is enabled.
+  final bool fog;
+
   /// The total number of bend matrices allowed by this shader.
   final int bendMats;
 
@@ -135,14 +138,14 @@ class MaterialLightConfig {
     bool this.viewPos, bool this.norm, bool this.binm,
     bool this.txt2D, bool this.txtCube, bool this.bending,
     bool this.txt2DMat, bool this.txtCubeMat,
-    bool this.colorMat, int this.bendMats,
+    bool this.colorMat, bool this.fog, int this.bendMats,
     String this.name, Data.VertexType this.vertexType);
 
   /// Creates a new material light configuration.
   /// The configuration for the material light shader.
   factory MaterialLightConfig(
     bool txt2DMat, bool txtCubeMat, bool colorMat,
-    int bendMats, ColorSourceType emission,
+    bool fog, int bendMats, ColorSourceType emission,
     ColorSourceType ambient, ColorSourceType diffuse,
     ColorSourceType invDiffuse, ColorSourceType specular,
     ColorSourceType bumpy, ColorSourceType reflection,
@@ -165,6 +168,7 @@ class MaterialLightConfig {
     buf.write(txt2DMat?   "1": "0");
     buf.write(txtCubeMat? "1": "0");
     buf.write(colorMat?   "1": "0");
+    buf.write(fog?        "1": "0");
     buf.write("_");
     buf.write(bendMats);
     buf.write("_");
@@ -217,12 +221,13 @@ class MaterialLightConfig {
                    (reflection == ColorSourceType.TextureCube) ||
                    (refraction == ColorSourceType.TextureCube) ||
                    (alpha      == ColorSourceType.TextureCube);
-    bool objPos = (pointLight + txtPointLight + txtDirLight +
-                   spotLight + txtSpotLight) > 0;
+    bool hasLight = (pointLight + txtPointLight + txtDirLight +
+                     spotLight + txtSpotLight) > 0;
+    bool objPos  = hasLight || fog;
     bool bending = bendMats > 0;
     bool objMat  = objPos;
-    bool viewObjMat = norm || binm || viewPos;
-    bool viewMat    = false;
+    bool viewObjMat = norm || binm || viewPos || fog;
+    bool viewMat        = false;
     bool projViewObjMat = true;
     bool projViewMat    = false;
     txt2DMat   = txt2DMat   && txt2D;
@@ -242,7 +247,7 @@ class MaterialLightConfig {
       invViewMat, objMat, viewObjMat, projViewObjMat,
       viewMat, projViewMat, lights, objPos, viewPos,
       norm, binm, txt2D, txtCube, bending, txt2DMat, txtCubeMat,
-      colorMat, bendMats, name, vertexType);
+      colorMat, fog, bendMats, name, vertexType);
   }
 
   //=====================================================================
@@ -355,7 +360,7 @@ class MaterialLightConfig {
     buf.writeln("vec2 getTxt2D()");
     buf.writeln("{");
     if (this.txt2DMat) buf.writeln("   return (txt2DMat*vec3(txt2DAttr, 1.0)).xy;");
-    else               buf.writeln("   return vec3(txt2DAttr, 1.0).xy;");
+    else               buf.writeln("   return txt2DAttr;");
     buf.writeln("}");
     buf.writeln("");
   }
@@ -370,7 +375,7 @@ class MaterialLightConfig {
     buf.writeln("vec3 getTxtCube()");
     buf.writeln("{");
     if (this.txtCubeMat) buf.writeln("   return (txtCubeMat*vec4(txtCubeAttr, 1.0)).xyz;");
-    else                 buf.writeln("   return vec4(txtCubeAttr, 1.0).xyz;");
+    else                 buf.writeln("   return txtCubeAttr;");
     buf.writeln("}");
     buf.writeln("");
   }
@@ -495,21 +500,22 @@ class MaterialLightConfig {
     buf.writeln("// === Ambient ===");
     buf.writeln("");
     this._fragmentSrcTypeVars(buf, this.ambient, "ambient");
+    buf.writeln("vec3 ambientColor;");
     buf.writeln("");
-    buf.writeln("vec3 ambient()");
+    buf.writeln("void setAmbientColor()");
     buf.writeln("{");
     switch (this.ambient) {
       case ColorSourceType.None: break;
       case ColorSourceType.Solid:
-        buf.writeln("   return ambientClr;");
+        buf.writeln("   ambientColor = ambientClr;");
         break;
       case ColorSourceType.Texture2D:
-        buf.writeln("   if(nullAmbientTxt > 0) return ambientClr;");
-        buf.writeln("   return ambientClr*texture2D(ambientTxt, txt2D).rgb;");
+        buf.writeln("   if(nullAmbientTxt > 0) ambientColor = ambientClr;");
+        buf.writeln("   ambientColor = ambientClr*texture2D(ambientTxt, txt2D).rgb;");
         break;
       case ColorSourceType.TextureCube:
-        buf.writeln("   if(nullAmbientTxt > 0) return ambientClr;");
-        buf.writeln("   return ambientClr*textureCube(ambientTxt, txtCube).rgb;");
+        buf.writeln("   if(nullAmbientTxt > 0) ambientColor = ambientClr;");
+        buf.writeln("   ambientColor = ambientClr*textureCube(ambientTxt, txtCube).rgb;");
         break;
     }
     buf.writeln("}");
@@ -1083,6 +1089,11 @@ class MaterialLightConfig {
 
     if (this.colorMat)   buf.writeln("uniform mat4 colorMat;");
     if (this.invViewMat) buf.writeln("uniform mat4 invViewMat;");
+    if (this.fog) {
+      buf.writeln("uniform vec4 fogColor;");
+      buf.writeln("uniform float fogStop;");
+      buf.writeln("uniform float fogWidth;");
+    }
     buf.writeln("");
 
     this._writeEmission(buf);
@@ -1109,7 +1120,7 @@ class MaterialLightConfig {
       buf.writeln("{");
       buf.writeln("   if ((litClr.r < 0.001) && (litClr.g < 0.001) && (litClr.b < 0.001)) return litClr;");
       List<String> parts = new List<String>();
-      if (this.ambient    != ColorSourceType.None) parts.add("ambient()");
+      if (this.ambient    != ColorSourceType.None) parts.add("ambientColor");
       if (this.diffuse    != ColorSourceType.None) parts.add("diffuse(norm, litVec)");
       if (this.invDiffuse != ColorSourceType.None) parts.add("invDiffuse(norm, litVec)");
       if (this.specular   != ColorSourceType.None) parts.add("specular(norm, litVec)");
@@ -1139,6 +1150,7 @@ class MaterialLightConfig {
     if (this.lights) {
       buf.writeln("   vec3 lightAccum = vec3(0.0, 0.0, 0.0);");
       fragParts.add("lightAccum");
+      if (this.ambient    != ColorSourceType.None) buf.writeln("   setAmbientColor();");
       if (this.diffuse    != ColorSourceType.None) buf.writeln("   setDiffuseColor();");
       if (this.invDiffuse != ColorSourceType.None) buf.writeln("   setInvDiffuseColor();");
       if (this.specular   != ColorSourceType.None) buf.writeln("   setSpecularColor();");
@@ -1154,9 +1166,13 @@ class MaterialLightConfig {
     if (this.reflection != ColorSourceType.None) fragParts.add("reflect(refl)");
     if (this.refraction != ColorSourceType.None) fragParts.add("refract(refl)");
     if (fragParts.length <= 0) fragParts.add("vec3(0.0, 0.0, 0.0)");
-    String colorComp = "vec4(" + fragParts.join(" + ") + ", alpha);";
-    if (this.colorMat) buf.writeln("   gl_FragColor = colorMat*" + colorComp);
-    else               buf.writeln("   gl_FragColor = " + colorComp);
+    buf.writeln("   vec4 objClr = vec4(" + fragParts.join(" + ") + ", alpha);");
+    if (this.colorMat) buf.writeln("   objClr = colorMat*objClr;");
+    if (this.fog) {
+      buf.writeln("   float fogFactor = (viewPos.z-fogStop) / fogWidth;");
+      buf.writeln("   objClr = mix(fogColor, objClr, clamp(fogFactor, 0.0, 1.0));");
+    }
+    buf.writeln("   gl_FragColor = objClr;");
     buf.writeln("}");
     return buf.toString();
   }

@@ -18,6 +18,7 @@ class MaterialLight extends Technique {
   MaterialLightRefractionComponent _refract;
   MaterialLightAlphaComponent _alpha;
   Lights.LightCollection _lights;
+  MaterialLightFogComponent _fog;
   Events.Event _changed;
 
   /// Creates a new material/light technique.
@@ -41,6 +42,7 @@ class MaterialLight extends Technique {
     this._refract    = new MaterialLightRefractionComponent._(this, "refract");
     this._alpha      = new MaterialLightAlphaComponent._(this, "alpha");
     this._lights     = new Lights.LightCollection();
+    this._fog        = new MaterialLightFogComponent._(this);
     this._lights.changed.add(this._resetShader);
     this._lights.lightChanged.add(this._onChanged);
     this._changed = null;
@@ -137,6 +139,9 @@ class MaterialLight extends Technique {
   /// The specular component of the material.
   MaterialLightBumpComponent get bump => this._bump;
 
+  /// The fog component of to render with.
+  MaterialLightFogComponent get fog => this._fog;
+
   /// The environment cube texture for reflective and refractive materials.
   Textures.TextureCube get environment => this._envSampler;
   set environment(Textures.TextureCube txt) {
@@ -179,8 +184,9 @@ class MaterialLight extends Technique {
     int txtSpotLight  = this._lengthLimit(this._lights.texturedSpotLights.length);
     int bendMats      = this._lengthLimit(this._bendMats.length);
     return new Shaders.MaterialLightConfig(
-      this._txt2DMat != null, this._txtCubeMat != null, this._colorMat != null, bendMats,
-      this._emission.type, this._ambient.type, this._diffuse.type, this._invDiffuse.type, this._specular.type,
+      this._txt2DMat != null, this._txtCubeMat != null, this._colorMat != null,
+      this._fog.enabled, bendMats, this._emission.type, this._ambient.type,
+      this._diffuse.type, this._invDiffuse.type, this._specular.type,
       this._bump.type, this._reflect.type, this._refract.type, this._alpha.type,
       dirLight, pointLight, spotLight, txtDirLight, txtPointLight, txtSpotLight);
   }
@@ -508,6 +514,12 @@ class MaterialLight extends Technique {
           this._shader.refraction = this._refract.deflection;
           break;
       }
+    }
+
+    if (cfg.fog) {
+      this._shader.fogColor = this._fog._clr;
+      this._shader.fogStop = this._fog.stop;
+      this._shader.fogWidth = this._fog.start-this._fog.stop;
     }
 
     if (cfg.alpha != Shaders.ColorSourceType.None) {
