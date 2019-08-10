@@ -61,13 +61,8 @@ class GaussianBlur extends Shader {
   }
 
   /// Sets the tcxture 2D and null texture indicator for the shader.
-  void _setTexture2D(UniformSampler2D txt2D, Uniform1i nullTxt, Textures.Texture2D txt) {
-    if ((txt == null) || !txt.loaded) {
-      nullTxt.setValue(1);
-    } else {
-      txt2D.setTexture2D(txt);
-      nullTxt.setValue(0);
-    }
+  void _setTexture2D(UniformSampler2D txt2D, Textures.Texture2D txt) {
+    if ((txt != null) && txt.loaded) txt2D.setTexture2D(txt);
   }
 
   /// The configuration the shader is built for.
@@ -97,11 +92,11 @@ class GaussianBlur extends Shader {
 
   /// The color texture to cover with.
   set colorTexture(Textures.Texture2D txt) =>
-    this._setTexture2D(this._colorTxt, this._nullColorTxt, txt);
+    this._setTexture2D(this._colorTxt, txt);
 
   /// The blur texture to cover with.
   set blurTexture(Textures.Texture2D txt) =>
-    this._setTexture2D(this._blurTxt, this._nullBlurTxt, txt);
+    this._setTexture2D(this._blurTxt, txt);
 
   /// The blur value to use when not using a texture.
   double get blurValue => this._blurValue.getValue();

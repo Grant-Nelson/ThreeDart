@@ -458,9 +458,6 @@ class MaterialLightConfig {
     buf.writeln("uniform vec3 ${name}Clr;");
     if (srcType == ColorSourceType.Solid) return;
 
-    String capName = name[0].toUpperCase()+name.substring(1);
-    buf.writeln("uniform int null${capName}Txt;");
-
     if (srcType == ColorSourceType.Texture2D)
       buf.writeln("uniform sampler2D ${name}Txt;");
     else if (srcType == ColorSourceType.TextureCube)
@@ -482,11 +479,9 @@ class MaterialLightConfig {
         buf.writeln("   return emissionClr;");
         break;
       case ColorSourceType.Texture2D:
-        buf.writeln("   if(nullEmissionTxt > 0) return emissionClr;");
         buf.writeln("   return emissionClr*texture2D(emissionTxt, txt2D).rgb;");
         break;
       case ColorSourceType.TextureCube:
-        buf.writeln("   if(nullEmissionTxt > 0) return emissionClr;");
         buf.writeln("   return emissionClr*textureCube(emissionTxt, txtCube).rgb;");
         break;
     }
@@ -510,11 +505,9 @@ class MaterialLightConfig {
         buf.writeln("   ambientColor = ambientClr;");
         break;
       case ColorSourceType.Texture2D:
-        buf.writeln("   if(nullAmbientTxt > 0) ambientColor = ambientClr;");
         buf.writeln("   ambientColor = ambientClr*texture2D(ambientTxt, txt2D).rgb;");
         break;
       case ColorSourceType.TextureCube:
-        buf.writeln("   if(nullAmbientTxt > 0) ambientColor = ambientClr;");
         buf.writeln("   ambientColor = ambientClr*textureCube(ambientTxt, txtCube).rgb;");
         break;
     }
@@ -538,12 +531,10 @@ class MaterialLightConfig {
         buf.writeln("   diffuseColor = diffuseClr;");
         break;
       case ColorSourceType.Texture2D:
-        buf.writeln("   if(nullDiffuseTxt > 0) diffuseColor = diffuseClr;");
-        buf.writeln("   else diffuseColor = diffuseClr*texture2D(diffuseTxt, txt2D).rgb;");
+        buf.writeln("   diffuseColor = diffuseClr*texture2D(diffuseTxt, txt2D).rgb;");
         break;
       case ColorSourceType.TextureCube:
-        buf.writeln("   if(nullDiffuseTxt > 0) diffuseColor = diffuseClr;");
-        buf.writeln("   else diffuseColor = diffuseClr*textureCube(diffuseTxt, txtCube).rgb;");
+        buf.writeln("   diffuseColor = diffuseClr*textureCube(diffuseTxt, txtCube).rgb;");
         break;
     }
     buf.writeln("}");
@@ -573,12 +564,10 @@ class MaterialLightConfig {
         buf.writeln("   invDiffuseColor = invDiffuseClr;");
         break;
       case ColorSourceType.Texture2D:
-        buf.writeln("   if(nullInvDiffuseTxt > 0) invDiffuseColor = invDiffuseClr;");
-        buf.writeln("   else invDiffuseColor = invDiffuseClr*texture2D(invDiffuseTxt, txt2D).rgb;");
+        buf.writeln("   invDiffuseColor = invDiffuseClr*texture2D(invDiffuseTxt, txt2D).rgb;");
         break;
       case ColorSourceType.TextureCube:
-        buf.writeln("   if(nullInvDiffuseTxt > 0) invDiffuseColor = invDiffuseClr;");
-        buf.writeln("   else invDiffuseColor = invDiffuseClr*textureCube(invDiffuseTxt, txtCube).rgb;");
+        buf.writeln("   invDiffuseColor = invDiffuseClr*textureCube(invDiffuseTxt, txtCube).rgb;");
         break;
     }
     buf.writeln("}");
@@ -609,12 +598,10 @@ class MaterialLightConfig {
         buf.writeln("   specularColor = specularClr;");
         break;
       case ColorSourceType.Texture2D:
-        buf.writeln("   if(nullSpecularTxt > 0) specularColor = specularClr;");
-        buf.writeln("   else specularColor = specularClr*texture2D(specularTxt, txt2D).rgb;");
+        buf.writeln("   specularColor = specularClr*texture2D(specularTxt, txt2D).rgb;");
         break;
       case ColorSourceType.TextureCube:
-        buf.writeln("   if(nullSpecularTxt > 0) specularColor = specularClr;");
-        buf.writeln("   else specularColor = specularClr*textureCube(specularTxt, txtCube).rgb;");
+        buf.writeln("   specularColor = specularClr*textureCube(specularTxt, txtCube).rgb;");
         break;
     }
     buf.writeln("}");
@@ -640,12 +627,10 @@ class MaterialLightConfig {
       case ColorSourceType.Solid: break;
       case ColorSourceType.Texture2D:
         buf.writeln("uniform sampler2D bumpTxt;");
-        buf.writeln("uniform int nullBumpTxt;");
         buf.writeln("");
         break;
       case ColorSourceType.TextureCube:
         buf.writeln("uniform samplerCube bumpTxt;");
-        buf.writeln("uniform int nullBumpTxt;");
         buf.writeln("");
         break;
     }
@@ -659,7 +644,6 @@ class MaterialLightConfig {
         buf.writeln("   return normalize(normalVec);");
         break;
       case ColorSourceType.Texture2D:
-        buf.writeln("   if(nullBumpTxt > 0) return normalVec;");
         buf.writeln("   vec3 color = texture2D(bumpTxt, txt2D).rgb;");
         buf.writeln("   vec3 n = normalize(normalVec);");
         buf.writeln("   vec3 b = normalize(binormalVec);");
@@ -671,7 +655,6 @@ class MaterialLightConfig {
         buf.writeln("   return mat * normalize(2.0*color - 1.0);");
         break;
       case ColorSourceType.TextureCube:
-        buf.writeln("   if(nullBumpTxt > 0) return normalVec;");
         buf.writeln("   vec3 color = textureCube(bumpTxt, txtCube).rgb;");
         buf.writeln("   vec3 n = normalize(normalVec);");
         buf.writeln("   vec3 b = normalize(binormalVec);");
@@ -696,18 +679,15 @@ class MaterialLightConfig {
     buf.writeln("");
     buf.writeln("vec3 reflect(vec3 refl)");
     buf.writeln("{");
-    buf.writeln("   if(nullEnvTxt > 0) return vec3(0.0, 0.0, 0.0);");
     switch (this.reflection) {
       case ColorSourceType.None: break;
       case ColorSourceType.Solid:
         buf.writeln("   vec3 scalar = reflectClr;");
         break;
       case ColorSourceType.Texture2D:
-        buf.writeln("   if(nullReflectTxt > 0) return vec3(0.0, 0.0, 0.0);");
         buf.writeln("   vec3 scalar = reflectClr*texture2D(reflectTxt, txt2D).rgb;");
         break;
       case ColorSourceType.TextureCube:
-        buf.writeln("   if(nullReflectTxt > 0) return vec3(0.0, 0.0, 0.0);");
         buf.writeln("   vec3 scalar = reflectClr*textureCube(reflectTxt, txtCube).rgb;");
         break;
     }
@@ -727,18 +707,15 @@ class MaterialLightConfig {
     buf.writeln("");
     buf.writeln("vec3 refract(vec3 refl)");
     buf.writeln("{");
-    buf.writeln("   if(nullEnvTxt > 0) return vec3(0.0, 0.0, 0.0);");
     switch (this.refraction) {
       case ColorSourceType.None: break;
       case ColorSourceType.Solid:
         buf.writeln("   vec3 scalar = refractClr;");
         break;
       case ColorSourceType.Texture2D:
-        buf.writeln("   if(nullRefractTxt > 0) return vec3(0.0, 0.0, 0.0);");
         buf.writeln("   vec3 scalar = refractClr*texture2D(refractTxt, txt2D).rgb;");
         break;
       case ColorSourceType.TextureCube:
-        buf.writeln("   if(nullRefractTxt > 0) return vec3(0.0, 0.0, 0.0);");
         buf.writeln("   vec3 scalar = refractClr*textureCube(refractTxt, txtCube).rgb;");
         break;
     }
@@ -755,13 +732,10 @@ class MaterialLightConfig {
     buf.writeln("");
     if (this.alpha != ColorSourceType.None) {
       buf.writeln("uniform float alpha;");
-      if (this.alpha != ColorSourceType.Solid) {
-        buf.writeln("uniform int nullAlphaTxt;");
-        if (this.alpha == ColorSourceType.Texture2D)
-          buf.writeln("uniform sampler2D alphaTxt;");
-        else if (this.alpha == ColorSourceType.TextureCube)
-          buf.writeln("uniform samplerCube alphaTxt;");
-      }
+      if (this.alpha == ColorSourceType.Texture2D)
+        buf.writeln("uniform sampler2D alphaTxt;");
+      else if (this.alpha == ColorSourceType.TextureCube)
+        buf.writeln("uniform samplerCube alphaTxt;");
       buf.writeln("");
     }
     buf.writeln("float alphaValue()");
@@ -774,13 +748,11 @@ class MaterialLightConfig {
         buf.writeln("   return alpha;");
         break;
       case ColorSourceType.Texture2D:
-        buf.writeln("   if(nullAlphaTxt > 0) return alpha;");
         buf.writeln("   float a = alpha*texture2D(alphaTxt, txt2D).a;");
         buf.writeln("   if (a <= 0.000001) discard;");
         buf.writeln("   return a;");
         break;
       case ColorSourceType.TextureCube:
-        buf.writeln("   if(nullAlphaTxt > 0) return alpha;");
         buf.writeln("   float a = alpha*textureCube(alphaTxt, txtCube).a;");
         buf.writeln("   if (a <= 0.000001) discard;");
         buf.writeln("   return a;");
@@ -916,7 +888,6 @@ class MaterialLightConfig {
     buf.writeln("   vec3 objDir;");
     buf.writeln("   vec3 viewDir;");
     buf.writeln("   vec3 color;");
-    buf.writeln("   int nullTxt;");
     buf.writeln("};");
     buf.writeln("");
     buf.writeln("uniform int txtDirLightCount;");
@@ -926,15 +897,10 @@ class MaterialLightConfig {
     buf.writeln("");
     buf.writeln("vec3 txtDirLightValue(vec3 norm, TexturedDirLight lit, sampler2D txt2D)");
     buf.writeln("{");
-    buf.writeln("   vec3 color;");
-    buf.writeln("   if(lit.nullTxt > 0) color = lit.color;");
-    buf.writeln("   else");
-    buf.writeln("   {");
-    buf.writeln("      vec3 offset = objPos + lit.objDir*dot(objPos, lit.objDir);");
-    buf.writeln("      float tu = dot(offset, lit.objUp);");
-    buf.writeln("      float tv = dot(offset, lit.objRight);");
-    buf.writeln("      color = lit.color*texture2D(txt2D, vec2(tu, tv)).xyz;");
-    buf.writeln("   }");
+    buf.writeln("   vec3 offset = objPos + lit.objDir*dot(objPos, lit.objDir);");
+    buf.writeln("   float tu = dot(offset, lit.objUp);");
+    buf.writeln("   float tv = dot(offset, lit.objRight);");
+    buf.writeln("   vec3 color = lit.color*texture2D(txt2D, vec2(tu, tv)).xyz;");
     buf.writeln("   return lightValue(norm, color, lit.viewDir);");
     buf.writeln("}");
     buf.writeln("");
@@ -961,7 +927,6 @@ class MaterialLightConfig {
     buf.writeln("   vec3 viewPnt;");
     buf.writeln("   mat3 invViewRotMat;");
     buf.writeln("   vec3 color;");
-    buf.writeln("   int nullTxt;");
     buf.writeln("   float att0;");
     buf.writeln("   float att1;");
     buf.writeln("   float att2;");
@@ -978,13 +943,8 @@ class MaterialLightConfig {
     buf.writeln("   float attenuation = 1.0/(lit.att0 + (lit.att1 + lit.att2*dist)*dist);");
     buf.writeln("   if(attenuation <= 0.005) return vec3(0.0, 0.0, 0.0);");
     buf.writeln("   vec3 normDir = normalize(viewPos - lit.viewPnt);");
-    buf.writeln("   vec3 color;");
-    buf.writeln("   if(lit.nullTxt > 0) color = lit.color;");
-    buf.writeln("   else");
-    buf.writeln("   {");
-    buf.writeln("      vec3 invNormDir = lit.invViewRotMat*normDir;");
-    buf.writeln("      color = lit.color*textureCube(txtCube, invNormDir).xyz;");
-    buf.writeln("   }");
+    buf.writeln("   vec3 invNormDir = lit.invViewRotMat*normDir;");
+    buf.writeln("   vec3 color = lit.color*textureCube(txtCube, invNormDir).xyz;");
     buf.writeln("   return lightValue(norm, attenuation*color, normDir);");
     buf.writeln("}");
     buf.writeln("");
@@ -1012,7 +972,6 @@ class MaterialLightConfig {
     buf.writeln("   vec3 objUp;");
     buf.writeln("   vec3 objRight;");
     buf.writeln("   vec3 viewPnt;");
-    buf.writeln("   int nullTxt;");
     buf.writeln("   vec3 color;");
     buf.writeln("   float tuScalar;");
     buf.writeln("   float tvScalar;");
@@ -1036,16 +995,11 @@ class MaterialLightConfig {
     buf.writeln("   float zScale = dot(normDir, lit.objDir);");
     buf.writeln("   if(zScale < 0.0) return vec3(0.0, 0.0, 0.0);");
     buf.writeln("   normDir = normDir/zScale;");
-    buf.writeln("   vec3 color;");
-    buf.writeln("   if(lit.nullTxt > 0) color = lit.color;");
-    buf.writeln("   else");
-    buf.writeln("   {");
-    buf.writeln("      float tu = dot(normDir, lit.objUp)*lit.tuScalar+0.5;");
-    buf.writeln("      if((tu > 1.0) || (tu < 0.0)) return vec3(0.0, 0.0, 0.0);");
-    buf.writeln("      float tv = dot(normDir, lit.objRight)*lit.tvScalar+0.5;");
-    buf.writeln("      if((tv > 1.0) || (tv < 0.0)) return vec3(0.0, 0.0, 0.0);");
-    buf.writeln("      color = lit.color*texture2D(txt2D, vec2(tu, tv)).xyz;");
-    buf.writeln("   }");
+    buf.writeln("   float tu = dot(normDir, lit.objUp)*lit.tuScalar+0.5;");
+    buf.writeln("   if((tu > 1.0) || (tu < 0.0)) return vec3(0.0, 0.0, 0.0);");
+    buf.writeln("   float tv = dot(normDir, lit.objRight)*lit.tvScalar+0.5;");
+    buf.writeln("   if((tv > 1.0) || (tv < 0.0)) return vec3(0.0, 0.0, 0.0);");
+    buf.writeln("   vec3 color = lit.color*texture2D(txt2D, vec2(tu, tv)).xyz;");
     buf.writeln("   return lightValue(norm, color*attenuation, normalize(viewPos - lit.viewPnt));");
     buf.writeln("}");
     buf.writeln("");
@@ -1105,7 +1059,6 @@ class MaterialLightConfig {
       buf.writeln("// === Enviromental ===");
       buf.writeln("");
       buf.writeln("uniform samplerCube envSampler;");
-      buf.writeln("uniform int nullEnvTxt;");
       buf.writeln("");
       this._writeReflection(buf);
       this._writeRefraction(buf);

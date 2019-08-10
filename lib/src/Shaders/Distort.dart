@@ -28,34 +28,27 @@ class Distort extends Shader {
 
   /// The fragment shader source code in glsl.
   static String _fragmentSource =
-      "precision mediump float;                                 \n"+
-      "                                                         \n"+
-      "uniform sampler2D colorTxt;                              \n"+
-      "uniform sampler2D bumpTxt;                               \n"+
-      "uniform int nullColorTxt;                                \n"+
-      "uniform int nullBumpTxt;                                 \n"+
-      "uniform mat4 bumpMat;                                    \n"+
-      "                                                         \n"+
-      "varying vec2 colorTxt2D;                                 \n"+
-      "varying vec2 bumpTxt2D;                                  \n"+
-      "                                                         \n"+
-      "vec2 offset()                                            \n"+
-      "{                                                        \n"+
-      "   if(nullBumpTxt > 0) return vec2(0.0, 0.0);            \n"+
-      "   vec3 txt2D = texture2D(bumpTxt, bumpTxt2D).rgb;       \n"+
-      "   txt2D = normalize(txt2D*2.0 - 1.0);                   \n"+
-      "   return (bumpMat * vec4(txt2D, 1.0)).xy;               \n"+
-      "}                                                        \n"+
-      "                                                         \n"+
-      "void main()                                              \n"+
-      "{                                                        \n"+
-      "   if(nullColorTxt > 0) gl_FragColor = vec4(1.0);        \n"+
-      "   else                                                  \n"+
-      "   {                                                     \n"+
-      "      vec2 txt2D = colorTxt2D + offset();                \n"+
-      "      gl_FragColor = texture2D(colorTxt, txt2D);         \n"+
-      "   }                                                     \n"+
-      "}                                                        \n";
+      "precision mediump float;                           \n"+
+      "                                                   \n"+
+      "uniform sampler2D colorTxt;                        \n"+
+      "uniform sampler2D bumpTxt;                         \n"+
+      "uniform mat4 bumpMat;                              \n"+
+      "                                                   \n"+
+      "varying vec2 colorTxt2D;                           \n"+
+      "varying vec2 bumpTxt2D;                            \n"+
+      "                                                   \n"+
+      "vec2 offset()                                      \n"+
+      "{                                                  \n"+
+      "   vec3 txt2D = texture2D(bumpTxt, bumpTxt2D).rgb; \n"+
+      "   txt2D = normalize(txt2D*2.0 - 1.0);             \n"+
+      "   return (bumpMat * vec4(txt2D, 1.0)).xy;         \n"+
+      "}                                                  \n"+
+      "                                                   \n"+
+      "void main()                                        \n"+
+      "{                                                  \n"+
+      "   vec2 txt2D = colorTxt2D + offset();             \n"+
+      "   gl_FragColor = texture2D(colorTxt, txt2D);      \n"+
+      "}                                                  \n";
 
   Attribute _posAttr;
   Attribute _txtAttr;
@@ -90,19 +83,12 @@ class Distort extends Shader {
     this._bumpTxt2DMat   = this.uniforms.required("bumpTxt2DMat") as UniformMat3;
     this._colorTxt       = this.uniforms.required("colorTxt") as UniformSampler2D;
     this._bumpTxt        = this.uniforms.required("bumpTxt") as UniformSampler2D;
-    this._nullColorTxt   = this.uniforms.required("nullColorTxt") as Uniform1i;
-    this._nullBumpTxt    = this.uniforms.required("nullBumpTxt") as Uniform1i;
     this._bumpMat        = this.uniforms.required("bumpMat") as UniformMat4;
   }
 
   /// Sets the tcxture 2D and null texture indicator for the shader.
-  void _setTexture2D(UniformSampler2D txt2D, Uniform1i nullTxt, Textures.Texture2D txt) {
-    if ((txt == null) || !txt.loaded) {
-      nullTxt.setValue(1);
-    } else {
-      txt2D.setTexture2D(txt);
-      nullTxt.setValue(0);
-    }
+  void _setTexture2D(UniformSampler2D txt2D, Textures.Texture2D txt) {
+    if ((txt != null) && txt.loaded) txt2D.setTexture2D(txt);
   }
 
   /// The position vertex shader attribute.
@@ -125,11 +111,11 @@ class Distort extends Shader {
 
   /// The color texture to cover with.
   set colorTexture(Textures.Texture2D txt) =>
-    this._setTexture2D(this._colorTxt, this._nullColorTxt, txt);
+    this._setTexture2D(this._colorTxt, txt);
 
   /// The bump distrotion texture to cover with.
   set bumpTexture(Textures.Texture2D txt) =>
-    this._setTexture2D(this._bumpTxt, this._nullBumpTxt, txt);
+    this._setTexture2D(this._bumpTxt, txt);
 
   /// The matrix for modifying the bump normals.
   Math.Matrix4 get bumpMatrix => this._bumpMat.getMatrix4();

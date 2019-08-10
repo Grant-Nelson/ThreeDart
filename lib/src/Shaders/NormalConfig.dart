@@ -95,11 +95,9 @@ class NormalConfig {
       case ColorSourceType.Solid: break;
       case ColorSourceType.Texture2D:
         buf.writeln("uniform sampler2D bumpTxt;");
-        buf.writeln("uniform int nullBumpTxt;");
         break;
       case ColorSourceType.TextureCube:
         buf.writeln("uniform samplerCube bumpTxt;");
-        buf.writeln("uniform int nullBumpTxt;");
         break;
     }
     buf.writeln("");
@@ -110,7 +108,6 @@ class NormalConfig {
         (this.bumpy == ColorSourceType.Solid)) {
       buf.writeln("   return normalize(normalVec);");
     } else {
-      buf.writeln("   if(nullBumpTxt > 0) return normalVec;");
       if (this.bumpy == ColorSourceType.Texture2D) {
         buf.writeln("   vec3 color = texture2D(bumpTxt, txt2D).rgb;");
       } else { // ColorSourceType.TextureCube

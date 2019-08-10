@@ -18,7 +18,6 @@ class Normal extends Shader {
 
   UniformSampler2D _bump2D;
   UniformSamplerCube _bumpCube;
-  Uniform1i _nullBumpTxt;
 
   /// Checks for the shader in the shader cache in the given [state],
   /// if it is not found then this shader is compiled and added
@@ -60,33 +59,21 @@ class Normal extends Shader {
       case ColorSourceType.Solid: break;
       case ColorSourceType.Texture2D:
         this._bump2D = this.uniforms.required("bumpTxt") as UniformSampler2D;
-        this._nullBumpTxt = this.uniforms.required("nullBumpTxt") as Uniform1i;
         break;
       case ColorSourceType.TextureCube:
         this._bumpCube = this.uniforms.required("bumpTxt") as UniformSamplerCube;
-        this._nullBumpTxt = this.uniforms.required("nullBumpTxt") as Uniform1i;
         break;
     }
   }
 
   /// Sets the tcxture 2D and null texture indicator for the shader.
-  void _setTexture2D(UniformSampler2D txt2D, Uniform1i nullTxt, Textures.Texture2D txt) {
-    if ((txt == null) || !txt.loaded) {
-      nullTxt.setValue(1);
-    } else {
-      txt2D.setTexture2D(txt);
-      nullTxt.setValue(0);
-    }
+  void _setTexture2D(UniformSampler2D txt2D, Textures.Texture2D txt) {
+    if ((txt != null) && txt.loaded) txt2D.setTexture2D(txt);
   }
 
   /// Sets the tcxture cube and null texture indicator for the shader.
-  void _setTextureCube(UniformSamplerCube txtCube, Uniform1i nullTxt, Textures.TextureCube txt) {
-    if ((txt == null) || !txt.loaded) {
-      nullTxt.setValue(1);
-    } else {
-      txtCube.setTextureCube(txt);
-      nullTxt.setValue(0);
-    }
+  void _setTextureCube(UniformSamplerCube txtCube, Textures.TextureCube txt) {
+    if ((txt != null) && txt.loaded) txtCube.setTextureCube(txt);
   }
 
   /// The configuration the shader is built for.
@@ -125,9 +112,9 @@ class Normal extends Shader {
 
   /// The normal distortion texture 2D of the object.
   set bumpTexture2D(Textures.Texture2D txt) =>
-    this._setTexture2D(this._bump2D, this._nullBumpTxt, txt);
+    this._setTexture2D(this._bump2D, txt);
 
   /// The normal distortion texture cube of the object.
   set bumpTextureCube(Textures.TextureCube txt) =>
-    this._setTextureCube(this._bumpCube, this._nullBumpTxt, txt);
+    this._setTextureCube(this._bumpCube, txt);
 }

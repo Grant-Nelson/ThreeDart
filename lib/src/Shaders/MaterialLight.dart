@@ -28,51 +28,41 @@ class MaterialLight extends Shader {
   Uniform3f _emissionClr;
   UniformSampler2D _emission2D;
   UniformSamplerCube _emissionCube;
-  Uniform1i _nullEmissionTxt;
 
   Uniform3f _ambientClr;
   UniformSampler2D _ambient2D;
   UniformSamplerCube _ambientCube;
-  Uniform1i _nullAmbientTxt;
 
   Uniform3f _diffuseClr;
   UniformSampler2D _diffuse2D;
   UniformSamplerCube _diffuseCube;
-  Uniform1i _nullDiffuseTxt;
 
   Uniform3f _invDiffuseClr;
   UniformSampler2D _invDiffuse2D;
   UniformSamplerCube _invDiffuseCube;
-  Uniform1i _nullInvDiffuseTxt;
 
   Uniform3f _specularClr;
   UniformSampler2D _specular2D;
   UniformSamplerCube _specularCube;
-  Uniform1i _nullSpecularTxt;
   Uniform1f _shininess;
 
   UniformSampler2D _bump2D;
   UniformSamplerCube _bumpCube;
-  Uniform1i _nullBumpTxt;
 
   UniformSamplerCube _envSampler;
-  Uniform1i _nullEnvTxt;
 
   Uniform3f _reflectClr;
   UniformSampler2D _reflect2D;
   UniformSamplerCube _reflectCube;
-  Uniform1i _nullReflectTxt;
 
   Uniform1f _refraction;
   Uniform3f _refractClr;
   UniformSampler2D _refract2D;
   UniformSamplerCube _refractCube;
-  Uniform1i _nullRefractTxt;
 
   Uniform1f _alpha;
   UniformSampler2D _alpha2D;
   UniformSamplerCube _alphaCube;
-  Uniform1i _nullAlphaTxt;
 
   Uniform1i _dirLightCount;
   List<UniformDirectionalLight> _dirLights;
@@ -153,12 +143,10 @@ class MaterialLight extends Shader {
         case ColorSourceType.None: break;
         case ColorSourceType.Solid: break;
         case ColorSourceType.Texture2D:
-          this._emission2D      = this.uniforms.required("emissionTxt") as UniformSampler2D;
-          this._nullEmissionTxt = this.uniforms.required("nullEmissionTxt") as Uniform1i;
+          this._emission2D = this.uniforms.required("emissionTxt") as UniformSampler2D;
           break;
         case ColorSourceType.TextureCube:
-          this._emissionCube    = this.uniforms.required("emissionTxt") as UniformSamplerCube;
-          this._nullEmissionTxt = this.uniforms.required("nullEmissionTxt") as Uniform1i;
+          this._emissionCube = this.uniforms.required("emissionTxt") as UniformSamplerCube;
           break;
       }
     }
@@ -169,12 +157,10 @@ class MaterialLight extends Shader {
         case ColorSourceType.None: break;
         case ColorSourceType.Solid: break;
         case ColorSourceType.Texture2D:
-          this._ambient2D      = this.uniforms.required("ambientTxt") as UniformSampler2D;
-          this._nullAmbientTxt = this.uniforms.required("nullAmbientTxt") as Uniform1i;
+          this._ambient2D = this.uniforms.required("ambientTxt") as UniformSampler2D;
           break;
         case ColorSourceType.TextureCube:
-          this._ambientCube    = this.uniforms.required("ambientTxt") as UniformSamplerCube;
-          this._nullAmbientTxt = this.uniforms.required("nullAmbientTxt") as Uniform1i;
+          this._ambientCube = this.uniforms.required("ambientTxt") as UniformSamplerCube;
           break;
       }
     }
@@ -185,12 +171,10 @@ class MaterialLight extends Shader {
         case ColorSourceType.None: break;
         case ColorSourceType.Solid: break;
         case ColorSourceType.Texture2D:
-          this._diffuse2D      = this.uniforms.required("diffuseTxt") as UniformSampler2D;
-          this._nullDiffuseTxt = this.uniforms.required("nullDiffuseTxt") as Uniform1i;
+          this._diffuse2D = this.uniforms.required("diffuseTxt") as UniformSampler2D;
           break;
         case ColorSourceType.TextureCube:
-          this._diffuseCube    = this.uniforms.required("diffuseTxt") as UniformSamplerCube;
-          this._nullDiffuseTxt = this.uniforms.required("nullDiffuseTxt") as Uniform1i;
+          this._diffuseCube = this.uniforms.required("diffuseTxt") as UniformSamplerCube;
           break;
       }
     }
@@ -201,12 +185,10 @@ class MaterialLight extends Shader {
         case ColorSourceType.None: break;
         case ColorSourceType.Solid: break;
         case ColorSourceType.Texture2D:
-          this._invDiffuse2D      = this.uniforms.required("invDiffuseTxt") as UniformSampler2D;
-          this._nullInvDiffuseTxt = this.uniforms.required("nullInvDiffuseTxt") as Uniform1i;
+          this._invDiffuse2D = this.uniforms.required("invDiffuseTxt") as UniformSampler2D;
           break;
         case ColorSourceType.TextureCube:
-          this._invDiffuseCube    = this.uniforms.required("invDiffuseTxt") as UniformSamplerCube;
-          this._nullInvDiffuseTxt = this.uniforms.required("nullInvDiffuseTxt") as Uniform1i;
+          this._invDiffuseCube = this.uniforms.required("invDiffuseTxt") as UniformSamplerCube;
           break;
       }
     }
@@ -218,12 +200,10 @@ class MaterialLight extends Shader {
         case ColorSourceType.None: break;
         case ColorSourceType.Solid: break;
         case ColorSourceType.Texture2D:
-          this._specular2D      = this.uniforms.required("specularTxt") as UniformSampler2D;
-          this._nullSpecularTxt = this.uniforms.required("nullSpecularTxt") as Uniform1i;
+          this._specular2D = this.uniforms.required("specularTxt") as UniformSampler2D;
           break;
         case ColorSourceType.TextureCube:
-          this._specularCube    = this.uniforms.required("specularTxt") as UniformSamplerCube;
-          this._nullSpecularTxt = this.uniforms.required("nullSpecularTxt") as Uniform1i;
+          this._specularCube = this.uniforms.required("specularTxt") as UniformSamplerCube;
           break;
       }
     }
@@ -232,18 +212,15 @@ class MaterialLight extends Shader {
       case ColorSourceType.None: break;
       case ColorSourceType.Solid: break;
       case ColorSourceType.Texture2D:
-        this._bump2D      = this.uniforms.required("bumpTxt") as UniformSampler2D;
-        this._nullBumpTxt = this.uniforms.required("nullBumpTxt") as Uniform1i;
+        this._bump2D = this.uniforms.required("bumpTxt") as UniformSampler2D;
         break;
       case ColorSourceType.TextureCube:
-        this._bumpCube    = this.uniforms.required("bumpTxt") as UniformSamplerCube;
-        this._nullBumpTxt = this.uniforms.required("nullBumpTxt") as Uniform1i;
+        this._bumpCube = this.uniforms.required("bumpTxt") as UniformSamplerCube;
         break;
     }
 
     if (cfg.enviromental) {
       this._envSampler = this.uniforms.required("envSampler") as UniformSamplerCube;
-      this._nullEnvTxt = this.uniforms.required("nullEnvTxt") as Uniform1i;
 
       if (cfg.reflection != ColorSourceType.None) {
         this._reflectClr = this.uniforms.required("reflectClr") as Uniform3f;
@@ -251,12 +228,10 @@ class MaterialLight extends Shader {
           case ColorSourceType.None: break;
           case ColorSourceType.Solid: break;
           case ColorSourceType.Texture2D:
-            this._reflect2D      = this.uniforms.required("reflectTxt") as UniformSampler2D;
-            this._nullReflectTxt = this.uniforms.required("nullReflectTxt") as Uniform1i;
+            this._reflect2D = this.uniforms.required("reflectTxt") as UniformSampler2D;
             break;
           case ColorSourceType.TextureCube:
-            this._reflectCube    = this.uniforms.required("reflectTxt") as UniformSamplerCube;
-            this._nullReflectTxt = this.uniforms.required("nullReflectTxt") as Uniform1i;
+            this._reflectCube = this.uniforms.required("reflectTxt") as UniformSamplerCube;
             break;
         }
       }
@@ -268,12 +243,10 @@ class MaterialLight extends Shader {
           case ColorSourceType.None: break;
           case ColorSourceType.Solid: break;
           case ColorSourceType.Texture2D:
-            this._refract2D      = this.uniforms.required("refractTxt") as UniformSampler2D;
-            this._nullRefractTxt = this.uniforms.required("nullRefractTxt") as Uniform1i;
+            this._refract2D = this.uniforms.required("refractTxt") as UniformSampler2D;
             break;
           case ColorSourceType.TextureCube:
-            this._refractCube    = this.uniforms.required("refractTxt") as UniformSamplerCube;
-            this._nullRefractTxt = this.uniforms.required("nullRefractTxt") as Uniform1i;
+            this._refractCube = this.uniforms.required("refractTxt") as UniformSamplerCube;
             break;
         }
       }
@@ -285,12 +258,10 @@ class MaterialLight extends Shader {
         case ColorSourceType.None: break;
         case ColorSourceType.Solid: break;
         case ColorSourceType.Texture2D:
-          this._alpha2D      = this.uniforms.required("alphaTxt") as UniformSampler2D;
-          this._nullAlphaTxt = this.uniforms.required("nullAlphaTxt") as Uniform1i;
+          this._alpha2D = this.uniforms.required("alphaTxt") as UniformSampler2D;
           break;
         case ColorSourceType.TextureCube:
-          this._alphaCube    = this.uniforms.required("alphaTxt") as UniformSamplerCube;
-          this._nullAlphaTxt = this.uniforms.required("nullAlphaTxt") as Uniform1i;
+          this._alphaCube = this.uniforms.required("alphaTxt") as UniformSamplerCube;
           break;
       }
     }
@@ -349,9 +320,8 @@ class MaterialLight extends Shader {
           Uniform3f objDir     = this.uniforms.required("txtDirLights[$i].objDir") as Uniform3f;
           Uniform3f viewDir    = this.uniforms.required("txtDirLights[$i].viewDir") as Uniform3f;
           Uniform3f color      = this.uniforms.required("txtDirLights[$i].color") as Uniform3f;
-          Uniform1i nullTxt    = this.uniforms.required("txtDirLights[$i].nullTxt") as Uniform1i;
           UniformSampler2D txt = this.uniforms.required("txtDirLightsTxt2D$i") as UniformSampler2D;
-          this._txtDirLights.add(new UniformTexturedDirectionalLight._(i, objUp, objRight, objDir, viewDir, color, txt, nullTxt));
+          this._txtDirLights.add(new UniformTexturedDirectionalLight._(i, objUp, objRight, objDir, viewDir, color, txt));
         }
       }
 
@@ -362,12 +332,11 @@ class MaterialLight extends Shader {
           Uniform3f viewPnt         = this.uniforms.required("txtPntLights[$i].viewPnt") as Uniform3f;
           UniformMat3 invViewRotMat = this.uniforms.required("txtPntLights[$i].invViewRotMat") as UniformMat3;
           Uniform3f color           = this.uniforms.required("txtPntLights[$i].color") as Uniform3f;
-          Uniform1i nullTxt         = this.uniforms.required("txtPntLights[$i].nullTxt") as Uniform1i;
           Uniform1f att0            = this.uniforms.required("txtPntLights[$i].att0") as Uniform1f;
           Uniform1f att1            = this.uniforms.required("txtPntLights[$i].att1") as Uniform1f;
           Uniform1f att2            = this.uniforms.required("txtPntLights[$i].att2") as Uniform1f;
           UniformSamplerCube txt    = this.uniforms.required("txtPntLightsTxtCube$i") as UniformSamplerCube;
-          this._txtPntLights.add(new UniformTexturedPointLight._(i, point, viewPnt, invViewRotMat, color, txt, nullTxt, att0, att1, att2));
+          this._txtPntLights.add(new UniformTexturedPointLight._(i, point, viewPnt, invViewRotMat, color, txt, att0, att1, att2));
         }
       }
 
@@ -379,7 +348,6 @@ class MaterialLight extends Shader {
           Uniform3f objUp      = this.uniforms.required("txtSpotLights[$i].objUp") as Uniform3f;
           Uniform3f objRight   = this.uniforms.required("txtSpotLights[$i].objRight") as Uniform3f;
           Uniform3f viewPnt    = this.uniforms.required("txtSpotLights[$i].viewPnt") as Uniform3f;
-          Uniform1i nullTxt    = this.uniforms.required("txtSpotLights[$i].nullTxt") as Uniform1i;
           Uniform3f color      = this.uniforms.required("txtSpotLights[$i].color") as Uniform3f;
           Uniform1f tuScalar   = this.uniforms.required("txtSpotLights[$i].tuScalar") as Uniform1f;
           Uniform1f tvScalar   = this.uniforms.required("txtSpotLights[$i].tvScalar") as Uniform1f;
@@ -387,7 +355,7 @@ class MaterialLight extends Shader {
           Uniform1f att1       = this.uniforms.required("txtSpotLights[$i].att1") as Uniform1f;
           Uniform1f att2       = this.uniforms.required("txtSpotLights[$i].att2") as Uniform1f;
           UniformSampler2D txt = this.uniforms.required("txtSpotLightsTxt2D$i") as UniformSampler2D;
-          this._txtSpotLights.add(new UniformTexturedSpotLight._(i, objPnt, objDir, objUp, objRight, viewPnt, txt, nullTxt, color, tuScalar, tvScalar, att0, att1, att2));
+          this._txtSpotLights.add(new UniformTexturedSpotLight._(i, objPnt, objDir, objUp, objRight, viewPnt, txt, color, tuScalar, tvScalar, att0, att1, att2));
         }
       }
 
@@ -400,23 +368,13 @@ class MaterialLight extends Shader {
   }
 
   /// Sets the tcxture 2D and null texture indicator for the shader.
-  void _setTexture2D(UniformSampler2D txt2D, Uniform1i nullTxt, Textures.Texture2D txt) {
-    if ((txt == null) || !txt.loaded) {
-      nullTxt.setValue(1);
-    } else {
-      txt2D.setTexture2D(txt);
-      nullTxt.setValue(0);
-    }
+  void _setTexture2D(UniformSampler2D txt2D, Textures.Texture2D txt) {
+    if ((txt != null) && txt.loaded) txt2D.setTexture2D(txt);
   }
 
   /// Sets the tcxture cube and null texture indicator for the shader.
-  void _setTextureCube(UniformSamplerCube txtCube, Uniform1i nullTxt, Textures.TextureCube txt) {
-    if ((txt == null) || !txt.loaded) {
-      nullTxt.setValue(1);
-    } else {
-      txtCube.setTextureCube(txt);
-      nullTxt.setValue(0);
-    }
+  void _setTextureCube(UniformSamplerCube txtCube, Textures.TextureCube txt) {
+    if ((txt != null) && txt.loaded) txtCube.setTextureCube(txt);
   }
 
   /// The configuration the shader is built for.
@@ -492,11 +450,11 @@ class MaterialLight extends Shader {
 
   /// The emission texture 2D of the object.
   set emissionTexture2D(Textures.Texture2D txt) =>
-    this._setTexture2D(this._emission2D, this._nullEmissionTxt, txt);
+    this._setTexture2D(this._emission2D, txt);
 
   /// The emission texture cube of the object.
   set emissionTextureCube(Textures.TextureCube txt) =>
-    this._setTextureCube(this._emissionCube, this._nullEmissionTxt, txt);
+    this._setTextureCube(this._emissionCube, txt);
 
   /// The ambient color scalar of the object.
   Math.Color3 get ambientColor => this._ambientClr.getColor3();
@@ -504,11 +462,11 @@ class MaterialLight extends Shader {
 
   /// The ambient texture 2D of the object.
   set ambientTexture2D(Textures.Texture2D txt) =>
-    this._setTexture2D(this._ambient2D, this._nullAmbientTxt, txt);
+    this._setTexture2D(this._ambient2D, txt);
 
   /// The ambient texture cube of the object.
   set ambientTextureCube(Textures.TextureCube txt) =>
-    this._setTextureCube(this._ambientCube, this._nullAmbientTxt, txt);
+    this._setTextureCube(this._ambientCube, txt);
 
   /// The diffuse color scalar of the object.
   Math.Color3 get diffuseColor => this._diffuseClr.getColor3();
@@ -516,11 +474,11 @@ class MaterialLight extends Shader {
 
   /// The diffuse texture 2D of the object.
   set diffuseTexture2D(Textures.Texture2D txt) =>
-    this._setTexture2D(this._diffuse2D, this._nullDiffuseTxt, txt);
+    this._setTexture2D(this._diffuse2D, txt);
 
   /// The diffuse texture cube of the object.
   set diffuseTextureCube(Textures.TextureCube txt) =>
-    this._setTextureCube(this._diffuseCube, this._nullDiffuseTxt, txt);
+    this._setTextureCube(this._diffuseCube, txt);
 
   /// The inverse diffuse color scalar of the object.
   Math.Color3 get invDiffuseColor => this._invDiffuseClr.getColor3();
@@ -528,11 +486,11 @@ class MaterialLight extends Shader {
 
   /// The inverse diffuse texture 2D of the object.
   set invDiffuseTexture2D(Textures.Texture2D txt) =>
-    this._setTexture2D(this._invDiffuse2D, this._nullInvDiffuseTxt, txt);
+    this._setTexture2D(this._invDiffuse2D, txt);
 
   /// The inverse diffuse texture cube of the object.
   set invDiffuseTextureCube(Textures.TextureCube txt) =>
-    this._setTextureCube(this._invDiffuseCube, this._nullInvDiffuseTxt, txt);
+    this._setTextureCube(this._invDiffuseCube, txt);
 
   /// The specular color scalar of the object.
   Math.Color3 get specularColor => this._specularClr.getColor3();
@@ -540,11 +498,11 @@ class MaterialLight extends Shader {
 
   /// The specular texture 2D of the object.
   set specularTexture2D(Textures.Texture2D txt) =>
-    this._setTexture2D(this._specular2D, this._nullSpecularTxt, txt);
+    this._setTexture2D(this._specular2D, txt);
 
   /// The specular texture cube of the object.
   set specularTextureCube(Textures.TextureCube txt) =>
-    this._setTextureCube(this._specularCube, this._nullSpecularTxt, txt);
+    this._setTextureCube(this._specularCube, txt);
 
   /// The shininess value of the specualr.
   double get shininess => this._shininess.getValue();
@@ -552,15 +510,15 @@ class MaterialLight extends Shader {
 
   /// The normal distortion texture 2D of the object.
   set bumpTexture2D(Textures.Texture2D txt) =>
-    this._setTexture2D(this._bump2D, this._nullBumpTxt, txt);
+    this._setTexture2D(this._bump2D, txt);
 
   /// The normal distortion texture cube of the object.
   set bumpTextureCube(Textures.TextureCube txt) =>
-    this._setTextureCube(this._bumpCube, this._nullBumpTxt, txt);
+    this._setTextureCube(this._bumpCube, txt);
 
   /// The environment texture cube of the object.
   set environmentTextureCube(Textures.TextureCube txt) =>
-    this._setTextureCube(this._envSampler, this._nullEnvTxt, txt);
+    this._setTextureCube(this._envSampler, txt);
 
   /// The refraction value of the specualr.
   double get refraction => this._refraction.getValue();
@@ -572,11 +530,11 @@ class MaterialLight extends Shader {
 
   /// The reflection texture 2D scalar of the object.
   set reflectionTexture2D(Textures.Texture2D txt) =>
-    this._setTexture2D(this._reflect2D, this._nullReflectTxt, txt);
+    this._setTexture2D(this._reflect2D, txt);
 
   /// The reflection texture cube scalar of the object.
   set reflectionTextureCube(Textures.TextureCube txt) =>
-    this._setTextureCube(this._reflectCube, this._nullReflectTxt, txt);
+    this._setTextureCube(this._reflectCube, txt);
 
   /// The refraction color scalar of the object.
   Math.Color3 get refractionColor => this._refractClr.getColor3();
@@ -584,11 +542,11 @@ class MaterialLight extends Shader {
 
   /// The refraction texture 2D scalar of the object.
   set refractionTexture2D(Textures.Texture2D txt) =>
-    this._setTexture2D(this._refract2D, this._nullRefractTxt, txt);
+    this._setTexture2D(this._refract2D, txt);
 
   /// The refraction texture cube scalar of the object.
   set refractionTextureCube(Textures.TextureCube txt) =>
-    this._setTextureCube(this._refractCube, this._nullRefractTxt, txt);
+    this._setTextureCube(this._refractCube, txt);
 
   /// The alpha scalar of the object.
   double get alpha => this._alpha.getValue();
@@ -596,11 +554,11 @@ class MaterialLight extends Shader {
 
   /// The alpha texture 2D of the object.
   set alphaTexture2D(Textures.Texture2D txt) =>
-    this._setTexture2D(this._alpha2D, this._nullAlphaTxt, txt);
+    this._setTexture2D(this._alpha2D, txt);
 
   /// The alpha texture cube of the object.
   set alphaTextureCube(Textures.TextureCube txt) =>
-    this._setTextureCube(this._alphaCube, this._nullAlphaTxt, txt);
+    this._setTextureCube(this._alphaCube, txt);
 
   /// The number of currently used directional lights.
   int get directionalLightCount => this._dirLightCount.getValue();

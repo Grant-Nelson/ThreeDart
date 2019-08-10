@@ -27,7 +27,7 @@ class UniformTexturedDirectionalLight {
   /// Creates the textured directional light uniform.
   UniformTexturedDirectionalLight._(int this._index, Uniform3f this._objUp,
     Uniform3f this._objRight, Uniform3f this._objDir, Uniform3f this._viewDir,
-    Uniform3f this._color, UniformSampler2D this._txt, Uniform1i this._nullTxt);
+    Uniform3f this._color, UniformSampler2D this._txt);
 
   /// The index of this light in the list of directional lights.
   int get index => this._index;
@@ -60,15 +60,9 @@ class UniformTexturedDirectionalLight {
 
   /// The directional light texture.
   set texture(Textures.Texture2D txt) {
-    if ((txt == null) || !txt.loaded) {
-      this._nullTxt.setValue(1);
-    } else {
-      this._txt.setTexture2D(txt);
-      this._nullTxt.setValue(0);
-    }
+    if ((txt != null) && txt.loaded) this._txt.setTexture2D(txt);
   }
   UniformSampler2D _txt;
-  Uniform1i _nullTxt;
 }
 
 /// Point light uniform.
@@ -119,7 +113,7 @@ class UniformTexturedPointLight {
   /// Creates the texture point light uniform.
   UniformTexturedPointLight._(int this._index, Uniform3f this._point, Uniform3f this._viewPnt,
     UniformMat3 this._invViewRotMat, Uniform3f this._color, UniformSamplerCube this._txt,
-    Uniform1i this._nullTxt, Uniform1f this._att0, Uniform1f this._att1, Uniform1f this._att2);
+    Uniform1f this._att0, Uniform1f this._att1, Uniform1f this._att2);
 
   /// The index of this light in the list of texture point lights.
   int get index => this._index;
@@ -147,15 +141,9 @@ class UniformTexturedPointLight {
 
   /// The point light texture.
   set texture(Textures.TextureCube txt) {
-    if ((txt == null) || !txt.loaded) {
-      this._nullTxt.setValue(1);
-    } else {
-      this._txt.setTextureCube(txt);
-      this._nullTxt.setValue(0);
-    }
+    if ((txt != null) && txt.loaded) this._txt.setTextureCube(txt);
   }
   UniformSamplerCube _txt;
-  Uniform1i _nullTxt;
 
   /// The point light constant attenuation.
   double get attenuation0 => this._att0.getValue();
@@ -238,7 +226,7 @@ class UniformTexturedSpotLight {
   /// Creates the textured spot light uniform.
   UniformTexturedSpotLight._(int this._index, Uniform3f this._objPnt,
     Uniform3f this._objDir, Uniform3f this._objUp, Uniform3f this._objRight,
-    Uniform3f this._viewPnt, UniformSampler2D this._txt, Uniform1i this._nullTxt,
+    Uniform3f this._viewPnt, UniformSampler2D this._txt,
     Uniform3f this._color, Uniform1f this._tuScalar, Uniform1f this._tvScalar,
     Uniform1f this._att0, Uniform1f this._att1, Uniform1f this._att2);
 
@@ -273,15 +261,9 @@ class UniformTexturedSpotLight {
 
   /// The spot light texture.
   set texture(Textures.Texture2D txt) {
-    if ((txt == null) || !txt.loaded) {
-      this._nullTxt.setValue(1);
-    } else {
-      this._txt.setTexture2D(txt);
-      this._nullTxt.setValue(0);
-    }
+    if ((txt != null) && txt.loaded) this._txt.setTexture2D(txt);
   }
   UniformSampler2D _txt;
-  Uniform1i _nullTxt;
 
   /// The spot light color.
   Math.Color3 get color => this._color.getColor3();
