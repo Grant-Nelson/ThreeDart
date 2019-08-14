@@ -254,93 +254,57 @@ class MaterialLight extends Technique {
       }
     }
 
-    switch (cfg.emission) {
-      case Shaders.ColorSourceType.None: break;
-      case Shaders.ColorSourceType.Solid:
-        this._shader.emissionColor = this._emission.color;
-        break;
-      case Shaders.ColorSourceType.Texture2D:
-        this._addToTextureList(textures, this._emission.texture2D);
-        this._shader.emissionTexture2D = this._emission.texture2D;
-        this._shader.emissionColor     = this._emission.color;
-        break;
-      case Shaders.ColorSourceType.TextureCube:
-        this._addToTextureList(textures, this._emission.textureCube);
-        this._shader.emissionTextureCube = this._emission.textureCube;
-        this._shader.emissionColor       = this._emission.color;
-        break;
+    if (cfg.emission.hasSolid)
+      this._shader.emissionColor = this._emission.color;
+    if (cfg.emission.hasTxt2D) {
+      this._addToTextureList(textures, this._emission.texture2D);
+      this._shader.emissionTexture2D = this._emission.texture2D;
+    } else if (cfg.emission.hasTxtCube) {
+      this._addToTextureList(textures, this._emission.textureCube);
+      this._shader.emissionTextureCube = this._emission.textureCube;
     }
 
     if (cfg.lights) {
-      switch (cfg.ambient) {
-        case Shaders.ColorSourceType.None: break;
-        case Shaders.ColorSourceType.Solid:
-          this._shader.ambientColor = this._ambient.color;
-          break;
-        case Shaders.ColorSourceType.Texture2D:
-          this._addToTextureList(textures, this._ambient.texture2D);
-          this._shader.ambientTexture2D = this._ambient.texture2D;
-          this._shader.ambientColor     = this._ambient.color;
-          break;
-        case Shaders.ColorSourceType.TextureCube:
-          this._addToTextureList(textures, this._ambient.textureCube);
-          this._shader.ambientTextureCube = this._ambient.textureCube;
-          this._shader.ambientColor       = this._ambient.color;
-          break;
+      if (cfg.ambient.hasSolid)
+        this._shader.ambientColor = this._ambient.color;
+      if (cfg.ambient.hasTxt2D) {
+        this._addToTextureList(textures, this._ambient.texture2D);
+        this._shader.ambientTexture2D = this._ambient.texture2D;
+      } else if (cfg.ambient.hasTxtCube) {
+        this._addToTextureList(textures, this._ambient.textureCube);
+        this._shader.ambientTextureCube = this._ambient.textureCube;
+      }
+      
+      if (cfg.diffuse.hasSolid)
+        this._shader.diffuseColor = this._diffuse.color;
+      if (cfg.diffuse.hasTxt2D) {
+        this._addToTextureList(textures, this._diffuse.texture2D);
+        this._shader.diffuseTexture2D = this._diffuse.texture2D;
+      } else if (cfg.diffuse.hasTxtCube) {
+        this._addToTextureList(textures, this._diffuse.textureCube);
+        this._shader.diffuseTextureCube = this._diffuse.textureCube;
+      }
+      
+      if (cfg.invDiffuse.hasSolid)
+        this._shader.invDiffuseColor = this._invDiffuse.color;
+      if (cfg.invDiffuse.hasTxt2D) {
+        this._addToTextureList(textures, this._invDiffuse.texture2D);
+        this._shader.invDiffuseTexture2D = this._invDiffuse.texture2D;
+      } else if (cfg.invDiffuse.hasTxtCube) {
+        this._addToTextureList(textures, this._invDiffuse.textureCube);
+        this._shader.invDiffuseTextureCube = this._invDiffuse.textureCube;
       }
 
-      switch (cfg.diffuse) {
-        case Shaders.ColorSourceType.None: break;
-        case Shaders.ColorSourceType.Solid:
-          this._shader.diffuseColor = this._diffuse.color;
-          break;
-        case Shaders.ColorSourceType.Texture2D:
-          this._addToTextureList(textures, this._diffuse.texture2D);
-          this._shader.diffuseTexture2D = this._diffuse.texture2D;
-          this._shader.diffuseColor     = this._diffuse.color;
-          break;
-        case Shaders.ColorSourceType.TextureCube:
-          this._addToTextureList(textures, this._diffuse.textureCube);
-          this._shader.diffuseTextureCube = this._diffuse.textureCube;
-          this._shader.diffuseColor       = this._diffuse.color;
-          break;
-      }
-
-      switch (cfg.invDiffuse) {
-        case Shaders.ColorSourceType.None: break;
-        case Shaders.ColorSourceType.Solid:
-          this._shader.invDiffuseColor = this._invDiffuse.color;
-          break;
-        case Shaders.ColorSourceType.Texture2D:
-          this._addToTextureList(textures, this._invDiffuse.texture2D);
-          this._shader.invDiffuseTexture2D = this._invDiffuse.texture2D;
-          this._shader.invDiffuseColor     = this._invDiffuse.color;
-          break;
-        case Shaders.ColorSourceType.TextureCube:
-          this._addToTextureList(textures, this._invDiffuse.textureCube);
-          this._shader.invDiffuseTextureCube = this._invDiffuse.textureCube;
-          this._shader.invDiffuseColor       = this._invDiffuse.color;
-          break;
-      }
-
-      switch (cfg.specular) {
-        case Shaders.ColorSourceType.None: break;
-        case Shaders.ColorSourceType.Solid:
-          this._shader.specularColor = this._specular.color;
-          this._shader.shininess     = this._specular.shininess;
-          break;
-        case Shaders.ColorSourceType.Texture2D:
-          this._addToTextureList(textures, this._specular.texture2D);
-          this._shader.specularTexture2D = this._specular.texture2D;
-          this._shader.specularColor     = this._specular.color;
-          this._shader.shininess         = this._specular.shininess;
-          break;
-        case Shaders.ColorSourceType.TextureCube:
-          this._addToTextureList(textures, this._specular.textureCube);
-          this._shader.specularTextureCube = this._specular.textureCube;
-          this._shader.specularColor       = this._specular.color;
-          this._shader.shininess           = this._specular.shininess;
-          break;
+      if (!cfg.specular.hasNone)
+        this._shader.shininess = this._specular.shininess;
+      if (cfg.specular.hasSolid)
+        this._shader.specularColor = this._specular.color;
+      if (cfg.specular.hasTxt2D) {
+        this._addToTextureList(textures, this._specular.texture2D);
+        this._shader.specularTexture2D = this._specular.texture2D;
+      } else if (cfg.specular.hasTxtCube) {
+        this._addToTextureList(textures, this._specular.textureCube);
+        this._shader.specularTextureCube = this._specular.textureCube;
       }
 
       if (cfg.dirLight > 0) {
@@ -457,62 +421,41 @@ class MaterialLight extends Technique {
       }
     }
 
-    switch (cfg.bumpy) {
-      case Shaders.ColorSourceType.None: break;
-      case Shaders.ColorSourceType.Solid: break;
-      case Shaders.ColorSourceType.Texture2D:
-        this._addToTextureList(textures, this._bump.texture2D);
-        this._shader.bumpTexture2D = this._bump.texture2D;
-        break;
-      case Shaders.ColorSourceType.TextureCube:
-        this._addToTextureList(textures, this._bump.textureCube);
-        this._shader.bumpTextureCube = this._bump.textureCube;
-        break;
+    if (cfg.bumpy.hasTxt2D) {
+      this._addToTextureList(textures, this._bump.texture2D);
+      this._shader.bumpTexture2D = this._bump.texture2D;
+    } else if (cfg.bumpy.hasTxtCube) {
+      this._addToTextureList(textures, this._bump.textureCube);
+      this._shader.bumpTextureCube = this._bump.textureCube;
     }
 
-    if (cfg.invViewMat) {
+    if (cfg.invViewMat)
       this._shader.inverseViewMatrix = state.inverseViewMatrix;
-    }
 
     if (cfg.enviromental) {
       this._addToTextureList(textures, this._envSampler);
       this._shader.environmentTextureCube = this._envSampler;
 
-      switch (cfg.reflection) {
-        case Shaders.ColorSourceType.None: break;
-        case Shaders.ColorSourceType.Solid:
-          this._shader.reflectionColor = this._reflect.color;
-          break;
-        case Shaders.ColorSourceType.Texture2D:
-          this._addToTextureList(textures, this._reflect.texture2D);
-          this._shader.reflectionTexture2D = this._reflect.texture2D;
-          this._shader.reflectionColor = this._reflect.color;
-          break;
-        case Shaders.ColorSourceType.TextureCube:
-          this._addToTextureList(textures, this._reflect.textureCube);
-          this._shader.reflectionTextureCube = this._reflect.textureCube;
-          this._shader.reflectionColor = this._reflect.color;
-          break;
+      if (cfg.reflection.hasSolid)
+        this._shader.reflectionColor = this._reflect.color;
+      if (cfg.reflection.hasTxt2D) {
+        this._addToTextureList(textures, this._reflect.texture2D);
+        this._shader.reflectionTexture2D = this._reflect.texture2D;
+      } else if (cfg.reflection.hasTxtCube) {
+        this._addToTextureList(textures, this._reflect.textureCube);
+        this._shader.reflectionTextureCube = this._reflect.textureCube;
       }
 
-      switch (cfg.refraction) {
-        case Shaders.ColorSourceType.None: break;
-        case Shaders.ColorSourceType.Solid:
-          this._shader.refractionColor = this._refract.color;
-          this._shader.refraction = this._refract.deflection;
-          break;
-        case Shaders.ColorSourceType.Texture2D:
-          this._addToTextureList(textures, this._refract.texture2D);
-          this._shader.refractionTexture2D = this._refract.texture2D;
-          this._shader.refractionColor = this._refract.color;
-          this._shader.refraction = this._refract.deflection;
-          break;
-        case Shaders.ColorSourceType.TextureCube:
-          this._addToTextureList(textures, this._refract.textureCube);
-          this._shader.refractionTextureCube = this._refract.textureCube;
-          this._shader.refractionColor = this._refract.color;
-          this._shader.refraction = this._refract.deflection;
-          break;
+      if (!cfg.refraction.hasNone)
+        this._shader.refraction = this._refract.deflection;
+      if (cfg.refraction.hasSolid)
+        this._shader.refractionColor = this._refract.color;
+      if (cfg.refraction.hasTxt2D) {
+        this._addToTextureList(textures, this._refract.texture2D);
+        this._shader.refractionTexture2D = this._refract.texture2D;
+      } else if (cfg.refraction.hasTxtCube) {
+        this._addToTextureList(textures, this._refract.textureCube);
+        this._shader.refractionTextureCube = this._refract.textureCube;
       }
     }
 
@@ -522,23 +465,17 @@ class MaterialLight extends Technique {
       this._shader.fogWidth = this._fog.start-this._fog.stop;
     }
 
-    if (cfg.alpha != Shaders.ColorSourceType.None) {
-      switch (cfg.alpha) {
-        case Shaders.ColorSourceType.None: break;
-        case Shaders.ColorSourceType.Solid:
-          this._shader.alpha = this._alpha.value;
-          break;
-        case Shaders.ColorSourceType.Texture2D:
-          this._addToTextureList(textures, this._alpha.texture2D);
-          this._shader.alphaTexture2D = this._alpha.texture2D;
-          this._shader.alpha = this._alpha.value;
-          break;
-        case Shaders.ColorSourceType.TextureCube:
-          this._addToTextureList(textures, this._alpha.textureCube);
-          this._shader.alphaTextureCube = this._alpha.textureCube;
-          this._shader.alpha = this._alpha.value;
-          break;
+    if (!cfg.alpha.hasNone) {
+      if (cfg.alpha.hasSolid)
+        this._shader.alpha = this._alpha.value;
+      if (cfg.alpha.hasTxt2D) {
+        this._addToTextureList(textures, this._alpha.texture2D);
+        this._shader.alphaTexture2D = this._alpha.texture2D;
+      } else if (cfg.alpha.hasTxtCube) {
+        this._addToTextureList(textures, this._alpha.textureCube);
+        this._shader.alphaTextureCube = this._alpha.textureCube;
       }
+
       state.gl.enable(WebGL.WebGL.BLEND);
       state.gl.blendFunc(WebGL.WebGL.SRC_ALPHA, WebGL.WebGL.ONE_MINUS_SRC_ALPHA);
     }
@@ -552,9 +489,8 @@ class MaterialLight extends Technique {
         ..render(state)
         ..unbind(state);
 
-    if (cfg.alpha != Shaders.ColorSourceType.None) {
+    if (!cfg.alpha.hasNone)
       state.gl.disable(WebGL.WebGL.BLEND);
-    }
 
     for (int i = 0; i < textures.length; i++) {
       textures[i].unbind(state);

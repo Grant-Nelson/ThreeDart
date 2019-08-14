@@ -155,15 +155,15 @@ class MaterialLightConfig {
 
     StringBuffer buf = new StringBuffer();
     buf.write("MaterialLight_");
-    buf.write(stringForComponentType(emission));
-    buf.write(stringForComponentType(ambient));
-    buf.write(stringForComponentType(diffuse));
-    buf.write(stringForComponentType(invDiffuse));
-    buf.write(stringForComponentType(specular));
-    buf.write(stringForComponentType(bumpy));
-    buf.write(stringForComponentType(reflection));
-    buf.write(stringForComponentType(refraction));
-    buf.write(stringForComponentType(alpha));
+    buf.write(emission.toString());
+    buf.write(ambient.toString());
+    buf.write(diffuse.toString());
+    buf.write(invDiffuse.toString());
+    buf.write(specular.toString());
+    buf.write(bumpy.toString());
+    buf.write(reflection.toString());
+    buf.write(refraction.toString());
+    buf.write(alpha.toString());
     buf.write("_");
     buf.write(txt2DMat?   "1": "0");
     buf.write(txtCubeMat? "1": "0");
@@ -187,40 +187,24 @@ class MaterialLightConfig {
 
     int totalLights = dirLight + pointLight + spotLight +
                       txtDirLight + txtPointLight + txtSpotLight;
-    bool enviromental = (reflection != ColorSourceType.None) ||
-                        (refraction != ColorSourceType.None);
+    bool enviromental = reflection.hasAny || refraction.hasAny;
     bool invViewMat = enviromental;
-    bool lights = (ambient    != ColorSourceType.None) ||
-                  (diffuse    != ColorSourceType.None) ||
-                  (invDiffuse != ColorSourceType.None) ||
-                  (specular   != ColorSourceType.None);
-    bool viewPos = (specular != ColorSourceType.None) ||
+    bool lights = ambient.hasAny || diffuse.hasAny ||
+                  invDiffuse.hasAny || specular.hasAny;
+    bool viewPos = (specular.hasAny) ||
                    ((pointLight + txtPointLight) > 0) ||
                     enviromental;
-    bool norm = (diffuse    != ColorSourceType.None) ||
-                (invDiffuse != ColorSourceType.None) ||
-                (specular   != ColorSourceType.None) ||
-                (bumpy      != ColorSourceType.None) ||
-                enviromental;
-    bool binm = (bumpy != ColorSourceType.None);
-    bool txt2D = (emission   == ColorSourceType.Texture2D) ||
-                 (ambient    == ColorSourceType.Texture2D) ||
-                 (diffuse    == ColorSourceType.Texture2D) ||
-                 (invDiffuse == ColorSourceType.Texture2D) ||
-                 (specular   == ColorSourceType.Texture2D) ||
-                 (bumpy      == ColorSourceType.Texture2D) ||
-                 (reflection == ColorSourceType.Texture2D) ||
-                 (refraction == ColorSourceType.Texture2D) ||
-                 (alpha      == ColorSourceType.Texture2D);
-    bool txtCube = (emission   == ColorSourceType.TextureCube) ||
-                   (ambient    == ColorSourceType.TextureCube) ||
-                   (diffuse    == ColorSourceType.TextureCube) ||
-                   (invDiffuse == ColorSourceType.TextureCube) ||
-                   (specular   == ColorSourceType.TextureCube) ||
-                   (bumpy      == ColorSourceType.TextureCube) ||
-                   (reflection == ColorSourceType.TextureCube) ||
-                   (refraction == ColorSourceType.TextureCube) ||
-                   (alpha      == ColorSourceType.TextureCube);
+    bool norm = diffuse.hasAny || invDiffuse.hasAny || specular.hasAny ||
+                bumpy.hasAny || enviromental;
+    bool binm = bumpy.hasAny;
+    bool txt2D = emission.hasTxt2D || ambient.hasTxt2D || diffuse.hasTxt2D ||
+                 invDiffuse.hasTxt2D || specular.hasTxt2D || bumpy.hasTxt2D ||
+                 reflection.hasTxt2D || refraction.hasTxt2D || alpha.hasTxt2D;
+    bool txtCube = emission.hasTxtCube || ambient.hasTxtCube ||
+                   diffuse.hasTxtCube || invDiffuse.hasTxtCube ||
+                   specular.hasTxtCube || bumpy.hasTxtCube ||
+                   reflection.hasTxtCube || refraction.hasTxtCube ||
+                   alpha.hasTxtCube;
     bool hasLight = (pointLight + txtPointLight + txtDirLight +
                      spotLight + txtSpotLight) > 0;
     bool objPos  = hasLight || fog;
@@ -450,94 +434,71 @@ class MaterialLightConfig {
 
   //=====================================================================
 
+  /// Upcases just the first character of the given string.
+  String toTitleCase(String name) =>
+    name[0].toUpperCase()+name.substring(1);
+
   /// Writes the typical variables for the given source type
   /// with the given [name] to the fragment shader [buf].
   void _fragmentSrcTypeVars(StringBuffer buf, ColorSourceType srcType, String name) {
-    if (srcType == ColorSourceType.None) return;
-
-    buf.writeln("uniform vec3 ${name}Clr;");
-    if (srcType == ColorSourceType.Solid) return;
-
-    if (srcType == ColorSourceType.Texture2D)
+    if (srcType.hasSolid)
+      buf.writeln("uniform vec3 ${name}Clr;");
+    if (srcType.hasTxt2D)
       buf.writeln("uniform sampler2D ${name}Txt;");
-    else if (srcType == ColorSourceType.TextureCube)
+    else if (srcType.hasTxtCube)
       buf.writeln("uniform samplerCube ${name}Txt;");
+  }
+
+  /// Writes the basics for a color source in a vertex fragment.
+  void _writeColorSource(StringBuffer buf, ColorSourceType srcType, String name) {
+    this._fragmentSrcTypeVars(buf, srcType, name);
+    buf.writeln("");
+
+    buf.writeln("vec3 ${name}Color;");
+    buf.writeln("");
+
+    buf.writeln("void set${toTitleCase(name)}Color()");
+    buf.writeln("{");
+
+    if (srcType.hasSolid) {
+      if (srcType.hasTxt2D)
+        buf.writeln("   ${name}Color = ${name}Clr*texture2D(${name}Txt, txt2D).rgb;");
+      else if (srcType.hasTxtCube)
+        buf.writeln("   ${name}Color = ${name}Clr*textureCube(${name}Txt, txtCube).rgb;");
+      else
+        buf.writeln("   ${name}Color = ${name}Clr;");
+    } else if (srcType.hasTxt2D)
+        buf.writeln("   ${name}Color = texture2D(${name}Txt, txt2D).rgb;");
+    else if (srcType.hasTxtCube)
+        buf.writeln("   ${name}Color = textureCube(${name}Txt, txtCube).rgb;");
+
+    buf.writeln("}");
   }
 
   /// Writes the emission material component to the fragment shader [buf].
   void _writeEmission(StringBuffer buf) {
-    if (this.emission == ColorSourceType.None) return;
+    if (this.emission.hasNone) return;
     buf.writeln("// === Emission ===");
     buf.writeln("");
-    this._fragmentSrcTypeVars(buf, this.emission, "emission");
-    buf.writeln("");
-    buf.writeln("vec3 emission()");
-    buf.writeln("{");
-    switch (this.emission) {
-      case ColorSourceType.None: break;
-      case ColorSourceType.Solid:
-        buf.writeln("   return emissionClr;");
-        break;
-      case ColorSourceType.Texture2D:
-        buf.writeln("   return emissionClr*texture2D(emissionTxt, txt2D).rgb;");
-        break;
-      case ColorSourceType.TextureCube:
-        buf.writeln("   return emissionClr*textureCube(emissionTxt, txtCube).rgb;");
-        break;
-    }
-    buf.writeln("}");
+    this._writeColorSource(buf, this.emission, "emission");
     buf.writeln("");
   }
 
   /// Writes the ambient material component to the fragment shader [buf].
   void _writeAmbient(StringBuffer buf) {
-    if (this.ambient == ColorSourceType.None) return;
+    if (this.ambient.hasNone) return;
     buf.writeln("// === Ambient ===");
     buf.writeln("");
-    this._fragmentSrcTypeVars(buf, this.ambient, "ambient");
-    buf.writeln("vec3 ambientColor;");
-    buf.writeln("");
-    buf.writeln("void setAmbientColor()");
-    buf.writeln("{");
-    switch (this.ambient) {
-      case ColorSourceType.None: break;
-      case ColorSourceType.Solid:
-        buf.writeln("   ambientColor = ambientClr;");
-        break;
-      case ColorSourceType.Texture2D:
-        buf.writeln("   ambientColor = ambientClr*texture2D(ambientTxt, txt2D).rgb;");
-        break;
-      case ColorSourceType.TextureCube:
-        buf.writeln("   ambientColor = ambientClr*textureCube(ambientTxt, txtCube).rgb;");
-        break;
-    }
-    buf.writeln("}");
+    this._writeColorSource(buf, this.ambient, "ambient");
     buf.writeln("");
   }
 
   /// Writes the diffuse material component to the fragment shader [buf].
   void _writeDiffuse(StringBuffer buf) {
-    if (this.diffuse == ColorSourceType.None) return;
+    if (this.diffuse.hasNone) return;
     buf.writeln("// === Diffuse ===");
     buf.writeln("");
-    this._fragmentSrcTypeVars(buf, this.diffuse, "diffuse");
-    buf.writeln("vec3 diffuseColor;");
-    buf.writeln("");
-    buf.writeln("void setDiffuseColor()");
-    buf.writeln("{");
-    switch (this.diffuse) {
-      case ColorSourceType.None: break;
-      case ColorSourceType.Solid:
-        buf.writeln("   diffuseColor = diffuseClr;");
-        break;
-      case ColorSourceType.Texture2D:
-        buf.writeln("   diffuseColor = diffuseClr*texture2D(diffuseTxt, txt2D).rgb;");
-        break;
-      case ColorSourceType.TextureCube:
-        buf.writeln("   diffuseColor = diffuseClr*textureCube(diffuseTxt, txtCube).rgb;");
-        break;
-    }
-    buf.writeln("}");
+    this._writeColorSource(buf, this.diffuse, "diffuse");
     buf.writeln("");
     buf.writeln("vec3 diffuse(vec3 norm, vec3 litVec)");
     buf.writeln("{");
@@ -550,27 +511,10 @@ class MaterialLightConfig {
 
   /// Writes the inverse diffuse material component to the fragment shader [buf].
   void _writeInvDiffuse(StringBuffer buf) {
-    if (this.invDiffuse == ColorSourceType.None) return;
+    if (this.invDiffuse.hasNone) return;
     buf.writeln("// === Inverse Diffuse ===");
     buf.writeln("");
-    this._fragmentSrcTypeVars(buf, this.invDiffuse, "invDiffuse");
-    buf.writeln("vec3 invDiffuseColor;");
-    buf.writeln("");
-    buf.writeln("void setInvDiffuseColor()");
-    buf.writeln("{");
-    switch (this.invDiffuse) {
-      case ColorSourceType.None: break;
-      case ColorSourceType.Solid:
-        buf.writeln("   invDiffuseColor = invDiffuseClr;");
-        break;
-      case ColorSourceType.Texture2D:
-        buf.writeln("   invDiffuseColor = invDiffuseClr*texture2D(invDiffuseTxt, txt2D).rgb;");
-        break;
-      case ColorSourceType.TextureCube:
-        buf.writeln("   invDiffuseColor = invDiffuseClr*textureCube(invDiffuseTxt, txtCube).rgb;");
-        break;
-    }
-    buf.writeln("}");
+    this._writeColorSource(buf, this.invDiffuse, "invDiffuse");
     buf.writeln("");
     buf.writeln("vec3 invDiffuse(vec3 norm, vec3 litVec)");
     buf.writeln("{");
@@ -583,28 +527,10 @@ class MaterialLightConfig {
 
   /// Writes the specular material component to the fragment shader [buf].
   void _writeSpecular(StringBuffer buf) {
-    if (this.specular == ColorSourceType.None) return;
+    if (this.specular.hasNone) return;
     buf.writeln("// === Specular ===");
     buf.writeln("");
-    this._fragmentSrcTypeVars(buf, this.specular, "specular");
-    buf.writeln("uniform float shininess;");
-    buf.writeln("vec3 specularColor;");
-    buf.writeln("");
-    buf.writeln("void setSpecularColor()");
-    buf.writeln("{");
-    switch (this.specular) {
-      case ColorSourceType.None: break;
-      case ColorSourceType.Solid:
-        buf.writeln("   specularColor = specularClr;");
-        break;
-      case ColorSourceType.Texture2D:
-        buf.writeln("   specularColor = specularClr*texture2D(specularTxt, txt2D).rgb;");
-        break;
-      case ColorSourceType.TextureCube:
-        buf.writeln("   specularColor = specularClr*textureCube(specularTxt, txtCube).rgb;");
-        break;
-    }
-    buf.writeln("}");
+    this._writeColorSource(buf, this.specular, "specular");
     buf.writeln("");
     buf.writeln("vec3 specular(vec3 norm, vec3 litVec)");
     buf.writeln("{");
@@ -622,49 +548,31 @@ class MaterialLightConfig {
     if (!this.norm) return;
     buf.writeln("// === Normal ===");
     buf.writeln("");
-    switch (this.bumpy) {
-      case ColorSourceType.None: break;
-      case ColorSourceType.Solid: break;
-      case ColorSourceType.Texture2D:
-        buf.writeln("uniform sampler2D bumpTxt;");
-        buf.writeln("");
-        break;
-      case ColorSourceType.TextureCube:
-        buf.writeln("uniform samplerCube bumpTxt;");
-        buf.writeln("");
-        break;
+    if (this.bumpy.hasTxt2D) {
+      buf.writeln("uniform sampler2D bumpTxt;");
+      buf.writeln("");
+    } else if (this.bumpy.hasTxtCube) {
+      buf.writeln("uniform samplerCube bumpTxt;");
+      buf.writeln("");
     }
     buf.writeln("vec3 normal()");
     buf.writeln("{");
-    switch (this.bumpy) {
-      case ColorSourceType.None:
+    if (this.bumpy.hasNone || this.bumpy.hasSolid) {
         buf.writeln("   return normalize(normalVec);");
-        break;
-      case ColorSourceType.Solid:
-        buf.writeln("   return normalize(normalVec);");
-        break;
-      case ColorSourceType.Texture2D:
+    } else {
+      if (this.bumpy.hasTxt2D) {
         buf.writeln("   vec3 color = texture2D(bumpTxt, txt2D).rgb;");
-        buf.writeln("   vec3 n = normalize(normalVec);");
-        buf.writeln("   vec3 b = normalize(binormalVec);");
-        buf.writeln("   vec3 c = normalize(cross(b, n));");
-        buf.writeln("   b = cross(n, c);");
-        buf.writeln("   mat3 mat = mat3( b.x,  b.y,  b.z,");
-        buf.writeln("                   -c.x, -c.y, -c.z,");
-        buf.writeln("                    n.x,  n.y,  n.z);");
-        buf.writeln("   return mat * normalize(2.0*color - 1.0);");
-        break;
-      case ColorSourceType.TextureCube:
+      } else { // hasTxtCube
         buf.writeln("   vec3 color = textureCube(bumpTxt, txtCube).rgb;");
-        buf.writeln("   vec3 n = normalize(normalVec);");
-        buf.writeln("   vec3 b = normalize(binormalVec);");
-        buf.writeln("   vec3 c = cross(b, n);");
-        buf.writeln("   b = cross(n, c);");
-        buf.writeln("   mat3 mat = mat3( b.x,  b.y,  b.z,");
-        buf.writeln("                   -c.x, -c.y, -c.z,");
-        buf.writeln("                    n.x,  n.y,  n.z);");
-        buf.writeln("   return mat * normalize(2.0*color - 1.0);");
-        break;
+      }
+      buf.writeln("   vec3 n = normalize(normalVec);");
+      buf.writeln("   vec3 b = normalize(binormalVec);");
+      buf.writeln("   vec3 c = normalize(cross(b, n));");
+      buf.writeln("   b = cross(n, c);");
+      buf.writeln("   mat3 mat = mat3( b.x,  b.y,  b.z,");
+      buf.writeln("                   -c.x, -c.y, -c.z,");
+      buf.writeln("                    n.x,  n.y,  n.z);");
+      buf.writeln("   return mat * normalize(2.0*color - 1.0);");
     }
     buf.writeln("}");
     buf.writeln("");
@@ -672,25 +580,26 @@ class MaterialLightConfig {
 
   /// Writes the reflection calculation to the fragment shader [buf].
   void _writeReflection(StringBuffer buf) {
-    if (this.reflection == ColorSourceType.None) return;
+    if (this.reflection.hasNone) return;
     buf.writeln("// === Reflection ===");
     buf.writeln("");
     this._fragmentSrcTypeVars(buf, this.reflection, "reflect");
     buf.writeln("");
     buf.writeln("vec3 reflect(vec3 refl)");
     buf.writeln("{");
-    switch (this.reflection) {
-      case ColorSourceType.None: break;
-      case ColorSourceType.Solid:
-        buf.writeln("   vec3 scalar = reflectClr;");
-        break;
-      case ColorSourceType.Texture2D:
+
+    if (this.reflection.hasSolid) {
+      if (this.reflection.hasTxt2D)
         buf.writeln("   vec3 scalar = reflectClr*texture2D(reflectTxt, txt2D).rgb;");
-        break;
-      case ColorSourceType.TextureCube:
+      else if (this.reflection.hasTxtCube)
         buf.writeln("   vec3 scalar = reflectClr*textureCube(reflectTxt, txtCube).rgb;");
-        break;
-    }
+      else
+        buf.writeln("   vec3 scalar = reflectClr;");
+    } else if (this.reflection.hasTxt2D)
+        buf.writeln("   vec3 scalar = texture2D(reflectTxt, txt2D).rgb;");
+    else if (this.reflection.hasTxtCube)
+        buf.writeln("   vec3 scalar = textureCube(reflectTxt, txtCube).rgb;");
+
     buf.writeln("   vec3 invRefl = vec3(invViewMat*vec4(refl, 0.0));");
     buf.writeln("   return scalar*textureCube(envSampler, invRefl).rgb;");
     buf.writeln("}");
@@ -699,7 +608,7 @@ class MaterialLightConfig {
 
   /// Writes the refraction calculation to the fragment shader [buf].
   void _writeRefraction(StringBuffer buf) {
-    if (this.refraction == ColorSourceType.None) return;
+    if (this.refraction.hasNone) return;
     buf.writeln("// === Refraction ===");
     buf.writeln("");
     this._fragmentSrcTypeVars(buf, this.refraction, "refract");
@@ -707,18 +616,19 @@ class MaterialLightConfig {
     buf.writeln("");
     buf.writeln("vec3 refract(vec3 refl)");
     buf.writeln("{");
-    switch (this.refraction) {
-      case ColorSourceType.None: break;
-      case ColorSourceType.Solid:
-        buf.writeln("   vec3 scalar = refractClr;");
-        break;
-      case ColorSourceType.Texture2D:
+
+    if (this.refraction.hasSolid) {
+      if (this.refraction.hasTxt2D)
         buf.writeln("   vec3 scalar = refractClr*texture2D(refractTxt, txt2D).rgb;");
-        break;
-      case ColorSourceType.TextureCube:
+      else if (this.refraction.hasTxtCube)
         buf.writeln("   vec3 scalar = refractClr*textureCube(refractTxt, txtCube).rgb;");
-        break;
-    }
+      else
+        buf.writeln("   vec3 scalar = refractClr;");
+    } else if (this.refraction.hasTxt2D)
+        buf.writeln("   vec3 scalar = texture2D(refractTxt, txt2D).rgb;");
+    else if (this.refraction.hasTxtCube)
+        buf.writeln("   vec3 scalar = textureCube(refractTxt, txtCube).rgb;");
+
     buf.writeln("   vec3 refr = mix(-refl, viewPos, refraction);");
     buf.writeln("   vec3 invRefr = vec3(invViewMat*vec4(refr, 0.0));");
     buf.writeln("   return scalar*textureCube(envSampler, invRefr).rgb;");
@@ -730,34 +640,34 @@ class MaterialLightConfig {
   void _writeAlpha(StringBuffer buf) {
     buf.writeln("// === Alpha ===");
     buf.writeln("");
-    if (this.alpha != ColorSourceType.None) {
+
+    if (this.alpha.hasSolid)
       buf.writeln("uniform float alpha;");
-      if (this.alpha == ColorSourceType.Texture2D)
-        buf.writeln("uniform sampler2D alphaTxt;");
-      else if (this.alpha == ColorSourceType.TextureCube)
-        buf.writeln("uniform samplerCube alphaTxt;");
-      buf.writeln("");
-    }
+    if (this.alpha.hasTxt2D)
+      buf.writeln("uniform sampler2D alphaTxt;");
+    if (this.alpha.hasTxtCube)
+      buf.writeln("uniform samplerCube alphaTxt;");
+
     buf.writeln("float alphaValue()");
     buf.writeln("{");
-    switch (this.alpha) {
-      case ColorSourceType.None:
-        buf.writeln("   return 1.0;");
-        break;
-      case ColorSourceType.Solid:
-        buf.writeln("   return alpha;");
-        break;
-      case ColorSourceType.Texture2D:
-        buf.writeln("   float a = alpha*texture2D(alphaTxt, txt2D).a;");
-        buf.writeln("   if (a <= 0.000001) discard;");
-        buf.writeln("   return a;");
-        break;
-      case ColorSourceType.TextureCube:
-        buf.writeln("   float a = alpha*textureCube(alphaTxt, txtCube).a;");
-        buf.writeln("   if (a <= 0.000001) discard;");
-        buf.writeln("   return a;");
-        break;
-    }
+
+    if (this.alpha.hasNone)
+      buf.writeln("   return 1.0;");
+    else if (this.alpha.hasTxt2D || this.alpha.hasTxtCube) {
+      if (this.alpha.hasSolid) {
+        if (this.alpha.hasTxt2D)
+          buf.writeln("   float a = alpha*texture2D(alphaTxt, txt2D).a;");
+        else if (this.alpha.hasTxtCube)
+          buf.writeln("   float a = alpha*textureCube(alphaTxt, txtCube).a;");
+      } else if (this.alpha.hasTxt2D)
+        buf.writeln("   float a = texture2D(alphaTxt, txt2D).a;");
+      else if (this.alpha.hasTxtCube)
+        buf.writeln("   float a = textureCube(alphaTxt, txtCube).a;");
+      buf.writeln("   if (a <= 0.000001) discard;");
+      buf.writeln("   return a;");
+    } else if (this.alpha.hasSolid)
+      buf.writeln("   return alpha;");
+
     buf.writeln("}");
     buf.writeln("");
   }
@@ -1073,10 +983,10 @@ class MaterialLightConfig {
       buf.writeln("{");
       buf.writeln("   if ((litClr.r < 0.001) && (litClr.g < 0.001) && (litClr.b < 0.001)) return litClr;");
       List<String> parts = new List<String>();
-      if (this.ambient    != ColorSourceType.None) parts.add("ambientColor");
-      if (this.diffuse    != ColorSourceType.None) parts.add("diffuse(norm, litVec)");
-      if (this.invDiffuse != ColorSourceType.None) parts.add("invDiffuse(norm, litVec)");
-      if (this.specular   != ColorSourceType.None) parts.add("specular(norm, litVec)");
+      if (!this.ambient.hasNone)    parts.add("ambientColor");
+      if (!this.diffuse.hasNone)    parts.add("diffuse(norm, litVec)");
+      if (!this.invDiffuse.hasNone) parts.add("invDiffuse(norm, litVec)");
+      if (!this.specular.hasNone)   parts.add("specular(norm, litVec)");
       buf.writeln("   return litClr*(" + parts.join(" + ") + ");");
       buf.writeln("}");
       buf.writeln("");
@@ -1103,10 +1013,11 @@ class MaterialLightConfig {
     if (this.lights) {
       buf.writeln("   vec3 lightAccum = vec3(0.0, 0.0, 0.0);");
       fragParts.add("lightAccum");
-      if (this.ambient    != ColorSourceType.None) buf.writeln("   setAmbientColor();");
-      if (this.diffuse    != ColorSourceType.None) buf.writeln("   setDiffuseColor();");
-      if (this.invDiffuse != ColorSourceType.None) buf.writeln("   setInvDiffuseColor();");
-      if (this.specular   != ColorSourceType.None) buf.writeln("   setSpecularColor();");
+      if (!this.emission.hasNone)   buf.writeln("   setEmissionColor();");
+      if (!this.ambient.hasNone)    buf.writeln("   setAmbientColor();");
+      if (!this.diffuse.hasNone)    buf.writeln("   setDiffuseColor();");
+      if (!this.invDiffuse.hasNone) buf.writeln("   setInvDiffuseColor();");
+      if (!this.specular.hasNone)   buf.writeln("   setSpecularColor();");
       if (this.dirLight      > 0) buf.writeln("   lightAccum += allDirLightValues(norm);");
       if (this.pointLight    > 0) buf.writeln("   lightAccum += allPointLightValues(norm);");
       if (this.spotLight     > 0) buf.writeln("   lightAccum += allSpotLightValues(norm);");
@@ -1115,9 +1026,9 @@ class MaterialLightConfig {
       if (this.txtSpotLight  > 0) buf.writeln("   lightAccum += allTxtSpotLightValues(norm);");
       if (this.totalLights  <= 0) buf.writeln("   lightAccum += nonLightValues(norm);");
     }
-    if (this.emission   != ColorSourceType.None) fragParts.add("emission()");
-    if (this.reflection != ColorSourceType.None) fragParts.add("reflect(refl)");
-    if (this.refraction != ColorSourceType.None) fragParts.add("refract(refl)");
+    if (!this.emission.hasNone)   fragParts.add("emissionColor");
+    if (!this.reflection.hasNone) fragParts.add("reflect(refl)");
+    if (!this.refraction.hasNone) fragParts.add("refract(refl)");
     if (fragParts.length <= 0) fragParts.add("vec3(0.0, 0.0, 0.0)");
     buf.writeln("   vec4 objClr = vec4(" + fragParts.join(" + ") + ", alpha);");
     if (this.colorMat) buf.writeln("   objClr = colorMat*objClr;");

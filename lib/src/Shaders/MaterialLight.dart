@@ -137,134 +137,76 @@ class MaterialLight extends Shader {
       }
     }
 
-    if (cfg.emission != ColorSourceType.None) {
+    if (cfg.emission.hasSolid)
       this._emissionClr = this.uniforms.required("emissionClr") as Uniform3f;
-      switch (cfg.emission) {
-        case ColorSourceType.None: break;
-        case ColorSourceType.Solid: break;
-        case ColorSourceType.Texture2D:
-          this._emission2D = this.uniforms.required("emissionTxt") as UniformSampler2D;
-          break;
-        case ColorSourceType.TextureCube:
-          this._emissionCube = this.uniforms.required("emissionTxt") as UniformSamplerCube;
-          break;
-      }
-    }
+    if (cfg.emission.hasTxt2D)
+      this._emission2D = this.uniforms.required("emissionTxt") as UniformSampler2D;
+    else if (cfg.emission.hasTxtCube)
+      this._emissionCube = this.uniforms.required("emissionTxt") as UniformSamplerCube;
 
-    if (cfg.ambient != ColorSourceType.None) {
+    if (cfg.ambient.hasSolid)
       this._ambientClr = this.uniforms.required("ambientClr") as Uniform3f;
-      switch (cfg.ambient) {
-        case ColorSourceType.None: break;
-        case ColorSourceType.Solid: break;
-        case ColorSourceType.Texture2D:
-          this._ambient2D = this.uniforms.required("ambientTxt") as UniformSampler2D;
-          break;
-        case ColorSourceType.TextureCube:
-          this._ambientCube = this.uniforms.required("ambientTxt") as UniformSamplerCube;
-          break;
-      }
-    }
+    if (cfg.ambient.hasTxt2D)
+      this._ambient2D = this.uniforms.required("ambientTxt") as UniformSampler2D;
+    else if (cfg.ambient.hasTxtCube)
+      this._ambientCube = this.uniforms.required("ambientTxt") as UniformSamplerCube;
 
-    if (cfg.diffuse != ColorSourceType.None) {
+    if (cfg.diffuse.hasSolid)
       this._diffuseClr = this.uniforms.required("diffuseClr") as Uniform3f;
-      switch (cfg.diffuse) {
-        case ColorSourceType.None: break;
-        case ColorSourceType.Solid: break;
-        case ColorSourceType.Texture2D:
-          this._diffuse2D = this.uniforms.required("diffuseTxt") as UniformSampler2D;
-          break;
-        case ColorSourceType.TextureCube:
-          this._diffuseCube = this.uniforms.required("diffuseTxt") as UniformSamplerCube;
-          break;
-      }
-    }
+    if (cfg.diffuse.hasTxt2D)
+      this._diffuse2D = this.uniforms.required("diffuseTxt") as UniformSampler2D;
+    else if (cfg.diffuse.hasTxtCube)
+      this._diffuseCube = this.uniforms.required("diffuseTxt") as UniformSamplerCube;
 
-    if (cfg.invDiffuse != ColorSourceType.None) {
+    if (cfg.invDiffuse.hasSolid)
       this._invDiffuseClr = this.uniforms.required("invDiffuseClr") as Uniform3f;
-      switch (cfg.invDiffuse) {
-        case ColorSourceType.None: break;
-        case ColorSourceType.Solid: break;
-        case ColorSourceType.Texture2D:
-          this._invDiffuse2D = this.uniforms.required("invDiffuseTxt") as UniformSampler2D;
-          break;
-        case ColorSourceType.TextureCube:
-          this._invDiffuseCube = this.uniforms.required("invDiffuseTxt") as UniformSamplerCube;
-          break;
-      }
-    }
+    if (cfg.invDiffuse.hasTxt2D)
+      this._invDiffuse2D = this.uniforms.required("invDiffuseTxt") as UniformSampler2D;
+    else if (cfg.invDiffuse.hasTxtCube)
+      this._invDiffuseCube = this.uniforms.required("invDiffuseTxt") as UniformSamplerCube;
 
-    if (cfg.specular != ColorSourceType.None) {
-        this._shininess   = this.uniforms.required("shininess") as Uniform1f;
+    if (cfg.specular.hasAny) {
+      this._shininess = this.uniforms.required("shininess") as Uniform1f;
+      if (cfg.specular.hasSolid)
         this._specularClr = this.uniforms.required("specularClr") as Uniform3f;
-      switch (cfg.specular) {
-        case ColorSourceType.None: break;
-        case ColorSourceType.Solid: break;
-        case ColorSourceType.Texture2D:
-          this._specular2D = this.uniforms.required("specularTxt") as UniformSampler2D;
-          break;
-        case ColorSourceType.TextureCube:
-          this._specularCube = this.uniforms.required("specularTxt") as UniformSamplerCube;
-          break;
-      }
+      if (cfg.specular.hasTxt2D)
+        this._specular2D = this.uniforms.required("specularTxt") as UniformSampler2D;
+      else if (cfg.specular.hasTxtCube)
+        this._specularCube = this.uniforms.required("specularTxt") as UniformSamplerCube;
     }
 
-    switch (cfg.bumpy) {
-      case ColorSourceType.None: break;
-      case ColorSourceType.Solid: break;
-      case ColorSourceType.Texture2D:
-        this._bump2D = this.uniforms.required("bumpTxt") as UniformSampler2D;
-        break;
-      case ColorSourceType.TextureCube:
-        this._bumpCube = this.uniforms.required("bumpTxt") as UniformSamplerCube;
-        break;
-    }
+    if (cfg.bumpy.hasTxt2D)
+      this._bump2D = this.uniforms.required("bumpTxt") as UniformSampler2D;
+    else if (cfg.bumpy.hasTxtCube)
+      this._bumpCube = this.uniforms.required("bumpTxt") as UniformSamplerCube;
 
     if (cfg.enviromental) {
       this._envSampler = this.uniforms.required("envSampler") as UniformSamplerCube;
 
-      if (cfg.reflection != ColorSourceType.None) {
+      if (cfg.reflection.hasSolid)
         this._reflectClr = this.uniforms.required("reflectClr") as Uniform3f;
-        switch (cfg.reflection) {
-          case ColorSourceType.None: break;
-          case ColorSourceType.Solid: break;
-          case ColorSourceType.Texture2D:
-            this._reflect2D = this.uniforms.required("reflectTxt") as UniformSampler2D;
-            break;
-          case ColorSourceType.TextureCube:
-            this._reflectCube = this.uniforms.required("reflectTxt") as UniformSamplerCube;
-            break;
-        }
-      }
+      if (cfg.reflection.hasTxt2D)
+        this._reflect2D = this.uniforms.required("reflectTxt") as UniformSampler2D;
+      else if (cfg.reflection.hasTxtCube)
+        this._reflectCube = this.uniforms.required("reflectTxt") as UniformSamplerCube;
 
-      if (cfg.refraction != ColorSourceType.None) {
+      if (cfg.refraction.hasAny) {
         this._refraction = this.uniforms.required("refraction") as Uniform1f;
-        this._refractClr = this.uniforms.required("refractClr") as Uniform3f;
-        switch (cfg.refraction) {
-          case ColorSourceType.None: break;
-          case ColorSourceType.Solid: break;
-          case ColorSourceType.Texture2D:
-            this._refract2D = this.uniforms.required("refractTxt") as UniformSampler2D;
-            break;
-          case ColorSourceType.TextureCube:
-            this._refractCube = this.uniforms.required("refractTxt") as UniformSamplerCube;
-            break;
-        }
+        if (cfg.refraction.hasSolid)
+          this._refractClr = this.uniforms.required("refractClr") as Uniform3f;
+        if (cfg.refraction.hasTxt2D)
+          this._refract2D = this.uniforms.required("refractTxt") as UniformSampler2D;
+        else if (cfg.refraction.hasTxtCube)
+          this._refractCube = this.uniforms.required("refractTxt") as UniformSamplerCube;
       }
     }
 
-    if (cfg.alpha != ColorSourceType.None) {
+    if (cfg.alpha.hasSolid)
       this._alpha = this.uniforms.required("alpha") as Uniform1f;
-      switch (cfg.alpha) {
-        case ColorSourceType.None: break;
-        case ColorSourceType.Solid: break;
-        case ColorSourceType.Texture2D:
-          this._alpha2D = this.uniforms.required("alphaTxt") as UniformSampler2D;
-          break;
-        case ColorSourceType.TextureCube:
-          this._alphaCube = this.uniforms.required("alphaTxt") as UniformSamplerCube;
-          break;
-      }
-    }
+    if (cfg.alpha.hasTxt2D)
+      this._alpha2D = this.uniforms.required("alphaTxt") as UniformSampler2D;
+    else if (cfg.alpha.hasTxtCube)
+      this._alphaCube = this.uniforms.required("alphaTxt") as UniformSamplerCube;
 
     this._dirLights     = new List<UniformDirectionalLight>();
     this._pntLights     = new List<UniformPointLight>();

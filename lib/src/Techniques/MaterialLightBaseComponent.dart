@@ -13,7 +13,7 @@ abstract class MaterialLightBaseComponent {
 
   /// Creates a new base component for the given [owner] and [name].
   MaterialLightBaseComponent._(this._owner, this._name) {
-    this._type = Shaders.ColorSourceType.None;
+    this._type = new Shaders.ColorSourceType();
     this._txt2D = null;
     this._txtCube = null;
   }
@@ -66,8 +66,8 @@ abstract class MaterialLightBaseComponent {
 
   /// Removes any of this component from the material.
   void clear() {
-    if (this._type != Shaders.ColorSourceType.None) {
-      this._type = Shaders.ColorSourceType.None;
+    if (!this._type.hasNone) {
+      this._type = new Shaders.ColorSourceType();
       this._onTypeChanged();
     }
     this._onClear();
@@ -80,14 +80,14 @@ abstract class MaterialLightBaseComponent {
   Textures.Texture2D get texture2D => this._txt2D;
   set texture2D(Textures.Texture2D txt) {
     if (txt == null) {
-      if (this._type == Shaders.ColorSourceType.Texture2D) {
-        this._type = Shaders.ColorSourceType.Solid;
+      if (this._type.hasTxt2D) {
+        this._type = this._type.enableTxt2D(false);
         this._onTypeChanged();
       }
-    } else if (this._type != Shaders.ColorSourceType.Texture2D) {
-      if (this._type == Shaders.ColorSourceType.None)
+    } else if (!this._type.hasTxt2D) {
+      if (this._type.hasNone)
         this._onComponentSet();
-      this._type = Shaders.ColorSourceType.Texture2D;
+      this._type = this._type.enableTxt2D(true);
       this._setTxtCube(null);
       this._onTypeChanged();
     }
@@ -98,14 +98,14 @@ abstract class MaterialLightBaseComponent {
   Textures.TextureCube get textureCube => this._txtCube;
   set textureCube(Textures.TextureCube txt) {
     if (txt == null) {
-      if (this._type == Shaders.ColorSourceType.TextureCube) {
-        this._type = Shaders.ColorSourceType.Solid;
+      if (this._type.hasTxtCube) {
+        this._type = this._type.enableTxtCube(false);
         this._onTypeChanged();
       }
-    } else if (this._type != Shaders.ColorSourceType.TextureCube) {
-      if (this._type == Shaders.ColorSourceType.None)
+    } else if (!this._type.hasTxtCube) {
+      if (this._type.hasNone)
         this._onComponentSet();
-      this._type = Shaders.ColorSourceType.TextureCube;
+      this._type = this._type.enableTxtCube(true);
       this._setTxt2D(null);
       this._onTypeChanged();
     }

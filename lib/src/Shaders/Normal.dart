@@ -54,16 +54,10 @@ class Normal extends Shader {
     if (cfg.txt2D) this._txt2DMat = this.uniforms.required("txt2DMat") as UniformMat3;
     if (cfg.txtCube) this._txtCubeMat = this.uniforms.required("txtCubeMat") as UniformMat4;
 
-    switch (cfg.bumpy) {
-      case ColorSourceType.None: break;
-      case ColorSourceType.Solid: break;
-      case ColorSourceType.Texture2D:
-        this._bump2D = this.uniforms.required("bumpTxt") as UniformSampler2D;
-        break;
-      case ColorSourceType.TextureCube:
-        this._bumpCube = this.uniforms.required("bumpTxt") as UniformSamplerCube;
-        break;
-    }
+    if (cfg.bumpy.hasTxt2D)
+      this._bump2D = this.uniforms.required("bumpTxt") as UniformSampler2D;
+    else if (cfg.bumpy.hasTxtCube)
+      this._bumpCube = this.uniforms.required("bumpTxt") as UniformSamplerCube;
   }
 
   /// Sets the tcxture 2D and null texture indicator for the shader.
