@@ -6,7 +6,7 @@ class MaterialLightConfig {
   /// The emission color source type.
   final ColorSourceType emission;
 
-  /// The emission color source type.
+  /// The ambient color source type.
   final ColorSourceType ambient;
 
   /// The diffuse color source type.
@@ -453,13 +453,10 @@ class MaterialLightConfig {
   void _writeColorSource(StringBuffer buf, ColorSourceType srcType, String name) {
     this._fragmentSrcTypeVars(buf, srcType, name);
     buf.writeln("");
-
     buf.writeln("vec3 ${name}Color;");
     buf.writeln("");
-
     buf.writeln("void set${toTitleCase(name)}Color()");
     buf.writeln("{");
-
     if (srcType.hasSolid) {
       if (srcType.hasTxt2D)
         buf.writeln("   ${name}Color = ${name}Clr*texture2D(${name}Txt, txt2D).rgb;");
@@ -471,7 +468,6 @@ class MaterialLightConfig {
         buf.writeln("   ${name}Color = texture2D(${name}Txt, txt2D).rgb;");
     else if (srcType.hasTxtCube)
         buf.writeln("   ${name}Color = textureCube(${name}Txt, txtCube).rgb;");
-
     buf.writeln("}");
   }
 
@@ -479,8 +475,22 @@ class MaterialLightConfig {
   void _writeEmission(StringBuffer buf) {
     if (this.emission.hasNone) return;
     buf.writeln("// === Emission ===");
+    buf.writeln("");    this._fragmentSrcTypeVars(buf, this.emission, "emission");
     buf.writeln("");
-    this._writeColorSource(buf, this.emission, "emission");
+    buf.writeln("vec3 emissionColor()");
+    buf.writeln("{");
+    if (this.emission.hasSolid) {
+      if (this.emission.hasTxt2D)
+        buf.writeln("   return emissionClr*texture2D(emissionTxt, txt2D).rgb;");
+      else if (this.emission.hasTxtCube)
+        buf.writeln("   return emissionClr*textureCube(emissionTxt, txtCube).rgb;");
+      else
+        buf.writeln("   return emissionClr;");
+    } else if (this.emission.hasTxt2D)
+        buf.writeln("   return texture2D(emissionTxt, txt2D).rgb;");
+    else if (this.emission.hasTxtCube)
+        buf.writeln("   return textureCube(emissionTxt, txtCube).rgb;");
+    buf.writeln("}");
     buf.writeln("");
   }
 
@@ -530,6 +540,7 @@ class MaterialLightConfig {
     if (this.specular.hasNone) return;
     buf.writeln("// === Specular ===");
     buf.writeln("");
+    buf.writeln("uniform float shininess;");
     this._writeColorSource(buf, this.specular, "specular");
     buf.writeln("");
     buf.writeln("vec3 specular(vec3 norm, vec3 litVec)");
@@ -1013,7 +1024,6 @@ class MaterialLightConfig {
     if (this.lights) {
       buf.writeln("   vec3 lightAccum = vec3(0.0, 0.0, 0.0);");
       fragParts.add("lightAccum");
-      if (!this.emission.hasNone)   buf.writeln("   setEmissionColor();");
       if (!this.ambient.hasNone)    buf.writeln("   setAmbientColor();");
       if (!this.diffuse.hasNone)    buf.writeln("   setDiffuseColor();");
       if (!this.invDiffuse.hasNone) buf.writeln("   setInvDiffuseColor();");
@@ -1026,7 +1036,7 @@ class MaterialLightConfig {
       if (this.txtSpotLight  > 0) buf.writeln("   lightAccum += allTxtSpotLightValues(norm);");
       if (this.totalLights  <= 0) buf.writeln("   lightAccum += nonLightValues(norm);");
     }
-    if (!this.emission.hasNone)   fragParts.add("emissionColor");
+    if (!this.emission.hasNone)   fragParts.add("emissionColor()");
     if (!this.reflection.hasNone) fragParts.add("reflect(refl)");
     if (!this.refraction.hasNone) fragParts.add("refract(refl)");
     if (fragParts.length <= 0) fragParts.add("vec3(0.0, 0.0, 0.0)");

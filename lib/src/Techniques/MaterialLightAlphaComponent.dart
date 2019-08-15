@@ -34,12 +34,12 @@ class MaterialLightAlphaComponent extends MaterialLightBaseComponent {
   double get value => this._alpha;
   set value(double value) {
     value ??= 1.0;
-    if (value <= 0.0) this.clear();
-    else if (this._type.hasNone) {
-      this._type = Shaders.ColorSourceType.Solid;
-      this._onComponentSet();
-      this._onTypeChanged();
+    if (value <= 0.0) {
+      this._setNewType(this._type.enableSolid(false));
+      this._setAlpha(0.0);
+    } else {
+      this._setNewType(this._type.enableSolid(true));
+      this._setAlpha(value >= 1.0? 1.0: value);
     }
-    this._setAlpha(value);
   }
 }
