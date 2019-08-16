@@ -81,7 +81,7 @@ class Normal extends Technique {
 
   /// Removes any normal distortion from the material.
   void clearBump() {
-    if (!this._bumpyType.hasNone) {
+    if (this._bumpyType.hasAny) {
       this._shader = null;
       this._bumpyType = Shaders.ColorSourceType();
     }

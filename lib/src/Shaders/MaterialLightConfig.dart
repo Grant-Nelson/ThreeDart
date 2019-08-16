@@ -994,10 +994,10 @@ class MaterialLightConfig {
       buf.writeln("{");
       buf.writeln("   if ((litClr.r < 0.001) && (litClr.g < 0.001) && (litClr.b < 0.001)) return litClr;");
       List<String> parts = new List<String>();
-      if (!this.ambient.hasNone)    parts.add("ambientColor");
-      if (!this.diffuse.hasNone)    parts.add("diffuse(norm, litVec)");
-      if (!this.invDiffuse.hasNone) parts.add("invDiffuse(norm, litVec)");
-      if (!this.specular.hasNone)   parts.add("specular(norm, litVec)");
+      if (this.ambient.hasAny)    parts.add("ambientColor");
+      if (this.diffuse.hasAny)    parts.add("diffuse(norm, litVec)");
+      if (this.invDiffuse.hasAny) parts.add("invDiffuse(norm, litVec)");
+      if (this.specular.hasAny)   parts.add("specular(norm, litVec)");
       buf.writeln("   return litClr*(" + parts.join(" + ") + ");");
       buf.writeln("}");
       buf.writeln("");
@@ -1024,10 +1024,10 @@ class MaterialLightConfig {
     if (this.lights) {
       buf.writeln("   vec3 lightAccum = vec3(0.0, 0.0, 0.0);");
       fragParts.add("lightAccum");
-      if (!this.ambient.hasNone)    buf.writeln("   setAmbientColor();");
-      if (!this.diffuse.hasNone)    buf.writeln("   setDiffuseColor();");
-      if (!this.invDiffuse.hasNone) buf.writeln("   setInvDiffuseColor();");
-      if (!this.specular.hasNone)   buf.writeln("   setSpecularColor();");
+      if (this.ambient.hasAny)    buf.writeln("   setAmbientColor();");
+      if (this.diffuse.hasAny)    buf.writeln("   setDiffuseColor();");
+      if (this.invDiffuse.hasAny) buf.writeln("   setInvDiffuseColor();");
+      if (this.specular.hasAny)   buf.writeln("   setSpecularColor();");
       if (this.dirLight      > 0) buf.writeln("   lightAccum += allDirLightValues(norm);");
       if (this.pointLight    > 0) buf.writeln("   lightAccum += allPointLightValues(norm);");
       if (this.spotLight     > 0) buf.writeln("   lightAccum += allSpotLightValues(norm);");
@@ -1036,9 +1036,9 @@ class MaterialLightConfig {
       if (this.txtSpotLight  > 0) buf.writeln("   lightAccum += allTxtSpotLightValues(norm);");
       if (this.totalLights  <= 0) buf.writeln("   lightAccum += nonLightValues(norm);");
     }
-    if (!this.emission.hasNone)   fragParts.add("emissionColor()");
-    if (!this.reflection.hasNone) fragParts.add("reflect(refl)");
-    if (!this.refraction.hasNone) fragParts.add("refract(refl)");
+    if (this.emission.hasAny)   fragParts.add("emissionColor()");
+    if (this.reflection.hasAny) fragParts.add("reflect(refl)");
+    if (this.refraction.hasAny) fragParts.add("refract(refl)");
     if (fragParts.length <= 0) fragParts.add("vec3(0.0, 0.0, 0.0)");
     buf.writeln("   vec4 objClr = vec4(" + fragParts.join(" + ") + ", alpha);");
     if (this.colorMat) buf.writeln("   objClr = colorMat*objClr;");

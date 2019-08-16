@@ -31,7 +31,7 @@ class NormalConfig {
   /// Creates a new normal configuration.
   /// The configuration for the normal shader.
   factory NormalConfig(ColorSourceType bumpy) {
-    bool binm    = !bumpy.hasNone;
+    bool binm    = bumpy.hasAny;
     bool txt2D   = bumpy.hasTxt2D;
     bool txtCube = bumpy.hasTxtCube;
 

@@ -295,7 +295,7 @@ class MaterialLight extends Technique {
         this._shader.invDiffuseTextureCube = this._invDiffuse.textureCube;
       }
 
-      if (!cfg.specular.hasNone)
+      if (cfg.specular.hasAny)
         this._shader.shininess = this._specular.shininess;
       if (cfg.specular.hasSolid)
         this._shader.specularColor = this._specular.color;
@@ -446,7 +446,7 @@ class MaterialLight extends Technique {
         this._shader.reflectionTextureCube = this._reflect.textureCube;
       }
 
-      if (!cfg.refraction.hasNone)
+      if (cfg.refraction.hasAny)
         this._shader.refraction = this._refract.deflection;
       if (cfg.refraction.hasSolid)
         this._shader.refractionColor = this._refract.color;
@@ -465,7 +465,7 @@ class MaterialLight extends Technique {
       this._shader.fogWidth = this._fog.start-this._fog.stop;
     }
 
-    if (!cfg.alpha.hasNone) {
+    if (cfg.alpha.hasAny) {
       if (cfg.alpha.hasSolid)
         this._shader.alpha = this._alpha.value;
       if (cfg.alpha.hasTxt2D) {
@@ -489,7 +489,7 @@ class MaterialLight extends Technique {
         ..render(state)
         ..unbind(state);
 
-    if (!cfg.alpha.hasNone)
+    if (cfg.alpha.hasAny)
       state.gl.disable(WebGL.WebGL.BLEND);
 
     for (int i = 0; i < textures.length; i++) {
