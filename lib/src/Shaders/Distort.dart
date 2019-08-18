@@ -57,8 +57,6 @@ class Distort extends Shader {
   UniformMat3 _bumpTxt2DMat;
   UniformSampler2D _colorTxt;
   UniformSampler2D _bumpTxt;
-  Uniform1i _nullColorTxt;
-  Uniform1i _nullBumpTxt;
   UniformMat4 _bumpMat;
 
   /// Checks for the shader in the shader cache in the given [state],

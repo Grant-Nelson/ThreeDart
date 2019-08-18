@@ -103,10 +103,13 @@ class GaussianBlur extends Technique {
 
   /// The blur value modification vector.
   /// This is the vector to apply to the color from the blur texture
-  /// to get the blur value from the blur texture, by default it just uses red.
+  /// to get the blur value from the blur texture.
+  /// To use RBG higher quality depth use the vector
+  /// `<1.0, 1.0/256.0, 1.0/65536.0, 0.0>`
+  /// which is the default for the adjustment.
   Math.Vector4 get blurAdjust => this._blurAdj;
   void set blurAdjust(Math.Vector4 vec) {
-    vec ??= Math.Vector4.posX;
+    vec ??= new Math.Vector4(1.0, 1.0/256.0, 1.0/65536.0, 0.0);
     if (this._blurAdj != vec) {
       Math.Vector4 prev = this._blurAdj;
       this._blurAdj = vec;

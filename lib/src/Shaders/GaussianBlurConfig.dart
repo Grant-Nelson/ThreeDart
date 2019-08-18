@@ -99,9 +99,8 @@ class GaussianBlurConfig {
     
     buf.writeln("void main()");
     buf.writeln("{");
-    if (this.blurTxt) {
+    if (this.blurTxt)
       buf.writeln("   float blurValue = dot(texture2D(blurTxt, txt2D), blurAdj);");
-    }
     buf.writeln("   float blurOffset = abs(blurValue);");
     buf.writeln("");
 

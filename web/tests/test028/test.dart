@@ -77,7 +77,7 @@ void main() {
   Scenes.EntityPass depthPass = new Scenes.EntityPass()
     ..camera = userCamera
     ..target = depthTarget
-    ..technique = new Techniques.Depth(fogStart: 3.5, fogStop: 5.5)
+    ..technique = new Techniques.Depth(start: 3.5, stop: 5.5)
     ..children.add(group);
   
   Scenes.GaussianBlur blurPass = new Scenes.GaussianBlur(

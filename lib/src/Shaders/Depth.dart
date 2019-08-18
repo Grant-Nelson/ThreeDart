@@ -3,13 +3,18 @@ part of ThreeDart.Shaders;
 /// A shader for very basic depth rendering.
 class Depth extends Shader {
 
-  /// The name for this shader.
-  static const String defaultName = "Depth";
+  /// The name for the high quality depth shader.
+  static const String _highName = "HighDepth";
+
+  /// The name for the grey scale depth shader.
+  static const String _greyName = "GreyDepth";
 
   /// The vertex shader source code in glsl.
   static String _vertexSource =
       "uniform mat4 viewObjMat;                    \n"+
       "uniform mat4 projMat;                       \n"+
+      "uniform float width;                        \n"+
+      "uniform float stop;                         \n"+
       "                                            \n"+
       "attribute vec3 posAttr;                     \n"+
       "                                            \n"+
@@ -18,56 +23,68 @@ class Depth extends Shader {
       "void main()                                 \n"+
       "{                                           \n"+
       "  vec4 pos = viewObjMat*vec4(posAttr, 1.0); \n"+
-      "  depth = pos.z;                            \n"+
+      "  depth = (pos.z - stop) / width;           \n"+
       "  gl_Position = projMat*pos;                \n"+
       "}                                           \n";
 
-  /// The fragment shader source code in glsl.
-  static String _fragmentSource =
-      "precision mediump float;                                  \n"+
-      "                                                          \n"+
-      "uniform vec3 objClr;                                      \n"+
-      "uniform vec3 fogClr;                                      \n"+
-      "uniform float fogStart;                                   \n"+
-      "uniform float fogStop;                                    \n"+
-      "                                                          \n"+
-      "varying float depth;                                      \n"+
-      "                                                          \n"+
-      "void main()                                               \n"+
-      "{                                                         \n"+
-      "   float factor = (depth-fogStop)/(fogStart-fogStop);     \n"+
-      "   factor = clamp(factor, 0.0, 1.0);                      \n"+
-      "   gl_FragColor = vec4(mix(fogClr, objClr, factor), 1.0); \n"+
-      "}                                                         \n";
+  /// The fragment shader source code in glsl
+  /// for the higher quality depth values.
+  static String _fragmentHighSource =
+      "precision mediump float;             \n"+
+      "                                     \n"+
+      "varying float depth;                 \n"+
+      "                                     \n"+
+      "void main()                          \n"+
+      "{                                    \n"+
+      "   float f = clamp(depth, 0.0, 1.0); \n"+
+      "   f = f * 256.0;                    \n"+
+      "   float r = floor(f);               \n"+
+      "   f = (f - r) * 256.0;              \n"+
+      "   float g = floor(f);               \n"+
+      "   f = (f - g) * 256.0;              \n"+
+      "   float b = floor(f);               \n"+
+      "   vec3 clr = vec3(r, g, b) / 256.0; \n"+
+      "   gl_FragColor = vec4(clr, 1.0);    \n"+
+      "}                                    \n";
+      
+  /// The fragment shader source code in glsl
+  /// for the grey scale depth values.
+  static String _fragmentGreySource =
+      "precision mediump float;             \n"+
+      "                                     \n"+
+      "varying float depth;                 \n"+
+      "                                     \n"+
+      "void main()                          \n"+
+      "{                                    \n"+
+      "   float f = clamp(depth, 0.0, 1.0); \n"+
+      "   vec3 clr = vec3(f, f, f);         \n"+
+      "   gl_FragColor = vec4(clr, 1.0);    \n"+
+      "}                                    \n";
 
   Attribute _posAttr;
-  Uniform3f _objClr;
-  Uniform3f _fogClr;
-  Uniform1f _fogStart;
-  Uniform1f _fogStop;
+  Uniform1f _width;
+  Uniform1f _stop;
   UniformMat4 _viewObjMat;
   UniformMat4 _projMat;
 
   /// Checks for the shader in the shader cache in the given [state],
   /// if it is not found then this shader is compiled and added
   /// to the shader cache before being returned.
-  factory Depth.cached(Core.RenderState state) {
-    Depth shader = state.shader(defaultName);
+  factory Depth.cached(bool grey, Core.RenderState state) {
+    Depth shader = state.shader(grey? _greyName: _highName);
     if (shader == null) {
-      shader = new Depth(state.gl);
+      shader = new Depth(grey, state.gl);
       state.addShader(shader);
     }
     return shader;
   }
 
   /// Compiles this shader for the given rendering context.
-  Depth(WebGL.RenderingContext2 gl): super(gl, defaultName) {
-    this.initialize(_vertexSource, _fragmentSource);
+  Depth(bool grey, WebGL.RenderingContext2 gl): super(gl, grey? _greyName: _highName) {
+    this.initialize(_vertexSource, grey? _fragmentGreySource: _fragmentHighSource);
     this._posAttr    = this.attributes["posAttr"];
-    this._objClr     = this.uniforms["objClr"] as Uniform3f;
-    this._fogClr     = this.uniforms["fogClr"] as Uniform3f;
-    this._fogStart   = this.uniforms["fogStart"] as Uniform1f;
-    this._fogStop    = this.uniforms["fogStop"] as Uniform1f;
+    this._width      = this.uniforms["width"] as Uniform1f;
+    this._stop       = this.uniforms["stop"] as Uniform1f;
     this._viewObjMat = this.uniforms["viewObjMat"] as UniformMat4;
     this._projMat    = this.uniforms["projMat"] as UniformMat4;
   }
@@ -75,21 +92,13 @@ class Depth extends Shader {
   /// The position vertex shader attribute.
   Attribute get posAttr => this._posAttr;
 
-  /// The color to draw the object with.
-  Math.Color3 get objectColor => this._objClr.getColor3();
-  set objectColor(Math.Color3 clr) => this._objClr.setColor3(clr);
+  /// The width of the depth values which map between 0 and 1.
+  double get width => this._width.getValue();
+  set width(double value) => this._width.setValue(value);
 
-  /// The color to draw the fog with, typically the same color as the background.
-  Math.Color3 get fogColor => this._fogClr.getColor3();
-  set fogColor(Math.Color3 clr) => this._fogClr.setColor3(clr);
-
-  /// The depth the fog starts. Closer than this has the object color.
-  double get fogStart => this._fogStart.getValue();
-  set fogStart(double value) => this._fogStart.setValue(value);
-
-  /// The depth the fog stops. Farther than this has the fog color.
-  double get fogStop => this._fogStop.getValue();
-  set fogStop(double value) => this._fogStop.setValue(value);
+  /// The value when the depth stops.
+  double get stop => this._stop.getValue();
+  set stop(double value) => this._stop.setValue(value);
 
   /// The view matrix times the object matrix.
   Math.Matrix4 get viewObjectMatrix => this._viewObjMat.getMatrix4();

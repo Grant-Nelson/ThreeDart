@@ -101,7 +101,7 @@ void main() {
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..shape = Shapes.cube()
     ..mover = new Movers.Rotater()
-    ..technique = new Techniques.Depth(fogStart: 3.0, fogStop: 6.0);
+    ..technique = new Techniques.Depth(start: 3.0, stop: 6.0, grey: true);
 
   Scenes.EntityPass pass = new Scenes.EntityPass()
     ..children.add(obj)

@@ -14,10 +14,7 @@ class GaussianBlur extends Shader {
   Uniform2f _blurScale;
 
   UniformSampler2D _colorTxt;
-  Uniform1i _nullColorTxt;
-
   UniformSampler2D _blurTxt;
-  Uniform1i _nullBlurTxt;
   Uniform1f _blurValue;
 
   /// Checks for the shader in the shader cache in the given [state],
@@ -48,13 +45,11 @@ class GaussianBlur extends Shader {
     this._projViewObjMat = this.uniforms["projViewObjMat"] as UniformMat4;
     this._txt2DMat       = this.uniforms["txt2DMat"] as UniformMat3;
     this._colorTxt       = this.uniforms["colorTxt"] as UniformSampler2D;
-    this._nullColorTxt   = this.uniforms["nullColorTxt"] as Uniform1i;
     this._blurScale      = this.uniforms["blurScale"] as Uniform2f;
 
     if (cfg.blurTxt) {
-      this._blurTxt     = this.uniforms["blurTxt"] as UniformSampler2D;
-      this._nullBlurTxt = this.uniforms["nullBlurTxt"] as Uniform1i;
-      this._blurAdj     = this.uniforms["blurAdj"] as Uniform4f;
+      this._blurTxt = this.uniforms["blurTxt"] as UniformSampler2D;
+      this._blurAdj = this.uniforms["blurAdj"] as Uniform4f;
     } else {
       this._blurValue = this.uniforms["blurValue"] as Uniform1f;
     }
