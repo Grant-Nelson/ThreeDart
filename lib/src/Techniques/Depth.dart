@@ -6,21 +6,25 @@ class Depth extends Technique {
   double _start;
   double _stop;
   bool _grey;
+  bool _invert;
   Events.Event _changed;
 
   /// Creates a new depth technique with the given initial values.
-  Depth({double start: 1.0,
-         double stop:  10.0,
-         bool   grey:  false}) {
+  Depth({double start:  1.0,
+         double stop:   10.0,
+         bool   grey:   false,
+         bool   invert: false}) {
     this._shader  = null;
     this._start   = 1.0;
     this._stop    = 10.0;
     this._grey    = false;
+    this._invert  = false;
     this._changed = null;
 
-    this.start = start;
-    this.stop  = stop;
-    this.grey  = grey;
+    this.start  = start;
+    this.stop   = stop;
+    this.grey   = grey;
+    this.invert = invert;
   }
 
   /// Indicates that this technique has changed.
@@ -56,7 +60,8 @@ class Depth extends Technique {
     }
   }
 
-  /// The value of the depth labelled 0. Farther than this will all be 0.
+  /// Indicates that grey scale should be outputted,
+  /// otherwise high quality depth using RGB values.
   bool get grey => this._grey;
   void set grey(bool grey) {
     grey ??= false;
@@ -65,6 +70,18 @@ class Depth extends Technique {
       this._grey = grey;
       this._shader = null;
       this._onChanged(new Events.ValueChangedEventArgs(this, "grey", prev, this._grey));
+    }
+  }
+
+  /// Indicates that the backside of the shape should be used
+  /// instead of the front. This is used when getting shadow depth textures.
+  bool get invert => this._invert;
+  void set invert(bool invert) {
+    invert ??= false;
+    if (this._invert != invert) {
+      bool prev = this._invert;
+      this._invert = invert;
+      this._onChanged(new Events.ValueChangedEventArgs(this, "invert", prev, this._invert));
     }
   }
 
@@ -95,11 +112,17 @@ class Depth extends Technique {
       ..stop  = this._stop
       ..projectMatrix = state.projection.matrix
       ..viewObjectMatrix = state.viewObjectMatrix;
+    
+    if (this._invert)
+      state.gl.frontFace(WebGL.WebGL.CW);
 
     (obj.cache as Data.BufferStore)
       ..bind(state)
       ..render(state)
       ..unbind(state);
+      
+    if (this._invert)
+      state.gl.frontFace(WebGL.WebGL.CCW);
 
     this._shader.unbind(state);
   }
