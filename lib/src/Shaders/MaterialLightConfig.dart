@@ -111,6 +111,9 @@ class MaterialLightConfig {
   /// Indicates that fog is enabled.
   final bool fog;
 
+  /// Indicates that the RBG to float method is needed.
+  final bool rgbToFloat;
+
   /// The total number of bend matrices allowed by this shader.
   final int bendMats;
 
@@ -138,7 +141,8 @@ class MaterialLightConfig {
     bool this.viewPos, bool this.norm, bool this.binm,
     bool this.txt2D, bool this.txtCube, bool this.bending,
     bool this.txt2DMat, bool this.txtCubeMat,
-    bool this.colorMat, bool this.fog, int this.bendMats,
+    bool this.colorMat, bool this.fog,
+    bool this.rgbToFloat, int this.bendMats,
     String this.name, Data.VertexType this.vertexType);
 
   /// Creates a new material light configuration.
@@ -207,6 +211,7 @@ class MaterialLightConfig {
                    alpha.hasTxtCube;
     bool hasLight = (pointLight + txtPointLight + txtDirLight +
                      spotLight + txtSpotLight) > 0;
+    bool rgbToFloat = false;
     bool objPos  = hasLight || fog;
     bool bending = bendMats > 0;
     bool objMat  = objPos;
@@ -231,7 +236,7 @@ class MaterialLightConfig {
       invViewMat, objMat, viewObjMat, projViewObjMat,
       viewMat, projViewMat, lights, objPos, viewPos,
       norm, binm, txt2D, txtCube, bending, txt2DMat, txtCubeMat,
-      colorMat, fog, bendMats, name, vertexType);
+      colorMat, fog, rgbToFloat, bendMats, name, vertexType);
   }
 
   //=====================================================================
@@ -683,6 +688,16 @@ class MaterialLightConfig {
     buf.writeln("");
   }
 
+  /// Writes the conversion from color to single float value method.
+  /// This method is used for using a color texture as a depth like buffer.
+  void _writeRGBToFoat(StringBuffer buf) {
+    buf.writeln("float rgbToFloat(vec3 clr)");
+    buf.writeln("{");
+    buf.writeln("   return clr.r + clr.g * 256.0 + clr.b * 265536.0;");
+    buf.writeln("}");
+    buf.writeln("");
+  }
+
   /// Writes the directional lights to the fragment shader [buf].
   void _writeDirLight(StringBuffer buf) {
     if (dirLight <= 0) return;
@@ -821,7 +836,8 @@ class MaterialLightConfig {
     buf.writeln("   vec3 offset = objPos + lit.objDir*dot(objPos, lit.objDir);");
     buf.writeln("   float tu = dot(offset, lit.objUp);");
     buf.writeln("   float tv = dot(offset, lit.objRight);");
-    buf.writeln("   vec3 color = lit.color*texture2D(txt2D, vec2(tu, tv)).xyz;");
+    buf.writeln("   vec2 txtLoc = vec2(tu, tv);");
+    buf.writeln("   vec3 color = lit.color*texture2D(txt2D, txtLoc).xyz;");
     buf.writeln("   return lightValue(norm, color, lit.viewDir);");
     buf.writeln("}");
     buf.writeln("");
@@ -920,7 +936,8 @@ class MaterialLightConfig {
     buf.writeln("   if((tu > 1.0) || (tu < 0.0)) return vec3(0.0, 0.0, 0.0);");
     buf.writeln("   float tv = dot(normDir, lit.objRight)*lit.tvScalar+0.5;");
     buf.writeln("   if((tv > 1.0) || (tv < 0.0)) return vec3(0.0, 0.0, 0.0);");
-    buf.writeln("   vec3 color = lit.color*texture2D(txt2D, vec2(tu, tv)).xyz;");
+    buf.writeln("   vec2 txtLoc = vec2(tu, tv);");
+    buf.writeln("   vec3 color = lit.color*texture2D(txt2D, txtLoc).xyz;");
     buf.writeln("   return lightValue(norm, color*attenuation, normalize(viewPos - lit.viewPnt));");
     buf.writeln("}");
     buf.writeln("");
@@ -976,6 +993,8 @@ class MaterialLightConfig {
     this._writeDiffuse(buf);
     this._writeInvDiffuse(buf);
     this._writeSpecular(buf);
+    if (this.rgbToFloat)
+      this._writeRGBToFoat(buf);
     if (this.enviromental) {
       buf.writeln("// === Enviromental ===");
       buf.writeln("");
