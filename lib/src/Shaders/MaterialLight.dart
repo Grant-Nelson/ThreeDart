@@ -296,7 +296,7 @@ class MaterialLight extends Shader {
           Uniform1f att0       = this.uniforms.required("txtSpotLights[$i].att0") as Uniform1f;
           Uniform1f att1       = this.uniforms.required("txtSpotLights[$i].att1") as Uniform1f;
           Uniform1f att2       = this.uniforms.required("txtSpotLights[$i].att2") as Uniform1f;
-          UniformSampler2D txt = this.uniforms.required("txtSpotLightsTxt2D$i") as UniformSampler2D;
+          UniformSampler2D txt = this.uniforms.required("txtSpotLightsTexture2D$i") as UniformSampler2D;
           this._txtSpotLights.add(new UniformTexturedSpotLight._(i, objPnt, objDir, objUp, objRight, viewPnt, txt, color, tuScalar, tvScalar, att0, att1, att2));
         }
       }

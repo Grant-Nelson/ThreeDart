@@ -766,50 +766,114 @@ class MaterialLightConfig {
   }
 
   /// Writes the spot lights to the fragment shader [buf].
-  void _writeSpotLight(StringBuffer buf) {
-    if (this.spotLight <= 0) return;
-    buf.writeln("// === Spot Light ===");
+  void _writeSpotLightTemp(bool hasTexture, bool colorTxt, bool shadowTxt,
+    bool hasCutOff, int lightCount, String name, StringBuffer buf) {
+    if (lightCount <= 0) return;
+    String title = toTitleCase(name);
+    buf.writeln("// === $title ===");
     buf.writeln("");
-    buf.writeln("struct SpotLight");
+    buf.writeln("struct $title");
     buf.writeln("{");
     buf.writeln("   vec3 objPnt;");
     buf.writeln("   vec3 objDir;");
+    if (hasTexture) {
+      buf.writeln("   vec3 objUp;");
+      buf.writeln("   vec3 objRight;");
+    }
     buf.writeln("   vec3 viewPnt;");
     buf.writeln("   vec3 color;");
-    buf.writeln("   float cutoff;");
-    buf.writeln("   float coneAngle;");
+    if (hasTexture) {
+      buf.writeln("   float tuScalar;");
+      buf.writeln("   float tvScalar;");
+    }
+    if (shadowTxt)
+      buf.writeln("   vec4 shadowAdj;");
+    if (hasCutOff) {
+      buf.writeln("   float cutoff;");
+      buf.writeln("   float coneAngle;");
+    }
     buf.writeln("   float att0;");
     buf.writeln("   float att1;");
     buf.writeln("   float att2;");
     buf.writeln("};");
     buf.writeln("");
-    buf.writeln("uniform int spotLightCount;");
-    buf.writeln("uniform SpotLight spotLights[${this.spotLight}];");
+    buf.writeln("uniform int ${name}Count;");
+    buf.writeln("uniform $title ${name}s[$lightCount];");
+    for (int i = 0; i < lightCount; i++) {
+      if (colorTxt)
+        buf.writeln("uniform sampler2D ${name}sTexture2D$i;");
+      if (shadowTxt)
+        buf.writeln("uniform sampler2D ${name}sShadow2D$i;");
+    }
     buf.writeln("");
-    buf.writeln("vec3 spotLightValue(vec3 norm, SpotLight lit)");
+    String params = "";
+    if (colorTxt)  params += ", sampler2D txt2D";
+    if (shadowTxt) params += ", sampler2D shadow2D";
+    buf.writeln("vec3 ${name}Value(vec3 norm, $title lit$params)");
     buf.writeln("{");
     buf.writeln("   vec3 dir = objPos - lit.objPnt;");
     buf.writeln("   float dist = length(dir);");
     buf.writeln("   float attenuation = 1.0/(lit.att0 + (lit.att1 + lit.att2*dist)*dist);");
     buf.writeln("   if(attenuation <= 0.005) return vec3(0.0, 0.0, 0.0);");
-    buf.writeln("   float angle = acos(dot(normalize(dir), lit.objDir));");
-    buf.writeln("   float scale = (lit.cutoff-angle)/(lit.cutoff-lit.coneAngle);");
-    buf.writeln("   if(scale <= 0.0) return vec3(0.0, 0.0, 0.0);");
-    buf.writeln("   if(scale > 1.0) scale = 1.0;");
-    buf.writeln("   return lightValue(norm, lit.color*attenuation*scale, normalize(viewPos - lit.viewPnt));");
+    buf.writeln("   vec3 normDir = normalize(dir);");
+    buf.writeln("   float zScale = dot(normDir, lit.objDir);");
+    buf.writeln("   if(zScale < 0.0) return vec3(0.0, 0.0, 0.0);");
+    if (hasCutOff) {
+      buf.writeln("   float angle = acos(zScale);");
+      buf.writeln("   float scale = (lit.cutoff-angle)/(lit.cutoff-lit.coneAngle);");
+      buf.writeln("   if(scale <= 0.0) return vec3(0.0, 0.0, 0.0);");
+    }
+    if (hasTexture) {
+      buf.writeln("   normDir = normDir/zScale;");
+      buf.writeln("   float tu = dot(normDir, lit.objUp)*lit.tuScalar+0.5;");
+      buf.writeln("   if((tu > 1.0) || (tu < 0.0)) return vec3(0.0, 0.0, 0.0);");
+      buf.writeln("   float tv = dot(normDir, lit.objRight)*lit.tvScalar+0.5;");
+      buf.writeln("   if((tv > 1.0) || (tv < 0.0)) return vec3(0.0, 0.0, 0.0);");
+      buf.writeln("   vec2 txtLoc = vec2(tu, tv);");
+    }
+    if (shadowTxt) {
+      buf.writeln("   float depth = dot(texture2D(txt2D, txtLoc), shadowAdj);");
+      buf.writeln("   if(depth < dist) return vec3(0.0, 0.0, 0.0);");
+    }
+    buf.writeln("   vec3 color = lit.color*attenuation;");
+    if (hasCutOff) 
+      buf.writeln("   if(scale < 1.0) color *= scale;");
+    if (colorTxt)
+      buf.writeln("   color *= texture2D(txt2D, txtLoc).rgb;");
+    buf.writeln("   return lightValue(norm, color, normalize(viewPos - lit.viewPnt));");
     buf.writeln("}");
     buf.writeln("");
-    buf.writeln("vec3 allSpotLightValues(vec3 norm)");
+    buf.writeln("vec3 all${title}Values(vec3 norm)");
     buf.writeln("{");
     buf.writeln("   vec3 lightAccum = vec3(0.0, 0.0, 0.0);");
-    buf.writeln("   for(int i = 0; i < ${this.spotLight}; ++i)");
-    buf.writeln("   {");
-    buf.writeln("      if(i >= spotLightCount) break;");
-    buf.writeln("      lightAccum += spotLightValue(norm, spotLights[i]);");
-    buf.writeln("   }");
+    if (hasTexture) {
+      for (int i = 0; i < this.txtSpotLight; ++i) {
+        buf.writeln("   if(${name}Count <= $i) return lightAccum;");
+        String params = "";
+        if (colorTxt)  params += ", ${name}sTexture2D$i";
+        if (shadowTxt) params += ", ${name}sShadow2D$i";
+        buf.writeln("   lightAccum += ${name}Value(norm, ${name}s[$i]$params);");
+      }
+    } else {
+      buf.writeln("   for(int i = 0; i < $lightCount; ++i)");
+      buf.writeln("   {");
+      buf.writeln("      if(i >= ${name}Count) break;");
+      buf.writeln("      lightAccum += ${name}Value(norm, ${name}s[i]);");
+      buf.writeln("   }");
+    }
     buf.writeln("   return lightAccum;");
     buf.writeln("}");
     buf.writeln("");
+  }
+
+  /// Writes the spot lights to the fragment shader [buf].
+  void _writeSpotLight(StringBuffer buf) {
+    this._writeSpotLightTemp(false, false, false, true, this.spotLight, "spotLight", buf);
+  }
+
+  /// Writes the texture spot lights to the fragment shader [buf].
+  void _writeTxtSpotLight(StringBuffer buf) {
+    this._writeSpotLightTemp(true, true, false, false, this.txtSpotLight, "txtSpotLight", buf);
   }
 
   /// Writes the texture directional lights to the fragment shader [buf].
@@ -891,62 +955,6 @@ class MaterialLightConfig {
     for (int i = 0; i < this.txtPointLight; ++i) {
       buf.writeln("   if(txtPntLightCount <= $i) return lightAccum;");
       buf.writeln("   lightAccum += txtPointLightValue(norm, txtPntLights[$i], txtPntLightsTxtCube$i);");
-    }
-    buf.writeln("   return lightAccum;");
-    buf.writeln("}");
-    buf.writeln("");
-  }
-
-  /// Writes the texture spot lights to the fragment shader [buf].
-  void _writeTxtSpotLight(StringBuffer buf) {
-    if (this.txtSpotLight <= 0) return;
-    buf.writeln("// === Texture Spot Light ===");
-    buf.writeln("");
-    buf.writeln("struct TexturedSpotLight");
-    buf.writeln("{");
-    buf.writeln("   vec3 objPnt;");
-    buf.writeln("   vec3 objDir;");
-    buf.writeln("   vec3 objUp;");
-    buf.writeln("   vec3 objRight;");
-    buf.writeln("   vec3 viewPnt;");
-    buf.writeln("   vec3 color;");
-    buf.writeln("   float tuScalar;");
-    buf.writeln("   float tvScalar;");
-    buf.writeln("   float att0;");
-    buf.writeln("   float att1;");
-    buf.writeln("   float att2;");
-    buf.writeln("};");
-    buf.writeln("");
-    buf.writeln("uniform int txtSpotLightCount;");
-    buf.writeln("uniform TexturedSpotLight txtSpotLights[${this.txtSpotLight}];");
-    for (int i = 0; i < this.txtSpotLight; i++)
-      buf.writeln("uniform sampler2D txtSpotLightsTxt2D$i;");
-    buf.writeln("");
-    buf.writeln("vec3 txtSpotLightValue(vec3 norm, TexturedSpotLight lit, sampler2D txt2D)");
-    buf.writeln("{");
-    buf.writeln("   vec3 dir = objPos - lit.objPnt;");
-    buf.writeln("   float dist = length(dir);");
-    buf.writeln("   float attenuation = 1.0/(lit.att0 + (lit.att1 + lit.att2*dist)*dist);");
-    buf.writeln("   if(attenuation <= 0.005) return vec3(0.0, 0.0, 0.0);");
-    buf.writeln("   vec3 normDir = normalize(dir);");
-    buf.writeln("   float zScale = dot(normDir, lit.objDir);");
-    buf.writeln("   if(zScale < 0.0) return vec3(0.0, 0.0, 0.0);");
-    buf.writeln("   normDir = normDir/zScale;");
-    buf.writeln("   float tu = dot(normDir, lit.objUp)*lit.tuScalar+0.5;");
-    buf.writeln("   if((tu > 1.0) || (tu < 0.0)) return vec3(0.0, 0.0, 0.0);");
-    buf.writeln("   float tv = dot(normDir, lit.objRight)*lit.tvScalar+0.5;");
-    buf.writeln("   if((tv > 1.0) || (tv < 0.0)) return vec3(0.0, 0.0, 0.0);");
-    buf.writeln("   vec2 txtLoc = vec2(tu, tv);");
-    buf.writeln("   vec3 color = lit.color*texture2D(txt2D, txtLoc).xyz;");
-    buf.writeln("   return lightValue(norm, color*attenuation, normalize(viewPos - lit.viewPnt));");
-    buf.writeln("}");
-    buf.writeln("");
-    buf.writeln("vec3 allTxtSpotLightValues(vec3 norm)");
-    buf.writeln("{");
-    buf.writeln("   vec3 lightAccum = vec3(0.0, 0.0, 0.0);");
-    for (int i = 0; i < this.txtSpotLight; ++i) {
-      buf.writeln("   if(txtSpotLightCount <= $i) return lightAccum;");
-      buf.writeln("   lightAccum += txtSpotLightValue(norm, txtSpotLights[$i], txtSpotLightsTxt2D$i);");
     }
     buf.writeln("   return lightAccum;");
     buf.writeln("}");

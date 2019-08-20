@@ -15,8 +15,8 @@ void main() {
       "Depth can also be sent to all the channels causing a grey scale but at ",
       "lower quality depth. The depth can invert the face to use so that this can ",
       "be used for light shadow depth texture."])
-    ..addPar(["«[Back to Tests|../]"])
-    ..addControlBoxes(["controls"]);
+    ..addControlBoxes(["controls"])
+    ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..shape = Shapes.toroid()
