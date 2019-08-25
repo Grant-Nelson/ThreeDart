@@ -167,8 +167,11 @@ class UniformSpotLight {
   /// Creates the spot light uniform.
   UniformSpotLight._(int this._index,
     Uniform3f this._objPnt, Uniform3f this._objDir, Uniform3f this._viewPnt,
-    Uniform3f this._color, Uniform1f this._cutoff, Uniform1f this._coneAngle,
-    Uniform1f this._att0, Uniform1f this._att1, Uniform1f this._att2);
+    Uniform3f this._color, Uniform3f this._objUp, Uniform3f this._objRight,
+    Uniform1f this._tuScalar, Uniform1f this._tvScalar, Uniform4f this._shadowAdj,
+    Uniform1f this._cutoff, Uniform1f this._coneAngle,
+    Uniform1f this._att0, Uniform1f this._att1, Uniform1f this._att2,
+    UniformSampler2D this._txt, UniformSampler2D this._shadow);
 
   /// The index of this light in the list of spot lights.
   int get index => this._index;
@@ -193,6 +196,31 @@ class UniformSpotLight {
   Math.Color3 get color => this._color.getColor3();
   set color(Math.Color3 clr) => this._color.setColor3(clr);
   Uniform3f _color;
+
+  /// The spot light's up.
+  Math.Vector3 get objectUp => this._objUp.getVector3();
+  set objectUp(Math.Vector3 vec) => this._objUp.setVector3(vec);
+  Uniform3f _objUp;
+
+  /// The spot light's right.
+  Math.Vector3 get objectRight => this._objRight.getVector3();
+  set objectRight(Math.Vector3 vec) => this._objRight.setVector3(vec);
+  Uniform3f _objRight;
+  
+  /// The spot light's horizontal scalar.
+  double get tuScalar => this._tuScalar.getValue();
+  set tuScalar(double tuScalar) => this._tuScalar.setValue(tuScalar);
+  Uniform1f _tuScalar;
+
+  /// The spot light's vertical scalar.
+  double get tvScalar => this._tvScalar.getValue();
+  set tvScalar(double tvScalar) => this._tvScalar.setValue(tvScalar);
+  Uniform1f _tvScalar;
+
+  /// The spot light shadow depths adjustment vector.
+  Math.Vector4 get shadowAdjust => this._shadowAdj.getVector4();
+  set shadowAdjust(Math.Vector4 adj) => this._shadowAdj.setVector4(adj);
+  Uniform4f _shadowAdj;
 
   /// The spot light cut-off, in radians.
   double get cutoff => this._cutoff.getValue();
@@ -218,46 +246,6 @@ class UniformSpotLight {
   double get attenuation2 => this._att2.getValue();
   set attenuation2(double att) => this._att2.setValue(att);
   Uniform1f _att2;
-}
-
-/// Textured spot light uniform.
-class UniformTexturedSpotLight {
-
-  /// Creates the textured spot light uniform.
-  UniformTexturedSpotLight._(int this._index, Uniform3f this._objPnt,
-    Uniform3f this._objDir, Uniform3f this._objUp, Uniform3f this._objRight,
-    Uniform3f this._viewPnt, UniformSampler2D this._txt,
-    Uniform3f this._color, Uniform1f this._tuScalar, Uniform1f this._tvScalar,
-    Uniform1f this._att0, Uniform1f this._att1, Uniform1f this._att2);
-
-  /// The index of this light in the list of spot lights.
-  int get index => this._index;
-  int _index;
-
-  /// The spot light's location transformed by the object matrix.
-  Math.Point3 get objectPoint => this._objPnt.getPoint3();
-  set objectPoint(Math.Point3 pnt) => this._objPnt.setPoint3(pnt);
-  Uniform3f _objPnt;
-
-  /// The directional light's direction.
-  Math.Vector3 get objectDirection => this._objDir.getVector3();
-  set objectDirection(Math.Vector3 vec) => this._objDir.setVector3(vec);
-  Uniform3f _objDir;
-
-  /// The directional light's up.
-  Math.Vector3 get objectUp => this._objUp.getVector3();
-  set objectUp(Math.Vector3 vec) => this._objUp.setVector3(vec);
-  Uniform3f _objUp;
-
-  /// The directional light's right.
-  Math.Vector3 get objectRight => this._objRight.getVector3();
-  set objectRight(Math.Vector3 vec) => this._objRight.setVector3(vec);
-  Uniform3f _objRight;
-
-  /// The spot light's location transformed by the view matrix.
-  Math.Point3 get viewPoint => this._viewPnt.getPoint3();
-  set viewPoint(Math.Point3 pnt) => this._viewPnt.setPoint3(pnt);
-  Uniform3f _viewPnt;
 
   /// The spot light texture.
   set texture(Textures.Texture2D txt) {
@@ -265,33 +253,9 @@ class UniformTexturedSpotLight {
   }
   UniformSampler2D _txt;
 
-  /// The spot light color.
-  Math.Color3 get color => this._color.getColor3();
-  set color(Math.Color3 clr) => this._color.setColor3(clr);
-  Uniform3f _color;
-
-  /// The spot light's veritcal horizontal.
-  double get tuScalar => this._tuScalar.getValue();
-  set tuScalar(double tuScalar) => this._tuScalar.setValue(tuScalar);
-  Uniform1f _tuScalar;
-
-  /// The spot light's veritcal scalar.
-  double get tvScalar => this._tvScalar.getValue();
-  set tvScalar(double tvScalar) => this._tvScalar.setValue(tvScalar);
-  Uniform1f _tvScalar;
-
-  /// The spot light constant attenuation.
-  double get attenuation0 => this._att0.getValue();
-  set attenuation0(double att) => this._att0.setValue(att);
-  Uniform1f _att0;
-
-  /// The spot light linear attenuation.
-  double get attenuation1 => this._att1.getValue();
-  set attenuation1(double att) => this._att1.setValue(att);
-  Uniform1f _att1;
-
-  /// The spot light quatradic attenuation.
-  double get attenuation2 => this._att2.getValue();
-  set attenuation2(double att) => this._att2.setValue(att);
-  Uniform1f _att2;
+  /// The spot light shadow depth texture.
+  set shadow(Textures.Texture2D txt) {
+    if ((txt != null) && txt.loaded) this._shadow.setTexture2D(txt);
+  }
+  UniformSampler2D _shadow;
 }

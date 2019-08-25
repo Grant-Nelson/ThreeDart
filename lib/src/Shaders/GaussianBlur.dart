@@ -35,10 +35,6 @@ class GaussianBlur extends Shader {
     String vertexSource = this._cfg.createVertexSource();
     String fragmentSource = this._cfg.createFragmentSource();
 
-    // print(this._cfg.toString());
-    // print(numberLines(vertexSource));
-    // print(numberLines(fragmentSource));
-
     this.initialize(vertexSource, fragmentSource);
     this._posAttr        = this.attributes["posAttr"];
     this._txtAttr        = this.attributes["txtAttr"];

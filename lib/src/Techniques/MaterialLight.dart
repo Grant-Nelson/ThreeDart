@@ -176,19 +176,28 @@ class MaterialLight extends Technique {
 
   /// Creates the configuration for this shader.
   Shaders.MaterialLightConfig _config() {
-    int dirLight      = this._lengthLimit(this._lights.directionalLights.length);
+    int dirLight    = this._lengthLimit(this._lights.directionalLights.length);
+    int txtDirLight = this._lengthLimit(this._lights.texturedDirectionalLights.length);
+
     int pointLight    = this._lengthLimit(this._lights.pointLights.length);
-    int spotLight     = this._lengthLimit(this._lights.spotLights.length);
-    int txtDirLight   = this._lengthLimit(this._lights.texturedDirectionalLights.length);
     int txtPointLight = this._lengthLimit(this._lights.texturedPointLights.length);
-    int txtSpotLight  = this._lengthLimit(this._lights.texturedSpotLights.length);
-    int bendMats      = this._lengthLimit(this._bendMats.length);
+
+    // Collect configuration for spot lights.
+    Map<int, int> spotLightCounter = new Map<int, int>();
+    for (Lights.Spot light in this._lights.spotLights)
+      spotLightCounter[light.configID] = spotLightCounter[light.configID]??0 + 1;
+    List<Shaders.SpotLightConfig> spotLights = new List<Shaders.SpotLightConfig>();
+    spotLightCounter.forEach((int configID, int count) =>
+      spotLights.add(new Shaders.SpotLightConfig(configID, this._lengthLimit(count))));
+    spotLights.sort((Shaders.SpotLightConfig a, Shaders.SpotLightConfig b) => a.configID.compareTo(b.configID));
+
+    int bendMats = this._lengthLimit(this._bendMats.length);
     return new Shaders.MaterialLightConfig(
       this._txt2DMat != null, this._txtCubeMat != null, this._colorMat != null,
       this._fog.enabled, bendMats, this._emission.type, this._ambient.type,
       this._diffuse.type, this._invDiffuse.type, this._specular.type,
       this._bump.type, this._reflect.type, this._refract.type, this._alpha.type,
-      dirLight, pointLight, spotLight, txtDirLight, txtPointLight, txtSpotLight);
+      dirLight, pointLight, spotLights, txtDirLight, txtPointLight);
   }
 
   /// Checks if the texture is in the list and if not, sets it's index and adds it to the list.
@@ -337,23 +346,44 @@ class MaterialLight extends Technique {
         }
       }
 
-      if (cfg.spotLight > 0) {
-        int count = this._lights.spotLights.length;
-        this._shader.spotLightCount = count;
+      if (cfg.spotLights.length > 0) {
         Math.Matrix4 viewMat = state.view.matrix;
-        int index = 0;
+        Map<int, int> spotLightCounter = new Map<int, int>();
         for (Lights.Spot light in this._lights.spotLights) {
-          Shaders.UniformSpotLight uniform = this._shader.spotLights[index];
+          final int configID = light.configID;
+          final int index = spotLightCounter[configID]??0;
+          spotLightCounter[configID] = index + 1;
+
+          Shaders.UniformSpotLight uniform = this._shader.getSpotLight(configID)[index];
           uniform.objectPoint     = light.position;
           uniform.objectDirection = light.direction.normal();
           uniform.viewPoint       = viewMat.transPnt3(light.position);
           uniform.color           = light.color;
-          uniform.cutoff          = light.cutoff;
-          uniform.coneAngle       = light.coneAngle;
-          uniform.attenuation0    = light.attenuation0;
-          uniform.attenuation1    = light.attenuation1;
-          uniform.attenuation2    = light.attenuation2;
-          index++;
+          uniform.texture         = light.texture;
+          uniform.shadow          = light.shadow;
+          if (light.texture != null || light.shadow != null) { 
+            uniform.objectUp    = light.up;
+            uniform.objectRight = light.right;
+            uniform.tuScalar    = light.tuScalar;
+            uniform.tvScalar    = light.tvScalar;
+          }
+          if (light.shadow != null) {
+            uniform.shadowAdjust = light.shadowAdjust;
+          }
+          if (light.enableCutOff) {
+            uniform.cutoff    = light.cutoff;
+            uniform.coneAngle = light.coneAngle;
+          }
+          if (light.enableAttenuation) {
+            uniform.attenuation0 = light.attenuation0;
+            uniform.attenuation1 = light.attenuation1;
+            uniform.attenuation2 = light.attenuation2;
+          }
+        }
+
+        for (Shaders.SpotLightConfig light in cfg.spotLights) {
+          int  count = spotLightCounter[light.configID]??0;
+          this._shader.setSpotLightCount(light.configID, count);
         }
       }
 
@@ -392,30 +422,6 @@ class MaterialLight extends Technique {
           uniform.attenuation0 = light.attenuation0;
           uniform.attenuation1 = light.attenuation1;
           uniform.attenuation2 = light.attenuation2;
-          index++;
-        }
-      }
-
-      if (cfg.txtSpotLight > 0) {
-        int count = this._lights.texturedSpotLights.length;
-        this._shader.texturedSpotLightCount = count;
-        Math.Matrix4 viewMat = state.view.matrix;
-        int index = 0;
-        for (Lights.TexturedSpot light in this._lights.texturedSpotLights) {
-          Shaders.UniformTexturedSpotLight uniform = this._shader.texturedSpotLights[index];
-          this._addToTextureList(textures, light.texture);
-          uniform.objectPoint     = light.position;
-          uniform.objectDirection = light.direction;
-          uniform.objectUp        = light.up;
-          uniform.objectRight     = light.right;
-          uniform.viewPoint       = viewMat.transPnt3(light.position);
-          uniform.texture         = light.texture;
-          uniform.color           = light.color;
-          uniform.tuScalar        = light.tuScalar;
-          uniform.tvScalar        = light.tvScalar;
-          uniform.attenuation0    = light.attenuation0;
-          uniform.attenuation1    = light.attenuation1;
-          uniform.attenuation2    = light.attenuation2;
           index++;
         }
       }

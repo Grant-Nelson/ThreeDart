@@ -70,17 +70,14 @@ class MaterialLight extends Shader {
   Uniform1i _pntLightCount;
   List<UniformPointLight> _pntLights;
 
-  Uniform1i _spotLightCount;
-  List<UniformSpotLight> _spotLights;
+  Map<int, Uniform1i> _spotLightCounts;
+  Map<int, List<UniformSpotLight>> _spotLights;
 
   Uniform1i _txtDirLightCount;
   List<UniformTexturedDirectionalLight> _txtDirLights;
 
   Uniform1i _txtPntLightCount;
   List<UniformTexturedPointLight> _txtPntLights;
-
-  Uniform1i _txtSpotLightCount;
-  List<UniformTexturedSpotLight> _txtSpotLights;
 
   Uniform4f _fogClr;
   Uniform1f _fogStop;
@@ -208,12 +205,14 @@ class MaterialLight extends Shader {
     else if (cfg.alpha.hasTxtCube)
       this._alphaCube = this.uniforms.required("alphaTxt") as UniformSamplerCube;
 
-    this._dirLights     = new List<UniformDirectionalLight>();
-    this._pntLights     = new List<UniformPointLight>();
-    this._spotLights    = new List<UniformSpotLight>();
-    this._txtDirLights  = new List<UniformTexturedDirectionalLight>();
-    this._txtPntLights  = new List<UniformTexturedPointLight>();
-    this._txtSpotLights = new List<UniformTexturedSpotLight>();
+    this._dirLights    = new List<UniformDirectionalLight>();
+    this._txtDirLights = new List<UniformTexturedDirectionalLight>();
+
+    this._pntLights    = new List<UniformPointLight>();
+    this._txtPntLights = new List<UniformTexturedPointLight>();
+
+    this._spotLightCounts = new Map<int, Uniform1i>();
+    this._spotLights      = new Map<int, List<UniformSpotLight>>();
 
     if (cfg.lights) {
       if (cfg.dirLight > 0) {
@@ -238,22 +237,50 @@ class MaterialLight extends Shader {
         }
       }
 
-      if (cfg.spotLight > 0) {
-        this._spotLightCount = this.uniforms.required("spotLightCount");
-        for (int i = 0; i < cfg.spotLight; ++i) {
-          Uniform3f objPnt    = this.uniforms.required("spotLights[$i].objPnt") as Uniform3f;
-          Uniform3f objDir    = this.uniforms.required("spotLights[$i].objDir") as Uniform3f;
-          Uniform3f viewPnt   = this.uniforms.required("spotLights[$i].viewPnt") as Uniform3f;
-          Uniform3f color     = this.uniforms.required("spotLights[$i].color") as Uniform3f;
-          Uniform1f cutoff    = this.uniforms.required("spotLights[$i].cutoff") as Uniform1f;
-          Uniform1f coneAngle = this.uniforms.required("spotLights[$i].coneAngle") as Uniform1f;
-          Uniform1f att0      = this.uniforms.required("spotLights[$i].att0") as Uniform1f;
-          Uniform1f att1      = this.uniforms.required("spotLights[$i].att1") as Uniform1f;
-          Uniform1f att2      = this.uniforms.required("spotLights[$i].att2") as Uniform1f;
-          this._spotLights.add(new UniformSpotLight._(i, objPnt, objDir, viewPnt, color, cutoff, coneAngle, att0, att1, att2));
+      for (SpotLightConfig light in cfg.spotLights) {
+        final int configID = light.configID;
+        final String name = light.toString();
+        this._spotLightCounts[configID] = this.uniforms.required("${name}Count");
+        List<UniformSpotLight> lights = new List<UniformSpotLight>();
+        for (int i = 0; i < light.lightCount; ++i) {
+          Uniform3f objPnt  = this.uniforms.required("${name}s[$i].objPnt")  as Uniform3f;
+          Uniform3f objDir  = this.uniforms.required("${name}s[$i].objDir")  as Uniform3f;
+          Uniform3f viewPnt = this.uniforms.required("${name}s[$i].viewPnt") as Uniform3f;
+          Uniform3f color   = this.uniforms.required("${name}s[$i].color")   as Uniform3f;
+          Uniform3f objUp, objRight;
+          Uniform1f tuScalar, tvScalar;
+          if (light.colorTxt || light.shadowTxt) {
+            objUp    = this.uniforms.required("${name}s[$i].objUp")    as Uniform3f;
+            objRight = this.uniforms.required("${name}s[$i].objRight") as Uniform3f;
+            tuScalar = this.uniforms.required("${name}s[$i].tuScalar") as Uniform1f;
+            tvScalar = this.uniforms.required("${name}s[$i].tvScalar") as Uniform1f;
+          }
+          Uniform4f shadowAdj;
+          if (light.shadowTxt)
+            shadowAdj = this.uniforms.required("${name}s[$i].shadowAdj")    as Uniform4f;
+          Uniform1f cutoff, coneAngle;
+          if (light.hasCutOff) {
+            cutoff    = this.uniforms.required("${name}s[$i].cutoff")    as Uniform1f;
+            coneAngle = this.uniforms.required("${name}s[$i].coneAngle") as Uniform1f;
+          }
+          Uniform1f att0, att1, att2;
+          if (light.hasAttenuation) {
+            att0 = this.uniforms.required("${name}s[$i].att0") as Uniform1f;
+            att1 = this.uniforms.required("${name}s[$i].att1") as Uniform1f;
+            att2 = this.uniforms.required("${name}s[$i].att2") as Uniform1f;
+          }
+          UniformSampler2D txt, shadow;
+          if (light.colorTxt)
+            txt = this.uniforms.required("${name}sTexture2D$i") as UniformSampler2D;
+          if (light.shadowTxt)
+            shadow = this.uniforms.required("${name}sShadow2D$i")  as UniformSampler2D;
+          lights.add(new UniformSpotLight._(i, objPnt, objDir, viewPnt,
+            color, objUp, objRight, tuScalar, tvScalar, shadowAdj, cutoff,
+            coneAngle, att0, att1, att2, txt, shadow));
         }
+        this._spotLights[configID] = lights;
       }
-
+      
       if (cfg.txtDirLight > 0) {
         this._txtDirLightCount = this.uniforms.required("txtDirLightCount");
         for (int i = 0; i < cfg.txtDirLight; ++i) {
@@ -279,25 +306,6 @@ class MaterialLight extends Shader {
           Uniform1f att2            = this.uniforms.required("txtPntLights[$i].att2") as Uniform1f;
           UniformSamplerCube txt    = this.uniforms.required("txtPntLightsTxtCube$i") as UniformSamplerCube;
           this._txtPntLights.add(new UniformTexturedPointLight._(i, point, viewPnt, invViewRotMat, color, txt, att0, att1, att2));
-        }
-      }
-
-      if (cfg.txtSpotLight > 0) {
-        this._txtSpotLightCount = this.uniforms.required("txtSpotLightCount");
-        for (int i = 0; i < cfg.txtSpotLight; ++i) {
-          Uniform3f objPnt     = this.uniforms.required("txtSpotLights[$i].objPnt") as Uniform3f;
-          Uniform3f objDir     = this.uniforms.required("txtSpotLights[$i].objDir") as Uniform3f;
-          Uniform3f objUp      = this.uniforms.required("txtSpotLights[$i].objUp") as Uniform3f;
-          Uniform3f objRight   = this.uniforms.required("txtSpotLights[$i].objRight") as Uniform3f;
-          Uniform3f viewPnt    = this.uniforms.required("txtSpotLights[$i].viewPnt") as Uniform3f;
-          Uniform3f color      = this.uniforms.required("txtSpotLights[$i].color") as Uniform3f;
-          Uniform1f tuScalar   = this.uniforms.required("txtSpotLights[$i].tuScalar") as Uniform1f;
-          Uniform1f tvScalar   = this.uniforms.required("txtSpotLights[$i].tvScalar") as Uniform1f;
-          Uniform1f att0       = this.uniforms.required("txtSpotLights[$i].att0") as Uniform1f;
-          Uniform1f att1       = this.uniforms.required("txtSpotLights[$i].att1") as Uniform1f;
-          Uniform1f att2       = this.uniforms.required("txtSpotLights[$i].att2") as Uniform1f;
-          UniformSampler2D txt = this.uniforms.required("txtSpotLightsTexture2D$i") as UniformSampler2D;
-          this._txtSpotLights.add(new UniformTexturedSpotLight._(i, objPnt, objDir, objUp, objRight, viewPnt, txt, color, tuScalar, tvScalar, att0, att1, att2));
         }
       }
 
@@ -517,11 +525,11 @@ class MaterialLight extends Shader {
   List<UniformPointLight> get pointLights => this._pntLights;
 
   /// The number of currently used spot lights.
-  int get spotLightCount => this._spotLightCount.getValue();
-  set spotLightCount(int count) => this._spotLightCount.setValue(count);
+  int getSpotLightCount(int configID) => this._spotLightCounts[configID].getValue();
+  setSpotLightCount(int configID, int count) => this._spotLightCounts[configID].setValue(count);
 
-  /// The list of spot lights.
-  List<UniformSpotLight> get spotLights => this._spotLights;
+  /// The list of spot lights grouped by the configuration IDs.
+  List<UniformSpotLight> getSpotLight(int configID) => this._spotLights[configID];
 
   /// The number of currently used textured directional lights.
   int get texturedDirectionalLightCount => this._txtDirLightCount.getValue();
@@ -536,13 +544,6 @@ class MaterialLight extends Shader {
 
   /// The list of textured point lights.
   List<UniformTexturedPointLight> get texturedPointLights => this._txtPntLights;
-
-  /// The number of currently used textured spot lights.
-  int get texturedSpotLightCount => this._txtSpotLightCount.getValue();
-  set texturedSpotLightCount(int count) => this._txtSpotLightCount.setValue(count);
-
-  /// The list of textured spot lights.
-  List<UniformTexturedSpotLight> get texturedSpotLights => this._txtSpotLights;
 
   /// The color of the fog.
   Math.Color4 get fogColor => this._fogClr.getColor4();

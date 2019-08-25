@@ -7,7 +7,6 @@ class LightCollection extends Collections.Collection<Light> {
   List<Spot> _spotLights;
   List<TexturedDirectional> _txtDirLights;
   List<TexturedPoint> _txtPntLights;
-  List<TexturedSpot> _txtSpotLights;
   Events.Event _changed;
   Events.Event _lightChanged;
 
@@ -18,7 +17,6 @@ class LightCollection extends Collections.Collection<Light> {
     this._spotLights    = new List<Spot>();
     this._txtDirLights  = new List<TexturedDirectional>();
     this._txtPntLights  = new List<TexturedPoint>();
-    this._txtSpotLights = new List<TexturedSpot>();
     this._changed       = null;
     this._lightChanged  = null;
     this.setHandlers(onPreaddHndl:  this._onPreaddLights,
@@ -89,9 +87,6 @@ class LightCollection extends Collections.Collection<Light> {
   /// Gets the set of textured point lights in this collection.
   Iterable<TexturedPoint> get texturedPointLights => this._txtPntLights;
 
-  /// Gets the set of textured spot lights in this collection.
-  Iterable<TexturedSpot> get texturedSpotLights => this._txtSpotLights;
-
   /// Checks the given [light] is in the collection.
   bool _contains(Light light) {
     if (light is Directional)
@@ -104,8 +99,6 @@ class LightCollection extends Collections.Collection<Light> {
       return this._txtDirLights.contains(light);
     if (light is TexturedPoint)
       return this._txtPntLights.contains(light);
-    if (light is TexturedSpot)
-      return this._txtSpotLights.contains(light);
     return false;
   }
 
@@ -121,8 +114,6 @@ class LightCollection extends Collections.Collection<Light> {
       this._txtDirLights.add(light);
     else if (light is TexturedPoint)
       this._txtPntLights.add(light);
-    else if (light is TexturedSpot)
-      this._txtSpotLights.add(light);
   }
 
   /// Removes the light from the specific lists of lights.
@@ -137,7 +128,5 @@ class LightCollection extends Collections.Collection<Light> {
       this._txtDirLights.remove(light);
     else if (light is TexturedPoint)
       this._txtPntLights.remove(light);
-    else if (light is TexturedSpot)
-      this._txtSpotLights.remove(light);
   }
 }
