@@ -351,7 +351,7 @@ class MaterialLight extends Technique {
         Map<int, int> spotLightCounter = new Map<int, int>();
         for (Lights.Spot light in this._lights.spotLights) {
           final int configID = light.configID;
-          final int index = spotLightCounter[configID]??0;
+          final int index = spotLightCounter[configID] ?? 0;
           spotLightCounter[configID] = index + 1;
 
           Shaders.UniformSpotLight uniform = this._shader.getSpotLight(configID)[index];
@@ -359,16 +359,20 @@ class MaterialLight extends Technique {
           uniform.objectDirection = light.direction.normal();
           uniform.viewPoint       = viewMat.transPnt3(light.position);
           uniform.color           = light.color;
-          uniform.texture         = light.texture;
-          uniform.shadow          = light.shadow;
-          if (light.texture != null || light.shadow != null) { 
+          if (light.texture != null || light.shadow != null) {
             uniform.objectUp    = light.up;
             uniform.objectRight = light.right;
             uniform.tuScalar    = light.tuScalar;
             uniform.tvScalar    = light.tvScalar;
           }
+          if (light.texture != null) {
+            uniform.texture = light.texture;
+            this._addToTextureList(textures, light.texture);
+          }
           if (light.shadow != null) {
             uniform.shadowAdjust = light.shadowAdjust;
+            uniform.shadow       = light.shadow;
+            this._addToTextureList(textures, light.shadow);
           }
           if (light.enableCutOff) {
             uniform.cutoff    = light.cutoff;
@@ -382,7 +386,7 @@ class MaterialLight extends Technique {
         }
 
         for (Shaders.SpotLightConfig light in cfg.spotLights) {
-          int  count = spotLightCounter[light.configID]??0;
+          final int count = spotLightCounter[light.configID] ?? 0;
           this._shader.setSpotLightCount(light.configID, count);
         }
       }

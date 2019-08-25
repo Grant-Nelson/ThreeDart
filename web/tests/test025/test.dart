@@ -23,9 +23,10 @@ void main() {
     ..add(new Movers.Constant.translate(0.0, 0.0, -2.5))
     ..add(new Movers.UserRotater(input: td.userInput, ctrl: true));
 
-  Lights.TexturedSpot spot = new Lights.TexturedSpot(
+  Lights.Spot spot = new Lights.Spot(
     mover:        lightMover,
     color:        new Math.Color3.white(),
+    enableCutOff: true,
     fov:          0.5,
     ratio:        1.0,
     attenuation0: 0.5,

@@ -240,7 +240,6 @@ class MaterialLight extends Shader {
       for (SpotLightConfig light in cfg.spotLights) {
         final int configID = light.configID;
         final String name = light.toString();
-        this._spotLightCounts[configID] = this.uniforms.required("${name}Count");
         List<UniformSpotLight> lights = new List<UniformSpotLight>();
         for (int i = 0; i < light.lightCount; ++i) {
           Uniform3f objPnt  = this.uniforms.required("${name}s[$i].objPnt")  as Uniform3f;
@@ -257,7 +256,7 @@ class MaterialLight extends Shader {
           }
           Uniform4f shadowAdj;
           if (light.shadowTxt)
-            shadowAdj = this.uniforms.required("${name}s[$i].shadowAdj")    as Uniform4f;
+            shadowAdj = this.uniforms.required("${name}s[$i].shadowAdj") as Uniform4f;
           Uniform1f cutoff, coneAngle;
           if (light.hasCutOff) {
             cutoff    = this.uniforms.required("${name}s[$i].cutoff")    as Uniform1f;
@@ -279,6 +278,7 @@ class MaterialLight extends Shader {
             coneAngle, att0, att1, att2, txt, shadow));
         }
         this._spotLights[configID] = lights;
+        this._spotLightCounts[configID] = this.uniforms.required("${name}Count");
       }
       
       if (cfg.txtDirLight > 0) {

@@ -42,16 +42,6 @@ class Directional implements Light {
     }
   }
 
-  /// Binds the light to the given [state].
-  void bind(Core.RenderState state) {
-    // Do Nothing
-  }
-
-  /// Unbinds the bound the light from the given [state].
-  void unbind(Core.RenderState state) {
-    // Do Nothing
-  }
-
   /// The direction the light is pointing.
   /// Setting direction will override the mover with a constant mover pointing in the given direction.
   Math.Vector3 get direction => this._direction;

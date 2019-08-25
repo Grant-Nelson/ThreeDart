@@ -33,8 +33,8 @@ class Spot implements Light {
       Math.Vector4       shadowAdj: null,
       double fov:          Math.PI_3,
       double ratio:        1.0,
-      double cutoff:       Math.PI,
-      double coneAngle:    Math.PI,
+      double cutoff:       Math.PI_2,
+      double coneAngle:    Math.PI_2,
       double attenuation0: 1.0,
       double attenuation1: 0.0,
       double attenuation2: 0.0,
@@ -46,9 +46,9 @@ class Spot implements Light {
     this._shadow       = null;
     this._fov          = Math.PI_3;
     this._ratio        = 1.0;
-    this._cutoff       = Math.PI;
+    this._cutoff       = Math.PI_2;
+    this._coneAngle    = Math.PI_2;
     this._enableCutOff = true;
-    this._coneAngle    = Math.PI;
     this._attenuation0 = 1.0;
     this._attenuation1 = 0.0;
     this._attenuation2 = 0.0;
@@ -104,25 +104,13 @@ class Spot implements Light {
     }
   }
 
-  /// Binds the light to the given [state].
-  void bind(Core.RenderState state) {
-    this._texture?.bind(state);
-    this._shadow?.bind(state);
-  }
-
-  /// Unbinds the bound the light from the given [state].
-  void unbind(Core.RenderState state) {
-    this._shadow?.unbind(state);
-    this._texture?.unbind(state);
-  }
-
   /// The identifier for the configuration to use when
   /// setting up the shader using this light.
   int get configID =>
-    (this._texture != null? 0x01: 0) +
-    (this._shadow != null?  0x02: 0) +
-    (this._enableAttn?      0x04: 0) +
-    (this._enableCutOff?    0x08: 0);  
+    ((this._texture != null)? 0x01: 0) +
+    ((this._shadow != null)?  0x02: 0) +
+    (this._enableAttn?        0x04: 0) +
+    (this._enableCutOff?      0x08: 0);  
 
   /// The location the light.
   Math.Point3 get position => this._position;
@@ -233,7 +221,7 @@ class Spot implements Light {
   /// The cut-off angle, in radians, of the light cone.
   double get cutoff => this._cutoff;
   void set cutoff(double cutoff) {
-    cutoff = Math.clampVal(cutoff ?? Math.PI, 0.0, Math.PI);
+    cutoff = Math.clampVal(cutoff ?? Math.PI_2, 0.0, Math.PI);
     if (!Math.Comparer.equals(this._cutoff, cutoff)) {
       double prev = this._cutoff;
       this._cutoff = cutoff;
@@ -244,7 +232,7 @@ class Spot implements Light {
   /// The cone angle, in radians, of the light.
   double get coneAngle => this._coneAngle;
   void set coneAngle(double coneAngle) {
-    coneAngle = Math.clampVal(coneAngle ?? Math.PI, 0.0, Math.PI);
+    coneAngle = Math.clampVal(coneAngle ?? Math.PI_2, 0.0, Math.PI);
     if (!Math.Comparer.equals(this._coneAngle, coneAngle)) {
       double prev = this._coneAngle;
       this._coneAngle = coneAngle;
@@ -306,5 +294,4 @@ class Spot implements Light {
       this._onChanged(new Events.ValueChangedEventArgs(this, "enableAttenuation", prev, this._enableAttn));
     }
   }
-  
 }

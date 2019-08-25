@@ -376,28 +376,29 @@ class _materialLightFS {
     buf.writeln("   if(zScale < 0.0) return vec3(0.0, 0.0, 0.0);");
     if (light.hasCutOff) {
       buf.writeln("   float angle = acos(zScale);");
-      buf.writeln("   float scale = (lit.cutoff-angle)/(lit.cutoff-lit.coneAngle);");
+      buf.writeln("   float scale = (lit.cutoff-angle) / (lit.cutoff-lit.coneAngle);");
       buf.writeln("   if(scale <= 0.0) return vec3(0.0, 0.0, 0.0);");
+      buf.writeln("   if(scale >= 1.0) scale = 1.0;");
     }
     if (light.hasTexture) {
-      buf.writeln("   normDir = normDir/zScale;");
-      buf.writeln("   float tu = dot(normDir, lit.objUp)*lit.tuScalar+0.5;");
-      buf.writeln("   if((tu > 1.0) || (tu < 0.0)) return vec3(0.0, 0.0, 0.0);");
-      buf.writeln("   float tv = dot(normDir, lit.objRight)*lit.tvScalar+0.5;");
-      buf.writeln("   if((tv > 1.0) || (tv < 0.0)) return vec3(0.0, 0.0, 0.0);");
+      buf.writeln("   normDir = normDir / zScale;");
+      buf.writeln("   float tu = 0.5 - dot(normDir, lit.objRight)*lit.tuScalar;");
+      buf.writeln("   if((tu < 0.0) || (tu > 1.0)) return vec3(0.0, 0.0, 0.0);");
+      buf.writeln("   float tv = dot(normDir, lit.objUp)*lit.tvScalar + 0.5;");
+      buf.writeln("   if((tv < 0.0) || (tv > 1.0)) return vec3(0.0, 0.0, 0.0);");
       buf.writeln("   vec2 txtLoc = vec2(tu, tv);");
     }
     if (light.shadowTxt) {
       buf.writeln("   float depth = dot(texture2D(txt2D, txtLoc), shadowAdj);");
       buf.writeln("   if(depth < dist) return vec3(0.0, 0.0, 0.0);");
     }
-    buf.writeln("   vec3 color = lit.color;");
-    if (light.hasAttenuation)
-      buf.writeln("   color *= attenuation;");
-    if (light.hasCutOff) 
-      buf.writeln("   if(scale < 1.0) color *= scale;");
-    if (light.colorTxt)
-      buf.writeln("   color *= texture2D(txt2D, txtLoc).rgb;");
+
+    List<String> parts = new List<String>();
+    parts.add("lit.color");
+    if (light.hasAttenuation) parts.add("attenuation");
+    if (light.hasCutOff) parts.add("scale");
+    if (light.colorTxt)parts.add("texture2D(txt2D, txtLoc).rgb");
+    buf.writeln("   vec3 color = ${parts.join(" * ")};");
     buf.writeln("   return lightValue(norm, color, normalize(viewPos - lit.viewPnt));");
     buf.writeln("}");
     buf.writeln("");
@@ -572,7 +573,7 @@ class _materialLightFS {
       if (cfg.diffuse.hasAny)    parts.add("diffuse(norm, litVec)");
       if (cfg.invDiffuse.hasAny) parts.add("invDiffuse(norm, litVec)");
       if (cfg.specular.hasAny)   parts.add("specular(norm, litVec)");
-      buf.writeln("   return litClr*(" + parts.join(" + ") + ");");
+      buf.writeln("   return litClr*(${parts.join(" + ")});");
       buf.writeln("}");
       buf.writeln("");
 

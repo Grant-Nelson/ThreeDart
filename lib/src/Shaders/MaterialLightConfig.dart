@@ -14,8 +14,8 @@ class SpotLightConfig {
   factory SpotLightConfig(int configID, int lightCount) {
     bool colorTxt  = (configID & 0x01) != 0x00;
     bool shadowTxt = (configID & 0x02) != 0x00;
-    bool hasCutOff = (configID & 0x04) != 0x00;
-    bool hasAtten  = (configID & 0x08) != 0x00;
+    bool hasAtten  = (configID & 0x04) != 0x00;
+    bool hasCutOff = (configID & 0x08) != 0x00;
     return new SpotLightConfig._(configID, colorTxt, shadowTxt, hasCutOff, hasAtten, lightCount);
   }
 
