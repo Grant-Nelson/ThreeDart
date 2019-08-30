@@ -1,28 +1,38 @@
 part of ThreeDart.Shaders;
 
+/// The configuration for a specific type of spot lights
+/// that can be added to the material light shader.
 class SpotLightConfig {
+
+  /// The identifier for the type of spot light this configuration is for.
   final int configID;
-  final bool colorTxt;
-  final bool shadowTxt;
-  final bool hasCutOff;
-  final bool hasAttenuation;
+
+  /// Indicates the number of spot lights of this type.
   final int lightCount;
 
-  SpotLightConfig._(int this.configID, bool this.colorTxt, bool this.shadowTxt,
-    bool this.hasCutOff, bool this.hasAttenuation, int this.lightCount);
-
-  factory SpotLightConfig(int configID, int lightCount) {
-    bool colorTxt  = (configID & 0x01) != 0x00;
-    bool shadowTxt = (configID & 0x02) != 0x00;
-    bool hasAtten  = (configID & 0x04) != 0x00;
-    bool hasCutOff = (configID & 0x08) != 0x00;
-    return new SpotLightConfig._(configID, colorTxt, shadowTxt, hasCutOff, hasAtten, lightCount);
-  }
-
-  bool get hasTexture => this.colorTxt || this.shadowTxt;
-
-  bool get hasDist => this.hasAttenuation || this.shadowTxt;
+  /// Constructs a new spot light configuration.
+  SpotLightConfig(int this.configID, int this.lightCount);
   
+  /// Indicates if this type of spot light has a color texture.
+  bool get colorTexture => (this.configID & 0x01) != 0x00;
+
+  /// Indicates if this type of spot light has a shadow texture.
+  bool get shadowTexture => (this.configID & 0x02) != 0x00;
+
+  /// Indicates if this type of spot light has light attenuation.
+  bool get hasAttenuation => (this.configID & 0x04) != 0x00;
+
+  /// Indicates if this type of spot light has a light cone cut off.
+  bool get hasCutOff => (this.configID & 0x08) != 0x00;
+
+  /// Indicates if this type of spot light has either a color or shadow texture.
+  bool get hasTexture => (this.configID & 0x03) != 0x00;
+
+  /// Indicates if this type of spot light has either attenuation or shadow
+  /// meaning that it will require calculating distance from light.
+  bool get hasDist => (this.configID & 0x06) != 0x00;
+  
+  /// Gets the string for this spot light configuration.
   String toString() => "spotLight${this.configID}";
 }
 

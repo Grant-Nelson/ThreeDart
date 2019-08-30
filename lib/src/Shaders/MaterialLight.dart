@@ -248,14 +248,14 @@ class MaterialLight extends Shader {
           Uniform3f color   = this.uniforms.required("${name}s[$i].color")   as Uniform3f;
           Uniform3f objUp, objRight;
           Uniform1f tuScalar, tvScalar;
-          if (light.colorTxt || light.shadowTxt) {
+          if (light.hasTexture) {
             objUp    = this.uniforms.required("${name}s[$i].objUp")    as Uniform3f;
             objRight = this.uniforms.required("${name}s[$i].objRight") as Uniform3f;
             tuScalar = this.uniforms.required("${name}s[$i].tuScalar") as Uniform1f;
             tvScalar = this.uniforms.required("${name}s[$i].tvScalar") as Uniform1f;
           }
           Uniform4f shadowAdj;
-          if (light.shadowTxt)
+          if (light.shadowTexture)
             shadowAdj = this.uniforms.required("${name}s[$i].shadowAdj") as Uniform4f;
           Uniform1f cutoff, coneAngle;
           if (light.hasCutOff) {
@@ -269,9 +269,9 @@ class MaterialLight extends Shader {
             att2 = this.uniforms.required("${name}s[$i].att2") as Uniform1f;
           }
           UniformSampler2D txt, shadow;
-          if (light.colorTxt)
+          if (light.colorTexture)
             txt = this.uniforms.required("${name}sTexture2D$i") as UniformSampler2D;
-          if (light.shadowTxt)
+          if (light.shadowTexture)
             shadow = this.uniforms.required("${name}sShadow2D$i")  as UniformSampler2D;
           lights.add(new UniformSpotLight._(i, objPnt, objDir, viewPnt,
             color, objUp, objRight, tuScalar, tvScalar, shadowAdj, cutoff,

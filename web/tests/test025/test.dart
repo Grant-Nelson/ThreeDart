@@ -58,8 +58,7 @@ void main() {
                 ..add(new Movers.Constant.scale(0.1, 0.1, 0.1))
                 ..add(lightMover))
     ..shape = Shapes.cylinder(bottomRadius: 0.0, sides: 40, capBottom: false)
-    ..technique = (new Techniques.MaterialLight()
-                ..emission.color = new Math.Color3.white());
+    ..technique = new Techniques.MaterialLight.glow();
 
   td.scene = new Scenes.EntityPass()
     ..technique = tech
