@@ -474,11 +474,9 @@ class _materialLightFS {
       buf.writeln("   vec2 txtLoc = vec2(tu, tv);");
     }
     if (light.shadowTexture) {
-      buf.writeln("   float depth = dot(texture2D(shadow2D, txtLoc), lit.shadowAdj);");
-      buf.writeln("   attenuation = 1.0;");
-      buf.writeln("   scale = depth;");
-      //buf.writeln("   depth = depth*9.0 + 1.0;"); // TODO: Fix scaling
-      //buf.writeln("   if(depth > dist) return vec3(0.0, 0.0, 0.0);");
+      buf.writeln("   float depth = dot(texture2D(shadow2D, vec2(txtLoc.x, 1.0-txtLoc.y)), lit.shadowAdj);");
+      buf.writeln("   float dist2 = (dist - 20.0) / (1.0 - 20.0);"); // TODO: Fix scaling
+      buf.writeln("   if(depth > dist2) return vec3(0.0, 0.0, 0.0);");
     }
 
     List<String> parts = new List<String>();

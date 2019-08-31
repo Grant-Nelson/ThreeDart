@@ -366,13 +366,13 @@ class MaterialLight extends Technique {
             uniform.tvScalar    = light.tvScalar;
           }
           if (light.texture != null) {
-            uniform.texture = light.texture;
             this._addToTextureList(textures, light.texture);
+            uniform.texture = light.texture;
           }
           if (light.shadow != null) {
             uniform.shadowAdjust = light.shadowAdjust;
-            uniform.shadow       = light.shadow;
             this._addToTextureList(textures, light.shadow);
+            uniform.shadow = light.shadow;
           }
           if (light.enableCutOff) {
             uniform.cutoff    = light.cutoff;

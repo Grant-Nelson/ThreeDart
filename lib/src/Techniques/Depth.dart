@@ -7,24 +7,28 @@ class Depth extends Technique {
   double _stop;
   bool _grey;
   bool _invert;
+  bool _focus;
   Events.Event _changed;
 
   /// Creates a new depth technique with the given initial values.
   Depth({double start:  1.0,
          double stop:   10.0,
          bool   grey:   false,
-         bool   invert: false}) {
+         bool   invert: false,
+         bool   focus:  false}) {
     this._shader  = null;
     this._start   = 1.0;
     this._stop    = 10.0;
     this._grey    = false;
     this._invert  = false;
+    this._focus   = false;
     this._changed = null;
 
     this.start  = start;
     this.stop   = stop;
     this.grey   = grey;
     this.invert = invert;
+    this.focus  = focus;
   }
 
   /// Indicates that this technique has changed.
@@ -85,6 +89,16 @@ class Depth extends Technique {
     }
   }
 
+  /// Indicates that the depth should be based off of the camera's focal point instead of the camera's view.
+  bool get focus => this._focus;
+  void set focus(bool focus) {
+    if (this._focus != focus) {
+      bool prev = this._focus;
+      this._focus = focus;
+      this._onChanged(new Events.ValueChangedEventArgs(this, "focus", prev, this._focus));
+    }
+  }
+
   /// Gets the vertex source code used for the shader used by this techinique.
   String get vertexSourceCode => this._shader?.vertexSourceCode;
 
@@ -98,7 +112,7 @@ class Depth extends Technique {
 
   /// Renders this technique for the given state and entity.
   void render(Core.RenderState state, Core.Entity obj) {
-    this._shader ??= new Shaders.Depth.cached(this._grey, state);
+    this._shader ??= new Shaders.Depth.cached(this._grey, this._focus, state);
 
     if (obj.cache is! Data.BufferStore) obj.clearCache();
     if (obj.cacheNeedsUpdate) {

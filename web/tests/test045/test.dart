@@ -6,7 +6,6 @@ import 'package:ThreeDart/Movers.dart' as Movers;
 import 'package:ThreeDart/Math.dart' as Math;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
-import 'package:ThreeDart/Shaders.dart' as Shaders;
 import 'package:ThreeDart/Lights.dart' as Lights;
 import 'package:ThreeDart/Views.dart' as Views;
 import '../../common/common.dart' as common;
@@ -21,20 +20,23 @@ void main() {
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
+  Views.BackTarget shadow = new Views.BackTarget();
+
   Movers.Group lightMover = new Movers.Group()
     ..add(new Movers.Constant.translate(0.0, 0.0, -4.0))
     ..add(new Movers.UserRotater(input: td.userInput, ctrl: true));
 
   Lights.Spot spot = new Lights.Spot(
     mover:        lightMover,
+    shadow:       shadow.colorTexture,
+    //texture:      td.textureLoader.load2DFromFile("../resources/Test.png"),
     color:        new Math.Color3.white(),
-    enableCutOff: true,
+    enableCutOff: false,
     fov:          0.5,
     ratio:        1.0,
     attenuation0: 0.0,
     attenuation1: 0.1,
-    attenuation2: 0.0,
-    texture:      td.textureLoader.load2DFromFile("../resources/Test.png"));
+    attenuation2: 0.0);
 
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
     ..lights.add(spot)
@@ -47,7 +49,7 @@ void main() {
     ..shape = Shapes.toroid();
 
   ThreeDart.Entity room = new ThreeDart.Entity()
-    ..mover = new Movers.Constant.scale(8.0, 8.0, 8.0)
+    ..mover = new Movers.Constant.scale(5.0, 5.0, 5.0)
     ..shape = (Shapes.cube()..flip());
 
   Movers.Group camMover = new Movers.Group()
@@ -62,50 +64,31 @@ void main() {
     ..shape = Shapes.cylinder(bottomRadius: 0.0, sides: 40, capBottom: false)
     ..technique = new Techniques.MaterialLight.glow();
 
-  Views.BackTarget colorTarget = new Views.BackTarget();
-
   Scenes.EntityPass colorPass = new Scenes.EntityPass()
-    ..target = colorTarget
     ..technique = tech
     ..children.add(centerObj)
     ..children.add(room)
     ..children.add(lightSource)
     ..camera.mover = camMover;
 
-  Views.BackTarget shadow = new Views.BackTarget();
-
+  // TODO: Determine how to setup camera without the hardcoded constants.
   Views.Perspective shadowCam = new Views.Perspective(
     mover: (new Movers.Group()
             ..add(Movers.Constant.scale(-1.0, 1.0, -1.0))
             ..add(Movers.Invert(lightMover))
             ..add(Movers.Constant.rotateZ(Math.PI))
+            ..add(Movers.Constant.translate(0.0, 0.0, 2.0))
           ),
-    fov: 0.8);
+    fov: 0.5);
   
   Scenes.EntityPass shadowPass = new Scenes.EntityPass()
     ..target = shadow
-    ..technique = tech
+    ..technique = new Techniques.Depth(start: 1.0, stop: 20.0, focus: true)
     ..children.add(centerObj)
     ..children.add(room)
-    ..children.add(lightSource)
     ..camera = shadowCam;
 
-  //spot.shadow = shadow.colorTexture;
-
-  Techniques.TextureLayout layoutTech = new Techniques.TextureLayout()
-    ..blend = Shaders.ColorBlendType.Overwrite
-    ..entries.add(new Techniques.TextureLayoutEntry(
-      texture: shadow.colorTexture,
-      destination: new Math.Region2(0.0, 0.0, 0.5, 1.0)))
-    ..entries.add(new Techniques.TextureLayoutEntry(
-      texture: colorTarget.colorTexture,
-      destination: new Math.Region2(0.5, 0.0, 0.5, 1.0)));
-
-  Scenes.CoverPass layout = new Scenes.CoverPass()
-    ..target = new Views.FrontTarget(clearColor: false)
-    ..technique = layoutTech;
-
-  td.scene = new Scenes.Compound(passes: [shadowPass, colorPass, layout]);
+  td.scene = new Scenes.Compound(passes: [shadowPass, colorPass]);
 
   new common.RadioGroup("shapes")
     ..add("Cube",     () { centerObj.shape = Shapes.cube(); })
