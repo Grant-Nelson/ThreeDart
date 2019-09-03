@@ -66,6 +66,15 @@ class Vector4 {
   }
   static Vector4 _negWSingleton;
 
+  /// Gets the default shadow adjustment.
+  /// The RBG higher quality depth vector `<1.0, 1.0/256.0, 1.0/65536.0, 0.0>`
+  /// which is the default for shadow depth adjustment.
+  static Vector4 get shadowAdjust {
+    _shadowAdjust ??= new Vector4(1.0, 1.0/256.0, 1.0/65536.0, 0.0);
+    return _shadowAdjust;
+  }
+  static Vector4 _shadowAdjust;
+
   /// The dX component of the vector.
   final double dx;
 

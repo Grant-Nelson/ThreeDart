@@ -110,7 +110,7 @@ class Spot implements Light {
     ((this._texture != null)? 0x01: 0) +
     ((this._shadow != null)?  0x02: 0) +
     (this._enableAttn?        0x04: 0) +
-    (this._enableCutOff?      0x08: 0);  
+    (this._enableCutOff?      0x08: 0);
 
   /// The location the light.
   Math.Point3 get position => this._position;
@@ -174,12 +174,9 @@ class Spot implements Light {
   /// The shadow value modification vector.
   /// This is the vector to apply to the color from the shadow texture
   /// to get the shadow value from the shadow texture.
-  /// To use RBG higher quality depth use the vector
-  /// `<1.0, 1.0/256.0, 1.0/65536.0, 0.0>`
-  /// which is the default for the adjustment.
   Math.Vector4 get shadowAdjust => this._shadowAdj;
   void set shadowAdjust(Math.Vector4 vec) {
-    vec ??= new Math.Vector4(1.0, 1.0/256.0, 1.0/65536.0, 0.0);
+    vec ??= Math.Vector4.shadowAdjust;
     if (this._shadowAdj != vec) {
       Math.Vector4 prev = this._shadowAdj;
       this._shadowAdj = vec;

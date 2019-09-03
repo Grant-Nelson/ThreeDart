@@ -250,151 +250,185 @@ class _materialLightFS {
   }
 
   /// Writes the directional lights to the fragment shader [buf].
-  static void _writeDirLight(MaterialLightConfig cfg, StringBuffer buf) {
-    if (cfg.dirLight <= 0) return;
-    buf.writeln("// === Directional Light ===");
+  static void _writeDirLight(MaterialLightConfig cfg, DirectionalLightConfig light, StringBuffer buf) {
+    if (light.lightCount <= 0) return;
+    final String name = light.toString();
+    final String title = toTitleCase(name);
+
+    buf.writeln("// === $title ===");
     buf.writeln("");
-    buf.writeln("struct DirLight");
+    buf.writeln("struct $title");
     buf.writeln("{");
+    if (light.hasTexture) {
+      buf.writeln("   vec3 objUp;");
+      buf.writeln("   vec3 objRight;");
+      buf.writeln("   vec3 objDir;");
+    }
     buf.writeln("   vec3 viewDir;");
     buf.writeln("   vec3 color;");
     buf.writeln("};");
     buf.writeln("");
-    buf.writeln("uniform int dirLightCount;");
-    buf.writeln("uniform DirLight dirLights[${cfg.dirLight}];");
+    buf.writeln("uniform int ${name}Count;");
+    buf.writeln("uniform $title ${name}s[${light.lightCount}];");
+    if (light.colorTexture) {
+      for (int i = 0; i < light.lightCount; i++)
+          buf.writeln("uniform sampler2D ${name}sTexture2D$i;");
+    }
     buf.writeln("");
-    buf.writeln("vec3 allDirLightValues(vec3 norm)");
+    String params = "";
+    if (light.colorTexture) params += ", sampler2D txt2D";
+    buf.writeln("vec3 ${name}Value(vec3 norm, $title lit${params})");
     buf.writeln("{");
-    buf.writeln("   vec3 lightAccum = vec3(0.0, 0.0, 0.0);");
-    buf.writeln("   for(int i = 0; i < ${cfg.dirLight}; ++i)");
-    buf.writeln("   {");
-    buf.writeln("      if(i >= dirLightCount) break;");
-    buf.writeln("      DirLight lit = dirLights[i];");
-    buf.writeln("      lightAccum += lightValue(norm, lit.color, lit.viewDir);");
-    buf.writeln("   }");
-    buf.writeln("   return lightAccum;");
+    List<String> parts = new List<String>();
+    if (cfg.ambient.hasAny) parts.add("ambientColor");
+    if (cfg.intense) {
+      buf.writeln("   vec3 highLight = vec3(0.0, 0.0, 0.0);");
+      parts.add("highLight");
+      String indent = "";
+      if (light.colorTexture) {
+        buf.writeln("   vec3 offset = objPos + lit.objDir*dot(objPos, lit.objDir);");
+        buf.writeln("   float tu = dot(offset, lit.objUp);");
+        buf.writeln("   float tv = dot(offset, lit.objRight);");
+        buf.writeln("   vec2 txtLoc = vec2(tu, tv);");
+        buf.writeln("   vec3 intensity = texture2D(txt2D, txtLoc).xyz;");
+        buf.writeln("   if(length(intensity) > 0.0001) {");
+        indent = "   ";
+      }
+      buf.writeln("   ${indent}vec3 litVec = normalize(viewPos - lit.viewPnt);");
+      List<String> subparts = new List<String>();
+      if (cfg.diffuse.hasAny)    subparts.add("diffuse(norm, litVec)");
+      if (cfg.invDiffuse.hasAny) subparts.add("invDiffuse(norm, litVec)");
+      if (cfg.specular.hasAny)   subparts.add("specular(norm, litVec)");
+      buf.writeln("   ${indent}highLight = intensity*(${subparts.join(" + ")});");
+      if (light.colorTexture)
+        buf.writeln("   }");
+    }
+    buf.writeln("   return lit.color*(${parts.join(" + ")});");
     buf.writeln("}");
     buf.writeln("");
-  }
-  
-  /// Writes the texture directional lights to the fragment shader [buf].
-  static void _writeTxtDirLight(MaterialLightConfig cfg, StringBuffer buf) {
-    if (cfg.txtDirLight <= 0) return;
-    buf.writeln("// === Texture Directional Light ===");
-    buf.writeln("");
-    buf.writeln("struct TexturedDirLight");
-    buf.writeln("{");
-    buf.writeln("   vec3 objUp;");
-    buf.writeln("   vec3 objRight;");
-    buf.writeln("   vec3 objDir;");
-    buf.writeln("   vec3 viewDir;");
-    buf.writeln("   vec3 color;");
-    buf.writeln("};");
-    buf.writeln("");
-    buf.writeln("uniform int txtDirLightCount;");
-    buf.writeln("uniform TexturedDirLight txtDirLights[${cfg.txtDirLight}];");
-    for (int i = 0; i < cfg.txtDirLight; i++)
-      buf.writeln("uniform sampler2D txtDirLightsTxt2D$i;");
-    buf.writeln("");
-    buf.writeln("vec3 txtDirLightValue(vec3 norm, TexturedDirLight lit, sampler2D txt2D)");
-    buf.writeln("{");
-    buf.writeln("   vec3 offset = objPos + lit.objDir*dot(objPos, lit.objDir);");
-    buf.writeln("   float tu = dot(offset, lit.objUp);");
-    buf.writeln("   float tv = dot(offset, lit.objRight);");
-    buf.writeln("   vec2 txtLoc = vec2(tu, tv);");
-    buf.writeln("   vec3 color = lit.color*texture2D(txt2D, txtLoc).xyz;");
-    buf.writeln("   return lightValue(norm, color, lit.viewDir);");
-    buf.writeln("}");
-    buf.writeln("");
-    buf.writeln("vec3 allTxtDirLightValues(vec3 norm)");
+    buf.writeln("vec3 all${title}Values(vec3 norm)");
     buf.writeln("{");
     buf.writeln("   vec3 lightAccum = vec3(0.0, 0.0, 0.0);");
-    for (int i = 0; i < cfg.txtDirLight; ++i) {
-      buf.writeln("   if(txtDirLightCount <= $i) return lightAccum;");
-      buf.writeln("   lightAccum += txtDirLightValue(norm, txtDirLights[$i], txtDirLightsTxt2D$i);");
+    if (light.colorTexture) {
+      for (int i = 0; i < light.lightCount; ++i) {
+        buf.writeln("   if(txtDirLightCount <= $i) return lightAccum;");
+        buf.writeln("   lightAccum += ${name}Value(norm, ${name}s[$i], txtDirLightsTxt2D$i);");
+      }
+    } else {
+      buf.writeln("   for(int i = 0; i < ${light.lightCount}; ++i)");
+      buf.writeln("   {");
+      buf.writeln("      if(i >= dirLightCount) break;");
+      buf.writeln("      lightAccum += ${name}Value(norm, ${name}s[i]);");
+      buf.writeln("   }");
     }
     buf.writeln("   return lightAccum;");
     buf.writeln("}");
     buf.writeln("");
   }
-
+  
   /// Writes the point lights to the fragment shader [buf].
-  static void _writePointLight(MaterialLightConfig cfg, StringBuffer buf) {
-    if (cfg.pointLight <= 0) return;
-    buf.writeln("// === Point Light ===");
-    buf.writeln("");
-    buf.writeln("struct PointLight");
-    buf.writeln("{");
-    buf.writeln("   vec3 point;");
-    buf.writeln("   vec3 viewPnt;");
-    buf.writeln("   vec3 color;");
-    buf.writeln("   float att0;");
-    buf.writeln("   float att1;");
-    buf.writeln("   float att2;");
-    buf.writeln("};");
-    buf.writeln("");
-    buf.writeln("uniform int pntLightCount;");
-    buf.writeln("uniform PointLight pntLights[${cfg.pointLight}];");
-    buf.writeln("");
-    buf.writeln("vec3 pointLightValue(vec3 norm, PointLight lit)");
-    buf.writeln("{");
-    buf.writeln("   float dist = length(objPos - lit.point);");
-    buf.writeln("   float attenuation = 1.0/(lit.att0 + (lit.att1 + lit.att2*dist)*dist);");
-    buf.writeln("   if(attenuation <= 0.005) return vec3(0.0, 0.0, 0.0);");
-    buf.writeln("   return lightValue(norm, lit.color*attenuation, normalize(viewPos - lit.viewPnt));");
-    buf.writeln("}");
-    buf.writeln("");
-    buf.writeln("vec3 allPointLightValues(vec3 norm)");
-    buf.writeln("{");
-    buf.writeln("   vec3 lightAccum = vec3(0.0, 0.0, 0.0);");
-    buf.writeln("   for(int i = 0; i < ${cfg.pointLight}; ++i)");
-    buf.writeln("   {");
-    buf.writeln("      if(i >= pntLightCount) break;");
-    buf.writeln("      lightAccum += pointLightValue(norm, pntLights[i]);");
-    buf.writeln("   }");
-    buf.writeln("   return lightAccum;");
-    buf.writeln("}");
-    buf.writeln("");
-  }
+  static void _writePointLight(MaterialLightConfig cfg, PointLightConfig light, StringBuffer buf) {
+    if (light.lightCount <= 0) return;
+    final String name = light.toString();
+    final String title = toTitleCase(name);
 
-  /// Writes the texture point lights to the fragment shader [buf].
-  static void _writeTxtPointLight(MaterialLightConfig cfg, StringBuffer buf) {
-    if (cfg.txtPointLight <= 0) return;
-    buf.writeln("// === Texture Point Light ===");
+    buf.writeln("// === ${title} ===");
     buf.writeln("");
-    buf.writeln("struct TexturedPointLight");
+    buf.writeln("struct ${title}");
     buf.writeln("{");
     buf.writeln("   vec3 point;");
     buf.writeln("   vec3 viewPnt;");
-    buf.writeln("   mat3 invViewRotMat;");
     buf.writeln("   vec3 color;");
-    buf.writeln("   float att0;");
-    buf.writeln("   float att1;");
-    buf.writeln("   float att2;");
+    if (light.hasTexture)
+      buf.writeln("   mat3 invViewRotMat;");
+    if (light.shadowTexture)
+      buf.writeln("   vec4 shadowAdj;");
+    if (light.hasAttenuation) {
+      buf.writeln("   float att0;");
+      buf.writeln("   float att1;");
+      buf.writeln("   float att2;");
+    }
     buf.writeln("};");
     buf.writeln("");
-    buf.writeln("uniform int txtPntLightCount;");
-    buf.writeln("uniform TexturedPointLight txtPntLights[${cfg.txtPointLight}];");
-    for (int i = 0; i < cfg.txtPointLight; i++)
-      buf.writeln("uniform samplerCube txtPntLightsTxtCube$i;");
-    buf.writeln("");
-    buf.writeln("vec3 txtPointLightValue(vec3 norm, TexturedPointLight lit, samplerCube txtCube)");
+    buf.writeln("uniform int ${name}Count;");
+    buf.writeln("uniform ${title} ${name}s[${light.lightCount}];");
+    if (light.colorTexture) {
+      for (int i = 0; i < light.lightCount; i++)
+        buf.writeln("uniform samplerCube ${name}sTextureCube$i;");
+    }
+
+    String params = "";
+    if (light.colorTexture)  params += ", samplerCube txtCube";
+    if (light.shadowTexture) params += ", samplerCube shadowCube";
+    buf.writeln("vec3 ${name}Intensity(vec3 normDir, $title lit$params)");
     buf.writeln("{");
     buf.writeln("   float dist = length(objPos - lit.point);");
-    buf.writeln("   float attenuation = 1.0/(lit.att0 + (lit.att1 + lit.att2*dist)*dist);");
-    buf.writeln("   if(attenuation <= 0.005) return vec3(0.0, 0.0, 0.0);");
-    buf.writeln("   vec3 normDir = normalize(viewPos - lit.viewPnt);");
-    buf.writeln("   vec3 invNormDir = lit.invViewRotMat*normDir;");
-    buf.writeln("   vec3 color = lit.color*textureCube(txtCube, invNormDir).xyz;");
-    buf.writeln("   return lightValue(norm, attenuation*color, normDir);");
+    if (light.hasAttenuation) {
+      buf.writeln("   float attenuation = 1.0/(lit.att0 + (lit.att1 + lit.att2*dist)*dist);");
+      buf.writeln("   if(attenuation <= 0.005) return vec3(0.0, 0.0, 0.0);");
+      buf.writeln("");
+    }
+    if (light.hasTexture) {
+      buf.writeln("   vec3 invNormDir = lit.invViewRotMat*normDir;");
+      buf.writeln("   vec3 color = lit.color*textureCube(txtCube, invNormDir).xyz;");
+      buf.writeln("");
+    }
+    if (light.shadowTexture) {
+      buf.writeln("   float depth = dot(textureCube(shadowCube, invNormDir), lit.shadowAdj);");
+      buf.writeln("   float dist2 = (dist - 20.0) / (1.0 - 20.0);"); // TODO: Fix scaling
+      buf.writeln("   if(depth > dist2) return vec3(0.0, 0.0, 0.0);");
+      buf.writeln("");
+    }
+    List<String> parts = new List<String>();
+    if (light.hasAttenuation) parts.add("attenuation");
+    if (light.colorTexture)   parts.add("texture2D(txt2D, txtLoc).rgb");
+    else                      parts.add("vec3(1.0, 1.0, 1.0)");
+    buf.writeln("   return ${parts.join(" * ")};");
     buf.writeln("}");
     buf.writeln("");
-    buf.writeln("vec3 allTxtPointLightValues(vec3 norm)");
+
+    buf.writeln("vec3 ${name}Value(vec3 norm, $title lit$params)");
+    buf.writeln("{");
+    parts = new List<String>();
+    if (cfg.ambient.hasAny) parts.add("ambientColor");
+    if (cfg.intense) {
+      buf.writeln("   vec3 highLight = vec3(0.0, 0.0, 0.0);");
+      parts.add("highLight");
+
+      params = "";
+      if (light.colorTexture)  params += ", txt2D";
+      if (light.shadowTexture) params += ", shadow2D";
+      buf.writeln("   vec3 normDir = normalize(viewPos - lit.viewPnt);");
+      buf.writeln("   vec3 intensity = ${name}Intensity(normDir, lit$params);");
+      buf.writeln("   if(length(intensity) > 0.0001) {");
+      List<String> subparts = new List<String>();
+      if (cfg.diffuse.hasAny)    subparts.add("diffuse(norm, normDir)");
+      if (cfg.invDiffuse.hasAny) subparts.add("invDiffuse(norm, normDir)");
+      if (cfg.specular.hasAny)   subparts.add("specular(norm, normDir)");
+      buf.writeln("      highLight = intensity*(${subparts.join(" + ")});");
+      buf.writeln("   }");
+    }
+    buf.writeln("   return lit.color*(${parts.join(" + ")});");
+    buf.writeln("}");
+    buf.writeln("");
+
+    buf.writeln("vec3 all${title}Values(vec3 norm)");
     buf.writeln("{");
     buf.writeln("   vec3 lightAccum = vec3(0.0, 0.0, 0.0);");
-    for (int i = 0; i < cfg.txtPointLight; ++i) {
-      buf.writeln("   if(txtPntLightCount <= $i) return lightAccum;");
-      buf.writeln("   lightAccum += txtPointLightValue(norm, txtPntLights[$i], txtPntLightsTxtCube$i);");
+    if (light.hasTexture) {
+      for (int i = 0; i < light.lightCount; ++i) {
+        buf.writeln("   if(${name}Count <= $i) return lightAccum;");
+        String params = "";
+        if (light.colorTexture)  params += ", ${name}sTexture2D$i";
+        if (light.shadowTexture) params += ", ${name}sShadow2D$i";
+        buf.writeln("   lightAccum += ${name}Value(norm, ${name}s[$i]$params);");
+      }
+    } else {
+      buf.writeln("   for(int i = 0; i < ${light.lightCount}; ++i)");
+      buf.writeln("   {");
+      buf.writeln("      if(i >= ${name}Count) break;");
+      buf.writeln("      lightAccum += ${name}Value(norm, ${name}s[i]);");
+      buf.writeln("   }");
     }
     buf.writeln("   return lightAccum;");
     buf.writeln("}");
@@ -402,7 +436,7 @@ class _materialLightFS {
   }
 
   /// Writes the spot lights to the fragment shader [buf].
-  static void _writeSpotLight(SpotLightConfig light, StringBuffer buf) {
+  static void _writeSpotLight(MaterialLightConfig cfg, SpotLightConfig light, StringBuffer buf) {
     if (light.lightCount <= 0) return;
     final String name = light.toString();
     final String title = toTitleCase(name);
@@ -436,10 +470,12 @@ class _materialLightFS {
     buf.writeln("");
     buf.writeln("uniform int ${name}Count;");
     buf.writeln("uniform $title ${name}s[${light.lightCount}];");
-    for (int i = 0; i < light.lightCount; i++) {
-      if (light.colorTexture)
-        buf.writeln("uniform sampler2D ${name}sTexture2D$i;");
-      if (light.shadowTexture)
+    if (light.colorTexture) {
+      for (int i = 0; i < light.lightCount; i++)
+          buf.writeln("uniform sampler2D ${name}sTexture2D$i;");
+    }
+    if (light.shadowTexture) {
+      for (int i = 0; i < light.lightCount; i++)
         buf.writeln("uniform sampler2D ${name}sShadow2D$i;");
     }
     buf.writeln("");
@@ -447,7 +483,7 @@ class _materialLightFS {
     String params = "";
     if (light.colorTexture)  params += ", sampler2D txt2D";
     if (light.shadowTexture) params += ", sampler2D shadow2D";
-    buf.writeln("vec3 ${name}Value(vec3 norm, $title lit$params)");
+    buf.writeln("vec3 ${name}Intensity($title lit$params)");
     buf.writeln("{");
     buf.writeln("   vec3 dir = objPos - lit.objPnt;");
     if (light.hasDist)
@@ -455,6 +491,7 @@ class _materialLightFS {
     if (light.hasAttenuation) {
       buf.writeln("   float attenuation = 1.0/(lit.att0 + (lit.att1 + lit.att2*dist)*dist);");
       buf.writeln("   if(attenuation <= 0.005) return vec3(0.0, 0.0, 0.0);");
+      buf.writeln("");
     }
     buf.writeln("   vec3 normDir = normalize(dir);");
     buf.writeln("   float zScale = dot(normDir, lit.objDir);");
@@ -464,6 +501,7 @@ class _materialLightFS {
       buf.writeln("   float scale = (lit.cutoff-angle) / (lit.cutoff-lit.coneAngle);");
       buf.writeln("   if(scale <= 0.0) return vec3(0.0, 0.0, 0.0);");
       buf.writeln("   if(scale >= 1.0) scale = 1.0;");
+      buf.writeln("");
     }
     if (light.hasTexture) {
       buf.writeln("   normDir = normDir / zScale;");
@@ -472,20 +510,46 @@ class _materialLightFS {
       buf.writeln("   float tv = dot(normDir, lit.objUp)*lit.tvScalar + 0.5;");
       buf.writeln("   if((tv < 0.0) || (tv > 1.0)) return vec3(0.0, 0.0, 0.0);");
       buf.writeln("   vec2 txtLoc = vec2(tu, tv);");
+      buf.writeln("");
     }
     if (light.shadowTexture) {
       buf.writeln("   float depth = dot(texture2D(shadow2D, vec2(txtLoc.x, 1.0-txtLoc.y)), lit.shadowAdj);");
       buf.writeln("   float dist2 = (dist - 20.0) / (1.0 - 20.0);"); // TODO: Fix scaling
       buf.writeln("   if(depth > dist2) return vec3(0.0, 0.0, 0.0);");
+      buf.writeln("");
     }
-
     List<String> parts = new List<String>();
-    parts.add("lit.color");
     if (light.hasAttenuation) parts.add("attenuation");
     if (light.hasCutOff)      parts.add("scale");
     if (light.colorTexture)   parts.add("texture2D(txt2D, txtLoc).rgb");
-    buf.writeln("   vec3 color = ${parts.join(" * ")};");
-    buf.writeln("   return lightValue(norm, color, normalize(viewPos - lit.viewPnt));");
+    else                      parts.add("vec3(1.0, 1.0, 1.0)");
+    buf.writeln("   return ${parts.join(" * ")};");
+    buf.writeln("}");
+    buf.writeln("");
+
+    buf.writeln("vec3 ${name}Value(vec3 norm, $title lit$params)");
+    buf.writeln("{");
+    parts = new List<String>();
+    if (cfg.ambient.hasAny) parts.add("ambientColor");
+    if (cfg.intense) {
+      buf.writeln("   vec3 highLight = vec3(0.0, 0.0, 0.0);");
+      parts.add("highLight");
+
+      params = "";
+      if (light.colorTexture)  params += ", txt2D";
+      if (light.shadowTexture) params += ", shadow2D";
+      buf.writeln("   vec3 intensity = ${name}Intensity(lit$params);");
+      buf.writeln("   if(length(intensity) > 0.0001) {");
+      buf.writeln("      vec3 litVec = normalize(viewPos - lit.viewPnt);");
+      List<String> subparts = new List<String>();
+      if (cfg.diffuse.hasAny)    subparts.add("diffuse(norm, litVec)");
+      if (cfg.invDiffuse.hasAny) subparts.add("invDiffuse(norm, litVec)");
+      if (cfg.specular.hasAny)   subparts.add("specular(norm, litVec)");
+      buf.writeln("      highLight = intensity*(${subparts.join(" + ")});");
+      buf.writeln("   }");
+    }
+
+    buf.writeln("   return lit.color*(${parts.join(" + ")});");
     buf.writeln("}");
     buf.writeln("");
 
@@ -519,7 +583,13 @@ class _materialLightFS {
     buf.writeln("");
     buf.writeln("vec3 nonLightValues(vec3 norm)");
     buf.writeln("{");
-    buf.writeln("   return lightValue(norm, vec3(1.0, 1.0, 1.0), vec3(0.0, 0.0, 1.0));");
+    if (cfg.intense) buf.writeln("   vec3 litVec = vec3(0.0, 0.0, 1.0));");
+    List<String> parts = new List<String>();
+    if (cfg.ambient.hasAny)    parts.add("ambientColor");
+    if (cfg.diffuse.hasAny)    parts.add("diffuse(norm, litVec)");
+    if (cfg.invDiffuse.hasAny) parts.add("invDiffuse(norm, litVec)");
+    if (cfg.specular.hasAny)   parts.add("specular(norm, litVec)");
+    buf.writeln("   return ${parts.join(" + ")};");
     buf.writeln("}");
     buf.writeln("");
   }
@@ -564,28 +634,15 @@ class _materialLightFS {
     _writeAlpha(cfg, buf);
 
     if (cfg.lights) {
-      buf.writeln("// === Lighting ===");
-      buf.writeln("");
-      buf.writeln("vec3 lightValue(vec3 norm, vec3 litClr, vec3 litVec)");
-      buf.writeln("{");
-      buf.writeln("   if ((litClr.r < 0.001) && (litClr.g < 0.001) && (litClr.b < 0.001)) return litClr;");
-      List<String> parts = new List<String>();
-      if (cfg.ambient.hasAny)    parts.add("ambientColor");
-      if (cfg.diffuse.hasAny)    parts.add("diffuse(norm, litVec)");
-      if (cfg.invDiffuse.hasAny) parts.add("invDiffuse(norm, litVec)");
-      if (cfg.specular.hasAny)   parts.add("specular(norm, litVec)");
-      buf.writeln("   return litClr*(${parts.join(" + ")});");
-      buf.writeln("}");
-      buf.writeln("");
-
-      _writeDirLight(cfg, buf);
-      _writePointLight(cfg, buf);
+      for (DirectionalLightConfig light in cfg.dirLights)
+        _writeDirLight(cfg, light, buf);
       
+      for (PointLightConfig light in cfg.pointLights)
+        _writePointLight(cfg, light, buf);
+  
       for (SpotLightConfig light in cfg.spotLights)
-        _writeSpotLight(light, buf);
+        _writeSpotLight(cfg, light, buf);
 
-      _writeTxtDirLight(cfg, buf);
-      _writeTxtPointLight(cfg, buf);
       _writeNoLight(cfg, buf);
     }
 
@@ -606,17 +663,23 @@ class _materialLightFS {
       if (cfg.diffuse.hasAny)    buf.writeln("   setDiffuseColor();");
       if (cfg.invDiffuse.hasAny) buf.writeln("   setInvDiffuseColor();");
       if (cfg.specular.hasAny)   buf.writeln("   setSpecularColor();");
-      if (cfg.dirLight      > 0) buf.writeln("   lightAccum += allDirLightValues(norm);");
-      if (cfg.pointLight    > 0) buf.writeln("   lightAccum += allPointLightValues(norm);");
+
+      for (DirectionalLightConfig light in cfg.dirLights) {
+        String title = toTitleCase(light.toString());
+        buf.writeln("   lightAccum += all${title}Values(norm);");
+      }
+      
+      for (PointLightConfig light in cfg.pointLights) {
+        String title = toTitleCase(light.toString());
+        buf.writeln("   lightAccum += all${title}Values(norm);");
+      }
 
       for (SpotLightConfig light in cfg.spotLights) {
         String title = toTitleCase(light.toString());
         buf.writeln("   lightAccum += all${title}Values(norm);");
       }
 
-      if (cfg.txtDirLight   > 0) buf.writeln("   lightAccum += allTxtDirLightValues(norm);");
-      if (cfg.txtPointLight > 0) buf.writeln("   lightAccum += allTxtPointLightValues(norm);");
-      if (cfg.totalLights  <= 0) buf.writeln("   lightAccum += nonLightValues(norm);");
+      if (cfg.totalLights <= 0) buf.writeln("   lightAccum += nonLightValues(norm);");
     }
     if (cfg.emission.hasAny)   fragParts.add("emissionColor()");
     if (cfg.reflection.hasAny) fragParts.add("reflect(refl)");

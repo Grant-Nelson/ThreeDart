@@ -316,33 +316,66 @@ class MaterialLight extends Technique {
         this._shader.specularTextureCube = this._specular.textureCube;
       }
 
-      if (cfg.dirLight > 0) {
-        int count = this._lights.directionalLights.length;
-        this._shader.directionalLightCount = count;
+      if (cfg.dirLights.length > 0) {
         Math.Matrix4 viewMat = state.view.matrix;
-        int index = 0;
+        Map<int, int> dirLightCounter = new Map<int, int>();
         for (Lights.Directional light in this._lights.directionalLights) {
-          Shaders.UniformDirectionalLight uniform = this._shader.directionalLights[index];
+          final int configID = light.configID;
+          final int index = dirLightCounter[configID] ?? 0;
+          dirLightCounter[configID] = index + 1;
+
+          Shaders.UniformDirectionalLight uniform = this._shader.getDirectionalLight(configID)[index];
           uniform.viewDir = viewMat.transVec3(light.direction).normal();
           uniform.color   = light.color;
-          index++;
+          if (light.texture != null) {
+            uniform.objectDir   = light.direction;
+            uniform.objectUp    = light.up;
+            uniform.objectRight = light.right;
+            this._addToTextureList(textures, light.texture);
+            uniform.texture = light.texture;
+          }
+        }
+
+        for (Shaders.DirectionalLightConfig light in cfg.dirLights) {
+          final int count = dirLightCounter[light.configID] ?? 0;
+          this._shader.setDirectionalLightCount(light.configID, count);
         }
       }
 
-      if (cfg.pointLight > 0) {
-        int count = this._lights.pointLights.length;
-        this._shader.pointLightCount = count;
+      if (cfg.pointLights.length > 0) {
         Math.Matrix4 viewMat = state.view.matrix;
-        int index = 0;
+        Map<int, int> pointLightCounter = new Map<int, int>();
         for (Lights.Point light in this._lights.pointLights) {
-          Shaders.UniformPointLight uniform = this._shader.pointLights[index];
-          uniform.point        = light.position;
-          uniform.viewPoint    = viewMat.transPnt3(light.position);
-          uniform.color        = light.color;
-          uniform.attenuation0 = light.attenuation0;
-          uniform.attenuation1 = light.attenuation1;
-          uniform.attenuation2 = light.attenuation2;
-          index++;
+          final int configID = light.configID;
+          final int index = pointLightCounter[configID] ?? 0;
+          pointLightCounter[configID] = index + 1;
+
+          Shaders.UniformPointLight uniform = this._shader.getPointLight(configID)[index];
+          Math.Matrix4 viewObjMat = viewMat*light.matrix;
+          uniform.point     = light.matrix.transPnt3(Math.Point3.zero);
+          uniform.viewPoint = viewObjMat.transPnt3(Math.Point3.zero);
+          uniform.color     = light.color;
+          if (light.texture != null || light.shadow != null)
+            uniform.inverseViewRotationMatrix = new Math.Matrix3.fromMatrix4(viewObjMat.inverse());
+          if (light.texture != null) {
+            this._addToTextureList(textures, light.texture);
+            uniform.texture = light.texture;
+          }
+          if (light.shadow != null) {
+            uniform.shadowAdjust = light.shadowAdjust;
+            this._addToTextureList(textures, light.shadow);
+            uniform.shadow = light.shadow;
+          }
+          if (light.enableAttenuation) {
+            uniform.attenuation0 = light.attenuation0;
+            uniform.attenuation1 = light.attenuation1;
+            uniform.attenuation2 = light.attenuation2;
+          }
+        }
+
+        for (Shaders.PointLightConfig light in cfg.pointLights) {
+          final int count = pointLightCounter[light.configID] ?? 0;
+          this._shader.setPointLightCount(light.configID, count);
         }
       }
 
@@ -388,45 +421,6 @@ class MaterialLight extends Technique {
         for (Shaders.SpotLightConfig light in cfg.spotLights) {
           final int count = spotLightCounter[light.configID] ?? 0;
           this._shader.setSpotLightCount(light.configID, count);
-        }
-      }
-
-      if (cfg.txtDirLight > 0) {
-        int count = this._lights.texturedDirectionalLights.length;
-        this._shader.texturedDirectionalLightCount = count;
-        Math.Matrix4 viewMat = state.view.matrix;
-        int index = 0;
-        for (Lights.TexturedDirectional light in this._lights.texturedDirectionalLights) {
-          Shaders.UniformTexturedDirectionalLight uniform = this._shader.texturedDirectionalLights[index];
-          this._addToTextureList(textures, light.texture);
-          uniform.objectDir   = light.direction;
-          uniform.objectUp    = light.up;
-          uniform.objectRight = light.right;
-          uniform.viewDir     = viewMat.transVec3(light.direction).normal();
-          uniform.color       = light.color;
-          uniform.texture     = light.texture;
-          index++;
-        }
-      }
-
-      if (cfg.txtPointLight > 0) {
-        int count = this._lights.texturedPointLights.length;
-        this._shader.texturedPointLightCount = count;
-        Math.Matrix4 viewMat = state.view.matrix;
-        int index = 0;
-        for (Lights.TexturedPoint light in this._lights.texturedPointLights) {
-          Shaders.UniformTexturedPointLight uniform = this._shader.texturedPointLights[index];
-          this._addToTextureList(textures, light.texture);
-          Math.Matrix4 viewObjMat = viewMat*light.matrix;
-          uniform.point        = light.matrix.transPnt3(Math.Point3.zero);
-          uniform.viewPoint    = viewObjMat.transPnt3(Math.Point3.zero);
-          uniform.inverseViewRotationMatrix = new Math.Matrix3.fromMatrix4(viewObjMat.inverse());
-          uniform.color        = light.color;
-          uniform.texture      = light.texture;
-          uniform.attenuation0 = light.attenuation0;
-          uniform.attenuation1 = light.attenuation1;
-          uniform.attenuation2 = light.attenuation2;
-          index++;
         }
       }
     }

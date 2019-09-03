@@ -64,20 +64,14 @@ class MaterialLight extends Shader {
   UniformSampler2D _alpha2D;
   UniformSamplerCube _alphaCube;
 
-  Uniform1i _dirLightCount;
-  List<UniformDirectionalLight> _dirLights;
-
-  Uniform1i _pntLightCount;
-  List<UniformPointLight> _pntLights;
+  Map<int, Uniform1i> _dirLightCounts;
+  Map<int, List<UniformDirectionalLight>> _dirLights;
+  
+  Map<int, Uniform1i> _pointLightCounts;
+  Map<int, List<UniformPointLight>> _pointLights;
 
   Map<int, Uniform1i> _spotLightCounts;
   Map<int, List<UniformSpotLight>> _spotLights;
-
-  Uniform1i _txtDirLightCount;
-  List<UniformTexturedDirectionalLight> _txtDirLights;
-
-  Uniform1i _txtPntLightCount;
-  List<UniformTexturedPointLight> _txtPntLights;
 
   Uniform4f _fogClr;
   Uniform1f _fogStop;
@@ -205,36 +199,69 @@ class MaterialLight extends Shader {
     else if (cfg.alpha.hasTxtCube)
       this._alphaCube = this.uniforms.required("alphaTxt") as UniformSamplerCube;
 
-    this._dirLights    = new List<UniformDirectionalLight>();
-    this._txtDirLights = new List<UniformTexturedDirectionalLight>();
+    this._dirLightCounts = new Map<int, Uniform1i>();
+    this._dirLights      = new Map<int, List<UniformDirectionalLight>>();
 
-    this._pntLights    = new List<UniformPointLight>();
-    this._txtPntLights = new List<UniformTexturedPointLight>();
+    this._pointLightCounts = new Map<int, Uniform1i>();
+    this._pointLights      = new Map<int, List<UniformPointLight>>();
 
     this._spotLightCounts = new Map<int, Uniform1i>();
     this._spotLights      = new Map<int, List<UniformSpotLight>>();
 
     if (cfg.lights) {
-      if (cfg.dirLight > 0) {
-        this._dirLightCount = this.uniforms.required("dirLightCount");
-        for (int i = 0; i < cfg.dirLight; ++i) {
-          Uniform3f viewDir = this.uniforms.required("dirLights[$i].viewDir") as Uniform3f;
-          Uniform3f color   = this.uniforms.required("dirLights[$i].color") as Uniform3f;
-          this._dirLights.add(new UniformDirectionalLight._(i, viewDir, color));
+  
+      for (DirectionalLightConfig light in cfg.dirLights) {
+        final int configID = light.configID;
+        final String name = light.toString();
+        List<UniformDirectionalLight> lights = new List<UniformDirectionalLight>();
+        for (int i = 0; i < light.lightCount; ++i) {
+          Uniform3f objUp, objRight, objDir;
+          if (light.hasTexture) {
+            objUp    = this.uniforms.required("${name}s[$i].objUp")    as Uniform3f;
+            objRight = this.uniforms.required("${name}s[$i].objRight") as Uniform3f;
+            objDir   = this.uniforms.required("${name}s[$i].objDir")   as Uniform3f;
+          }
+          Uniform3f viewDir = this.uniforms.required("${name}s[$i].viewDir") as Uniform3f;
+          Uniform3f color   = this.uniforms.required("${name}s[$i].color")   as Uniform3f;
+          UniformSampler2D txt;
+          if (light.colorTexture)
+            txt = this.uniforms.required("${name}sTexture2D$i") as UniformSampler2D;
+          lights.add(new UniformDirectionalLight._(i, objUp, objRight, objDir, viewDir, color, txt));
         }
+        this._dirLights[configID] = lights;
+        this._dirLightCounts[configID] = this.uniforms.required("${name}Count");
       }
 
-      if (cfg.pointLight > 0) {
-        this._pntLightCount = this.uniforms.required("pntLightCount");
-        for (int i = 0; i < cfg.pointLight; ++i) {
-          Uniform3f point   = this.uniforms.required("pntLights[$i].point") as Uniform3f;
-          Uniform3f viewPnt = this.uniforms.required("pntLights[$i].viewPnt") as Uniform3f;
-          Uniform3f color   = this.uniforms.required("pntLights[$i].color") as Uniform3f;
-          Uniform1f att0    = this.uniforms.required("pntLights[$i].att0") as Uniform1f;
-          Uniform1f att1    = this.uniforms.required("pntLights[$i].att1") as Uniform1f;
-          Uniform1f att2    = this.uniforms.required("pntLights[$i].att2") as Uniform1f;
-          this._pntLights.add(new UniformPointLight._(i, point, viewPnt, color, att0, att1, att2));
+      for (PointLightConfig light in cfg.pointLights) {
+        final int configID = light.configID;
+        final String name = light.toString();
+        List<UniformPointLight> lights = new List<UniformPointLight>();
+        for (int i = 0; i < light.lightCount; ++i) {
+          Uniform3f point   = this.uniforms.required("${name}s[$i].point")   as Uniform3f;
+          Uniform3f viewPnt = this.uniforms.required("${name}s[$i].viewPnt") as Uniform3f;
+          Uniform3f color   = this.uniforms.required("${name}s[$i].color")   as Uniform3f;
+          UniformMat3 invViewRotMat;
+          if (light.hasTexture)
+            invViewRotMat = this.uniforms.required("${name}s[$i].invViewRotMat") as UniformMat3;
+          Uniform4f shadowAdj;
+          UniformSamplerCube txt, shadow;
+          if (light.colorTexture)
+            txt = this.uniforms.required("${name}sTextureCube$i") as UniformSamplerCube;
+          if (light.shadowTexture) {
+            shadow = this.uniforms.required("${name}sShadowCube$i") as UniformSamplerCube;
+            shadowAdj = this.uniforms.required("${name}s[$i].shadowAdj") as Uniform4f;
+          }
+          Uniform1f att0, att1, att2;
+          if (light.hasAttenuation) {
+            att0 = this.uniforms.required("${name}s[$i].att0") as Uniform1f;
+            att1 = this.uniforms.required("${name}s[$i].att1") as Uniform1f;
+            att2 = this.uniforms.required("${name}s[$i].att2") as Uniform1f;
+          }
+          lights.add(new UniformPointLight._(i, point, viewPnt, invViewRotMat,
+            color, txt, shadow, shadowAdj, att0, att1, att2));
         }
+        this._pointLights[configID] = lights;
+        this._pointLightCounts[configID] = this.uniforms.required("${name}Count");
       }
 
       for (SpotLightConfig light in cfg.spotLights) {
@@ -279,34 +306,6 @@ class MaterialLight extends Shader {
         }
         this._spotLights[configID] = lights;
         this._spotLightCounts[configID] = this.uniforms.required("${name}Count");
-      }
-      
-      if (cfg.txtDirLight > 0) {
-        this._txtDirLightCount = this.uniforms.required("txtDirLightCount");
-        for (int i = 0; i < cfg.txtDirLight; ++i) {
-          Uniform3f objUp      = this.uniforms.required("txtDirLights[$i].objUp") as Uniform3f;
-          Uniform3f objRight   = this.uniforms.required("txtDirLights[$i].objRight") as Uniform3f;
-          Uniform3f objDir     = this.uniforms.required("txtDirLights[$i].objDir") as Uniform3f;
-          Uniform3f viewDir    = this.uniforms.required("txtDirLights[$i].viewDir") as Uniform3f;
-          Uniform3f color      = this.uniforms.required("txtDirLights[$i].color") as Uniform3f;
-          UniformSampler2D txt = this.uniforms.required("txtDirLightsTxt2D$i") as UniformSampler2D;
-          this._txtDirLights.add(new UniformTexturedDirectionalLight._(i, objUp, objRight, objDir, viewDir, color, txt));
-        }
-      }
-
-      if (cfg.txtPointLight > 0) {
-        this._txtPntLightCount = this.uniforms.required("txtPntLightCount");
-        for (int i = 0; i < cfg.txtPointLight; ++i) {
-          Uniform3f point           = this.uniforms.required("txtPntLights[$i].point") as Uniform3f;
-          Uniform3f viewPnt         = this.uniforms.required("txtPntLights[$i].viewPnt") as Uniform3f;
-          UniformMat3 invViewRotMat = this.uniforms.required("txtPntLights[$i].invViewRotMat") as UniformMat3;
-          Uniform3f color           = this.uniforms.required("txtPntLights[$i].color") as Uniform3f;
-          Uniform1f att0            = this.uniforms.required("txtPntLights[$i].att0") as Uniform1f;
-          Uniform1f att1            = this.uniforms.required("txtPntLights[$i].att1") as Uniform1f;
-          Uniform1f att2            = this.uniforms.required("txtPntLights[$i].att2") as Uniform1f;
-          UniformSamplerCube txt    = this.uniforms.required("txtPntLightsTxtCube$i") as UniformSamplerCube;
-          this._txtPntLights.add(new UniformTexturedPointLight._(i, point, viewPnt, invViewRotMat, color, txt, att0, att1, att2));
-        }
       }
 
       if (cfg.fog) {
@@ -511,18 +510,18 @@ class MaterialLight extends Shader {
     this._setTextureCube(this._alphaCube, txt);
 
   /// The number of currently used directional lights.
-  int get directionalLightCount => this._dirLightCount.getValue();
-  set directionalLightCount(int count) => this._dirLightCount.setValue(count);
+  int getDirectionalLightCount(int configID) => this._dirLightCounts[configID].getValue();
+  setDirectionalLightCount(int configID, int count) => this._dirLightCounts[configID].setValue(count);
 
-  /// The list of directional lights.
-  List<UniformDirectionalLight> get directionalLights => this._dirLights;
+  /// The list of directional lights grouped by the configuration IDs.
+  List<UniformDirectionalLight> getDirectionalLight(int configID) => this._dirLights[configID];
 
   /// The number of currently used point lights.
-  int get pointLightCount => this._pntLightCount.getValue();
-  set pointLightCount(int count) => this._pntLightCount.setValue(count);
+  int getPointLightCount(int configID) => this._pointLightCounts[configID].getValue();
+  setPointLightCount(int configID, int count) => this._pointLightCounts[configID].setValue(count);
 
-  /// The list of point lights.
-  List<UniformPointLight> get pointLights => this._pntLights;
+  /// The list of point lights grouped by the configuration IDs.
+  List<UniformPointLight> getPointLight(int configID) => this._pointLights[configID];
 
   /// The number of currently used spot lights.
   int getSpotLightCount(int configID) => this._spotLightCounts[configID].getValue();
@@ -530,20 +529,6 @@ class MaterialLight extends Shader {
 
   /// The list of spot lights grouped by the configuration IDs.
   List<UniformSpotLight> getSpotLight(int configID) => this._spotLights[configID];
-
-  /// The number of currently used textured directional lights.
-  int get texturedDirectionalLightCount => this._txtDirLightCount.getValue();
-  set texturedDirectionalLightCount(int count) => this._txtDirLightCount.setValue(count);
-
-  /// The list of textured directional lights.
-  List<UniformTexturedDirectionalLight> get texturedDirectionalLights => this._txtDirLights;
-
-  /// The number of currently used textured point lights.
-  int get texturedPointLightCount => this._txtPntLightCount.getValue();
-  set texturedPointLightCount(int count) => this._txtPntLightCount.setValue(count);
-
-  /// The list of textured point lights.
-  List<UniformTexturedPointLight> get texturedPointLights => this._txtPntLights;
 
   /// The color of the fog.
   Math.Color4 get fogColor => this._fogClr.getColor4();

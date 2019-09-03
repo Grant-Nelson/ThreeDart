@@ -1,5 +1,61 @@
 part of ThreeDart.Shaders;
 
+/// The configuration for a specific type of directional lights
+/// that can be added to the material light shader.
+class DirectionalLightConfig {
+
+  /// The identifier for the type of directional light this configuration is for.
+  final int configID;
+
+  /// Indicates the number of directional lights of this type.
+  final int lightCount;
+
+  /// Constructs a new directional light configuration.
+  DirectionalLightConfig(int this.configID, int this.lightCount);
+  
+  /// Indicates if this type of directional light has a color texture.
+  bool get colorTexture => (this.configID & 0x01) != 0x00;
+
+  /// Indicates if this type of directional light has either a color or shadow texture.
+  bool get hasTexture => (this.configID & 0x01) != 0x00;
+  
+  /// Gets the string for this directional light configuration.
+  String toString() => "dirLight${this.configID}";
+}
+
+/// The configuration for a specific type of point lights
+/// that can be added to the material light shader.
+class PointLightConfig {
+
+  /// The identifier for the type of point light this configuration is for.
+  final int configID;
+
+  /// Indicates the number of point lights of this type.
+  final int lightCount;
+
+  /// Constructs a new point light configuration.
+  PointLightConfig(int this.configID, int this.lightCount);
+  
+  /// Indicates if this type of point light has a color texture.
+  bool get colorTexture => (this.configID & 0x01) != 0x00;
+
+  /// Indicates if this type of point light has a shadow texture.
+  bool get shadowTexture => (this.configID & 0x02) != 0x00;
+
+  /// Indicates if this type of point light has light attenuation.
+  bool get hasAttenuation => (this.configID & 0x04) != 0x00;
+
+  /// Indicates if this type of point light has either a color or shadow texture.
+  bool get hasTexture => (this.configID & 0x03) != 0x00;
+
+  /// Indicates if this type of point light has either attenuation or shadow
+  /// meaning that it will require calculating distance from light.
+  bool get hasDist => (this.configID & 0x06) != 0x00;
+  
+  /// Gets the string for this point light configuration.
+  String toString() => "pointLight${this.configID}";
+}
+
 /// The configuration for a specific type of spot lights
 /// that can be added to the material light shader.
 class SpotLightConfig {
@@ -66,20 +122,14 @@ class MaterialLightConfig {
   /// The alpha color source type.
   final ColorSourceType alpha;
 
-  /// The number of allowed directional lights.
-  final int dirLight;
+  /// The directional light configurations.
+  final List<DirectionalLightConfig> dirLights;
 
-  /// The number of allowed point lights.
-  final int pointLight;
+  /// The point light configurations.
+  final List<PointLightConfig> pointLights;
 
-  /// The number of allowed spot lights.
+  /// The spot light configurations.
   final List<SpotLightConfig> spotLights;
-
-  /// The number of allowed textured directional lights.
-  final int txtDirLight;
-
-  /// The number of allowed textured point lights.
-  final int txtPointLight;
 
   /// The total number of any type of light.
   final int totalLights;
@@ -87,6 +137,10 @@ class MaterialLightConfig {
   /// Indicates there is either reflection or refration
   /// meaning that an enviromental map is needed for this shader.
   final bool enviromental;
+
+  /// Indicates that there is intense light illumination via
+  /// diffuse, inverse diffuse, and specular.
+  final bool intense;
 
   /// Indicates the inverse view matrix is needed for this shader.
   final bool invViewMat;
@@ -161,13 +215,13 @@ class MaterialLightConfig {
     ColorSourceType this.specular, ColorSourceType this.bumpy,
     ColorSourceType this.reflection, ColorSourceType this.refraction,
     ColorSourceType this.alpha,
-    
-    int this.dirLight, int this.pointLight,
-    List<SpotLightConfig> this.spotLights,
-    
-    int this.txtDirLight, int this.txtPointLight, int this.totalLights,
 
-    bool this.enviromental, bool this.invViewMat,
+    List<DirectionalLightConfig> this.dirLights,
+    List<PointLightConfig> this.pointLights,
+    List<SpotLightConfig> this.spotLights,
+
+    int this.totalLights,
+    bool this.enviromental, bool this.intense, bool this.invViewMat,
     bool this.objMat, bool this.viewObjMat, bool this.projViewObjMat,
     bool this.viewMat, bool this.projViewMat,
     bool this.lights, bool this.objPos,
@@ -186,9 +240,9 @@ class MaterialLightConfig {
     ColorSourceType invDiffuse, ColorSourceType specular,
     ColorSourceType bumpy, ColorSourceType reflection,
     ColorSourceType refraction, ColorSourceType alpha,
-    int dirLight, int pointLight,
-    List<SpotLightConfig> spotLights,
-    int txtDirLight, int txtPointLight) {
+    List<DirectionalLightConfig> dirLights,
+    List<PointLightConfig> pointLights,
+    List<SpotLightConfig> spotLights) {
 
     StringBuffer buf = new StringBuffer();
     buf.write("MaterialLight_");
@@ -208,26 +262,36 @@ class MaterialLightConfig {
     buf.write(fog?        "1": "0");
     buf.write("_");
     buf.write(bendMats);
-    buf.write("_");
-    buf.write(dirLight);
-    buf.write("_");
-    buf.write(pointLight);
-    buf.write("_");
 
-    for (SpotLightConfig light in spotLights)
-      buf.write("Spot${light}_");
+    if (dirLights.length > 0) {
+      buf.write("_Dir");
+      for (DirectionalLightConfig light in dirLights)
+        buf.write("_${light.configID}");
+    }
 
-    buf.write(txtDirLight);
-    buf.write("_");
-    buf.write(txtPointLight);
+    if (pointLights.length > 0) {
+      buf.write("_Point");
+      for (PointLightConfig light in pointLights)
+        buf.write("_${light.configID}");
+    }
+
+    if (spotLights.length > 0) {
+      buf.write("_Spot");
+      for (SpotLightConfig light in spotLights)
+        buf.write("_${light.configID}");
+    }
     String name = buf.toString();
 
     int totalLights = 0;
     bool objPos = fog;
-    
-    totalLights += dirLight + pointLight + txtDirLight + txtPointLight;
-    objPos = objPos || (pointLight + txtDirLight + txtPointLight) > 0;
-
+    for (DirectionalLightConfig light in dirLights) {
+      totalLights += light.lightCount;
+      objPos = true;
+    }
+    for (PointLightConfig light in pointLights) {
+      totalLights += light.lightCount;
+      objPos = true;
+    }
     for (SpotLightConfig light in spotLights) {
       totalLights += light.lightCount;
       objPos = true;
@@ -237,11 +301,9 @@ class MaterialLightConfig {
     bool invViewMat = enviromental;
     bool lights = ambient.hasAny || diffuse.hasAny ||
                   invDiffuse.hasAny || specular.hasAny;
-    bool viewPos = (specular.hasAny) ||
-                   ((pointLight + txtPointLight) > 0) ||
-                    enviromental;
-    bool norm = diffuse.hasAny || invDiffuse.hasAny || specular.hasAny ||
-                bumpy.hasAny || enviromental;
+    bool viewPos = (specular.hasAny) || (pointLights.length > 0) || enviromental;
+    bool intense = diffuse.hasAny || invDiffuse.hasAny || specular.hasAny;;
+    bool norm = intense || bumpy.hasAny || enviromental;
     bool binm = bumpy.hasAny;
     bool txt2D = emission.hasTxt2D || ambient.hasTxt2D || diffuse.hasTxt2D ||
                  invDiffuse.hasTxt2D || specular.hasTxt2D || bumpy.hasTxt2D ||
@@ -269,8 +331,8 @@ class MaterialLightConfig {
 
     return new MaterialLightConfig._(emission, ambient,
       diffuse, invDiffuse, specular, bumpy, reflection, refraction,
-      alpha, dirLight, pointLight, spotLights, txtDirLight,
-      txtPointLight, totalLights, enviromental,
+      alpha, dirLights, pointLights, spotLights,
+      totalLights, enviromental, intense,
       invViewMat, objMat, viewObjMat, projViewObjMat,
       viewMat, projViewMat, lights, objPos, viewPos,
       norm, binm, txt2D, txtCube, bending, txt2DMat, txtCubeMat,

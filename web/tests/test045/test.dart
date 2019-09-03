@@ -24,12 +24,13 @@ void main() {
 
   Movers.Group lightMover = new Movers.Group()
     ..add(new Movers.Constant.translate(0.0, 0.0, -4.0))
+    //..add(new Movers.Rotater())
     ..add(new Movers.UserRotater(input: td.userInput, ctrl: true));
 
   Lights.Spot spot = new Lights.Spot(
     mover:        lightMover,
     shadow:       shadow.colorTexture,
-    //texture:      td.textureLoader.load2DFromFile("../resources/Test.png"),
+    texture:      td.textureLoader.load2DFromFile("../resources/Test.png"),
     color:        new Math.Color3.white(),
     enableCutOff: false,
     fov:          0.5,
@@ -53,9 +54,9 @@ void main() {
     ..shape = (Shapes.cube()..flip());
 
   Movers.Group camMover = new Movers.Group()
-  ..add(new Movers.UserRotater(input: td.userInput))
-  ..add(new Movers.Constant.rotateX(Math.PI))
-  ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));
+    ..add(new Movers.UserRotater(input: td.userInput))
+    ..add(new Movers.Constant.rotateX(Math.PI))
+    ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));
 
   ThreeDart.Entity lightSource = new ThreeDart.Entity()
     ..mover = (new Movers.Group()
