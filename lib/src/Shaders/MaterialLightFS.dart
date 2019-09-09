@@ -275,6 +275,7 @@ class _materialLightFS {
           buf.writeln("uniform sampler2D ${name}sTexture2D$i;");
     }
     buf.writeln("");
+
     String params = "";
     if (light.colorTexture) params += ", sampler2D txt2D";
     buf.writeln("vec3 ${name}Value(vec3 norm, $title lit${params})");
@@ -283,41 +284,39 @@ class _materialLightFS {
     if (cfg.ambient.hasAny) parts.add("ambientColor");
     if (cfg.intense) {
       buf.writeln("   vec3 highLight = vec3(0.0, 0.0, 0.0);");
-      parts.add("highLight");
-      String indent = "";
+      List<String> subparts = new List<String>();
+      if (cfg.diffuse.hasAny)    subparts.add("diffuse(norm, lit.viewDir)");
+      if (cfg.invDiffuse.hasAny) subparts.add("invDiffuse(norm, lit.viewDir)");
+      if (cfg.specular.hasAny)   subparts.add("specular(norm, lit.viewDir)");
       if (light.colorTexture) {
         buf.writeln("   vec3 offset = objPos + lit.objDir*dot(objPos, lit.objDir);");
         buf.writeln("   float tu = dot(offset, lit.objUp);");
         buf.writeln("   float tv = dot(offset, lit.objRight);");
         buf.writeln("   vec2 txtLoc = vec2(tu, tv);");
         buf.writeln("   vec3 intensity = texture2D(txt2D, txtLoc).xyz;");
-        buf.writeln("   if(length(intensity) > 0.0001) {");
-        indent = "   ";
+        buf.writeln("   if(length(intensity) > 0.0001)");
+        buf.writeln("      highLight = intensity*(${subparts.join(" + ")});");
+      } else {
+        buf.writeln("   highLight = ${subparts.join(" + ")};");
       }
-      buf.writeln("   ${indent}vec3 litVec = normalize(viewPos - lit.viewPnt);");
-      List<String> subparts = new List<String>();
-      if (cfg.diffuse.hasAny)    subparts.add("diffuse(norm, litVec)");
-      if (cfg.invDiffuse.hasAny) subparts.add("invDiffuse(norm, litVec)");
-      if (cfg.specular.hasAny)   subparts.add("specular(norm, litVec)");
-      buf.writeln("   ${indent}highLight = intensity*(${subparts.join(" + ")});");
-      if (light.colorTexture)
-        buf.writeln("   }");
+      parts.add("highLight");
     }
     buf.writeln("   return lit.color*(${parts.join(" + ")});");
     buf.writeln("}");
     buf.writeln("");
+
     buf.writeln("vec3 all${title}Values(vec3 norm)");
     buf.writeln("{");
     buf.writeln("   vec3 lightAccum = vec3(0.0, 0.0, 0.0);");
     if (light.colorTexture) {
       for (int i = 0; i < light.lightCount; ++i) {
-        buf.writeln("   if(txtDirLightCount <= $i) return lightAccum;");
-        buf.writeln("   lightAccum += ${name}Value(norm, ${name}s[$i], txtDirLightsTxt2D$i);");
+        buf.writeln("   if(${name}Count <= $i) return lightAccum;");
+        buf.writeln("   lightAccum += ${name}Value(norm, ${name}s[$i], ${name}sTexture2D$i);");
       }
     } else {
       buf.writeln("   for(int i = 0; i < ${light.lightCount}; ++i)");
       buf.writeln("   {");
-      buf.writeln("      if(i >= dirLightCount) break;");
+      buf.writeln("      if(i >= ${name}Count) break;");
       buf.writeln("      lightAccum += ${name}Value(norm, ${name}s[i]);");
       buf.writeln("   }");
     }
@@ -356,6 +355,7 @@ class _materialLightFS {
       for (int i = 0; i < light.lightCount; i++)
         buf.writeln("uniform samplerCube ${name}sTextureCube$i;");
     }
+    buf.writeln("");
 
     String params = "";
     if (light.colorTexture)  params += ", samplerCube txtCube";
@@ -580,7 +580,7 @@ class _materialLightFS {
     buf.writeln("");
     buf.writeln("vec3 nonLightValues(vec3 norm)");
     buf.writeln("{");
-    if (cfg.intense) buf.writeln("   vec3 litVec = vec3(0.0, 0.0, 1.0));");
+    if (cfg.intense) buf.writeln("   vec3 litVec = vec3(0.0, 0.0, 1.0);");
     List<String> parts = new List<String>();
     if (cfg.ambient.hasAny)    parts.add("ambientColor");
     if (cfg.diffuse.hasAny)    parts.add("diffuse(norm, litVec)");

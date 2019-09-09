@@ -30,7 +30,7 @@ void main() {
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
     ..lights.add(txtDir)
     ..emission.color = new Math.Color3.black()
-    ..ambient.color = new Math.Color3.gray(0.0)
+    ..ambient.color = new Math.Color3.gray(0.01)
     ..diffuse.color = new Math.Color3.gray(0.7)
     ..specular.color = new Math.Color3.gray(0.3)
     ..specular.shininess = 100.0;

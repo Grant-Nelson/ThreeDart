@@ -41,7 +41,7 @@ void main() {
 
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
     ..lights.add(objPoint)
-    ..ambient.color = new Math.Color3.gray(0.2)
+    ..ambient.color = new Math.Color3.gray(0.1)
     ..diffuse.color = new Math.Color3.gray(1.0)
     ..specular.color = new Math.Color3.gray(1.0)
     ..specular.shininess = 100.0;

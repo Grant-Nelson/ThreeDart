@@ -97,7 +97,7 @@ void main() {
 
   Techniques.MaterialLight colorTech = new Techniques.MaterialLight()
     ..lights.add(lightPoint)
-    ..ambient.color = new Math.Color3.gray(0.3)
+    ..ambient.color = new Math.Color3.gray(0.05)
     ..diffuse.color = new Math.Color3.gray(0.7);
 
   Views.BackTarget colorTarget = new Views.BackTarget(autoResize: true);
