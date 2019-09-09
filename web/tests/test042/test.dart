@@ -78,7 +78,7 @@ void main() {
   Textures.TextureCube lightTxt = td.textureLoader.loadCubeFromFiles(
     "../resources/Stars.png", "../resources/Stars.png", "../resources/Stars.png",
     "../resources/Stars.png", "../resources/Stars.png", "../resources/Stars.png");
-  Lights.TexturedPoint lightPoint = new Lights.TexturedPoint(
+  Lights.Point lightPoint = new Lights.Point(
     mover: mover,
     texture: lightTxt,
     attenuation0: 0.5,

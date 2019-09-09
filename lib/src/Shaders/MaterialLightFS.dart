@@ -368,11 +368,8 @@ class _materialLightFS {
       buf.writeln("   if(attenuation <= 0.005) return vec3(0.0, 0.0, 0.0);");
       buf.writeln("");
     }
-    if (light.hasTexture) {
+    if (light.hasTexture)
       buf.writeln("   vec3 invNormDir = lit.invViewRotMat*normDir;");
-      buf.writeln("   vec3 color = lit.color*textureCube(txtCube, invNormDir).xyz;");
-      buf.writeln("");
-    }
     if (light.shadowTexture) {
       buf.writeln("   float depth = dot(textureCube(shadowCube, invNormDir), lit.shadowAdj);");
       buf.writeln("   float dist2 = (dist - 20.0) / (1.0 - 20.0);"); // TODO: Fix scaling
@@ -380,9 +377,9 @@ class _materialLightFS {
       buf.writeln("");
     }
     List<String> parts = new List<String>();
+    parts.add("lit.color");
     if (light.hasAttenuation) parts.add("attenuation");
-    if (light.colorTexture)   parts.add("texture2D(txt2D, txtLoc).rgb");
-    else                      parts.add("vec3(1.0, 1.0, 1.0)");
+    if (light.colorTexture)   parts.add("textureCube(txtCube, invNormDir).rgb");
     buf.writeln("   return ${parts.join(" * ")};");
     buf.writeln("}");
     buf.writeln("");
@@ -396,8 +393,8 @@ class _materialLightFS {
       parts.add("highLight");
 
       params = "";
-      if (light.colorTexture)  params += ", txt2D";
-      if (light.shadowTexture) params += ", shadow2D";
+      if (light.colorTexture)  params += ", txtCube";
+      if (light.shadowTexture) params += ", shadowCube";
       buf.writeln("   vec3 normDir = normalize(viewPos - lit.viewPnt);");
       buf.writeln("   vec3 intensity = ${name}Intensity(normDir, lit$params);");
       buf.writeln("   if(length(intensity) > 0.0001) {");
@@ -419,8 +416,8 @@ class _materialLightFS {
       for (int i = 0; i < light.lightCount; ++i) {
         buf.writeln("   if(${name}Count <= $i) return lightAccum;");
         String params = "";
-        if (light.colorTexture)  params += ", ${name}sTexture2D$i";
-        if (light.shadowTexture) params += ", ${name}sShadow2D$i";
+        if (light.colorTexture)  params += ", ${name}sTextureCube$i";
+        if (light.shadowTexture) params += ", ${name}sShadowCube$i";
         buf.writeln("   lightAccum += ${name}Value(norm, ${name}s[$i]$params);");
       }
     } else {

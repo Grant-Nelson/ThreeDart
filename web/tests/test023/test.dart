@@ -22,7 +22,7 @@ void main() {
   Movers.UserRotater viewRotater = new Movers.UserRotater(input: td.userInput);
   Movers.UserRotater objRotater = new Movers.UserRotater(input: td.userInput, ctrl: true);
 
-  Lights.TexturedDirectional txtDir = new Lights.TexturedDirectional(
+  Lights.Directional txtDir = new Lights.Directional(
     mover: objRotater,
     color: new Math.Color3(0.6, 0.9, 1.0),
     texture: td.textureLoader.load2DFromFile("../resources/Test.png", wrapEdges: true));

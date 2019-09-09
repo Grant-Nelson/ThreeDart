@@ -88,7 +88,7 @@ class Directional implements Light {
   /// The color of the light.
   Math.Color3 get color => this._color;
   void set color(Math.Color3 color) {
-    color = color ?? new Math.Color3.white();
+    color ??= new Math.Color3.white();
     if (this._color != color) {
       Math.Color3 prev = this._color;
       this._color = color;

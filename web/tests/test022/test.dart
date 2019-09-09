@@ -32,7 +32,7 @@ void main() {
     ..technique = (new Techniques.MaterialLight()
                 ..emission.textureCube = texture);
 
-  Lights.TexturedPoint objPoint = new Lights.TexturedPoint(
+  Lights.Point objPoint = new Lights.Point(
     mover: mover,
     texture: texture,
     attenuation0: 1.0,

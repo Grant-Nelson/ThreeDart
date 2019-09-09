@@ -83,7 +83,7 @@ class UserZoom implements Mover, Input.Interactable {
   /// Indicates if the modifiers keys must be pressed or released.
   Input.Modifiers get modifiers => this._modPressed;
   void set modifiers(Input.Modifiers mods) {
-    mods = mods ?? new Input.Modifiers.none();
+    mods ??= new Input.Modifiers.none();
     if (this._modPressed != mods) {
       Input.Modifiers prev = this._modPressed;
       this._modPressed = mods;
@@ -94,7 +94,7 @@ class UserZoom implements Mover, Input.Interactable {
   /// The scalar to change how fast the zoom occurs.
   double get zoomScalar => this._zoomScalar;
   void set zoomScalar(double value) {
-    value = value ?? 0.0;
+    value ??= 0.0;
     if (!Math.Comparer.equals(this._zoomScalar, value)) {
       double prev = this._zoomScalar;
       this._zoomScalar = value;
@@ -105,7 +105,7 @@ class UserZoom implements Mover, Input.Interactable {
   /// The current zoom value, the exponent on the scalar.
   double get zoom => this._zoom;
   void set zoom(double value) {
-    value = value ?? 1.0;
+    value ??= 1.0;
     if (this._zoom != value) {
       double prev = this._zoom;
       this._zoom = value;

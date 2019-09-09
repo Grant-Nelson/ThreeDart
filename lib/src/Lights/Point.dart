@@ -90,7 +90,7 @@ class Point implements Light {
   /// The color of the light.
   Math.Color3 get color => this._color;
   void set color(Math.Color3 color) {
-    this._color = color ?? new Math.Color3.white();
+    color ??= new Math.Color3.white();
     if (this._color != color) {
       Math.Color3 prev = this._color;
       this._color = color;
@@ -138,7 +138,7 @@ class Point implements Light {
   /// The constant attenuation factor of the light.
   double get attenuation0 => this._attenuation0;
   void set attenuation0(double attenuation0) {
-    attenuation0 = attenuation0 ?? 1.0;
+    attenuation0 ??= 1.0;
     if (!Math.Comparer.equals(this._attenuation0, attenuation0)) {
       double prev = this._attenuation0;
       this._attenuation0 = attenuation0;
@@ -149,7 +149,7 @@ class Point implements Light {
   /// The linear attenuation factor of the light.
   double get attenuation1 => this._attenuation1;
   void set attenuation1(double attenuation1) {
-    attenuation1 = attenuation1 ?? 0.0;
+    attenuation1 ??= 0.0;
     if (!Math.Comparer.equals(this._attenuation1, attenuation1)) {
       double prev = this._attenuation1;
       this._attenuation1 = attenuation1;
@@ -160,7 +160,7 @@ class Point implements Light {
   /// The quadratic attenuation factor of the light.
   double get attenuation2 => this._attenuation2;
   void set attenuation2(double attenuation2) {
-    attenuation2 = attenuation2 ?? 0.0;
+    attenuation2 ??= 0.0;
     if (!Math.Comparer.equals(this._attenuation2, attenuation2)) {
       double prev = this._attenuation2;
       this._attenuation2 = attenuation2;
@@ -171,7 +171,7 @@ class Point implements Light {
   /// Indicates if attenuation should be determined or not.
   bool get enableAttenuation => this._enableAttn;
   void set enableAttenuation(bool enable) {
-    enable = enable ?? true;
+    enable ??= true;
     if (this._enableAttn != enable) {
       bool prev = this._enableAttn;
       this._enableAttn = enable;

@@ -176,11 +176,23 @@ class MaterialLight extends Technique {
 
   /// Creates the configuration for this shader.
   Shaders.MaterialLightConfig _config() {
-    int dirLight    = this._lengthLimit(this._lights.directionalLights.length);
-    int txtDirLight = this._lengthLimit(this._lights.texturedDirectionalLights.length);
+    // Collect configuration for point lights.
+    Map<int, int> dirLightCounter = new Map<int, int>();
+    for (Lights.Directional light in this._lights.directionalLights)
+      dirLightCounter[light.configID] = dirLightCounter[light.configID]??0 + 1;
+    List<Shaders.DirectionalLightConfig> dirLights = new List<Shaders.DirectionalLightConfig>();
+    dirLightCounter.forEach((int configID, int count) =>
+      dirLights.add(new Shaders.DirectionalLightConfig(configID, this._lengthLimit(count))));
+    dirLights.sort((Shaders.DirectionalLightConfig a, Shaders.DirectionalLightConfig b) => a.configID.compareTo(b.configID));
 
-    int pointLight    = this._lengthLimit(this._lights.pointLights.length);
-    int txtPointLight = this._lengthLimit(this._lights.texturedPointLights.length);
+    // Collect configuration for point lights.
+    Map<int, int> pointLightCounter = new Map<int, int>();
+    for (Lights.Point light in this._lights.pointLights)
+      pointLightCounter[light.configID] = pointLightCounter[light.configID]??0 + 1;
+    List<Shaders.PointLightConfig> pointLights = new List<Shaders.PointLightConfig>();
+    pointLightCounter.forEach((int configID, int count) =>
+      pointLights.add(new Shaders.PointLightConfig(configID, this._lengthLimit(count))));
+    pointLights.sort((Shaders.PointLightConfig a, Shaders.PointLightConfig b) => a.configID.compareTo(b.configID));
 
     // Collect configuration for spot lights.
     Map<int, int> spotLightCounter = new Map<int, int>();
@@ -197,7 +209,7 @@ class MaterialLight extends Technique {
       this._fog.enabled, bendMats, this._emission.type, this._ambient.type,
       this._diffuse.type, this._invDiffuse.type, this._specular.type,
       this._bump.type, this._reflect.type, this._refract.type, this._alpha.type,
-      dirLight, pointLight, spotLights, txtDirLight, txtPointLight);
+      dirLights, pointLights, spotLights);
   }
 
   /// Checks if the texture is in the list and if not, sets it's index and adds it to the list.

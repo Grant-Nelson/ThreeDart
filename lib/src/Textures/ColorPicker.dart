@@ -124,7 +124,7 @@ class ColorPicker implements Input.Interactable, Events.Changable {
   /// Indicates if the modifiers keys must be pressed or released.
   Input.Modifiers get modifiers => this._modPressed;
   void set modifiers(Input.Modifiers mods) {
-    mods = mods ?? new Input.Modifiers.none();
+    mods ??= new Input.Modifiers.none();
     if (this._modPressed != mods) {
       Input.Modifiers prev = this._modPressed;
       this._modPressed = mods;
@@ -136,7 +136,7 @@ class ColorPicker implements Input.Interactable, Events.Changable {
   /// This does not apply when the mouse is locked.
   double get deadBand => this._deadBand;
   void set deadBand(double value) {
-    value = value ?? 0.0;
+    value ??= 0.0;
     if (!Math.Comparer.equals(this._deadBand, value)) {
       double prev = this._deadBand;
       this._deadBand = value;

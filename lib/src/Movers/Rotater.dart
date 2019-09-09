@@ -85,7 +85,7 @@ class Rotater extends Mover {
   /// The change in yaw, in radians per second.
   double get deltaYaw => this._deltaYaw;
   void set deltaYaw(double value) {
-    value = value ?? 0.0;
+    value ??= 0.0;
     if (!Math.Comparer.equals(this._deltaYaw, value)) {
       double prev = this._deltaYaw;
       this._deltaYaw = value;
@@ -96,7 +96,7 @@ class Rotater extends Mover {
   /// The change in pitch, in radians per second.
   double get deltaPitch => this._deltaPitch;
   void set deltaPitch(double value) {
-    value = value ?? 0.0;
+    value ??= 0.0;
     if (!Math.Comparer.equals(this._deltaPitch, value)) {
       double prev = this._deltaPitch;
       this._deltaPitch = value;
@@ -107,7 +107,7 @@ class Rotater extends Mover {
   /// The change in roll, in radians per second.
   double get deltaRoll => this._deltaRoll;
   void set deltaRoll(double value) {
-    value = value ?? 0.0;
+    value ??= 0.0;
     if (!Math.Comparer.equals(this._deltaRoll, value)) {
       double prev = this._deltaRoll;
       this._deltaRoll = value;

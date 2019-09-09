@@ -48,7 +48,7 @@ class FrontTarget extends Target {
   /// The clear color to clear the target to before rendering.
   Math.Color4 get color => this._color;
   void set color(Math.Color4 color) {
-    color = color ?? new Math.Color4.black();
+    color ??= new Math.Color4.black();
     if (this._color != color) {
       Math.Color4 prev = this._color;
       this._color = color;
