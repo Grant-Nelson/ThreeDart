@@ -31,15 +31,15 @@ class NormalConfig {
   /// Creates a new normal configuration.
   /// The configuration for the normal shader.
   factory NormalConfig(ColorSourceType bumpy) {
-    bool binm = (bumpy != ColorSourceType.None);
-    bool txt2D = (bumpy == ColorSourceType.Texture2D);
-    bool txtCube = (bumpy == ColorSourceType.TextureCube);
+    bool binm    = bumpy.hasAny;
+    bool txt2D   = bumpy.hasTxt2D;
+    bool txtCube = bumpy.hasTxtCube;
 
-    String name = "Normal_${stringForComponentType(bumpy)}";
+    String name = "Normal_${bumpy.toString()}";
 
     Data.VertexType vertexType = Data.VertexType.Pos | Data.VertexType.Norm;
-    if (binm) vertexType |= Data.VertexType.Binm;
-    if (txt2D) vertexType |= Data.VertexType.Txt2D;
+    if (binm)    vertexType |= Data.VertexType.Binm;
+    if (txt2D)   vertexType |= Data.VertexType.Txt2D;
     if (txtCube) vertexType |= Data.VertexType.TxtCube;
 
     return new NormalConfig._(bumpy, binm, txt2D, txtCube, name, vertexType);
@@ -90,30 +90,20 @@ class NormalConfig {
     if (this.txtCube) buf.writeln("varying vec3 txtCube;");
     buf.writeln("");
 
-    switch (this.bumpy) {
-      case ColorSourceType.None: break;
-      case ColorSourceType.Solid: break;
-      case ColorSourceType.Texture2D:
-        buf.writeln("uniform sampler2D bumpTxt;");
-        buf.writeln("uniform int nullBumpTxt;");
-        break;
-      case ColorSourceType.TextureCube:
-        buf.writeln("uniform samplerCube bumpTxt;");
-        buf.writeln("uniform int nullBumpTxt;");
-        break;
-    }
+    if (this.bumpy.hasTxt2D)
+      buf.writeln("uniform sampler2D bumpTxt;");
+    else if (this.bumpy.hasTxtCube)
+      buf.writeln("uniform samplerCube bumpTxt;");
     buf.writeln("");
 
     buf.writeln("vec3 normal()");
     buf.writeln("{");
-    if ((this.bumpy == ColorSourceType.None) ||
-        (this.bumpy == ColorSourceType.Solid)) {
+    if (this.bumpy.hasNone || this.bumpy.hasSolid) {
       buf.writeln("   return normalize(normalVec);");
     } else {
-      buf.writeln("   if(nullBumpTxt > 0) return normalVec;");
-      if (this.bumpy == ColorSourceType.Texture2D) {
+      if (this.bumpy.hasTxt2D) {
         buf.writeln("   vec3 color = texture2D(bumpTxt, txt2D).rgb;");
-      } else { // ColorSourceType.TextureCube
+      } else { // hasTxtCube
         buf.writeln("   vec3 color = textureCube(bumpTxt, txtCube).rgb;");
       }
       buf.writeln("   vec3 n = normalize(normalVec);");

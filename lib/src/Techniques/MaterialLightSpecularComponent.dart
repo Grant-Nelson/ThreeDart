@@ -34,12 +34,12 @@ class MaterialLightSpecularComponent extends MaterialLightColorComponent {
   double get shininess => this._shininess;
   set shininess(double value) {
     value ??= 100.0;
-    if (value <= 0.0) this.clear();
-    else if (this._type == Shaders.ColorSourceType.None) {
-      this._type = Shaders.ColorSourceType.Solid;
-      this._onComponentSet();
-      this._onTypeChanged();
+    if (value <= 0.0) {
+      this._setNewType(this._type.enableSolid(false));
+      this._setShininess(0.0);
+    } else {
+      this._setNewType(this._type.enableSolid(true));
+      this._setShininess(value);
     }
-    this._setShininess(value);
   }
 }

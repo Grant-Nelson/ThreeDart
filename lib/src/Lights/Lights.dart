@@ -14,6 +14,3 @@ part 'Light.dart';
 part 'LightCollection.dart';
 part 'Point.dart';
 part 'Spot.dart';
-part 'TexturedDirectional.dart';
-part 'TexturedPoint.dart';
-part 'TexturedSpot.dart';

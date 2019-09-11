@@ -250,8 +250,8 @@ class Entity implements Movers.Movable, Events.Changable {
   /// and the shape is centered then offset by the given [offset].
   void resizeCenter([double size = 2.0, Math.Point3 offset = null]) {
     Math.Region3 aabb = this.calculateAABB();
-    offset = offset ?? Math.Point3.zero;
-    offset = offset - aabb.center;
+    offset ??= Math.Point3.zero;
+    offset -= aabb.center;
     double maxSize = aabb.dx;
     if (aabb.dy > maxSize) maxSize = aabb.dy;
     if (aabb.dz > maxSize) maxSize = aabb.dz;

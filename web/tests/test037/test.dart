@@ -71,6 +71,7 @@ void main() {
     ..add("../resources/HeightMap1.png", true)
     ..add("../resources/HeightMap2.png")
     ..add("../resources/HeightMap3.png")
+    ..add("../resources/HeightMap4.png")
     ..add("../resources/ScrewHeightMap.png");
 
   var setShape = (Shapes.Shape shape) {

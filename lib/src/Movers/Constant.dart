@@ -104,7 +104,7 @@ class Constant extends Mover {
   /// The matrix to apply to an entity or group.
   Math.Matrix4 get matrix => this._mat;
   void set matrix(Math.Matrix4 mat) {
-    mat = mat ?? Math.Matrix4.identity;
+    mat ??= Math.Matrix4.identity;
     if (this._mat != mat) {
       Math.Matrix4 prev = this._mat;
       this._mat = mat;

@@ -5,22 +5,16 @@ class LightCollection extends Collections.Collection<Light> {
   List<Directional> _dirLights;
   List<Point> _pntLights;
   List<Spot> _spotLights;
-  List<TexturedDirectional> _txtDirLights;
-  List<TexturedPoint> _txtPntLights;
-  List<TexturedSpot> _txtSpotLights;
   Events.Event _changed;
   Events.Event _lightChanged;
 
   /// Creates a new light collection.
   LightCollection() {
-    this._dirLights     = new List<Directional>();
-    this._pntLights     = new List<Point>();
-    this._spotLights    = new List<Spot>();
-    this._txtDirLights  = new List<TexturedDirectional>();
-    this._txtPntLights  = new List<TexturedPoint>();
-    this._txtSpotLights = new List<TexturedSpot>();
-    this._changed       = null;
-    this._lightChanged  = null;
+    this._dirLights    = new List<Directional>();
+    this._pntLights    = new List<Point>();
+    this._spotLights   = new List<Spot>();
+    this._changed      = null;
+    this._lightChanged = null;
     this.setHandlers(onPreaddHndl:  this._onPreaddLights,
                      onAddedHndl:   this._onAddedLights,
                      onRemovedHndl: this._onRemovedLights);
@@ -83,15 +77,6 @@ class LightCollection extends Collections.Collection<Light> {
   /// Gets the set of spot lights in this collection.
   Iterable<Spot> get spotLights => this._spotLights;
 
-  /// Gets the set of textured directional lights in this collection.
-  Iterable<TexturedDirectional> get texturedDirectionalLights => this._txtDirLights;
-
-  /// Gets the set of textured point lights in this collection.
-  Iterable<TexturedPoint> get texturedPointLights => this._txtPntLights;
-
-  /// Gets the set of textured spot lights in this collection.
-  Iterable<TexturedSpot> get texturedSpotLights => this._txtSpotLights;
-
   /// Checks the given [light] is in the collection.
   bool _contains(Light light) {
     if (light is Directional)
@@ -100,12 +85,6 @@ class LightCollection extends Collections.Collection<Light> {
       return this._pntLights.contains(light);
     if (light is Spot)
       return this._spotLights.contains(light);
-    if (light is TexturedDirectional)
-      return this._txtDirLights.contains(light);
-    if (light is TexturedPoint)
-      return this._txtPntLights.contains(light);
-    if (light is TexturedSpot)
-      return this._txtSpotLights.contains(light);
     return false;
   }
 
@@ -117,12 +96,6 @@ class LightCollection extends Collections.Collection<Light> {
       this._pntLights.add(light);
     else if (light is Spot)
       this._spotLights.add(light);
-    else if (light is TexturedDirectional)
-      this._txtDirLights.add(light);
-    else if (light is TexturedPoint)
-      this._txtPntLights.add(light);
-    else if (light is TexturedSpot)
-      this._txtSpotLights.add(light);
   }
 
   /// Removes the light from the specific lists of lights.
@@ -133,11 +106,5 @@ class LightCollection extends Collections.Collection<Light> {
       this._pntLights.remove(light);
     else if (light is Spot)
       this._spotLights.remove(light);
-    else if (light is TexturedDirectional)
-      this._txtDirLights.remove(light);
-    else if (light is TexturedPoint)
-      this._txtPntLights.remove(light);
-    else if (light is TexturedSpot)
-      this._txtSpotLights.remove(light);
   }
 }
