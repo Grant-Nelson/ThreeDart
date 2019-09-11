@@ -46,7 +46,7 @@ class ComponentShift extends Events.Changable {
   /// false to clap to the maximum and minimum values.
   bool get wrap => this._wrap;
   void set wrap(bool wrap) {
-    wrap = wrap ?? true;
+    wrap ??= true;
     if (this._wrap != wrap) {
       bool prev = this._wrap;
       this._wrap = wrap;
@@ -57,7 +57,7 @@ class ComponentShift extends Events.Changable {
   /// The maximum allowed location.
   double get maximumLocation => this._maxLoc;
   void set maximumLocation(double max) {
-    max = max ?? 1.0e12;
+    max ??= 1.0e12;
     if (!Math.Comparer.equals(this._maxLoc, max)) {
       double prev = this._maxLoc;
       this._maxLoc = max;
@@ -73,7 +73,7 @@ class ComponentShift extends Events.Changable {
   /// The minimum allowed location.
   double get minimumLocation => this._minLoc;
   void set minimumLocation(double min) {
-    min = min ?? -1.0e12;
+    min ??= -1.0e12;
     if (!Math.Comparer.equals(this._minLoc, min)) {
       double prev = this._minLoc;
       this._minLoc = min;
@@ -101,7 +101,7 @@ class ComponentShift extends Events.Changable {
   /// The minimum allowed velocity is the negation of this value.
   double get maximumVelocity => this._maxVel;
   void set maximumVelocity(double max) {
-    max = max ?? 100.0;
+    max ??= 100.0;
     if (!Math.Comparer.equals(this._maxVel, max)) {
       double prev = this._maxVel;
       this._maxVel = max;

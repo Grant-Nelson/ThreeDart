@@ -15,6 +15,7 @@ class Normal extends Technique {
     this._shader = null;
     this._txt2DMat = Math.Matrix3.identity;
     this._txtCubeMat = Math.Matrix4.identity;
+    this._bumpyType = new Shaders.ColorSourceType();
     this.clearBump();
     this._changed = null;
   }
@@ -80,9 +81,9 @@ class Normal extends Technique {
 
   /// Removes any normal distortion from the material.
   void clearBump() {
-    if (this._bumpyType != Shaders.ColorSourceType.None) {
+    if (this._bumpyType.hasAny) {
       this._shader = null;
-      this._bumpyType = Shaders.ColorSourceType.None;
+      this._bumpyType = Shaders.ColorSourceType();
     }
     this._setBump2D(null);
     this._setBumpCube(null);
@@ -93,12 +94,12 @@ class Normal extends Technique {
   Textures.Texture2D get bumpyTexture2D => this._bump2D;
   set bumpyTexture2D(Textures.Texture2D txt) {
     if (txt == null) {
-      if (this._bumpyType == Shaders.ColorSourceType.Texture2D) {
+      if (this._bumpyType.hasTxt2D) {
         this._shader = null;
-        this._bumpyType = Shaders.ColorSourceType.None;
+        this._bumpyType = Shaders.ColorSourceType();
       }
-    } else if (this._bumpyType != Shaders.ColorSourceType.Texture2D) {
-      this._bumpyType = Shaders.ColorSourceType.Texture2D;
+    } else if (!this._bumpyType.hasTxt2D) {
+      this._bumpyType = this._bumpyType.enableTxt2D(true);
       this._setBumpCube(null);
       this._shader = null;
     }
@@ -109,12 +110,12 @@ class Normal extends Technique {
   Textures.TextureCube get bumpyTextureCube => this._bumpCube;
   set bumpyTextureCube(Textures.TextureCube txt) {
     if (txt == null) {
-      if (this._bumpyType == Shaders.ColorSourceType.TextureCube) {
+      if (this._bumpyType.hasTxtCube) {
         this._shader = null;
-        this._bumpyType = Shaders.ColorSourceType.None;
+        this._bumpyType = Shaders.ColorSourceType();
       }
-    } else if (this._bumpyType != Shaders.ColorSourceType.TextureCube) {
-      this._bumpyType = Shaders.ColorSourceType.TextureCube;
+    } else if (!this._bumpyType.hasTxtCube) {
+      this._bumpyType = this._bumpyType.enableTxtCube(true);
       this._setBump2D(null);
       this._shader = null;
     }
@@ -172,17 +173,12 @@ class Normal extends Technique {
     if (cfg.txt2D)   this._shader.texture2DMatrix   = this._txt2DMat;
     if (cfg.txtCube) this._shader.textureCubeMatrix = this._txtCubeMat;
 
-    switch (cfg.bumpy) {
-      case Shaders.ColorSourceType.None: break;
-      case Shaders.ColorSourceType.Solid: break;
-      case Shaders.ColorSourceType.Texture2D:
-        this._addToTextureList(textures, this._bump2D);
-        this._shader.bumpTexture2D = this._bump2D;
-        break;
-      case Shaders.ColorSourceType.TextureCube:
-        this._addToTextureList(textures, this._bumpCube);
-        this._shader.bumpTextureCube = this._bumpCube;
-        break;
+    if (cfg.bumpy.hasTxt2D) {
+      this._addToTextureList(textures, this._bump2D);
+      this._shader.bumpTexture2D = this._bump2D;
+    } else if (cfg.bumpy.hasTxtCube) {
+      this._addToTextureList(textures, this._bumpCube);
+      this._shader.bumpTextureCube = this._bumpCube;
     }
 
     for (int i = 0; i < textures.length; i++) {

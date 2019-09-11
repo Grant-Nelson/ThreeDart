@@ -79,10 +79,8 @@ class GaussianBlurConfig {
     buf.writeln("precision mediump float;");
     buf.writeln("");
     buf.writeln("uniform sampler2D colorTxt;");
-    buf.writeln("uniform int nullColorTxt;");
     if (this.blurTxt) {
       buf.writeln("uniform sampler2D blurTxt;");
-      buf.writeln("uniform int nullBlurTxt;");
       buf.writeln("uniform vec4 blurAdj;");
     } else {
       buf.writeln("uniform float blurValue;");
@@ -102,16 +100,7 @@ class GaussianBlurConfig {
     buf.writeln("void main()");
     buf.writeln("{");
     if (this.blurTxt)
-      buf.writeln("   if((nullColorTxt > 0) || (nullBlurTxt > 0))");
-    else buf.writeln("   if(nullColorTxt > 0)");
-    buf.writeln("   {");
-    buf.writeln("      gl_FragColor = vec4(1.0);");
-    buf.writeln("      return;");
-    buf.writeln("   }");
-    buf.writeln("");
-    if (this.blurTxt) {
       buf.writeln("   float blurValue = dot(texture2D(blurTxt, txt2D), blurAdj);");
-    }
     buf.writeln("   float blurOffset = abs(blurValue);");
     buf.writeln("");
 

@@ -8,7 +8,7 @@ void main() {
   html.DivElement elem = new html.DivElement();
 
   // Add all tests in the format: addTest(elem, "test000");
-  for (int i = 0; i <= 44; i++)
+  for (int i = 0; i <= 45; i++)
     addTest(elem, "test"+"$i".padLeft(3, '0'));
 
   new common.ShellPage("3Dart Tests")

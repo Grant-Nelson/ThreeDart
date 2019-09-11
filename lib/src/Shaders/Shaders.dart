@@ -10,6 +10,7 @@ import '../Data/Data.dart' as Data;
 
 // Shader Components
 part 'Attributes.dart';
+part 'ColorSourceType.dart';
 part 'Shader.dart';
 part 'Uniforms.dart';
 
@@ -21,30 +22,14 @@ part 'GaussianBlurConfig.dart';
 part 'Inspection.dart';
 part 'MaterialLight.dart';
 part 'MaterialLightConfig.dart';
+part 'MaterialLightFS.dart';
 part 'MaterialLightUniforms.dart';
+part 'MaterialLightVS.dart';
 part 'Normal.dart';
 part 'NormalConfig.dart';
 part 'Skybox.dart';
 part 'SolidColor.dart';
 part 'TextureLayout.dart';
-
-/// Source of colors type for different shader components.
-enum ColorSourceType {
-  /// No color source, meaning component isn't being used.
-  None,
-
-  /// Solid color source or a scalar on the component.
-  Solid,
-
-  /// The 2D texture color source.
-  Texture2D,
-
-  /// The cube texture color source.
-  TextureCube
-}
-
-/// Gets the string to indicate a source type used for the name of the material light.
-String stringForComponentType(ColorSourceType type) => type.index.toString();
 
 /// The type of blending of multiple colors together.
 enum ColorBlendType {
@@ -72,3 +57,6 @@ String numberLines(String text) {
   }
   return lines.join("\n");
 }
+
+/// Upcases just the first character of the given string.
+String toTitleCase(String name) => name[0].toUpperCase()+name.substring(1);

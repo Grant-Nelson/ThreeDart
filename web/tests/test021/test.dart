@@ -61,7 +61,7 @@ void main() {
     ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));
 
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
-    ..ambient.color = new Math.Color3.gray(0.4)
+    ..ambient.color = new Math.Color3.gray(0.15)
     ..diffuse.color = new Math.Color3.gray(0.4)
     ..specular.color = new Math.Color3.gray(0.3)
     ..specular.shininess = 100.0;

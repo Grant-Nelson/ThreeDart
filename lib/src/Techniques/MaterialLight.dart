@@ -176,19 +176,40 @@ class MaterialLight extends Technique {
 
   /// Creates the configuration for this shader.
   Shaders.MaterialLightConfig _config() {
-    int dirLight      = this._lengthLimit(this._lights.directionalLights.length);
-    int pointLight    = this._lengthLimit(this._lights.pointLights.length);
-    int spotLight     = this._lengthLimit(this._lights.spotLights.length);
-    int txtDirLight   = this._lengthLimit(this._lights.texturedDirectionalLights.length);
-    int txtPointLight = this._lengthLimit(this._lights.texturedPointLights.length);
-    int txtSpotLight  = this._lengthLimit(this._lights.texturedSpotLights.length);
-    int bendMats      = this._lengthLimit(this._bendMats.length);
+    // Collect configuration for point lights.
+    Map<int, int> dirLightCounter = new Map<int, int>();
+    for (Lights.Directional light in this._lights.directionalLights)
+      dirLightCounter[light.configID] = dirLightCounter[light.configID]??0 + 1;
+    List<Shaders.DirectionalLightConfig> dirLights = new List<Shaders.DirectionalLightConfig>();
+    dirLightCounter.forEach((int configID, int count) =>
+      dirLights.add(new Shaders.DirectionalLightConfig(configID, this._lengthLimit(count))));
+    dirLights.sort((Shaders.DirectionalLightConfig a, Shaders.DirectionalLightConfig b) => a.configID.compareTo(b.configID));
+
+    // Collect configuration for point lights.
+    Map<int, int> pointLightCounter = new Map<int, int>();
+    for (Lights.Point light in this._lights.pointLights)
+      pointLightCounter[light.configID] = pointLightCounter[light.configID]??0 + 1;
+    List<Shaders.PointLightConfig> pointLights = new List<Shaders.PointLightConfig>();
+    pointLightCounter.forEach((int configID, int count) =>
+      pointLights.add(new Shaders.PointLightConfig(configID, this._lengthLimit(count))));
+    pointLights.sort((Shaders.PointLightConfig a, Shaders.PointLightConfig b) => a.configID.compareTo(b.configID));
+
+    // Collect configuration for spot lights.
+    Map<int, int> spotLightCounter = new Map<int, int>();
+    for (Lights.Spot light in this._lights.spotLights)
+      spotLightCounter[light.configID] = spotLightCounter[light.configID]??0 + 1;
+    List<Shaders.SpotLightConfig> spotLights = new List<Shaders.SpotLightConfig>();
+    spotLightCounter.forEach((int configID, int count) =>
+      spotLights.add(new Shaders.SpotLightConfig(configID, this._lengthLimit(count))));
+    spotLights.sort((Shaders.SpotLightConfig a, Shaders.SpotLightConfig b) => a.configID.compareTo(b.configID));
+
+    int bendMats = this._lengthLimit(this._bendMats.length);
     return new Shaders.MaterialLightConfig(
       this._txt2DMat != null, this._txtCubeMat != null, this._colorMat != null,
       this._fog.enabled, bendMats, this._emission.type, this._ambient.type,
       this._diffuse.type, this._invDiffuse.type, this._specular.type,
       this._bump.type, this._reflect.type, this._refract.type, this._alpha.type,
-      dirLight, pointLight, spotLight, txtDirLight, txtPointLight, txtSpotLight);
+      dirLights, pointLights, spotLights);
   }
 
   /// Checks if the texture is in the list and if not, sets it's index and adds it to the list.
@@ -254,265 +275,203 @@ class MaterialLight extends Technique {
       }
     }
 
-    switch (cfg.emission) {
-      case Shaders.ColorSourceType.None: break;
-      case Shaders.ColorSourceType.Solid:
-        this._shader.emissionColor = this._emission.color;
-        break;
-      case Shaders.ColorSourceType.Texture2D:
-        this._addToTextureList(textures, this._emission.texture2D);
-        this._shader.emissionTexture2D = this._emission.texture2D;
-        this._shader.emissionColor     = this._emission.color;
-        break;
-      case Shaders.ColorSourceType.TextureCube:
-        this._addToTextureList(textures, this._emission.textureCube);
-        this._shader.emissionTextureCube = this._emission.textureCube;
-        this._shader.emissionColor       = this._emission.color;
-        break;
+    if (cfg.emission.hasSolid)
+      this._shader.emissionColor = this._emission.color;
+    if (cfg.emission.hasTxt2D) {
+      this._addToTextureList(textures, this._emission.texture2D);
+      this._shader.emissionTexture2D = this._emission.texture2D;
+    } else if (cfg.emission.hasTxtCube) {
+      this._addToTextureList(textures, this._emission.textureCube);
+      this._shader.emissionTextureCube = this._emission.textureCube;
     }
 
     if (cfg.lights) {
-      switch (cfg.ambient) {
-        case Shaders.ColorSourceType.None: break;
-        case Shaders.ColorSourceType.Solid:
-          this._shader.ambientColor = this._ambient.color;
-          break;
-        case Shaders.ColorSourceType.Texture2D:
-          this._addToTextureList(textures, this._ambient.texture2D);
-          this._shader.ambientTexture2D = this._ambient.texture2D;
-          this._shader.ambientColor     = this._ambient.color;
-          break;
-        case Shaders.ColorSourceType.TextureCube:
-          this._addToTextureList(textures, this._ambient.textureCube);
-          this._shader.ambientTextureCube = this._ambient.textureCube;
-          this._shader.ambientColor       = this._ambient.color;
-          break;
+      if (cfg.ambient.hasSolid)
+        this._shader.ambientColor = this._ambient.color;
+      if (cfg.ambient.hasTxt2D) {
+        this._addToTextureList(textures, this._ambient.texture2D);
+        this._shader.ambientTexture2D = this._ambient.texture2D;
+      } else if (cfg.ambient.hasTxtCube) {
+        this._addToTextureList(textures, this._ambient.textureCube);
+        this._shader.ambientTextureCube = this._ambient.textureCube;
+      }
+      
+      if (cfg.diffuse.hasSolid)
+        this._shader.diffuseColor = this._diffuse.color;
+      if (cfg.diffuse.hasTxt2D) {
+        this._addToTextureList(textures, this._diffuse.texture2D);
+        this._shader.diffuseTexture2D = this._diffuse.texture2D;
+      } else if (cfg.diffuse.hasTxtCube) {
+        this._addToTextureList(textures, this._diffuse.textureCube);
+        this._shader.diffuseTextureCube = this._diffuse.textureCube;
+      }
+      
+      if (cfg.invDiffuse.hasSolid)
+        this._shader.invDiffuseColor = this._invDiffuse.color;
+      if (cfg.invDiffuse.hasTxt2D) {
+        this._addToTextureList(textures, this._invDiffuse.texture2D);
+        this._shader.invDiffuseTexture2D = this._invDiffuse.texture2D;
+      } else if (cfg.invDiffuse.hasTxtCube) {
+        this._addToTextureList(textures, this._invDiffuse.textureCube);
+        this._shader.invDiffuseTextureCube = this._invDiffuse.textureCube;
       }
 
-      switch (cfg.diffuse) {
-        case Shaders.ColorSourceType.None: break;
-        case Shaders.ColorSourceType.Solid:
-          this._shader.diffuseColor = this._diffuse.color;
-          break;
-        case Shaders.ColorSourceType.Texture2D:
-          this._addToTextureList(textures, this._diffuse.texture2D);
-          this._shader.diffuseTexture2D = this._diffuse.texture2D;
-          this._shader.diffuseColor     = this._diffuse.color;
-          break;
-        case Shaders.ColorSourceType.TextureCube:
-          this._addToTextureList(textures, this._diffuse.textureCube);
-          this._shader.diffuseTextureCube = this._diffuse.textureCube;
-          this._shader.diffuseColor       = this._diffuse.color;
-          break;
+      if (cfg.specular.hasAny)
+        this._shader.shininess = this._specular.shininess;
+      if (cfg.specular.hasSolid)
+        this._shader.specularColor = this._specular.color;
+      if (cfg.specular.hasTxt2D) {
+        this._addToTextureList(textures, this._specular.texture2D);
+        this._shader.specularTexture2D = this._specular.texture2D;
+      } else if (cfg.specular.hasTxtCube) {
+        this._addToTextureList(textures, this._specular.textureCube);
+        this._shader.specularTextureCube = this._specular.textureCube;
       }
 
-      switch (cfg.invDiffuse) {
-        case Shaders.ColorSourceType.None: break;
-        case Shaders.ColorSourceType.Solid:
-          this._shader.invDiffuseColor = this._invDiffuse.color;
-          break;
-        case Shaders.ColorSourceType.Texture2D:
-          this._addToTextureList(textures, this._invDiffuse.texture2D);
-          this._shader.invDiffuseTexture2D = this._invDiffuse.texture2D;
-          this._shader.invDiffuseColor     = this._invDiffuse.color;
-          break;
-        case Shaders.ColorSourceType.TextureCube:
-          this._addToTextureList(textures, this._invDiffuse.textureCube);
-          this._shader.invDiffuseTextureCube = this._invDiffuse.textureCube;
-          this._shader.invDiffuseColor       = this._invDiffuse.color;
-          break;
-      }
-
-      switch (cfg.specular) {
-        case Shaders.ColorSourceType.None: break;
-        case Shaders.ColorSourceType.Solid:
-          this._shader.specularColor = this._specular.color;
-          this._shader.shininess     = this._specular.shininess;
-          break;
-        case Shaders.ColorSourceType.Texture2D:
-          this._addToTextureList(textures, this._specular.texture2D);
-          this._shader.specularTexture2D = this._specular.texture2D;
-          this._shader.specularColor     = this._specular.color;
-          this._shader.shininess         = this._specular.shininess;
-          break;
-        case Shaders.ColorSourceType.TextureCube:
-          this._addToTextureList(textures, this._specular.textureCube);
-          this._shader.specularTextureCube = this._specular.textureCube;
-          this._shader.specularColor       = this._specular.color;
-          this._shader.shininess           = this._specular.shininess;
-          break;
-      }
-
-      if (cfg.dirLight > 0) {
-        int count = this._lights.directionalLights.length;
-        this._shader.directionalLightCount = count;
+      if (cfg.dirLights.length > 0) {
         Math.Matrix4 viewMat = state.view.matrix;
-        int index = 0;
+        Map<int, int> dirLightCounter = new Map<int, int>();
         for (Lights.Directional light in this._lights.directionalLights) {
-          Shaders.UniformDirectionalLight uniform = this._shader.directionalLights[index];
+          final int configID = light.configID;
+          final int index = dirLightCounter[configID] ?? 0;
+          dirLightCounter[configID] = index + 1;
+
+          Shaders.UniformDirectionalLight uniform = this._shader.getDirectionalLight(configID)[index];
           uniform.viewDir = viewMat.transVec3(light.direction).normal();
           uniform.color   = light.color;
-          index++;
+          if (light.texture != null) {
+            uniform.objectDir   = light.direction;
+            uniform.objectUp    = light.up;
+            uniform.objectRight = light.right;
+            this._addToTextureList(textures, light.texture);
+            uniform.texture = light.texture;
+          }
+        }
+
+        for (Shaders.DirectionalLightConfig light in cfg.dirLights) {
+          final int count = dirLightCounter[light.configID] ?? 0;
+          this._shader.setDirectionalLightCount(light.configID, count);
         }
       }
 
-      if (cfg.pointLight > 0) {
-        int count = this._lights.pointLights.length;
-        this._shader.pointLightCount = count;
+      if (cfg.pointLights.length > 0) {
         Math.Matrix4 viewMat = state.view.matrix;
-        int index = 0;
+        Map<int, int> pointLightCounter = new Map<int, int>();
         for (Lights.Point light in this._lights.pointLights) {
-          Shaders.UniformPointLight uniform = this._shader.pointLights[index];
-          uniform.point        = light.position;
-          uniform.viewPoint    = viewMat.transPnt3(light.position);
-          uniform.color        = light.color;
-          uniform.attenuation0 = light.attenuation0;
-          uniform.attenuation1 = light.attenuation1;
-          uniform.attenuation2 = light.attenuation2;
-          index++;
+          final int configID = light.configID;
+          final int index = pointLightCounter[configID] ?? 0;
+          pointLightCounter[configID] = index + 1;
+
+          Shaders.UniformPointLight uniform = this._shader.getPointLight(configID)[index];
+          Math.Matrix4 viewObjMat = viewMat*light.matrix;
+          uniform.point     = light.matrix.transPnt3(Math.Point3.zero);
+          uniform.viewPoint = viewObjMat.transPnt3(Math.Point3.zero);
+          uniform.color     = light.color;
+          if (light.texture != null || light.shadow != null)
+            uniform.inverseViewRotationMatrix = new Math.Matrix3.fromMatrix4(viewObjMat.inverse());
+          if (light.texture != null) {
+            this._addToTextureList(textures, light.texture);
+            uniform.texture = light.texture;
+          }
+          if (light.shadow != null) {
+            uniform.shadowAdjust = light.shadowAdjust;
+            this._addToTextureList(textures, light.shadow);
+            uniform.shadow = light.shadow;
+          }
+          if (light.enableAttenuation) {
+            uniform.attenuation0 = light.attenuation0;
+            uniform.attenuation1 = light.attenuation1;
+            uniform.attenuation2 = light.attenuation2;
+          }
+        }
+
+        for (Shaders.PointLightConfig light in cfg.pointLights) {
+          final int count = pointLightCounter[light.configID] ?? 0;
+          this._shader.setPointLightCount(light.configID, count);
         }
       }
 
-      if (cfg.spotLight > 0) {
-        int count = this._lights.spotLights.length;
-        this._shader.spotLightCount = count;
+      if (cfg.spotLights.length > 0) {
         Math.Matrix4 viewMat = state.view.matrix;
-        int index = 0;
+        Map<int, int> spotLightCounter = new Map<int, int>();
         for (Lights.Spot light in this._lights.spotLights) {
-          Shaders.UniformSpotLight uniform = this._shader.spotLights[index];
+          final int configID = light.configID;
+          final int index = spotLightCounter[configID] ?? 0;
+          spotLightCounter[configID] = index + 1;
+
+          Shaders.UniformSpotLight uniform = this._shader.getSpotLight(configID)[index];
           uniform.objectPoint     = light.position;
           uniform.objectDirection = light.direction.normal();
           uniform.viewPoint       = viewMat.transPnt3(light.position);
           uniform.color           = light.color;
-          uniform.cutoff          = light.cutoff;
-          uniform.coneAngle       = light.coneAngle;
-          uniform.attenuation0    = light.attenuation0;
-          uniform.attenuation1    = light.attenuation1;
-          uniform.attenuation2    = light.attenuation2;
-          index++;
+          if (light.texture != null || light.shadow != null) {
+            uniform.objectUp    = light.up;
+            uniform.objectRight = light.right;
+            uniform.tuScalar    = light.tuScalar;
+            uniform.tvScalar    = light.tvScalar;
+          }
+          if (light.texture != null) {
+            this._addToTextureList(textures, light.texture);
+            uniform.texture = light.texture;
+          }
+          if (light.shadow != null) {
+            uniform.shadowAdjust = light.shadowAdjust;
+            this._addToTextureList(textures, light.shadow);
+            uniform.shadow = light.shadow;
+          }
+          if (light.enableCutOff) {
+            uniform.cutoff    = light.cutoff;
+            uniform.coneAngle = light.coneAngle;
+          }
+          if (light.enableAttenuation) {
+            uniform.attenuation0 = light.attenuation0;
+            uniform.attenuation1 = light.attenuation1;
+            uniform.attenuation2 = light.attenuation2;
+          }
         }
-      }
 
-      if (cfg.txtDirLight > 0) {
-        int count = this._lights.texturedDirectionalLights.length;
-        this._shader.texturedDirectionalLightCount = count;
-        Math.Matrix4 viewMat = state.view.matrix;
-        int index = 0;
-        for (Lights.TexturedDirectional light in this._lights.texturedDirectionalLights) {
-          Shaders.UniformTexturedDirectionalLight uniform = this._shader.texturedDirectionalLights[index];
-          this._addToTextureList(textures, light.texture);
-          uniform.objectDir   = light.direction;
-          uniform.objectUp    = light.up;
-          uniform.objectRight = light.right;
-          uniform.viewDir     = viewMat.transVec3(light.direction).normal();
-          uniform.color       = light.color;
-          uniform.texture     = light.texture;
-          index++;
-        }
-      }
-
-      if (cfg.txtPointLight > 0) {
-        int count = this._lights.texturedPointLights.length;
-        this._shader.texturedPointLightCount = count;
-        Math.Matrix4 viewMat = state.view.matrix;
-        int index = 0;
-        for (Lights.TexturedPoint light in this._lights.texturedPointLights) {
-          Shaders.UniformTexturedPointLight uniform = this._shader.texturedPointLights[index];
-          this._addToTextureList(textures, light.texture);
-          Math.Matrix4 viewObjMat = viewMat*light.matrix;
-          uniform.point        = light.matrix.transPnt3(Math.Point3.zero);
-          uniform.viewPoint    = viewObjMat.transPnt3(Math.Point3.zero);
-          uniform.inverseViewRotationMatrix = new Math.Matrix3.fromMatrix4(viewObjMat.inverse());
-          uniform.color        = light.color;
-          uniform.texture      = light.texture;
-          uniform.attenuation0 = light.attenuation0;
-          uniform.attenuation1 = light.attenuation1;
-          uniform.attenuation2 = light.attenuation2;
-          index++;
-        }
-      }
-
-      if (cfg.txtSpotLight > 0) {
-        int count = this._lights.texturedSpotLights.length;
-        this._shader.texturedSpotLightCount = count;
-        Math.Matrix4 viewMat = state.view.matrix;
-        int index = 0;
-        for (Lights.TexturedSpot light in this._lights.texturedSpotLights) {
-          Shaders.UniformTexturedSpotLight uniform = this._shader.texturedSpotLights[index];
-          this._addToTextureList(textures, light.texture);
-          uniform.objectPoint     = light.position;
-          uniform.objectDirection = light.direction;
-          uniform.objectUp        = light.up;
-          uniform.objectRight     = light.right;
-          uniform.viewPoint       = viewMat.transPnt3(light.position);
-          uniform.texture         = light.texture;
-          uniform.color           = light.color;
-          uniform.tuScalar        = light.tuScalar;
-          uniform.tvScalar        = light.tvScalar;
-          uniform.attenuation0    = light.attenuation0;
-          uniform.attenuation1    = light.attenuation1;
-          uniform.attenuation2    = light.attenuation2;
-          index++;
+        for (Shaders.SpotLightConfig light in cfg.spotLights) {
+          final int count = spotLightCounter[light.configID] ?? 0;
+          this._shader.setSpotLightCount(light.configID, count);
         }
       }
     }
 
-    switch (cfg.bumpy) {
-      case Shaders.ColorSourceType.None: break;
-      case Shaders.ColorSourceType.Solid: break;
-      case Shaders.ColorSourceType.Texture2D:
-        this._addToTextureList(textures, this._bump.texture2D);
-        this._shader.bumpTexture2D = this._bump.texture2D;
-        break;
-      case Shaders.ColorSourceType.TextureCube:
-        this._addToTextureList(textures, this._bump.textureCube);
-        this._shader.bumpTextureCube = this._bump.textureCube;
-        break;
+    if (cfg.bumpy.hasTxt2D) {
+      this._addToTextureList(textures, this._bump.texture2D);
+      this._shader.bumpTexture2D = this._bump.texture2D;
+    } else if (cfg.bumpy.hasTxtCube) {
+      this._addToTextureList(textures, this._bump.textureCube);
+      this._shader.bumpTextureCube = this._bump.textureCube;
     }
 
-    if (cfg.invViewMat) {
+    if (cfg.invViewMat)
       this._shader.inverseViewMatrix = state.inverseViewMatrix;
-    }
 
     if (cfg.enviromental) {
       this._addToTextureList(textures, this._envSampler);
       this._shader.environmentTextureCube = this._envSampler;
 
-      switch (cfg.reflection) {
-        case Shaders.ColorSourceType.None: break;
-        case Shaders.ColorSourceType.Solid:
-          this._shader.reflectionColor = this._reflect.color;
-          break;
-        case Shaders.ColorSourceType.Texture2D:
-          this._addToTextureList(textures, this._reflect.texture2D);
-          this._shader.reflectionTexture2D = this._reflect.texture2D;
-          this._shader.reflectionColor = this._reflect.color;
-          break;
-        case Shaders.ColorSourceType.TextureCube:
-          this._addToTextureList(textures, this._reflect.textureCube);
-          this._shader.reflectionTextureCube = this._reflect.textureCube;
-          this._shader.reflectionColor = this._reflect.color;
-          break;
+      if (cfg.reflection.hasSolid)
+        this._shader.reflectionColor = this._reflect.color;
+      if (cfg.reflection.hasTxt2D) {
+        this._addToTextureList(textures, this._reflect.texture2D);
+        this._shader.reflectionTexture2D = this._reflect.texture2D;
+      } else if (cfg.reflection.hasTxtCube) {
+        this._addToTextureList(textures, this._reflect.textureCube);
+        this._shader.reflectionTextureCube = this._reflect.textureCube;
       }
 
-      switch (cfg.refraction) {
-        case Shaders.ColorSourceType.None: break;
-        case Shaders.ColorSourceType.Solid:
-          this._shader.refractionColor = this._refract.color;
-          this._shader.refraction = this._refract.deflection;
-          break;
-        case Shaders.ColorSourceType.Texture2D:
-          this._addToTextureList(textures, this._refract.texture2D);
-          this._shader.refractionTexture2D = this._refract.texture2D;
-          this._shader.refractionColor = this._refract.color;
-          this._shader.refraction = this._refract.deflection;
-          break;
-        case Shaders.ColorSourceType.TextureCube:
-          this._addToTextureList(textures, this._refract.textureCube);
-          this._shader.refractionTextureCube = this._refract.textureCube;
-          this._shader.refractionColor = this._refract.color;
-          this._shader.refraction = this._refract.deflection;
-          break;
+      if (cfg.refraction.hasAny)
+        this._shader.refraction = this._refract.deflection;
+      if (cfg.refraction.hasSolid)
+        this._shader.refractionColor = this._refract.color;
+      if (cfg.refraction.hasTxt2D) {
+        this._addToTextureList(textures, this._refract.texture2D);
+        this._shader.refractionTexture2D = this._refract.texture2D;
+      } else if (cfg.refraction.hasTxtCube) {
+        this._addToTextureList(textures, this._refract.textureCube);
+        this._shader.refractionTextureCube = this._refract.textureCube;
       }
     }
 
@@ -522,23 +481,17 @@ class MaterialLight extends Technique {
       this._shader.fogWidth = this._fog.start-this._fog.stop;
     }
 
-    if (cfg.alpha != Shaders.ColorSourceType.None) {
-      switch (cfg.alpha) {
-        case Shaders.ColorSourceType.None: break;
-        case Shaders.ColorSourceType.Solid:
-          this._shader.alpha = this._alpha.value;
-          break;
-        case Shaders.ColorSourceType.Texture2D:
-          this._addToTextureList(textures, this._alpha.texture2D);
-          this._shader.alphaTexture2D = this._alpha.texture2D;
-          this._shader.alpha = this._alpha.value;
-          break;
-        case Shaders.ColorSourceType.TextureCube:
-          this._addToTextureList(textures, this._alpha.textureCube);
-          this._shader.alphaTextureCube = this._alpha.textureCube;
-          this._shader.alpha = this._alpha.value;
-          break;
+    if (cfg.alpha.hasAny) {
+      if (cfg.alpha.hasSolid)
+        this._shader.alpha = this._alpha.value;
+      if (cfg.alpha.hasTxt2D) {
+        this._addToTextureList(textures, this._alpha.texture2D);
+        this._shader.alphaTexture2D = this._alpha.texture2D;
+      } else if (cfg.alpha.hasTxtCube) {
+        this._addToTextureList(textures, this._alpha.textureCube);
+        this._shader.alphaTextureCube = this._alpha.textureCube;
       }
+
       state.gl.enable(WebGL.WebGL.BLEND);
       state.gl.blendFunc(WebGL.WebGL.SRC_ALPHA, WebGL.WebGL.ONE_MINUS_SRC_ALPHA);
     }
@@ -552,9 +505,8 @@ class MaterialLight extends Technique {
         ..render(state)
         ..unbind(state);
 
-    if (cfg.alpha != Shaders.ColorSourceType.None) {
+    if (cfg.alpha.hasAny)
       state.gl.disable(WebGL.WebGL.BLEND);
-    }
 
     for (int i = 0; i < textures.length; i++) {
       textures[i].unbind(state);

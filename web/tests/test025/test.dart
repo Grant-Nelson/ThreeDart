@@ -23,9 +23,10 @@ void main() {
     ..add(new Movers.Constant.translate(0.0, 0.0, -2.5))
     ..add(new Movers.UserRotater(input: td.userInput, ctrl: true));
 
-  Lights.TexturedSpot spot = new Lights.TexturedSpot(
+  Lights.Spot spot = new Lights.Spot(
     mover:        lightMover,
     color:        new Math.Color3.white(),
+    enableCutOff: true,
     fov:          0.5,
     ratio:        1.0,
     attenuation0: 0.5,
@@ -57,8 +58,7 @@ void main() {
                 ..add(new Movers.Constant.scale(0.1, 0.1, 0.1))
                 ..add(lightMover))
     ..shape = Shapes.cylinder(bottomRadius: 0.0, sides: 40, capBottom: false)
-    ..technique = (new Techniques.MaterialLight()
-                ..emission.color = new Math.Color3.white());
+    ..technique = new Techniques.MaterialLight.glow();
 
   td.scene = new Scenes.EntityPass()
     ..technique = tech

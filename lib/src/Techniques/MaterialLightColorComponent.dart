@@ -33,12 +33,7 @@ class MaterialLightColorComponent extends MaterialLightBaseComponent {
   /// The color or scalar on the texture for the material component.
   Math.Color3 get color => this._color;
   set color(Math.Color3 clr) {
-    if (clr == null) this.clear();
-    else if (this._type == Shaders.ColorSourceType.None) {
-      this._type = Shaders.ColorSourceType.Solid;
-      this._onComponentSet();
-      this._onTypeChanged();
-    }
+    this._setNewType(this._type.enableSolid(clr != null));
     this._setColor(clr);
   }
 }

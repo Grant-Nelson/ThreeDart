@@ -11,7 +11,7 @@ import 'package:ThreeDart/Scenes.dart' as Scenes;
 import '../../common/common.dart' as common;
 
 void main() {
-  common.ShellPage page = new common.ShellPage("Test 002")
+  new common.ShellPage("Test 002")
     ..addLargeCanvas("testCanvas")
     ..addPar([
       "The inspection test is used to check that shapes are built correctly ",

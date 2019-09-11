@@ -158,7 +158,7 @@ class UserRoller implements Mover, Input.Interactable {
   /// Indicates if the modifiers keys must be pressed or released.
   Input.Modifiers get modifiers => this._modPressed;
   void set modifiers(Input.Modifiers mods) {
-    mods = mods ?? new Input.Modifiers.none();
+    mods ??= new Input.Modifiers.none();
     if (this._modPressed != mods) {
       Input.Modifiers prev = this._modPressed;
       this._modPressed = mods;
@@ -169,7 +169,7 @@ class UserRoller implements Mover, Input.Interactable {
   /// Indicates if the rotations should be continuous or not.
   bool get cumulative => this._cumulative;
   void set cumulative(bool enable) {
-    enable = enable ?? false;
+    enable ??= false;
     if (this._cumulative != enable) {
       bool prev = this._cumulative;
       this._cumulative = enable;
@@ -180,7 +180,7 @@ class UserRoller implements Mover, Input.Interactable {
   /// The scalar to apply to the mouse movements roll.
   double get rollScalar => this._rollScalar;
   void set rollScalar(double value) {
-    value = value ?? 0.0;
+    value ??= 0.0;
     if (!Math.Comparer.equals(this._rollScalar, value)) {
       double prev = this._rollScalar;
       this._rollScalar = value;
@@ -191,7 +191,7 @@ class UserRoller implements Mover, Input.Interactable {
   /// The dead-band, in pixels, before any movement is made.
   double get deadBand => this._deadBand;
   void set deadBand(double value) {
-    value = value ?? 0.0;
+    value ??= 0.0;
     if (!Math.Comparer.equals(this._deadBand, value)) {
       double prev = this._deadBand;
       this._deadBand = value;

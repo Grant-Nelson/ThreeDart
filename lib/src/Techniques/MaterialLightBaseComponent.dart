@@ -13,7 +13,7 @@ abstract class MaterialLightBaseComponent {
 
   /// Creates a new base component for the given [owner] and [name].
   MaterialLightBaseComponent._(this._owner, this._name) {
-    this._type = Shaders.ColorSourceType.None;
+    this._type = new Shaders.ColorSourceType();
     this._txt2D = null;
     this._txtCube = null;
   }
@@ -64,12 +64,19 @@ abstract class MaterialLightBaseComponent {
   /// The type of source this component will get it's color from.
   Shaders.ColorSourceType get type => this._type;
 
-  /// Removes any of this component from the material.
-  void clear() {
-    if (this._type != Shaders.ColorSourceType.None) {
-      this._type = Shaders.ColorSourceType.None;
+  /// Sets the type of the source type component will get it's color from.
+  void _setNewType(Shaders.ColorSourceType newType) {
+    if (this._type != newType) {
+      bool componentChange = this._type.hasNone || newType.hasNone;
+      this._type = newType;
+      if (componentChange) this._onComponentSet();
       this._onTypeChanged();
     }
+  }
+
+  /// Removes any of this component from the material.
+  void clear() {
+    this._setNewType(new Shaders.ColorSourceType());
     this._onClear();
     this._setTxt2D(null);
     this._setTxtCube(null);
@@ -79,17 +86,11 @@ abstract class MaterialLightBaseComponent {
   /// The 2D texture for the material component.
   Textures.Texture2D get texture2D => this._txt2D;
   set texture2D(Textures.Texture2D txt) {
-    if (txt == null) {
-      if (this._type == Shaders.ColorSourceType.Texture2D) {
-        this._type = Shaders.ColorSourceType.Solid;
-        this._onTypeChanged();
-      }
-    } else if (this._type != Shaders.ColorSourceType.Texture2D) {
-      if (this._type == Shaders.ColorSourceType.None)
-        this._onComponentSet();
-      this._type = Shaders.ColorSourceType.Texture2D;
+    if (txt == null)
+      this._setNewType(this._type.enableTxt2D(false));
+    else if (!this._type.hasTxt2D) {
+      this._setNewType(this._type.enableTxt2D(true));
       this._setTxtCube(null);
-      this._onTypeChanged();
     }
     this._setTxt2D(txt);
   }
@@ -98,16 +99,10 @@ abstract class MaterialLightBaseComponent {
   Textures.TextureCube get textureCube => this._txtCube;
   set textureCube(Textures.TextureCube txt) {
     if (txt == null) {
-      if (this._type == Shaders.ColorSourceType.TextureCube) {
-        this._type = Shaders.ColorSourceType.Solid;
-        this._onTypeChanged();
-      }
-    } else if (this._type != Shaders.ColorSourceType.TextureCube) {
-      if (this._type == Shaders.ColorSourceType.None)
-        this._onComponentSet();
-      this._type = Shaders.ColorSourceType.TextureCube;
+      this._setNewType(this._type.enableTxtCube(false));
+    } else if (!this._type.hasTxtCube) {
+      this._setNewType(this._type.enableTxtCube(true));
       this._setTxt2D(null);
-      this._onTypeChanged();
     }
     this._setTxtCube(txt);
   }
