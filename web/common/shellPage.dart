@@ -261,7 +261,7 @@ class ShellPage {
   }
 
   /// Adds an image to the page with the given [id].
-  void addImage(String id, String path) {
+  void addImage(String id, String path, [String link = ""]) {
     html.DivElement pageImageElem = new html.DivElement()
       ..className = "pageImage"
       ..id = id;
@@ -270,7 +270,14 @@ class ShellPage {
     html.ImageElement image = new html.ImageElement()
       ..src = path;
     anchor.append(image);
-    pageImageElem.append(anchor);
+    if (link.isNotEmpty) {
+      html.AnchorElement hrefAnchor = new html.AnchorElement()
+        ..className = "linkPar"
+        ..href = link;
+      hrefAnchor.append(anchor);
+      pageImageElem.append(hrefAnchor);
+    } 
+    else pageImageElem.append(anchor);
     this._page.append(pageImageElem);
   }
 
