@@ -136,6 +136,7 @@ tests/resources/Grass.png
 tests/resources/HeightMap1.png
 tests/resources/HeightMap2.png
 tests/resources/HeightMap3.png
+tests/resources/HeightMap4.png
 tests/resources/ScrewBumpMap.png
 tests/resources/ScrewColor.png
 tests/resources/ScrewHeightMap.png
@@ -331,6 +332,12 @@ tests/test042/test.png
 tests/test043/index.html
 tests/test043/test.dart.js
 tests/test043/test.png
+tests/test044/index.html
+tests/test044/test.dart.js
+tests/test044/test.png
+tests/test045/index.html
+tests/test045/test.dart.js
+tests/test045/test.png
 tutorials/index.html
 tutorials/tutorial1/index.html
 tutorials/tutorial1/main.dart.js

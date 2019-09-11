@@ -2387,242 +2387,242 @@ bn:function bn(a,b,c){this.a=a
 this.b=b
 this.c=c},
 cw:function cw(a){this.a=a},
-n6:function(){var u,t,s,r,q,p,o,n,m,l,k,j,i,h,g,f,e="testCanvas",d=null,c="controls",b="modifiers",a=V.oe("Test 002"),a0=W.lR()
-a0.className="pageLargeCanvas"
-a0.id=e
-a.a.appendChild(a0)
+n6:function(){var u,t,s,r,q,p,o,n,m,l,k,j,i,h,g,f="testCanvas",e=null,d="controls",c="modifiers",b=V.oe("Test 002"),a=W.lR()
+a.className="pageLargeCanvas"
+a.id=f
+b.a.appendChild(a)
 u=[P.i]
-a.cV(H.h(["The inspection test is used to check that shapes are built correctly ","and for checking the data privided by the shapes. ","Also it is useful for testing out new generated shape configurations. ","For loaded shape testing see test032."],u))
-a.hc(H.h(["controls","shapes","scalars"],u))
-a.cV(H.h(["\xab[Back to Tests|../]"],u))
+b.cV(H.h(["The inspection test is used to check that shapes are built correctly ","and for checking the data privided by the shapes. ","Also it is useful for testing out new generated shape configurations. ","For loaded shape testing see test032."],u))
+b.hc(H.h(["controls","shapes","scalars"],u))
+b.cV(H.h(["\xab[Back to Tests|../]"],u))
 u=document
-t=u.getElementById(e)
+t=u.getElementById(f)
 if(t==null)H.U(P.W("Failed to find an element with the identifier, testCanvas."))
 s=E.oh(t,!0,!0,!0,!1)
 r=new E.an()
 r.a=""
 r.b=!0
-q=E.an
-r.sef(0,O.lT(q))
+b=E.an
+r.sef(0,O.lT(b))
 r.y.bh(r.ghK(),r.ghN())
 r.dy=r.dx=r.db=r.cy=r.cx=r.ch=r.Q=r.z=null
-r.sca(0,d)
-r.saQ(d)
-p=new U.cb()
-p.cd(U.ac)
-p.bh(p.geS(),p.gfn())
-p.e=null
-p.f=V.ha()
-p.r=0
-o=s.r
-n=new U.dD()
-m=U.lb()
-m.sc8(0,!0)
-m.sbX(6.283185307179586)
-m.sbZ(0)
-m.sU(0,0)
-m.sbY(100)
-m.sV(0)
-m.sbS(0.5)
-n.b=m
-l=n.gav()
-m.gC().h(0,l)
-m=U.lb()
-m.sc8(0,!0)
-m.sbX(6.283185307179586)
-m.sbZ(0)
-m.sU(0,0)
-m.sbY(100)
-m.sV(0)
-m.sbS(0.5)
-n.c=m
-m.gC().h(0,l)
-n.d=null
-n.r=n.f=n.e=!1
-n.y=n.x=2.5
-n.Q=4
-n.ch=n.cx=!1
-n.db=n.cy=0
-n.dx=null
-n.dy=0
-n.fx=n.fr=null
-k=new X.au(!1,!1,!1)
-j=n.d
-n.d=k
-m=[X.au]
-l=new D.E(b,j,k,m)
-l.b=!0
-n.P(l)
-l=n.f
-if(l!==!1){n.f=!1
-l=new D.E("invertX",l,!1,[P.M])
-l.b=!0
-n.P(l)}l=n.r
-if(l!==!0){n.r=!0
-l=new D.E("invertY",l,!0,[P.M])
-l.b=!0
-n.P(l)}n.aM(o)
-p.h(0,n)
-o=s.r
-n=new U.dC()
-l=U.lb()
-l.sc8(0,!0)
-l.sbX(6.283185307179586)
-l.sbZ(0)
-l.sU(0,0)
-l.sbY(100)
-l.sV(0)
-l.sbS(0.2)
-n.b=l
-l.gC().h(0,n.gav())
-n.c=null
-n.d=!1
-n.e=2.5
-n.r=4
-n.x=n.y=!1
-n.z=0
-n.Q=null
-n.ch=0
-n.cy=n.cx=null
-k=new X.au(!0,!1,!1)
-j=n.c
-n.c=k
-l=new D.E(b,j,k,m)
-l.b=!0
-n.P(l)
-n.aM(o)
-p.h(0,n)
-o=s.r
-n=new U.dE()
-n.c=0.01
-n.e=n.d=0
-k=new X.au(!1,!1,!1)
-n.b=k
-m=new D.E(b,d,k,m)
+r.sca(0,e)
+r.saQ(e)
+q=new U.cb()
+q.cd(U.ac)
+q.bh(q.geS(),q.gfn())
+q.e=null
+q.f=V.ha()
+q.r=0
+p=s.r
+o=new U.dD()
+n=U.lb()
+n.sc8(0,!0)
+n.sbX(6.283185307179586)
+n.sbZ(0)
+n.sU(0,0)
+n.sbY(100)
+n.sV(0)
+n.sbS(0.5)
+o.b=n
+m=o.gav()
+n.gC().h(0,m)
+n=U.lb()
+n.sc8(0,!0)
+n.sbX(6.283185307179586)
+n.sbZ(0)
+n.sU(0,0)
+n.sbY(100)
+n.sV(0)
+n.sbS(0.5)
+o.c=n
+n.gC().h(0,m)
+o.d=null
+o.r=o.f=o.e=!1
+o.y=o.x=2.5
+o.Q=4
+o.ch=o.cx=!1
+o.db=o.cy=0
+o.dx=null
+o.dy=0
+o.fx=o.fr=null
+l=new X.au(!1,!1,!1)
+k=o.d
+o.d=l
+n=[X.au]
+m=new D.E(c,k,l,n)
 m.b=!0
-n.P(m)
-n.aM(o)
-p.h(0,n)
-r.saQ(p)
-i=new O.d3()
-i.b=V.mz()
-i.c=new V.J(0.2,0.3,0.4,1)
-i.d=new V.J(0.1,0.2,0.3,1)
-i.e=V.cV(0.7)
-i.f=V.cV(0.3)
-i.r=V.cV(0.5)
-i.x=V.cV(0.5)
-i.y=new V.J(1,1,1,1)
-i.z=V.cV(0.8)
-i.r1=i.k4=i.k3=i.k2=i.k1=i.id=i.go=i.fy=i.fx=i.fr=i.dy=i.dx=i.db=i.cy=i.cx=i.ch=i.Q=!1
-i.r2=1
-i.sa3(0.4)
-p=new M.d0()
-p.a=!0
-p.sdU(0,O.lT(q))
-p.e.bh(p.geW(),p.geY())
-p.y=p.x=p.r=p.f=null
-h=X.nO(d)
-g=new X.dh()
-g.c=1.0471975511965976
-g.d=0.1
-g.e=2000
-g.saQ(d)
-q=g.c
-if(!(Math.abs(q-1.0471975511965976)<$.Q().a)){g.c=1.0471975511965976
-q=new D.E("fov",q,1.0471975511965976,[P.r])
-q.b=!0
-g.as(q)}q=g.d
-if(!(Math.abs(q-0.1)<$.Q().a)){g.d=0.1
-q=new D.E("near",q,0.1,[P.r])
-q.b=!0
-g.as(q)}q=g.e
-if(!(Math.abs(q-2000)<$.Q().a)){g.e=2000
-q=new D.E("far",q,2000,[P.r])
-q.b=!0
-g.as(q)}q=p.b
-if(q!==g){if(q!=null)q.gC().F(0,p.gac())
-j=p.b
-p.b=g
-g.gC().h(0,p.gac())
-q=new D.E("camera",j,p.b,[X.cU])
-q.b=!0
-p.ah(q)}q=p.c
-if(q!==h){if(q!=null)q.gC().F(0,p.gac())
-j=p.c
-p.c=h
-h.gC().h(0,p.gac())
-q=new D.E("target",j,p.c,[X.dq])
-q.b=!0
-p.ah(q)}p.sdB(d)
-p.sdB(i)
-p.e.h(0,r)
-q=p.b
-f=V.bc(1,0,0,0,0,1,0,0,0,0,1,5,0,0,0,1)
-o=new U.cW()
-o.a=f
-q.saQ(o)
-q=s.d
-if(q!==p){if(q!=null)q.gC().F(0,s.gce())
-s.d=p
-p.gC().h(0,s.gce())
-s.cf()}q=new V.eV(c)
-u=u.getElementById(c)
-q.c=u
+o.P(m)
+m=o.f
+if(m!==!1){o.f=!1
+m=new D.E("invertX",m,!1,[P.M])
+m.b=!0
+o.P(m)}m=o.r
+if(m!==!0){o.r=!0
+m=new D.E("invertY",m,!0,[P.M])
+m.b=!0
+o.P(m)}o.aM(p)
+q.h(0,o)
+p=s.r
+o=new U.dC()
+m=U.lb()
+m.sc8(0,!0)
+m.sbX(6.283185307179586)
+m.sbZ(0)
+m.sU(0,0)
+m.sbY(100)
+m.sV(0)
+m.sbS(0.2)
+o.b=m
+m.gC().h(0,o.gav())
+o.c=null
+o.d=!1
+o.e=2.5
+o.r=4
+o.x=o.y=!1
+o.z=0
+o.Q=null
+o.ch=0
+o.cy=o.cx=null
+l=new X.au(!0,!1,!1)
+k=o.c
+o.c=l
+m=new D.E(c,k,l,n)
+m.b=!0
+o.P(m)
+o.aM(p)
+q.h(0,o)
+p=s.r
+o=new U.dE()
+o.c=0.01
+o.e=o.d=0
+l=new X.au(!1,!1,!1)
+o.b=l
+n=new D.E(c,e,l,n)
+n.b=!0
+o.P(n)
+o.aM(p)
+q.h(0,o)
+r.saQ(q)
+j=new O.d3()
+j.b=V.mz()
+j.c=new V.J(0.2,0.3,0.4,1)
+j.d=new V.J(0.1,0.2,0.3,1)
+j.e=V.cV(0.7)
+j.f=V.cV(0.3)
+j.r=V.cV(0.5)
+j.x=V.cV(0.5)
+j.y=new V.J(1,1,1,1)
+j.z=V.cV(0.8)
+j.r1=j.k4=j.k3=j.k2=j.k1=j.id=j.go=j.fy=j.fx=j.fr=j.dy=j.dx=j.db=j.cy=j.cx=j.ch=j.Q=!1
+j.r2=1
+j.sa3(0.4)
+q=new M.d0()
+q.a=!0
+q.sdU(0,O.lT(b))
+q.e.bh(q.geW(),q.geY())
+q.y=q.x=q.r=q.f=null
+i=X.nO(e)
+h=new X.dh()
+h.c=1.0471975511965976
+h.d=0.1
+h.e=2000
+h.saQ(e)
+b=h.c
+if(!(Math.abs(b-1.0471975511965976)<$.Q().a)){h.c=1.0471975511965976
+b=new D.E("fov",b,1.0471975511965976,[P.r])
+b.b=!0
+h.as(b)}b=h.d
+if(!(Math.abs(b-0.1)<$.Q().a)){h.d=0.1
+b=new D.E("near",b,0.1,[P.r])
+b.b=!0
+h.as(b)}b=h.e
+if(!(Math.abs(b-2000)<$.Q().a)){h.e=2000
+b=new D.E("far",b,2000,[P.r])
+b.b=!0
+h.as(b)}b=q.b
+if(b!==h){if(b!=null)b.gC().F(0,q.gac())
+k=q.b
+q.b=h
+h.gC().h(0,q.gac())
+b=new D.E("camera",k,q.b,[X.cU])
+b.b=!0
+q.ah(b)}b=q.c
+if(b!==i){if(b!=null)b.gC().F(0,q.gac())
+k=q.c
+q.c=i
+i.gC().h(0,q.gac())
+b=new D.E("target",k,q.c,[X.dq])
+b.b=!0
+q.ah(b)}q.sdB(e)
+q.sdB(j)
+q.e.h(0,r)
+b=q.b
+g=V.bc(1,0,0,0,0,1,0,0,0,0,1,5,0,0,0,1)
+p=new U.cW()
+p.a=g
+b.saQ(p)
+b=s.d
+if(b!==q){if(b!=null)b.gC().F(0,s.gce())
+s.d=q
+q.gC().h(0,s.gce())
+s.cf()}b=new V.eV(d)
+u=u.getElementById(d)
+b.c=u
 if(u==null)H.U("Failed to find controls for CheckGroup")
-q.see(H.h([],[W.c4]))
-q.a0(0,"Filled",new Z.kd(i),!0)
-q.a0(0,"Wire Frame",new Z.ke(i),!0)
-q.p(0,"Vertices",new Z.kf(i))
-q.p(0,"Normals",new Z.kq(i))
-q.p(0,"Binormals",new Z.kB(i))
-q.p(0,"Tangentals",new Z.kM(i))
-q.p(0,"Face Centers",new Z.kV(i))
-q.p(0,"Face Normals",new Z.kW(i))
-q.p(0,"Face Binormals",new Z.kX(i))
-q.p(0,"Face Tangentals",new Z.kY(i))
-q.p(0,"Colors",new Z.kZ(i))
-q.p(0,"Textures2D",new Z.kg(i))
-q.p(0,"TexturesCube",new Z.kh(i))
-q.p(0,"Weight",new Z.ki(i))
-q.p(0,"Bend",new Z.kj(i))
-q.a0(0,"Axis",new Z.kk(i),!0)
-q.p(0,"AABB",new Z.kl(i))
-u=new Z.l_(r)
-q=V.mf("shapes")
-q.a0(0,"Square",new Z.km(u),!0)
-q.p(0,"Cube",new Z.kn(u))
-q.p(0,"Cuboid",new Z.ko(u))
-q.p(0,"Cuboid+",new Z.kp(u))
-q.p(0,"Disk",new Z.kr(u))
-q.p(0,"Disk+",new Z.ks(u))
-q.p(0,"Cylinder",new Z.kt(u))
-q.p(0,"Cylinder+",new Z.ku(u))
-q.p(0,"Cone",new Z.kv(u))
-q.p(0,"Cylindrical",new Z.kw(u))
-q.p(0,"LatLonSphere",new Z.kx(u))
-q.p(0,"LatLonSphere+",new Z.ky(u))
-q.p(0,"IsoSphere",new Z.kz(u))
-q.p(0,"IsoSphere+",new Z.kA(u))
-q.p(0,"Sphere",new Z.kC(u))
-q.p(0,"Sphere+",new Z.kD(u))
-q.p(0,"Spherical",new Z.kE(u))
-q.p(0,"Toroid",new Z.kF(u))
-q.p(0,"Knot",new Z.kG(u))
-q.p(0,"Grid",new Z.kH(u))
-q.p(0,"Grid+",new Z.kI(u))
-u=V.mf("scalars")
-u.p(0,"0.01",new Z.kJ(i))
-u.p(0,"0.02",new Z.kK(i))
-u.p(0,"0.04",new Z.kL(i))
-u.p(0,"0.06",new Z.kN(i))
-u.p(0,"0.08",new Z.kO(i))
-u.p(0,"0.1",new Z.kP(i))
-u.p(0,"0.2",new Z.kQ(i))
-u.a0(0,"0.4",new Z.kR(i),!0)
-u.p(0,"0.6",new Z.kS(i))
-u.p(0,"0.8",new Z.kT(i))
-u.p(0,"1.0",new Z.kU(i))
+b.see(H.h([],[W.c4]))
+b.a0(0,"Filled",new Z.kd(j),!0)
+b.a0(0,"Wire Frame",new Z.ke(j),!0)
+b.p(0,"Vertices",new Z.kf(j))
+b.p(0,"Normals",new Z.kq(j))
+b.p(0,"Binormals",new Z.kB(j))
+b.p(0,"Tangentals",new Z.kM(j))
+b.p(0,"Face Centers",new Z.kV(j))
+b.p(0,"Face Normals",new Z.kW(j))
+b.p(0,"Face Binormals",new Z.kX(j))
+b.p(0,"Face Tangentals",new Z.kY(j))
+b.p(0,"Colors",new Z.kZ(j))
+b.p(0,"Textures2D",new Z.kg(j))
+b.p(0,"TexturesCube",new Z.kh(j))
+b.p(0,"Weight",new Z.ki(j))
+b.p(0,"Bend",new Z.kj(j))
+b.a0(0,"Axis",new Z.kk(j),!0)
+b.p(0,"AABB",new Z.kl(j))
+b=new Z.l_(r)
+u=V.mf("shapes")
+u.a0(0,"Square",new Z.km(b),!0)
+u.p(0,"Cube",new Z.kn(b))
+u.p(0,"Cuboid",new Z.ko(b))
+u.p(0,"Cuboid+",new Z.kp(b))
+u.p(0,"Disk",new Z.kr(b))
+u.p(0,"Disk+",new Z.ks(b))
+u.p(0,"Cylinder",new Z.kt(b))
+u.p(0,"Cylinder+",new Z.ku(b))
+u.p(0,"Cone",new Z.kv(b))
+u.p(0,"Cylindrical",new Z.kw(b))
+u.p(0,"LatLonSphere",new Z.kx(b))
+u.p(0,"LatLonSphere+",new Z.ky(b))
+u.p(0,"IsoSphere",new Z.kz(b))
+u.p(0,"IsoSphere+",new Z.kA(b))
+u.p(0,"Sphere",new Z.kC(b))
+u.p(0,"Sphere+",new Z.kD(b))
+u.p(0,"Spherical",new Z.kE(b))
+u.p(0,"Toroid",new Z.kF(b))
+u.p(0,"Knot",new Z.kG(b))
+u.p(0,"Grid",new Z.kH(b))
+u.p(0,"Grid+",new Z.kI(b))
+b=V.mf("scalars")
+b.p(0,"0.01",new Z.kJ(j))
+b.p(0,"0.02",new Z.kK(j))
+b.p(0,"0.04",new Z.kL(j))
+b.p(0,"0.06",new Z.kN(j))
+b.p(0,"0.08",new Z.kO(j))
+b.p(0,"0.1",new Z.kP(j))
+b.p(0,"0.2",new Z.kQ(j))
+b.a0(0,"0.4",new Z.kR(j),!0)
+b.p(0,"0.6",new Z.kS(j))
+b.p(0,"0.8",new Z.kT(j))
+b.p(0,"1.0",new Z.kU(j))
 V.pk(s)},
 kd:function kd(a){this.a=a},
 ke:function ke(a){this.a=a},
