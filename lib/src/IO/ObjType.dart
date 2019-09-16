@@ -33,20 +33,4 @@ class ObjType {
     writer.addEntity(entity);
     return writer.lines;
   }
-
-  /// Writes a *.obj file with the given entity to the given [filename].
-  /// [normal] indicates normal vector is written.
-  /// [txtCube] indicates the texture cube coordinates
-  /// should be written instead of texture 2D coordinates.
-  static Future toFile(String fileName, Core.Entity entity,
-    {bool normal = true, bool texture = true, bool txtCube = false, int decimals = 16}) async {
-    try {
-      _objWriter writer = new _objWriter(normal, texture, txtCube, decimals);
-      writer.addEntity(entity);
-      return new io.File(fileName).writeAsString(writer.lines.join("\n"));
-    } catch(e) {
-      print("$fileName: $e");
-      throw new Exception("$fileName: $e");
-    }
-  }
 }
