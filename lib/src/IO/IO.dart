@@ -2,7 +2,6 @@ library ThreeDart.IO;
 
 import 'dart:html';
 import 'dart:async';
-import 'dart:io' as io;
 
 import '../Core/Core.dart' as Core;
 import '../Events/Events.dart' as Events;
