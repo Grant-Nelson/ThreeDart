@@ -43,6 +43,7 @@ void main() {
   new common.ShellPage("3Dart Craft")
     ..addPar(["This example is in development and may still have a few issues and glitches."])
     ..addLargeCanvas("targetCanvas")
+    ..addControlBoxes(["buttons"])
     ..addHeader(1, "About")
     ..addPar(["3Dart Craft is an example of how [3Dart|https://github.com/Grant-Nelson/ThreeDart] can be used ",
       "to create a [voxel|https://en.wikipedia.org/wiki/Voxel] environment for browser driven video games. ",
@@ -99,6 +100,12 @@ void startCraft() {
   new Timer.periodic(const Duration(milliseconds: Constants.worldTickMs), world.worldTick);
   new Timer.periodic(const Duration(milliseconds: Constants.generateTickMs), world.generateTick);
   new Timer.periodic(const Duration(milliseconds: Constants.animationTickMs), world.animationTick);
+
+  html.Element elem = html.document.getElementById("buttons");
+  html.ButtonElement button = new html.ButtonElement()
+    ..text = "Fullscreen"
+    ..onClick.listen((_) => td.fullscreen());
+  elem.children.add(button);
 
   // Start debug output
   new Timer.periodic(const Duration(milliseconds: Constants.debugPrintTickMs), (Timer time) {
