@@ -1,5 +1,7 @@
 library graphics;
 
+import 'dart:html' as html;
+
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 import 'package:ThreeDart/IO.dart' as IO;
 import 'package:ThreeDart/Events.dart' as Events;
@@ -76,6 +78,12 @@ void startGraphics(game.Game game) {
     });
 
   td.scene = new Scenes.Compound(passes: [skybox, mainScene]);
+
+  html.Element elem = html.document.getElementById("buttons");
+  html.ButtonElement button = new html.ButtonElement()
+    ..text = "Fullscreen"
+    ..onClick.listen((_) => td.fullscreen());
+  elem.children.add(button);
 
   common.showFPS(td);
 }

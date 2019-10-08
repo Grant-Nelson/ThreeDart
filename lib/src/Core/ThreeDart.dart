@@ -225,6 +225,11 @@ class ThreeDart implements Events.Changable {
     }
   }
 
+  /// Requests the render to be full screen.
+  void fullscreen() {
+    this._canvas.requestFullscreen();
+  }
+
   /// Requests a render to start the next time the main message loop
   /// is retured to. This is debunced so that it can be called many times
   /// but will only be run once
