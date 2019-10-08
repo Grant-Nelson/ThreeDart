@@ -348,6 +348,9 @@ tests/test044/test.png
 tests/test045/index.html
 tests/test045/test.dart.js
 tests/test045/test.png
+tests/test046/index.html
+tests/test046/test.dart.js
+tests/test046/test.png
 tutorials/index.html
 tutorials/tutorial1/index.html
 tutorials/tutorial1/main.dart.js
