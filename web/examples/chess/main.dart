@@ -30,7 +30,7 @@ void main() {
       "See the [3Dart Project|https://github.com/Grant-Nelson/ThreeDart] for more."]);
 
     game.Game chess = new game.Game();
-    
+
     // This is deferred so that if loading takes a while the page is at least loaded.
     Timer.run(() => graphics.startGraphics(chess));
 }
