@@ -11,6 +11,7 @@ void main() {
   new common.ShellPage("3Dart Chess")
     ..addPar(["This example is in development and may still have a few issues and glitches."])
     ..addLargeCanvas("targetCanvas")
+    ..addControlBoxes(["buttons"])
     ..addHeader(1, "About")
     ..addPar(["Click and drag to see the board from different angles. ",
       "Click without dragging to select a piece, unselect a piece, or pick which movement should be made. ",
@@ -29,7 +30,7 @@ void main() {
       "See the [3Dart Project|https://github.com/Grant-Nelson/ThreeDart] for more."]);
 
     game.Game chess = new game.Game();
-
+    
     // This is deferred so that if loading takes a while the page is at least loaded.
     Timer.run(() => graphics.startGraphics(chess));
 }
