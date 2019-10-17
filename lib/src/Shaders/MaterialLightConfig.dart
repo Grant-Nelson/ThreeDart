@@ -1,5 +1,29 @@
 part of ThreeDart.Shaders;
 
+/// The configuration for a specific type of bar lights
+/// that can be added to the material light shader.
+class BarLightConfig {
+
+  /// The identifier for the type of bar light this configuration is for.
+  final int configID;
+
+  /// Indicates the number of bar lights of this type.
+  final int lightCount;
+
+  /// Constructs a new bar light configuration.
+  BarLightConfig(int this.configID, int this.lightCount);
+  
+  /// Indicates if this type of bar light has light attenuation.
+  bool get hasAttenuation => (this.configID & 0x04) != 0x00;
+
+  /// Indicates if this type of bar light has either attenuation or shadow
+  /// meaning that it will require calculating distance from light.
+  bool get hasDist => (this.configID & 0x06) != 0x00;
+  
+  /// Gets the string for this bar light configuration.
+  String toString() => "barLight${this.configID}";
+}
+
 /// The configuration for a specific type of directional lights
 /// that can be added to the material light shader.
 class DirectionalLightConfig {
@@ -121,6 +145,9 @@ class MaterialLightConfig {
 
   /// The alpha color source type.
   final ColorSourceType alpha;
+  
+  /// The bar light configurations.
+  final List<BarLightConfig> barLights;
 
   /// The directional light configurations.
   final List<DirectionalLightConfig> dirLights;
@@ -216,6 +243,7 @@ class MaterialLightConfig {
     ColorSourceType this.reflection, ColorSourceType this.refraction,
     ColorSourceType this.alpha,
 
+    List<BarLightConfig> this.barLights,
     List<DirectionalLightConfig> this.dirLights,
     List<PointLightConfig> this.pointLights,
     List<SpotLightConfig> this.spotLights,
@@ -240,6 +268,7 @@ class MaterialLightConfig {
     ColorSourceType invDiffuse, ColorSourceType specular,
     ColorSourceType bumpy, ColorSourceType reflection,
     ColorSourceType refraction, ColorSourceType alpha,
+    List<BarLightConfig> barLights,
     List<DirectionalLightConfig> dirLights,
     List<PointLightConfig> pointLights,
     List<SpotLightConfig> spotLights) {
@@ -262,6 +291,12 @@ class MaterialLightConfig {
     buf.write(fog?        "1": "0");
     buf.write("_");
     buf.write(bendMats);
+    
+    if (barLights.length > 0) {
+      buf.write("_Bar");
+      for (BarLightConfig light in barLights)
+        buf.write("_${light.configID}");
+    }
 
     if (dirLights.length > 0) {
       buf.write("_Dir");
@@ -284,6 +319,10 @@ class MaterialLightConfig {
 
     int totalLights = 0;
     bool objPos = fog;
+    for (BarLightConfig light in barLights) {
+      totalLights += light.lightCount;
+      objPos = true;
+    }
     for (DirectionalLightConfig light in dirLights) {
       totalLights += light.lightCount;
       objPos = true;
@@ -301,7 +340,8 @@ class MaterialLightConfig {
     bool invViewMat = enviromental;
     bool lights = ambient.hasAny || diffuse.hasAny ||
                   invDiffuse.hasAny || specular.hasAny;
-    bool viewPos = (specular.hasAny) || (pointLights.length > 0) || enviromental;
+    bool viewPos = (specular.hasAny) || (barLights.length > 0) ||
+                   (pointLights.length > 0) || enviromental;
     bool intense = diffuse.hasAny || invDiffuse.hasAny || specular.hasAny;;
     bool norm = intense || bumpy.hasAny || enviromental;
     bool binm = bumpy.hasAny;
@@ -331,7 +371,7 @@ class MaterialLightConfig {
 
     return new MaterialLightConfig._(emission, ambient,
       diffuse, invDiffuse, specular, bumpy, reflection, refraction,
-      alpha, dirLights, pointLights, spotLights,
+      alpha, barLights, dirLights, pointLights, spotLights,
       totalLights, enviromental, intense,
       invViewMat, objMat, viewObjMat, projViewObjMat,
       viewMat, projViewMat, lights, objPos, viewPos,

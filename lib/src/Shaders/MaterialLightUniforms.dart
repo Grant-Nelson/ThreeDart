@@ -1,5 +1,58 @@
 part of ThreeDart.Shaders;
 
+/// Bar light uniform.
+class UniformBarLight {
+
+  /// Creates the bar light uniform.
+  UniformBarLight._(int this._index, Uniform3f this._startPnt, Uniform3f this._endPnt,
+    Uniform3f this._viewStartPnt, Uniform3f this._viewEndPnt, Uniform3f this._color, 
+    Uniform1f this._att0, Uniform1f this._att1, Uniform1f this._att2);
+
+  /// The index of this light in the list of point lights.
+  int get index => this._index;
+  int _index;
+
+  /// The point of the bars light's start location transformed by the object matrix.
+  Math.Point3 get startPoint => this._startPnt.getPoint3();
+  set startPoint(Math.Point3 pnt) => this._startPnt.setPoint3(pnt);
+  Uniform3f _startPnt;
+  
+  /// The point of the bars light's end location transformed by the object matrix.
+  Math.Point3 get endPoint => this._endPnt.getPoint3();
+  set endPoint(Math.Point3 pnt) => this._endPnt.setPoint3(pnt);
+  Uniform3f _endPnt;
+
+  /// The bar light's start location transformed by the view matrix.
+  Math.Point3 get viewStartPoint => this._viewStartPnt.getPoint3();
+  set viewStartPoint(Math.Point3 pnt) => this._viewStartPnt.setPoint3(pnt);
+  Uniform3f _viewStartPnt;
+  
+  /// The bar light's end location transformed by the view matrix.
+  Math.Point3 get viewEndPoint => this._viewEndPnt.getPoint3();
+  set viewEndPoint(Math.Point3 pnt) => this._viewEndPnt.setPoint3(pnt);
+  Uniform3f _viewEndPnt;
+
+  /// The bar light color.
+  Math.Color3 get color => this._color.getColor3();
+  set color(Math.Color3 clr) => this._color.setColor3(clr);
+  Uniform3f _color;
+
+  /// The bar light constant attenuation.
+  double get attenuation0 => this._att0.getValue();
+  set attenuation0(double att) => this._att0.setValue(att);
+  Uniform1f _att0;
+
+  /// The bar light linear attenuation.
+  double get attenuation1 => this._att1.getValue();
+  set attenuation1(double att) => this._att1.setValue(att);
+  Uniform1f _att1;
+
+  /// The bar light quatradic attenuation.
+  double get attenuation2 => this._att2.getValue();
+  set attenuation2(double att) => this._att2.setValue(att);
+  Uniform1f _att2;
+}
+
 /// Directional light uniform.
 class UniformDirectionalLight {
 

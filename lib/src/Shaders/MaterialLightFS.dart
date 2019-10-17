@@ -249,6 +249,92 @@ class _materialLightFS {
     buf.writeln("");
   }
 
+  /// Writes the bar lights to the fragment shader [buf].
+  static void _writeBarLight(MaterialLightConfig cfg, BarLightConfig light, StringBuffer buf) {
+    if (light.lightCount <= 0) return;
+    final String name = light.toString();
+    final String title = toTitleCase(name);
+
+    buf.writeln("// === ${title} ===");
+    buf.writeln("");
+    buf.writeln("struct ${title}");
+    buf.writeln("{");
+    buf.writeln("   vec3 startPnt;");
+    buf.writeln("   vec3 endPnt;");
+    buf.writeln("   vec3 viewStartPnt;");
+    buf.writeln("   vec3 viewEndPnt;");
+    buf.writeln("   vec3 color;");
+    if (light.hasAttenuation) {
+      buf.writeln("   float att0;");
+      buf.writeln("   float att1;");
+      buf.writeln("   float att2;");
+    }
+    buf.writeln("};");
+    buf.writeln("");
+    buf.writeln("uniform int ${name}Count;");
+    buf.writeln("uniform ${title} ${name}s[${light.lightCount}];");
+    buf.writeln("");
+
+    buf.writeln("vec3 ${name}Intensity(vec3 normDir, $title lit)");
+    buf.writeln("{");
+    if (light.hasAttenuation) {
+      buf.writeln("   vec3 lineVec = lit.endPnt - lit.startPnt;");
+      buf.writeln("   float lineLen = length(lineVec)");
+      buf.writeln("   float dist;");
+      buf.writeln("   if(lineLen <= 0.0001) {");
+      buf.writeln("     dist = length(objPos - lit.startPnt);");
+      buf.writeln("   } else {");
+      buf.writeln("   }");
+
+      // TODO: FINISH!!!
+
+    
+      buf.writeln("   float attenuation = 1.0/(lit.att0 + (lit.att1 + lit.att2*dist)*dist);");
+      buf.writeln("   if(attenuation <= 0.005) return vec3(0.0, 0.0, 0.0);");
+      buf.writeln("");
+    }
+    List<String> parts = new List<String>();
+    parts.add("lit.color");
+    if (light.hasAttenuation) parts.add("attenuation");
+    buf.writeln("   return ${parts.join(" * ")};");
+    buf.writeln("}");
+    buf.writeln("");
+
+    buf.writeln("vec3 ${name}Value(vec3 norm, $title lit)");
+    buf.writeln("{");
+    parts = new List<String>();
+    if (cfg.ambient.hasAny) parts.add("ambientColor");
+    if (cfg.intense) {
+      buf.writeln("   vec3 highLight = vec3(0.0, 0.0, 0.0);");
+      parts.add("highLight");
+
+      buf.writeln("   vec3 normDir = normalize(viewPos - lit.viewStartPnt);");
+      buf.writeln("   vec3 intensity = ${name}Intensity(normDir, lit);");
+      buf.writeln("   if(length(intensity) > 0.0001) {");
+      List<String> subparts = new List<String>();
+      if (cfg.diffuse.hasAny)    subparts.add("diffuse(norm, normDir)");
+      if (cfg.invDiffuse.hasAny) subparts.add("invDiffuse(norm, normDir)");
+      if (cfg.specular.hasAny)   subparts.add("specular(norm, normDir)");
+      buf.writeln("      highLight = intensity*(${subparts.join(" + ")});");
+      buf.writeln("   }");
+    }
+    buf.writeln("   return lit.color*(${parts.join(" + ")});");
+    buf.writeln("}");
+    buf.writeln("");
+
+    buf.writeln("vec3 all${title}Values(vec3 norm)");
+    buf.writeln("{");
+    buf.writeln("   vec3 lightAccum = vec3(0.0, 0.0, 0.0);");
+    buf.writeln("   for(int i = 0; i < ${light.lightCount}; ++i)");
+    buf.writeln("   {");
+    buf.writeln("      if(i >= ${name}Count) break;");
+    buf.writeln("      lightAccum += ${name}Value(norm, ${name}s[i]);");
+    buf.writeln("   }");
+    buf.writeln("   return lightAccum;");
+    buf.writeln("}");
+    buf.writeln("");
+  }
+
   /// Writes the directional lights to the fragment shader [buf].
   static void _writeDirLight(MaterialLightConfig cfg, DirectionalLightConfig light, StringBuffer buf) {
     if (light.lightCount <= 0) return;
@@ -324,7 +410,7 @@ class _materialLightFS {
     buf.writeln("}");
     buf.writeln("");
   }
-  
+
   /// Writes the point lights to the fragment shader [buf].
   static void _writePointLight(MaterialLightConfig cfg, PointLightConfig light, StringBuffer buf) {
     if (light.lightCount <= 0) return;
@@ -631,12 +717,15 @@ class _materialLightFS {
     _writeAlpha(cfg, buf);
 
     if (cfg.lights) {
+      for (BarLightConfig light in cfg.barLights)
+        _writeBarLight(cfg, light, buf);
+
       for (DirectionalLightConfig light in cfg.dirLights)
         _writeDirLight(cfg, light, buf);
-      
+
       for (PointLightConfig light in cfg.pointLights)
         _writePointLight(cfg, light, buf);
-  
+
       for (SpotLightConfig light in cfg.spotLights)
         _writeSpotLight(cfg, light, buf);
 
@@ -661,11 +750,16 @@ class _materialLightFS {
       if (cfg.invDiffuse.hasAny) buf.writeln("   setInvDiffuseColor();");
       if (cfg.specular.hasAny)   buf.writeln("   setSpecularColor();");
 
+      for (BarLightConfig light in cfg.barLights) {
+        String title = toTitleCase(light.toString());
+        buf.writeln("   lightAccum += all${title}Values(norm);");
+      }
+
       for (DirectionalLightConfig light in cfg.dirLights) {
         String title = toTitleCase(light.toString());
         buf.writeln("   lightAccum += all${title}Values(norm);");
       }
-      
+
       for (PointLightConfig light in cfg.pointLights) {
         String title = toTitleCase(light.toString());
         buf.writeln("   lightAccum += all${title}Values(norm);");
