@@ -23,7 +23,7 @@ Shape line({Data.VertexType type: null}) {
     loc:     new Math.Point3(-1.0, 0.0, 0.0),
     txt2D:   Math.Point2.zero,
     txtCube: new Math.Vector3(-1.0, -1.0, 0.0).normal(),
-    clr:     new Math.Color4(1.0, 0.0, 0.0, 1.0),
+    clr:     Math.Colors.red,
     bending: new Math.Point4(1.0, 2.0, 4.0, 6.0));
 
   Vertex ver2 = shape.vertices.addNew(
@@ -31,7 +31,7 @@ Shape line({Data.VertexType type: null}) {
     loc:     new Math.Point3(1.0, 0.0, 0.0),
     txt2D:   new Math.Point2(1.0, 0.0),
     txtCube: new Math.Vector3(1.0, -1.0, 0.0).normal(),
-    clr:     new Math.Color4(0.0, 0.0, 1.0, 1.0),
+    clr:     Math.Colors.blue,
     bending: new Math.Point4(0.0, 3.0, 4.0, 6.0));
 
   shape.lines.add(ver1, ver2);
@@ -46,7 +46,7 @@ Shape square({double width: 2.0, double height: 2.0, double zOffset: 0.0, Data.V
     loc:     new Math.Point3(-width*0.5, -height*0.5, zOffset),
     txt2D:   new Math.Point2(0.0, 1.0),
     txtCube: new Math.Vector3(-1.0, -1.0, 1.0).normal(),
-    clr:     new Math.Color4(1.0, 0.0, 0.0, 1.0),
+    clr:     Math.Colors.red,
     bending: new Math.Point4(1.0, 2.0, 4.0, 6.0));
 
   Vertex ver2 = shape.vertices.addNew(
@@ -54,7 +54,7 @@ Shape square({double width: 2.0, double height: 2.0, double zOffset: 0.0, Data.V
     loc:     new Math.Point3(width*0.5, -height*0.5, zOffset),
     txt2D:   new Math.Point2(1.0, 1.0),
     txtCube: new Math.Vector3(1.0, -1.0, 1.0).normal(),
-    clr:     new Math.Color4(0.0, 0.0, 1.0, 1.0),
+    clr:     Math.Colors.blue,
     bending: new Math.Point4(0.0, 3.0, 4.0, 6.0));
 
   Vertex ver3 = shape.vertices.addNew(
@@ -62,7 +62,7 @@ Shape square({double width: 2.0, double height: 2.0, double zOffset: 0.0, Data.V
     loc:     new Math.Point3(width*0.5, height*0.5, zOffset),
     txt2D:   new Math.Point2(1.0, 0.0),
     txtCube: new Math.Vector3(1.0, 1.0, 1.0).normal(),
-    clr:     new Math.Color4(0.0, 1.0, 0.0, 1.0),
+    clr:     Math.Colors.green,
     bending: new Math.Point4(0.0, 2.0, 5.0, 6.0));
 
   Vertex ver4 = shape.vertices.addNew(
@@ -70,7 +70,7 @@ Shape square({double width: 2.0, double height: 2.0, double zOffset: 0.0, Data.V
     loc:     new Math.Point3(-width*0.5, height*0.5, zOffset),
     txt2D:   Math.Point2.zero,
     txtCube: new Math.Vector3(-1.0, 1.0, 1.0).normal(),
-    clr:     new Math.Color4(1.0, 1.0, 0.0, 1.0),
+    clr:     Math.Colors.yellow,
     bending: new Math.Point4(0.0, 2.0, 4.0, 7.0));
 
   if (frameOnly) shape.lines.addLoop([ver1, ver2, ver3, ver4]);
