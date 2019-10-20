@@ -37,6 +37,12 @@ class Color3 {
   factory Color3.white() =>
     new Color3._(1.0, 1.0, 1.0);
 
+  /// Constructs a new color from bytes.
+  ///
+  /// [red], [green], and [blue] are between 0 and 255. 
+  factory Color3.fromBytes(int red, int green, int blue) =>
+    new Color3(red/0xFF, green/0xFF, blue/0xFF);
+
   /// Constructs a new [Color3] instance from a [Color4] instance.
   ///
   /// [clr] contains the initial components for the color.
