@@ -278,17 +278,31 @@ class _materialLightFS {
     buf.writeln("vec3 ${name}Intensity(vec3 normDir, $title lit)");
     buf.writeln("{");
     if (light.hasAttenuation) {
-      buf.writeln("   vec3 lineVec = lit.endPnt - lit.startPnt;");
-      buf.writeln("   float lineLen = length(lineVec)");
       buf.writeln("   float dist;");
-      buf.writeln("   if(lineLen <= 0.0001) {");
+      buf.writeln("   vec3 lineVec = lit.endPnt - lit.startPnt;");
+      buf.writeln("   float lineLen2 = dot(lineVec, lineVec)");
+      buf.writeln("   if(lineLen2 <= 0.0001)");
+      buf.writeln("   {");
       buf.writeln("     dist = length(objPos - lit.startPnt);");
-      buf.writeln("   } else {");
       buf.writeln("   }");
-
-      // TODO: FINISH!!!
-
-    
+      buf.writeln("   else");
+      buf.writeln("   {");
+      buf.writeln("     float edgeDot = dot(objPos - lit.startPnt, lineVec);");
+      buf.writeln("     float t = edgeDot/lineLen2;");
+      buf.writeln("     if (t <= 0.0)");
+      buf.writeln("     {");
+      buf.writeln("       dist = length(objPos - lit.startPnt);");
+      buf.writeln("     }");
+      buf.writeln("     else if (t >= 1.0)");
+      buf.writeln("     {");
+      buf.writeln("       dist = length(objPos - lit.endPnt);");
+      buf.writeln("     }");
+      buf.writeln("     else");
+      buf.writeln("     {");
+      buf.writeln("       vec3 p = lit.startPnt + t*lineVec;");
+      buf.writeln("       dist = length(objPos - p);");
+      buf.writeln("     }");
+      buf.writeln("   }");
       buf.writeln("   float attenuation = 1.0/(lit.att0 + (lit.att1 + lit.att2*dist)*dist);");
       buf.writeln("   if(attenuation <= 0.005) return vec3(0.0, 0.0, 0.0);");
       buf.writeln("");
