@@ -280,15 +280,14 @@ class _materialLightFS {
     if (light.hasAttenuation) {
       buf.writeln("   float dist;");
       buf.writeln("   vec3 lineVec = lit.endPnt - lit.startPnt;");
-      buf.writeln("   float lineLen2 = dot(lineVec, lineVec)");
+      buf.writeln("   float lineLen2 = dot(lineVec, lineVec);");
       buf.writeln("   if(lineLen2 <= 0.0001)");
       buf.writeln("   {");
       buf.writeln("     dist = length(objPos - lit.startPnt);");
       buf.writeln("   }");
       buf.writeln("   else");
       buf.writeln("   {");
-      buf.writeln("     float edgeDot = dot(objPos - lit.startPnt, lineVec);");
-      buf.writeln("     float t = edgeDot/lineLen2;");
+      buf.writeln("     float t = dot(objPos - lit.startPnt, lineVec)/lineLen2;");
       buf.writeln("     if (t <= 0.0)");
       buf.writeln("     {");
       buf.writeln("       dist = length(objPos - lit.startPnt);");

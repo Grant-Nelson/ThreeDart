@@ -20,7 +20,8 @@ void main() {
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
   ThreeDart.Entity centerObj = new ThreeDart.Entity()
-    ..mover = new Movers.Constant.identity()
+    ..mover = (new Movers.Group()
+      ..add(new Movers.UserRotater(input: td.userInput, ctrl: true)))
     ..shape = Shapes.toroid();
 
   ThreeDart.Entity room = new ThreeDart.Entity()
@@ -29,7 +30,6 @@ void main() {
 
   Movers.Group camMover = new Movers.Group()
     ..add(new Movers.UserRotater(input: td.userInput))
-    ..add(new Movers.UserRoller(input: td.userInput, ctrl: true))
     ..add(new Movers.UserZoom(input: td.userInput))
     ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));
 
@@ -50,16 +50,16 @@ void main() {
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..mover = (new Movers.Group()
-                ..add(new Movers.Constant.scale(0.1, 10.0, 0.1)))
+                ..add(new Movers.Constant.scale(0.01, 0.01, 3.0)))
     ..shape = Shapes.cylinder()
     ..technique = (new Techniques.MaterialLight()
                 ..emission.color = clr);
 
   Movers.Group startMover = new Movers.Group()
-    ..add(new Movers.Constant.translate(0.0, 0.0, 2.0));
+    ..add(new Movers.Constant.translate(0.0, 0.0, 3.0));
     
   Movers.Group endMover = new Movers.Group()
-    ..add(new Movers.Constant.translate(0.0, 0.0, -2.0));
+    ..add(new Movers.Constant.translate(0.0, 0.0, -3.0));
 
   Lights.Bar point = new Lights.Bar(
     startMover: startMover,
