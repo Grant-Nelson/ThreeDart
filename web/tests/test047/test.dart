@@ -56,10 +56,10 @@ void main() {
                 ..emission.color = clr);
 
   Movers.Group startMover = new Movers.Group()
-    ..add(new Movers.Constant.translate(0.0, 0.0, 3.0));
+    ..add(new Movers.Constant.translate(0.0, 0.0, 2.5));
     
   Movers.Group endMover = new Movers.Group()
-    ..add(new Movers.Constant.translate(0.0, 0.0, -3.0));
+    ..add(new Movers.Constant.translate(0.0, 0.0, -2.5));
 
   Lights.Bar point = new Lights.Bar(
     startMover: startMover,

@@ -339,7 +339,6 @@ class MaterialLight extends Technique {
       }
 
       if (cfg.barLights.length > 0) {
-        Math.Matrix4 viewMat = state.view.matrix;
         Map<int, int> barLightCounter = new Map<int, int>();
         for (Lights.Bar light in this._lights.barLights) {
           final int configID = light.configID;
@@ -347,12 +346,8 @@ class MaterialLight extends Technique {
           barLightCounter[configID] = index + 1;
 
           Shaders.UniformBarLight uniform = this._shader.getBarLight(configID)[index];
-          Math.Matrix4 viewObjStartMat = viewMat*light.startMatrix;
-          Math.Matrix4 viewObjEndMat   = viewMat*light.endMatrix;
-          uniform.startPoint     = light.startMatrix.transPnt3(Math.Point3.zero);
-          uniform.viewStartPoint = viewObjStartMat.transPnt3(Math.Point3.zero);
-          uniform.endPoint       = light.endMatrix.transPnt3(Math.Point3.zero);
-          uniform.viewEndPoint   = viewObjEndMat.transPnt3(Math.Point3.zero);
+          uniform.startPoint = light.startMatrix.transPnt3(Math.Point3.zero);
+          uniform.endPoint   = light.endMatrix.transPnt3(Math.Point3.zero);
           uniform.color = light.color;
           if (light.enableAttenuation) {
             uniform.attenuation0 = light.attenuation0;

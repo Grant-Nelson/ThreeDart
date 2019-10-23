@@ -181,7 +181,7 @@ class MaterialLightConfig {
   /// Indicates the projection view object matrix is needed for this shader.
   final bool projViewObjMat;
 
-  /// Indicates the view matrix is needed for this shader.
+  /// Indicates the view matrix is needed by the fragment shader.
   final bool viewMat;
 
   /// Indicates the projection view matrix is needed for this shader.
@@ -338,9 +338,10 @@ class MaterialLightConfig {
 
     bool enviromental = reflection.hasAny || refraction.hasAny;
     bool invViewMat = enviromental;
+    bool hasBar = barLights.length > 0;
     bool lights = ambient.hasAny || diffuse.hasAny ||
                   invDiffuse.hasAny || specular.hasAny;
-    bool viewPos = (specular.hasAny) || (barLights.length > 0) ||
+    bool viewPos = (specular.hasAny) || hasBar ||
                    (pointLights.length > 0) || enviromental;
     bool intense = diffuse.hasAny || invDiffuse.hasAny || specular.hasAny;;
     bool norm = intense || bumpy.hasAny || enviromental;
@@ -356,7 +357,7 @@ class MaterialLightConfig {
     bool bending = bendMats > 0;
     bool objMat  = objPos;
     bool viewObjMat = norm || binm || viewPos || fog;
-    bool viewMat        = false;
+    bool viewMat        = hasBar && intense;
     bool projViewObjMat = true;
     bool projViewMat    = false;
     txt2DMat   = txt2DMat   && txt2D;

@@ -214,8 +214,6 @@ class MaterialLight extends Shader {
           for (int i = 0; i < light.lightCount; ++i) {
             Uniform3f startPnt     = this.uniforms.required("${name}s[$i].startPnt")     as Uniform3f;
             Uniform3f endPnt       = this.uniforms.required("${name}s[$i].endPnt")       as Uniform3f;
-            Uniform3f viewStartPnt = this.uniforms.required("${name}s[$i].viewStartPnt") as Uniform3f;
-            Uniform3f viewEndPnt   = this.uniforms.required("${name}s[$i].viewEndPnt")   as Uniform3f;
             Uniform3f color        = this.uniforms.required("${name}s[$i].color")        as Uniform3f;
             Uniform1f att0, att1, att2;
             if (light.hasAttenuation) {
@@ -223,8 +221,7 @@ class MaterialLight extends Shader {
               att1 = this.uniforms.required("${name}s[$i].att1") as Uniform1f;
               att2 = this.uniforms.required("${name}s[$i].att2") as Uniform1f;
             }
-            lights.add(new UniformBarLight._(i, startPnt, endPnt,
-              viewStartPnt, viewEndPnt, color, att0, att1, att2));
+            lights.add(new UniformBarLight._(i, startPnt, endPnt, color, att0, att1, att2));
           }
           this._barLights[configID] = lights;
           this._barLightCounts[configID] = this.uniforms.required("${name}Count");

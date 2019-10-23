@@ -5,8 +5,7 @@ class UniformBarLight {
 
   /// Creates the bar light uniform.
   UniformBarLight._(int this._index, Uniform3f this._startPnt, Uniform3f this._endPnt,
-    Uniform3f this._viewStartPnt, Uniform3f this._viewEndPnt, Uniform3f this._color, 
-    Uniform1f this._att0, Uniform1f this._att1, Uniform1f this._att2);
+    Uniform3f this._color, Uniform1f this._att0, Uniform1f this._att1, Uniform1f this._att2);
 
   /// The index of this light in the list of point lights.
   int get index => this._index;
@@ -21,16 +20,6 @@ class UniformBarLight {
   Math.Point3 get endPoint => this._endPnt.getPoint3();
   set endPoint(Math.Point3 pnt) => this._endPnt.setPoint3(pnt);
   Uniform3f _endPnt;
-
-  /// The bar light's start location transformed by the view matrix.
-  Math.Point3 get viewStartPoint => this._viewStartPnt.getPoint3();
-  set viewStartPoint(Math.Point3 pnt) => this._viewStartPnt.setPoint3(pnt);
-  Uniform3f _viewStartPnt;
-  
-  /// The bar light's end location transformed by the view matrix.
-  Math.Point3 get viewEndPoint => this._viewEndPnt.getPoint3();
-  set viewEndPoint(Math.Point3 pnt) => this._viewEndPnt.setPoint3(pnt);
-  Uniform3f _viewEndPnt;
 
   /// The bar light color.
   Math.Color3 get color => this._color.getColor3();

@@ -261,8 +261,6 @@ class _materialLightFS {
     buf.writeln("{");
     buf.writeln("   vec3 startPnt;");
     buf.writeln("   vec3 endPnt;");
-    buf.writeln("   vec3 viewStartPnt;");
-    buf.writeln("   vec3 viewEndPnt;");
     buf.writeln("   vec3 color;");
     if (light.hasAttenuation) {
       buf.writeln("   float att0;");
@@ -275,33 +273,26 @@ class _materialLightFS {
     buf.writeln("uniform ${title} ${name}s[${light.lightCount}];");
     buf.writeln("");
 
-    buf.writeln("vec3 ${name}Intensity(vec3 normDir, $title lit)");
+    // TODO: Determine a better way to do the bar light than using closest point.
+    // 
+    // MAYBE use the best angel out of three, start/closest/end, but use
+    // the closest for the distance?
+    buf.writeln("vec3 ${name}ClosestPoint(vec3 norm, $title lit)");
+    buf.writeln("{");
+    buf.writeln("   vec3 lineVec = lit.endPnt - lit.startPnt;");
+    buf.writeln("   float lineLen2 = dot(lineVec, lineVec);");
+    buf.writeln("   if(lineLen2 <= 0.0001) return lit.startPnt;");
+    buf.writeln("   float t = dot(objPos - lit.startPnt, lineVec)/lineLen2;");
+    buf.writeln("   if(t <= 0.0) return lit.startPnt;");
+    buf.writeln("   if(t >= 1.0) return lit.endPnt;");
+    buf.writeln("   return lit.startPnt + t*lineVec;");
+    buf.writeln("}");
+    buf.writeln("");
+
+    buf.writeln("vec3 ${name}Intensity(vec3 normDir, vec3 litPnt, $title lit)");
     buf.writeln("{");
     if (light.hasAttenuation) {
-      buf.writeln("   float dist;");
-      buf.writeln("   vec3 lineVec = lit.endPnt - lit.startPnt;");
-      buf.writeln("   float lineLen2 = dot(lineVec, lineVec);");
-      buf.writeln("   if(lineLen2 <= 0.0001)");
-      buf.writeln("   {");
-      buf.writeln("     dist = length(objPos - lit.startPnt);");
-      buf.writeln("   }");
-      buf.writeln("   else");
-      buf.writeln("   {");
-      buf.writeln("     float t = dot(objPos - lit.startPnt, lineVec)/lineLen2;");
-      buf.writeln("     if (t <= 0.0)");
-      buf.writeln("     {");
-      buf.writeln("       dist = length(objPos - lit.startPnt);");
-      buf.writeln("     }");
-      buf.writeln("     else if (t >= 1.0)");
-      buf.writeln("     {");
-      buf.writeln("       dist = length(objPos - lit.endPnt);");
-      buf.writeln("     }");
-      buf.writeln("     else");
-      buf.writeln("     {");
-      buf.writeln("       vec3 p = lit.startPnt + t*lineVec;");
-      buf.writeln("       dist = length(objPos - p);");
-      buf.writeln("     }");
-      buf.writeln("   }");
+      buf.writeln("   float dist = length(objPos - litPnt);");
       buf.writeln("   float attenuation = 1.0/(lit.att0 + (lit.att1 + lit.att2*dist)*dist);");
       buf.writeln("   if(attenuation <= 0.005) return vec3(0.0, 0.0, 0.0);");
       buf.writeln("");
@@ -321,8 +312,10 @@ class _materialLightFS {
       buf.writeln("   vec3 highLight = vec3(0.0, 0.0, 0.0);");
       parts.add("highLight");
 
-      buf.writeln("   vec3 normDir = normalize(viewPos - lit.viewStartPnt);");
-      buf.writeln("   vec3 intensity = ${name}Intensity(normDir, lit);");
+      buf.writeln("   vec3 litPnt = ${name}ClosestPoint(norm, lit);");
+      buf.writeln("   vec3 litVerPnt = (viewMat*vec4(litPnt, 1.0)).xyz;");
+      buf.writeln("   vec3 normDir = normalize(viewPos - litVerPnt);");
+      buf.writeln("   vec3 intensity = ${name}Intensity(normDir, litPnt, lit);");
       buf.writeln("   if(length(intensity) > 0.0001) {");
       List<String> subparts = new List<String>();
       if (cfg.diffuse.hasAny)    subparts.add("diffuse(norm, normDir)");
@@ -705,6 +698,7 @@ class _materialLightFS {
     buf.writeln("");
 
     if (cfg.colorMat)   buf.writeln("uniform mat4 colorMat;");
+    if (cfg.viewMat)    buf.writeln("uniform mat4 viewMat;");
     if (cfg.invViewMat) buf.writeln("uniform mat4 invViewMat;");
     if (cfg.fog) {
       buf.writeln("uniform vec4 fogColor;");
@@ -797,6 +791,9 @@ class _materialLightFS {
     }
     buf.writeln("   gl_FragColor = objClr;");
     buf.writeln("}");
-    return buf.toString();
+
+    String result = buf.toString();
+    //print(numberLines(result));
+    return result;
   }
 }
