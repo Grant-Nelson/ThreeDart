@@ -1553,11 +1553,11 @@ u.z.push(W.R(s,"pointerlockchange",u.geA(),!1))
 u.z.push(W.R(a,"touchstart",u.geN(),!1))
 u.z.push(W.R(a,"touchend",u.geJ(),!1))
 u.z.push(W.R(a,"touchmove",u.geL(),!1))
-q.r=u
-q.Q=!0
-q.ch=!1
-q.cx=new P.a1(Date.now(),!1)
-q.cy=0
+q.x=u
+q.ch=!0
+q.cx=!1
+q.cy=new P.a1(Date.now(),!1)
+q.db=0
 q.ci()
 return q},
 ei:function ei(){},
@@ -1570,7 +1570,7 @@ fW:function fW(a){this.a=a},
 fX:function fX(a){this.a=a},
 fY:function fY(a){this.a=a},
 d_:function d_(){var _=this
-_.cy=_.cx=_.ch=_.Q=_.z=_.y=_.x=_.r=_.e=_.d=_.c=_.b=null},
+_.db=_.cy=_.cx=_.ch=_.Q=_.z=_.y=_.x=_.e=_.d=_.c=_.b=null},
 hs:function hs(a){this.a=a}},Z={
 lp:function(a,b,c){var u=a.createBuffer()
 a.bindBuffer(b,u)
@@ -3073,7 +3073,7 @@ j.aS(j.gdY(),j.geF())
 j.e=null
 j.f=V.cG()
 j.r=0
-q=s.r
+q=s.x
 o=new U.da()
 l=U.j3()
 l.sbU(0,!0)
@@ -3121,7 +3121,7 @@ l=new D.y("invertY",l,!0)
 l.b=!0
 o.K(l)}o.aN(q)
 j.m(0,o)
-q=s.r
+q=s.x
 o=new U.d9()
 l=U.j3()
 l.sbU(0,!0)
@@ -3150,7 +3150,7 @@ l.b=!0
 o.K(l)
 o.aN(q)
 j.m(0,o)
-q=s.r
+q=s.x
 o=new U.db()
 o.c=0.01
 o.e=o.d=0
@@ -3208,8 +3208,8 @@ u=s.d
 if(u!==q){if(u!=null)u.gv().S(0,s.gc1())
 s.d=q
 q.gv().m(0,s.gc1())
-s.c2()}u=s.z
-if(u==null)u=s.z=D.D()
+s.c2()}u=s.Q
+if(u==null)u=s.Q=D.D()
 q=u.b
 u=q==null?u.b=H.b([],[{func:1,ret:-1,args:[D.O]}]):q
 u.push(new Q.iS(b,p))
@@ -5023,11 +5023,11 @@ u.cx=u.ch=null}}
 E.d_.prototype={
 c3:function(a){this.d0()},
 c2:function(){return this.c3(null)},
-gfG:function(){var u,t=this,s=Date.now(),r=C.d.X(P.jF(s-t.cx.a).a,1000)/1000
+gfG:function(){var u,t=this,s=Date.now(),r=C.d.X(P.jF(s-t.cy.a).a,1000)/1000
 if(r<=0)return 0
-u=t.cy
-t.cy=0
-t.cx=new P.a1(s,!1)
+u=t.db
+t.db=0
+t.cy=new P.a1(s,!1)
 return u/r},
 ci:function(){var u,t,s=this,r=window.devicePixelRatio,q=s.b.clientWidth
 if(typeof q!=="number")return q.q()
@@ -5040,13 +5040,13 @@ q=s.b
 if(q.width!==u||q.height!==t){q.width=u
 q.height=t
 P.k1(C.i,s.gh5())}},
-d0:function(){if(!this.ch){this.ch=!0
+d0:function(){if(!this.cx){this.cx=!0
 var u=window
 C.v.dP(u)
 C.v.eU(u,W.kh(new E.hs(this),P.a8))}},
 h3:function(){var u,t,s,r,q,p=this,o=null
-try{++p.cy
-p.ch=!1
+try{++p.db
+p.cx=!1
 p.ci()
 if(o==null)o=p.d
 if(o!=null){s=p.e;++s.e
@@ -5065,7 +5065,7 @@ C.a.sl(r.a,0)
 r.aw()
 r=s.dy;(r&&C.a).sl(r,0)
 s.dy.push(null)
-o.aH(p.e)}s=p.z
+o.aH(p.e)}s=p.Q
 if(s!=null)s.B(null)}catch(q){u=H.aw(q)
 t=H.jp(q)
 P.js("Error: "+H.e(u))
@@ -5073,7 +5073,7 @@ P.js("Stack: "+H.e(t))
 throw H.f(u)}}}
 E.hs.prototype={
 $1:function(a){var u=this.a
-if(u.ch){u.ch=!1
+if(u.cx){u.cx=!1
 u.h3()}}}
 Z.dc.prototype={}
 Z.ce.prototype={

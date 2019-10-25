@@ -2385,11 +2385,11 @@ u.z.push(W.X(s,"pointerlockchange",u.gfn(),!1))
 u.z.push(W.X(a,"touchstart",u.gfG(),!1))
 u.z.push(W.X(a,"touchend",u.gfC(),!1))
 u.z.push(W.X(a,"touchmove",u.gfE(),!1))
-q.r=u
-q.Q=!0
-q.ch=!1
-q.cx=new P.a7(Date.now(),!1)
-q.cy=0
+q.x=u
+q.ch=!0
+q.cx=!1
+q.cy=new P.a7(Date.now(),!1)
+q.db=0
 q.cL()
 return q},
 eU:function eU(){},
@@ -2402,7 +2402,7 @@ hE:function hE(a){this.a=a},
 hF:function hF(a){this.a=a},
 hG:function hG(a){this.a=a},
 du:function du(){var _=this
-_.cy=_.cx=_.ch=_.Q=_.z=_.y=_.x=_.r=_.f=_.e=_.d=_.c=_.b=null},
+_.db=_.cy=_.cx=_.ch=_.Q=_.z=_.y=_.x=_.f=_.e=_.d=_.c=_.b=null},
 ic:function ic(a){this.a=a}},Z={
 kK:function(a,b,c){var u=a.createBuffer()
 a.bindBuffer(b,u)
@@ -2693,7 +2693,7 @@ o=new D.x("region",p,n)
 o.b=!0
 r.a3(o)}m=U.fy()
 m.n(0,U.aV(V.kC(0,0,-4)))
-m.n(0,U.lH(!0,s.r))
+m.n(0,U.lH(!0,s.x))
 o=r.ch
 l=s.f.hE("../resources/Test.png")
 q=new V.V(1,1,1)
@@ -2798,7 +2798,7 @@ o=F.kT(1,a3,a3,1)
 o.bZ()
 f.sac(0,o)
 e=U.fy()
-e.n(0,U.lH(!1,s.r))
+e.n(0,U.lH(!1,s.x))
 e.n(0,U.aV(V.ll(3.141592653589793)))
 e.n(0,U.aV(V.kC(0,0,5)))
 d=E.ks()
@@ -2876,8 +2876,8 @@ o.aN(0,"Cone",new V.k7(g))
 o.aN(0,"Sphere",new V.k8(g))
 o.cV(0,"Toroid",new V.k9(g),!0)
 o.aN(0,"Knot",new V.ka(g))
-u=s.z
-if(u==null)u=s.z=D.G()
+u=s.Q
+if(u==null)u=s.Q=D.G()
 o=u.b
 u=o==null?u.b=H.c([],[{func:1,ret:-1,args:[D.W]}]):o
 u.push(new V.kb(a4,h))
@@ -6679,11 +6679,11 @@ u.cx=u.ch=null}}
 E.du.prototype={
 cp:function(a){this.dQ()},
 co:function(){return this.cp(null)},
-ghw:function(){var u,t=this,s=Date.now(),r=C.c.a9(P.ld(s-t.cx.a).a,1000)/1000
+ghw:function(){var u,t=this,s=Date.now(),r=C.c.a9(P.ld(s-t.cy.a).a,1000)/1000
 if(r<=0)return 0
-u=t.cy
-t.cy=0
-t.cx=new P.a7(s,!1)
+u=t.db
+t.db=0
+t.cy=new P.a7(s,!1)
 return u/r},
 cL:function(){var u,t,s=this,r=window.devicePixelRatio,q=s.b.clientWidth
 if(typeof q!=="number")return q.B()
@@ -6696,13 +6696,13 @@ q=s.b
 if(q.width!==u||q.height!==t){q.width=u
 q.height=t
 P.lA(C.n,s.gi0())}},
-dQ:function(){if(!this.ch){this.ch=!0
+dQ:function(){if(!this.cx){this.cx=!0
 var u=window
 C.E.eC(u)
 C.E.fM(u,W.m1(new E.ic(this),P.aa))}},
 hZ:function(){var u,t,s,r,q,p=this,o=null
-try{++p.cy
-p.ch=!1
+try{++p.db
+p.cx=!1
 p.cL()
 if(o==null)o=p.d
 if(o!=null){s=p.e;++s.e
@@ -6721,7 +6721,7 @@ C.b.sl(r.a,0)
 r.aI()
 r=s.dy;(r&&C.b).sl(r,0)
 s.dy.push(null)
-o.aq(p.e)}s=p.z
+o.aq(p.e)}s=p.Q
 if(s!=null)s.E(null)}catch(q){u=H.ab(q)
 t=H.kV(q)
 P.kY("Error: "+H.e(u))
@@ -6729,7 +6729,7 @@ P.kY("Stack: "+H.e(t))
 throw H.d(u)}}}
 E.ic.prototype={
 $1:function(a){var u=this.a
-if(u.ch){u.ch=!1
+if(u.cx){u.cx=!1
 u.hZ()}}}
 Z.dH.prototype={}
 Z.cL.prototype={

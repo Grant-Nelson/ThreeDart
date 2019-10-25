@@ -1460,7 +1460,7 @@ fW:function fW(a){this.a=a},
 fX:function fX(a){this.a=a},
 fY:function fY(a){this.a=a},
 dk:function dk(){var _=this
-_.cy=_.ch=_.Q=_.z=_.y=_.x=_.e=_.d=_.c=_.b=null},
+_.db=_.cx=_.ch=_.Q=_.z=_.y=_.e=_.d=_.c=_.b=null},
 hA:function hA(a){this.a=a}},Z={
 ap:function(a){return new Z.ao(a)},
 ao:function ao(a){this.a=a}},D={
@@ -2024,12 +2024,12 @@ t.z.push(W.Z(a1,"pointerlockchange",t.gdd(),!1))
 t.z.push(W.Z(i,"touchstart",t.gdj(),!1))
 t.z.push(W.Z(i,"touchend",t.gdf(),!1))
 t.z.push(W.Z(i,"touchmove",t.gdh(),!1))
-h.Q=!0
-h.ch=!1
+h.ch=!0
+h.cx=!1
 Date.now()
-h.cy=0
+h.db=0
 h.bE()
-if(!h.Q){h.Q=!1
+if(!h.ch){h.ch=!1
 h.aU()}a1=h.d
 if(a1!==m){if(a1!=null)a1.gD().P(0,h.gbr())
 h.d=m
@@ -4351,7 +4351,7 @@ $1:function(a){}}
 E.fY.prototype={
 $1:function(a){}}
 E.dk.prototype={
-bs:function(a){if(this.Q)this.bZ()},
+bs:function(a){if(this.ch)this.bZ()},
 aU:function(){return this.bs(null)},
 bE:function(){var u,t,s=this,r=window.devicePixelRatio,q=s.b.clientWidth
 if(typeof q!=="number")return q.B()
@@ -4364,13 +4364,13 @@ q=s.b
 if(q.width!==u||q.height!==t){q.width=u
 q.height=t
 P.dl(C.f,s.gen())}},
-bZ:function(){if(!this.ch){this.ch=!0
+bZ:function(){if(!this.cx){this.cx=!0
 var u=window
 C.r.cE(u)
 C.r.dn(u,W.lk(new E.hA(this),P.aq))}},
 bY:function(){var u,t,s,r,q,p=this,o=null
-try{++p.cy
-p.ch=!1
+try{++p.db
+p.cx=!1
 p.bE()
 if(o==null)o=p.d
 if(o!=null){s=p.e;++s.e
@@ -4396,7 +4396,7 @@ P.lu("Stack: "+H.c(t))
 throw H.h(u)}}}
 E.hA.prototype={
 $1:function(a){var u=this.a
-if(u.ch){u.ch=!1
+if(u.cx){u.cx=!1
 u.bY()}}}
 Z.ao.prototype={
 dG:function(a){var u,t=$.af(),s=this.a

@@ -1322,10 +1322,10 @@ u.z.push(W.F(s,"pointerlockchange",u.gcS(),!1))
 u.z.push(W.F(a,"touchstart",u.gcZ(),!1))
 u.z.push(W.F(a,"touchend",u.gcV(),!1))
 u.z.push(W.F(a,"touchmove",u.gcX(),!1))
-q.Q=!0
-q.ch=!1
+q.ch=!0
+q.cx=!1
 Date.now()
-q.cy=0
+q.db=0
 q.bk()
 return q},
 dF:function dF(){},
@@ -1338,7 +1338,7 @@ f5:function f5(a){this.a=a},
 f6:function f6(a){this.a=a},
 f7:function f7(a){this.a=a},
 cr:function cr(){var _=this
-_.cy=_.ch=_.Q=_.z=_.y=_.x=_.e=_.d=_.c=_.b=null},
+_.db=_.cx=_.ch=_.Q=_.z=_.y=_.e=_.d=_.c=_.b=null},
 fz:function fz(a){this.a=a}},Z={
 ie:function(a,b,c){var u=a.createBuffer()
 a.bindBuffer(b,u)
@@ -3689,13 +3689,13 @@ q=s.b
 if(q.width!==u||q.height!==t){q.width=u
 q.height=t
 P.iZ(C.h,s.gdW())}},
-bH:function(){if(!this.ch){this.ch=!0
+bH:function(){if(!this.cx){this.cx=!0
 var u=window
 C.t.cl(u)
 C.t.d2(u,W.jb(new E.fz(this),P.T))}},
 dV:function(){var u,t,s,r,q,p=this,o=null
-try{++p.cy
-p.ch=!1
+try{++p.db
+p.cx=!1
 p.bk()
 if(o==null)o=p.d
 if(o!=null){s=p.e;++s.e
@@ -3721,7 +3721,7 @@ P.jk("Stack: "+H.d(t))
 throw H.e(u)}}}
 E.fz.prototype={
 $1:function(a){var u=this.a
-if(u.ch){u.ch=!1
+if(u.cx){u.cx=!1
 u.dV()}}}
 Z.cz.prototype={}
 Z.bQ.prototype={

@@ -1541,10 +1541,10 @@ u.z.push(W.M(s,"pointerlockchange",u.ge3(),!1))
 u.z.push(W.M(a,"touchstart",u.gee(),!1))
 u.z.push(W.M(a,"touchend",u.gea(),!1))
 u.z.push(W.M(a,"touchmove",u.gec(),!1))
-q.Q=!0
-q.ch=!1
-q.cx=new P.aA(Date.now(),!1)
-q.cy=0
+q.ch=!0
+q.cx=!1
+q.cy=new P.aA(Date.now(),!1)
+q.db=0
 q.bS()
 return q},
 ea:function ea(){},
@@ -1557,7 +1557,7 @@ fN:function fN(a){this.a=a},
 fO:function fO(a){this.a=a},
 fP:function fP(a){this.a=a},
 cW:function cW(){var _=this
-_.cy=_.cx=_.ch=_.Q=_.z=_.y=_.x=_.e=_.d=_.c=_.b=null},
+_.db=_.cy=_.cx=_.ch=_.Q=_.z=_.y=_.e=_.d=_.c=_.b=null},
 hj:function hj(a){this.a=a}},Z={
 lg:function(a,b,c){var u=a.createBuffer()
 a.bindBuffer(b,u)
@@ -1810,8 +1810,8 @@ u=h.d
 if(u!==l){if(u!=null)u.gv().M(0,h.gbC())
 h.d=l
 l.gv().p(0,h.gbC())
-h.bD()}u=h.z
-if(u==null)u=h.z=D.a1()
+h.bD()}u=h.Q
+if(u==null)u=h.Q=D.a1()
 s=u.b
 u=s==null?u.b=H.b([],[{func:1,ret:-1,args:[D.R]}]):s
 u.push(new X.iI(e,q))
@@ -4892,11 +4892,11 @@ u.cx=u.ch=null}}
 E.cW.prototype={
 bE:function(a){this.cA()},
 bD:function(){return this.bE(null)},
-gf_:function(){var u,t=this,s=Date.now(),r=C.d.T(P.jw(s-t.cx.a).a,1000)/1000
+gf_:function(){var u,t=this,s=Date.now(),r=C.d.T(P.jw(s-t.cy.a).a,1000)/1000
 if(r<=0)return 0
-u=t.cy
-t.cy=0
-t.cx=new P.aA(s,!1)
+u=t.db
+t.db=0
+t.cy=new P.aA(s,!1)
 return u/r},
 bS:function(){var u,t,s=this,r=window.devicePixelRatio,q=s.b.clientWidth
 if(typeof q!=="number")return q.J()
@@ -4909,13 +4909,13 @@ q=s.b
 if(q.width!==u||q.height!==t){q.width=u
 q.height=t
 P.jS(C.h,s.gfq())}},
-cA:function(){if(!this.ch){this.ch=!0
+cA:function(){if(!this.cx){this.cx=!0
 var u=window
 C.u.dq(u)
 C.u.el(u,W.k7(new E.hj(this),P.a3))}},
 fo:function(){var u,t,s,r,q,p=this,o=null
-try{++p.cy
-p.ch=!1
+try{++p.db
+p.cx=!1
 p.bS()
 if(o==null)o=p.d
 if(o!=null){s=p.e;++s.e
@@ -4934,7 +4934,7 @@ C.a.sl(r.a,0)
 r.am()
 r=s.dy;(r&&C.a).sl(r,0)
 s.dy.push(null)
-o.aw(p.e)}s=p.z
+o.aw(p.e)}s=p.Q
 if(s!=null)s.O(null)}catch(q){u=H.as(q)
 t=H.jf(q)
 P.ji("Error: "+H.e(u))
@@ -4942,7 +4942,7 @@ P.ji("Stack: "+H.e(t))
 throw H.f(u)}}}
 E.hj.prototype={
 $1:function(a){var u=this.a
-if(u.ch){u.ch=!1
+if(u.cx){u.cx=!1
 u.fo()}}}
 Z.d4.prototype={}
 Z.ca.prototype={

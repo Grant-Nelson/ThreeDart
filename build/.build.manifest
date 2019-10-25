@@ -204,6 +204,7 @@ tests/resources/maskonaive/posz.jpg
 tests/resources/plant/leaf.jpg
 tests/resources/plant/plant.mtl
 tests/resources/plant/plant.obj
+tests/resources/tink.mp3
 tests/resources/tree/bottom.jpg
 tests/resources/tree/top.jpg
 tests/resources/tree/tree.mtl
@@ -351,6 +352,9 @@ tests/test045/test.png
 tests/test046/index.html
 tests/test046/test.dart.js
 tests/test046/test.png
+tests/test047/index.html
+tests/test047/test.dart.js
+tests/test047/test.png
 tutorials/index.html
 tutorials/tutorial1/index.html
 tutorials/tutorial1/main.dart.js

@@ -2347,11 +2347,11 @@ u.z.push(W.Y(s,"pointerlockchange",u.gfa(),!1))
 u.z.push(W.Y(a,"touchstart",u.gfn(),!1))
 u.z.push(W.Y(a,"touchend",u.gfj(),!1))
 u.z.push(W.Y(a,"touchmove",u.gfl(),!1))
-q.r=u
-q.Q=!0
-q.ch=!1
-q.cx=new P.a6(Date.now(),!1)
-q.cy=0
+q.x=u
+q.ch=!0
+q.cx=!1
+q.cy=new P.a6(Date.now(),!1)
+q.db=0
 q.cD()
 return q},
 eJ:function eJ(){},
@@ -2364,7 +2364,7 @@ hr:function hr(a){this.a=a},
 hs:function hs(a){this.a=a},
 ht:function ht(a){this.a=a},
 dk:function dk(){var _=this
-_.cy=_.cx=_.ch=_.Q=_.z=_.y=_.x=_.r=_.e=_.d=_.c=_.b=null},
+_.db=_.cy=_.cx=_.ch=_.Q=_.z=_.y=_.x=_.e=_.d=_.c=_.b=null},
 hX:function hX(a){this.a=a}},Z={
 kp:function(a,b,c){var u=a.createBuffer()
 a.bindBuffer(b,u)
@@ -3934,7 +3934,7 @@ if(t==null)H.t(P.u("Failed to find an element with the identifier, testCanvas.")
 s=E.n9(t,!0,!0,!0,!1)
 r=U.kc()
 r.n(0,U.cI(V.l3(0,0,-2.5)))
-r.n(0,U.lo(!0,s.r))
+r.n(0,U.lo(!0,s.x))
 q=new V.U(1,1,1)
 p=new D.bt()
 p.r=new V.U(1,1,1)
@@ -4021,7 +4021,7 @@ n=F.ky(1,c,c,1)
 n.bX()
 i.sa7(0,n)
 h=U.kc()
-h.n(0,U.lo(!1,s.r))
+h.n(0,U.lo(!1,s.x))
 h.n(0,U.cI(V.l1(3.141592653589793)))
 h.n(0,U.cI(V.l3(0,0,5)))
 g=E.ka()
@@ -4092,8 +4092,8 @@ n.aT(0,"Cone",new N.jR(j))
 n.aT(0,"Sphere",new N.jS(j))
 n.cM(0,"Toroid",new N.jT(j),!0)
 n.aT(0,"Knot",new N.jU(j))
-u=s.z
-if(u==null)u=s.z=D.M()
+u=s.Q
+if(u==null)u=s.Q=D.M()
 n=u.b
 u=n==null?u.b=H.c([],[{func:1,ret:-1,args:[D.V]}]):n
 u.push(new N.jV(b,k))
@@ -6501,11 +6501,11 @@ u.cx=u.ch=null}}
 E.dk.prototype={
 cj:function(a){this.dB()},
 ci:function(){return this.cj(null)},
-ghh:function(){var u,t=this,s=Date.now(),r=C.c.a5(P.kV(s-t.cx.a).a,1000)/1000
+ghh:function(){var u,t=this,s=Date.now(),r=C.c.a5(P.kV(s-t.cy.a).a,1000)/1000
 if(r<=0)return 0
-u=t.cy
-t.cy=0
-t.cx=new P.a6(s,!1)
+u=t.db
+t.db=0
+t.cy=new P.a6(s,!1)
 return u/r},
 cD:function(){var u,t,s=this,r=window.devicePixelRatio,q=s.b.clientWidth
 if(typeof q!=="number")return q.A()
@@ -6518,13 +6518,13 @@ q=s.b
 if(q.width!==u||q.height!==t){q.width=u
 q.height=t
 P.lh(C.n,s.ghL())}},
-dB:function(){if(!this.ch){this.ch=!0
+dB:function(){if(!this.cx){this.cx=!0
 var u=window
 C.D.em(u)
 C.D.fu(u,W.lJ(new E.hX(this),P.a9))}},
 hI:function(){var u,t,s,r,q,p=this,o=null
-try{++p.cy
-p.ch=!1
+try{++p.db
+p.cx=!1
 p.cD()
 if(o==null)o=p.d
 if(o!=null){s=p.e;++s.e
@@ -6543,7 +6543,7 @@ C.b.sl(r.a,0)
 r.aE()
 r=s.dy;(r&&C.b).sl(r,0)
 s.dy.push(null)
-o.aM(p.e)}s=p.z
+o.aM(p.e)}s=p.Q
 if(s!=null)s.J(null)}catch(q){u=H.aa(q)
 t=H.kB(q)
 P.kE("Error: "+H.e(u))
@@ -6551,7 +6551,7 @@ P.kE("Stack: "+H.e(t))
 throw H.d(u)}}}
 E.hX.prototype={
 $1:function(a){var u=this.a
-if(u.ch){u.ch=!1
+if(u.cx){u.cx=!1
 u.hI()}}}
 Z.dy.prototype={}
 Z.cD.prototype={

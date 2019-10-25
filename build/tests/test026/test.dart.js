@@ -2312,11 +2312,11 @@ u.z.push(W.V(s,"pointerlockchange",u.gfj(),!1))
 u.z.push(W.V(a,"touchstart",u.gfz(),!1))
 u.z.push(W.V(a,"touchend",u.gft(),!1))
 u.z.push(W.V(a,"touchmove",u.gfv(),!1))
-q.r=u
-q.Q=!0
-q.ch=!1
-q.cx=new P.a7(Date.now(),!1)
-q.cy=0
+q.x=u
+q.ch=!0
+q.cx=!1
+q.cy=new P.a7(Date.now(),!1)
+q.db=0
 q.cI()
 return q},
 eP:function eP(){},
@@ -2331,7 +2331,7 @@ hx:function hx(a){this.a=a},
 dl:function dl(a){this.c=a
 this.b=null},
 dr:function dr(){var _=this
-_.cy=_.cx=_.ch=_.Q=_.z=_.y=_.x=_.r=_.f=_.e=_.d=_.c=_.b=null},
+_.db=_.cy=_.cx=_.ch=_.Q=_.z=_.y=_.x=_.f=_.e=_.d=_.c=_.b=null},
 i4:function i4(a){this.a=a}},Z={
 kA:function(a,b,c){var u=a.createBuffer()
 a.bindBuffer(b,u)
@@ -3977,7 +3977,7 @@ n.gv().n(0,o.gbb())
 n=new D.B(o.b+".texture2D",l,o.d)
 n.b=!0
 o.a.X(n)}k=E.l8()
-k.saa(U.lA(!0,s.r))
+k.saa(U.lA(!0,s.x))
 k.saf(0,F.m7())
 j=E.l8()
 j.saa(U.cL(V.aq(3,0,0,0,0,3,0,0,0,0,3,0,0,0,0,1)))
@@ -3990,7 +3990,7 @@ i.b6(i.geK(),i.gfo())
 i.e=null
 i.f=V.d3()
 i.r=0
-i.n(0,U.lA(!1,s.r))
+i.n(0,U.lA(!1,s.x))
 i.n(0,U.cL(V.kt(3.141592653589793)))
 i.n(0,U.cL(V.aq(1,0,0,0,0,1,0,0,0,0,1,5,0,0,0,1)))
 h=U.lp(0.5,0.7,0.3)
@@ -4055,8 +4055,8 @@ o.aW(0,"Cone",new K.k_(k))
 o.aW(0,"Sphere",new K.k0(k))
 o.cQ(0,"Toroid",new K.k1(k),!0)
 o.aW(0,"Knot",new K.k2(k))
-u=s.z
-if(u==null)u=s.z=D.L()
+u=s.Q
+if(u==null)u=s.Q=D.L()
 o=u.b
 u=o==null?u.b=H.c([],[{func:1,ret:-1,args:[D.W]}]):o
 u.push(new K.k3(b,p))
@@ -6469,11 +6469,11 @@ E.dl.prototype={}
 E.dr.prototype={
 co:function(a){this.dK()},
 cn:function(){return this.co(null)},
-ghz:function(){var u,t=this,s=Date.now(),r=C.c.a5(P.l5(s-t.cx.a).a,1000)/1000
+ghz:function(){var u,t=this,s=Date.now(),r=C.c.a5(P.l5(s-t.cy.a).a,1000)/1000
 if(r<=0)return 0
-u=t.cy
-t.cy=0
-t.cx=new P.a7(s,!1)
+u=t.db
+t.db=0
+t.cy=new P.a7(s,!1)
 return u/r},
 cI:function(){var u,t,s=this,r=window.devicePixelRatio,q=s.b.clientWidth
 if(typeof q!=="number")return q.A()
@@ -6486,13 +6486,13 @@ q=s.b
 if(q.width!==u||q.height!==t){q.width=u
 q.height=t
 P.lt(C.m,s.gi4())}},
-dK:function(){if(!this.ch){this.ch=!0
+dK:function(){if(!this.cx){this.cx=!0
 var u=window
 C.D.ex(u)
 C.D.fF(u,W.lT(new E.i4(this),P.aa))}},
 i1:function(){var u,t,s,r,q,p=this,o=null
-try{++p.cy
-p.ch=!1
+try{++p.db
+p.cx=!1
 p.cI()
 if(o==null)o=p.d
 if(o!=null){s=p.e;++s.e
@@ -6511,7 +6511,7 @@ C.b.sl(r.a,0)
 r.aJ()
 r=s.dy;(r&&C.b).sl(r,0)
 s.dy.push(null)
-o.aQ(p.e)}s=p.z
+o.aQ(p.e)}s=p.Q
 if(s!=null)s.I(null)}catch(q){u=H.ab(q)
 t=H.kL(q)
 P.kP("Error: "+H.e(u))
@@ -6519,7 +6519,7 @@ P.kP("Stack: "+H.e(t))
 throw H.d(u)}}}
 E.i4.prototype={
 $1:function(a){var u=this.a
-if(u.ch){u.ch=!1
+if(u.cx){u.cx=!1
 u.i1()}}}
 Z.dE.prototype={}
 Z.cG.prototype={

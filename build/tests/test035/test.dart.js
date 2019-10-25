@@ -2172,11 +2172,11 @@ u.z.push(W.U(s,"pointerlockchange",u.geP(),!1))
 u.z.push(W.U(a,"touchstart",u.gf0(),!1))
 u.z.push(W.U(a,"touchend",u.geX(),!1))
 u.z.push(W.U(a,"touchmove",u.geZ(),!1))
-q.r=u
-q.Q=!0
-q.ch=!1
-q.cx=new P.a4(Date.now(),!1)
-q.cy=0
+q.x=u
+q.ch=!0
+q.cx=!1
+q.cy=new P.a4(Date.now(),!1)
+q.db=0
 q.cC()
 return q},
 ep:function ep(){},
@@ -2191,7 +2191,7 @@ fX:function fX(a){this.a=a},
 cZ:function cZ(a){this.c=a
 this.b=null},
 d1:function d1(){var _=this
-_.cy=_.cx=_.ch=_.Q=_.z=_.y=_.x=_.r=_.e=_.d=_.c=_.b=null},
+_.db=_.cy=_.cx=_.ch=_.Q=_.z=_.y=_.x=_.e=_.d=_.c=_.b=null},
 hp:function hp(a){this.a=a}},Z={
 jV:function(a,b,c){var u=a.createBuffer()
 a.bindBuffer(b,u)
@@ -3851,7 +3851,7 @@ p.e.l(0,V.a_())
 p.e.l(0,V.a_())
 p.e.l(0,V.a_())
 j=U.jH()
-q=s.r
+q=s.x
 o=new U.dd()
 l=U.jE()
 l.sc7(0,!0)
@@ -3899,7 +3899,7 @@ l=new D.z("invertY",l,!1)
 l.b=!0
 o.D(l)}o.aM(q)
 j.l(0,o)
-q=s.r
+q=s.x
 o=new U.dc()
 l=U.jE()
 l.sc7(0,!0)
@@ -3928,7 +3928,7 @@ l.b=!0
 o.D(l)
 o.aM(q)
 j.l(0,o)
-q=s.r
+q=s.x
 o=new U.de()
 o.c=0.01
 o.e=o.d=0
@@ -6117,11 +6117,11 @@ E.cZ.prototype={}
 E.d1.prototype={
 cg:function(a){this.dq()},
 cf:function(){return this.cg(null)},
-gfV:function(){var u,t=this,s=Date.now(),r=C.c.a0(P.kj(s-t.cx.a).a,1000)/1000
+gfV:function(){var u,t=this,s=Date.now(),r=C.c.a0(P.kj(s-t.cy.a).a,1000)/1000
 if(r<=0)return 0
-u=t.cy
-t.cy=0
-t.cx=new P.a4(s,!1)
+u=t.db
+t.db=0
+t.cy=new P.a4(s,!1)
 return u/r},
 cC:function(){var u,t,s=this,r=window.devicePixelRatio,q=s.b.clientWidth
 if(typeof q!=="number")return q.m()
@@ -6134,13 +6134,13 @@ q=s.b
 if(q.width!==u||q.height!==t){q.width=u
 q.height=t
 P.kD(C.n,s.ghm())}},
-dq:function(){if(!this.ch){this.ch=!0
+dq:function(){if(!this.cx){this.cx=!0
 var u=window
 C.x.e5(u)
 C.x.f6(u,W.l_(new E.hp(this),P.a8))}},
 hj:function(){var u,t,s,r,q,p=this,o=null
-try{++p.cy
-p.ch=!1
+try{++p.db
+p.cx=!1
 p.cC()
 if(o==null)o=p.d
 if(o!=null){s=p.e;++s.e
@@ -6166,7 +6166,7 @@ P.k7("Stack: "+H.f(t))
 throw H.c(u)}}}
 E.hp.prototype={
 $1:function(a){var u=this.a
-if(u.ch){u.ch=!1
+if(u.cx){u.cx=!1
 u.hj()}}}
 Z.dg.prototype={}
 Z.cm.prototype={

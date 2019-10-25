@@ -2275,11 +2275,11 @@ u.z.push(W.R(s,"pointerlockchange",u.geW(),!1))
 u.z.push(W.R(a,"touchstart",u.gf7(),!1))
 u.z.push(W.R(a,"touchend",u.gf3(),!1))
 u.z.push(W.R(a,"touchmove",u.gf5(),!1))
-q.r=u
-q.Q=!0
-q.ch=!1
-q.cx=new P.a3(Date.now(),!1)
-q.cy=0
+q.x=u
+q.ch=!0
+q.cx=!1
+q.cy=new P.a3(Date.now(),!1)
+q.db=0
 q.cz()
 return q},
 er:function er(){},
@@ -2292,7 +2292,7 @@ fW:function fW(a){this.a=a},
 fX:function fX(a){this.a=a},
 fY:function fY(a){this.a=a},
 d4:function d4(){var _=this
-_.cy=_.cx=_.ch=_.Q=_.z=_.y=_.x=_.r=_.f=_.e=_.d=_.c=_.b=null},
+_.db=_.cy=_.cx=_.ch=_.Q=_.z=_.y=_.x=_.f=_.e=_.d=_.c=_.b=null},
 hs:function hs(a){this.a=a}},Z={
 jD:function(a,b,c){var u=a.createBuffer()
 a.bindBuffer(b,u)
@@ -2518,7 +2518,7 @@ m.saL(p)
 m.sc1(o)
 b.l(0,m)
 r.y.l(0,X.nb(s))
-m=s.r
+m=s.x
 k=new U.dg()
 b=X.bK()
 b.a6(39)
@@ -2576,7 +2576,7 @@ k.c.ai(m)
 k.d.ai(m)
 k.e.ai(m)
 k.f.ai(m)
-b=s.r
+b=s.x
 j=new U.df()
 m=U.cr()
 m.sc4(0,!0)
@@ -6089,11 +6089,11 @@ u.cx=u.ch=null}}
 E.d4.prototype={
 cd:function(a){this.dr()},
 cc:function(){return this.cd(null)},
-gfZ:function(){var u,t=this,s=Date.now(),r=C.c.a_(P.k0(s-t.cx.a).a,1000)/1000
+gfZ:function(){var u,t=this,s=Date.now(),r=C.c.a_(P.k0(s-t.cy.a).a,1000)/1000
 if(r<=0)return 0
-u=t.cy
-t.cy=0
-t.cx=new P.a3(s,!1)
+u=t.db
+t.db=0
+t.cy=new P.a3(s,!1)
 return u/r},
 cz:function(){var u,t,s=this,r=window.devicePixelRatio,q=s.b.clientWidth
 if(typeof q!=="number")return q.m()
@@ -6106,13 +6106,13 @@ q=s.b
 if(q.width!==u||q.height!==t){q.width=u
 q.height=t
 P.kn(C.m,s.ght())}},
-dr:function(){if(!this.ch){this.ch=!0
+dr:function(){if(!this.cx){this.cx=!0
 var u=window
 C.x.ea(u)
 C.x.fc(u,W.kI(new E.hs(this),P.a8))}},
 hq:function(){var u,t,s,r,q,p=this,o=null
-try{++p.cy
-p.ch=!1
+try{++p.db
+p.cx=!1
 p.cz()
 if(o==null)o=p.d
 if(o!=null){s=p.e;++s.e
@@ -6138,7 +6138,7 @@ P.jR("Stack: "+H.f(t))
 throw H.c(u)}}}
 E.hs.prototype={
 $1:function(a){var u=this.a
-if(u.ch){u.ch=!1
+if(u.cx){u.cx=!1
 u.hq()}}}
 Z.di.prototype={}
 Z.co.prototype={
@@ -9361,7 +9361,7 @@ s=new D.w("velocityRotation",u,t.z)
 s.b=!0
 t.I(s)}}}
 X.j8.prototype={
-$1:function(a){this.a.r.r=a}};(function aliases(){var u=J.a.prototype
+$1:function(a){this.a.x.r=a}};(function aliases(){var u=J.a.prototype
 u.dH=u.h
 u=J.cE.prototype
 u.dI=u.h

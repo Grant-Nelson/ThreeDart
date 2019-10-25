@@ -2219,11 +2219,11 @@ u.z.push(W.R(s,"pointerlockchange",u.geR(),!1))
 u.z.push(W.R(a,"touchstart",u.gf3(),!1))
 u.z.push(W.R(a,"touchend",u.gf_(),!1))
 u.z.push(W.R(a,"touchmove",u.gf1(),!1))
-q.r=u
-q.Q=!0
-q.ch=!1
-q.cx=new P.a2(Date.now(),!1)
-q.cy=0
+q.x=u
+q.ch=!0
+q.cx=!1
+q.cy=new P.a2(Date.now(),!1)
+q.db=0
 q.cH()
 return q},
 es:function es(){},
@@ -2236,7 +2236,7 @@ fW:function fW(a){this.a=a},
 fX:function fX(a){this.a=a},
 fY:function fY(a){this.a=a},
 d4:function d4(){var _=this
-_.cy=_.cx=_.ch=_.Q=_.z=_.y=_.x=_.r=_.f=_.e=_.d=_.c=_.b=null},
+_.db=_.cy=_.cx=_.ch=_.Q=_.z=_.y=_.x=_.f=_.e=_.d=_.c=_.b=null},
 hx:function hx(a){this.a=a}},Z={
 k8:function(a,b,c){var u=a.createBuffer()
 a.bindBuffer(b,u)
@@ -3835,7 +3835,7 @@ a2.b2(a2.gee(),a2.geW())
 a2.e=null
 a2.f=V.cL()
 a2.r=0
-q=s.r
+q=s.x
 n=new U.dg()
 j=U.jS()
 j.scb(0,!0)
@@ -3883,7 +3883,7 @@ j=new D.z("invertY",j,!1)
 j.b=!0
 n.O(j)}n.aP(q)
 a2.l(0,n)
-q=s.r
+q=s.x
 n=new U.df()
 j=U.jS()
 j.scb(0,!0)
@@ -3912,7 +3912,7 @@ j.b=!0
 n.O(j)
 n.aP(q)
 a2.l(0,n)
-q=s.r
+q=s.x
 n=new U.dh()
 n.c=0.01
 n.e=n.d=0
@@ -6144,11 +6144,11 @@ u.cx=u.ch=null}}
 E.d4.prototype={
 cn:function(a){this.dt()},
 cm:function(){return this.cn(null)},
-gfZ:function(){var u,t=this,s=Date.now(),r=C.c.a_(P.kA(s-t.cx.a).a,1000)/1000
+gfZ:function(){var u,t=this,s=Date.now(),r=C.c.a_(P.kA(s-t.cy.a).a,1000)/1000
 if(r<=0)return 0
-u=t.cy
-t.cy=0
-t.cx=new P.a2(s,!1)
+u=t.db
+t.db=0
+t.cy=new P.a2(s,!1)
 return u/r},
 cH:function(){var u,t,s=this,r=window.devicePixelRatio,q=s.b.clientWidth
 if(typeof q!=="number")return q.m()
@@ -6161,13 +6161,13 @@ q=s.b
 if(q.width!==u||q.height!==t){q.width=u
 q.height=t
 P.kV(C.n,s.ghs())}},
-dt:function(){if(!this.ch){this.ch=!0
+dt:function(){if(!this.cx){this.cx=!0
 var u=window
 C.x.e4(u)
 C.x.f9(u,W.lg(new E.hx(this),P.a6))}},
 hp:function(){var u,t,s,r,q,p=this,o=null
-try{++p.cy
-p.ch=!1
+try{++p.db
+p.cx=!1
 p.cH()
 if(o==null)o=p.d
 if(o!=null){s=p.e;++s.e
@@ -6193,7 +6193,7 @@ P.kn("Stack: "+H.f(t))
 throw H.c(u)}}}
 E.hx.prototype={
 $1:function(a){var u=this.a
-if(u.ch){u.ch=!1
+if(u.cx){u.cx=!1
 u.hp()}}}
 Z.di.prototype={}
 Z.cm.prototype={
@@ -8413,15 +8413,18 @@ m=C.d.aV(p*(r-1))
 n=n>=0?C.c.af(n,c):c+C.c.af(n,c)
 l=(n+(m>=0?C.c.af(m,r):r+C.c.af(m,r))*c)*4
 if(l<0||l>=s)return H.b(t,l)
-p=t[l]/255
+p=t[l]
 k=l+1
 if(k>=s)return H.b(t,k)
-k=t[k]/255
+k=t[k]
 j=l+2
 if(j>=s)return H.b(t,j)
-j=t[j]/255
+j=t[j]
 i=l+3
 if(i>=s)return H.b(t,i)
+p/=255
+k/=255
+j/=255
 i=t[i]/255
 if(p<0)p=0
 else if(p>1)p=1

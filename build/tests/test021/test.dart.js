@@ -2348,11 +2348,11 @@ u.z.push(W.Y(s,"pointerlockchange",u.gfl(),!1))
 u.z.push(W.Y(a,"touchstart",u.gfB(),!1))
 u.z.push(W.Y(a,"touchend",u.gfv(),!1))
 u.z.push(W.Y(a,"touchmove",u.gfz(),!1))
-q.r=u
-q.Q=!0
-q.ch=!1
-q.cx=new P.a6(Date.now(),!1)
-q.cy=0
+q.x=u
+q.ch=!0
+q.cx=!1
+q.cy=new P.a6(Date.now(),!1)
+q.db=0
 q.cP()
 return q},
 eM:function eM(){},
@@ -2365,7 +2365,7 @@ hv:function hv(a){this.a=a},
 hw:function hw(a){this.a=a},
 hx:function hx(a){this.a=a},
 dl:function dl(){var _=this
-_.cy=_.cx=_.ch=_.Q=_.z=_.y=_.x=_.r=_.e=_.d=_.c=_.b=null},
+_.db=_.cy=_.cx=_.ch=_.Q=_.z=_.y=_.x=_.e=_.d=_.c=_.b=null},
 i1:function i1(a){this.a=a}},Z={
 ku:function(a,b,c){var u=a.createBuffer()
 a.bindBuffer(b,u)
@@ -2709,7 +2709,7 @@ p=F.kE(1,d,d,1)
 p.c4()
 q.sa9(0,p)
 o=U.kg()
-p=s.r
+p=s.x
 n=new U.dy()
 m=U.kb()
 m.scl(0,!0)
@@ -2757,7 +2757,7 @@ m=new D.y("invertY",m,!1)
 m.b=!0
 n.G(m)}n.aW(p)
 o.n(0,n)
-p=s.r
+p=s.x
 n=new U.dx()
 m=U.kb()
 m.scl(0,!0)
@@ -2786,7 +2786,7 @@ m.b=!0
 n.G(m)
 n.aW(p)
 o.n(0,n)
-p=s.r
+p=s.x
 n=new U.dz()
 n.c=0.01
 n.e=n.d=0
@@ -2868,8 +2868,8 @@ p.aV(0,"Cone",new U.jT(r))
 p.aV(0,"Sphere",new U.jU(r))
 p.cY(0,"Toroid",new U.jV(r),!0)
 p.aV(0,"Knot",new U.jW(r))
-u=s.z
-if(u==null)u=s.z=D.H()
+u=s.Q
+if(u==null)u=s.Q=D.H()
 p=u.b
 u=p==null?u.b=H.c([],[{func:1,ret:-1,args:[D.V]}]):p
 u.push(new U.jX(b,i))
@@ -6543,11 +6543,11 @@ u.cx=u.ch=null}}
 E.dl.prototype={
 cv:function(a){this.dP()},
 cu:function(){return this.cv(null)},
-ghq:function(){var u,t=this,s=Date.now(),r=C.c.a4(P.kZ(s-t.cx.a).a,1000)/1000
+ghq:function(){var u,t=this,s=Date.now(),r=C.c.a4(P.kZ(s-t.cy.a).a,1000)/1000
 if(r<=0)return 0
-u=t.cy
-t.cy=0
-t.cx=new P.a6(s,!1)
+u=t.db
+t.db=0
+t.cy=new P.a6(s,!1)
 return u/r},
 cP:function(){var u,t,s=this,r=window.devicePixelRatio,q=s.b.clientWidth
 if(typeof q!=="number")return q.p()
@@ -6560,13 +6560,13 @@ q=s.b
 if(q.width!==u||q.height!==t){q.width=u
 q.height=t
 P.lk(C.n,s.ghW())}},
-dP:function(){if(!this.ch){this.ch=!0
+dP:function(){if(!this.cx){this.cx=!0
 var u=window
 C.D.eE(u)
 C.D.fH(u,W.lL(new E.i1(this),P.aa))}},
 hT:function(){var u,t,s,r,q,p=this,o=null
-try{++p.cy
-p.ch=!1
+try{++p.db
+p.cx=!1
 p.cP()
 if(o==null)o=p.d
 if(o!=null){s=p.e;++s.e
@@ -6585,7 +6585,7 @@ C.b.sl(r.a,0)
 r.aF()
 r=s.dy;(r&&C.b).sl(r,0)
 s.dy.push(null)
-o.aP(p.e)}s=p.z
+o.aP(p.e)}s=p.Q
 if(s!=null)s.E(null)}catch(q){u=H.ab(q)
 t=H.kG(q)
 P.kJ("Error: "+H.e(u))
@@ -6593,7 +6593,7 @@ P.kJ("Stack: "+H.e(t))
 throw H.d(u)}}}
 E.i1.prototype={
 $1:function(a){var u=this.a
-if(u.ch){u.ch=!1
+if(u.cx){u.cx=!1
 u.hT()}}}
 Z.dB.prototype={}
 Z.cF.prototype={

@@ -1468,10 +1468,10 @@ u.z.push(W.I(s,"pointerlockchange",u.gdP(),!1))
 u.z.push(W.I(a,"touchstart",u.ge_(),!1))
 u.z.push(W.I(a,"touchend",u.gdW(),!1))
 u.z.push(W.I(a,"touchmove",u.gdY(),!1))
-q.Q=!0
-q.ch=!1
-q.cx=new P.ar(Date.now(),!1)
-q.cy=0
+q.ch=!0
+q.cx=!1
+q.cy=new P.ar(Date.now(),!1)
+q.db=0
 q.bP()
 return q},
 e_:function e_(){},
@@ -1484,7 +1484,7 @@ fn:function fn(a){this.a=a},
 fo:function fo(a){this.a=a},
 fp:function fp(a){this.a=a},
 cL:function cL(){var _=this
-_.cy=_.cx=_.ch=_.Q=_.z=_.y=_.x=_.f=_.e=_.d=_.c=_.b=null},
+_.db=_.cy=_.cx=_.ch=_.Q=_.z=_.y=_.f=_.e=_.d=_.c=_.b=null},
 fV:function fV(a){this.a=a}},Z={
 iB:function(a,b,c){var u=a.createBuffer()
 a.bindBuffer(b,u)
@@ -4515,11 +4515,11 @@ u.cx=u.ch=null}}
 E.cL.prototype={
 bB:function(a){this.cv()},
 bA:function(){return this.bB(null)},
-geG:function(){var u,t=this,s=Date.now(),r=C.d.S(P.im(s-t.cx.a).a,1000)/1000
+geG:function(){var u,t=this,s=Date.now(),r=C.d.S(P.im(s-t.cy.a).a,1000)/1000
 if(r<=0)return 0
-u=t.cy
-t.cy=0
-t.cx=new P.ar(s,!1)
+u=t.db
+t.db=0
+t.cy=new P.ar(s,!1)
 return u/r},
 bP:function(){var u,t,s=this,r=window.devicePixelRatio,q=s.b.clientWidth
 if(typeof q!=="number")return q.M()
@@ -4532,13 +4532,13 @@ q=s.b
 if(q.width!==u||q.height!==t){q.width=u
 q.height=t
 P.jc(C.f,s.gf5())}},
-cv:function(){if(!this.ch){this.ch=!0
+cv:function(){if(!this.cx){this.cx=!0
 var u=window
 C.p.d8(u)
 C.p.e4(u,W.jo(new E.fV(this),P.a1))}},
 f3:function(){var u,t,s,r,q,p=this,o=null
-try{++p.cy
-p.ch=!1
+try{++p.db
+p.cx=!1
 p.bP()
 if(o==null)o=p.d
 if(o!=null){s=p.e;++s.e
@@ -4564,7 +4564,7 @@ P.iM("Stack: "+H.e(t))
 throw H.f(u)}}}
 E.fV.prototype={
 $1:function(a){var u=this.a
-if(u.ch){u.ch=!1
+if(u.cx){u.cx=!1
 u.f3()}}}
 Z.cU.prototype={}
 Z.c0.prototype={
