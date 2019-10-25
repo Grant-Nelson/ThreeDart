@@ -4,6 +4,7 @@ import 'dart:math' as math;
 
 part 'Color3.dart';
 part 'Color4.dart';
+part 'Colors.dart';
 part 'CustomComparer.dart';
 part 'Comparer.dart';
 part 'EpsilonComparer.dart';
