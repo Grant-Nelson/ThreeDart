@@ -29,7 +29,8 @@ class AudioLoader {
   /// Handles loading a new audio player with the audio from the given file path.
   Player loadFromFile(String path) {
     html.AudioElement elem = new html.AudioElement(path)
-      ..autoplay = false;
+      ..autoplay = false
+      ..preload = "auto";
     this._incLoading();
     Player player = new Player._(elem);
     elem.onLoad.listen((_){
