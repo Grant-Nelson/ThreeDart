@@ -20,6 +20,9 @@ class ThreeDart implements Events.Changable {
 
   /// The loader for creating textures.
   Textures.TextureLoader _txtLoader;
+  
+  /// The loader for creating audio.
+  Audio.AudioLoader _audioLoader;
 
   /// The user input listener.
   Input.UserInput _input;
@@ -108,9 +111,10 @@ class ThreeDart implements Events.Changable {
     this._elem   = canvas;
     this._gl     = gl;
     this._scene  = null;
-    this._state     = new RenderState(this._gl, this._canvas);
-    this._txtLoader = new Textures.TextureLoader(this._gl);
-    this._input     = new Input.UserInput(this._canvas);
+    this._state       = new RenderState(this._gl, this._canvas);
+    this._txtLoader   = new Textures.TextureLoader(this._gl);
+    this._audioLoader = new Audio.AudioLoader();
+    this._input       = new Input.UserInput(this._canvas);
     this._changed       = null;
     this._prerender     = null;
     this._postrender    = null;
@@ -138,6 +142,9 @@ class ThreeDart implements Events.Changable {
 
   /// The loader to create textures with.
   Textures.TextureLoader get textureLoader => this._txtLoader;
+
+  /// The loader to create audio players with.
+  Audio.AudioLoader get audioLoader => this._audioLoader;
 
   /// Indicates if a refresh is automatically called
   /// when something internally is changed.

@@ -2,12 +2,11 @@ part of ThreeDart.Audio;
 
 /// A loader for loading sounds.
 class AudioLoader {
-  html.HtmlElement _elem;
   int _soundCount;
   int _loadedCount;
 
   /// Creates a new audio loader.
-  AudioLoader(html.HtmlElement this._elem) {
+  AudioLoader() {
     this._soundCount = 0;
     this._loadedCount = 0;
   }
@@ -27,8 +26,18 @@ class AudioLoader {
     this._loadedCount = 0;
   }
   
-
-
+  /// Handles loading a new audio player with the audio from the given file path.
+  Player loadFromFile(String path) {
+    html.AudioElement elem = new html.AudioElement(path)
+      ..autoplay = false;
+    this._incLoading();
+    Player player = new Player._(elem);
+    elem.onLoad.listen((_){
+        player._setLoaded();
+        this._decLoading();
+      });
+    return player;
+  }
 
   /// Increments the loading count.
   void _incLoading() {
