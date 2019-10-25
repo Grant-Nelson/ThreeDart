@@ -272,12 +272,7 @@ class _materialLightFS {
     buf.writeln("uniform int ${name}Count;");
     buf.writeln("uniform ${title} ${name}s[${light.lightCount}];");
     buf.writeln("");
-
-    // TODO: Determine a better way to do the bar light than using closest point.
-    // 
-    // MAYBE use the best angel out of three, start/closest/end, but use
-    // the closest for the distance?
-    buf.writeln("vec3 ${name}ClosestPoint(vec3 norm, $title lit)");
+    buf.writeln("vec3 ${name}ClosestPoint($title lit)");
     buf.writeln("{");
     buf.writeln("   vec3 lineVec = lit.endPnt - lit.startPnt;");
     buf.writeln("   float lineLen2 = dot(lineVec, lineVec);");
@@ -312,9 +307,14 @@ class _materialLightFS {
       buf.writeln("   vec3 highLight = vec3(0.0, 0.0, 0.0);");
       parts.add("highLight");
 
-      buf.writeln("   vec3 litPnt = ${name}ClosestPoint(norm, lit);");
-      buf.writeln("   vec3 litVerPnt = (viewMat*vec4(litPnt, 1.0)).xyz;");
-      buf.writeln("   vec3 normDir = normalize(viewPos - litVerPnt);");
+      buf.writeln("   vec3 litPnt  = ${name}ClosestPoint(lit);");
+      buf.writeln("   vec3 litView = (viewMat*vec4(litPnt, 1.0)).xyz;");
+      buf.writeln("   vec3 normDir = normalize(viewPos - litView);");
+
+      // TODO: Determine a better way to do the bar light than using closest point.
+      // It doesn't work when a normal is perpendicular to the plane when it should work.
+      // It might need some kind of integration or faking it using the best angle.
+
       buf.writeln("   vec3 intensity = ${name}Intensity(normDir, litPnt, lit);");
       buf.writeln("   if(length(intensity) > 0.0001) {");
       List<String> subparts = new List<String>();
