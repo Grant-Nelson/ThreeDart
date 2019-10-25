@@ -4,6 +4,7 @@ import 'dart:web_gl' as WebGL;
 import 'dart:html' as html;
 import 'dart:async';
 
+import '../Audio/Audio.dart' as Audio;
 import '../Collections/Collections.dart' as Collections;
 import '../Data/Data.dart' as Data;
 import '../Events/Events.dart' as Events;

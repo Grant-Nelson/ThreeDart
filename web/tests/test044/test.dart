@@ -25,7 +25,7 @@ void main() {
 
   Textures.Texture2D color = td.textureLoader.load2DFromFile("../resources/CtrlPnlColor.png");
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
-    ..fog.color = new Math.Color4(1.0, 1.0, 1.0)
+    ..fog.color = Math.Colors.white
     ..fog.start = 4.0
     ..fog.stop  = 5.0
     ..lights.add(new Lights.Directional(

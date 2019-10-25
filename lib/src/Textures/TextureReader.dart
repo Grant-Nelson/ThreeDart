@@ -60,11 +60,11 @@ class TextureReader {
     else y = this._height + (y % this._height);
 
     int offset = (x + y*this._width)*4;
-    return new Math.Color4(
-      this._data[offset]/255.0,
-      this._data[offset+1]/255.0,
-      this._data[offset+2]/255.0,
-      this._data[offset+3]/255.0);
+    return new Math.Color4.fromBytes(
+      this._data[offset],
+      this._data[offset+1],
+      this._data[offset+2],
+      this._data[offset+3]);
   }
   
   /// Creates a copy of this texture data.

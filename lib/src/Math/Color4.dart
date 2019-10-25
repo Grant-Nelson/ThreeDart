@@ -45,6 +45,12 @@ class Color4 {
   factory Color4.transparent() =>
     new Color4._(0.0, 0.0, 0.0, 0.0);
 
+  /// Constructs a new color from bytes.
+  ///
+  /// [red], [green], [blue], and [alpha] are between 0 and 255. 
+  factory Color4.fromBytes(int red, int green, int blue, [int alpha = 0xFF]) =>
+    new Color4(red/0xFF, green/0xFF, blue/0xFF, alpha/0xFF);
+
   /// Constructs a new [Color4] instance from a [Color3] instance.
   ///
   /// [clr] contains the initial components for the color.
