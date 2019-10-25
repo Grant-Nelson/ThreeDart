@@ -18,9 +18,8 @@ import '../../common/common.dart' as common;
 void main() {
   new common.ShellPage("Test 047")
     ..addLargeCanvas("testCanvas")
-    ..addPar(["Test of the color picker, used to read the color of a pixel from a texture. "+
-      "It uses a back buffer with solid colored entities to pick which one to move. "+
-      "Also testing out the ability to screen shot a back buffer."])
+    ..addPar(["Test of the audio player. When you click on a cube it will ",
+      "play the same audio at slightly different rate and volume."])
     ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
