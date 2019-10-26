@@ -63,6 +63,9 @@ class MaterialLight extends Shader {
   Uniform1f _alpha;
   UniformSampler2D _alpha2D;
   UniformSamplerCube _alphaCube;
+  
+  Map<int, Uniform1i> _barLightCounts;
+  Map<int, List<UniformBarLight>> _barLights;
 
   Map<int, Uniform1i> _dirLightCounts;
   Map<int, List<UniformDirectionalLight>> _dirLights;
@@ -199,120 +202,147 @@ class MaterialLight extends Shader {
     else if (cfg.alpha.hasTxtCube)
       this._alphaCube = this.uniforms.required("alphaTxt") as UniformSamplerCube;
 
-    this._dirLightCounts = new Map<int, Uniform1i>();
-    this._dirLights      = new Map<int, List<UniformDirectionalLight>>();
-
-    this._pointLightCounts = new Map<int, Uniform1i>();
-    this._pointLights      = new Map<int, List<UniformPointLight>>();
-
-    this._spotLightCounts = new Map<int, Uniform1i>();
-    this._spotLights      = new Map<int, List<UniformSpotLight>>();
-
     if (cfg.lights) {
+
+      if (cfg.barLights.isNotEmpty) {
+        this._barLightCounts = new Map<int, Uniform1i>();
+        this._barLights      = new Map<int, List<UniformBarLight>>();
+        for (BarLightConfig light in cfg.barLights) {
+          final int configID = light.configID;
+          final String name = light.toString();
+          List<UniformBarLight> lights = new List<UniformBarLight>();
+          for (int i = 0; i < light.lightCount; ++i) {
+            Uniform3f startPnt     = this.uniforms.required("${name}s[$i].startPnt")     as Uniform3f;
+            Uniform3f endPnt       = this.uniforms.required("${name}s[$i].endPnt")       as Uniform3f;
+            Uniform3f color        = this.uniforms.required("${name}s[$i].color")        as Uniform3f;
+            Uniform1f att0, att1, att2;
+            if (light.hasAttenuation) {
+              att0 = this.uniforms.required("${name}s[$i].att0") as Uniform1f;
+              att1 = this.uniforms.required("${name}s[$i].att1") as Uniform1f;
+              att2 = this.uniforms.required("${name}s[$i].att2") as Uniform1f;
+            }
+            lights.add(new UniformBarLight._(i, startPnt, endPnt, color, att0, att1, att2));
+          }
+          this._barLights[configID] = lights;
+          this._barLightCounts[configID] = this.uniforms.required("${name}Count");
+        }
+      }
   
-      for (DirectionalLightConfig light in cfg.dirLights) {
-        final int configID = light.configID;
-        final String name = light.toString();
-        List<UniformDirectionalLight> lights = new List<UniformDirectionalLight>();
-        for (int i = 0; i < light.lightCount; ++i) {
-          Uniform3f objUp, objRight, objDir;
-          if (light.hasTexture) {
-            objUp    = this.uniforms.required("${name}s[$i].objUp")    as Uniform3f;
-            objRight = this.uniforms.required("${name}s[$i].objRight") as Uniform3f;
-            objDir   = this.uniforms.required("${name}s[$i].objDir")   as Uniform3f;
+      if (cfg.dirLights.isNotEmpty) {
+        this._dirLightCounts = new Map<int, Uniform1i>();
+        this._dirLights      = new Map<int, List<UniformDirectionalLight>>();
+        for (DirectionalLightConfig light in cfg.dirLights) {
+          final int configID = light.configID;
+          final String name = light.toString();
+          List<UniformDirectionalLight> lights = new List<UniformDirectionalLight>();
+          for (int i = 0; i < light.lightCount; ++i) {
+            Uniform3f objUp, objRight, objDir;
+            if (light.hasTexture) {
+              objUp    = this.uniforms.required("${name}s[$i].objUp")    as Uniform3f;
+              objRight = this.uniforms.required("${name}s[$i].objRight") as Uniform3f;
+              objDir   = this.uniforms.required("${name}s[$i].objDir")   as Uniform3f;
+            }
+            Uniform3f viewDir = this.uniforms.required("${name}s[$i].viewDir") as Uniform3f;
+            Uniform3f color   = this.uniforms.required("${name}s[$i].color")   as Uniform3f;
+            UniformSampler2D txt;
+            if (light.colorTexture)
+              txt = this.uniforms.required("${name}sTexture2D$i") as UniformSampler2D;
+            lights.add(new UniformDirectionalLight._(i, objUp, objRight, objDir, viewDir, color, txt));
           }
-          Uniform3f viewDir = this.uniforms.required("${name}s[$i].viewDir") as Uniform3f;
-          Uniform3f color   = this.uniforms.required("${name}s[$i].color")   as Uniform3f;
-          UniformSampler2D txt;
-          if (light.colorTexture)
-            txt = this.uniforms.required("${name}sTexture2D$i") as UniformSampler2D;
-          lights.add(new UniformDirectionalLight._(i, objUp, objRight, objDir, viewDir, color, txt));
+          this._dirLights[configID] = lights;
+          this._dirLightCounts[configID] = this.uniforms.required("${name}Count");
         }
-        this._dirLights[configID] = lights;
-        this._dirLightCounts[configID] = this.uniforms.required("${name}Count");
       }
 
-      for (PointLightConfig light in cfg.pointLights) {
-        final int configID = light.configID;
-        final String name = light.toString();
-        List<UniformPointLight> lights = new List<UniformPointLight>();
-        for (int i = 0; i < light.lightCount; ++i) {
-          Uniform3f point   = this.uniforms.required("${name}s[$i].point")   as Uniform3f;
-          Uniform3f viewPnt = this.uniforms.required("${name}s[$i].viewPnt") as Uniform3f;
-          Uniform3f color   = this.uniforms.required("${name}s[$i].color")   as Uniform3f;
-          UniformMat3 invViewRotMat;
-          if (light.hasTexture)
-            invViewRotMat = this.uniforms.required("${name}s[$i].invViewRotMat") as UniformMat3;
-          Uniform4f shadowAdj;
-          UniformSamplerCube txt, shadow;
-          if (light.colorTexture)
-            txt = this.uniforms.required("${name}sTextureCube$i") as UniformSamplerCube;
-          if (light.shadowTexture) {
-            shadow = this.uniforms.required("${name}sShadowCube$i") as UniformSamplerCube;
-            shadowAdj = this.uniforms.required("${name}s[$i].shadowAdj") as Uniform4f;
+      if (cfg.pointLights.isNotEmpty) {
+        this._pointLightCounts = new Map<int, Uniform1i>();
+        this._pointLights      = new Map<int, List<UniformPointLight>>();
+        for (PointLightConfig light in cfg.pointLights) {
+          final int configID = light.configID;
+          final String name = light.toString();
+          List<UniformPointLight> lights = new List<UniformPointLight>();
+          for (int i = 0; i < light.lightCount; ++i) {
+            Uniform3f point   = this.uniforms.required("${name}s[$i].point")   as Uniform3f;
+            Uniform3f viewPnt = this.uniforms.required("${name}s[$i].viewPnt") as Uniform3f;
+            Uniform3f color   = this.uniforms.required("${name}s[$i].color")   as Uniform3f;
+            UniformMat3 invViewRotMat;
+            if (light.hasTexture)
+              invViewRotMat = this.uniforms.required("${name}s[$i].invViewRotMat") as UniformMat3;
+            Uniform4f shadowAdj;
+            UniformSamplerCube txt, shadow;
+            if (light.colorTexture)
+              txt = this.uniforms.required("${name}sTextureCube$i") as UniformSamplerCube;
+            if (light.shadowTexture) {
+              shadow = this.uniforms.required("${name}sShadowCube$i") as UniformSamplerCube;
+              shadowAdj = this.uniforms.required("${name}s[$i].shadowAdj") as Uniform4f;
+            }
+            Uniform1f att0, att1, att2;
+            if (light.hasAttenuation) {
+              att0 = this.uniforms.required("${name}s[$i].att0") as Uniform1f;
+              att1 = this.uniforms.required("${name}s[$i].att1") as Uniform1f;
+              att2 = this.uniforms.required("${name}s[$i].att2") as Uniform1f;
+            }
+            lights.add(new UniformPointLight._(i, point, viewPnt, invViewRotMat,
+              color, txt, shadow, shadowAdj, att0, att1, att2));
           }
-          Uniform1f att0, att1, att2;
-          if (light.hasAttenuation) {
-            att0 = this.uniforms.required("${name}s[$i].att0") as Uniform1f;
-            att1 = this.uniforms.required("${name}s[$i].att1") as Uniform1f;
-            att2 = this.uniforms.required("${name}s[$i].att2") as Uniform1f;
-          }
-          lights.add(new UniformPointLight._(i, point, viewPnt, invViewRotMat,
-            color, txt, shadow, shadowAdj, att0, att1, att2));
+          this._pointLights[configID] = lights;
+          this._pointLightCounts[configID] = this.uniforms.required("${name}Count");
         }
-        this._pointLights[configID] = lights;
-        this._pointLightCounts[configID] = this.uniforms.required("${name}Count");
       }
 
-      for (SpotLightConfig light in cfg.spotLights) {
-        final int configID = light.configID;
-        final String name = light.toString();
-        List<UniformSpotLight> lights = new List<UniformSpotLight>();
-        for (int i = 0; i < light.lightCount; ++i) {
-          Uniform3f objPnt  = this.uniforms.required("${name}s[$i].objPnt")  as Uniform3f;
-          Uniform3f objDir  = this.uniforms.required("${name}s[$i].objDir")  as Uniform3f;
-          Uniform3f viewPnt = this.uniforms.required("${name}s[$i].viewPnt") as Uniform3f;
-          Uniform3f color   = this.uniforms.required("${name}s[$i].color")   as Uniform3f;
-          Uniform3f objUp, objRight;
-          Uniform1f tuScalar, tvScalar;
-          if (light.hasTexture) {
-            objUp    = this.uniforms.required("${name}s[$i].objUp")    as Uniform3f;
-            objRight = this.uniforms.required("${name}s[$i].objRight") as Uniform3f;
-            tuScalar = this.uniforms.required("${name}s[$i].tuScalar") as Uniform1f;
-            tvScalar = this.uniforms.required("${name}s[$i].tvScalar") as Uniform1f;
+      if (cfg.spotLights.isNotEmpty) {
+        this._spotLightCounts = new Map<int, Uniform1i>();
+        this._spotLights      = new Map<int, List<UniformSpotLight>>();
+        for (SpotLightConfig light in cfg.spotLights) {
+          final int configID = light.configID;
+          final String name = light.toString();
+          List<UniformSpotLight> lights = new List<UniformSpotLight>();
+          for (int i = 0; i < light.lightCount; ++i) {
+            Uniform3f objPnt  = this.uniforms.required("${name}s[$i].objPnt")  as Uniform3f;
+            Uniform3f objDir  = this.uniforms.required("${name}s[$i].objDir")  as Uniform3f;
+            Uniform3f viewPnt = this.uniforms.required("${name}s[$i].viewPnt") as Uniform3f;
+            Uniform3f color   = this.uniforms.required("${name}s[$i].color")   as Uniform3f;
+            Uniform3f objUp, objRight;
+            Uniform1f tuScalar, tvScalar;
+            if (light.hasTexture) {
+              objUp    = this.uniforms.required("${name}s[$i].objUp")    as Uniform3f;
+              objRight = this.uniforms.required("${name}s[$i].objRight") as Uniform3f;
+              tuScalar = this.uniforms.required("${name}s[$i].tuScalar") as Uniform1f;
+              tvScalar = this.uniforms.required("${name}s[$i].tvScalar") as Uniform1f;
+            }
+            Uniform4f shadowAdj;
+            if (light.shadowTexture)
+              shadowAdj = this.uniforms.required("${name}s[$i].shadowAdj") as Uniform4f;
+            Uniform1f cutoff, coneAngle;
+            if (light.hasCutOff) {
+              cutoff    = this.uniforms.required("${name}s[$i].cutoff")    as Uniform1f;
+              coneAngle = this.uniforms.required("${name}s[$i].coneAngle") as Uniform1f;
+            }
+            Uniform1f att0, att1, att2;
+            if (light.hasAttenuation) {
+              att0 = this.uniforms.required("${name}s[$i].att0") as Uniform1f;
+              att1 = this.uniforms.required("${name}s[$i].att1") as Uniform1f;
+              att2 = this.uniforms.required("${name}s[$i].att2") as Uniform1f;
+            }
+            UniformSampler2D txt, shadow;
+            if (light.colorTexture)
+              txt = this.uniforms.required("${name}sTexture2D$i") as UniformSampler2D;
+            if (light.shadowTexture)
+              shadow = this.uniforms.required("${name}sShadow2D$i")  as UniformSampler2D;
+            lights.add(new UniformSpotLight._(i, objPnt, objDir, viewPnt,
+              color, objUp, objRight, tuScalar, tvScalar, shadowAdj, cutoff,
+              coneAngle, att0, att1, att2, txt, shadow));
           }
-          Uniform4f shadowAdj;
-          if (light.shadowTexture)
-            shadowAdj = this.uniforms.required("${name}s[$i].shadowAdj") as Uniform4f;
-          Uniform1f cutoff, coneAngle;
-          if (light.hasCutOff) {
-            cutoff    = this.uniforms.required("${name}s[$i].cutoff")    as Uniform1f;
-            coneAngle = this.uniforms.required("${name}s[$i].coneAngle") as Uniform1f;
-          }
-          Uniform1f att0, att1, att2;
-          if (light.hasAttenuation) {
-            att0 = this.uniforms.required("${name}s[$i].att0") as Uniform1f;
-            att1 = this.uniforms.required("${name}s[$i].att1") as Uniform1f;
-            att2 = this.uniforms.required("${name}s[$i].att2") as Uniform1f;
-          }
-          UniformSampler2D txt, shadow;
-          if (light.colorTexture)
-            txt = this.uniforms.required("${name}sTexture2D$i") as UniformSampler2D;
-          if (light.shadowTexture)
-            shadow = this.uniforms.required("${name}sShadow2D$i")  as UniformSampler2D;
-          lights.add(new UniformSpotLight._(i, objPnt, objDir, viewPnt,
-            color, objUp, objRight, tuScalar, tvScalar, shadowAdj, cutoff,
-            coneAngle, att0, att1, att2, txt, shadow));
+          this._spotLights[configID] = lights;
+          this._spotLightCounts[configID] = this.uniforms.required("${name}Count");
         }
-        this._spotLights[configID] = lights;
-        this._spotLightCounts[configID] = this.uniforms.required("${name}Count");
       }
+    }
 
-      if (cfg.fog) {
-        this._fogClr   = this.uniforms.required("fogColor");
-        this._fogStop  = this.uniforms.required("fogStop");
-        this._fogWidth = this.uniforms.required("fogWidth");
-      }
+    if (cfg.fog) {
+      this._fogClr   = this.uniforms.required("fogColor");
+      this._fogStop  = this.uniforms.required("fogStop");
+      this._fogWidth = this.uniforms.required("fogWidth");
     }
   }
 
@@ -508,6 +538,13 @@ class MaterialLight extends Shader {
   /// The alpha texture cube of the object.
   set alphaTextureCube(Textures.TextureCube txt) =>
     this._setTextureCube(this._alphaCube, txt);
+    
+  /// The number of currently used bar lights.
+  int getBarLightCount(int configID) => this._barLightCounts[configID].getValue();
+  setBarLightCount(int configID, int count) => this._barLightCounts[configID].setValue(count);
+
+  /// The list of bar lights grouped by the configuration IDs.
+  List<UniformBarLight> getBarLight(int configID) => this._barLights[configID];
 
   /// The number of currently used directional lights.
   int getDirectionalLightCount(int configID) => this._dirLightCounts[configID].getValue();
