@@ -12,6 +12,7 @@ void main() {
     ..addHeader(2, "Examples")
     ..addPar(["[3Dart Craft|./examples/craft/]"])
     ..addPar(["[3Dart Chess|./examples/chess/]"])
+    ..addPar(["[3Dart Rift|./examples/rift/]"])
     ..addPar(["[Hypersphere|./examples/hypersphere/]"])
     ..addHeader(2, "Tutorials")
     ..addPar(["[Getting Started|./tutorials/tutorial1/]"])
