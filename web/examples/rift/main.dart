@@ -11,19 +11,18 @@ import 'package:ThreeDart/Data.dart' as Data;
 import 'package:ThreeDart/Input.dart' as Input;
 import 'package:ThreeDart/Events.dart' as Events;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
-
-import 'package:OpenSimplexNoiseDart/OpenSimplexNoise.dart' as simplex;
+import 'package:ThreeDart/Views.dart' as Views;
 
 import 'dart:math' as math;
 import 'dart:async';
 import 'dart:html' as html;
 import 'dart:typed_data' as data;
 
+import './engine/engine.dart' as engine;
+import './rooms/rooms.dart' as rooms;
 import '../../common/common.dart' as common;
 
 part 'constants.dart';
-part 'layer.dart';
-part 'room.dart';
 
 /// Starts up the 3Dart Rift example
 void main() {
@@ -61,9 +60,9 @@ void main() {
 void startRift() {
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("targetCanvas");
 
-  // TODO: Fill out
+  engine.Room room = new engine.Room(td);
+  rooms.loadRoom(room, 1);
 
-  
   // Add fullscreen button
   html.Element elem = html.document.getElementById("buttons");
   html.ButtonElement button = new html.ButtonElement()
