@@ -10,6 +10,7 @@ import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Views.dart' as Views;
 
+part 'constants.dart';
 part 'layer.dart';
 part 'room.dart';
 

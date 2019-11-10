@@ -24,3 +24,10 @@ This is a design and try out type game which will be directed by feedback.
 - Super Metroid style movement, jumping, breathing, etc
 - Look and feel from 70's science and half-life 1
 - Isolated, not a hero, becomes a hero by doing what it right
+
+## Room Layout
+
+- The center of the room is 0, 0
+- Positive X is to the right
+- Positive Y is down
+- The top left corner of a "flat" is the given x, y location

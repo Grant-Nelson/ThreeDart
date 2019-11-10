@@ -344,7 +344,7 @@ class MaterialLightConfig {
     bool viewPos = (specular.hasAny) || hasBar ||
                    (pointLights.length > 0) || enviromental;
     bool intense = diffuse.hasAny || invDiffuse.hasAny || specular.hasAny;;
-    bool norm = intense || bumpy.hasAny || enviromental;
+    bool norm = lights || bumpy.hasAny || enviromental;
     bool binm = bumpy.hasAny;
     bool txt2D = emission.hasTxt2D || ambient.hasTxt2D || diffuse.hasTxt2D ||
                  invDiffuse.hasTxt2D || specular.hasTxt2D || bumpy.hasTxt2D ||

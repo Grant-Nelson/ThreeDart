@@ -37,22 +37,31 @@ class Room {
       ..bumpTexture = this._mainNormalTarget.colorTexture
       ..bumpMatrix = new Math.Matrix4.scale(0.05, 0.05, 0.05);
 
+    Views.Camera camera = new Views.Orthogonal();
+
     this._background = new Layer._(this)
-      ..target = this._backgroundTarget;
+      ..target = this._backgroundTarget
+      ..camera = camera;
     this._backDistort = new Layer._(this)
-      ..target = this._backNormalTarget;
+      ..target = this._backNormalTarget
+      ..camera = camera;
     this._distortBack = new Scenes.CoverPass()
       ..target = this._mainTarget
       ..technique = distortBackTech;
     this._main = new Layer._(this)
-      ..target = this._mainTarget;
+      ..target = this._mainTarget
+      ..camera = camera;
     this._mainDistort = new Layer._(this)
-      ..target = this._mainNormalTarget;
+      ..target = this._mainNormalTarget
+      ..camera = camera;
     this._distortMain = new Scenes.CoverPass()
       ..target = this._frontTarget
       ..technique = distortMainTech;
     this._foreground = new Layer._(this)
-      ..target = this._frontTarget;
+      ..target = this._frontTarget
+      ..camera = camera;
+
+    // TODO: Need to add main distortion so that no distortion passes through.
 
     this._td.scene = new Scenes.Compound(passes: [
       this._background,
@@ -64,6 +73,7 @@ class Room {
       this._foreground]);
 
     this._globalLight = new Lights.Directional(
+      mover: new Movers.Constant.scale(-1.0, -1.0, -1.0),
       color: Math.Color3.white());
   }
 

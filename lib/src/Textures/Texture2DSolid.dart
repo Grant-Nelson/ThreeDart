@@ -61,7 +61,7 @@ class Texture2DSolid extends Texture2D {
   void _setLoaded() {
     if (!this._loaded) {
       this._loaded = true;
-      this._changed?.emit();
+      this._changed?.emit(new TextureLoadedEventArgs(this));
     }
   }
 

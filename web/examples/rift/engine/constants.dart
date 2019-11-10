@@ -1,4 +1,4 @@
-part of rift;
+part of engine;
 
 /// Set of constants for Rift.
 class Constants {
@@ -10,5 +10,5 @@ class Constants {
   static const int debugPrintTickMs = 5000;
 
   /// The path to the textures.
-  static const String imgFolder = "./textures/";
+  static const String imgFolder = "./resources/textures/";
 }

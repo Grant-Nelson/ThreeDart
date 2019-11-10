@@ -24,7 +24,7 @@ class TextureCube extends Texture {
   void _incLoaded() {
     this._loaded++;
     if (this.loaded)
-      this._changed?.emit();
+      this._changed?.emit(new TextureLoadedEventArgs(this));
   }
 
   /// The index of the texture when bound to the rendering context.

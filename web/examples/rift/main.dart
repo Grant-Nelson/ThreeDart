@@ -22,8 +22,6 @@ import './engine/engine.dart' as engine;
 import './rooms/rooms.dart' as rooms;
 import '../../common/common.dart' as common;
 
-part 'constants.dart';
-
 /// Starts up the 3Dart Rift example
 void main() {
   new common.ShellPage("3Dart Rift")
@@ -71,7 +69,7 @@ void startRift() {
   elem.children.add(button);
 
   // Start debug output
-  new Timer.periodic(const Duration(milliseconds: Constants.debugPrintTickMs), (Timer time) {
+  new Timer.periodic(const Duration(milliseconds: engine.Constants.debugPrintTickMs), (Timer time) {
     String fps = td.fps.toStringAsFixed(2);
     print("$fps fps");
   });
