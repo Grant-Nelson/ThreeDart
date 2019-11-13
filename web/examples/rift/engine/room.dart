@@ -25,7 +25,7 @@ class Room {
     this._backNormalTarget = new Views.BackTarget(autoResize: true, color: defaultNormal);
     this._mainTarget       = new Views.BackTarget(autoResize: true, clearColor: false);
     this._mainNormalTarget = new Views.BackTarget(autoResize: true, color: defaultNormal);
-    this._frontTarget      = new Views.FrontTarget(clearColor: true, color: Math.Colors.blue);
+    this._frontTarget      = new Views.FrontTarget(clearColor: true, color: Math.Colors.black);
 
     Techniques.Distort distortBackTech = new Techniques.Distort()
       ..colorTexture = this._backgroundTarget.colorTexture
