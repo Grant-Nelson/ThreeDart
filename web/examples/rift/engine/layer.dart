@@ -16,8 +16,11 @@ class Layer extends Scenes.EntityPass {
         Math.Matrix3.scale(scaleU, scaleV, 1.0));
 
     String path = Constants.imgFolder+texture;
+    Textures.Texture2D tex2D = this._room.td.textureLoader.load2DFromFile(path, wrapEdges: wrapEdges);
+
     Techniques.MaterialLight tech = new Techniques.MaterialLight()
-      ..ambient.texture2D = this._room.td.textureLoader.load2DFromFile(path, wrapEdges: wrapEdges)
+      ..ambient.texture2D = tex2D
+      ..alpha.texture2D = tex2D
       ..lights.add(this._room.globalLight);
 
     ThreeDart.Entity entity = new ThreeDart.Entity()
