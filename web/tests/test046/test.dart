@@ -64,7 +64,7 @@ void main() {
   (pass.target as Views.FrontTarget).clearColor = false;
 
   td.scene = new Scenes.Compound(passes: [skybox, pass]);
-  
+
   html.Element elem = html.document.getElementById("buttons");
   html.ButtonElement button = new html.ButtonElement()
     ..text = "Fullscreen"

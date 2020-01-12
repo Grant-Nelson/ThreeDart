@@ -302,7 +302,7 @@ class MaterialLight extends Technique {
         this._addToTextureList(textures, this._ambient.textureCube);
         this._shader.ambientTextureCube = this._ambient.textureCube;
       }
-      
+
       if (cfg.diffuse.hasSolid)
         this._shader.diffuseColor = this._diffuse.color;
       if (cfg.diffuse.hasTxt2D) {
@@ -312,7 +312,7 @@ class MaterialLight extends Technique {
         this._addToTextureList(textures, this._diffuse.textureCube);
         this._shader.diffuseTextureCube = this._diffuse.textureCube;
       }
-      
+
       if (cfg.invDiffuse.hasSolid)
         this._shader.invDiffuseColor = this._invDiffuse.color;
       if (cfg.invDiffuse.hasTxt2D) {

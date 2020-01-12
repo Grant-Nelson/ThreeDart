@@ -104,7 +104,7 @@ class TextureLoader {
     this._loadCubeFace(result, texture, negZPath, WebGL.WebGL.TEXTURE_CUBE_MAP_NEGATIVE_Z, flipY, false);
     return result;
   }
-    
+
   /// Reads the entire given [texture] into the reader buffer.
   TextureReader readAll(Texture2D texture, [bool flipY = true]) =>
     new TextureReader._read(this._gl, texture, flipY: flipY);

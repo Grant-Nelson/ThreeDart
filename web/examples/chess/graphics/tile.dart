@@ -6,7 +6,7 @@ class Tile extends ThreeDart.Entity {
   /// The singleton for the shape of the tile with the render cache for the color shader.
   /// Used for rendering to the screen.
   static ThreeDart.Entity _colorShapeEntity;
-  
+
   /// The singleton for the shape of the tile with the render cache for the picker shader.
   /// Used for determining which piece or tile was clicked on.
   static ThreeDart.Entity _pickShapeEntity;
@@ -31,7 +31,7 @@ class Tile extends ThreeDart.Entity {
 
   /// Indicates that the pick color should be rendered.
   bool _showPick;
-  
+
   /// The techinque for drawing the pick color for this tile.
   Techniques.SolidColor _pickTech;
 
@@ -74,7 +74,7 @@ class Tile extends ThreeDart.Entity {
 
     this._updateColorTech();
   }
-  
+
   /// Gets the location of this tile.
   game.Location get location => this._loc;
 

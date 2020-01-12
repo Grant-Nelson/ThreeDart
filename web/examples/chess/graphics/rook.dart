@@ -4,11 +4,11 @@ part of graphics;
 /// Rooks move horizontally and vertically with no restriction to the distance.
 /// https://en.wikipedia.org/wiki/Rook_(chess)
 class Rook extends Piece {
-  
+
   /// The singleton for the shape of the rook with the render cache for the color shader.
   /// Used for rendering to the screen.
   static ThreeDart.Entity _colorShapeEntity;
-  
+
   /// The singleton for the shape of the rook with the render cache for the picker shader.
   /// Used for determining which piece or tile was clicked on.
   static ThreeDart.Entity _pickShapeEntity;

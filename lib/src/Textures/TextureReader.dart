@@ -5,7 +5,7 @@ class TextureReader {
   Typed.Uint8List _data;
   final int _width;
   final int _height;
-  
+
   /// Reads the given range of the given [texture] into the reader buffer.
   /// The x, y, width, and height are based on actual buffer size.
   factory TextureReader._read(WebGL.RenderingContext2 gl, Texture2D texture,
@@ -66,7 +66,7 @@ class TextureReader {
       this._data[offset+2],
       this._data[offset+3]);
   }
-  
+
   /// Creates a copy of this texture data.
   TextureReader copy() {
     Typed.Uint8List data = new Typed.Uint8List(this._data.length);

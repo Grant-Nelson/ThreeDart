@@ -454,12 +454,12 @@ class Inspection extends Technique {
 
     state.gl.disable(WebGL.WebGL.DEPTH_TEST);
     state.gl.blendFunc(WebGL.WebGL.ONE, WebGL.WebGL.ONE);
-    
+
     if (this._showVertices)
       this._render(state, store, obj.shape, 'vertices', this._vertices, this._ambient2, this._diffuse2);
     if (this._showFaceCenters)
       this._render(state, store, obj.shape, 'faceCenters', this._faceCenters, this._ambient2, this._diffuse2);
-    
+
     if (this._showWireFrame)
       this._render(state, store, obj.shape, 'wireFrame', this._wireFrame, this._ambient2, this._diffuse2);
     if (this._showNormals)

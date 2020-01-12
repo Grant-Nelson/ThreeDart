@@ -117,7 +117,7 @@ class Sterioscopic implements Scene {
     }
     this._onChanged(new Events.ItemsRemovedEventArgs(this, index, passes));
   }
-  
+
   /// Indicates if this scene should be rendered or not.
   bool get enabled => this._enabled;
   set enabled(bool enable) {

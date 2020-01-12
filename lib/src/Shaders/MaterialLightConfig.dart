@@ -12,14 +12,14 @@ class BarLightConfig {
 
   /// Constructs a new bar light configuration.
   BarLightConfig(int this.configID, int this.lightCount);
-  
+
   /// Indicates if this type of bar light has light attenuation.
   bool get hasAttenuation => (this.configID & 0x04) != 0x00;
 
   /// Indicates if this type of bar light has either attenuation or shadow
   /// meaning that it will require calculating distance from light.
   bool get hasDist => (this.configID & 0x06) != 0x00;
-  
+
   /// Gets the string for this bar light configuration.
   String toString() => "barLight${this.configID}";
 }
@@ -36,13 +36,13 @@ class DirectionalLightConfig {
 
   /// Constructs a new directional light configuration.
   DirectionalLightConfig(int this.configID, int this.lightCount);
-  
+
   /// Indicates if this type of directional light has a color texture.
   bool get colorTexture => (this.configID & 0x01) != 0x00;
 
   /// Indicates if this type of directional light has either a color or shadow texture.
   bool get hasTexture => (this.configID & 0x01) != 0x00;
-  
+
   /// Gets the string for this directional light configuration.
   String toString() => "dirLight${this.configID}";
 }
@@ -59,7 +59,7 @@ class PointLightConfig {
 
   /// Constructs a new point light configuration.
   PointLightConfig(int this.configID, int this.lightCount);
-  
+
   /// Indicates if this type of point light has a color texture.
   bool get colorTexture => (this.configID & 0x01) != 0x00;
 
@@ -75,7 +75,7 @@ class PointLightConfig {
   /// Indicates if this type of point light has either attenuation or shadow
   /// meaning that it will require calculating distance from light.
   bool get hasDist => (this.configID & 0x06) != 0x00;
-  
+
   /// Gets the string for this point light configuration.
   String toString() => "pointLight${this.configID}";
 }
@@ -92,7 +92,7 @@ class SpotLightConfig {
 
   /// Constructs a new spot light configuration.
   SpotLightConfig(int this.configID, int this.lightCount);
-  
+
   /// Indicates if this type of spot light has a color texture.
   bool get colorTexture => (this.configID & 0x01) != 0x00;
 
@@ -111,7 +111,7 @@ class SpotLightConfig {
   /// Indicates if this type of spot light has either attenuation or shadow
   /// meaning that it will require calculating distance from light.
   bool get hasDist => (this.configID & 0x06) != 0x00;
-  
+
   /// Gets the string for this spot light configuration.
   String toString() => "spotLight${this.configID}";
 }
@@ -145,7 +145,7 @@ class MaterialLightConfig {
 
   /// The alpha color source type.
   final ColorSourceType alpha;
-  
+
   /// The bar light configurations.
   final List<BarLightConfig> barLights;
 
@@ -291,7 +291,7 @@ class MaterialLightConfig {
     buf.write(fog?        "1": "0");
     buf.write("_");
     buf.write(bendMats);
-    
+
     if (barLights.length > 0) {
       buf.write("_Bar");
       for (BarLightConfig light in barLights)

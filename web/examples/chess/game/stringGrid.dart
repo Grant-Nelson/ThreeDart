@@ -9,7 +9,7 @@ class StringGrid {
 
   /// The number of columns in the grid.
   final int columns;
-  
+
   /// The content for each cell of the grid stored by column then row.
   List<String> _content;
 
@@ -44,7 +44,7 @@ class StringGrid {
     return grid;
   }
 
-  /// Gets the index into the grid data, or -1 if out of bounds. 
+  /// Gets the index into the grid data, or -1 if out of bounds.
   int _index(int row, int column) {
     int index = row*this.rows + column;
     if ((index < 0) || (index >= this.rows * this.columns)) return -1;
@@ -100,7 +100,7 @@ class StringGrid {
       for (int c = 0; c < this.columns; ++c) {
         if (this.showLabels || c != 0) row += "|";
         int i = this._index(r, c);
-        String value = this._content[i] ?? "";        
+        String value = this._content[i] ?? "";
         row += value.padRight(contentWidth);
       }
 

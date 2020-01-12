@@ -39,7 +39,7 @@ class Color3 {
 
   /// Constructs a new color from bytes.
   ///
-  /// [red], [green], and [blue] are between 0 and 255. 
+  /// [red], [green], and [blue] are between 0 and 255.
   factory Color3.fromBytes(int red, int green, int blue) =>
     new Color3(red/0xFF, green/0xFF, blue/0xFF);
 
@@ -101,7 +101,7 @@ class Color3 {
   /// Trims the color into 24 bit space range.
   Color3 trim24() =>
     new Color3._(trimColor8(this.red),  trimColor8(this.green), trimColor8(this.blue));
-                 
+
   /// Converts this color to an RGB 24 bit color integer.
   int toRGB24() =>
     ((this.red  *255.0).floor() << 16) +

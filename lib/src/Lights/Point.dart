@@ -71,7 +71,7 @@ class Point implements Light {
     ((this._texture != null)? 0x01: 0) +
     ((this._shadow != null)?  0x02: 0) +
     (this._enableAttn?        0x04: 0);
-  
+
   /// The rotation and position of the point light.
   Math.Matrix4 get matrix => this._matrix;
 
@@ -121,7 +121,7 @@ class Point implements Light {
       this._onChanged(new Events.ValueChangedEventArgs(this, "shadow", prev, this._shadow));
     }
   }
-  
+
   /// The shadow value modification vector.
   /// This is the vector to apply to the color from the shadow texture
   /// to get the shadow value from the shadow texture.

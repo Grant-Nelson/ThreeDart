@@ -30,7 +30,7 @@ void main() {
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas")
     ..scene = pass;
-    
+
   new common.CheckGroup("controls")
     ..add("grey",   (bool enable) { tech.grey   = enable; }, true)
     ..add("invert", (bool enable) { tech.invert = enable; });

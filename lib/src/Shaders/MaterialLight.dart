@@ -63,13 +63,13 @@ class MaterialLight extends Shader {
   Uniform1f _alpha;
   UniformSampler2D _alpha2D;
   UniformSamplerCube _alphaCube;
-  
+
   Map<int, Uniform1i> _barLightCounts;
   Map<int, List<UniformBarLight>> _barLights;
 
   Map<int, Uniform1i> _dirLightCounts;
   Map<int, List<UniformDirectionalLight>> _dirLights;
-  
+
   Map<int, Uniform1i> _pointLightCounts;
   Map<int, List<UniformPointLight>> _pointLights;
 
@@ -227,7 +227,7 @@ class MaterialLight extends Shader {
           this._barLightCounts[configID] = this.uniforms.required("${name}Count");
         }
       }
-  
+
       if (cfg.dirLights.isNotEmpty) {
         this._dirLightCounts = new Map<int, Uniform1i>();
         this._dirLights      = new Map<int, List<UniformDirectionalLight>>();
@@ -538,7 +538,7 @@ class MaterialLight extends Shader {
   /// The alpha texture cube of the object.
   set alphaTextureCube(Textures.TextureCube txt) =>
     this._setTextureCube(this._alphaCube, txt);
-    
+
   /// The number of currently used bar lights.
   int getBarLightCount(int configID) => this._barLightCounts[configID].getValue();
   setBarLightCount(int configID, int count) => this._barLightCounts[configID].setValue(count);

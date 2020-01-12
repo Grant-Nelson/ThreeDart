@@ -69,7 +69,7 @@ class LightCollection extends Collections.Collection<Light> {
     }
     this._onChanged(new Events.ItemsRemovedEventArgs(this, index, removed));
   }
-  
+
   /// Gets the set of bar lights in this collection.
   Iterable<Bar> get barLights => this._barLights;
 

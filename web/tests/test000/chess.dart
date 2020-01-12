@@ -11,7 +11,7 @@ void addChessTests(TestManager tests) {
       args.info("$resultStr\n\n");
     }
   }
-  
+
   void checkIsChecked(TestArgs args, bool expIsCheckedWhite, bool expIsCheckedBlack, List<String> data) {
     chess.State state = new chess.State.parse(data);
     args.info("State:\n$state\n");
@@ -20,7 +20,7 @@ void addChessTests(TestManager tests) {
     if (state.isChecked(false) != expIsCheckedBlack)
       args.error("Expected IsChecked(black) to return $expIsCheckedBlack but it wasn't\n");
   }
-  
+
   void checkMovements(TestArgs args, chess.State state, String itemStr, List<String> expMovements) {
     args.info("moving $itemStr\n");
 
@@ -48,7 +48,7 @@ void addChessTests(TestManager tests) {
     if (loc.onBoard != expOnBoard) args.error("Unexpected onBoard: ${loc.onBoard} != $expOnBoard\n");
     if (loc.index != expIndex) args.error("Unexpected index: ${loc.index} != $expIndex\n");
     if (loc.toNotation() != expNotation) args.error("Unexpected notation: ${loc.toNotation()} != $expNotation\n");
-    
+
     int row2 = row, column2 = column;
     if (!loc.onBoard) row2 = column2 = 0;
     chess.Location loc2 = new chess.Location.fromIndex(expIndex);
@@ -143,7 +143,7 @@ void addChessTests(TestManager tests) {
        "6 |    |+BP5|    |    |+WP5|    |    |    |",
        "7 | BP6|    |    |+WK1|    |+WP6|+WQ1|+WQ2|",
        "8 |    | WH1| WB1|    |+WQ3| WB2|    | WR1|"]);
-      
+
     state = new chess.State.parse(
       ["BR2|BH2|BB2|BK1|BQ1|BB1|BH1|BR1",
        "BP8|BP7|BP6|BP5|BP4|BP3|BP2|BP1",
@@ -252,7 +252,7 @@ void addChessTests(TestManager tests) {
     checkMovements(args, state, "WP8",
       ["Pawn move to 6 8, 7 8 => 6 8",
        "Pawn move to 5 8, 7 8 => 5 8"]);
-      
+
     checkMovements(args, state, "BP1",
       ["Pawn move to 3 1, 2 1 => 3 1",
        "Pawn move to 4 1, 2 1 => 4 1"]);
@@ -273,7 +273,7 @@ void addChessTests(TestManager tests) {
        " WP1|    |    | WP4|    | WP6|    | WP8",
        " WR1| WH1| WB1| WK1| WQ1| WB2| WH2| WR2"]);
     state2.prev = state;
-    
+
     checkMovements(args, state2, "BP1",
       ["Pawn move to 6 1, 5 1 => 6 1",
        "Pawn en passent Pawn at 6 2, 5 1 => 6 2, 5 2 => null"]);
@@ -284,7 +284,7 @@ void addChessTests(TestManager tests) {
     checkMovements(args, state2, "BP8",
       ["Pawn move to 6 8, 5 8 => 6 8",
        "Pawn en passent Pawn at 6 7, 5 8 => 6 7, 5 7 => null"]);
-    
+
     state2 = new chess.State.parse(
       [" BR1| BH1| BB1| BK1| BQ1| BB2| BH2| BR2",
        " BP1|    |    | BP4|    | BP6|    | BP8",
@@ -295,7 +295,7 @@ void addChessTests(TestManager tests) {
        "    | WP2| WP3|    | WP5| WP6| WP7|    ",
        " WR1| WH1| WB1| WK1| WQ1| WB2| WH2| WR2"]);
     state2.prev = state;
-    
+
     checkMovements(args, state2, "WP1",
       ["Pawn move to 3 1, 4 1 => 3 1",
        "Pawn en passent Pawn at 3 2, 4 1 => 3 2, 4 2 => null"]);
@@ -319,7 +319,7 @@ void addChessTests(TestManager tests) {
     checkMovements(args, state, "WP1",
       ["Pawn move to 6 4, 7 4 => 6 4"]);
   });
-  
+
   tests.add("Test of chess state movements of knights", (TestArgs args) {
     chess.State state = new chess.State.parse(
       ["   |   |    |   |   |   |   |   ",
@@ -369,7 +369,7 @@ void addChessTests(TestManager tests) {
       ["Knight move to 3 6, 4 4 => 3 6",
        "Knight move to 3 2, 4 4 => 3 2"]);
   });
-  
+
   tests.add("Test of chess state movements of bishops", (TestArgs args) {
     chess.State state = new chess.State.parse(
       ["   |   |    |   |   |   |   |   ",
@@ -412,7 +412,7 @@ void addChessTests(TestManager tests) {
        "Bishop move to 3 4, 4 3 => 3 4",
        "Bishop take Pawn at 2 5, 4 3 => 2 5, 2 5 => null"]);
   });
-  
+
   tests.add("Test of chess state movements of rooks", (TestArgs args) {
     chess.State state = new chess.State.parse(
       ["   |   |    |   |   |   |   |   ",
@@ -486,7 +486,7 @@ void addChessTests(TestManager tests) {
        "Rook move to 8 6, 8 8 => 8 6",
        "Rook move to 8 5, 8 8 => 8 5",
        "Rook castles with King, 8 8 => 8 5, 8 4 => 8 6"]);
-       
+
     state = new chess.State.parse(
       [" BR1|   |   |+BK1|   |   |   | BR2",
        " BP1|   |   |    |   |   |   | BP2",
@@ -598,7 +598,7 @@ void addChessTests(TestManager tests) {
       ["King move to 8 3, 8 4 => 8 3",
        "King move to 8 5, 8 4 => 8 5",
        "King castles with Rook, 8 4 => 8 6, 8 8 => 8 5"]);
-       
+
     state = new chess.State.parse(
       ["BR1|   |   |BK1|   |   |BB2|BR2",
        "BP1|   |BP3|BP4|BP5|   |   |BP8",
@@ -618,7 +618,7 @@ void addChessTests(TestManager tests) {
        "King move to 8 5, 8 4 => 8 5",
        "King castles with Rook, 8 4 => 8 2, 8 1 => 8 3"]);
   });
-  
+
   tests.add("Test of chess state movements of queens", (TestArgs args) {
     chess.State state = new chess.State.parse(
       ["+WQ1|   |   |   |   |   |   |    ",

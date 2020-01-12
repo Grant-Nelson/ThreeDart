@@ -39,7 +39,7 @@ class CoverPass implements RenderPass {
     this._box      = new Core.Entity()
       ..shape      = Shapes.square();
     this._onRender = null;
-    
+
     this.camera    = camera;
     this.target    = target;
     this.technique = tech;

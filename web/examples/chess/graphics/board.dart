@@ -98,7 +98,7 @@ class Board extends ThreeDart.Entity {
         return;
       }
     }
-    
+
     for (Tile tile in this._tiles) {
       if (tile.isPick(color)) {
         this._pickLoc(tile.location);

@@ -60,7 +60,7 @@ class GaussianBlur implements Scene {
     this.blurAdjust    = blurAdj;
     this.target        = target;
   }
-  
+
   /// Gets the vertex source code used for the shader used by the blur techinique.
   String get vertexSourceCode => this._horzBlurTech?.vertexSourceCode;
 
@@ -112,7 +112,7 @@ class GaussianBlur implements Scene {
     this._horzBlurTech.blurAdjust = vec;
     this._vertBlurTech.blurAdjust = vec;
   }
-  
+
   /// The target defining the storage to render to.
   /// If null is set, the target is set to an FrontTarget.
   Views.Target get target => this._vertBlurPass.target;

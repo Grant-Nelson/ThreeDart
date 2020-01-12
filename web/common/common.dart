@@ -18,7 +18,6 @@ part 'radioGroup.dart';
 part 'shellPage.dart';
 part 'texture2DGroup.dart';
 
-
 /// Prints an FPS output for the given TreeDart object ot the console.
 void showFPS(ThreeDart.ThreeDart td) {
   new Timer.periodic(const Duration(milliseconds: 5000), (Timer time) {

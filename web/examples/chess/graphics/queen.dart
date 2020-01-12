@@ -4,11 +4,11 @@ part of graphics;
 /// Queens move diagonally, horizontally, and vertically with no restriction to the distance.
 /// https://en.wikipedia.org/wiki/Queen_(chess)
 class Queen extends Piece {
-  
+
   /// The singleton for the shape of the queen with the render cache for the color shader.
   /// Used for rendering to the screen.
   static ThreeDart.Entity _colorShapeEntity;
-  
+
   /// The singleton for the shape of the queen with the render cache for the picker shader.
   /// Used for determining which piece or tile was clicked on.
   static ThreeDart.Entity _pickShapeEntity;

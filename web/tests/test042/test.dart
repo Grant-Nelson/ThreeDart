@@ -46,7 +46,7 @@ void main() {
     ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
-  
+
   Movers.Group mover = new Movers.Group()
     ..add(new Movers.Rotater(deltaYaw: 0.0, deltaPitch: 0.0, deltaRoll: 0.5))
     ..add(new Movers.Constant.rotateX(Math.PI_2));
@@ -56,7 +56,7 @@ void main() {
     ..shape = Shapes.sphere(radius: 0.6)
     ..technique = (new Techniques.MaterialLight()
                 ..emission.color = Math.Color3.white());
-  
+
   Textures.TextureCube shadeTxt = td.textureLoader.loadCubeFromFiles(
     "../resources/StarsCan.png", "../resources/StarsCan.png", "../resources/StarsCan.png",
     "../resources/StarsCan.png", "../resources/StarsCan.png", "../resources/StarsCan.png");
@@ -109,7 +109,7 @@ void main() {
     ..children.add(shadeObj)
     ..camera.mover = camMover
     ..target = colorTarget;
-  
+
   Views.BackTarget brightTarget = new Views.BackTarget(
     autoResize: true, clearColor: false);
   Techniques.TextureLayout brightTrimTech = new Techniques.TextureLayout()
@@ -139,7 +139,7 @@ void main() {
     bloomTarget = blurTarget;
     bloomScene.add(blurPass);
   }
-  
+
   Techniques.TextureLayout layoutTech = new Techniques.TextureLayout()
     ..blend = Shaders.ColorBlendType.Additive
     ..entries.add(new Techniques.TextureLayoutEntry(

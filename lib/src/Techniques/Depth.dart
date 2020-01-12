@@ -126,7 +126,7 @@ class Depth extends Technique {
       ..stop  = this._stop
       ..projectMatrix = state.projection.matrix
       ..viewObjectMatrix = state.viewObjectMatrix;
-    
+
     if (this._invert)
       state.gl.frontFace(WebGL.WebGL.CW);
 
@@ -134,7 +134,7 @@ class Depth extends Technique {
       ..bind(state)
       ..render(state)
       ..unbind(state);
-      
+
     if (this._invert)
       state.gl.frontFace(WebGL.WebGL.CCW);
 
