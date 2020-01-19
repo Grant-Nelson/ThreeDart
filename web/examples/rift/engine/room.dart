@@ -2,86 +2,43 @@ part of engine;
 
 class Room {
   ThreeDart.ThreeDart _td;
-  Views.BackTarget _backgroundTarget;
-  Views.BackTarget _backNormalTarget;
-  Views.BackTarget _mainTarget;
-  Views.BackTarget _mainNormalTarget;
   Views.FrontTarget _frontTarget;
 
-  Layer _background;
-  Layer _backDistort;
-  Scenes.CoverPass _distortBack;
-  Layer _main;
-  Layer _mainDistort;
-  Scenes.CoverPass _distortMain;
-  Layer _foreground;
+  Layer _layer;
+  Layer _debugging;
+  Colliders _colliders;
 
   Lights.Directional _globalLight;
 
   Room(ThreeDart.ThreeDart this._td) {
-    Math.Color4 defaultNormal = new Math.Color4(0.5, 0.5, 1.0, 1.0);
-
-    this._backgroundTarget = new Views.BackTarget(autoResize: true, clearColor: false);
-    this._backNormalTarget = new Views.BackTarget(autoResize: true, color: defaultNormal);
-    this._mainTarget       = new Views.BackTarget(autoResize: true, clearColor: false);
-    this._mainNormalTarget = new Views.BackTarget(autoResize: true, color: defaultNormal);
-    this._frontTarget      = new Views.FrontTarget(clearColor: true, color: Math.Colors.black);
-
-    Techniques.Distort distortBackTech = new Techniques.Distort()
-      ..colorTexture = this._backgroundTarget.colorTexture
-      ..bumpTexture = this._backNormalTarget.colorTexture
-      ..bumpMatrix = new Math.Matrix4.scale(0.05, 0.05, 0.05);
-
-    Techniques.Distort distortMainTech = new Techniques.Distort()
-      ..colorTexture = this._mainTarget.colorTexture
-      ..bumpTexture = this._mainNormalTarget.colorTexture
-      ..bumpMatrix = new Math.Matrix4.scale(0.05, 0.05, 0.05);
+    this._frontTarget = new Views.FrontTarget(clearColor: false, color: Math.Colors.black);
 
     Views.Camera camera = new Views.Orthogonal();
 
-    this._background = new Layer._(this)
-      ..target = this._backgroundTarget
-      ..camera = camera;
-    this._backDistort = new Layer._(this)
-      ..target = this._backNormalTarget
-      ..camera = camera;
-    this._distortBack = new Scenes.CoverPass()
-      ..target = this._mainTarget
-      ..technique = distortBackTech;
-    this._main = new Layer._(this)
-      ..target = this._mainTarget
-      ..camera = camera;
-    this._mainDistort = new Layer._(this)
-      ..target = this._mainNormalTarget
-      ..camera = camera;
-    this._distortMain = new Scenes.CoverPass()
-      ..target = this._frontTarget
-      ..technique = distortMainTech;
-    this._foreground = new Layer._(this)
-      ..target = this._frontTarget
-      ..camera = camera;
+    this._layer = new Layer._(this, 1.0, 1.0);
+    this._debugging = new Layer._(this, 1.0, 1.0);
+    this._colliders = new Colliders._(this, this._debugging);
 
-    // TODO: Need to add main distortion so that no distortion passes through.
-
-    this._td.scene = new Scenes.Compound(passes: [
-      this._background,
-      this._backDistort,
-      this._distortBack,
-      this._main,
-      this._mainDistort,
-      this._distortMain,
-      this._foreground]);
+    this._td.scene = new Scenes.EntityPass(children: [
+      this._layer,
+      this._debugging,
+    ], 
+      target: this._frontTarget,
+      camera: camera);
 
     this._globalLight = new Lights.Directional(
       mover: new Movers.Constant.scale(-1.0, -1.0, -1.0),
       color: Math.Color3.white());
   }
 
+  void setView(Math.Point2 loc) {
+    this._layer.setView(loc);
+    this._debugging.setView(loc);
+  }
+
   ThreeDart.ThreeDart get td => this._td;
-  Layer get background  => this._background;
-  Layer get backDistort => this._backDistort;
-  Layer get main        => this._main;
-  Layer get mainDistort => this._mainDistort;
-  Layer get foreground  => this._foreground;
+  Layer get main      => this._layer;
+  Layer get debugging => this._debugging;
+  Colliders get colliders => this._colliders;
   Lights.Directional get globalLight => this._globalLight;
 }

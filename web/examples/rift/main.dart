@@ -58,8 +58,8 @@ void main() {
 void startRift() {
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("targetCanvas");
 
-  engine.Room room = new engine.Room(td);
-  rooms.loadRoom(room, 1);
+  engine.Engine eng = new engine.Engine(td, rooms.loadRoom);
+  eng.jumpToRoom(1);
 
   // Add fullscreen button
   html.Element elem = html.document.getElementById("buttons");
