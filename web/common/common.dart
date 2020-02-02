@@ -5,7 +5,7 @@ import 'dart:convert' as convert;
 import 'dart:async';
 
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
-import 'package:PatiteParserDart/Tokenizer.dart' as Tokenizer;
+import 'package:PetiteParserDart/Tokenizer.dart' as Tokenizer;
 
 part 'buttonGroup.dart';
 part 'checkGroup.dart';
