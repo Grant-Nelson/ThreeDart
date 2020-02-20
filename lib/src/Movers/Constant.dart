@@ -52,7 +52,7 @@ class Constant extends Mover {
 
   /// Constructs a new perspective projection constant mover.
   ///
-  /// Constructs a projectection for a right hand coordinate system.
+  /// Constructs a projection for a right hand coordinate system.
   /// The given [angle] is in radians of the field of view.
   /// The given [ratio] is the width over the height of the view.
   /// The [near] and [far] depth of the view.

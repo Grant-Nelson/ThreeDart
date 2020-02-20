@@ -4,7 +4,7 @@ part of ThreeDart.Core;
 ///
 /// An [Entity] is a [Shape], [Technique], and a [Mover]
 /// to create an output when rendered.
-class Entity implements Movers.Movable, Events.Changable {
+class Entity implements Movers.Movable, Events.Changeable {
 
   /// The name for this entity.
   String _name;
@@ -15,7 +15,7 @@ class Entity implements Movers.Movable, Events.Changable {
 
   /// The shape to render.
   /// May be null to not render this Entity which is useful
-  /// when grouping other Entitys.
+  /// when grouping other Entities.
   Shapes.Shape _shape;
 
   /// The shape builder used to build the rendering data.
@@ -117,7 +117,7 @@ class Entity implements Movers.Movable, Events.Changable {
   bool get enabled => this._enabled;
   void set enabled(bool enabled) { this._enabled = enabled; }
 
-  /// Indicates if the shape cashe needs to be updated.
+  /// Indicates if the shape cache needs to be updated.
   bool get cacheNeedsUpdate => this._cache == null;
 
   /// Requests that the shape cache is updated.
@@ -130,8 +130,8 @@ class Entity implements Movers.Movable, Events.Changable {
   /// Requests that this and child shape caches are updated.
   ///
   /// This will clear the caches for updating when the technique changes.
-  /// Since techniques are shared to children which don't provide thier
-  /// own technique this will clear all children and descendents which
+  /// Since techniques are shared to children which don't provide their
+  /// own technique this will clear all children and descendants which
   /// currently use this technique.
   void _cacheUpdateForTech() {
     this.clearCache();
@@ -146,12 +146,12 @@ class Entity implements Movers.Movable, Events.Changable {
   Data.TechniqueCache get cache => this._cache;
   set cache(Data.TechniqueCache cache) => this._cache = cache;
 
-  /// The children Entitys of this Entity.
+  /// The children Entities of this Entity.
   Collections.Collection<Entity> get children => this._children;
 
   /// The shape to draw at this Entity.
-  /// May be null to not draw anything, usefull if this Entity
-  /// is just a container for child Entitys.
+  /// May be null to not draw anything, useful if this Entity
+  /// is just a container for child Entities.
   Shapes.Shape get shape => this._shape;
   set shape(Shapes.Shape shape) {
     if (this._shape != shape) {
@@ -183,8 +183,8 @@ class Entity implements Movers.Movable, Events.Changable {
     }
   }
 
-  /// The techinque to render this Entity and/or it's children with.
-  /// May be null to inherit the technique from this Entitys parent.
+  /// The technique to render this Entity and/or it's children with.
+  /// May be null to inherit the technique from this Entities parent.
   Techniques.Technique get technique => this._tech;
   set technique(Techniques.Technique technique) {
     if (this._tech != technique) {
@@ -264,7 +264,7 @@ class Entity implements Movers.Movable, Events.Changable {
 
   /// Modifies the position, normal, and binormal
   /// by translating it with the given [mat]
-  /// for this entity's shape and chilren shapes.
+  /// for this entity's shape and children shapes.
   void applyPositionMatrix(Math.Matrix4 mat) {
     if (this.shape != null)
       this.shape.applyPositionMatrix(mat);

@@ -1,7 +1,7 @@
 part of ThreeDart.Collections;
 
 /// A stack of matrix 4x4s.
-class Matrix4Stack implements Events.Changable {
+class Matrix4Stack implements Events.Changeable {
 
   /// The list storing the stack.
   List<Math.Matrix4> _mat;

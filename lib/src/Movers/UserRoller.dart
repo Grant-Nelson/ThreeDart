@@ -45,7 +45,7 @@ class UserRoller implements Mover, Input.Interactable {
   /// Event for handling changes to this mover.
   Events.Event _changed;
 
-  /// Creates a new user rotater instance.
+  /// Creates a new user rotator instance.
   UserRoller({
       bool ctrl:  false,
       bool alt:   false,
@@ -152,7 +152,7 @@ class UserRoller implements Mover, Input.Interactable {
     }
   }
 
-  /// The roll component for this rotater.
+  /// The roll component for this rotator.
   ComponentShift get roll => this._roll;
 
   /// Indicates if the modifiers keys must be pressed or released.

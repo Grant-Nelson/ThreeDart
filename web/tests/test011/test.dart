@@ -24,7 +24,7 @@ void main() {
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..shape = Shapes.sphere()
     ..mover = (new Movers.Group()
-      ..add(new Movers.UserRotater(input: td.userInput, invertY: true))
+      ..add(new Movers.UserRotator(input: td.userInput, invertY: true))
       ..add(new Movers.UserRoller(input: td.userInput, ctrl: true))
       ..add(new Movers.UserZoom(input: td.userInput)));
 

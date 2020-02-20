@@ -17,14 +17,14 @@ void main() {
       "the first, the third to the second, and so on."])
     ..addPar(["«[Back to Tests|../]"]);
 
-  Movers.Rotater rotater = new Movers.Rotater()
+  Movers.Rotator rotator = new Movers.Rotator()
     ..deltaYaw = 0.51
     ..deltaPitch = 0.71
     ..deltaRoll = 0.92;
 
   Movers.Group mover = new Movers.Group()
     ..add(new Movers.Constant.scale(0.8, 0.8, 0.8))
-    ..add(rotater);
+    ..add(rotator);
 
   Shapes.Shape shape = Shapes.toroid(minorRadius: 0.2, majorRadius: 2.0);
 

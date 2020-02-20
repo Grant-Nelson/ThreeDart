@@ -41,7 +41,7 @@ void main() {
     ..reflection.color = new Math.Color3(0.6, 0.6, 0.6);
 
   Movers.Group mover = new Movers.Group()
-    ..add(new Movers.UserRotater(input: td.userInput))
+    ..add(new Movers.UserRotator(input: td.userInput))
     ..add(new Movers.UserRoller(input: td.userInput, ctrl: true))
     ..add(new Movers.UserZoom(input: td.userInput))
     ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));

@@ -143,7 +143,7 @@ class Matrix4 {
 
   /// Constructs a new perspective projection matrix.
   ///
-  /// Constructs a projectection for a right hand coordinate system.
+  /// Constructs a projection for a right hand coordinate system.
   /// The given [angle] is in radians of the field of view.
   /// The given [ratio] is the width over the height of the view.
   /// The [near] and [far] depth of the view.
@@ -424,7 +424,7 @@ class Matrix4 {
     this.m13 * clr.red + this.m23 * clr.green + this.m33 * clr.blue + this.m43 * clr.alpha,
     this.m14 * clr.red + this.m24 * clr.green + this.m34 * clr.blue + this.m44 * clr.alpha);
 
-  /// Determines if the given [other] variable is a [Matrix4] equal to this metrix.
+  /// Determines if the given [other] variable is a [Matrix4] equal to this matrix.
   ///
   /// The equality of the doubles is tested with the current [Comparer] method.
   bool operator ==(var other) {

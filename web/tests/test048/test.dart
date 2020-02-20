@@ -21,7 +21,7 @@ void main() {
 
   ThreeDart.Entity centerObj = new ThreeDart.Entity()
     ..mover = (new Movers.Group()
-      ..add(new Movers.UserRotater(input: td.userInput, ctrl: true)))
+      ..add(new Movers.UserRotator(input: td.userInput, ctrl: true)))
     ..shape = Shapes.toroid();
 
   ThreeDart.Entity room = new ThreeDart.Entity()
@@ -29,7 +29,7 @@ void main() {
     ..shape = (Shapes.cube()..flip());
 
   Movers.Group camMover = new Movers.Group()
-    ..add(new Movers.UserRotater(input: td.userInput))
+    ..add(new Movers.UserRotator(input: td.userInput))
     ..add(new Movers.UserZoom(input: td.userInput))
     ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));
 

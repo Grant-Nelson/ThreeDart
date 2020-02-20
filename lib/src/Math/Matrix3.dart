@@ -246,7 +246,7 @@ class Matrix3 {
     this.m13 * clr.red + this.m23 * clr.green + this.m33 * clr.blue,
     clr.alpha);
 
-  /// Determines if the given [other] variable is a [Matrix3] equal to this metrix.
+  /// Determines if the given [other] variable is a [Matrix3] equal to this matrix.
   ///
   /// The equality of the doubles is tested with the current [Comparer] method.
   bool operator ==(var other) {

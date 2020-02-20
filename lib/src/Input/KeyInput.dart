@@ -13,7 +13,7 @@ class KeyInput {
   /// Indicates the modifiers which have been pressed.
   Modifiers _mods;
 
-  /// The set of key codes which arecurrently pressed.
+  /// The set of key codes which are currently pressed.
   Set<int> _pressed;
 
   /// Creates a new user input for the given [_elem].
@@ -53,7 +53,7 @@ class KeyInput {
     return this._down;
   }
 
-  /// The set of key codes which arecurrently pressed.
+  /// The set of key codes which are currently pressed.
   Set<int> get pressed => this._pressed;
 
   /// Indicates if the modifier keys currently pressed.

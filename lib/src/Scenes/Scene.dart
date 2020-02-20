@@ -1,7 +1,7 @@
 part of ThreeDart.Scenes;
 
 /// Interface for any class which can be used to generate a scene.
-abstract class Scene implements Events.Changable {
+abstract class Scene implements Events.Changeable {
 
   /// Indicates if this scene should be rendered or not.
   bool get enabled;

@@ -3,7 +3,7 @@ part of craft;
 /// The object defining the player and view of the game.
 class Player {
   Movers.UserTranslator _trans;
-  Movers.UserRotater _rot;
+  Movers.UserRotator _rot;
   World _world;
   bool _touchingGround;
   int _selectedBlockIndex;
@@ -65,7 +65,7 @@ class Player {
       ..collisionHandle = this._handleCollide;
 
     // Sets up how the player will look around.
-    this._rot = new Movers.UserRotater.flat(input: userInput, locking: true);
+    this._rot = new Movers.UserRotator.flat(input: userInput, locking: true);
     this._rot.changed.add((Events.EventArgs args) {
       this._trans.velocityRotation = new Math.Matrix3.rotateY(-this._rot.yaw.location);
     });
@@ -80,7 +80,7 @@ class Player {
     // Sets up the location for the player's hand to show the selected block value to place.
     this._handLoc = new Movers.Group([
       new Movers.Constant.translate(-0.5, -0.5, -0.5),
-      new Movers.Rotater(yaw: -0.1, deltaYaw: 0.0, deltaPitch: 0.1, deltaRoll: 0.0),
+      new Movers.Rotator(yaw: -0.1, deltaYaw: 0.0, deltaPitch: 0.1, deltaRoll: 0.0),
       new Movers.Constant.translate(0.5, 0.5, 0.5),
       new Movers.Constant.scale(0.04, -0.04, 0.04),
       new Movers.Constant.translate(-0.15, 0.06, -0.2),

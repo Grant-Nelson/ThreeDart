@@ -1,7 +1,7 @@
 part of ThreeDart.Math;
 
 /// A math structure for storing a 3D region, like a rectangular cube.
-/// This is also used for AABBs (axial alligned bounding boxes).
+/// This is also used for AABBs (axial aligned bounding boxes).
 class Region3 {
 
   /// Gets a [Region3] at the origin.
@@ -18,7 +18,7 @@ class Region3 {
   }
   static Region3 _unitSingleton;
 
-  /// Gets a [Region3] at the origin with a width, height, and depth of 2 centerd on origin.
+  /// Gets a [Region3] at the origin with a width, height, and depth of 2 centered on origin.
   static Region3 get unit2 {
     _unit2Singleton ??= new Region3(-1.0, -1.0, -1.0, 2.0, 2.0, 2.0);
     return _unit2Singleton;
@@ -329,7 +329,7 @@ class Region3 {
   /// Determines the collision between this region moving with the given [vector]
   /// and the other region, the [target], not moving.
   /// This will not detect collisions where the two rectangles are already within
-  /// eachother, this is so that "already hit" can be handled as needed.
+  /// each other, this is so that "already hit" can be handled as needed.
   IntersectionBetweenMovingRegions collision(Region3 target, Vector3 vector, [HitRegion sides = null]) {
     sides ??= HitRegion.All;
     double t = 100.0, d;
@@ -436,7 +436,7 @@ class Region3 {
     inRange(a.y, this.y, this.y+this.dy) &&
     inRange(a.z, this.z, this.z+this.dz);
 
-  /// Determines if the two regions overlap even partually.
+  /// Determines if the two regions overlap even partially.
   bool overlaps(Region3 a) =>
     rangeOverlap(a.x, a.x + a.dx, this.x, this.x + this.dx) &&
     rangeOverlap(a.y, a.y + a.dy, this.y, this.y + this.dy) &&

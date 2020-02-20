@@ -41,7 +41,7 @@ void main() {
     ..diffuse.texture2D = td.textureLoader.load2DFromFile("../resources/Test.png", wrapEdges: true);
 
   ThreeDart.Entity centerObj = new ThreeDart.Entity()
-    ..mover = new Movers.UserRotater(input: td.userInput, ctrl: true)
+    ..mover = new Movers.UserRotator(input: td.userInput, ctrl: true)
     ..shape = Shapes.toroid();
 
   ThreeDart.Entity room = new ThreeDart.Entity()
@@ -49,12 +49,12 @@ void main() {
     ..shape = (Shapes.cube()..flip());
 
   Movers.Group camMover = new Movers.Group()
-  ..add(new Movers.UserRotater(input: td.userInput))
+  ..add(new Movers.UserRotator(input: td.userInput))
   ..add(new Movers.Constant.rotateX(Math.PI))
   ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));
 
-  Movers.Rotater colorMover = new Movers.Rotater(deltaYaw: 0.3, deltaPitch: 0.5, deltaRoll: 0.7);
-  Movers.Rotater txtMover   = new Movers.Rotater(deltaYaw: 0.0, deltaPitch: 0.0, deltaRoll: 0.1);
+  Movers.Rotator colorMover = new Movers.Rotator(deltaYaw: 0.3, deltaPitch: 0.5, deltaRoll: 0.7);
+  Movers.Rotator txtMover   = new Movers.Rotator(deltaYaw: 0.0, deltaPitch: 0.0, deltaRoll: 0.1);
   td.scene = new Scenes.EntityPass()
     ..technique = tech
     ..children.add(centerObj)

@@ -19,15 +19,15 @@ void main() {
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
   Lights.Directional redDir = new Lights.Directional(
-    mover: new Movers.Rotater(deltaYaw: 0.3, deltaPitch: 0.0, deltaRoll: 0.0),
+    mover: new Movers.Rotator(deltaYaw: 0.3, deltaPitch: 0.0, deltaRoll: 0.0),
     color: new Math.Color3(1.0, 0.0, 0.0));
 
   Lights.Directional greenDir = new Lights.Directional(
-    mover: new Movers.Rotater(deltaYaw: 0.0, deltaPitch: 0.4, deltaRoll: 0.0),
+    mover: new Movers.Rotator(deltaYaw: 0.0, deltaPitch: 0.4, deltaRoll: 0.0),
     color: new Math.Color3(0.0, 1.0, 0.0));
 
   Lights.Directional blueDir = new Lights.Directional(
-    mover: new Movers.Rotater(deltaYaw: 0.5, deltaPitch: 0.5, deltaRoll: 0.0),
+    mover: new Movers.Rotator(deltaYaw: 0.5, deltaPitch: 0.5, deltaRoll: 0.0),
     color: new Math.Color3(0.0, 0.0, 1.0));
 
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
@@ -48,7 +48,7 @@ void main() {
     ..shape = (Shapes.cube()..flip());
 
   Movers.Group camMover = new Movers.Group()
-  ..add(new Movers.UserRotater(input: td.userInput))
+  ..add(new Movers.UserRotator(input: td.userInput))
   ..add(new Movers.UserRoller(input: td.userInput, ctrl: true))
   ..add(new Movers.UserZoom(input: td.userInput))
   ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));

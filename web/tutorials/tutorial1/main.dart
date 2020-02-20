@@ -45,7 +45,7 @@ void main() {
       "void main() {",
       "  ThreeDart.Entity obj = new ThreeDart.Entity()",
       "    ..shape = Shapes.cube()",
-      "    ..mover = new Movers.Rotater()",
+      "    ..mover = new Movers.Rotator()",
       "    ..technique = new Techniques.Depth(fogStart: 3.0, fogStop: 6.0);",
       "",
       "  Scenes.EntityPass pass = new Scenes.EntityPass()",
@@ -81,7 +81,7 @@ void main() {
       "can be set to many other built-in shapes, such as sphere, torois, and knot. ",
       "The shape can be loaded from a file or created mathmatically or procedually."])
     ..addPar(["To make the Entity rotate a `Mover` is attached to it. For this tutorial ",
-      "we used the default `Rotater` to cause it to rotate. Movers can be grouped ",
+      "we used the default `Rotator` to cause it to rotate. Movers can be grouped ",
       "to multiply matrices togrether thus compounding the movements."])
     ..addPar(["The `Technique` attached to the Entity defines how the shape should be ",
       "drawn. In this tutorial we used a very simple technique, `Depth`. Depth ",
@@ -89,7 +89,7 @@ void main() {
       "camera. If the background, front target clear color, it the same as the ",
       "far color, it can give the appearence of fog or merky water."])
     ..addHeader(4, "Summary")
-    ..addPar(["Play around with the Rotater, Shape, and Depth to get a feel for "
+    ..addPar(["Play around with the Rotator, Shape, and Depth to get a feel for "
       "how the parts works. The main take away from this tutorial should be ",
       "how to structure a basic render. A render is one or more pass which draws ",
       "entities. The pass has a camera and target. Entities can contain several ",
@@ -100,7 +100,7 @@ void main() {
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..shape = Shapes.cube()
-    ..mover = new Movers.Rotater()
+    ..mover = new Movers.Rotator()
     ..technique = new Techniques.Depth(start: 3.0, stop: 6.0, grey: true);
 
   Scenes.EntityPass pass = new Scenes.EntityPass()

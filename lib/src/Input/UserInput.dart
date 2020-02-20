@@ -96,7 +96,7 @@ class UserInput {
     this._key._mods = new Modifiers(tEvent.ctrlKey||tEvent.metaKey, tEvent.altKey, tEvent.shiftKey);
   }
 
-  /// Gets the raw mouse point relative to the client retangle in pixels.
+  /// Gets the raw mouse point relative to the client rectangle in pixels.
   Math.Point2 _rawPoint(html.MouseEvent msEvent) {
     html.Rectangle rect = this._elem.getBoundingClientRect();
     return new Math.Point2((msEvent.page.x-rect.left).toDouble(), (msEvent.page.y-rect.top).toDouble());
@@ -107,7 +107,7 @@ class UserInput {
     return new Math.Vector2(msEvent.movement.x, msEvent.movement.y);
   }
 
-  /// Gets the raw touch points relative to the client retangle in pixels.
+  /// Gets the raw touch points relative to the client rectangle in pixels.
   List<Math.Point2> _rawTouchPoints(html.TouchEvent tEvent) {
     html.Rectangle rect = this._elem.getBoundingClientRect();
     List<Math.Point2> pnts = new List<Math.Point2>();
@@ -117,11 +117,11 @@ class UserInput {
     return pnts;
   }
 
-  /// Convertes the html button into the 3Dart button.
+  /// Converts the html button into the 3Dart button.
   Button _convertButton(html.MouseEvent msEvent) =>
     new Button(msEvent.buttons, ctrl: msEvent.ctrlKey||msEvent.metaKey, alt: msEvent.altKey, shift: msEvent.shiftKey);
 
-  /// Determines if the given mouse location is containerd in the canvas.
+  /// Determines if the given mouse location is contained in the canvas.
   bool _mouseContained(html.MouseEvent msEvent) {
     html.Rectangle rect = this._elem.getBoundingClientRect();
     final num x = msEvent.page.x - rect.left;
@@ -208,7 +208,7 @@ class UserInput {
       msEvent.preventDefault();
   }
 
-  /// Handles the mouse up ouside the canvas event
+  /// Handles the mouse up outside the canvas event
   /// when the mouse was pressed while over the canvas.
   void _onDocMouseUp(html.MouseEvent msEvent) {
     if (!this._mouseContained(msEvent)) {

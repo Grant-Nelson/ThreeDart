@@ -1,11 +1,13 @@
 part of ThreeDart.Math;
 
+/// An epsilon comparer where things are equal when two values are
+/// with a given difference, epsilon, which is relatively small.
 class EpsilonComparer implements CustomComparer {
 
   /// The value to use as padding for equality closeness.
   final double epsilon;
 
-  /// Constructs a new epsilong comparer with the given expsilon value.
+  /// Constructs a new epsilon comparer with the given epsilon value.
   EpsilonComparer(double this.epsilon);
 
   /// Determines if the two values are equal.

@@ -1,7 +1,7 @@
 part of ThreeDart.Core;
 
 /// [TreeDart] (3Dart) is the a tool for rendering WebGL with Dart.
-class ThreeDart implements Events.Changable {
+class ThreeDart implements Events.Changeable {
 
   /// The element the canvas was added to or the canvas being drawn to.
   html.Element _elem;
@@ -53,7 +53,7 @@ class ThreeDart implements Events.Changable {
   /// [alpha] indicates if the back color target will have an alpha channel or not.
   /// [depth] indicates if the target will have a back buffer or not.
   /// [stencil] indicates if the target will have a stencil buffer or not.
-  /// [antialias] indicates if the target is antialised or not.
+  /// [antialias] indicates if the target is antialiased or not.
   factory ThreeDart.fromId(String elementId, {bool alpha: true, bool depth: true, stencil: false, antialias: true}) {
     html.Element elem = html.document.getElementById(elementId);
     if (elem == null) {
@@ -68,7 +68,7 @@ class ThreeDart implements Events.Changable {
   /// [alpha] indicates if the back color target will have an alpha channel or not.
   /// [depth] indicates if the target will have a back buffer or not.
   /// [stencil] indicates if the target will have a stencil buffer or not.
-  /// [antialias] indicates if the target is antialised or not.
+  /// [antialias] indicates if the target is antialiased or not.
   factory ThreeDart.fromElem(html.Element elem, {bool alpha: true, bool depth: true, stencil: false, antialias: true}) {
     if (elem == null) {
       throw new Exception("May not create a manager from a null element.");
@@ -94,7 +94,7 @@ class ThreeDart implements Events.Changable {
   /// [alpha] indicates if the back color target will have an alpha channel or not.
   /// [depth] indicates if the target will have a back buffer or not.
   /// [stencil] indicates if the target will have a stencil buffer or not.
-  /// [antialias] indicates if the target is antialised or not.
+  /// [antialias] indicates if the target is antialiased or not.
   ThreeDart.fromCanvas(html.CanvasElement canvas, {bool alpha: true, bool depth: true, stencil: false, antialias: true}) {
     if (canvas == null) {
       throw new Exception("May not create a manager from a null canvas.");
@@ -218,7 +218,7 @@ class ThreeDart implements Events.Changable {
   /// Makes sure the size of the canvas is correctly set.
   void _resize() {
     // Lookup the size the browser is displaying the canvas in CSS pixels and
-    // compute a size needed to make our drawingbuffer match it in device pixels.
+    // compute a size needed to make our drawing buffer match it in device pixels.
     num ratio = html.window.devicePixelRatio;
     int displayWidth  = (this._canvas.clientWidth  * ratio).floor();
     int displayHeight = (this._canvas.clientHeight * ratio).floor();
@@ -238,7 +238,7 @@ class ThreeDart implements Events.Changable {
   }
 
   /// Requests a render to start the next time the main message loop
-  /// is retured to. This is debunced so that it can be called many times
+  /// is returned to. This is debounced so that it can be called many times
   /// but will only be run once
   void requestRender() {
     if (!this._pendingRender) {
@@ -253,7 +253,7 @@ class ThreeDart implements Events.Changable {
   }
 
   /// Renders the scene to the canvas.
-  /// An optional diffent scene can be provided but
+  /// An optional different scene can be provided but
   /// typically the scene attached to this object should be used.
   /// If the scene parameter isn't set, the attached scene is used.
   void render([Scenes.Scene scene = null]) {

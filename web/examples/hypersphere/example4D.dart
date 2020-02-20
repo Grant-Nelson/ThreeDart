@@ -125,13 +125,13 @@ void startup4D(String targetName) {
       sphere.enabled = true;
     }
 
-    // On the left side so don't let mouse move continue to rotater.
+    // On the left side so don't let mouse move continue to rotator.
     ms.propagate = false;
   });
 
-  // Add the right side user rotater after the left side.
+  // Add the right side user rotator after the left side.
   projUserMover
-    ..add(new Movers.UserRotater(input: td.userInput, invertY: true))
+    ..add(new Movers.UserRotator(input: td.userInput, invertY: true))
     ..add(new Movers.UserRoller(input: td.userInput, ctrl: true))
     ..add(new Movers.UserZoom(input: td.userInput));
 

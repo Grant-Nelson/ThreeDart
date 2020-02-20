@@ -9,7 +9,7 @@ class Compound extends Collections.Collection<Scene> implements Scene {
   /// The control to stop infinite loops by a compound containing itself.
   bool _loopProtection;
 
-  /// Emits when any scene in the list chagnes.
+  /// Emits when any scene in the list changes.
   Events.Event _changed;
 
   /// Creates a new compound scene.

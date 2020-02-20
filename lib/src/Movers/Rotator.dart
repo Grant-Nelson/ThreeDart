@@ -1,7 +1,7 @@
 part of ThreeDart.Movers;
 
 /// A mover for rotating an object at a constant rate with euler angles.
-class Rotater extends Mover {
+class Rotator extends Mover {
   double _yaw;
   double _pitch;
   double _roll;
@@ -12,8 +12,8 @@ class Rotater extends Mover {
   Math.Matrix4 _mat;
   Events.Event _changed;
 
-  /// Creates a new rotater.
-  Rotater({
+  /// Creates a new rotator.
+  Rotator({
       double yaw:        0.0,
       double pitch:      0.0,
       double roll:       0.0,
@@ -133,13 +133,13 @@ class Rotater extends Mover {
     return this._mat;
   }
 
-  /// Determines if the given [other] variable is a [Rotater] equal to this one.
+  /// Determines if the given [other] variable is a [Rotator] equal to this one.
   ///
   /// The equality of the doubles is tested with the current [Comparer] method.
   bool operator ==(var other) {
     if (identical(this, other)) return true;
-    if (other is! Rotater) return false;
-    Rotater rot = other as Rotater;
+    if (other is! Rotator) return false;
+    Rotator rot = other as Rotator;
     if (!Math.Comparer.equals(this._yaw,        rot._yaw))        return false;
     if (!Math.Comparer.equals(this._pitch,      rot._pitch))      return false;
     if (!Math.Comparer.equals(this._roll,       rot._roll))       return false;
@@ -154,7 +154,7 @@ class Rotater extends Mover {
 
   /// Gets the formatted string for this constant mover.
   String format([int fraction = 3, int whole = 0]) {
-    return "Rotater: ["+
+    return "Rotator: ["+
       Math.formatDouble(this._yaw,        fraction, whole)+", "+
       Math.formatDouble(this._pitch,      fraction, whole)+", "+
       Math.formatDouble(this._roll,       fraction, whole)+"], ["+
