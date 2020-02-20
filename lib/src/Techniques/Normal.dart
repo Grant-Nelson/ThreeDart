@@ -142,7 +142,7 @@ class Normal extends Technique {
     // Do Nothing
   }
 
-  /// Renderes the given [obj] with the current light and material for the given [state].
+  /// Renders the given [obj] with the current light and material for the given [state].
   void render(Core.RenderState state, Core.Entity obj) {
     if (this._shader == null) {
       this._shader = new Shaders.Normal.cached(this._config(), state);

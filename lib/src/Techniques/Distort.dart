@@ -1,6 +1,6 @@
 part of ThreeDart.Techniques;
 
-/// A technique for a cover pass with a distored image based off depth.
+/// A technique for a cover pass with a distorted image based off depth.
 class Distort extends Technique {
   Shaders.Distort _shader;
 

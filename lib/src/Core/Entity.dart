@@ -25,7 +25,7 @@ class Entity implements Movers.Movable, Events.Changeable {
 
   /// The cache of the shape transformed into the buffers required
   /// by the shader in the currently set technique.
-  /// TODO: Need to make the cache work for two techinques when there are parents.
+  /// TODO: Need to make the cache work for two techniques when there are parents.
   Data.TechniqueCache _cache;
 
   /// The technique to render with or null to inherit from it's parent.

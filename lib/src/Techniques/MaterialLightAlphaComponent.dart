@@ -4,7 +4,7 @@ part of ThreeDart.Techniques;
 class MaterialLightAlphaComponent extends MaterialLightBaseComponent {
   double _alpha;
 
-  /// Creates a new alpha meterial light component for the given [owner].
+  /// Creates a new alpha material light component for the given [owner].
   MaterialLightAlphaComponent._(MaterialLight owner, String name): super._(owner, name) {
     this._alpha = 1.0;
   }

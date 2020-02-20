@@ -135,6 +135,6 @@ void startup4D(String targetName) {
     ..add(new Movers.UserRoller(input: td.userInput, ctrl: true))
     ..add(new Movers.UserZoom(input: td.userInput));
 
-  // Add the two parts of the scene to the ouput.
+  // Add the two parts of the scene to the output.
   td.scene = new Scenes.Compound(passes: [projPass, slicePass]);
 }

@@ -239,7 +239,7 @@ class MaterialLight extends Technique {
     }
   }
 
-  /// Renderes the given [obj] with the current light and material for the given [state].
+  /// Renders the given [obj] with the current light and material for the given [state].
   void render(Core.RenderState state, Core.Entity obj) {
     if (this._shader == null) {
       this._shader = new Shaders.MaterialLight.cached(this._config(), state);
@@ -482,7 +482,7 @@ class MaterialLight extends Technique {
     if (cfg.invViewMat)
       this._shader.inverseViewMatrix = state.inverseViewMatrix;
 
-    if (cfg.enviromental) {
+    if (cfg.environmental) {
       this._addToTextureList(textures, this._envSampler);
       this._shader.environmentTextureCube = this._envSampler;
 

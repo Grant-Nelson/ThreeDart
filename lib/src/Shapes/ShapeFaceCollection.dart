@@ -69,7 +69,7 @@ class ShapeFaceCollection {
     return faces;
   }
 
-  /// Adds a set of seperate faces with the given vertices to the shape.
+  /// Adds a set of separate faces with the given vertices to the shape.
   List<Face> addTriangles(List<Vertex> vertices) {
     List<Face> faces = new List<Face>();
     final int count = vertices.length;
@@ -136,7 +136,7 @@ class ShapeFaceCollection {
     return true;
   }
 
-  /// Removes all faces which match eachother based on the given matcher.
+  /// Removes all faces which match each other based on the given matcher.
   void removeRepeats([FaceMatcher matcher = null]) {
     matcher ??= new ExactFaceMatcher();
     for (int i = this._faces.length-1; i >= 0; --i) {
@@ -155,7 +155,7 @@ class ShapeFaceCollection {
     }
   }
 
-  /// Removes all faces which match eachother based
+  /// Removes all faces which match each other based
   /// on the given matcher and share a vertex.
   void removeVertexRepeats([FaceMatcher matcher = null]) {
     matcher ??= new ExactFaceMatcher();

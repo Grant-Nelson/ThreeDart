@@ -1,6 +1,6 @@
 part of ThreeDart.Shaders;
 
-/// The vertext shader writer for rendering material light.
+/// The vertex shader writer for rendering material light.
 class _materialLightVS {
 
   /// Writes variables for the vertex shader [buf].

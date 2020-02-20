@@ -84,7 +84,7 @@ class Distort extends Shader {
     this._bumpMat        = this.uniforms.required("bumpMat") as UniformMat4;
   }
 
-  /// Sets the tcxture 2D and null texture indicator for the shader.
+  /// Sets the texture 2D and null texture indicator for the shader.
   void _setTexture2D(UniformSampler2D txt2D, Textures.Texture2D txt) {
     if ((txt != null) && txt.loaded) txt2D.setTexture2D(txt);
   }
@@ -111,7 +111,7 @@ class Distort extends Shader {
   set colorTexture(Textures.Texture2D txt) =>
     this._setTexture2D(this._colorTxt, txt);
 
-  /// The bump distrotion texture to cover with.
+  /// The bump distortion texture to cover with.
   set bumpTexture(Textures.Texture2D txt) =>
     this._setTexture2D(this._bumpTxt, txt);
 

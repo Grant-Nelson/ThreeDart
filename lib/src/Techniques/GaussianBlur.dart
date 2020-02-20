@@ -52,7 +52,7 @@ class GaussianBlur extends Technique {
     this._onChanged(args);
   }
 
-  /// The blur value, this will overrided by blur texture.
+  /// The blur value, this will be overridden by blur texture.
   double get blurValue => this._blurValue;
   void set blurValue(double value) {
     value ??= 0.0;

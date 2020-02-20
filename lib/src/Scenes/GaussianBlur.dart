@@ -78,7 +78,7 @@ class GaussianBlur implements Scene {
     this._changed?.emit(args);
   }
 
-  /// The blur value, this will overridden by blur texture.
+  /// The blur value, this will be overridden by blur texture.
   double get blurValue => this._horzBlurTech.blurValue;
   void set blurValue(double value) {
     this._horzBlurTech.blurValue = value;

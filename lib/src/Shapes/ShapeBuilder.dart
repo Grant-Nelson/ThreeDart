@@ -17,7 +17,7 @@ abstract class ShapeBuilder extends Events.Changeable {
   /// True if successful, false on error.
   bool calculateCubeTextures();
 
-  /// Calculates the axial alligned bounding box of the shape.
+  /// Calculates the axial aligned bounding box of the shape.
   Math.Region3 calculateAABB();
 
   /// Builds a buffer store for caching the shape for rendering.

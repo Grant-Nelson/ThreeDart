@@ -7,7 +7,7 @@ class BumpyTechnique extends Techniques.Technique {
   double _offsetScalar;
   Events.Event _changed;
 
-  /// Creates a new bumpy test techinque technique.
+  /// Creates a new bumpy test technique technique.
   BumpyTechnique() {
     this._shader = null;
     this._txt = null;
@@ -59,7 +59,7 @@ class BumpyTechnique extends Techniques.Technique {
     // Do Nothing
   }
 
-  /// Renderes the given [obj] with the current texture for the given [state].
+  /// Renders the given [obj] with the current texture for the given [state].
   void render(ThreeDart.RenderState state, ThreeDart.Entity obj) {
     this._shader ??= new BumpyShader.cached(state);
 

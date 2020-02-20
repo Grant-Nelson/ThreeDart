@@ -108,7 +108,7 @@ class Player {
     }
     this._selectedBlockIndex = 0;
 
-    // Setup collider for handling collition detection for player.
+    // Setup collider for handling collision detection for player.
     this._collider = new Collider(this._world);
 
     // Creates the selection highlight to show which
@@ -167,19 +167,19 @@ class Player {
     this._updateHand();
   }
 
-  /// Handles when the player presses the button(s) to modify the voxal values of a chunk.
+  /// Handles when the player presses the button(s) to modify the voxel values of a chunk.
   void _onBlockChange(Events.EventArgs args) {
     Input.Key key = (args as Input.KeyEventArgs).key;
     this._changeBlock(key.code == Input.Key.keyE);
   }
 
-  /// Handles when the player clicks a mouse button to modify the voxal values of a chunk.
+  /// Handles when the player clicks a mouse button to modify the voxel values of a chunk.
   void _onClickBlockChange(Events.EventArgs args) {
     Input.Button button = (args as Input.MouseEventArgs).button;
     this._changeBlock(button.code == Input.Button.right);
   }
 
-  /// Modify the voxal values of a chunk.
+  /// Modify the voxel values of a chunk.
   /// If [setBlock] is true then the current block in the hand is set on a neighboring side to the
   /// highlight, if false then the highlighted block is set to air.
   void _changeBlock(bool setBlock) {
@@ -284,7 +284,7 @@ class Player {
 
   /// Updates the selection for the highlighted block that can be modified.
   void _updateHighlight(Events.EventArgs _) {
-    // Calcuates the view vector down the center of the screen out away from the player.
+    // Calculates the view vector down the center of the screen out away from the player.
     // The ray is scaled to have the maximum highlight length.
     Math.Matrix4 mat = this._playerLoc.matrix;
     Math.Ray3 playerViewTarget = new Math.Ray3.fromVector(

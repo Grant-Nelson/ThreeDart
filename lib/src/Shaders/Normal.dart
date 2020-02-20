@@ -60,12 +60,12 @@ class Normal extends Shader {
       this._bumpCube = this.uniforms.required("bumpTxt") as UniformSamplerCube;
   }
 
-  /// Sets the tcxture 2D and null texture indicator for the shader.
+  /// Sets the texture 2D and null texture indicator for the shader.
   void _setTexture2D(UniformSampler2D txt2D, Textures.Texture2D txt) {
     if ((txt != null) && txt.loaded) txt2D.setTexture2D(txt);
   }
 
-  /// Sets the tcxture cube and null texture indicator for the shader.
+  /// Sets the texture cube and null texture indicator for the shader.
   void _setTextureCube(UniformSamplerCube txtCube, Textures.TextureCube txt) {
     if ((txt != null) && txt.loaded) txtCube.setTextureCube(txt);
   }

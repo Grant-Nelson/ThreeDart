@@ -78,7 +78,7 @@ class NormalConfig {
     return buf.toString();
   }
 
-  /// Creates the fragmant source code for the material light shader for the given configurations.
+  /// Creates the fragment source code for the material light shader for the given configurations.
   String createFragmentSource() {
     StringBuffer buf = new StringBuffer();
     buf.writeln("precision mediump float;");
