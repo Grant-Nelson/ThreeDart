@@ -22,9 +22,8 @@ class Orthogonal implements Camera {
   }
 
   /// Handles a change in this target.
-  void _onChanged([Events.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs args = null]) =>
     this._changed?.emit(args);
-  }
 
   /// The near depth, distance from the camera, to start rendering at.
   double get near => this._near;
@@ -64,7 +63,8 @@ class Orthogonal implements Camera {
   void bind(Core.RenderState state) {
     double width = state.width.toDouble()*0.5;
     double height = state.height.toDouble()*0.5;
-    state.projection.push(new Math.Matrix4.ortho(-width, width, -height, height, this._near, this._far));
+    Math.Matrix4 proj = new Math.Matrix4.ortho(-width, width, -height, height, this._near, this._far);
+    state.projection.push(proj);
 
     Math.Matrix4 look = new Math.Matrix4.lookTowards(Math.Point3.zero,
         Math.Vector3.posY, Math.Vector3.posZ);

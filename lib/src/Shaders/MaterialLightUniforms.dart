@@ -15,7 +15,7 @@ class UniformBarLight {
   Math.Point3 get startPoint => this._startPnt.getPoint3();
   set startPoint(Math.Point3 pnt) => this._startPnt.setPoint3(pnt);
   Uniform3f _startPnt;
-  
+
   /// The point of the bars light's end location transformed by the object matrix.
   Math.Point3 get endPoint => this._endPnt.getPoint3();
   set endPoint(Math.Point3 pnt) => this._endPnt.setPoint3(pnt);
@@ -197,7 +197,7 @@ class UniformSpotLight {
   Math.Vector3 get objectRight => this._objRight.getVector3();
   set objectRight(Math.Vector3 vec) => this._objRight.setVector3(vec);
   Uniform3f _objRight;
-  
+
   /// The spot light's horizontal scalar.
   double get tuScalar => this._tuScalar.getValue();
   set tuScalar(double tuScalar) => this._tuScalar.setValue(tuScalar);

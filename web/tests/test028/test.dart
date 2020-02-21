@@ -79,7 +79,7 @@ void main() {
     ..target = depthTarget
     ..technique = new Techniques.Depth(start: 3.5, stop: 5.5)
     ..children.add(group);
-  
+
   Scenes.GaussianBlur blurPass = new Scenes.GaussianBlur(
     blurAdj: new Math.Vector4(-1.0, 0.0, 0.0, 1.0),
     colorTxt: colorTarget.colorTexture,

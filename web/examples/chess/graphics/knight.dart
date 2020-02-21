@@ -4,11 +4,11 @@ part of graphics;
 /// Knights move in an "L" shape of 2 by 1 tiles.
 /// https://en.wikipedia.org/wiki/Knight_(chess)
 class Knight extends Piece {
-  
+
   /// The singleton for the shape of the knight with the render cache for the color shader.
   /// Used for rendering to the screen.
   static ThreeDart.Entity _colorShapeEntity;
-  
+
   /// The singleton for the shape of the knight with the render cache for the picker shader.
   /// Used for determining which piece or tile was clicked on.
   static ThreeDart.Entity _pickShapeEntity;

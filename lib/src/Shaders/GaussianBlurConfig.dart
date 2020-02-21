@@ -2,13 +2,13 @@ part of ThreeDart.Shaders;
 
 /// The shader configuration for a gaussian blur.
 class GaussianBlurConfig {
-  
+
   /// Indicates blur source type is a texture instead of a single solid value.
   final bool blurTxt;
-  
+
   /// The name of this shader configuration.
   final String name;
-  
+
   /// Creates a new gaussian blur configuration with all final values
   /// calculated by the other GaussianBlurConfig constructor.
   GaussianBlurConfig._(bool this.blurTxt, String this.name);
@@ -41,7 +41,7 @@ class GaussianBlurConfig {
     buf.writeln("}");
     return buf.toString();
   }
-  
+
   /// Adds a blur method to the given buffer with the given data.
   void _addBlurMethod(StringBuffer buf, int blurSize, List<double> offsets, List<double> weights) {
     int count = offsets.length;
@@ -71,7 +71,7 @@ class GaussianBlurConfig {
   }
 
   /// Creates the fragmant source code for the gaussian blur shader for the given configurations.
-  /// 
+  ///
   /// This blur method is based off of Daniel Rákos, "Efficient Gaussian blur with linear sampling",
   /// http://rastergrid.com/blog/2010/09/efficient-gaussian-blur-with-linear-sampling/
   String createFragmentSource() {
@@ -96,7 +96,7 @@ class GaussianBlurConfig {
     _addBlurMethod(buf, 12, [0.00000,  1.38462,  3.23077], [0.22703,  0.31622,  0.07027]);
     _addBlurMethod(buf, 15, [0.93750,  2.81250], [0.36184,  0.13816]);
     _addBlurMethod(buf, 18, [0.47368,  2.36842,  4.26316], [0.29916,  0.16318,  0.03766]);
-    
+
     buf.writeln("void main()");
     buf.writeln("{");
     if (this.blurTxt)

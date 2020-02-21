@@ -60,9 +60,8 @@ class MaterialLight extends Technique {
   }
 
   /// Handles a change in this technique.
-  void _onChanged([Events.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs args = null]) =>
     this._changed?.emit(args);
-  }
 
   /// Resets the shader when a component has changed.
   void _resetShader([Events.EventArgs args = null]) {
@@ -71,14 +70,12 @@ class MaterialLight extends Technique {
   }
 
   /// Handles added matrices to the bend matrices.
-  void _onBendMatsAdded(int index, Iterable<Math.Matrix4> mats) {
+  void _onBendMatsAdded(int index, Iterable<Math.Matrix4> mats) =>
     this._onChanged(new Events.ItemsAddedEventArgs(this, index, mats));
-  }
 
   /// Handles removed matrices from the bend matrices.
-  void _onBendMatsRemoved(int index, Iterable<Math.Matrix4> mats) {
+  void _onBendMatsRemoved(int index, Iterable<Math.Matrix4> mats) =>
     this._onChanged(new Events.ItemsRemovedEventArgs(this, index, mats));
-  }
 
   /// The lights to render with.
   Lights.LightCollection get lights => this._lights;
@@ -305,7 +302,7 @@ class MaterialLight extends Technique {
         this._addToTextureList(textures, this._ambient.textureCube);
         this._shader.ambientTextureCube = this._ambient.textureCube;
       }
-      
+
       if (cfg.diffuse.hasSolid)
         this._shader.diffuseColor = this._diffuse.color;
       if (cfg.diffuse.hasTxt2D) {
@@ -315,7 +312,7 @@ class MaterialLight extends Technique {
         this._addToTextureList(textures, this._diffuse.textureCube);
         this._shader.diffuseTextureCube = this._diffuse.textureCube;
       }
-      
+
       if (cfg.invDiffuse.hasSolid)
         this._shader.invDiffuseColor = this._invDiffuse.color;
       if (cfg.invDiffuse.hasTxt2D) {

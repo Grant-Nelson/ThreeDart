@@ -20,7 +20,7 @@ class ThreeDart implements Events.Changable {
 
   /// The loader for creating textures.
   Textures.TextureLoader _txtLoader;
-  
+
   /// The loader for creating audio.
   Audio.AudioLoader _audioLoader;
 

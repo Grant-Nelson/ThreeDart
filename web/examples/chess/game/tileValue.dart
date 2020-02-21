@@ -74,7 +74,7 @@ class TileValue {
       value |= new TileValue(int.parse(str[2])).count;
     return value;
   }
-  
+
   /// Constructs a non-moved piece with the given conditions.
   factory TileValue._piece(TileValue piece, bool white, int count) =>
     piece|(white? White: Black)|(new TileValue(count)&Count);
@@ -89,7 +89,7 @@ class TileValue {
   /// Creates a new tile value with is the OR of the two raw values.
   /// This is mainly used for adding conditions onto a tile value.
   TileValue operator |(TileValue other) => new TileValue(this.value | other.value);
-  
+
   /// Creates a new tile value with is the AND of the two raw values.
   /// This is mainly used to examine some condition of a tile value.
   TileValue operator &(TileValue other) => new TileValue(this.value & other.value);
@@ -97,7 +97,7 @@ class TileValue {
   /// Checks if the given value is a subset or equal to this value.
   /// It is used to determine if a specific value or set of values has been set to this value.
   bool has(TileValue value) => (this.value & value.value) == value.value;
-  
+
   TileValue get color => new TileValue(this.value & Color.value);    /// Gets the color for this tile value.
   TileValue get piece => new TileValue(this.value & Piece.value);    /// Gets the piece kind from this tile value.
   TileValue get count => new TileValue(this.value & Count.value);    /// Gets the count value from this tile value.
@@ -108,7 +108,7 @@ class TileValue {
   bool get moved => this.has(Moved); /// Indicates if this piece has been moved.
   bool get white => this.has(White); /// Indicates if this piece is white.
   bool get black => this.has(Black); /// Indicates if this piece is black.
-  
+
   /// Indicates if this piece is an opponent of the given color.
   bool opponent(bool white) =>
     (!this.empty) && (this.white != white);

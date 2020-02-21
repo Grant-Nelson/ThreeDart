@@ -57,7 +57,7 @@ void startGraphics(game.Game game) {
     ..target = frontTarget
     ..camera = camera
     ..children.add(board);
-  
+
   Views.BackTarget pickTarget = new Views.BackTarget(autoResize: true,
     autoResizeScalarX: 0.5, autoResizeScalarY: 0.5);
   Scenes.EntityPass pickScene = new Scenes.EntityPass()

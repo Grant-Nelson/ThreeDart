@@ -140,7 +140,7 @@ class State {
 
   /// Gets the tile value at the given index.
   TileValue _dataAt(int index) => new TileValue(this._data[index]);
-  
+
   /// Gets the tile value at the given location.
   TileValue getValue(Location loc) {
     if (!loc.onBoard) return TileValue.OOB;
@@ -238,7 +238,7 @@ class State {
       if (this._hasValue(checkLoc, !white, [TileValue.Rook, TileValue.Queen])) return true;
       if (this._doneCheckingValues(checkLoc)) break;
     }
-    
+
     for (int i = 1; i < 8; ++i) {
       Location checkLoc = loc.offset(i, i);
       if (this._hasValue(checkLoc, !white, [TileValue.Bishop, TileValue.Queen])) return true;
@@ -259,7 +259,7 @@ class State {
       if (this._hasValue(checkLoc, !white, [TileValue.Bishop, TileValue.Queen])) return true;
       if (this._doneCheckingValues(checkLoc)) break;
     }
-    
+
     // Check for kings (to check that a king doesn't move into another kings space)
     if (this._hasValue(loc.offset( 1,  1), !white, [TileValue.King])) return true;
     if (this._hasValue(loc.offset( 1,  0), !white, [TileValue.King])) return true;
@@ -355,7 +355,7 @@ class State {
       testState.applyMovement(move);
       if (!testState.isChecked(value.white)) hndl(move);
     };
-  
+
     TileValue piece = value.piece;
     if      (piece == TileValue.Pawn)   this._pawnMovement(  filtered, loc);
     else if (piece == TileValue.Rook)   this._rookMovement(  filtered, loc);
@@ -381,12 +381,12 @@ class State {
         hndl(new Movement(desc, source, dest));
         return false;
       }
-      
+
       if (destValue.opponent(srcValue.white)) {
         String desc = "${srcValue.pieceName} take ${destValue.pieceName} at $dest";
         hndl(new Movement(desc, source, dest, dest));
       }
-      
+
       return true;
   }
 
@@ -522,7 +522,7 @@ class State {
       }
     }
   }
-  
+
   /// Gets the movement for the knight at the given location.
   /// If movements are possible, they will be returned via the given handler.
   /// Knights have the following movement constraints:
@@ -539,7 +539,7 @@ class State {
     this._movement(hndl, loc,  1, -2);
     this._movement(hndl, loc, -1, -2);
   }
-  
+
   /// Gets the movement for the bishop at the given location.
   /// If movements are possible, they will be returned via the given handler.
   /// Bishops have the following movement constraints:
@@ -552,7 +552,7 @@ class State {
     this._movementPath(hndl, loc, -1, -1);
     this._movementPath(hndl, loc, -1,  1);
   }
-  
+
   /// Gets the movement for the queen at the given location.
   /// If movements are possible, they will be returned via the given handler.
   /// Queen have the following movement constraints:
@@ -569,7 +569,7 @@ class State {
     this._movementPath(hndl, loc, -1,  1);
     this._movementPath(hndl, loc,  0,  1);
   }
-  
+
   /// Gets the movement for the king at the given location.
   /// If movements are possible, they will be returned via the given handler.
   /// King have the following movement constraints:
@@ -591,7 +591,7 @@ class State {
     this._movement(hndl, loc, -1,  0);
     this._movement(hndl, loc, -1,  1);
     this._movement(hndl, loc,  0,  1);
-    
+
     // Check for castle condition
     if (!moved) {
       for (int rookCol = 1; rookCol <= 8; rookCol += 7) {
@@ -630,7 +630,7 @@ class State {
         break;
       }
     }
-    
+
     StringGrid grid = new StringGrid();
     grid.showLabels = showLabels;
     for (int r = 0; r < 8; ++r) {

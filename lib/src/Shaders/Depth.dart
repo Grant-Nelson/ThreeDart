@@ -21,7 +21,7 @@ class Depth extends Shader {
     buf.writeln("}");
     return buf.toString();
   }
-      
+
   /// The fragment shader source code in glsl.
   static String _fragmentSource(bool grey, bool focus) {
     StringBuffer buf = new StringBuffer();
@@ -39,7 +39,7 @@ class Depth extends Shader {
     buf.writeln("  float depth = (dist - stop) / width;");
     buf.writeln("  float f = clamp(depth, 0.0, 1.0);");
     if (grey) buf.writeln("   vec3 clr = vec3(f, f, f);");
-    else {  
+    else {
       buf.writeln("  f = f * 256.0;");
       buf.writeln("  float r = floor(f);");
       buf.writeln("  f = (f - r) * 256.0;");

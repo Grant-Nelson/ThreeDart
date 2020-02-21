@@ -63,7 +63,7 @@ class Bar implements Light {
     this._startMatrix = Math.Matrix4.identity;
     if (this._startMover != null)
       this._startMatrix = this._startMover.update(state, this);
-      
+
     this._endMatrix = Math.Matrix4.identity;
     if (this._endMover != null)
       this._endMatrix = this._endMover.update(state, this);
@@ -74,14 +74,13 @@ class Bar implements Light {
   int get configID =>
     //((this._texture != null)? 0x01: 0) + // TODO: Add Texture
     (this._enableAttn?        0x04: 0);
-  
+
   /// The rotation and position of the start point of the bar light.
   Math.Matrix4 get startMatrix => this._startMatrix;
 
   /// The rotation and position of the end point of the bar light.
   Math.Matrix4 get endMatrix => this._endMatrix;
 
-  
   /// This is an alias to the satart mover, [startMover].
   Movers.Mover get mover => this.startMover;
   void set mover(Movers.Mover mover) => this.startMover = mover;
@@ -134,7 +133,7 @@ class Bar implements Light {
     }
   }
   */
-  
+
   /// The shadow value modification vector.
   /// This is the vector to apply to the color from the shadow texture
   /// to get the shadow value from the shadow texture.

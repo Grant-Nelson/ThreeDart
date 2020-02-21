@@ -24,7 +24,7 @@ class TextureLayout extends Technique {
     this._changed   = null;
     this._blend     = Shaders.ColorBlendType.AlphaBlend;
     this._lastBlend = Shaders.ColorBlendType.AlphaBlend;
-    
+
     this.backColor = backColor;
     this.blend     = blend;
   }
@@ -69,7 +69,7 @@ class TextureLayout extends Technique {
       this._onChanged(new Events.ValueChangedEventArgs(this, "backColor", prev, this._backClr));
     }
   }
-  
+
   /// The type of blending to use on overlapping layout textures.
   Shaders.ColorBlendType get blend => this._blend;
   set blend(Shaders.ColorBlendType blend) {

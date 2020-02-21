@@ -17,5 +17,6 @@ part 'Texture2D.dart';
 part 'Texture2DChanger.dart';
 part 'Texture2DSolid.dart';
 part 'TextureCube.dart';
+part 'TextureLoadedEventArgs.dart';
 part 'TextureLoader.dart';
 part 'TextureReader.dart';

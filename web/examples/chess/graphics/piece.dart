@@ -30,7 +30,7 @@ abstract class Piece extends ThreeDart.Entity {
   void _initialize(String name, game.TileValue stateItem, ThreeDart.Entity colorShapeEntity, ThreeDart.Entity pickShapeEntity) {
     this._pickTech = this._board.nextPickTech();
     this._stateItem = stateItem;
-    
+
     this._colorEntity = new ThreeDart.Entity(
       children: [colorShapeEntity], name: "color "+name);
 
@@ -72,7 +72,7 @@ abstract class Piece extends ThreeDart.Entity {
       this._updateColorTech();
     }
   }
-  
+
   /// Gets or sets if the piece should be highlighted.
   bool get highlighted => this._highlighted;
   set highlighted(bool highlighted) {

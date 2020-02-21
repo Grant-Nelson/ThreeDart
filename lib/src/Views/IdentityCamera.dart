@@ -18,9 +18,8 @@ class IdentityCamera implements Camera {
   }
 
   /// Handles a change in this target.
-  void _onChanged([Events.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs args = null]) =>
     this._changed?.emit(args);
-  }
 
   /// The mover to position this camera.
   Movers.Mover get mover => this._mover;

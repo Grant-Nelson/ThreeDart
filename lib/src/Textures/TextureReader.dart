@@ -5,7 +5,7 @@ class TextureReader {
   Typed.Uint8List _data;
   final int _width;
   final int _height;
-  
+
   /// Reads the given range of the given [texture] into the reader buffer.
   /// The x, y, width, and height are based on actual buffer size.
   factory TextureReader._read(WebGL.RenderingContext2 gl, Texture2D texture,
@@ -46,19 +46,33 @@ class TextureReader {
 
   /// Gets the color at the given texture 2D location.
   Math.Color4 atLoc(Math.Point2 txt2D) {
-    int x = (txt2D.x*(this._width-1)).floor();
-    int y = (txt2D.y*(this._height-1)).floor();
-    return this.at(x, y);
+    double x = txt2D.x*(this._width-1);
+    double y = txt2D.y*(this._height-1);
+    return this.atLerp(x, y);
+  }
+  
+  /// Gets the color at the given location or fractionally between.
+  /// This takes four samples and linearly interpolates between them.
+  Math.Color4 atLerp(double x, double y) {
+    int yfloor = y.floor();
+    int xfloor = x.floor();
+    Math.Color4 c00 = this.at(xfloor,   yfloor);
+    Math.Color4 c01 = this.at(xfloor,   yfloor+1);
+    Math.Color4 c10 = this.at(xfloor+1, yfloor);
+    Math.Color4 c11 = this.at(xfloor+1, yfloor+1);
+    Math.Color4 c0 = c00.lerp(c01, y-yfloor);
+    Math.Color4 c1 = c10.lerp(c11, y-yfloor);
+    return c0.lerp(c1, x-xfloor);
   }
 
   /// Gets the color at the given location.
   Math.Color4 at(int x, int y) {
-    if (x >= 0) x %= this._width;
-    else x = this._width + (x % this._width);
+    if (x >= this._width) x %= this._width;
+    else if (x < 0) x = this._width - 1 - (x % this._width);
 
-    if (y >= 0) y %= this._height;
-    else y = this._height + (y % this._height);
-
+    if (y >= this._height) y %= this._height;
+    else if (y < 0) y = this._height - 1 - (y % this._height);
+    
     int offset = (x + y*this._width)*4;
     return new Math.Color4.fromBytes(
       this._data[offset],
@@ -66,7 +80,7 @@ class TextureReader {
       this._data[offset+2],
       this._data[offset+3]);
   }
-  
+
   /// Creates a copy of this texture data.
   TextureReader copy() {
     Typed.Uint8List data = new Typed.Uint8List(this._data.length);

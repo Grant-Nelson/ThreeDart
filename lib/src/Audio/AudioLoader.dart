@@ -10,7 +10,7 @@ class AudioLoader {
     this._soundCount = 0;
     this._loadedCount = 0;
   }
-  
+
   /// The number of sounds being loaded.
   int get loading => this._soundCount - this._loadedCount;
 
@@ -25,7 +25,7 @@ class AudioLoader {
     this._soundCount = 0;
     this._loadedCount = 0;
   }
-  
+
   /// Handles loading a new audio player with the audio from the given file path.
   Player loadFromFile(String path) {
     html.AudioElement elem = new html.AudioElement(path)

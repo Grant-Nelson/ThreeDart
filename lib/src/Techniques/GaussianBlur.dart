@@ -45,7 +45,7 @@ class GaussianBlur extends Technique {
   void _onChanged([Events.EventArgs args = null]) {
     this._changed?.emit(args);
   }
-  
+
   /// Resets the shader when a component has changed.
   void _resetShader([Events.EventArgs args = null]) {
     this._shader = null;

@@ -54,7 +54,7 @@ class MaterialLightFogComponent {
       this._onChanged();
     }
   }
-  
+
   /// The minimum depth at which the fog was not drawn.
   double get stop => this._stop;
   set stop(double stop) {

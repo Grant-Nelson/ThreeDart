@@ -72,11 +72,11 @@ class GaussianBlur extends Shader {
   /// The width of the target in pixels.
   Math.Matrix3 get textureMatrix => this._txt2DMat.getMatrix3();
   set textureMatrix(Math.Matrix3 mat) => this._txt2DMat.setMatrix3(mat);
-  
+
   /// The color adjustment to apply to the blur texture colors to get the blur value with a texture.
   Math.Vector4 get blurAdjust => this._blurAdj.getVector4();
   set blurAdjust(Math.Vector4 vec) => this._blurAdj.setVector4(vec);
-  
+
   /// The direction of the blur divided by the textures width and height.
   Math.Vector2 get blurScalar => this._blurScale.getVector2();
   set blurScalar(Math.Vector2 vec) => this._blurScale.setVector2(vec);

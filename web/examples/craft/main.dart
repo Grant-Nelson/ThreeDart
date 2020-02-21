@@ -37,7 +37,6 @@ part 'shaper.dart';
 part 'testGenerator.dart';
 part 'world.dart';
 
-
 /// Starts up the 3Dart Craft example
 void main() {
   new common.ShellPage("3Dart Craft")
@@ -101,6 +100,7 @@ void startCraft() {
   new Timer.periodic(const Duration(milliseconds: Constants.generateTickMs), world.generateTick);
   new Timer.periodic(const Duration(milliseconds: Constants.animationTickMs), world.animationTick);
 
+  // Add fullscreen button
   html.Element elem = html.document.getElementById("buttons");
   html.ButtonElement button = new html.ButtonElement()
     ..text = "Fullscreen"

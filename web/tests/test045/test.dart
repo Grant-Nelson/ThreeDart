@@ -81,7 +81,7 @@ void main() {
             ..add(Movers.Constant.translate(0.0, 0.0, 2.0))
           ),
     fov: 0.5);
-  
+
   Scenes.EntityPass shadowPass = new Scenes.EntityPass()
     ..target = shadow
     ..technique = new Techniques.Depth(start: 1.0, stop: 20.0, focus: true)

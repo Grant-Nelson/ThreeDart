@@ -45,7 +45,7 @@ void main() {
     ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
-  
+
   Movers.Group mover = new Movers.Group()
     ..add(new Movers.UserRotater(input: td.userInput))
     ..add(new Movers.UserRoller(ctrl: true, input: td.userInput))
@@ -70,7 +70,7 @@ void main() {
     td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg"))
     ..target = backTarget
     ..camera = userCamera;
-    
+
   Scenes.GaussianBlur blurPass = new Scenes.GaussianBlur(
       colorTxt: backTarget.colorTexture);
 

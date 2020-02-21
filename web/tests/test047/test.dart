@@ -67,13 +67,13 @@ void main() {
         Movers.Group group = new Movers.Group()
           ..add(mover)
           ..add(new Movers.Constant(mat));
-        
+
         ThreeDart.Entity colorEntity = new ThreeDart.Entity()
           ..technique = colorTech
           ..mover = group
           ..children.add(cubeEntity);
         colorGroup.children.add(colorEntity);
-        
+
         Math.Color4 color = Math.Color4.fromHVS(pickerColors.length/cubeCount, 1.0, 1.0).trim32();
         pickerColors.add(color);
 
@@ -111,7 +111,7 @@ void main() {
         mover.deltaRoll = 0.99*mover.deltaRoll;
       }
   });
-    
+
   new Textures.ColorPicker(td.textureLoader, input: td.userInput, txt: backTarget.colorTexture)
     ..colorPicked.add((Events.EventArgs args) {
       Textures.ColorPickerEventArgs pickArgs = args as Textures.ColorPickerEventArgs;

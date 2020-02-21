@@ -17,13 +17,13 @@ class ColorPicker implements Input.Interactable, Events.Changable {
 
   /// Event for handling changes to this picker.
   Events.Event _changed;
-  
+
   /// Event emitted before an update for this picker.
   Events.Event _preUpdate;
 
   /// Event emitted after an update for this picker.
   Events.Event _postUpdate;
-  
+
   /// Event for handling when a color has been picked.
   Events.Event _colorPicked;
 
@@ -98,7 +98,7 @@ class ColorPicker implements Input.Interactable, Events.Changable {
   void _onPreUpdate([Events.EventArgs args = null]) {
     this._preUpdate?.emit(args);
   }
-  
+
   /// Handles after a color being picked.
   void _onPostUpdate([Events.EventArgs args = null]) {
     this._postUpdate?.emit(args);
@@ -179,7 +179,7 @@ class ColorPicker implements Input.Interactable, Events.Changable {
     this._pressed = true;
     this._inDeadBand = true;
   }
-  
+
   /// Handles the mouse move event.
   void _mouseMoveHandle(Events.EventArgs args) {
     if (!this._pressed) return;
@@ -197,13 +197,13 @@ class ColorPicker implements Input.Interactable, Events.Changable {
     if (!this._inDeadBand) return;
     this._pickColor(args);
   }
-  
+
   /// Handle the touch screen touch start.
   void _touchStartHandle(Events.EventArgs args) {
     this._pressed = true;
     this._inDeadBand = true;
   }
-  
+
   /// Handle the touch screen move.
   void _touchMoveHandle(Events.EventArgs args) {
     if (!this._pressed) return;

@@ -4,11 +4,11 @@ part of graphics;
 /// Pawns move forward only one space.
 /// https://en.wikipedia.org/wiki/Pawn_(chess)
 class Pawn extends Piece {
-  
+
   /// The singleton for the shape of the pawn with the render cache for the color shader.
   /// Used for rendering to the screen.
   static ThreeDart.Entity _colorShapeEntity;
-  
+
   /// The singleton for the shape of the pawn with the render cache for the picker shader.
   /// Used for determining which piece or tile was clicked on.
   static ThreeDart.Entity _pickShapeEntity;

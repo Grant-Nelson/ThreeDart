@@ -59,7 +59,7 @@ class Player {
 
   /// Plays this audio.
   void play() => this._elem.play();
-  
+
   /// Pauses the audio.
   void pause() => this._elem.pause();
 

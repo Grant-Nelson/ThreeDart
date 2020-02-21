@@ -56,7 +56,7 @@ class Game {
     this._changed ??= new Events.Event();
     return this._changed;
   }
-  
+
   /// Is called to fire the game changed event.
   void _onChanged([Events.EventArgs args = null]) => this._changed?.emit(args);
 
@@ -116,7 +116,7 @@ class Game {
     return changed;
   }
 
-  /// Redo is the same of undo except that it moves to any future state if there is one. 
+  /// Redo is the same of undo except that it moves to any future state if there is one.
   /// This can run multiple redoes at the same time by setting the number of `steps` greater than 1.
   bool redo([int steps = 1]) {
     bool changed = false;

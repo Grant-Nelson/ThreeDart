@@ -276,7 +276,7 @@ class ShellPage {
         ..href = link;
       hrefAnchor.append(anchor);
       pageImageElem.append(hrefAnchor);
-    } 
+    }
     else pageImageElem.append(anchor);
     this._page.append(pageImageElem);
   }

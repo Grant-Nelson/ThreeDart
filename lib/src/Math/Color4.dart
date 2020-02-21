@@ -47,7 +47,7 @@ class Color4 {
 
   /// Constructs a new color from bytes.
   ///
-  /// [red], [green], [blue], and [alpha] are between 0 and 255. 
+  /// [red], [green], [blue], and [alpha] are between 0 and 255.
   factory Color4.fromBytes(int red, int green, int blue, [int alpha = 0xFF]) =>
     new Color4(red/0xFF, green/0xFF, blue/0xFF, alpha/0xFF);
 
@@ -99,7 +99,7 @@ class Color4 {
   Color4 trim32() =>
     new Color4._(trimColor8(this.red),  trimColor8(this.green),
                  trimColor8(this.blue), trimColor8(this.alpha));
-                 
+
   /// Converts this color to an ARGB 32 bit color integer.
   int toARGB32() =>
     ((this.alpha*255.0).floor() << 24) +
