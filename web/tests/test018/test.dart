@@ -13,7 +13,7 @@ import '../../common/common.dart' as common;
 void main() {
   common.ShellPage page = new common.ShellPage("Test 018")
     ..addLargeCanvas("testCanvas")
-    ..addPar(["A test of the Material Lighting shader where a diffuse textue and ",
+    ..addPar(["A test of the Material Lighting shader where a diffuse texture and ",
       "inverse diffuse texture are used. Grass is only shown in the dark. ",
       "Dirt is shown where the directional light is shining."])
     ..addControlBoxes(["shapes"])

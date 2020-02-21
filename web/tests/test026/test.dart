@@ -16,7 +16,7 @@ void main() {
     ..addPar([
       "Test of the Material Lighting shader with a textured directional light. ",
       "The texturing of the directional light is being modified with a matrix. ",
-      "The texture metrix is updated using the pre-update mathods. ",
+      "The texture matrix is updated using the pre-update methods. ",
       "Use Ctrl plus the mouse to move the center object."])
     ..addControlBoxes(["shapes"])
     ..addPar(["«[Back to Tests|../]"]);

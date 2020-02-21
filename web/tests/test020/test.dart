@@ -12,7 +12,7 @@ import '../../common/common.dart' as common;
 void main() {
   common.ShellPage page = new common.ShellPage("Test 020")
     ..addLargeCanvas("testCanvas")
-    ..addPar(["Test of the Matrial Lighting shader with multiple moving directional lights."])
+    ..addPar(["Test of the Material Lighting shader with multiple moving directional lights."])
     ..addControlBoxes(["shapes"])
     ..addPar(["«[Back to Tests|../]"]);
 

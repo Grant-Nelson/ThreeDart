@@ -13,7 +13,7 @@ import 'package:ThreeDart/Shaders.dart' as Shaders;
 import '../../common/common.dart' as common;
 
 void main() {
-  common.ShellPage page = new common.ShellPage("Test 028")
+  new common.ShellPage("Test 028")
     ..addLargeCanvas("testCanvas")
     ..addPar(["Test of a Gaussian blur cover pass. ",
       "Notice the depth of field causing things further away to be blurry."])

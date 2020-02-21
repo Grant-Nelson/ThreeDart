@@ -15,7 +15,7 @@ class BumpyTechnique extends Techniques.Technique {
     this._changed = null;
   }
 
-  /// Emits an event whem the technique being changed.
+  /// Emits an event when the technique being changed.
   Events.Event get changed {
     this._changed ??= new Events.Event();
     return this._changed;

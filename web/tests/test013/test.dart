@@ -6,7 +6,6 @@ import 'package:ThreeDart/Movers.dart' as Movers;
 import 'package:ThreeDart/Math.dart' as Math;
 import 'package:ThreeDart/Views.dart' as Views;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
-import 'package:ThreeDart/Textures.dart' as Textures;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
 import '../../common/common.dart' as common;

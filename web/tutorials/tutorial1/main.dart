@@ -78,16 +78,16 @@ void main() {
       "of shapes that should be rendered in the scene."])
     ..addPar(["In this tutorial we only add one which is what draws the cube to the scene. ",
       "To make it draw a cube we set the shape of the Entity to a cube. The shape ",
-      "can be set to many other built-in shapes, such as sphere, torois, and knot. ",
-      "The shape can be loaded from a file or created mathmatically or procedually."])
+      "can be set to many other built-in shapes, such as sphere, toroid, and knot. ",
+      "The shape can be loaded from a file or created mathematically or procedurally."])
     ..addPar(["To make the Entity rotate a `Mover` is attached to it. For this tutorial ",
       "we used the default `Rotator` to cause it to rotate. Movers can be grouped ",
-      "to multiply matrices togrether thus compounding the movements."])
+      "to multiply matrices together thus compounding the movements."])
     ..addPar(["The `Technique` attached to the Entity defines how the shape should be ",
       "drawn. In this tutorial we used a very simple technique, `Depth`. Depth ",
       "simply draws the shape with two different colors based on distance from the ",
       "camera. If the background, front target clear color, it the same as the ",
-      "far color, it can give the appearence of fog or merky water."])
+      "far color, it can give the appearance of fog or murky water."])
     ..addHeader(4, "Summary")
     ..addPar(["Play around with the Rotator, Shape, and Depth to get a feel for "
       "how the parts works. The main take away from this tutorial should be ",

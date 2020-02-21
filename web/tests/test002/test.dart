@@ -15,7 +15,7 @@ void main() {
     ..addLargeCanvas("testCanvas")
     ..addPar([
       "The inspection test is used to check that shapes are built correctly ",
-      "and for checking the data privided by the shapes. ",
+      "and for checking the data provided by the shapes. ",
       "Also it is useful for testing out new generated shape configurations. ",
       "For loaded shape testing see test032."])
     ..addControlBoxes(["controls", "shapes", "scalars"])
