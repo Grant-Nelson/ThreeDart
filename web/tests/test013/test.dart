@@ -6,7 +6,6 @@ import 'package:ThreeDart/Movers.dart' as Movers;
 import 'package:ThreeDart/Math.dart' as Math;
 import 'package:ThreeDart/Views.dart' as Views;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
-import 'package:ThreeDart/Textures.dart' as Textures;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
 import '../../common/common.dart' as common;
@@ -20,7 +19,7 @@ void main() {
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
   Movers.Group secondMover = new Movers.Group()
-    ..add(new Movers.UserRotater(input: td.userInput))
+    ..add(new Movers.UserRotator(input: td.userInput))
     ..add(new Movers.UserRoller(ctrl: true, input: td.userInput))
     ..add(new Movers.UserZoom(input: td.userInput))
     ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));

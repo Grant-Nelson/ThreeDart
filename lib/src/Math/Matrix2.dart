@@ -132,7 +132,7 @@ class Matrix2 {
     this.m11 * pnt.x + this.m21 * pnt.y,
     this.m12 * pnt.x + this.m22 * pnt.y);
 
-  /// Determines if the given [other] variable is a [Matrix2] equal to this metrix.
+  /// Determines if the given [other] variable is a [Matrix2] equal to this matrix.
   ///
   /// The equality of the doubles is tested with the current [Comparer] method.
   bool operator ==(var other) {

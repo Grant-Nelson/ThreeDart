@@ -29,7 +29,7 @@ void main() {
 
   Movers.Group mover = new Movers.Group([
     new Movers.Constant.translate(0.0, 0.0, 2.0),
-    new Movers.Rotater(deltaYaw: 0.6, deltaPitch: 0.1, deltaRoll: 0.0)
+    new Movers.Rotator(deltaYaw: 0.6, deltaPitch: 0.1, deltaRoll: 0.0)
   ]);
 
   ThreeDart.Entity bulb = new ThreeDart.Entity(shape: Shapes.sphere(radius: 0.03))
@@ -55,7 +55,7 @@ void main() {
 
   Views.Perspective userCamera = new Views.Perspective()
     ..mover = new Movers.Group([
-      new Movers.UserRotater(input: td.userInput),
+      new Movers.UserRotator(input: td.userInput),
       new Movers.UserZoom(input: td.userInput),
       new Movers.Constant.translate(0.0, 0.0, 5.0)
     ]);

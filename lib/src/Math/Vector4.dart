@@ -159,7 +159,7 @@ class Vector4 {
   ///
   /// The [i] is interpolation factor. 0.0 or less will return this vector.
   /// 1.0 or more will return the [other] vector. Between 0.0 and 1.0 will be
-  /// a scaled mixure of the two vectors.
+  /// a scaled mixture of the two vectors.
   Vector4 lerp(Vector4 other, double i) =>
     new Vector4(lerpVal(this.dx, other.dx, i),
                 lerpVal(this.dy, other.dy, i),

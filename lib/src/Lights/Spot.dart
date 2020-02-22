@@ -190,7 +190,7 @@ class Spot implements Light {
   /// The horizontal texture scalar of the light.
   double get tvScalar => this._tvScalar;
 
-  /// The feild-of-view of the light in the y-axis (up) of the texture.
+  /// The field-of-view of the light in the y-axis (up) of the texture.
   double get fov => this._fov;
   void set fov(double fov) {
     fov = Math.clampVal(fov ?? Math.PI_3, 0.0, Math.PI);

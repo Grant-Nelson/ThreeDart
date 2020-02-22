@@ -25,7 +25,7 @@ void main() {
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
   Movers.Group mover = new Movers.Group()
-    ..add(new Movers.UserRotater(input: td.userInput))
+    ..add(new Movers.UserRotator(input: td.userInput))
     ..add(new Movers.UserRoller(ctrl: true, input: td.userInput))
     ..add(new Movers.UserZoom(input: td.userInput))
     ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));
@@ -49,7 +49,7 @@ void main() {
 
   Audio.Player tink = td.audioLoader.loadFromFile("../resources/tink.mp3");
 
-  List<Movers.Rotater> cubeMovers = new List<Movers.Rotater>();
+  List<Movers.Rotator> cubeMovers = new List<Movers.Rotator>();
   List<Math.Color4> pickerColors = new List<Math.Color4>();
   final int cubeCount = 125;
 
@@ -61,7 +61,7 @@ void main() {
       for (double z = -1.6; z <= 1.7; z += 0.8) {
         Math.Matrix4 mat = new Math.Matrix4.translate(x, y, z)*
                            new Math.Matrix4.scale(0.2, 0.2, 0.2);
-        Movers.Mover mover = new Movers.Rotater(deltaPitch: 0.0, deltaRoll: 0.0, deltaYaw: 0.0);
+        Movers.Mover mover = new Movers.Rotator(deltaPitch: 0.0, deltaRoll: 0.0, deltaYaw: 0.0);
         cubeMovers.add(mover);
 
         Movers.Group group = new Movers.Group()
@@ -106,7 +106,7 @@ void main() {
 
   td.prerender.add((_) {
       for (int i = 0; i < cubeMovers.length; ++i) {
-        Movers.Rotater mover = cubeMovers[i];
+        Movers.Rotator mover = cubeMovers[i];
         mover.deltaPitch = 0.99*mover.deltaPitch;
         mover.deltaRoll = 0.99*mover.deltaRoll;
       }
@@ -118,7 +118,7 @@ void main() {
       Math.Color4 color = pickArgs.color.trim32();
       for (int i = 0; i < pickerColors.length; ++i) {
         if (pickerColors[i] == color) {
-          Movers.Rotater mover = cubeMovers[i];
+          Movers.Rotator mover = cubeMovers[i];
           mover.deltaPitch = 1.21;
           mover.deltaRoll = 1.31;
 

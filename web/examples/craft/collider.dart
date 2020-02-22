@@ -71,7 +71,7 @@ class Collider {
     }
   }
 
-  /// Handles a collition of a single edge.
+  /// Handles a collision of a single edge.
   bool _singleCollide() {
     if (this._vector.isZero()) return false;
     Math.Region3 region = this._region.translate(new Math.Vector3.fromPoint3(this._loc));

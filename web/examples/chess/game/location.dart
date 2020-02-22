@@ -40,7 +40,7 @@ class Location {
   @override
   String toString() => "$row $column";
 
-  /// Determines if the two locations are equal to eachother.
+  /// Determines if the two locations are equal to each other.
   @override
   bool operator ==(var other) {
     if (identical(this, other)) return true;

@@ -12,7 +12,7 @@ class ReducedShape implements ShapeBuilder {
   /// The stride between vertex data.
   int _stride;
 
-  /// The current number of verties in this shape.
+  /// The current number of vertices in this shape.
   int _vertexCount;
 
   /// The set of buffer attributes for setting up to render this shape.
@@ -30,7 +30,7 @@ class ReducedShape implements ShapeBuilder {
   /// The set of indices to vertices in sets of three for each face to render.
   List<int> _faces;
 
-  /// The calculated axial alligned bounding box.
+  /// The calculated axial aligned bounding box.
   Math.Region3 _aabb;
 
   /// The event emitted when the shape has been changed.
@@ -103,7 +103,7 @@ class ReducedShape implements ShapeBuilder {
     return index;
   }
 
-  /// Adds a new set of points with the given ndices for vertices
+  /// Adds a new set of points with the given indices for vertices
   void addPoints(List<int> indices) {
     this._points.addAll(indices);
     this.onChanged();
@@ -210,7 +210,7 @@ class ReducedShape implements ShapeBuilder {
     }
   }
 
-  /// Adds a set of seperate faces with the given indices for vertices.
+  /// Adds a set of separate faces with the given indices for vertices.
   void addTriangles(List<int> indices) {
     this._faces.addAll(indices);
   }
@@ -240,7 +240,7 @@ class ReducedShape implements ShapeBuilder {
   /// This always returns false because the reduces shape can't calculate cube textures.
   bool calculateCubeTextures() => false;
 
-  /// Calculates the axial alligned bounding box of the shape.
+  /// Calculates the axial aligned bounding box of the shape.
   Math.Region3 calculateAABB() => this._aabb ?? Math.Region3.zero;
 
   /// Builds a buffer store for caching the shape for rendering.

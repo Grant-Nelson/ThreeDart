@@ -109,7 +109,7 @@ class FrontTarget extends Target {
   }
 
   /// The region of the front target to render to.
-  /// <0, 0> is top left corner and <1, 1> is botton right.
+  /// <0, 0> is top left corner and <1, 1> is bottom right.
   Math.Region2 get region => this._region;
   set region(Math.Region2 region) {
     region ??= Math.Region2.unit;

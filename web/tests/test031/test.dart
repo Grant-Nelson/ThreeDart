@@ -27,7 +27,7 @@ void main() {
   ThreeDart.Entity normalObj = new ThreeDart.Entity()
     ..shape = Shapes.cube()
     ..mover = (new Movers.Group()
-      ..add(new Movers.UserRotater(input: td.userInput))
+      ..add(new Movers.UserRotator(input: td.userInput))
       ..add(new Movers.UserZoom(input: td.userInput)));
 
   Techniques.Normal normalTech = new Techniques.Normal()
@@ -43,7 +43,7 @@ void main() {
     ..camera.mover = new Movers.Constant.translate(0.0, 0.0, 5.0);
 
   Movers.Group secondMover = new Movers.Group()
-  ..add(new Movers.UserRotater(ctrl: true, input: td.userInput))
+  ..add(new Movers.UserRotator(ctrl: true, input: td.userInput))
   ..add(new Movers.UserZoom(ctrl: true, input: td.userInput))
   ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));
   Views.Perspective userCamera = new Views.Perspective(mover: secondMover);

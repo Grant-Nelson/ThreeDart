@@ -18,7 +18,7 @@ void addLightBall(Techniques.MaterialLight tech, Scenes.EntityPass pass,
 
   Movers.Group mover = new Movers.Group()
     ..add(new Movers.Constant.translate(0.0, 0.0, 2.0))
-    ..add(new Movers.Rotater(deltaYaw: yaw, deltaPitch: pitch, deltaRoll: roll));
+    ..add(new Movers.Rotator(deltaYaw: yaw, deltaPitch: pitch, deltaRoll: roll));
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..mover = (new Movers.Group()
@@ -48,7 +48,7 @@ void main() {
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
   
   Movers.Group mover = new Movers.Group()
-    ..add(new Movers.Rotater(deltaYaw: 0.0, deltaPitch: 0.0, deltaRoll: 0.5))
+    ..add(new Movers.Rotator(deltaYaw: 0.0, deltaPitch: 0.0, deltaRoll: 0.5))
     ..add(new Movers.Constant.rotateX(Math.PI_2));
 
   ThreeDart.Entity bulbObj = new ThreeDart.Entity()
@@ -90,7 +90,7 @@ void main() {
     ..shape = (Shapes.cube()..flip());
 
   Movers.Group camMover = new Movers.Group()
-    ..add(new Movers.UserRotater(input: td.userInput))
+    ..add(new Movers.UserRotator(input: td.userInput))
     ..add(new Movers.UserRoller(input: td.userInput, ctrl: true))
     ..add(new Movers.UserZoom(input: td.userInput))
     ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));

@@ -174,7 +174,7 @@ class MaterialLight extends Shader {
     else if (cfg.bumpy.hasTxtCube)
       this._bumpCube = this.uniforms.required("bumpTxt") as UniformSamplerCube;
 
-    if (cfg.enviromental) {
+    if (cfg.environmental) {
       this._envSampler = this.uniforms.required("envSampler") as UniformSamplerCube;
 
       if (cfg.reflection.hasSolid)
@@ -346,12 +346,12 @@ class MaterialLight extends Shader {
     }
   }
 
-  /// Sets the tcxture 2D and null texture indicator for the shader.
+  /// Sets the texture 2D and null texture indicator for the shader.
   void _setTexture2D(UniformSampler2D txt2D, Textures.Texture2D txt) {
     if ((txt != null) && txt.loaded) txt2D.setTexture2D(txt);
   }
 
-  /// Sets the tcxture cube and null texture indicator for the shader.
+  /// Sets the texture cube and null texture indicator for the shader.
   void _setTextureCube(UniformSamplerCube txtCube, Textures.TextureCube txt) {
     if ((txt != null) && txt.loaded) txtCube.setTextureCube(txt);
   }
@@ -483,7 +483,7 @@ class MaterialLight extends Shader {
   set specularTextureCube(Textures.TextureCube txt) =>
     this._setTextureCube(this._specularCube, txt);
 
-  /// The shininess value of the specualr.
+  /// The shininess value of the specular.
   double get shininess => this._shininess.getValue();
   set shininess(double value) => this._shininess.setValue(value);
 
@@ -499,7 +499,7 @@ class MaterialLight extends Shader {
   set environmentTextureCube(Textures.TextureCube txt) =>
     this._setTextureCube(this._envSampler, txt);
 
-  /// The refraction value of the specualr.
+  /// The refraction value of the specular.
   double get refraction => this._refraction.getValue();
   set refraction(double value) => this._refraction.setValue(value);
 

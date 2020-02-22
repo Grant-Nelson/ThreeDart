@@ -109,7 +109,7 @@ double _cornerBendIndex(Math.Vector3 vec) {
   return index*2.0;
 }
 
-/// Adds a cuboid side to a cube [shape] given the normal direciton of the side's plain.
+/// Adds a cuboid side to a cube [shape] given the normal direction of the side's plain.
 void _addCuboidSide(Shape shape, Data.VertexType type, ver2Handle vertexHndl,
                     int widthDiv, int heightDiv,
                     double nx, double ny, double nz, int rotate) {
@@ -198,7 +198,7 @@ Shape cylinder({double topRadius: 1.0, double bottomRadius: 1.0,
 /// [sides] is the number of division on the side, [div] is the number of
 /// divisions to cut the cylinder. [capTop] and [capBottom] indicated if a
 /// top or bottom respectively should be covered with a disk.
-/// [radiusHndl] is the handle to specify the custom radius of the cylindical shape.
+/// [radiusHndl] is the handle to specify the custom radius of the cylindrical shape.
 Shape cylindrical({func2Handle radiusHndl: null, int sides: 8, int div: 1, bool capTop: true, bool capBottom: true}) {
   if (radiusHndl == null)  return null;
   if (sides < 3) return null;
@@ -230,7 +230,7 @@ Shape cylindrical({func2Handle radiusHndl: null, int sides: 8, int div: 1, bool 
 
 /// Creates a sphere shape constructed as from a latitude and longitude grid.
 /// The [latitudeDiv] is the number of latitude divisions and
-/// the [longitudeDiv] is the number of longitude divitions.
+/// the [longitudeDiv] is the number of longitude divisions.
 Shape latLonSphere([int latitudeDiv = 12, int longitudeDiv = 24]) {
   Shape shape = surface(latitudeDiv, longitudeDiv, (Vertex ver, double u, double v) {
     double r = sin(v*Math.PI);
@@ -397,7 +397,7 @@ Shape cylindricalPath(int minorCount, int majorCount, double minorRadius, double
   return shape;
 }
 
-/// Creates a flat grid shape with an option caustom [heightHndl].
+/// Creates a flat grid shape with an option custom [heightHndl].
 Shape grid({int widthDiv: 4, int heightDiv: 4, func2Handle heightHndl: null}) {
   heightHndl ??= (double u, double v) => 0.0;
   return surface(widthDiv, heightDiv, (Vertex ver, double u, double v) {

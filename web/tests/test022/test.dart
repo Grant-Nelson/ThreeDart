@@ -22,7 +22,7 @@ void main() {
 
   Movers.Group mover = new Movers.Group()
     ..add(new Movers.Constant.translate(0.0, 0.0, 2.0))
-    ..add(new Movers.Rotater(deltaYaw: 0.5, deltaPitch: 0.5, deltaRoll: 0.0));
+    ..add(new Movers.Rotator(deltaYaw: 0.5, deltaPitch: 0.5, deltaRoll: 0.0));
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..mover = (new Movers.Group()
@@ -54,7 +54,7 @@ void main() {
     ..shape = Shapes.toroid();
 
   Movers.Group camMover = new Movers.Group()
-  ..add(new Movers.UserRotater(input: td.userInput))
+  ..add(new Movers.UserRotator(input: td.userInput))
   ..add(new Movers.UserRoller(input: td.userInput, ctrl: true))
   ..add(new Movers.UserZoom(input: td.userInput))
   ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));

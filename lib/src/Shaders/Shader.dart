@@ -79,7 +79,7 @@ abstract class Shader extends Core.Bindable {
     return shader;
   }
 
-  /// Creates the shader program by linkind the shader components.
+  /// Creates the shader program by linking the shader components.
   void _createProgram() {
     this._program = this._gl.createProgram();
     this._gl.attachShader(this._program, this._vertexShader);
@@ -136,7 +136,7 @@ abstract class Shader extends Core.Bindable {
     else return new Uniform1iv._(this._gl, this._program, name, size, loc);
   }
 
-  /// Creats an exception for unsupported types.
+  /// Creates an exception for unsupported types.
   Exception _unsupportedException(String type, String name) {
     return new Exception("$type uniform variables are unsupported by all browsers.\n"+
       "Please change the type of $name.");

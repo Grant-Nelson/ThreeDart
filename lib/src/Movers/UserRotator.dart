@@ -1,15 +1,15 @@
 part of ThreeDart.Movers;
 
-/// A rotater which rotates an object in response to user input.
-class UserRotater implements Mover, Input.Interactable {
+/// A rotator which rotates an object in response to user input.
+class UserRotator implements Mover, Input.Interactable {
 
-  /// The user input this rotater is attached to.
+  /// The user input this rotator is attached to.
   Input.UserInput _input;
 
-  /// The pitch component for this rotater.
+  /// The pitch component for this rotator.
   ComponentShift _pitch;
 
-  /// The yaw component for this rotater.
+  /// The yaw component for this rotator.
   ComponentShift _yaw;
 
   /// Indicates if the modifier keys which must be pressed or released.
@@ -60,8 +60,8 @@ class UserRotater implements Mover, Input.Interactable {
   /// Event for handling changes to this mover.
   Events.Event _changed;
 
-  /// Creates a new user rotater instance.
-  UserRotater({
+  /// Creates a new user rotator instance.
+  UserRotator({
       bool ctrl:    false,
       bool alt:     false,
       bool shift:   false,
@@ -112,8 +112,8 @@ class UserRotater implements Mover, Input.Interactable {
     this.attach(input);
   }
 
-  /// Creates a new flat movement like a typical first person view rotater.
-  factory UserRotater.flat({
+  /// Creates a new flat movement like a typical first person view rotator.
+  factory UserRotator.flat({
       bool locking: false,
       bool ctrl:    false,
       bool alt:     false,
@@ -122,7 +122,7 @@ class UserRotater implements Mover, Input.Interactable {
       bool invertY: false,
       Input.Modifiers mod:   null,
       Input.UserInput input: null}) =>
-    new UserRotater(
+    new UserRotator(
       locking: locking,
       mod:     mod,
       invertX: invertX,
@@ -303,10 +303,10 @@ class UserRotater implements Mover, Input.Interactable {
     }
   }
 
-  /// The pitch component for this rotater.
+  /// The pitch component for this rotator.
   ComponentShift get pitch => this._pitch;
 
-  /// The yaw component for this rotater.
+  /// The yaw component for this rotator.
   ComponentShift get yaw => this._yaw;
 
   /// Indicates if the modifiers keys must be pressed or released.

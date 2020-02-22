@@ -22,7 +22,7 @@ void main() {
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..shape = (Shapes.cube()..adjustNormals())
-    ..mover = new Movers.Rotater();
+    ..mover = new Movers.Rotator();
 
   Textures.Texture2DChanger color = new Textures.Texture2DChanger(
     textures:List<Textures.Texture2D>.from([

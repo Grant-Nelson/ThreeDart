@@ -1,6 +1,6 @@
 part of ThreeDart.Math;
 
-/// The hit region is a location relative to a Region2 or Region3 for fast intesection.
+/// The hit region is a location relative to a Region2 or Region3 for fast intersection.
 class HitRegion {
 
   /// [None] indicates no hit region values at all.
@@ -80,7 +80,7 @@ class HitRegion {
     return new HitRegion._(result);
   }
 
-  /// The interal value of the hit region value.
+  /// The internal value of the hit region value.
   int get value => this._value;
 
   /// Determines if any part of the given hit region value is contained in this hit region value.

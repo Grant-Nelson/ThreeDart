@@ -1,7 +1,7 @@
 part of ThreeDart.Events;
 
-/// The interface for a changable.
-abstract class Changable {
+/// The interface for a Changeable.
+abstract class Changeable {
 
   /// Emits when the object has changed.
   ///

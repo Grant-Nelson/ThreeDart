@@ -79,9 +79,9 @@ class State {
     return state;
   }
 
-  /// This will load a state from a string repressenting the board.
+  /// This will load a state from a string representing the board.
   /// This string is the same as `toString(false)` of a state.
-  /// This will return false if there aren't 128 color peice letter pairs.
+  /// This will return false if there aren't 128 color piece letter pairs.
   factory State.parse(List<String> data) {
     State state = new State();
     Map<int, bool> used = new Map<int, bool>();
@@ -154,7 +154,7 @@ class State {
     return true;
   }
 
-  /// Finds the lovation of the given value on the board.
+  /// Finds the location of the given value on the board.
   /// The movement flag is ignored in the values.
   Location findItem(TileValue value) {
     TileValue item = value.item;
@@ -274,13 +274,13 @@ class State {
   }
 
   /// Determines if the given location has any of the given values in the given color.
-  bool _hasValue(Location loc, bool white, List<TileValue> peices) {
+  bool _hasValue(Location loc, bool white, List<TileValue> pieces) {
     if (loc.onBoard) {
       TileValue value = this.getValue(loc);
       if (value.white == white) {
-        TileValue peice = value.piece;
-        for (int i = peices.length - 1; i >= 0; --i) {
-          if (peice == peices[i].piece) return true;
+        TileValue piece = value.piece;
+        for (int i = pieces.length - 1; i >= 0; --i) {
+          if (piece == pieces[i].piece) return true;
         }
       }
     }
@@ -410,7 +410,7 @@ class State {
   ///   the pawn can capture that opponent
   /// - If there is an opponent pawn vertically from this pawn,
   ///   and on the opponent pawn's last move it moved two tiles as a first move,
-  ///   then this pawn can move diagonally while capturing the opponents virtical pawn
+  ///   then this pawn can move diagonally while capturing the opponents vertical pawn
   /// - See https://en.wikipedia.org/wiki/Pawn_(chess)
   void _pawnMovement(MovementCallback hndl, Location loc) {
     TileValue value = this.getValue(loc);
@@ -435,7 +435,7 @@ class State {
       }
     }
 
-    // Check for opponents on the diagonalls
+    // Check for opponents on the diagonally
     dest = loc.offset(dir, -1);
     otherVal = this.getValue(dest);
     if ((!otherVal.outOfBounds) && otherVal.opponent(white)) {
@@ -483,7 +483,7 @@ class State {
   /// Gets the movement for the rook at the given location.
   /// If movements are possible, they will be returned via the given handler.
   /// Rooks have the following movement constraints:
-  /// - They move horizontal or virtical any number of tiles until they reach a non-empty tile.
+  /// - They move horizontal or vertical any number of tiles until they reach a non-empty tile.
   ///   If that non-empty tile is an opponent that opponent can be taken.
   /// - If the rook hasn't been moved and the king of the same color hasn't been moved,
   ///   then check if there are only empty tiles between them. If the tiles are clear,
