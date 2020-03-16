@@ -48,7 +48,7 @@ class Animation {
     for (Shifter shifter in this._shifters) shifter._reset();
   }
 
-  /// Starts the animation runnning.
+  /// Starts the animation running.
   /// If the animation is already running then this has no effect.
   void start() {
     if (this._running) return;
@@ -58,7 +58,7 @@ class Animation {
   }
 
   /// Stops the animation running.
-  /// If the animation is not runnning this has no effect.
+  /// If the animation is not running this has no effect.
   void stop() {
     if (!this._running) return;
     this._running = false;
@@ -67,7 +67,7 @@ class Animation {
   /// Gets the current time.
   DateTime get _now => new DateTime.now();
 
-  /// Requests an update at the next bowser animation frame event.
+  /// Requests an update at the next browser animation frame event.
   void _requestUpdate() {
     window.requestAnimationFrame(this._update);
   }
@@ -75,10 +75,10 @@ class Animation {
   /// Performs an update of the animation.
   void _update(num) {
     if (!this._running) return;
-    int offest = this._now.difference(this._start).inMilliseconds;
+    int offset = this._now.difference(this._start).inMilliseconds;
     bool done = true;
     for (Shifter shifter in this._shifters)
-      done = shifter._update(offest) && done;
+      done = shifter._update(offset) && done;
     if (done) {
       if (this._loop)
         this._reset();

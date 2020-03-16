@@ -123,7 +123,7 @@ void addChessTests(TestManager tests) {
        "7 |WP1|WP2|WP3|WP4|WP5|WP6|WP7|WP8|",
        "8 |WR1|WH1|WB1|WK1|WQ1|WB2|WH2|WR2|"]);
 
-    // Test complex state missing peices and having multiple queens
+    // Test complex state missing pieces and having multiple queens
     state = new chess.State.parse(
       [" BR|   | BB| BK|   | BB| BH|   ",
        " WP|   |   |+BQ|   | BP|+BQ|+BQ",

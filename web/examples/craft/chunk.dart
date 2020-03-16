@@ -1,6 +1,6 @@
 part of craft;
 
-/// A chunk represents the voxal information for a large number of blocks.
+/// A chunk represents the voxel information for a large number of blocks.
 /// This makes up one of the many square areas of the world.
 class Chunk {
   /// The offset to the left edge of the chunk.
@@ -163,7 +163,7 @@ class Chunk {
     return defaultY;
   }
 
-  /// Updates the shapes in the entities for rendering this chucnk.
+  /// Updates the shapes in the entities for rendering this chunk.
   void updateShape() {
     if (this._needGen || !this._needUpdate) return;
     this._needUpdate = false;
@@ -180,8 +180,8 @@ class Chunk {
       entity.enabled = enabled;
   }
 
-  /// Updates the visiblity of this chunk.
-  void updateVisiblity(Math.Point2 loc, Math.Point2 front) {
+  /// Updates the visibility of this chunk.
+  void updateVisibility(Math.Point2 loc, Math.Point2 front) {
     if (this._needGen || this._needUpdate) {
       this._enabled = false;
       return;

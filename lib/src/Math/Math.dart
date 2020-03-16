@@ -45,7 +45,7 @@ const double TAU = PI*2.0;
 ///
 /// The [i] is interpolation factor. 0.0 or less will return [a].
 /// 1.0 or more will return the [b]. Between 0.0 and 1.0 will be
-/// a scaled mixure of the two given doubles.
+/// a scaled mixture of the two given doubles.
 double lerpVal(double a, double b, double i) =>
   a + i * (b - a);
 

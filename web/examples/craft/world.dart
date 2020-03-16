@@ -44,7 +44,7 @@ class World {
   /// These is an entity for each material in the world.
   List<ThreeDart.Entity> get entities => this._entities;
 
-  /// Gets or sets the player which is playing in this worls.
+  /// Gets or sets the player which is playing in this world.
   Player get player => this._player;
   set player(Player player) => this._player = player;
 
@@ -57,7 +57,7 @@ class World {
     return null;
   }
 
-  /// Gets the block closest to thie given location.
+  /// Gets the block closest to this given location.
   BlockInfo getBlock(double x, double y, double z) {
     int tx = x.floor();
     int ty = y.floor();
@@ -223,7 +223,7 @@ class World {
 
     for (Chunk chunk in this._chunks) {
       chunk.updateShape();
-      chunk.updateVisiblity(loc, front);
+      chunk.updateVisibility(loc, front);
     }
   }
 }

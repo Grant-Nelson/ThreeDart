@@ -1,7 +1,7 @@
 part of ThreeDart.Techniques;
 
-/// A techinque for rendering an entity.
-abstract class Technique implements Events.Changable {
+/// A technique for rendering an entity.
+abstract class Technique implements Events.Changeable {
 
   /// Updates the technique for the given state .
   /// If this technique attached to multiple entities then the update

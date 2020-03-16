@@ -81,7 +81,8 @@ class Bar implements Light {
   /// The rotation and position of the end point of the bar light.
   Math.Matrix4 get endMatrix => this._endMatrix;
 
-  /// This is an alias to the satart mover, [startMover].
+  
+  /// This is an alias to the start mover, [startMover].
   Movers.Mover get mover => this.startMover;
   void set mover(Movers.Mover mover) => this.startMover = mover;
 

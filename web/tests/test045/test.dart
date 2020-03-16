@@ -24,8 +24,8 @@ void main() {
 
   Movers.Group lightMover = new Movers.Group()
     ..add(new Movers.Constant.translate(0.0, 0.0, -4.0))
-    //..add(new Movers.Rotater())
-    ..add(new Movers.UserRotater(input: td.userInput, ctrl: true));
+    //..add(new Movers.Rotator())
+    ..add(new Movers.UserRotator(input: td.userInput, ctrl: true));
 
   Lights.Spot spot = new Lights.Spot(
     mover:        lightMover,
@@ -54,7 +54,7 @@ void main() {
     ..shape = (Shapes.cube()..flip());
 
   Movers.Group camMover = new Movers.Group()
-    ..add(new Movers.UserRotater(input: td.userInput))
+    ..add(new Movers.UserRotator(input: td.userInput))
     ..add(new Movers.Constant.rotateX(Math.PI))
     ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));
 

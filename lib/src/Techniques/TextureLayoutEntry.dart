@@ -1,7 +1,7 @@
 part of ThreeDart.Techniques;
 
-/// An entry in the TextureLayout technique descibing the layout of one texture.
-class TextureLayoutEntry implements Events.Changable {
+/// An entry in the TextureLayout technique describing the layout of one texture.
+class TextureLayoutEntry implements Events.Changeable {
   Textures.Texture2D _txt;
   Math.Matrix4 _clrMat;
   Math.Region2 _src;

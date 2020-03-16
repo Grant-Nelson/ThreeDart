@@ -55,7 +55,7 @@ void main() {
     ..addPar(["• *W* or *Up arrow* to move forward"])
     ..addPar(["• *S* or *Down arrow* to move backward"])
     ..addPar(["• *A* or *Left arrow* to strife left"])
-    ..addPar(["• *D* or *Right arror* to strife right"])
+    ..addPar(["• *D* or *Right arrow* to strife right"])
     ..addPar(["• *Space bar* to jump"])
     ..addPar(["• *Tab* cycles the block selected which can be placed"])
     ..addPar(["• *Shift-Tab* cycles the selection in the reverse direction"])

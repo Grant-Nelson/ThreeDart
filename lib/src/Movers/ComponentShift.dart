@@ -1,7 +1,7 @@
 part of ThreeDart.Movers;
 
 /// A simple single component for shifting and smoothing movement.
-class ComponentShift extends Events.Changable {
+class ComponentShift extends Events.Changeable {
   bool _wrap;
   double _maxLoc;
   double _minLoc;

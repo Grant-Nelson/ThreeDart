@@ -24,7 +24,7 @@ class ColorSourceType {
   /// Indicates that there is some kind of color source being used.
   bool get hasAny => this.hasSolid || this.hasTxt2D || this.hasTxtCube;
 
-  /// Creates a new color source by enabling/disabling the soloid color.
+  /// Creates a new color source by enabling/disabling the solid color.
   ColorSourceType enableSolid(bool enable) =>
     new ColorSourceType._(enable, this.hasTxt2D, this.hasTxtCube);
 

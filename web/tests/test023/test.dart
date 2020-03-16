@@ -19,11 +19,11 @@ void main() {
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
-  Movers.UserRotater viewRotater = new Movers.UserRotater(input: td.userInput);
-  Movers.UserRotater objRotater = new Movers.UserRotater(input: td.userInput, ctrl: true);
+  Movers.UserRotator viewRotator = new Movers.UserRotator(input: td.userInput);
+  Movers.UserRotator objRotator = new Movers.UserRotator(input: td.userInput, ctrl: true);
 
   Lights.Directional txtDir = new Lights.Directional(
-    mover: objRotater,
+    mover: objRotator,
     color: new Math.Color3(0.6, 0.9, 1.0),
     texture: td.textureLoader.load2DFromFile("../resources/Test.png", wrapEdges: true));
 
@@ -43,7 +43,7 @@ void main() {
     ..shape = (Shapes.cube()..flip());
 
   Movers.Group camMover = new Movers.Group()
-  ..add(viewRotater)
+  ..add(viewRotator)
   ..add(new Movers.Constant.rotateX(Math.PI))
   ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));
 

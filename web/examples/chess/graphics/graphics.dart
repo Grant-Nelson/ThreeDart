@@ -35,7 +35,7 @@ void startGraphics(game.Game game) {
 
   Views.Perspective camera = new Views.Perspective(
     mover: new Movers.Group([
-      new Movers.UserRotater(input: td.userInput)
+      new Movers.UserRotator(input: td.userInput)
         ..pitch.minimumLocation = -Math.PI_2
         ..pitch.maximumLocation = 0.0
         ..pitch.location = -0.5

@@ -2,7 +2,7 @@ library ThreeDart.Events;
 
 import 'dart:async' as async;
 
-part 'Changable.dart';
+part 'Changeable.dart';
 part 'Event.dart';
 part 'EventArgs.dart';
 part 'ItemsAddedEventArgs.dart';

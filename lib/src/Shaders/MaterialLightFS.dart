@@ -683,7 +683,7 @@ class _materialLightFS {
     buf.writeln("");
   }
 
-  /// Creates the fragmant source code for the material light shader for the given configurations.
+  /// Creates the fragment source code for the material light shader for the given configurations.
   static String createFragmentSource(MaterialLightConfig cfg) {
     StringBuffer buf = new StringBuffer();
     buf.writeln("precision mediump float;");
@@ -712,8 +712,8 @@ class _materialLightFS {
     _writeDiffuse(cfg, buf);
     _writeInvDiffuse(cfg, buf);
     _writeSpecular(cfg, buf);
-    if (cfg.enviromental) {
-      buf.writeln("// === Enviromental ===");
+    if (cfg.environmental) {
+      buf.writeln("// === Environmental ===");
       buf.writeln("");
       buf.writeln("uniform samplerCube envSampler;");
       buf.writeln("");
@@ -745,7 +745,7 @@ class _materialLightFS {
     buf.writeln("{");
     buf.writeln("   float alpha = alphaValue();");
     if (cfg.norm) buf.writeln("   vec3 norm = normal();");
-    if (cfg.enviromental) {
+    if (cfg.environmental) {
       buf.writeln("   vec3 refl = reflect(normalize(viewPos), norm);");
     }
     List<String> fragParts = new List<String>();

@@ -1,15 +1,15 @@
 part of ThreeDart.Scenes;
 
 /// The render pass renders a single scene.
-class Sterioscopic implements Scene {
+class Stereoscopic implements Scene {
 
   /// Indicates if the scene is rendered or not.
   bool _enabled;
 
-  /// The left constant for offseting the camera.
+  /// The left constant for offsetting the camera.
   Movers.Constant _leftConstMat;
 
-  /// The right constant for offseting the camera.
+  /// The right constant for offsetting the camera.
   Movers.Constant _rightConstMat;
 
   /// The left camera's main mover group.
@@ -49,7 +49,7 @@ class Sterioscopic implements Scene {
   Events.Event _changed;
 
   /// Creates a new render pass.
-  Sterioscopic({
+  Stereoscopic({
     bool             enabled: true,
     Movers.Mover     mover:   null,
     Views.Target     target:  null,

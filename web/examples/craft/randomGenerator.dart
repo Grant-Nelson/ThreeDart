@@ -7,7 +7,7 @@ class RandomGenerator implements Generator {
   /// The noise generator for the world.
   simplex.OpenSimplexNoise _simplex;
 
-  /// The temporary turrain height so that noise doesn't have to be calculated as much.
+  /// The temporary terrain height so that noise doesn't have to be calculated as much.
   data.Uint8List _tempCache;
 
   /// The current chunk that is being worked on.
@@ -27,7 +27,7 @@ class RandomGenerator implements Generator {
 
     this._prepareHeightCache();
     this._clearChunk();
-    this._turrain();
+    this._terrain();
     this._applyWater();
     this._applySand();
     this._trees();
@@ -43,11 +43,11 @@ class RandomGenerator implements Generator {
   double _noise(int x, int z, double scale) =>
     this._simplex.eval2D((x + this._curChunk.x)*scale, (z + this._curChunk.z)*scale)*0.5 + 0.5;
 
-  /// Gets the height of the turrain from the prepared height cache.
-  int _turrainHeight(int x, int z) =>
+  /// Gets the height of the terrain from the prepared height cache.
+  int _terrainHeight(int x, int z) =>
     this._tempCache[(x+Constants.borderSize)*Constants.paddedSize + (z+Constants.borderSize)];
 
-  /// Prepares the temporary cached turrain height.
+  /// Prepares the temporary cached terrain height.
   void _prepareHeightCache() {
     int offset = 0;
     for (int x = Constants.paddedMin; x < Constants.paddedMax; x++) {
@@ -63,23 +63,23 @@ class RandomGenerator implements Generator {
     }
   }
 
-  /// Cleares the chunk of all block data.
+  /// Clears the chunk of all block data.
   void _clearChunk() {
     this._curChunk._data.fillRange(0, Constants.chunkDataLength, BlockType.Air);
   }
 
-  /// Applies the turrain (turf, dirt, and rock) to the current chunk.
-  void _turrain() {
+  /// Applies the terrain (turf, dirt, and rock) to the current chunk.
+  void _terrain() {
     for (int x = 0; x < Constants.chunkSideSize; x++) {
       for (int z = 0; z < Constants.chunkSideSize; z++) {
-        this._turrainBlock(x, z);
+        this._terrainBlock(x, z);
       }
     }
   }
 
-  /// Determines the turrain blocks for the column in the current chunk.
-  void _turrainBlock(int x, int z) {
-    int maxy = this._turrainHeight(x, z);
+  /// Determines the terrain blocks for the column in the current chunk.
+  void _terrainBlock(int x, int z) {
+    int maxy = this._terrainHeight(x, z);
     for (int y = 0; y <= maxy; y++) {
       int block = BlockType.Rock;
       if (maxy < Constants.waterDepth) {
@@ -127,7 +127,7 @@ class RandomGenerator implements Generator {
 
   /// Determines the water blocks and adds surrounding sand blocks.
   void _applySandBlock(int x, int z) {
-    int maxy = this._turrainHeight(x, z);
+    int maxy = this._terrainHeight(x, z);
     if (maxy < Constants.waterDepth) {
       for (int y = Constants.maxEdgeSand; y > Constants.minEdgeSand; y--) {
         for (int dx = -1; dx <= 1; dx++) {
@@ -162,7 +162,7 @@ class RandomGenerator implements Generator {
         (z + this._curChunk.z < Constants.pyramidSize))
       return;
 
-    int maxy = this._turrainHeight(x, z);
+    int maxy = this._terrainHeight(x, z);
     if (maxy < Constants.treeMin) return;
 
     for (int y = 1; y < Constants.treeHeight; y++) {

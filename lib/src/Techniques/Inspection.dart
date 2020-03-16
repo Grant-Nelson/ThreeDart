@@ -33,7 +33,7 @@ class Inspection extends Technique {
   double _vectorScale;
   Events.Event _changed;
 
-  /// Creates a new inspection techinque.
+  /// Creates a new inspection technique.
   Inspection({
     bool showFilled:         false,
     bool showWireFrame:      false,
@@ -252,7 +252,7 @@ class Inspection extends Technique {
     }
   }
 
-  /// Indicates if the axlal alligned bounding box of the shape should be showed.
+  /// Indicates if the axlal aligned bounding box of the shape should be showed.
   bool get showAABB => this._showAABB;
   void set showAABB(bool show) {
     show ??= false;
@@ -485,7 +485,7 @@ class Inspection extends Technique {
     state.gl.blendFunc(WebGL.WebGL.SRC_ALPHA, WebGL.WebGL.ONE_MINUS_SRC_ALPHA);
   }
 
-  /// Renderes one of the shape components to inspect.
+  /// Renders one of the shape components to inspect.
   /// If the component of the shape isn't cached it will be created and cached.
   void _render(Core.RenderState state, Data.BufferStoreSet storeSet, Shapes.Shape shape,
       String name, Shapes.Shape shapeModHndl(Shapes.Shape shape), Math.Color4 ambient, Math.Color4 diffuse) {
@@ -498,7 +498,7 @@ class Inspection extends Technique {
     store.oneRender(state);
   }
 
-  /// Renderes one of the shape builder components to inspect.
+  /// Renders one of the shape builder components to inspect.
   /// If the component of the shape isn't cached it will be created and cached.
   void _renderBuilder(Core.RenderState state, Data.BufferStoreSet storeSet, Shapes.ShapeBuilder builder,
       String name, Shapes.Shape shapeBuilderModHndl(Shapes.ShapeBuilder builder), Math.Color4 ambient, Math.Color4 diffuse) {
@@ -863,12 +863,12 @@ class Inspection extends Technique {
     return result;
   }
 
-  /// Convertes the given [shape] into the axial alligned bounding box shape.
+  /// Convertes the given [shape] into the axial aligned bounding box shape.
   Shapes.Shape _aabb(Shapes.Shape shape) {
     return this._aabbBuilder(shape);
   }
 
-  /// Convertes the given [shape] into the axial alligned bounding box
+  /// Convertes the given [shape] into the axial aligned bounding box
   /// shape for a shape builder.
   Shapes.Shape _aabbBuilder(Shapes.ShapeBuilder builder) {
     Math.Region3 aabb = builder.calculateAABB();

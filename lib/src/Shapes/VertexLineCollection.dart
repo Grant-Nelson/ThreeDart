@@ -60,11 +60,11 @@ class VertexLineCollection {
   }
 
   /// Gets line with the given [index] from list
-  /// of the lines with this vertex as thier first vertex.
+  /// of the lines with this vertex as their first vertex.
   Line at1(int index) => this._lines1[index];
 
   /// Gets line with the given [index] from list
-  /// of the lines with this vertex as thier second vertex.
+  /// of the lines with this vertex as their second vertex.
   Line at2(int index) => this._lines2[index];
 
   /// Gets the index of the given [line].
@@ -77,12 +77,12 @@ class VertexLineCollection {
   }
 
   /// Gets the index of the given [line] in the list
-  /// of the lines with this vertex as thier first vertex.
+  /// of the lines with this vertex as their first vertex.
   /// -1 is returned if the line isn't found.
   int indexOf1(Line line) => this._lines1.indexOf(line);
 
   /// Gets the index of the given [line] in the list
-  /// of the lines with this vertex as thier second vertex.
+  /// of the lines with this vertex as their second vertex.
   /// -1 is returned if the line isn't found.
   int indexOf2(Line line) => this._lines2.indexOf(line);
 
@@ -95,11 +95,11 @@ class VertexLineCollection {
   }
 
   /// Runs the given function handler for every line in the vertex
-  /// which has this vertex as thier first vertex.
+  /// which has this vertex as their first vertex.
   void forEach1(void funcHndl(Line line)) => this._lines1.forEach(funcHndl);
 
   /// Runs the given function handler for every line in the vertex
-  /// which has this vertex as thier first vertex.
+  /// which has this vertex as their first vertex.
   void forEach2(void funcHndl(Line line)) => this._lines2.forEach(funcHndl);
 
   /// Removes the line with at the given index.
@@ -111,7 +111,7 @@ class VertexLineCollection {
   }
 
   /// Removes the line with at the given index of the face from
-  /// the list of the lines with this vertex as thier first vertex.
+  /// the list of the lines with this vertex as their first vertex.
   /// The removed line is disposed and returned or null if none removed.
   Line removeAt1(int index) {
     Line line = this._lines1[index];
@@ -120,7 +120,7 @@ class VertexLineCollection {
   }
 
   /// Removes the line with at the given index of the face from
-  /// the list of the lines with this vertex as thier second vertex.
+  /// the list of the lines with this vertex as their second vertex.
   /// The removed line is disposed and returned or null if none removed.
   Line removeAt2(int index) {
     Line line = this._lines2[index];
@@ -137,7 +137,7 @@ class VertexLineCollection {
     return true;
   }
 
-  /// Removes all lines which match eachother based on the given matcher.
+  /// Removes all lines which match each other based on the given matcher.
   void removeRepeats(LineMatcher matcher) {
     for (int i = this._lines1.length-1; i >= 0; --i) {
       Line lineA = this._lines1[i];

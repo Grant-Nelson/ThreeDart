@@ -16,7 +16,7 @@ void main() {
     ..addPar([
       "Test of the Material Lighting shader with a textured directional light. ",
       "The texturing of the directional light is being modified with a matrix. ",
-      "The texture metrix is updated using the pre-update mathods. ",
+      "The texture matrix is updated using the pre-update methods. ",
       "Use Ctrl plus the mouse to move the center object."])
     ..addControlBoxes(["shapes"])
     ..addPar(["«[Back to Tests|../]"]);
@@ -41,7 +41,7 @@ void main() {
     ..diffuse.texture2D = td.textureLoader.load2DFromFile("../resources/Test.png", wrapEdges: true);
 
   ThreeDart.Entity centerObj = new ThreeDart.Entity()
-    ..mover = new Movers.UserRotater(input: td.userInput, ctrl: true)
+    ..mover = new Movers.UserRotator(input: td.userInput, ctrl: true)
     ..shape = Shapes.toroid();
 
   ThreeDart.Entity room = new ThreeDart.Entity()
@@ -49,12 +49,12 @@ void main() {
     ..shape = (Shapes.cube()..flip());
 
   Movers.Group camMover = new Movers.Group()
-  ..add(new Movers.UserRotater(input: td.userInput))
+  ..add(new Movers.UserRotator(input: td.userInput))
   ..add(new Movers.Constant.rotateX(Math.PI))
   ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));
 
-  Movers.Rotater colorMover = new Movers.Rotater(deltaYaw: 0.3, deltaPitch: 0.5, deltaRoll: 0.7);
-  Movers.Rotater txtMover   = new Movers.Rotater(deltaYaw: 0.0, deltaPitch: 0.0, deltaRoll: 0.1);
+  Movers.Rotator colorMover = new Movers.Rotator(deltaYaw: 0.3, deltaPitch: 0.5, deltaRoll: 0.7);
+  Movers.Rotator txtMover   = new Movers.Rotator(deltaYaw: 0.0, deltaPitch: 0.0, deltaRoll: 0.1);
   td.scene = new Scenes.EntityPass()
     ..technique = tech
     ..children.add(centerObj)

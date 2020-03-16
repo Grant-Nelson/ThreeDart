@@ -1,7 +1,7 @@
 part of ThreeDart.Textures;
 
 /// A roller which rotates an object in response to user input.
-class ColorPicker implements Input.Interactable, Events.Changable {
+class ColorPicker implements Input.Interactable, Events.Changeable {
 
   /// Texture loader used to read the colors from the given texture.
   TextureLoader _loader;
@@ -39,7 +39,7 @@ class ColorPicker implements Input.Interactable, Events.Changable {
   /// Indicates if the mouse has left the dead band area yet.
   bool _inDeadBand;
 
-  /// Creates a new user rotater instance.
+  /// Creates a new user rotator instance.
   ColorPicker(TextureLoader loader, {
       bool ctrl:      false,
       bool alt:       false,

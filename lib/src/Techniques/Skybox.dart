@@ -31,7 +31,7 @@ class Skybox extends Technique {
     this._changed?.emit(args);
   }
 
-  /// Feild of view vertically in radians of the camera.
+  /// Field of view vertically in radians of the camera.
   double get fov => this._fov;
   void set fov(double fov) {
     fov ??= Math.PI_3;
@@ -65,10 +65,10 @@ class Skybox extends Technique {
     }
   }
 
-  /// Gets the vertex source code used for the shader used by this techinique.
+  /// Gets the vertex source code used for the shader used by this technique.
   String get vertexSourceCode => this._shader?.vertexSourceCode;
 
-  /// Gets the fragment source code used for the shader used by this techinique.
+  /// Gets the fragment source code used for the shader used by this technique.
   String get fragmentSourceCode => this._shader?.fragmentSourceCode;
 
   /// Updates this technique for the given state.

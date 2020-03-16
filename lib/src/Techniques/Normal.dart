@@ -73,10 +73,10 @@ class Normal extends Technique {
     }
   }
 
-  /// Gets the vertex source code used for the shader used by this techinique.
+  /// Gets the vertex source code used for the shader used by this technique.
   String get vertexSourceCode => this._shader?.vertexSourceCode;
 
-  /// Gets the fragment source code used for the shader used by this techinique.
+  /// Gets the fragment source code used for the shader used by this technique.
   String get fragmentSourceCode => this._shader?.fragmentSourceCode;
 
   /// Removes any normal distortion from the material.
@@ -142,7 +142,7 @@ class Normal extends Technique {
     // Do Nothing
   }
 
-  /// Renderes the given [obj] with the current light and material for the given [state].
+  /// Renders the given [obj] with the current light and material for the given [state].
   void render(Core.RenderState state, Core.Entity obj) {
     if (this._shader == null) {
       this._shader = new Shaders.Normal.cached(this._config(), state);

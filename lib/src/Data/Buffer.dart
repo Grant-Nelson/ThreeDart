@@ -63,7 +63,7 @@ class TestDoubleBuffer implements Buffer {
 
   /// Throws an error because test buffers may not be binded.
   void bind(Core.RenderState state) {
-    throw new Exception("May not bind a test doublebuffer.");
+    throw new Exception("May not bind a test double buffer.");
   }
 
   /// Has no effect for testing.

@@ -85,6 +85,6 @@ void startup2D(String targetName) {
     }
   });
 
-  // Add the two parts of the scene to the ouput.
+  // Add the two parts of the scene to the output.
   td.scene = new Scenes.Compound(passes: [projPass, slicePass]);
 }

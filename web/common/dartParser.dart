@@ -99,7 +99,7 @@ class DartParser extends CodeParser {
     tok.setToken("Whitespace", "Whitespace");
     tok.setToken("Id", "Id")
       ..replace("Class", ["Constant", "Depth", "Entity",
-        "EntityPass", "Math", "Matrix4", "Movers", "Rotater",
+        "EntityPass", "Math", "Matrix4", "Movers", "Rotator",
         "Scenes", "Shapes", "Techniques", "ThreeDart"])
       ..replace("Type", ["bool", "double", "dynamic", "false", "int",
         "List", "Map", "null", "num", "Object", "String", "this",

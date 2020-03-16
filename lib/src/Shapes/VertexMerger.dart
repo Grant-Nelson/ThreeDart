@@ -4,7 +4,7 @@ part of ThreeDart.Shapes;
 abstract class VertexMerger {
 
   /// Merges the given vertices into one vertex and returns it.
-  /// Or null can be returned and the list of vertices can have thier values updated.
+  /// Or null can be returned and the list of vertices can have their values updated.
   Vertex merge(List<Vertex> vertices);
 }
 
@@ -118,7 +118,7 @@ class VertexJoiner extends VertexMerger {
   }
 }
 
-/// Adjustes all the vertices so they have the same averaged normal.
+/// Adjusts all the vertices so they have the same averaged normal.
 class NormalAdjuster extends VertexMerger {
 
   /// Returns null and updates the normal of all
@@ -138,7 +138,7 @@ class NormalAdjuster extends VertexMerger {
   }
 }
 
-/// Adjustes all the vertices so they have the same averaged binormal.
+/// Adjusts all the vertices so they have the same averaged binormal.
 class BinormalAdjuster extends VertexMerger {
 
   /// Returns null and updates the binormal of all

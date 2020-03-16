@@ -1,6 +1,6 @@
 part of ThreeDart.Movers;
 
-/// The handler for handling colisions during the movement.
+/// The handler for handling collisions during the movement.
 typedef Math.Point3 CollisionHandle(Math.Point3 prev, Math.Point3 next);
 
 /// A translation mover which translates on an object in response to user input.
@@ -92,20 +92,20 @@ class UserTranslator implements Mover, Input.Interactable {
     this._changed?.emit(args);
   }
 
-  /// The group of keys which will cause movement down a negitive X vector.
-  Input.KeyGroup get negitiveXKey => this._xNegKey;
+  /// The group of keys which will cause movement down a negative X vector.
+  Input.KeyGroup get negativeXKey => this._xNegKey;
 
   /// The group of keys which will cause movement down a positive X vector.
   Input.KeyGroup get positiveXKey => this._xPosKey;
 
-  /// The group of keys which will cause movement down a negitive Y vector.
-  Input.KeyGroup get negitiveYKey => this._yNegKey;
+  /// The group of keys which will cause movement down a negative Y vector.
+  Input.KeyGroup get negativeYKey => this._yNegKey;
 
   /// The group of keys which will cause movement down a positive Y vector.
   Input.KeyGroup get positiveYKey => this._yPosKey;
 
-  /// The group of keys which will cause movement down a negitive Z vector.
-  Input.KeyGroup get negitiveZKey => this._zNegKey;
+  /// The group of keys which will cause movement down a negative Z vector.
+  Input.KeyGroup get negativeZKey => this._zNegKey;
 
   /// The group of keys which will cause movement down a positive Z vector.
   Input.KeyGroup get positiveZKey => this._zPosKey;
@@ -120,12 +120,12 @@ class UserTranslator implements Mover, Input.Interactable {
   ComponentShift get offsetZ => this._offsetZ;
 
   /// The amount to remove from the velocity when no key in a direction is being pressed.
-  double get decceleration => this._deccel;
-  void set decceleration(double deccel) {
+  double get deceleration => this._deccel;
+  void set deceleration(double deccel) {
     if (this._deccel != deccel) {
       double prev = this._deccel;
       this._deccel = deccel;
-      this._onChanged(new Events.ValueChangedEventArgs(this, "decceleration", prev, this._deccel));
+      this._onChanged(new Events.ValueChangedEventArgs(this, "deceleration", prev, this._deccel));
     }
   }
 

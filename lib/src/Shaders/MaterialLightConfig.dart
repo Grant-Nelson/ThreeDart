@@ -161,9 +161,9 @@ class MaterialLightConfig {
   /// The total number of any type of light.
   final int totalLights;
 
-  /// Indicates there is either reflection or refration
-  /// meaning that an enviromental map is needed for this shader.
-  final bool enviromental;
+  /// Indicates there is either reflection or refraction
+  /// meaning that an environmental map is needed for this shader.
+  final bool environmental;
 
   /// Indicates that there is intense light illumination via
   /// diffuse, inverse diffuse, and specular.
@@ -188,7 +188,7 @@ class MaterialLightConfig {
   final bool projViewMat;
 
   /// Indicates the ambient, diffuse, inverse diffuse, or specular
-  /// material compenent is used meaning lighting is needed for this shader.
+  /// material component is used meaning lighting is needed for this shader.
   /// If lighting is needed but no lights are provided a default light is used.
   final bool lights;
 
@@ -249,7 +249,7 @@ class MaterialLightConfig {
     List<SpotLightConfig> this.spotLights,
 
     int this.totalLights,
-    bool this.enviromental, bool this.intense, bool this.invViewMat,
+    bool this.environmental, bool this.intense, bool this.invViewMat,
     bool this.objMat, bool this.viewObjMat, bool this.projViewObjMat,
     bool this.viewMat, bool this.projViewMat,
     bool this.lights, bool this.objPos,
@@ -336,15 +336,15 @@ class MaterialLightConfig {
       objPos = true;
     }
 
-    bool enviromental = reflection.hasAny || refraction.hasAny;
-    bool invViewMat = enviromental;
+    bool environmental = reflection.hasAny || refraction.hasAny;
+    bool invViewMat = environmental;
     bool hasBar = barLights.length > 0;
     bool lights = ambient.hasAny || diffuse.hasAny ||
                   invDiffuse.hasAny || specular.hasAny;
     bool viewPos = (specular.hasAny) || hasBar ||
-                   (pointLights.length > 0) || enviromental;
+                   (pointLights.length > 0) || environmental;
     bool intense = diffuse.hasAny || invDiffuse.hasAny || specular.hasAny;;
-    bool norm = lights || bumpy.hasAny || enviromental;
+    bool norm = intense || bumpy.hasAny || environmental;
     bool binm = bumpy.hasAny;
     bool txt2D = emission.hasTxt2D || ambient.hasTxt2D || diffuse.hasTxt2D ||
                  invDiffuse.hasTxt2D || specular.hasTxt2D || bumpy.hasTxt2D ||
@@ -373,7 +373,7 @@ class MaterialLightConfig {
     return new MaterialLightConfig._(emission, ambient,
       diffuse, invDiffuse, specular, bumpy, reflection, refraction,
       alpha, barLights, dirLights, pointLights, spotLights,
-      totalLights, enviromental, intense,
+      totalLights, environmental, intense,
       invViewMat, objMat, viewObjMat, projViewObjMat,
       viewMat, projViewMat, lights, objPos, viewPos,
       norm, binm, txt2D, txtCube, bending, txt2DMat, txtCubeMat,
@@ -384,7 +384,7 @@ class MaterialLightConfig {
   String createVertexSource() =>
     _materialLightVS.createVertexSource(this);
 
-  /// Creates the fragmant source code for the material light shader for the given configurations.
+  /// Creates the fragment source code for the material light shader for the given configurations.
   String createFragmentSource() =>
     _materialLightFS.createFragmentSource(this);
 

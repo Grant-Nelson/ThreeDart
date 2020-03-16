@@ -160,10 +160,10 @@ class MaterialLight extends Technique {
   /// The alpha value or scalar on the alpha texture for the material.
   MaterialLightAlphaComponent get alpha => this._alpha;
 
-  /// Gets the vertex source code used for the shader used by this techinique.
+  /// Gets the vertex source code used for the shader used by this technique.
   String get vertexSourceCode => this._shader?.vertexSourceCode;
 
-  /// Gets the fragment source code used for the shader used by this techinique.
+  /// Gets the fragment source code used for the shader used by this technique.
   String get fragmentSourceCode => this._shader?.fragmentSourceCode;
 
   /// Calculates a limit for the lights and other arrays for the shader from
@@ -236,7 +236,7 @@ class MaterialLight extends Technique {
     }
   }
 
-  /// Renderes the given [obj] with the current light and material for the given [state].
+  /// Renders the given [obj] with the current light and material for the given [state].
   void render(Core.RenderState state, Core.Entity obj) {
     if (this._shader == null) {
       this._shader = new Shaders.MaterialLight.cached(this._config(), state);
@@ -479,7 +479,7 @@ class MaterialLight extends Technique {
     if (cfg.invViewMat)
       this._shader.inverseViewMatrix = state.inverseViewMatrix;
 
-    if (cfg.enviromental) {
+    if (cfg.environmental) {
       this._addToTextureList(textures, this._envSampler);
       this._shader.environmentTextureCube = this._envSampler;
 

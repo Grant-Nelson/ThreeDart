@@ -6,7 +6,7 @@ class GaussianBlur implements Scene {
   /// Indicates if the scene is rendered or not.
   bool _enabled;
 
-  /// Emits when any scene in the list chagnes.
+  /// Emits when any scene in the list changes.
   Events.Event _changed;
 
   /// The target to render the horizontal blur to.
@@ -18,7 +18,7 @@ class GaussianBlur implements Scene {
   /// The horizontal blur pass.
   CoverPass _horzBlurPass;
 
-  /// The vertical blur techinque.
+  /// The vertical blur technique.
   Techniques.GaussianBlur _vertBlurTech;
 
   /// The vertical blur pass.
@@ -60,11 +60,11 @@ class GaussianBlur implements Scene {
     this.blurAdjust    = blurAdj;
     this.target        = target;
   }
-
-  /// Gets the vertex source code used for the shader used by the blur techinique.
+  
+  /// Gets the vertex source code used for the shader used by the blur technique.
   String get vertexSourceCode => this._horzBlurTech?.vertexSourceCode;
 
-  /// Gets the fragment source code used for the shader used by the blur techinique.
+  /// Gets the fragment source code used for the shader used by the blur technique.
   String get fragmentSourceCode => this._horzBlurTech?.fragmentSourceCode;
 
   /// The event emitted when the scene has changed.
@@ -78,7 +78,7 @@ class GaussianBlur implements Scene {
     this._changed?.emit(args);
   }
 
-  /// The blur value, this will overrided by blur texture.
+  /// The blur value, this will be overridden by blur texture.
   double get blurValue => this._horzBlurTech.blurValue;
   void set blurValue(double value) {
     this._horzBlurTech.blurValue = value;

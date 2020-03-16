@@ -276,7 +276,7 @@ class Vertex {
     return true;
   }
 
-  /// Determines if the given [other] value is identical to thie vertex.
+  /// Determines if the given [other] value is identical to their vertex.
   bool operator ==(var other) => identical(this, other);
 
   /// Gets the string for this vertex.

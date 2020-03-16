@@ -32,7 +32,7 @@ abstract class MaterialLightBaseComponent {
   }
 
   /// Is called when the component is set from the
-  /// source type None to anyother source type.
+  /// source type None to any other source type.
   void _onComponentSet() {
     // Do Nothing
   }

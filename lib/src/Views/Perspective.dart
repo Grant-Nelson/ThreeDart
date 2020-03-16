@@ -43,7 +43,7 @@ class Perspective implements Camera {
     this._changed?.emit(args);
   }
 
-  /// Feild of view vertically in radians of the camera.
+  /// Field of view vertically in radians of the camera.
   double get fov => this._fov;
   void set fov(double fov) {
     fov ??= Math.PI_3;

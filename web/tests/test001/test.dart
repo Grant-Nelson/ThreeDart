@@ -20,7 +20,7 @@ void main() {
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..shape = Shapes.toroid()
-    ..mover = new Movers.Rotater();
+    ..mover = new Movers.Rotator();
 
   Techniques.Depth tech = new Techniques.Depth(start: 2.0, stop: 8.0);
   Scenes.EntityPass pass = new Scenes.EntityPass()

@@ -58,5 +58,5 @@ String numberLines(String text) {
   return lines.join("\n");
 }
 
-/// Upcases just the first character of the given string.
+/// Gets the uppercase of just the first character of the given string.
 String toTitleCase(String name) => name[0].toUpperCase()+name.substring(1);

@@ -52,7 +52,7 @@ class GaussianBlur extends Technique {
     this._onChanged(args);
   }
 
-  /// The blur value, this will overrided by blur texture.
+  /// The blur value, this will be overridden by blur texture.
   double get blurValue => this._blurValue;
   void set blurValue(double value) {
     value ??= 0.0;
@@ -125,10 +125,10 @@ class GaussianBlur extends Technique {
     }
   }
 
-  /// Gets the vertex source code used for the shader used by this techinique.
+  /// Gets the vertex source code used for the shader used by this technique.
   String get vertexSourceCode => this._shader?.vertexSourceCode;
 
-  /// Gets the fragment source code used for the shader used by this techinique.
+  /// Gets the fragment source code used for the shader used by this technique.
   String get fragmentSourceCode => this._shader?.fragmentSourceCode;
 
   /// Updates this technique for the given state.

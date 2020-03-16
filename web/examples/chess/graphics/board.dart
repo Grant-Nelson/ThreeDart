@@ -75,10 +75,10 @@ class Board extends ThreeDart.Entity {
     this.setLocations(this._game.state);
   }
 
-  /// The collection of material techinques to use for this game.
+  /// The collection of material techniques to use for this game.
   Materials get materials => this._mats;
 
-  /// Gets the next unique pick color material techinque.
+  /// Gets the next unique pick color material technique.
   Techniques.SolidColor nextPickTech() =>
     this._mats.nextPickTech(this.children.length);
 
@@ -118,7 +118,7 @@ class Board extends ThreeDart.Entity {
       }
     }
 
-    // Check if a peice was picked.
+    // Check if a piece was picked.
     game.TileValue stateItem = this._game.getValue(loc);
     if (stateItem.empty || stateItem.white != this._game.whiteTurn) return;
     bool selected = this.isSelected(stateItem);

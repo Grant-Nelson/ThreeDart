@@ -2,7 +2,7 @@ part of ThreeDart.Math;
 
 /// A math structure for storing a red, green, blue, and alpha additive color.
 ///
-/// The alpha color compoent is the transparency of the color.
+/// The alpha color component is the transparency of the color.
 /// 0.0 it completely transparent. 1.0 is completely opaque.
 class Color4 {
 
@@ -41,7 +41,7 @@ class Color4 {
   factory Color4.white([double alpha = 1.0]) =>
     new Color4._(1.0, 1.0, 1.0, clampVal(alpha));
 
-  /// Constructs a new transpanent [Color4] instance, transparent black.
+  /// Constructs a new transparent [Color4] instance, transparent black.
   factory Color4.transparent() =>
     new Color4._(0.0, 0.0, 0.0, 0.0);
 
@@ -111,7 +111,7 @@ class Color4 {
   ///
   /// The [i] is interpolation factor. 0.0 or less will return this color.
   /// 1.0 or more will return the [other] color. Between 0.0 and 1.0 will be
-  /// a scaled mixure of the two colors.
+  /// a scaled mixture of the two colors.
   Color4 lerp(Color4 other, double i) =>
     new Color4(lerpVal(this.red,  other.red,  i), lerpVal(this.green, other.green, i),
                lerpVal(this.blue, other.blue, i), lerpVal(this.alpha, other.alpha, i));

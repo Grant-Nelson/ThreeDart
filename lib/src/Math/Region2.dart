@@ -1,7 +1,7 @@
 part of ThreeDart.Math;
 
 /// A math structure for storing a 2D region, like a rectangle.
-/// This is also used for AABBs (axial alligned bounding boxes).
+/// This is also used for AABBs (axial aligned bounding boxes).
 class Region2 {
 
   /// Gets a [Region2] at the origin.
@@ -18,7 +18,7 @@ class Region2 {
   }
   static Region2 _unitSingleton;
 
-  /// Gets a [Region2] at the origin with a width and height of 2 centerd on origin.
+  /// Gets a [Region2] at the origin with a width and height of 2 centered on origin.
   static Region2 get unit2 {
     _unit2Singleton ??= new Region2(-1.0, -1.0, 2.0, 2.0);
     return _unit2Singleton;
@@ -327,7 +327,7 @@ class Region2 {
     inRange(a.x, this.x, this.x+this.dx) &&
     inRange(a.y, this.y, this.y+this.dy);
 
-  /// Determines if the two regions overlap even partually.
+  /// Determines if the two regions overlap even partially.
   bool overlaps(Region2 a) =>
     rangeOverlap(a.x, a.x + a.dx, this.x, this.x + this.dx) &&
     rangeOverlap(a.y, a.y + a.dy, this.y, this.y + this.dy);

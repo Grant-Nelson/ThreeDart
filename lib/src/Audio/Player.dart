@@ -37,7 +37,7 @@ class Player {
     }
   }
 
-  /// This is the volume to playplack the audio at.
+  /// This is the volume to playback the audio at.
   double get volume => this._elem.volume;
   set volume(double volume) {
     volume = Math.clampVal(volume ?? 1.0);

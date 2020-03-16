@@ -31,8 +31,13 @@ class Tile extends ThreeDart.Entity {
 
   /// Indicates that the pick color should be rendered.
   bool _showPick;
+<<<<<<< HEAD
 
   /// The techinque for drawing the pick color for this tile.
+=======
+  
+  /// The technique for drawing the pick color for this tile.
+>>>>>>> 675b485cde08b1559271582f6a463a63f26990a6
   Techniques.SolidColor _pickTech;
 
   /// The child entity for the shown color of this tile.
