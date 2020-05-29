@@ -2,11 +2,11 @@ part of craft;
 
 /// The sounds object helps make sounds easy to play.
 class Sounds {
-  Map<int, Audio.Player> _blockSound;
+  Map<int, Audio.MultiPlayer> _blockSound;
   
   /// Creates and starts loading the sounds for the game.
   Sounds(Audio.AudioLoader loader) {
-    this._blockSound = new  Map<int, Audio.Player>();
+    this._blockSound = new  Map<int, Audio.MultiPlayer>();
     // this._addBlockSound(loader, "./sounds/sandHit.mp3", [
     //   BlockType.Sand]);
     this._addBlockSound(loader, "./sounds/grassHit.mp3", [
@@ -28,16 +28,13 @@ class Sounds {
 
   /// Adds a sounds and the set of blocks which would make that sound.
   void _addBlockSound(Audio.AudioLoader loader, String path, List<int> blocks) {
-    Audio.Player player = loader.loadFromFile(path);
+    Audio.MultiPlayer player = new Audio.MultiPlayer(loader.loadFromFile(path));
     for (int block in blocks) this._blockSound[block] = player;
   }
 
   /// Plays a sounds based on one of the block types.
   void playBlockSound(int block, [double volume = 1.0]) {
-    Audio.Player player = this._blockSound[block];
-    if (player != null && !player.playing) {
-      player.volume = volume;
-      player.play();
-    }
+    Audio.MultiPlayer player = this._blockSound[block];
+    if (player != null) player.play(volume: volume);
   } 
 }
