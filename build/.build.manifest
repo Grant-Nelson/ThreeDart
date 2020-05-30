@@ -5,9 +5,13 @@ examples/chess/resources/README.md
 examples/chess/resources/bishop.obj
 examples/chess/resources/edge.obj
 examples/chess/resources/edge0.png
+examples/chess/resources/edge0Normal.png
 examples/chess/resources/edge1.png
+examples/chess/resources/edge1Normal.png
 examples/chess/resources/edge2.png
+examples/chess/resources/edge2Normal.png
 examples/chess/resources/edge3.png
+examples/chess/resources/edge3Normal.png
 examples/chess/resources/king.obj
 examples/chess/resources/knight.obj
 examples/chess/resources/negx.png
@@ -25,6 +29,12 @@ examples/chess/resources/tableSpec.png
 examples/chess/resources/tile.obj
 examples/craft/index.html
 examples/craft/main.dart.js
+examples/craft/sounds/grassHit.mp3
+examples/craft/sounds/leavesHit.mp3
+examples/craft/sounds/sandHit.mp3
+examples/craft/sounds/stoneHit.mp3
+examples/craft/sounds/waterHit.mp3
+examples/craft/sounds/woodHit.mp3
 examples/craft/textures/blackShine.png
 examples/craft/textures/blueFlowers.png
 examples/craft/textures/boundary.png
@@ -77,6 +87,8 @@ packages/$sdk/dev_compiler/kernel/common/run.js
 packages/$sdk/dev_compiler/kernel/es6/dart_sdk.js
 packages/$sdk/dev_compiler/web/dart_stack_trace_mapper.js
 packages/$sdk/dev_compiler/web/ddc_web_compiler.js
+packages/PetiteParserDart/src/Calculator/Calculator.md
+packages/PetiteParserDart/src/Calculator/Calculator.txt
 packages/ThreeDart/src/Core/README.md
 packages/ThreeDart/src/Data/README.md
 packages/ThreeDart/src/IO/README.md
@@ -120,6 +132,7 @@ packages/pedantic/analysis_options.1.5.0.yaml
 packages/pedantic/analysis_options.1.6.0.yaml
 packages/pedantic/analysis_options.1.7.0.yaml
 packages/pedantic/analysis_options.1.8.0.yaml
+packages/pedantic/analysis_options.1.9.0.yaml
 packages/pedantic/analysis_options.yaml
 packages/test/dart.js
 packages/test/src/runner/browser/static/favicon.ico
@@ -355,6 +368,9 @@ tests/test046/test.png
 tests/test047/index.html
 tests/test047/test.dart.js
 tests/test047/test.png
+tests/test048/index.html
+tests/test048/test.dart.js
+tests/test048/test.png
 tutorials/index.html
 tutorials/tutorial1/index.html
 tutorials/tutorial1/main.dart.js
