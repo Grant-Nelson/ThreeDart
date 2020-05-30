@@ -14,7 +14,7 @@ import '../../common/common.dart' as common;
 void main() {
   new common.ShellPage("Test 033")
     ..addLargeCanvas("testCanvas")
-    ..addPar(["Test of a sterioscopic scene."])
+    ..addPar(["Test of a Stereoscopic scene."])
     ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
@@ -51,7 +51,7 @@ void main() {
     ..bump.textureCube = td.textureLoader.loadCubeFromPath("../resources/diceBumpMap");
 
   Movers.Group mover = new Movers.Group()
-    ..add(new Movers.UserRotater(input: td.userInput))
+    ..add(new Movers.UserRotator(input: td.userInput))
     ..add(new Movers.UserRoller(ctrl: true, input: td.userInput))
     ..add(new Movers.UserZoom(input: td.userInput))
     ..add(new Movers.Constant.translate(0.0, 0.0, 6.0));
@@ -66,7 +66,7 @@ void main() {
     ..technique = colorTech
     ..children.add(shapeEntity);
 
-  td.scene = new Scenes.Sterioscopic(mover: mover, passes: [skybox, pass], target: target);
+  td.scene = new Scenes.Stereoscopic(mover: mover, passes: [skybox, pass], target: target);
 
   common.showFPS(td);
 }

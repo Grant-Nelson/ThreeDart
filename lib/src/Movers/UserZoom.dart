@@ -9,7 +9,7 @@ class UserZoom implements Mover, Input.Interactable {
   /// Indicates if the modifier keys which must be pressed or released.
   Input.Modifiers _modPressed;
 
-  /// The scalar to change how fast the zoom occures.
+  /// The scalar to change how fast the zoom occurs.
   double _zoomScalar;
 
   /// The current zoom value.

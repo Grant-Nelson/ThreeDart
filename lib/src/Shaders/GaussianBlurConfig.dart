@@ -70,7 +70,7 @@ class GaussianBlurConfig {
     buf.writeln("");
   }
 
-  /// Creates the fragmant source code for the gaussian blur shader for the given configurations.
+  /// Creates the fragment source code for the gaussian blur shader for the given configurations.
   /// 
   /// This blur method is based off of Daniel Rákos, "Efficient Gaussian blur with linear sampling",
   /// http://rastergrid.com/blog/2010/09/efficient-gaussian-blur-with-linear-sampling/

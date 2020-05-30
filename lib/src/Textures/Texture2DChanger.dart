@@ -59,12 +59,12 @@ class Texture2DChanger extends Texture2D {
     }
   }
 
-  /// Selectes the next texture or cycles back to the first texture.
+  /// Selects the next texture or cycles back to the first texture.
   void nextTexture() {
     this.currentIndex = (this._listIndex + 1) % this._textures.length;
   }
 
-  /// Selectes the previous texture or cycles back to the last texture.
+  /// Selects the previous texture or cycles back to the last texture.
   void previousTexture() {
     int count = this._textures.length;
     this.currentIndex = (this._listIndex + count - 1) % count;

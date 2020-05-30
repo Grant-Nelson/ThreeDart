@@ -85,7 +85,7 @@ class Collection<T> implements Iterable<T> {
   /// Gets the item at the given index.
   T elementAt(int index) => this._list.elementAt(index);
 
-  /// Check if evey item in this collection satisfies the given [hndl].
+  /// Check if every item in this collection satisfies the given [hndl].
   bool every(bool hndl(T item)) => this._list.every(hndl);
 
   /// Expands each element of this Iterable into zero or more elements.
@@ -100,7 +100,7 @@ class Collection<T> implements Iterable<T> {
   T2 fold<T2>(T2 initialValue, T2 combine(T2 previousValue, T element)) =>
     this._list.fold<T2>(initialValue, combine);
 
-  /// Returns the lazy concatentation of this iterable and [other].
+  /// Returns the lazy concatenation of this iterable and [other].
   Iterable<T> followedBy(Iterable<T> other) =>
     this._list.followedBy(other);
 

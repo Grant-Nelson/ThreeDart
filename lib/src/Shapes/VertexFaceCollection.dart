@@ -47,15 +47,15 @@ class VertexFaceCollection {
   }
 
   /// Gets face with the given [index] from list
-  /// of the faces with this vertex as thier first vertex.
+  /// of the faces with this vertex as their first vertex.
   Face at1(int index) => this._faces1[index];
 
   /// Gets face with the given [index] from list
-  /// of the faces with this vertex as thier second vertex.
+  /// of the faces with this vertex as their second vertex.
   Face at2(int index) => this._faces2[index];
 
   /// Gets face with the given [index] from list
-  /// of the faces with this vertex as thier third vertex.
+  /// of the faces with this vertex as their third vertex.
   Face at3(int index) => this._faces3[index];
 
   /// Gets the index of the given [face].
@@ -70,17 +70,17 @@ class VertexFaceCollection {
   }
 
   /// Gets the index of the given [face] in the list
-  /// of the faces with this vertex as thier first vertex.
+  /// of the faces with this vertex as their first vertex.
   /// -1 is returned if the face isn't found.
   int indexOf1(Face face) => this._faces1.indexOf(face);
 
   /// Gets the index of the given [face] in the list
-  /// of the faces with this vertex as thier second vertex.
+  /// of the faces with this vertex as their second vertex.
   /// -1 is returned if the face isn't found.
   int indexOf2(Face face) => this._faces2.indexOf(face);
 
   /// Gets the index of the given [face] in the list
-  /// of the faces with this vertex as thier third vertex.
+  /// of the faces with this vertex as their third vertex.
   /// -1 is returned if the face isn't found.
   int indexOf3(Face face) => this._faces3.indexOf(face);
 
@@ -96,15 +96,15 @@ class VertexFaceCollection {
   }
 
   /// Runs the given function handler for every face in the vertex
-  /// which has this vertex as thier first vertex.
+  /// which has this vertex as their first vertex.
   void forEach1(void funcHndl(Face face)) => this._faces1.forEach(funcHndl);
 
   /// Runs the given function handler for every face in the vertex
-  /// which has this vertex as thier second vertex.
+  /// which has this vertex as their second vertex.
   void forEach2(void funcHndl(Face face)) => this._faces2.forEach(funcHndl);
 
   /// Runs the given function handler for every face in the vertex
-  /// which has this vertex as thier third vertex.
+  /// which has this vertex as their third vertex.
   void forEach3(void funcHndl(Face face)) => this._faces3.forEach(funcHndl);
 
   /// Removes the face with at the given index.
@@ -116,7 +116,7 @@ class VertexFaceCollection {
   }
 
   /// Removes the face with at the given index of the face from
-  /// the list of the faces with this vertex as thier first vertex.
+  /// the list of the faces with this vertex as their first vertex.
   /// The removed face is disposed and returned or null if none removed.
   Face removeAt1(int index) {
     Face face = this._faces1[index];
@@ -125,7 +125,7 @@ class VertexFaceCollection {
   }
 
   /// Removes the face with at the given index of the face from
-  /// the list of the faces with this vertex as thier second vertex.
+  /// the list of the faces with this vertex as their second vertex.
   /// The removed face is disposed and returned or null if none removed.
   Face removeAt2(int index) {
     Face face = this._faces2[index];
@@ -134,7 +134,7 @@ class VertexFaceCollection {
   }
 
   /// Removes the face with at the given index of the face from
-  /// the list of the faces with this vertex as thier third vertex.
+  /// the list of the faces with this vertex as their third vertex.
   /// The removed face is disposed and returned or null if none removed.
   Face removeAt3(int index) {
     Face face = this._faces3[index];
@@ -151,7 +151,7 @@ class VertexFaceCollection {
     return true;
   }
 
-  /// Removes all faces which match eachother based on the given matcher.
+  /// Removes all faces which match each other based on the given matcher.
   void removeRepeats(FaceMatcher matcher) {
     for (int i = this._faces1.length-1; i >= 0; --i) {
       Face faceA = this._faces1[i];

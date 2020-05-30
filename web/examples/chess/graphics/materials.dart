@@ -26,7 +26,7 @@ class Materials {
       ..color = Math.Color3(1.0, 0.9, 0.8)
       ..direction = Math.Vector3(0.0, -1.0, -0.25);
 
-    Lights.Directional bollomLight = new Lights.Directional()
+    Lights.Directional bottomLight = new Lights.Directional()
       ..color = Math.Color3(0.0, 0.1, 0.3)
       ..direction = Math.Vector3(0.0, 1.0, 0.25);
 
@@ -40,7 +40,7 @@ class Materials {
       ..environment = this._environment
       ..reflection.color = pieceReflection
       ..lights.add(topLight)
-      ..lights.add(bollomLight);
+      ..lights.add(bottomLight);
 
     this._blackPieceTech = Techniques.MaterialLight()
       ..diffuse.color = new Math.Color3.gray(0.2)
@@ -50,7 +50,7 @@ class Materials {
       ..environment = this._environment
       ..reflection.color = pieceReflection
       ..lights.add(topLight)
-      ..lights.add(bollomLight);
+      ..lights.add(bottomLight);
 
     this._selectedWhitePieceTech = Techniques.MaterialLight()
       ..diffuse.color = new Math.Color3(0.6, 0.0, 0.0)
@@ -60,7 +60,7 @@ class Materials {
       ..environment = this._environment
       ..reflection.color = pieceReflection
       ..lights.add(topLight)
-      ..lights.add(bollomLight);
+      ..lights.add(bottomLight);
 
     this._selectedBlackPieceTech = Techniques.MaterialLight()
       ..diffuse.color = new Math.Color3(0.2, 0.0, 0.0)
@@ -70,7 +70,7 @@ class Materials {
       ..environment = this._environment
       ..reflection.color = pieceReflection
       ..lights.add(topLight)
-      ..lights.add(bollomLight);
+      ..lights.add(bottomLight);
 
     this._highlightedWhitePieceTech = Techniques.MaterialLight()
       ..diffuse.color = new Math.Color3(0.5, 0.5, 0.0)
@@ -80,7 +80,7 @@ class Materials {
       ..environment = this._environment
       ..reflection.color = pieceReflection
       ..lights.add(topLight)
-      ..lights.add(bollomLight);
+      ..lights.add(bottomLight);
 
     this._highlightedBlackPieceTech = Techniques.MaterialLight()
       ..diffuse.color = new Math.Color3(0.1, 0.1, 0.0)
@@ -90,7 +90,7 @@ class Materials {
       ..environment = this._environment
       ..reflection.color = pieceReflection
       ..lights.add(topLight)
-      ..lights.add(bollomLight);
+      ..lights.add(bottomLight);
 
     Math.Color3 tileReflection = new Math.Color3.gray(0.075);
 
@@ -102,7 +102,7 @@ class Materials {
       ..environment = this._environment
       ..reflection.color = tileReflection
       ..lights.add(topLight)
-      ..lights.add(bollomLight);
+      ..lights.add(bottomLight);
 
     this._blackTileTech = Techniques.MaterialLight()
       ..diffuse.color = new Math.Color3.gray(0.2)
@@ -112,7 +112,7 @@ class Materials {
       ..environment = this._environment
       ..reflection.color = tileReflection
       ..lights.add(topLight)
-      ..lights.add(bollomLight);
+      ..lights.add(bottomLight);
 
     this._selectedWhiteTileTech = Techniques.MaterialLight()
       ..diffuse.color = new Math.Color3(0.6, 0.0, 0.0)
@@ -122,7 +122,7 @@ class Materials {
       ..environment = this._environment
       ..reflection.color = tileReflection
       ..lights.add(topLight)
-      ..lights.add(bollomLight);
+      ..lights.add(bottomLight);
 
     this._selectedBlackTileTech = Techniques.MaterialLight()
       ..diffuse.color = new Math.Color3(0.2, 0.0, 0.0)
@@ -132,7 +132,7 @@ class Materials {
       ..environment = this._environment
       ..reflection.color = tileReflection
       ..lights.add(topLight)
-      ..lights.add(bollomLight);
+      ..lights.add(bottomLight);
 
     this._highlightedWhiteTileTech = Techniques.MaterialLight()
       ..diffuse.color = new Math.Color3(0.5, 0.5, 0.0)
@@ -142,7 +142,7 @@ class Materials {
       ..environment = this._environment
       ..reflection.color = tileReflection
       ..lights.add(topLight)
-      ..lights.add(bollomLight);
+      ..lights.add(bottomLight);
 
     this._highlightedBlackTileTech = Techniques.MaterialLight()
       ..diffuse.color = new Math.Color3(0.1, 0.1, 0.0)
@@ -152,12 +152,14 @@ class Materials {
       ..environment = this._environment
       ..reflection.color = tileReflection
       ..lights.add(topLight)
-      ..lights.add(bollomLight);
+      ..lights.add(bottomLight);
 
     this._edgeTechs = new List<Techniques.MaterialLight>();
     for (int i = 0; i < 4; ++i) {
       Textures.Texture2D edgeTxt = td.textureLoader.load2DFromFile("resources/edge$i.png");
+      Textures.Texture2D edgeNorm = td.textureLoader.load2DFromFile("resources/edge${i}Normal.png");
       this._edgeTechs.add(Techniques.MaterialLight()
+        ..bump.texture2D = edgeNorm
         ..diffuse.color = new Math.Color3.gray(0.6)
         ..diffuse.texture2D = edgeTxt
         ..ambient.color = new Math.Color3.gray(0.4)
@@ -167,11 +169,11 @@ class Materials {
         ..environment = this._environment
         ..reflection.color = new Math.Color3.gray(0.1)
         ..lights.add(topLight)
-        ..lights.add(bollomLight));
+        ..lights.add(bottomLight));
     }
 
     Textures.Texture2D tableColor = td.textureLoader.load2DFromFile("resources/tableColor.png");
-    Textures.Texture2D tableSpen = td.textureLoader.load2DFromFile("resources/tableSpec.png");
+    Textures.Texture2D tableSpec = td.textureLoader.load2DFromFile("resources/tableSpec.png");
     this._tableTech = Techniques.MaterialLight()
       ..diffuse.color = new Math.Color3.gray(0.6)
       ..diffuse.texture2D = tableColor
@@ -179,12 +181,12 @@ class Materials {
       ..ambient.texture2D = tableColor
       ..specular.color = new Math.Color3.white()
       ..specular.shininess = 80.0
-      ..specular.texture2D = tableSpen
+      ..specular.texture2D = tableSpec
       ..environment = this._environment
-      ..reflection.texture2D = tableSpen
+      ..reflection.texture2D = tableSpec
       ..bump.texture2D = td.textureLoader.load2DFromFile("resources/tableNormal.png")
       ..lights.add(topLight)
-      ..lights.add(bollomLight);
+      ..lights.add(bottomLight);
   }
 
   /// Creates a new pick color technique using the given index.

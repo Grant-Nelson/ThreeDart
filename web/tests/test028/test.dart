@@ -13,7 +13,7 @@ import 'package:ThreeDart/Shaders.dart' as Shaders;
 import '../../common/common.dart' as common;
 
 void main() {
-  common.ShellPage page = new common.ShellPage("Test 028")
+  new common.ShellPage("Test 028")
     ..addLargeCanvas("testCanvas")
     ..addPar(["Test of a Gaussian blur cover pass. ",
       "Notice the depth of field causing things further away to be blurry."])
@@ -22,7 +22,7 @@ void main() {
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
   Movers.Group secondMover = new Movers.Group()
-    ..add(new Movers.UserRotater(input: td.userInput))
+    ..add(new Movers.UserRotator(input: td.userInput))
     ..add(new Movers.UserRoller(ctrl: true, input: td.userInput))
     ..add(new Movers.UserZoom(input: td.userInput))
     ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));

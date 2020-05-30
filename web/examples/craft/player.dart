@@ -3,8 +3,9 @@ part of craft;
 /// The object defining the player and view of the game.
 class Player {
   Movers.UserTranslator _trans;
-  Movers.UserRotater _rot;
+  Movers.UserRotator _rot;
   World _world;
+  Sounds _sounds;
   bool _touchingGround;
   int _selectedBlockIndex;
   NeighborBlockInfo _highlight;
@@ -22,7 +23,7 @@ class Player {
   List<ThreeDart.Entity> _blockHandEntities;
 
   /// Creates a new player for the world.
-  Player(Input.UserInput userInput, this._world) {
+  Player(Input.UserInput userInput, this._world, this._sounds) {
     userInput.lockOnClick = true;
     userInput.locked
       ..horizontalSensitivity = Constants.mouseSensitivity
@@ -60,12 +61,13 @@ class Player {
     this._trans = new Movers.UserTranslator(input: userInput)
       ..offsetX.maximumVelocity = Constants.walkSpeed
       ..offsetY.maximumVelocity = Constants.maxFallSpeed
-      ..offsetY.acceleration = Constants.gravity
+      ..offsetY.acceleration    = Constants.gravity
       ..offsetZ.maximumVelocity = Constants.walkSpeed
-      ..collisionHandle = this._handleCollide;
+      ..collisionHandle = this._handleCollide
+      ..changed.add(this._onPlayerMove);
 
     // Sets up how the player will look around.
-    this._rot = new Movers.UserRotater.flat(input: userInput, locking: true);
+    this._rot = new Movers.UserRotator.flat(input: userInput, locking: true);
     this._rot.changed.add((Events.EventArgs args) {
       this._trans.velocityRotation = new Math.Matrix3.rotateY(-this._rot.yaw.location);
     });
@@ -80,7 +82,7 @@ class Player {
     // Sets up the location for the player's hand to show the selected block value to place.
     this._handLoc = new Movers.Group([
       new Movers.Constant.translate(-0.5, -0.5, -0.5),
-      new Movers.Rotater(yaw: -0.1, deltaYaw: 0.0, deltaPitch: 0.1, deltaRoll: 0.0),
+      new Movers.Rotator(yaw: -0.1, deltaYaw: 0.0, deltaPitch: 0.1, deltaRoll: 0.0),
       new Movers.Constant.translate(0.5, 0.5, 0.5),
       new Movers.Constant.scale(0.04, -0.04, 0.04),
       new Movers.Constant.translate(-0.15, 0.06, -0.2),
@@ -108,7 +110,7 @@ class Player {
     }
     this._selectedBlockIndex = 0;
 
-    // Setup collider for handling collition detection for player.
+    // Setup collider for handling collision detection for player.
     this._collider = new Collider(this._world);
 
     // Creates the selection highlight to show which
@@ -167,19 +169,19 @@ class Player {
     this._updateHand();
   }
 
-  /// Handles when the player presses the button(s) to modify the voxal values of a chunk.
+  /// Handles when the player presses the button(s) to modify the voxel values of a chunk.
   void _onBlockChange(Events.EventArgs args) {
     Input.Key key = (args as Input.KeyEventArgs).key;
     this._changeBlock(key.code == Input.Key.keyE);
   }
 
-  /// Handles when the player clicks a mouse button to modify the voxal values of a chunk.
+  /// Handles when the player clicks a mouse button to modify the voxel values of a chunk.
   void _onClickBlockChange(Events.EventArgs args) {
     Input.Button button = (args as Input.MouseEventArgs).button;
     this._changeBlock(button.code == Input.Button.right);
   }
 
-  /// Modify the voxal values of a chunk.
+  /// Modify the voxel values of a chunk.
   /// If [setBlock] is true then the current block in the hand is set on a neighboring side to the
   /// highlight, if false then the highlighted block is set to air.
   void _changeBlock(bool setBlock) {
@@ -228,6 +230,10 @@ class Player {
 
     Chunk chunk = info.chunk;
     if (chunk != null) {
+      // Play noise for block change.
+      if (setBlock) this._sounds.playBlockSound(blockType);
+      else this._sounds.playBlockSound(info.value);
+
       // Apply the new block type.
       info.value = blockType;
 
@@ -239,10 +245,17 @@ class Player {
 
       // Indicate which chunks need to be updated.
       chunk.needUpdate = true;
-      if (info.x <= 0)                           chunk.left?.needUpdate = true;
-      if (info.z <= 0)                           chunk.back?.needUpdate = true;
+      if (info.x <= 0)                           chunk.left?.needUpdate  = true;
+      if (info.z <= 0)                           chunk.back?.needUpdate  = true;
       if (info.x >= Constants.chunkSideSize - 1) chunk.right?.needUpdate = true;
       if (info.z >= Constants.chunkSideSize - 1) chunk.front?.needUpdate = true;
+    }
+  }
+
+  /// Handles a player moving around in the world.
+  void _onPlayerMove(Events.EventArgs args) {
+    if (this._touchingGround) {
+      // TODO: Implement walking sounds
     }
   }
 
@@ -284,7 +297,7 @@ class Player {
 
   /// Updates the selection for the highlighted block that can be modified.
   void _updateHighlight(Events.EventArgs _) {
-    // Calcuates the view vector down the center of the screen out away from the player.
+    // Calculates the view vector down the center of the screen out away from the player.
     // The ray is scaled to have the maximum highlight length.
     Math.Matrix4 mat = this._playerLoc.matrix;
     Math.Ray3 playerViewTarget = new Math.Ray3.fromVector(

@@ -1,5 +1,47 @@
 part of ThreeDart.Shaders;
 
+/// Bar light uniform.
+class UniformBarLight {
+
+  /// Creates the bar light uniform.
+  UniformBarLight._(int this._index, Uniform3f this._startPnt, Uniform3f this._endPnt,
+    Uniform3f this._color, Uniform1f this._att0, Uniform1f this._att1, Uniform1f this._att2);
+
+  /// The index of this light in the list of point lights.
+  int get index => this._index;
+  int _index;
+
+  /// The point of the bars light's start location transformed by the object matrix.
+  Math.Point3 get startPoint => this._startPnt.getPoint3();
+  set startPoint(Math.Point3 pnt) => this._startPnt.setPoint3(pnt);
+  Uniform3f _startPnt;
+  
+  /// The point of the bars light's end location transformed by the object matrix.
+  Math.Point3 get endPoint => this._endPnt.getPoint3();
+  set endPoint(Math.Point3 pnt) => this._endPnt.setPoint3(pnt);
+  Uniform3f _endPnt;
+
+  /// The bar light color.
+  Math.Color3 get color => this._color.getColor3();
+  set color(Math.Color3 clr) => this._color.setColor3(clr);
+  Uniform3f _color;
+
+  /// The bar light constant attenuation.
+  double get attenuation0 => this._att0.getValue();
+  set attenuation0(double att) => this._att0.setValue(att);
+  Uniform1f _att0;
+
+  /// The bar light linear attenuation.
+  double get attenuation1 => this._att1.getValue();
+  set attenuation1(double att) => this._att1.setValue(att);
+  Uniform1f _att1;
+
+  /// The bar light quadratic attenuation.
+  double get attenuation2 => this._att2.getValue();
+  set attenuation2(double att) => this._att2.setValue(att);
+  Uniform1f _att2;
+}
+
 /// Directional light uniform.
 class UniformDirectionalLight {
 
@@ -104,7 +146,7 @@ class UniformPointLight {
   set attenuation1(double att) => this._att1.setValue(att);
   Uniform1f _att1;
 
-  /// The point light quatradic attenuation.
+  /// The point light quadratic attenuation.
   double get attenuation2 => this._att2.getValue();
   set attenuation2(double att) => this._att2.setValue(att);
   Uniform1f _att2;
@@ -191,7 +233,7 @@ class UniformSpotLight {
   set attenuation1(double att) => this._att1.setValue(att);
   Uniform1f _att1;
 
-  /// The spot light quatradic attenuation.
+  /// The spot light quadratic attenuation.
   double get attenuation2 => this._att2.getValue();
   set attenuation2(double att) => this._att2.setValue(att);
   Uniform1f _att2;

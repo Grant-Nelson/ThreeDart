@@ -112,7 +112,7 @@ class Color3 {
   ///
   /// The [i] is interpolation factor. 0.0 or less will return this color.
   /// 1.0 or more will return the [other] color. Between 0.0 and 1.0 will be
-  /// a scaled mixure of the two colors.
+  /// a scaled mixture of the two colors.
   Color3 lerp(Color3 other, double i) =>
     new Color3(lerpVal(this.red,   other.red,   i),
                lerpVal(this.green, other.green, i),

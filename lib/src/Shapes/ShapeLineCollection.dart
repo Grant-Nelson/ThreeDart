@@ -82,7 +82,7 @@ class ShapeLineCollection {
     return true;
   }
 
-  /// Removes all lines which match eachother based on the given matcher.
+  /// Removes all lines which match each other based on the given matcher.
   void removeRepeats([LineMatcher matcher = null]) {
     matcher ??= new ExactLineMatcher();
     for (int i = this._lines.length-1; i >= 0; --i) {
@@ -101,7 +101,7 @@ class ShapeLineCollection {
     }
   }
 
-  /// Removes all lines which match eachother based
+  /// Removes all lines which match each other based
   /// on the given matcher and share a vertex.
   void removeVertexRepeats([LineMatcher matcher = null]) {
     matcher ??= new ExactLineMatcher();

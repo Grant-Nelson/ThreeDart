@@ -36,7 +36,7 @@ void main() {
   ThreeDart.Entity group = new ThreeDart.Entity()
     ..children.add(objTech)
     ..mover = (new Movers.Group()
-      ..add(new Movers.UserRotater(input: td.userInput))
+      ..add(new Movers.UserRotator(input: td.userInput))
       ..add(new Movers.UserRoller(input: td.userInput, ctrl: true))
       ..add(new Movers.UserZoom(input: td.userInput)));
 

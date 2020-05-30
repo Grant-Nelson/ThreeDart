@@ -24,7 +24,7 @@ void main() {
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..shape = (Shapes.cube()..adjustNormals())
-    ..mover = new Movers.Rotater();
+    ..mover = new Movers.Rotator();
 
   Textures.Texture2D color = td.textureLoader.load2DFromFile("../resources/CtrlPnlColor.png");
   Techniques.MaterialLight tech = new Techniques.MaterialLight()

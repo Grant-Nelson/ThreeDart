@@ -22,13 +22,13 @@ class Quaternion {
   /// The real axis scalar of the quaternion.
   final double t;
 
-  /// Contructs a new [Quaternion] instance.
+  /// Constructs a new [Quaternion] instance.
   ///
-  /// [a], [b], and [c] are the scalars on the imaginary 'i', 'j', and 'k' axii repectively.
+  /// [a], [b], and [c] are the scalars on the imaginary 'i', 'j', and 'k' axii respectively.
   /// [t] is the scalar on the real axis.
   Quaternion(double this.a, double this.b, double this.c, double this.t);
 
-  /// Constructs a scaled quaterion of the given [quat] scaled by the given [scalar].
+  /// Constructs a scaled quaternion of the given [quat] scaled by the given [scalar].
   factory Quaternion.scale(Quaternion quat, double scalar) =>
     new Quaternion(quat.a*scalar, quat.b*scalar, quat.c*scalar, quat.t*scalar);
 
@@ -124,7 +124,7 @@ class Quaternion {
   ///
   /// The [i] is interpolation factor. 0.0 or less will return this quaternion.
   /// 1.0 or more will return the [other] quaternion. Between 0.0 and 1.0 will be
-  /// a scaled mixure of the two quaternions.
+  /// a scaled mixture of the two quaternions.
   Quaternion slerp(Quaternion other, double i) {
     double d = i;
     double dot = this.a*other.a + this.b*other.b + this.c*other.c + this.t*other.t;

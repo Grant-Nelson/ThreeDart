@@ -9,6 +9,7 @@ import '../Math/Math.dart' as Math;
 import '../Movers/Movers.dart' as Movers;
 import '../Textures/Textures.dart' as Textures;
 
+part 'Bar.dart';
 part 'Directional.dart';
 part 'Light.dart';
 part 'LightCollection.dart';

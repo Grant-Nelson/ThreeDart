@@ -1,7 +1,7 @@
 part of craft;
 
 /// The generator will initialize chunks to create a world test world,
-/// for cehcking collision detection, block selection and replacement, and more.
+/// for checking collision detection, block selection and replacement, and more.
 class TestGenerator implements Generator {
 
   /// The current chunk that is being worked on.
@@ -86,11 +86,11 @@ class TestGenerator implements Generator {
   }
 
   void _walls() {
-    const int offset = 2, length = 12, seperation = 4, height = 10, lowest = 10;
-    this._block(offset, lowest, offset+seperation, length, height, 1);
-    this._block(offset+seperation, lowest, offset, 1, height, length);
-    this._block(offset, lowest, offset+seperation*2, length, height, 1);
-    this._block(offset+seperation*2, lowest, offset, 1, height, length);
+    const int offset = 2, length = 12, separation = 4, height = 10, lowest = 10;
+    this._block(offset, lowest, offset+separation, length, height, 1);
+    this._block(offset+separation, lowest, offset, 1, height, length);
+    this._block(offset, lowest, offset+separation*2, length, height, 1);
+    this._block(offset+separation*2, lowest, offset, 1, height, length);
   }
 
   void _platforms() {

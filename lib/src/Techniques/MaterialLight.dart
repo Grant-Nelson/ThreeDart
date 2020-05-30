@@ -163,10 +163,10 @@ class MaterialLight extends Technique {
   /// The alpha value or scalar on the alpha texture for the material.
   MaterialLightAlphaComponent get alpha => this._alpha;
 
-  /// Gets the vertex source code used for the shader used by this techinique.
+  /// Gets the vertex source code used for the shader used by this technique.
   String get vertexSourceCode => this._shader?.vertexSourceCode;
 
-  /// Gets the fragment source code used for the shader used by this techinique.
+  /// Gets the fragment source code used for the shader used by this technique.
   String get fragmentSourceCode => this._shader?.fragmentSourceCode;
 
   /// Calculates a limit for the lights and other arrays for the shader from
@@ -176,7 +176,17 @@ class MaterialLight extends Technique {
 
   /// Creates the configuration for this shader.
   Shaders.MaterialLightConfig _config() {
-    // Collect configuration for point lights.
+
+    // Collect configuration for bar lights.
+    Map<int, int> barLightCounter = new Map<int, int>();
+    for (Lights.Bar light in this._lights.barLights)
+      barLightCounter[light.configID] = barLightCounter[light.configID]??0 + 1;
+    List<Shaders.BarLightConfig> barLights = new List<Shaders.BarLightConfig>();
+    barLightCounter.forEach((int configID, int count) =>
+      barLights.add(new Shaders.BarLightConfig(configID, this._lengthLimit(count))));
+    barLights.sort((Shaders.BarLightConfig a, Shaders.BarLightConfig b) => a.configID.compareTo(b.configID));
+
+    // Collect configuration for directional lights.
     Map<int, int> dirLightCounter = new Map<int, int>();
     for (Lights.Directional light in this._lights.directionalLights)
       dirLightCounter[light.configID] = dirLightCounter[light.configID]??0 + 1;
@@ -209,7 +219,7 @@ class MaterialLight extends Technique {
       this._fog.enabled, bendMats, this._emission.type, this._ambient.type,
       this._diffuse.type, this._invDiffuse.type, this._specular.type,
       this._bump.type, this._reflect.type, this._refract.type, this._alpha.type,
-      dirLights, pointLights, spotLights);
+      barLights, dirLights, pointLights, spotLights);
   }
 
   /// Checks if the texture is in the list and if not, sets it's index and adds it to the list.
@@ -229,7 +239,7 @@ class MaterialLight extends Technique {
     }
   }
 
-  /// Renderes the given [obj] with the current light and material for the given [state].
+  /// Renders the given [obj] with the current light and material for the given [state].
   void render(Core.RenderState state, Core.Entity obj) {
     if (this._shader == null) {
       this._shader = new Shaders.MaterialLight.cached(this._config(), state);
@@ -326,6 +336,30 @@ class MaterialLight extends Technique {
       } else if (cfg.specular.hasTxtCube) {
         this._addToTextureList(textures, this._specular.textureCube);
         this._shader.specularTextureCube = this._specular.textureCube;
+      }
+
+      if (cfg.barLights.length > 0) {
+        Map<int, int> barLightCounter = new Map<int, int>();
+        for (Lights.Bar light in this._lights.barLights) {
+          final int configID = light.configID;
+          final int index = barLightCounter[configID] ?? 0;
+          barLightCounter[configID] = index + 1;
+
+          Shaders.UniformBarLight uniform = this._shader.getBarLight(configID)[index];
+          uniform.startPoint = light.startMatrix.transPnt3(Math.Point3.zero);
+          uniform.endPoint   = light.endMatrix.transPnt3(Math.Point3.zero);
+          uniform.color = light.color;
+          if (light.enableAttenuation) {
+            uniform.attenuation0 = light.attenuation0;
+            uniform.attenuation1 = light.attenuation1;
+            uniform.attenuation2 = light.attenuation2;
+          }
+        }
+
+        for (Shaders.BarLightConfig light in cfg.barLights) {
+          final int count = barLightCounter[light.configID] ?? 0;
+          this._shader.setBarLightCount(light.configID, count);
+        }
       }
 
       if (cfg.dirLights.length > 0) {
@@ -448,7 +482,7 @@ class MaterialLight extends Technique {
     if (cfg.invViewMat)
       this._shader.inverseViewMatrix = state.inverseViewMatrix;
 
-    if (cfg.enviromental) {
+    if (cfg.environmental) {
       this._addToTextureList(textures, this._envSampler);
       this._shader.environmentTextureCube = this._envSampler;
 

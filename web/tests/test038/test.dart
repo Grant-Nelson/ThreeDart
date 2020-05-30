@@ -62,7 +62,7 @@ ThreeDart.Entity createObjects(ThreeDart.ThreeDart td) {
       ThreeDart.Entity obj = new ThreeDart.Entity()
         ..shape = shape
         ..mover = new Movers.Group([
-          new Movers.Rotater(yaw: x/10.0, pitch: z/10.0, deltaYaw: x/10.0, deltaPitch: z/10.0),
+          new Movers.Rotator(yaw: x/10.0, pitch: z/10.0, deltaYaw: x/10.0, deltaPitch: z/10.0),
           new Movers.Constant.translate(x, 0.0, z)
         ]);
       group.children.add(obj);
@@ -90,7 +90,7 @@ void main() {
 
   // Setup the First person camera
   Movers.UserTranslator trans = new Movers.UserTranslator(input: td.userInput);
-  Movers.UserRotater rot = new Movers.UserRotater.flat(input: td.userInput);
+  Movers.UserRotator rot = new Movers.UserRotator.flat(input: td.userInput);
   rot.changed.add((Events.EventArgs args) {
     trans.velocityRotation = new Math.Matrix3.rotateY(-rot.yaw.location);
   });

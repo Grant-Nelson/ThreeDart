@@ -7,7 +7,7 @@ class BumpyTechnique extends Techniques.Technique {
   double _offsetScalar;
   Events.Event _changed;
 
-  /// Creates a new bumpy test techinque technique.
+  /// Creates a new bumpy test technique technique.
   BumpyTechnique() {
     this._shader = null;
     this._txt = null;
@@ -15,7 +15,7 @@ class BumpyTechnique extends Techniques.Technique {
     this._changed = null;
   }
 
-  /// Emits an event whem the technique being changed.
+  /// Emits an event when the technique being changed.
   Events.Event get changed {
     this._changed ??= new Events.Event();
     return this._changed;
@@ -48,10 +48,10 @@ class BumpyTechnique extends Techniques.Technique {
     }
   }
 
-  /// Gets the vertex source code used for the shader used by this techinique.
+  /// Gets the vertex source code used for the shader used by this technique.
   String get vertexSourceCode => this._shader?.vertexSourceCode;
 
-  /// Gets the fragment source code used for the shader used by this techinique.
+  /// Gets the fragment source code used for the shader used by this technique.
   String get fragmentSourceCode => this._shader?.fragmentSourceCode;
 
   /// Updates this technique for the given state.
@@ -59,7 +59,7 @@ class BumpyTechnique extends Techniques.Technique {
     // Do Nothing
   }
 
-  /// Renderes the given [obj] with the current texture for the given [state].
+  /// Renders the given [obj] with the current texture for the given [state].
   void render(ThreeDart.RenderState state, ThreeDart.Entity obj) {
     this._shader ??= new BumpyShader.cached(state);
 

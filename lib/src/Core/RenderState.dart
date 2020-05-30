@@ -62,7 +62,7 @@ class RenderState {
   /// The stack of techniques.
   List<Techniques.Technique> _tech;
 
-  /// The cashe of compiled shaders.
+  /// The cache of compiled shaders.
   Map<String, Shaders.Shader> _shaderCache;
 
   /// Constructs a new render state with the given context and canvas.

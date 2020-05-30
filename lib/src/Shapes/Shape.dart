@@ -120,7 +120,7 @@ class Shape implements ShapeBuilder {
     }
   }
 
-  /// Calculates the axial alligned bounding box of the shape.
+  /// Calculates the axial aligned bounding box of the shape.
   Math.Region3 calculateAABB() {
     final int count = this._vertices.length;
     if (count <= 0) return Math.Region3.zero;
@@ -286,8 +286,8 @@ class Shape implements ShapeBuilder {
   }
 
   /// Adjust normals by summing all the normals for matching vertices.
-  /// This is similar to joinging seams because it will smooth out edges
-  /// however the edges will still have seperate vertices meaning the surface
+  /// This is similar to joining seams because it will smooth out edges
+  /// however the edges will still have separate vertices meaning the surface
   /// can have texturing without a texture seam.
   void adjustNormals([VertexMatcher matcher = null]) {
     matcher ??= new VertexLocationMatcher();
@@ -295,15 +295,15 @@ class Shape implements ShapeBuilder {
   }
 
   /// Adjust binormals by summing all the binormals for matching vertices.
-  /// This is similar to joinging seams because it will smooth out edges
-  /// however the edges will still have seperate vertices meaning the surface
+  /// This is similar to joining seams because it will smooth out edges
+  /// however the edges will still have separate vertices meaning the surface
   /// can have texturing without a texture seam.
   void adjustBinormals([VertexMatcher matcher = null]) {
     matcher ??= new VertexLocationMatcher();
     this.mergeVertices(matcher, new BinormalAdjuster());
   }
 
-  /// Flips the shape insize out.
+  /// Flips the shape inside out.
   void flip() {
     this._changed?.suspend();
     this._faces.flip();

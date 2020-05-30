@@ -1,7 +1,7 @@
 part of ThreeDart.Input;
 
 /// A group of keyboard keys for user interactions.
-class KeyGroup extends Collections.Collection<Key> implements Interactable, Events.Changable {
+class KeyGroup extends Collections.Collection<Key> implements Interactable, Events.Changeable {
   Events.Event _changed;
   UserInput _input;
   bool _pressed;
@@ -51,7 +51,7 @@ class KeyGroup extends Collections.Collection<Key> implements Interactable, Even
   /// Indicated if a contained key is pressed.
   bool get pressed => this._pressed;
 
-  /// Foreces the key release signal.
+  /// Forces the key release signal.
   /// Returns true if released, false if not pressed.
   bool release() {
     if (!this._pressed) return false;

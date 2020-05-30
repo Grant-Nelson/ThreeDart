@@ -3,8 +3,6 @@ library ThreeDart.test.test004;
 import 'package:ThreeDart/ThreeDart.dart' as ThreeDart;
 import 'package:ThreeDart/Shapes.dart' as Shapes;
 import 'package:ThreeDart/Movers.dart' as Movers;
-import 'package:ThreeDart/Math.dart' as Math;
-import 'package:ThreeDart/Lights.dart' as Lights;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import '../../common/common.dart' as common;
@@ -17,14 +15,14 @@ void main() {
       "the first, the third to the second, and so on."])
     ..addPar(["«[Back to Tests|../]"]);
 
-  Movers.Rotater rotater = new Movers.Rotater()
+  Movers.Rotator rotator = new Movers.Rotator()
     ..deltaYaw = 0.51
     ..deltaPitch = 0.71
     ..deltaRoll = 0.92;
 
   Movers.Group mover = new Movers.Group()
     ..add(new Movers.Constant.scale(0.8, 0.8, 0.8))
-    ..add(rotater);
+    ..add(rotator);
 
   Shapes.Shape shape = Shapes.toroid(minorRadius: 0.2, majorRadius: 2.0);
 

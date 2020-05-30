@@ -249,6 +249,98 @@ class _materialLightFS {
     buf.writeln("");
   }
 
+  /// Writes the bar lights to the fragment shader [buf].
+  static void _writeBarLight(MaterialLightConfig cfg, BarLightConfig light, StringBuffer buf) {
+    if (light.lightCount <= 0) return;
+    final String name = light.toString();
+    final String title = toTitleCase(name);
+
+    buf.writeln("// === ${title} ===");
+    buf.writeln("");
+    buf.writeln("struct ${title}");
+    buf.writeln("{");
+    buf.writeln("   vec3 startPnt;");
+    buf.writeln("   vec3 endPnt;");
+    buf.writeln("   vec3 color;");
+    if (light.hasAttenuation) {
+      buf.writeln("   float att0;");
+      buf.writeln("   float att1;");
+      buf.writeln("   float att2;");
+    }
+    buf.writeln("};");
+    buf.writeln("");
+    buf.writeln("uniform int ${name}Count;");
+    buf.writeln("uniform ${title} ${name}s[${light.lightCount}];");
+    buf.writeln("");
+    buf.writeln("vec3 ${name}ClosestPoint($title lit)");
+    buf.writeln("{");
+    buf.writeln("   vec3 lineVec = lit.endPnt - lit.startPnt;");
+    buf.writeln("   float lineLen2 = dot(lineVec, lineVec);");
+    buf.writeln("   if(lineLen2 <= 0.0001) return lit.startPnt;");
+    buf.writeln("   float t = dot(objPos - lit.startPnt, lineVec)/lineLen2;");
+    buf.writeln("   if(t <= 0.0) return lit.startPnt;");
+    buf.writeln("   if(t >= 1.0) return lit.endPnt;");
+    buf.writeln("   return lit.startPnt + t*lineVec;");
+    buf.writeln("}");
+    buf.writeln("");
+
+    buf.writeln("vec3 ${name}Intensity(vec3 normDir, vec3 litPnt, $title lit)");
+    buf.writeln("{");
+    if (light.hasAttenuation) {
+      buf.writeln("   float dist = length(objPos - litPnt);");
+      buf.writeln("   float attenuation = 1.0/(lit.att0 + (lit.att1 + lit.att2*dist)*dist);");
+      buf.writeln("   if(attenuation <= 0.005) return vec3(0.0, 0.0, 0.0);");
+      buf.writeln("");
+    }
+    List<String> parts = new List<String>();
+    parts.add("lit.color");
+    if (light.hasAttenuation) parts.add("attenuation");
+    buf.writeln("   return ${parts.join(" * ")};");
+    buf.writeln("}");
+    buf.writeln("");
+
+    buf.writeln("vec3 ${name}Value(vec3 norm, $title lit)");
+    buf.writeln("{");
+    parts = new List<String>();
+    if (cfg.ambient.hasAny) parts.add("ambientColor");
+    if (cfg.intense) {
+      buf.writeln("   vec3 highLight = vec3(0.0, 0.0, 0.0);");
+      parts.add("highLight");
+
+      buf.writeln("   vec3 litPnt  = ${name}ClosestPoint(lit);");
+      buf.writeln("   vec3 litView = (viewMat*vec4(litPnt, 1.0)).xyz;");
+      buf.writeln("   vec3 normDir = normalize(viewPos - litView);");
+
+      // TODO: Determine a better way to do the bar light than using closest point.
+      // It doesn't work when a normal is perpendicular to the plane when it should work.
+      // It might need some kind of integration or faking it using the best angle.
+
+      buf.writeln("   vec3 intensity = ${name}Intensity(normDir, litPnt, lit);");
+      buf.writeln("   if(length(intensity) > 0.0001) {");
+      List<String> subparts = new List<String>();
+      if (cfg.diffuse.hasAny)    subparts.add("diffuse(norm, normDir)");
+      if (cfg.invDiffuse.hasAny) subparts.add("invDiffuse(norm, normDir)");
+      if (cfg.specular.hasAny)   subparts.add("specular(norm, normDir)");
+      buf.writeln("      highLight = intensity*(${subparts.join(" + ")});");
+      buf.writeln("   }");
+    }
+    buf.writeln("   return lit.color*(${parts.join(" + ")});");
+    buf.writeln("}");
+    buf.writeln("");
+
+    buf.writeln("vec3 all${title}Values(vec3 norm)");
+    buf.writeln("{");
+    buf.writeln("   vec3 lightAccum = vec3(0.0, 0.0, 0.0);");
+    buf.writeln("   for(int i = 0; i < ${light.lightCount}; ++i)");
+    buf.writeln("   {");
+    buf.writeln("      if(i >= ${name}Count) break;");
+    buf.writeln("      lightAccum += ${name}Value(norm, ${name}s[i]);");
+    buf.writeln("   }");
+    buf.writeln("   return lightAccum;");
+    buf.writeln("}");
+    buf.writeln("");
+  }
+
   /// Writes the directional lights to the fragment shader [buf].
   static void _writeDirLight(MaterialLightConfig cfg, DirectionalLightConfig light, StringBuffer buf) {
     if (light.lightCount <= 0) return;
@@ -324,7 +416,7 @@ class _materialLightFS {
     buf.writeln("}");
     buf.writeln("");
   }
-  
+
   /// Writes the point lights to the fragment shader [buf].
   static void _writePointLight(MaterialLightConfig cfg, PointLightConfig light, StringBuffer buf) {
     if (light.lightCount <= 0) return;
@@ -591,7 +683,7 @@ class _materialLightFS {
     buf.writeln("");
   }
 
-  /// Creates the fragmant source code for the material light shader for the given configurations.
+  /// Creates the fragment source code for the material light shader for the given configurations.
   static String createFragmentSource(MaterialLightConfig cfg) {
     StringBuffer buf = new StringBuffer();
     buf.writeln("precision mediump float;");
@@ -606,6 +698,7 @@ class _materialLightFS {
     buf.writeln("");
 
     if (cfg.colorMat)   buf.writeln("uniform mat4 colorMat;");
+    if (cfg.viewMat)    buf.writeln("uniform mat4 viewMat;");
     if (cfg.invViewMat) buf.writeln("uniform mat4 invViewMat;");
     if (cfg.fog) {
       buf.writeln("uniform vec4 fogColor;");
@@ -619,8 +712,8 @@ class _materialLightFS {
     _writeDiffuse(cfg, buf);
     _writeInvDiffuse(cfg, buf);
     _writeSpecular(cfg, buf);
-    if (cfg.enviromental) {
-      buf.writeln("// === Enviromental ===");
+    if (cfg.environmental) {
+      buf.writeln("// === Environmental ===");
       buf.writeln("");
       buf.writeln("uniform samplerCube envSampler;");
       buf.writeln("");
@@ -631,12 +724,15 @@ class _materialLightFS {
     _writeAlpha(cfg, buf);
 
     if (cfg.lights) {
+      for (BarLightConfig light in cfg.barLights)
+        _writeBarLight(cfg, light, buf);
+
       for (DirectionalLightConfig light in cfg.dirLights)
         _writeDirLight(cfg, light, buf);
-      
+
       for (PointLightConfig light in cfg.pointLights)
         _writePointLight(cfg, light, buf);
-  
+
       for (SpotLightConfig light in cfg.spotLights)
         _writeSpotLight(cfg, light, buf);
 
@@ -649,7 +745,7 @@ class _materialLightFS {
     buf.writeln("{");
     buf.writeln("   float alpha = alphaValue();");
     if (cfg.norm) buf.writeln("   vec3 norm = normal();");
-    if (cfg.enviromental) {
+    if (cfg.environmental) {
       buf.writeln("   vec3 refl = reflect(normalize(viewPos), norm);");
     }
     List<String> fragParts = new List<String>();
@@ -661,11 +757,16 @@ class _materialLightFS {
       if (cfg.invDiffuse.hasAny) buf.writeln("   setInvDiffuseColor();");
       if (cfg.specular.hasAny)   buf.writeln("   setSpecularColor();");
 
+      for (BarLightConfig light in cfg.barLights) {
+        String title = toTitleCase(light.toString());
+        buf.writeln("   lightAccum += all${title}Values(norm);");
+      }
+
       for (DirectionalLightConfig light in cfg.dirLights) {
         String title = toTitleCase(light.toString());
         buf.writeln("   lightAccum += all${title}Values(norm);");
       }
-      
+
       for (PointLightConfig light in cfg.pointLights) {
         String title = toTitleCase(light.toString());
         buf.writeln("   lightAccum += all${title}Values(norm);");
@@ -690,6 +791,9 @@ class _materialLightFS {
     }
     buf.writeln("   gl_FragColor = objClr;");
     buf.writeln("}");
-    return buf.toString();
+
+    String result = buf.toString();
+    //print(numberLines(result));
+    return result;
   }
 }

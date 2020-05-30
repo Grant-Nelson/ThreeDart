@@ -77,7 +77,7 @@ class Constants {
   /// The dead leaves radius squared (curve) below a tree.
   static const int deadLeavesRadius2 = 10;
 
-  /// The size of the X and Z border around the turrain required for trees.
+  /// The size of the X and Z border around the terrain required for trees.
   static const int borderSize = 3;
 
   /// The minimum X and Z including the border, value is inclusive to the range.
@@ -96,10 +96,10 @@ class Constants {
   // World Rendering & Chunk Loading Constants
   //----------------------------------------------
 
-  /// The minimum number of blocks away from the player to always render a chunck.
+  /// The minimum number of blocks away from the player to always render a chunk.
   static const double minDrawDist2 = 10.0 * 10.0;
 
-  /// The maximum number of blocks away from the player to render before not drawing a chunck.
+  /// The maximum number of blocks away from the player to render before not drawing a chunk.
   static const double maxDrawDist2 = 80.0 * 80.0;
 
   /// The maximum chunk X and Z distance from the player to keep chunks.
@@ -146,11 +146,11 @@ class Constants {
   /// This is used for collision detection.
   static final Math.Region3 playerRegion = new Math.Region3(-0.25, -1.5, -0.25, 0.5, 1.9, 0.5);
 
-  /// The maxium volocity in which collision detection is ignored.
+  /// The maximum velocity in which collision detection is ignored.
   static const double maxCollisionSpeedSquared = 100.0;
 
   //----------------------------------------------
-  // Mathmatical Constants
+  // Mathematical Constants
   //----------------------------------------------
 
   static final Math.Vector3 topNorm    = Math.Vector3.posY;

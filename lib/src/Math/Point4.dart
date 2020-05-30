@@ -97,7 +97,7 @@ class Point4 {
   ///
   /// The [i] is interpolation factor. 0.0 or less will return this point.
   /// 1.0 or more will return the [other] point. Between 0.0 and 1.0 will be
-  /// a scaled mixure of the two points.
+  /// a scaled mixture of the two points.
   Point4 lerp(Point4 other, double i) =>
     new Point4(lerpVal(this.x, other.x, i),
                lerpVal(this.y, other.y, i),

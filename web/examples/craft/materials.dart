@@ -135,7 +135,7 @@ class Materials {
   /// The changer to animate the water.
   Textures.Texture2DChanger get waterChanger => this._waterChanger;
 
-  /// The meterial used for all the sides of the selection box.
+  /// The material used for all the sides of the selection box.
   Techniques.MaterialLight get selection => this._selection;
 
   /// The material used for the cross hair in the center of the screen.

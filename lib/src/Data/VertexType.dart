@@ -57,7 +57,7 @@ class VertexType {
   VertexType operator ~() =>
     new VertexType._(All._value & ~this._value);
 
-  /// The interal value of the vertex type.
+  /// The internal value of the vertex type.
   int get value => this._value;
 
   /// Determines if this vertex type contains the given type.

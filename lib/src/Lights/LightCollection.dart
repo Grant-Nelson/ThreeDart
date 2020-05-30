@@ -2,6 +2,7 @@ part of ThreeDart.Lights;
 
 /// A collection of lights.
 class LightCollection extends Collections.Collection<Light> {
+  List<Bar> _barLights;
   List<Directional> _dirLights;
   List<Point> _pntLights;
   List<Spot> _spotLights;
@@ -10,6 +11,7 @@ class LightCollection extends Collections.Collection<Light> {
 
   /// Creates a new light collection.
   LightCollection() {
+    this._barLights    = new List<Bar>();
     this._dirLights    = new List<Directional>();
     this._pntLights    = new List<Point>();
     this._spotLights   = new List<Spot>();
@@ -67,6 +69,9 @@ class LightCollection extends Collections.Collection<Light> {
     }
     this._onChanged(new Events.ItemsRemovedEventArgs(this, index, removed));
   }
+  
+  /// Gets the set of bar lights in this collection.
+  Iterable<Bar> get barLights => this._barLights;
 
   /// Gets the set of directional lights in this collection.
   Iterable<Directional> get directionalLights => this._dirLights;
@@ -79,6 +84,8 @@ class LightCollection extends Collections.Collection<Light> {
 
   /// Checks the given [light] is in the collection.
   bool _contains(Light light) {
+    if (light is Bar)
+      return this._barLights.contains(light);
     if (light is Directional)
       return this._dirLights.contains(light);
     if (light is Point)
@@ -90,7 +97,9 @@ class LightCollection extends Collections.Collection<Light> {
 
   /// Adds the given [light] to this collection.
   void _addOther(Light light) {
-    if (light is Directional)
+    if (light is Bar)
+      this._barLights.add(light);
+    else if (light is Directional)
       this._dirLights.add(light);
     else if (light is Point)
       this._pntLights.add(light);
@@ -100,7 +109,9 @@ class LightCollection extends Collections.Collection<Light> {
 
   /// Removes the light from the specific lists of lights.
   void _removeOther(Light light) {
-    if (light is Directional)
+    if (light is Bar)
+      this._barLights.remove(light);
+    else if (light is Directional)
       this._dirLights.remove(light);
     else if (light is Point)
       this._pntLights.remove(light);

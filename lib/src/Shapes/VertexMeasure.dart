@@ -73,7 +73,7 @@ class DirectionalVertexMeasure extends VertexMeasure {
     else this._idist2 = 1.0/dist2;
   }
 
-  /// Determins the distance from the center point of the given vertex
+  /// Determines the distance from the center point of the given vertex
   /// projected on the vector.
   double measure(Vertex ver) {
     Math.Vector3 diff = new Math.Vector3.fromPoint3(ver.location - this._center);
@@ -101,7 +101,7 @@ class ExpVertexMeasure extends VertexMeasure {
     this._divs = (divs <= 0.0)? 1.0: divs;
   }
 
-  /// Determins the distance from the center point
+  /// Determines the distance from the center point
   /// of the given vertex projected on the vector.
   double measure(Vertex ver) {
     double dist = Math.clampVal(this._measure.measure(ver));

@@ -23,16 +23,16 @@ void main() {
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
   Movers.Group firstMover =new Movers.Group()
-    ..add(new Movers.Rotater())
+    ..add(new Movers.Rotator())
     ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));
-  Views.Perspective rotaterCamera = new Views.Perspective(mover: firstMover);
+  Views.Perspective rotatorCamera = new Views.Perspective(mover: firstMover);
 
   Views.BackTarget backTarget = new Views.BackTarget(width: 512, height: 512, clearColor: false);
 
   Scenes.CoverPass skybox = new Scenes.CoverPass.skybox(
     td.textureLoader.loadCubeFromPath("../resources/maskonaive", ext: ".jpg"))
     ..target = backTarget
-    ..camera = rotaterCamera;
+    ..camera = rotatorCamera;
 
   ThreeDart.Entity firstObj = new ThreeDart.Entity()
     ..shape = Shapes.toroid();
@@ -47,13 +47,13 @@ void main() {
     ..specular.shininess = 10.0;
 
   Scenes.EntityPass firstPass = new Scenes.EntityPass()
-    ..camera = rotaterCamera
+    ..camera = rotatorCamera
     ..technique = firstTech
     ..target = backTarget
     ..children.add(firstObj);
 
   Movers.Group secondMover = new Movers.Group()
-    ..add(new Movers.UserRotater(input: td.userInput))
+    ..add(new Movers.UserRotator(input: td.userInput))
     ..add(new Movers.UserRoller(ctrl: true, input: td.userInput))
     ..add(new Movers.UserZoom(input: td.userInput))
     ..add(new Movers.Constant.translate(0.0, 0.0, 5.0));

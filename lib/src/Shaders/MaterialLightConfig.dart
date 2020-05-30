@@ -1,5 +1,29 @@
 part of ThreeDart.Shaders;
 
+/// The configuration for a specific type of bar lights
+/// that can be added to the material light shader.
+class BarLightConfig {
+
+  /// The identifier for the type of bar light this configuration is for.
+  final int configID;
+
+  /// Indicates the number of bar lights of this type.
+  final int lightCount;
+
+  /// Constructs a new bar light configuration.
+  BarLightConfig(int this.configID, int this.lightCount);
+  
+  /// Indicates if this type of bar light has light attenuation.
+  bool get hasAttenuation => (this.configID & 0x04) != 0x00;
+
+  /// Indicates if this type of bar light has either attenuation or shadow
+  /// meaning that it will require calculating distance from light.
+  bool get hasDist => (this.configID & 0x06) != 0x00;
+  
+  /// Gets the string for this bar light configuration.
+  String toString() => "barLight${this.configID}";
+}
+
 /// The configuration for a specific type of directional lights
 /// that can be added to the material light shader.
 class DirectionalLightConfig {
@@ -121,6 +145,9 @@ class MaterialLightConfig {
 
   /// The alpha color source type.
   final ColorSourceType alpha;
+  
+  /// The bar light configurations.
+  final List<BarLightConfig> barLights;
 
   /// The directional light configurations.
   final List<DirectionalLightConfig> dirLights;
@@ -134,9 +161,9 @@ class MaterialLightConfig {
   /// The total number of any type of light.
   final int totalLights;
 
-  /// Indicates there is either reflection or refration
-  /// meaning that an enviromental map is needed for this shader.
-  final bool enviromental;
+  /// Indicates there is either reflection or refraction
+  /// meaning that an environmental map is needed for this shader.
+  final bool environmental;
 
   /// Indicates that there is intense light illumination via
   /// diffuse, inverse diffuse, and specular.
@@ -154,14 +181,14 @@ class MaterialLightConfig {
   /// Indicates the projection view object matrix is needed for this shader.
   final bool projViewObjMat;
 
-  /// Indicates the view matrix is needed for this shader.
+  /// Indicates the view matrix is needed by the fragment shader.
   final bool viewMat;
 
   /// Indicates the projection view matrix is needed for this shader.
   final bool projViewMat;
 
   /// Indicates the ambient, diffuse, inverse diffuse, or specular
-  /// material compenent is used meaning lighting is needed for this shader.
+  /// material component is used meaning lighting is needed for this shader.
   /// If lighting is needed but no lights are provided a default light is used.
   final bool lights;
 
@@ -216,12 +243,13 @@ class MaterialLightConfig {
     ColorSourceType this.reflection, ColorSourceType this.refraction,
     ColorSourceType this.alpha,
 
+    List<BarLightConfig> this.barLights,
     List<DirectionalLightConfig> this.dirLights,
     List<PointLightConfig> this.pointLights,
     List<SpotLightConfig> this.spotLights,
 
     int this.totalLights,
-    bool this.enviromental, bool this.intense, bool this.invViewMat,
+    bool this.environmental, bool this.intense, bool this.invViewMat,
     bool this.objMat, bool this.viewObjMat, bool this.projViewObjMat,
     bool this.viewMat, bool this.projViewMat,
     bool this.lights, bool this.objPos,
@@ -240,6 +268,7 @@ class MaterialLightConfig {
     ColorSourceType invDiffuse, ColorSourceType specular,
     ColorSourceType bumpy, ColorSourceType reflection,
     ColorSourceType refraction, ColorSourceType alpha,
+    List<BarLightConfig> barLights,
     List<DirectionalLightConfig> dirLights,
     List<PointLightConfig> pointLights,
     List<SpotLightConfig> spotLights) {
@@ -262,6 +291,12 @@ class MaterialLightConfig {
     buf.write(fog?        "1": "0");
     buf.write("_");
     buf.write(bendMats);
+    
+    if (barLights.length > 0) {
+      buf.write("_Bar");
+      for (BarLightConfig light in barLights)
+        buf.write("_${light.configID}");
+    }
 
     if (dirLights.length > 0) {
       buf.write("_Dir");
@@ -284,6 +319,10 @@ class MaterialLightConfig {
 
     int totalLights = 0;
     bool objPos = fog;
+    for (BarLightConfig light in barLights) {
+      totalLights += light.lightCount;
+      objPos = true;
+    }
     for (DirectionalLightConfig light in dirLights) {
       totalLights += light.lightCount;
       objPos = true;
@@ -297,13 +336,15 @@ class MaterialLightConfig {
       objPos = true;
     }
 
-    bool enviromental = reflection.hasAny || refraction.hasAny;
-    bool invViewMat = enviromental;
+    bool environmental = reflection.hasAny || refraction.hasAny;
+    bool invViewMat = environmental;
+    bool hasBar = barLights.length > 0;
     bool lights = ambient.hasAny || diffuse.hasAny ||
                   invDiffuse.hasAny || specular.hasAny;
-    bool viewPos = (specular.hasAny) || (pointLights.length > 0) || enviromental;
+    bool viewPos = (specular.hasAny) || hasBar ||
+                   (pointLights.length > 0) || environmental;
     bool intense = diffuse.hasAny || invDiffuse.hasAny || specular.hasAny;;
-    bool norm = intense || bumpy.hasAny || enviromental;
+    bool norm = intense || bumpy.hasAny || environmental;
     bool binm = bumpy.hasAny;
     bool txt2D = emission.hasTxt2D || ambient.hasTxt2D || diffuse.hasTxt2D ||
                  invDiffuse.hasTxt2D || specular.hasTxt2D || bumpy.hasTxt2D ||
@@ -316,7 +357,7 @@ class MaterialLightConfig {
     bool bending = bendMats > 0;
     bool objMat  = objPos;
     bool viewObjMat = norm || binm || viewPos || fog;
-    bool viewMat        = false;
+    bool viewMat        = hasBar && intense;
     bool projViewObjMat = true;
     bool projViewMat    = false;
     txt2DMat   = txt2DMat   && txt2D;
@@ -331,8 +372,8 @@ class MaterialLightConfig {
 
     return new MaterialLightConfig._(emission, ambient,
       diffuse, invDiffuse, specular, bumpy, reflection, refraction,
-      alpha, dirLights, pointLights, spotLights,
-      totalLights, enviromental, intense,
+      alpha, barLights, dirLights, pointLights, spotLights,
+      totalLights, environmental, intense,
       invViewMat, objMat, viewObjMat, projViewObjMat,
       viewMat, projViewMat, lights, objPos, viewPos,
       norm, binm, txt2D, txtCube, bending, txt2DMat, txtCubeMat,
@@ -343,7 +384,7 @@ class MaterialLightConfig {
   String createVertexSource() =>
     _materialLightVS.createVertexSource(this);
 
-  /// Creates the fragmant source code for the material light shader for the given configurations.
+  /// Creates the fragment source code for the material light shader for the given configurations.
   String createFragmentSource() =>
     _materialLightFS.createFragmentSource(this);
 

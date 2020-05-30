@@ -17,7 +17,7 @@ void main() {
 
   ThreeDart.Entity obj = new ThreeDart.Entity()
     ..shape = Shapes.toroid()
-    ..mover = new Movers.Rotater();
+    ..mover = new Movers.Rotator();
 
   Techniques.MaterialLight tech = new Techniques.MaterialLight()
     ..lights.add(new Lights.Directional(
