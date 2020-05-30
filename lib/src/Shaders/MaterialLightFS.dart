@@ -586,7 +586,13 @@ class _materialLightFS {
     buf.writeln("   float zScale = dot(normDir, lit.objDir);");
     buf.writeln("   if(zScale < 0.0) return vec3(0.0, 0.0, 0.0);");
     if (light.hasCutOff) {
-      buf.writeln("   float angle = acos(zScale);");
+      // TODO: On some Mac's `acos` doesn't work correctly. We should probably
+      // add some kind of switch to allow adjustments based on environment differences.
+      // Until then use `atan` to get the angle instead of `acos`.
+      buf.writeln("   float crossMag = length(cross(normDir, lit.objDir));");
+      buf.writeln("   float angle = atan(crossMag, zScale);");
+      // buf.writeln("   float angle = acos(zScale);");
+
       buf.writeln("   float scale = (lit.cutoff-angle) / (lit.cutoff-lit.coneAngle);");
       buf.writeln("   if(scale <= 0.0) return vec3(0.0, 0.0, 0.0);");
       buf.writeln("   if(scale >= 1.0) scale = 1.0;");

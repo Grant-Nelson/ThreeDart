@@ -12,8 +12,9 @@ import '../../common/common.dart' as common;
 void main() {
   common.ShellPage page = new common.ShellPage("Test 048")
     ..addLargeCanvas("testCanvas")
-    ..addPar(["Test of the Material Lighting shader with multiple moving point lights. ",
-      "Emissive spheres are added at the lights sources."])
+    ..addPar(["Test of the Material Lighting shader with a bar light. ",
+      "The bar light hasn't been finished yet so this test is more of a ",
+      "testbed for it's development."])
     ..addControlBoxes(["shapes"])
     ..addPar(["«[Back to Tests|../]"]);
 
