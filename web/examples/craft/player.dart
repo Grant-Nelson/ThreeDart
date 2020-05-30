@@ -5,6 +5,7 @@ class Player {
   Movers.UserTranslator _trans;
   Movers.UserRotator _rot;
   World _world;
+  Sounds _sounds;
   bool _touchingGround;
   int _selectedBlockIndex;
   NeighborBlockInfo _highlight;
@@ -22,7 +23,7 @@ class Player {
   List<ThreeDart.Entity> _blockHandEntities;
 
   /// Creates a new player for the world.
-  Player(Input.UserInput userInput, this._world) {
+  Player(Input.UserInput userInput, this._world, this._sounds) {
     userInput.lockOnClick = true;
     userInput.locked
       ..horizontalSensitivity = Constants.mouseSensitivity
@@ -60,9 +61,10 @@ class Player {
     this._trans = new Movers.UserTranslator(input: userInput)
       ..offsetX.maximumVelocity = Constants.walkSpeed
       ..offsetY.maximumVelocity = Constants.maxFallSpeed
-      ..offsetY.acceleration = Constants.gravity
+      ..offsetY.acceleration    = Constants.gravity
       ..offsetZ.maximumVelocity = Constants.walkSpeed
-      ..collisionHandle = this._handleCollide;
+      ..collisionHandle = this._handleCollide
+      ..changed.add(this._onPlayerMove);
 
     // Sets up how the player will look around.
     this._rot = new Movers.UserRotator.flat(input: userInput, locking: true);
@@ -228,6 +230,10 @@ class Player {
 
     Chunk chunk = info.chunk;
     if (chunk != null) {
+      // Play noise for block change.
+      if (setBlock) this._sounds.playBlockSound(blockType);
+      else this._sounds.playBlockSound(info.value);
+
       // Apply the new block type.
       info.value = blockType;
 
@@ -239,10 +245,17 @@ class Player {
 
       // Indicate which chunks need to be updated.
       chunk.needUpdate = true;
-      if (info.x <= 0)                           chunk.left?.needUpdate = true;
-      if (info.z <= 0)                           chunk.back?.needUpdate = true;
+      if (info.x <= 0)                           chunk.left?.needUpdate  = true;
+      if (info.z <= 0)                           chunk.back?.needUpdate  = true;
       if (info.x >= Constants.chunkSideSize - 1) chunk.right?.needUpdate = true;
       if (info.z >= Constants.chunkSideSize - 1) chunk.front?.needUpdate = true;
+    }
+  }
+
+  /// Handles a player moving around in the world.
+  void _onPlayerMove(Events.EventArgs args) {
+    if (this._touchingGround) {
+      // TODO: Implement walking sounds
     }
   }
 

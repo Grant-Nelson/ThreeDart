@@ -11,6 +11,7 @@ import 'package:ThreeDart/Data.dart' as Data;
 import 'package:ThreeDart/Input.dart' as Input;
 import 'package:ThreeDart/Events.dart' as Events;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
+import 'package:ThreeDart/Audio.dart' as Audio;
 
 import 'package:OpenSimplexNoiseDart/OpenSimplexNoise.dart' as simplex;
 
@@ -34,6 +35,7 @@ part 'neighborBlockInfo.dart';
 part 'player.dart';
 part 'randomGenerator.dart';
 part 'shaper.dart';
+part 'sounds.dart';
 part 'testGenerator.dart';
 part 'world.dart';
 
@@ -81,7 +83,8 @@ void startCraft() {
   Materials mats = new Materials(td);
   Generator gen = _getGenerator();
   World world = new World(mats, gen);
-  Player player = new Player(td.userInput, world);
+  Sounds sounds = new Sounds(td.audioLoader);
+  Player player = new Player(td.userInput, world, sounds);
 
   Scenes.EntityPass scene = new Scenes.EntityPass(
     clearColor: new Math.Color4(0.576, 0.784, 0.929))
