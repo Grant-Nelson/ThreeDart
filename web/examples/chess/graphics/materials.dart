@@ -157,7 +157,9 @@ class Materials {
     this._edgeTechs = new List<Techniques.MaterialLight>();
     for (int i = 0; i < 4; ++i) {
       Textures.Texture2D edgeTxt = td.textureLoader.load2DFromFile("resources/edge$i.png");
+      Textures.Texture2D edgeNorm = td.textureLoader.load2DFromFile("resources/edge${i}Normal.png");
       this._edgeTechs.add(Techniques.MaterialLight()
+        ..bump.texture2D = edgeNorm
         ..diffuse.color = new Math.Color3.gray(0.6)
         ..diffuse.texture2D = edgeTxt
         ..ambient.color = new Math.Color3.gray(0.4)
