@@ -20,6 +20,7 @@ import '../Textures/Textures.dart' as Textures;
 part 'Bindable.dart';
 part 'Entity.dart';
 part 'EntityEventArgs.dart';
+part 'Environment.dart';
 part 'RenderState.dart';
 part 'StateEventArgs.dart';
 part 'ThreeDart.dart';

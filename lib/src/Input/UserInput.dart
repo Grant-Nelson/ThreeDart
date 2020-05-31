@@ -13,6 +13,7 @@ class UserInput {
   bool _pointerLocked;
   html.MouseEvent _msEventOnLock;
   List<async.StreamSubscription<Object>> _eventStreams;
+  double _wheelScalar;
 
   /// Creates a new user input for the given [_elem].
   UserInput(this._elem) {
@@ -25,7 +26,8 @@ class UserInput {
     this._pointerLocked = false;
     this._msEventOnLock = null;
     this._eventStreams = new List<async.StreamSubscription<Object>>();
-
+    this._wheelScalar = (Core.Environment.browser == Core.Browser.firefox)? 1.0/6.0: 1.0/180.0;
+  
     this._eventStreams.add(html.document.onContextMenu.listen(this._onContentMenu));
     this._eventStreams.add(this._elem.onFocus.listen(this._onFocus));
     this._eventStreams.add(this._elem.onBlur.listen(this._onBlur));
@@ -271,7 +273,7 @@ class UserInput {
   /// Handles the mouse wheel being moved over the canvas.
   void _onMouseWheel(html.WheelEvent msEvent) {
     this._setMouseModifiers(msEvent);
-    final Math.Vector2 wheel = new Math.Vector2(msEvent.deltaX, msEvent.deltaY)/180.0;
+    final Math.Vector2 wheel = new Math.Vector2(msEvent.deltaX, msEvent.deltaY)*this._wheelScalar;
 
     if (this._pointerLocked) {
       if (this._locked.performWheel(wheel))
