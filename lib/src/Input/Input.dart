@@ -3,6 +3,7 @@ library ThreeDart.Input;
 import 'dart:html' as html;
 import 'dart:async' as async;
 
+import '../Core/Core.dart' as Core;
 import '../Collections/Collections.dart' as Collections;
 import '../Events/Events.dart' as Events;
 import '../Math/Math.dart' as Math;
