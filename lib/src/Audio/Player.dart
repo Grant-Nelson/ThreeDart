@@ -5,12 +5,21 @@ class Player {
   html.AudioElement _elem;
   bool _loaded;
   Events.Event _changed;
+  Events.Event _onPlaying;
+  Events.Event _onPause;
 
   /// Creates a new audio player.
   Player._(html.AudioElement this._elem) {
-    this._loaded = false;
+    this._loaded  = false;
     this._changed = null;
+    this._onPlaying  = null;
+    this._onPause = null;
+    this._elem.onPlaying.listen(this._onElemPlaying);
+    this._elem.onPause.listen(this._onElemPause);
   }
+
+  /// Create a copy of this audio player.
+  Player copy() => new Player._(this._elem.clone(true));
 
   /// Sets the loaded state for this audio.
   void _setLoaded() {
@@ -19,6 +28,12 @@ class Player {
       this._changed?.emit();
     }
   }
+
+  /// Handles the audio element playing.
+  void _onElemPlaying(html.Event _) => this._onPlaying?.emit();
+
+  /// Handles the audio element pausing.
+  void _onElemPause(html.Event _) => this._onPause?.emit();
 
   /// The loaded state of the audio.
   bool get loaded => this._loaded;
@@ -58,7 +73,12 @@ class Player {
   }
 
   /// Plays this audio.
-  void play() => this._elem.play();
+  void play({double volume = null, double rate = null, bool loop = null}) {
+    if (volume != null) this.volume = volume;
+    if (rate   != null) this.rate   = rate;
+    if (loop   != null) this.loop   = loop;
+    this._elem.play();
+  }
   
   /// Pauses the audio.
   void pause() => this._elem.pause();
@@ -67,5 +87,17 @@ class Player {
   Events.Event get changed {
     this._changed ??= new Events.Event();
     return this._changed;
+  }
+
+  /// Emitted when the audio starts playing.
+  Events.Event get onPlaying {
+    this._onPlaying ??= new Events.Event();
+    return this._onPlaying;
+  }
+
+  /// Emitted when the audio has paused.
+  Events.Event get onPause {
+    this._onPause ??= new Events.Event();
+    return this._onPause;
   }
 }

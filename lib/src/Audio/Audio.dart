@@ -6,4 +6,5 @@ import '../Events/Events.dart' as Events;
 import '../Math/Math.dart' as Math;
 
 part 'AudioLoader.dart';
+part 'MultiPlayer.dart';
 part 'Player.dart';
