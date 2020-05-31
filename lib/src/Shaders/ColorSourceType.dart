@@ -3,7 +3,7 @@ part of ThreeDart.Shaders;
 /// A description of what kind of source the color comes from.
 class ColorSourceType {
   
-  /// Indicates that the source color has a solid value such as a float or RBG color.
+  /// Indicates that the source color has a solid value such as a float or RGB color.
   final bool hasSolid;
 
   /// Indicates that the source color comes from a 2D texture.

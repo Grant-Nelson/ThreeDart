@@ -82,7 +82,7 @@ void main() {
                                 });
                               })
     ..add("Cylinder",      () { secondObj.shape = Shapes.cylinder(sides: 30); })
-    ..add("Cone",          () { secondObj.shape = Shapes.cylinder(topRadius: 0.0, sides: 30, capTop: false); })
+    ..add("Cone",          () { secondObj.shape = Shapes.cylinder(topRadius: 0.0, sides: 30, div: 5, capTop: false); })
     ..add("Cylindrical",   () { secondObj.shape = Shapes.cylindrical(sides: 50, div: 25,
                                 radiusHndl: (double u, double v) => cos(v*4.0*Math.PI + Math.PI)*0.2 + cos(u*6.0*Math.PI)*0.3 + 0.8); })
     ..add("Sphere",        () { secondObj.shape = Shapes.sphere(widthDiv: 6, heightDiv: 6); })
