@@ -1,5 +1,7 @@
 library ThreeDart.Octtree;
 
+import '../Math/Math.dart' as Math;
+
 part 'Branch.dart';
 part 'Leaf.dart';
 part 'Node.dart';
@@ -7,18 +9,16 @@ part 'Pass.dart';
 part 'Path.dart';
 
 class Octtree {
-
-  final double maxSize;
-  final double xOffset;
-  final double yOffset;
-  final double zOffset;
+  final Math.Cube maxCube;
 
   Node _root;
   Path _rootPath;
-
-  Octtree({this.maxSize = 10000.0, this.xOffset = -5000.0, this.yOffset = -5000.0, this.zOffset = -5000.0}) {
+  
+  Octtree._(this.maxCube) {
     this._root = null;
     this._rootPath = null;
   }
 
+  factory Octtree({Math.Cube maxCube = null}) =>
+    new Octtree._(new Math.Cube(-5000.0, -5000.0, -5000.0, 10000.0));
 }

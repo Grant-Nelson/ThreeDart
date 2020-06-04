@@ -132,16 +132,16 @@ class Region2 {
   }
 
   /// The minimum side of the region.
-  double get minSide {
-    if (this.dx > this.dy) return this.dy;
-    else return this.dx;
-  }
+  double get minSide =>
+    (this.dx > this.dy)? this.dy: this.dx;
 
   /// The maximum side of the region.
-  double get maxSide {
-    if (this.dx > this.dy) return this.dx;
-    else return this.dy;
-  }
+  double get maxSide =>
+    (this.dx > this.dy)? this.dx: this.dy;
+
+  /// Indicates if the region is a square, ie has equal dx and dy.
+  bool get isSquare =>
+    Comparer.equals(this.dx, this.dy);
 
   /// Gets the adjusted point of the given [raw] point.
   /// This point is normalized into the region.

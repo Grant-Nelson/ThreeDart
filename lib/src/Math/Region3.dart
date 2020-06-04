@@ -162,6 +162,10 @@ class Region3 {
     return 0.0;
   }
 
+  /// Indicates if the region is a cube, ie has equal dx, dy, and dz.
+  bool get isCube =>
+    Comparer.equals(this.dx, this.dy) && Comparer.equals(this.dx, this.dz);
+
   /// The minimum side of the region.
   double get minSide {
     double side = this.dx;

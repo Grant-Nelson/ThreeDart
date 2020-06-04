@@ -1,19 +1,25 @@
 part of ThreeDart.Octtree;
 
+/// The path to a node in the octtree.
 class Path {
+  static const int maxDepth = 52;
+
   final int _x;
   final int _y;
   final int _z;
   final int _depth;
 
-  factory Path.fromPoint(double x, double y, double z, double xOffset, double yOffset, double zOffset, double maxSize) =>
-    new Path._(((x - xOffset)/maxSize).round(), ((y - yOffset)/maxSize).round(), ((z - zOffset)/maxSize).round(), 63);
+  factory Path.fromPoint(double x, double y, double z, Math.Cube maxCube) =>
+    new Path._(
+      ((x - maxCube.x)/maxCube.size).round(),
+      ((y - maxCube.y)/maxCube.size).round(),
+      ((z - maxCube.z)/maxCube.size).round(), maxDepth);
 
   factory Path(int x, int y, int z, int depth) {
     if (x < 0 || y < 0 || z < 0)
       throw new Exception("A path must have positive coordinate ($x, $y, $z)");
-    if (depth < 0 || depth >= 64)
-      throw new Exception("A path's depth must be between 0 and 63 inclusively ($depth)");
+    if (depth < 0 || depth >= maxDepth)
+      throw new Exception("A path's depth must be between 0 and $maxDepth inclusively ($depth)");
     return new Path._(x, y, z, depth);
   }
 
