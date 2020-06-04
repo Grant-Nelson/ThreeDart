@@ -1,7 +1,6 @@
-part of ThreeDart.Shapes.Octtree;
+part of ThreeDart.Octtree;
 
 class Path {
-
   final int _x;
   final int _y;
   final int _z;

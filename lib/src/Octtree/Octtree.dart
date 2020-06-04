@@ -1,4 +1,4 @@
-library ThreeDart.Shapes.Octtree;
+library ThreeDart.Octtree;
 
 part 'Branch.dart';
 part 'Leaf.dart';
