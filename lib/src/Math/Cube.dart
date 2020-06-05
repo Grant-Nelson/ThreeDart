@@ -1,7 +1,7 @@
 part of ThreeDart.Math;
 
 /// A math structure for storing a 3D region with equal width, depth, and height.
-/// This is used when defining cubes of spaces like needed by an Octtree.
+/// This is used when defining cubes of spaces like needed by an Octree.
 class Cube {
 
   /// Gets a [Cube] at the origin.

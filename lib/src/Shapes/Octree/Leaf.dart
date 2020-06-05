@@ -1,4 +1,4 @@
-part of ThreeDart.Octtree;
+part of ThreeDart.Shapes.Octree;
 
 /// A leaf node to contain all vertices which are near
 /// and equal to this node's coordinates.

@@ -1,4 +1,4 @@
-part of ThreeDart.Octtree;
+part of ThreeDart.Shapes.Octree;
 
 /// A branch is a node in the tree which contains one or more children.
 class Branch extends Node {

@@ -1,6 +1,6 @@
-part of ThreeDart.Octtree;
+part of ThreeDart.Shapes.Octree;
 
-/// The node is the base type for an octtree.
+/// The node is the base type for an octree.
 class Node {
   Node _parent;
 

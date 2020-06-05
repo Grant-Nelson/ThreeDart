@@ -1,6 +1,6 @@
-part of ThreeDart.Octtree;
+part of ThreeDart.Shapes.Octree;
 
-/// The path to a node in the octtree.
+/// The path to a node in the octree.
 class Path {
   static const int maxDepth = 52;
 

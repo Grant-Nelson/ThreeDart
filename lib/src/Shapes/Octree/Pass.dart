@@ -1,4 +1,4 @@
-part of ThreeDart.Octtree;
+part of ThreeDart.Shapes.Octree;
 
 class Pass extends Node {
 
