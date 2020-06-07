@@ -1,4 +1,4 @@
-part of ThreeDart.Shapes;
+part of ThreeDart.Shapes.Shared;
 
 /// A matcher used to match lines.
 abstract class LineMatcher {

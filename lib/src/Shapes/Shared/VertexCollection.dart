@@ -1,13 +1,13 @@
-part of ThreeDart.Shapes;
+part of ThreeDart.Shapes.Shared;
 
 /// A collection of vertices for the shapes.
 class VertexCollection {
-  Shape _shape;
+  BaseShape _shape;
   bool _indicesNeedUpdate;
   List<Vertex> _vertices;
 
   /// Creates a new vertex collection of a shape.
-  VertexCollection._(Shape this._shape) {
+  VertexCollection._(BaseShape this._shape) {
     this._indicesNeedUpdate = false;
     this._vertices = new List<Vertex>();
   }

@@ -1,4 +1,4 @@
-part of ThreeDart.Shapes;
+part of ThreeDart.Shapes.Shared;
 
 /// A merger for joining or manipulating vertices.
 abstract class VertexMerger {

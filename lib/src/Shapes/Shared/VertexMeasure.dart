@@ -1,4 +1,4 @@
-part of ThreeDart.Shapes;
+part of ThreeDart.Shapes.Shared;
 
 /// A tool for measuring a distance to a vertex.
 abstract class VertexMeasure {

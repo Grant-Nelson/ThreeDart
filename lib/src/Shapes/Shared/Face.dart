@@ -1,4 +1,4 @@
-part of ThreeDart.Shapes;
+part of ThreeDart.Shapes.Shared;
 
 /// A face is a filled triangle defined by three vertices.
 class Face {

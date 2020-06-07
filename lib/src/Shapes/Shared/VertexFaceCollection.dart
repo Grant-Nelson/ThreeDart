@@ -1,4 +1,4 @@
-part of ThreeDart.Shapes;
+part of ThreeDart.Shapes.Shared;
 
 /// A collection of faces for a vertex.
 class VertexFaceCollection {
@@ -18,7 +18,7 @@ class VertexFaceCollection {
   Vertex get vertex => this._vertex;
 
   /// The shape which owns the vertex which owns this collection.
-  Shape get shape => this._vertex._shape;
+  BaseShape get shape => this._vertex._shape;
 
   /// Determines if the vertex contains any faces or not.
   bool get isEmpty => this._faces1.isEmpty && this._faces2.isEmpty && this._faces3.isEmpty;

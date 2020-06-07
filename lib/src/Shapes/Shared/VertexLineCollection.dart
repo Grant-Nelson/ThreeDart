@@ -1,4 +1,4 @@
-part of ThreeDart.Shapes;
+part of ThreeDart.Shapes.Shared;
 
 /// A collection of lines for a vertex.
 class VertexLineCollection {
@@ -16,7 +16,7 @@ class VertexLineCollection {
   Vertex get vertex => this._vertex;
 
   /// The shape which owns the vertex which owns this collection.
-  Shape get shape => this._vertex._shape;
+  BaseShape get shape => this._vertex._shape;
 
   /// Adds a line from this vertex to the given vertex.
   Line addLineTo(Vertex vertex) {

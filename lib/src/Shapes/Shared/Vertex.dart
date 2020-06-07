@@ -1,8 +1,8 @@
-part of ThreeDart.Shapes;
+part of ThreeDart.Shapes.Shared;
 
 /// A vertex of a shape with all of the renderable elements it is used.
 class Vertex {
-  Shape _shape;
+  BaseShape _shape;
 
   VertexPointCollection _points;
   VertexLineCollection _lines;
@@ -68,7 +68,7 @@ class Vertex {
   }
 
   /// The shape the vertex belongs to.
-  Shape get shape => this._shape;
+  BaseShape get shape => this._shape;
 
   /// The points which use this vertex.
   VertexPointCollection get points => this._points;
@@ -81,7 +81,7 @@ class Vertex {
 
   /// The index of this vertex in the shape.
   int get index {
-    this._shape._vertices._updateIndices();
+    this._shape.updateVertexIndices();
     return this._index;
   }
 

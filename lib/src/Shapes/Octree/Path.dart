@@ -2,30 +2,29 @@ part of ThreeDart.Shapes.Octree;
 
 /// The path to a node in the octree.
 class Path {
-  static const int maxDepth = 52;
-
   final int _x;
   final int _y;
   final int _z;
-  final int _depth;
 
-  factory Path.fromPoint(double x, double y, double z, Math.Cube maxCube) =>
+  factory Path.fromPoint(Math.Point3 loc, Math.Cube maxCube) =>
     new Path._(
-      ((x - maxCube.x)/maxCube.size).round(),
-      ((y - maxCube.y)/maxCube.size).round(),
-      ((z - maxCube.z)/maxCube.size).round(), maxDepth);
+      ((loc.x - maxCube.x)/maxCube.size).round(),
+      ((loc.y - maxCube.y)/maxCube.size).round(),
+      ((loc.z - maxCube.z)/maxCube.size).round());
 
   factory Path(int x, int y, int z, int depth) {
     if (x < 0 || y < 0 || z < 0)
       throw new Exception("A path must have positive coordinate ($x, $y, $z)");
-    if (depth < 0 || depth >= maxDepth)
-      throw new Exception("A path's depth must be between 0 and $maxDepth inclusively ($depth)");
-    return new Path._(x, y, z, depth);
+    return new Path._(x, y, z);
   }
 
-  Path._(this._x, this._y, this._z, this._depth);
+  Path._(this._x, this._y, this._z);
 
-  int get depth => this._depth;
+  Math.Point3 location(Math.Cube maxCube) =>
+    new Math.Point3(
+      this._x * maxCube.size + maxCube.x,
+      this._y * maxCube.size + maxCube.y,
+      this._z * maxCube.size + maxCube.z);
 
   int childIndexAt(int index) {
     int mask = 1 << index;
