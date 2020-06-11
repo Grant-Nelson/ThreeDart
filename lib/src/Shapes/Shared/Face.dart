@@ -26,16 +26,13 @@ class Face {
     this._setVertex1(ver1);
     this._setVertex2(ver2);
     this._setVertex3(ver3);
-    this._ver1._shape._faces._faces.add(this);
-    this._ver1._shape.onFaceAdded(this);
+    this._ver1._shape.internalAddFace(this);
   }
 
   /// Disposes this face.
   void dispose() {
-    if (!this.disposed) {
-      this._ver1._shape._faces._faces.remove(this);
-      this._ver1._shape.onFaceRemoved(this);
-    }
+    if (!this.disposed)
+      this._ver1._shape.internalRemoveFace(this);
     this._removeVertex1();
     this._removeVertex2();
     this._removeVertex3();

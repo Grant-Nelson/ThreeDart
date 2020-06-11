@@ -12,7 +12,7 @@ class VertexPointCollection {
   Vertex get vertex => this._vertex;
 
   /// The shape which owns the vertex which owns this collection.
-  Shape get shape => this._vertex._shape;
+  BaseShape get shape => this._vertex._shape;
 
   /// Adds a point to this vertex.
   Point add() {

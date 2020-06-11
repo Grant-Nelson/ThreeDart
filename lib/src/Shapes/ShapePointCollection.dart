@@ -55,7 +55,7 @@ class ShapePointCollection {
   /// Returns true if point was removed, false otherwise.
   bool remove(Point point) {
     if (point == null) return false;
-    if (point._ver._shape != this.shape) return false;
+    if (point.vertex.shape != this.shape) return false;
     point.dispose();
     return true;
   }

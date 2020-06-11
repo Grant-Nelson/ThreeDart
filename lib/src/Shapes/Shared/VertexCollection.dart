@@ -13,7 +13,7 @@ class VertexCollection {
   }
 
   /// Updates the indices of all vertices.
-  void _updateIndices() {
+  void updateIndices() {
     if (this._indicesNeedUpdate) {
       int index = 0;
       int count = this._vertices.length;
@@ -151,7 +151,7 @@ class VertexCollection {
 
   /// Gets the formatted string for all the vertices with and optional [indent].
   String format([String indent = ""]) {
-    this._updateIndices();
+    this.updateIndices();
     List<String> parts = new List<String>();
     for (Vertex vertex in this._vertices) {
       parts.add(vertex.format(indent));

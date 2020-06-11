@@ -77,7 +77,7 @@ class ShapeLineCollection {
   /// Returns true if line was removed, false otherwise.
   bool remove(Line line) {
     if (line == null) return false;
-    if (line._ver1._shape != this.shape) return false;
+    if (line.vertex1.shape != this.shape) return false;
     line.dispose();
     return true;
   }
@@ -107,11 +107,11 @@ class ShapeLineCollection {
     matcher ??= new ExactLineMatcher();
     for (int k = this._shape.vertices.length-1; k >= 0; --k) {
       Vertex ver = this._shape.vertices[k];
-      for (int i = ver._lines.length-1; i >= 0; --i) {
-        Line lineA = ver._lines[i];
+      for (int i = ver.lines.length-1; i >= 0; --i) {
+        Line lineA = ver.lines[i];
         if (lineA != null) {
           for (int j = i - 1; j >= 0; --j) {
-            Line lineB = ver._lines[j];
+            Line lineB = ver.lines[j];
             if (lineB != null) {
               if (matcher.matches(lineA, lineB)) {
                 lineA.dispose();

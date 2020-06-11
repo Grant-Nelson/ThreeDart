@@ -17,16 +17,13 @@ class Line {
       throw new Exception("May not create a line with vertices attached to different shapes.");
     this._setVertex1(ver1);
     this._setVertex2(ver2);
-    this._ver1._shape._lines._lines.add(this);
-    this._ver1._shape.onLineAdded(this);
+    this._ver1._shape.internalAddLine(this);
   }
 
   /// Disposes this line.
   void dispose() {
-    if (!this.disposed) {
-      this._ver1._shape._lines._lines.remove(this);
-      this._ver1._shape.onLineRemoved(this);
-    }
+    if (!this.disposed)
+      this._ver1._shape.internalRemoveLine(this);
     this._removeVertex1();
     this._removeVertex2();
   }

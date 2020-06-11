@@ -2,6 +2,7 @@ library ThreeDart.Shapes.Shared;
 
 import 'dart:math';
 
+import '../../Events/Events.dart' as Events;
 import '../../Data/Data.dart' as Data;
 import '../../Math/Math.dart' as Math;
 

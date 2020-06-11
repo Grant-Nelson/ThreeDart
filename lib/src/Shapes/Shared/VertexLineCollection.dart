@@ -22,7 +22,7 @@ class VertexLineCollection {
   Line addLineTo(Vertex vertex) {
     if (this._vertex.shape == null)
       throw new Exception("May not add a line to a vertex which has not been added to a shape.");
-    this._vertex.shape._vertices.add(vertex);
+    this._vertex.shape.internalAddVertices(vertex);
     return new Line(this._vertex, vertex);
   }
 
@@ -34,7 +34,7 @@ class VertexLineCollection {
     List<Line> lines = new List<Line>(count);
     for (int i = 0; i < count; ++i) {
       Vertex vertex = vertices[i];
-      this._vertex.shape._vertices.add(vertex);
+      this._vertex.shape.internalAddVertices(vertex);
       lines.add(new Line(this._vertex, vertex));
     }
     return lines;

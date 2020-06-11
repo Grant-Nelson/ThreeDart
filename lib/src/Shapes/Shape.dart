@@ -1,12 +1,11 @@
 part of ThreeDart.Shapes;
 
 /// A shape defining the renderable shape and collision detection.
-class Shape implements ShapeBuilder {
+class Shape extends BaseShape implements ShapeBuilder {
   VertexCollection _vertices;
   ShapePointCollection _points;
   ShapeLineCollection _lines;
   ShapeFaceCollection _faces;
-  Events.Event _changed;
 
   /// Creates a new shape.
   Shape() {
@@ -14,7 +13,6 @@ class Shape implements ShapeBuilder {
     this._points = new ShapePointCollection._(this);
     this._lines = new ShapeLineCollection._(this);
     this._faces = new ShapeFaceCollection._(this);
-    this._changed = null;
   }
 
   /// Creates a copy of the given [other] shape.
@@ -34,23 +32,17 @@ class Shape implements ShapeBuilder {
   /// The collection of renderable faces for the shape.
   ShapeFaceCollection get faces => this._faces;
 
-  /// The changed event to signal when ever the shape is modified.
-  Events.Event get changed {
-    this._changed ??= new Events.Event();
-    return this._changed;
-  }
-
   /// Merges the given shape into this shape.
   /// No vertices nor seams are joined, this is a simple copy
   /// of all the given shape's information into this shape.
   void merge(Shape other) {
-    this._changed?.suspend();
-    other._vertices._updateIndices();
+    this.suspendChanged();
+    other._vertices.updateIndices();
     int offset = this._vertices.length;
-    for (Vertex vertex in other._vertices._vertices) {
+    for (Vertex vertex in other.vertices._vertices) {
       this.vertices.add(vertex.copy());
     }
-    this._vertices._updateIndices();
+    this._vertices.updateIndices();
     for (Point point in other._points._points) {
       Vertex ver = this._vertices[point.vertex.index + offset];
       this._points.add(ver);
@@ -66,17 +58,17 @@ class Shape implements ShapeBuilder {
       Vertex ver3 = this._vertices[face.vertex3.index + offset];
       this._faces.add(ver1, ver2, ver3);
     }
-    this._changed?.resume();
+    this.resumeChanged();
   }
 
   /// Calculates the normals for the vertices and faces.
   /// True if successful, false on error.
   bool calculateNormals() {
     bool success = true;
-    this._changed?.suspend();
+    this.suspendChanged();
     if (!this._faces.calculateNormals()) success = false;
     if (!this._vertices.calculateNormals()) success = false;
-    this._changed?.resume();
+    this.resumeChanged();
     return success;
   }
 
@@ -85,10 +77,10 @@ class Shape implements ShapeBuilder {
   /// True if successful, false on error.
   bool calculateBinormals() {
     bool success = true;
-    this._changed?.suspend();
+    this.suspendChanged();
     if (!this._faces.calculateBinormals()) success = false;
     if (!this._vertices.calculateBinormals()) success = false;
-    this._changed?.resume();
+    this.resumeChanged();
     return success;
   }
 
@@ -97,9 +89,9 @@ class Shape implements ShapeBuilder {
   /// True if successful, false on error.
   bool calculateCubeTextures() {
     bool success = true;
-    this._changed?.suspend();
+    this.suspendChanged();
     if (!this._vertices.calculateCubeTextures()) success = false;
-    this._changed?.resume();
+    this.resumeChanged();
     return success;
   }
 
@@ -135,7 +127,7 @@ class Shape implements ShapeBuilder {
   /// The height is pulled from the map using the texture 2D values of the vertices and
   /// the offset is applied in the direction of the normal vector.
   void applyHeightMap(Textures.TextureReader height, [double scalar = 1.0]) {
-    this._changed?.suspend();
+    this.suspendChanged();
     for (int i = this._vertices.length-1; i >= 0; --i) {
       Vertex ver = this._vertices[i];
       if ((ver != null) || (ver.location != null) ||
@@ -145,29 +137,29 @@ class Shape implements ShapeBuilder {
         ver.location += new Math.Point3.fromVector3(ver.normal*length);
       }
     }
-    this._changed?.resume();
+    this.resumeChanged();
   }
 
   /// Trims all the vertices down to the given vertex types,
   /// everything else is nulled out.
   void trimVertices(Data.VertexType type) {
-    this._changed?.suspend();
+    this.suspendChanged();
     for (int i = this._vertices.length-1; i >= 0; --i) {
       Vertex ver = this._vertices[i];
       if (ver != null) ver.trim(type);
     }
-    this._changed?.resume();
+    this.resumeChanged();
   }
 
   /// Trims all the faces down to have the given true values,
   /// everything else is nulled out.
   void trimFaces({bool norm: true, bool binm: true}) {
-    this._changed?.suspend();
+    this.suspendChanged();
     for (int i = this._faces.length-1; i >= 0; --i) {
       Face face = this._faces[i];
       if (face != null) face.trim(norm: norm, binm: binm);
     }
-    this._changed?.resume();
+    this.resumeChanged();
   }
 
   /// Finds the first index of the vertex which matches the given vertex.
@@ -238,7 +230,7 @@ class Shape implements ShapeBuilder {
   /// After merger collapsed lines and faces are removed and
   /// repeat points, lines, and faces are removed.
   void mergeVertices(VertexMatcher matcher, VertexMerger merger) {
-    this._changed?.suspend();
+    this.suspendChanged();
     List<Vertex> vertices = this._vertices.copyToList();
     while (vertices.isNotEmpty) {
       Vertex ver = vertices.first;
@@ -267,13 +259,13 @@ class Shape implements ShapeBuilder {
       }
     }
 
-    this._vertices._updateIndices();
+    this._vertices.updateIndices();
     this._lines.removeCollapsed();
     this._faces.removeCollapsed();
     this._points.removeRepeats();
     this._lines.removeVertexRepeats(new UndirectedLineMatcher());
     this._faces.removeVertexRepeats(new SimilarFaceMatcher());
-    this._changed?.resume();
+    this.resumeChanged();
   }
 
   /// Joins seams in the shape by joining vertices.
@@ -305,7 +297,7 @@ class Shape implements ShapeBuilder {
 
   /// Flips the shape inside out.
   void flip() {
-    this._changed?.suspend();
+    this.suspendChanged();
     this._faces.flip();
     for (int i = this._vertices.length-1; i >= 0; --i) {
       Vertex ver = this._vertices[i];
@@ -314,7 +306,7 @@ class Shape implements ShapeBuilder {
         if (ver.binormal != null) ver.binormal = -ver.binormal;
       }
     }
-    this._changed?.resume();
+    this.resumeChanged();
   }
 
   /// Scales the AABB so that the longest size the given [size],
@@ -462,119 +454,40 @@ class Shape implements ShapeBuilder {
     return parts.join('\n');
   }
 
-  /// Handles any change to this shape.
-  /// This isn't meant to be called from outside the entity, in other languages this would
-  /// be a protected method. This method is exposed to that the shape is extended and
-  /// these methods can be overwritten. If overwritten call this super method to still emit events.
-  void onChanged([Events.EventArgs args = null]) {
-    this._changed?.emit(args);
+  void updateVertexIndices() =>
+    this._vertices.updateIndices();
+
+  void internalAddVertices(Vertex vertex) {
+    this._vertices.add(vertex);
   }
 
-  /// Called when the given [vertex] has been added.
-  /// This calls the [onChanged] method.
-  /// This isn't meant to be called from outside the entity, in other languages this would
-  /// be a protected method. This method is exposed to that the shape is extended and
-  /// these methods can be overwritten. If overwritten call this super method to still emit events.
-  void onVertexAdded(Vertex vertex) {
-    this.onChanged();
+  void internalAddPoint(Point point) {
+    this._points._points.add(point);
+    this.onPointAdded(point);
   }
 
-  /// Called when the given [vertex] has been modified.
-  /// This calls the [onChanged] method.
-  /// This isn't meant to be called from outside the entity, in other languages this would
-  /// be a protected method. This method is exposed to that the shape is extended and
-  /// these methods can be overwritten. If overwritten call this super method to still emit events.
-  void onVertexModified(Vertex vertex) {
-    this.onChanged();
+  void internalRemovePoint(Point point) {
+    this._points._points.remove(point);
+    this.onPointRemoved(point);
   }
 
-  /// Called when the given [vertex] has been removed.
-  /// This calls the [onChanged] method.
-  /// This isn't meant to be called from outside the entity, in other languages this would
-  /// be a protected method. This method is exposed to that the shape is extended and
-  /// these methods can be overwritten. If overwritten call this super method to still emit events.
-  void onVertexRemoved(Vertex vertex) {
-    this.onChanged();
+  void internalAddLine(Line line) {
+    this._lines._lines.add(line);
+    this.onLineAdded(line);
   }
 
-  /// Called when the given [face] has been added.
-  /// This calls the [onChanged] method.
-  /// This isn't meant to be called from outside the entity, in other languages this would
-  /// be a protected method. This method is exposed to that the shape is extended and
-  /// these methods can be overwritten. If overwritten call this super method to still emit events.
-  void onFaceAdded(Face face) {
-    this.onChanged();
+  void internalRemoveLine(Line line) {
+    this._lines._lines.remove(line);
+    this.onLineRemoved(line);
   }
 
-  /// Called when the given [face] has been modified.
-  /// This calls the [onChanged] method.
-  /// This isn't meant to be called from outside the entity, in other languages this would
-  /// be a protected method. This method is exposed to that the shape is extended and
-  /// these methods can be overwritten. If overwritten call this super method to still emit events.
-  void onFaceModified(Face face) {
-    this.onChanged();
+  void internalAddFace(Face face) {
+    this._faces._faces.add(face);
+    this.onFaceAdded(face);
   }
 
-  /// Called when the given [face] has been removed.
-  /// This calls the [onChanged] method.
-  /// This isn't meant to be called from outside the entity, in other languages this would
-  /// be a protected method. This method is exposed to that the shape is extended and
-  /// these methods can be overwritten. If overwritten call this super method to still emit events.
-  void onFaceRemoved(Face face) {
-    this.onChanged();
-  }
-
-  /// Called when the given [line] has been added.
-  /// This calls the [onChanged] method.
-  /// This isn't meant to be called from outside the entity, in other languages this would
-  /// be a protected method. This method is exposed to that the shape is extended and
-  /// these methods can be overwritten. If overwritten call this super method to still emit events.
-  void onLineAdded(Line line) {
-    this.onChanged();
-  }
-
-  /// Called when the given [line] has been modified.
-  /// This calls the [onChanged] method.
-  /// This isn't meant to be called from outside the entity, in other languages this would
-  /// be a protected method. This method is exposed to that the shape is extended and
-  /// these methods can be overwritten. If overwritten call this super method to still emit events.
-  void onLineModified(Line line) {
-    this.onChanged();
-  }
-
-  /// Called when the given [line] has been removed.
-  /// This calls the [onChanged] method.
-  /// This isn't meant to be called from outside the entity, in other languages this would
-  /// be a protected method. This method is exposed to that the shape is extended and
-  /// these methods can be overwritten. If overwritten call this super method to still emit events.
-  void onLineRemoved(Line line) {
-    this.onChanged();
-  }
-
-  /// Called when the given [point] has been added.
-  /// This calls the [onChanged] method.
-  /// This isn't meant to be called from outside the entity, in other languages this would
-  /// be a protected method. This method is exposed to that the shape is extended and
-  /// these methods can be overwritten. If overwritten call this super method to still emit events.
-  void onPointAdded(Point point) {
-    this.onChanged();
-  }
-
-  /// Called when the given [point] has been modified.
-  /// This calls the [onChanged] method.
-  /// This isn't meant to be called from outside the entity, in other languages this would
-  /// be a protected method. This method is exposed to that the shape is extended and
-  /// these methods can be overwritten. If overwritten call this super method to still emit events.
-  void onPointModified(Point point) {
-    this.onChanged();
-  }
-
-  /// Called when the given [point] has been removed.
-  /// This calls the [onChanged] method.
-  /// This isn't meant to be called from outside the entity, in other languages this would
-  /// be a protected method. This method is exposed to that the shape is extended and
-  /// these methods can be overwritten. If overwritten call this super method to still emit events.
-  void onPointRemoved(Point point) {
-    this.onChanged();
+  void internalRemoveFace(Face face) {
+    this._faces._faces.remove(face);
+    this.onFaceRemoved(face);
   }
 }

@@ -11,16 +11,13 @@ class Point {
     if (ver.shape == null)
       throw new Exception("May not create a point with a vertex which is not attached to a shape.");
     this._setVertex(ver);
-    this._ver._shape._points._points.add(this);
-    this._ver._shape.onPointAdded(this);
+    this._ver._shape.internalAddPoint(this);
   }
 
   /// Disposes this point.
   void dispose() {
-    if (!this.disposed) {
-      this._ver._shape._points._points.remove(this);
-      this._ver._shape.onPointRemoved(this);
-    }
+    if (!this.disposed)
+      this._ver._shape.internalRemovePoint(this);
     this._removeVertex();
   }
 

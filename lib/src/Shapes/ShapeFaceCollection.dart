@@ -131,7 +131,7 @@ class ShapeFaceCollection {
   /// Returns true if face was removed, false otherwise.
   bool remove(Face face) {
     if (face == null) return false;
-    if (face._ver1._shape != this.shape) return false;
+    if (face.vertex1.shape != this.shape) return false;
     face.dispose();
     return true;
   }
@@ -161,11 +161,11 @@ class ShapeFaceCollection {
     matcher ??= new ExactFaceMatcher();
     for (int k = this._shape.vertices.length-1; k >= 0; --k) {
       Vertex ver = this._shape.vertices[k];
-      for (int i = ver._faces.length-1; i >= 0; --i) {
-        Face faceA = ver._faces[i];
+      for (int i = ver.faces.length-1; i >= 0; --i) {
+        Face faceA = ver.faces[i];
         if (faceA != null) {
           for (int j = i - 1; j >= 0; --j) {
-            Face faceB = ver._faces[j];
+            Face faceB = ver.faces[j];
             if (faceB != null) {
               if (matcher.matches(faceA, faceB)) {
                 faceA.dispose();
