@@ -8,6 +8,7 @@ import '../Data/Data.dart' as Data;
 import '../Events/Events.dart' as Events;
 import '../Math/Math.dart' as Math;
 import '../Shapes/Shapes.dart' as Shapes;
+import '../Shapes/Shared/Shared.dart' as Shapes;
 import '../Lights/Lights.dart' as Lights;
 import '../Shaders/Shaders.dart' as Shaders;
 import '../Textures/Textures.dart' as Textures;

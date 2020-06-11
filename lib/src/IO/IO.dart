@@ -6,6 +6,7 @@ import 'dart:async';
 import '../Core/Core.dart' as Core;
 import '../Events/Events.dart' as Events;
 import '../Shapes/Shapes.dart' as Shapes;
+import '../Shapes/Shared/Shared.dart' as Shapes;
 import '../Techniques/Techniques.dart' as Techniques;
 import '../Textures/Textures.dart' as Textures;
 import '../Math/Math.dart' as Math;

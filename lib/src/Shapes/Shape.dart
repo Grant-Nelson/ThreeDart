@@ -9,7 +9,7 @@ class Shape extends BaseShape implements ShapeBuilder {
 
   /// Creates a new shape.
   Shape() {
-    this._vertices = new VertexCollection._(this);
+    this._vertices = new VertexCollection(this);
     this._points = new ShapePointCollection._(this);
     this._lines = new ShapeLineCollection._(this);
     this._faces = new ShapeFaceCollection._(this);
@@ -39,9 +39,9 @@ class Shape extends BaseShape implements ShapeBuilder {
     this.suspendChanged();
     other._vertices.updateIndices();
     int offset = this._vertices.length;
-    for (Vertex vertex in other.vertices._vertices) {
+    other.vertices.forEach((Vertex vertex) {
       this.vertices.add(vertex.copy());
-    }
+    });
     this._vertices.updateIndices();
     for (Point point in other._points._points) {
       Vertex ver = this._vertices[point.vertex.index + offset];
@@ -454,7 +454,7 @@ class Shape extends BaseShape implements ShapeBuilder {
     return parts.join('\n');
   }
 
-  void updateVertexIndices() =>
+  void internalUpdateVertexIndices() =>
     this._vertices.updateIndices();
 
   void internalAddVertices(Vertex vertex) {

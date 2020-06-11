@@ -47,10 +47,8 @@ class Debugger extends Technique {
 
     this._results.clear();
     if (obj.shape != null) {
-      Shapes.VertexCollection vertices = obj.shape.vertices;
-      int length = vertices.length;
-      for (int i = 0; i < length; ++i) {
-        Math.Point3 pnt0 = vertices[i].location;
+      obj.shape.vertices.forEach((Shapes.Vertex vertex) {
+        Math.Point3 pnt0 = vertex.location;
         Math.Point4 pnt1 = new Math.Point4.fromPoint3(pnt0, 1.0);
         Math.Point4 pnt2 = objMat.transPnt4(pnt1);
         Math.Point4 pnt3 = viewMat.transPnt4(pnt2);
@@ -66,7 +64,7 @@ class Debugger extends Technique {
         }
 
         this._results.add(pnt5);
-      }
+      });
     }
   }
 }

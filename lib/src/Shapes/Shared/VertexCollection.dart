@@ -7,7 +7,7 @@ class VertexCollection {
   List<Vertex> _vertices;
 
   /// Creates a new vertex collection of a shape.
-  VertexCollection._(BaseShape this._shape) {
+  VertexCollection(BaseShape this._shape) {
     this._indicesNeedUpdate = false;
     this._vertices = new List<Vertex>();
   }
