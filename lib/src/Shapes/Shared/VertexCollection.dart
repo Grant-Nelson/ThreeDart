@@ -67,6 +67,9 @@ class VertexCollection {
   void addList(List<Vertex> verList) {
     for (Vertex ver in verList) this.add(ver);
   }
+  
+  /// The shape which owns this collection.
+  BaseShape get shape => this._shape;
 
   /// Determines if the collection has any vertices in it.
   bool get isEmpty => this._vertices.isEmpty;

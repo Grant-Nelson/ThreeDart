@@ -18,5 +18,8 @@ packages/
 *.js.deps
 *.js.map
 
-# Include when developing application packages.
+# Included when developing application packages.
 pubspec.lock
+
+# Included when doing a release build
+build.yaml
