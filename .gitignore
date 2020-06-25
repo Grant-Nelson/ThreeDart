@@ -20,3 +20,6 @@ packages/
 
 # Include when developing application packages.
 pubspec.lock
+
+# Include when doing a release build
+build.yaml

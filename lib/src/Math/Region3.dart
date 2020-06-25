@@ -178,6 +178,10 @@ class Region3 {
     return side;
   }
 
+  /// Indicates if the region is a cube, ie has equal dx, dy, and dz.
+  bool get isCube =>
+    Comparer.equals(this.dx, this.dy) && Comparer.equals(this.dx, this.dz);
+
   /// Gets the adjusted point of the given [raw] point.
   /// This point is normalized into the region.
   Point3 adjustPoint(Point3 raw) {

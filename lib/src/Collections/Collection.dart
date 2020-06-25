@@ -104,7 +104,7 @@ class Collection<T> implements Iterable<T> {
   Iterable<T> followedBy(Iterable<T> other) =>
     this._list.followedBy(other);
 
-  /// Calls the given function handler, [hndl], foreach item.
+  /// Calls the given function handler, [hndl], for each item.
   void forEach(void hndl(T item)) => this._list.forEach(hndl);
 
   /// Converts each element to a String and concatenates the strings.

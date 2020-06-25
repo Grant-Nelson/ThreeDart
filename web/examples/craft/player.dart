@@ -255,7 +255,7 @@ class Player {
   /// Handles a player moving around in the world.
   void _onPlayerMove(Events.EventArgs args) {
     if (this._touchingGround) {
-      // TODO: Implement walking sounds
+      // TODO [Issues #127]: Implement walking sounds
     }
   }
 
