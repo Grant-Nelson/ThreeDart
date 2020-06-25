@@ -21,11 +21,9 @@ help()
 	echo "To build ThreeDart for deployment use './run build'."
 }
 
-if [$1 == "serve"]
-  then
+if [$1 == "serve"] then
 	serve()
-elif [$1 == "build"]
-  then
+elif [$1 == "build"] then
     build()
 else
 	help()
