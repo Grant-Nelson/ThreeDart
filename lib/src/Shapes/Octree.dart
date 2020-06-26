@@ -1,13 +1,4 @@
-library ThreeDart.Shapes;
-
-import '../../Math/Math.dart' as Math;
-import '../Shared/Shared.dart';
-
-part 'Branch.dart';
-part 'Leaf.dart';
-part 'Node.dart';
-part 'Pass.dart';
-part 'Path.dart';
+part of ThreeDart.Shapes;
 
 /// An octree for storing a shape. It uses more memory than other shape storage
 /// but provides significantly faster shape mathematics such as collision, union, and intersection.
