@@ -2,21 +2,19 @@ part of ThreeDart.Shapes;
 
 /// A collection of lines for a shape.
 class ShapeLineCollection {
-  Shape _shape;
-  List<Line> _lines;
+  final Shape _shape;
 
   /// Creates a new shape's line collection for the given shape.
-  ShapeLineCollection._(Shape this._shape) {
-    this._lines = new List<Line>();
-  }
+  ShapeLineCollection._(Shape this._shape);
 
   /// The shape which owns this collection.
   Shape get shape => this._shape;
 
   /// Adds a new line with the given vertices to the shape.
   Line add(Vertex ver1, Vertex ver2) {
-    this._shape._vertices.add(ver1);
-    this._shape._vertices.add(ver2);
+    ShapeVertexCollection vcol = this._shape.vertices;
+    vcol.add(ver1);
+    vcol.add(ver2);
     return new Line(ver1, ver2);
   }
 
@@ -51,26 +49,22 @@ class ShapeLineCollection {
   }
 
   /// Determines if the shape contains any lines or not.
-  bool get isEmpty => this._lines.isEmpty;
+  bool get isEmpty => this.length <= 0;
 
   /// The number of lines in the shape.
-  int get length => this._lines.length;
-
-  /// Gets the line at the at given index.
-  Line operator[](int index) => this._lines[index];
-
-  /// Gets the index of the given [line] or -1 if not found.
-  int indexOf(Line line) => this._lines.indexOf(line);
+  int get length => this._shape._lineCount;
 
   /// Runs the given function handler for every line in the shape.
-  void forEach(void funcHndl(Line line)) => this._lines.forEach(funcHndl);
+  void forEach(void funcHndl(Line line)) {
+    for (Line line in this.iteratable) funcHndl(line);
+  }
 
-  /// Removes the line with at the given index.
-  /// The removed line is disposed and returned or null if none removed.
-  Line removeAt(int index) {
-    Line line = this[index];
-    if (line != null) line.dispose();
-    return line;
+  /// Gets an iteratable which steps through all of the lines in the collection.
+  Iterable<Line> get iteratable sync* {
+    this._shape.vertices.forEach((Vertex vertex) {
+      List<Line> lines = vertex._lines1.toList(growable: false);
+      yield* lines;
+    });
   }
 
   /// Removes the given [line].
@@ -85,12 +79,15 @@ class ShapeLineCollection {
   /// Removes all lines which match each other based on the given matcher.
   void removeRepeats([LineMatcher matcher = null]) {
     matcher ??= new ExactLineMatcher();
-    for (int i = this._lines.length-1; i >= 0; --i) {
-      Line lineA = this._lines[i];
-      if (lineA != null) {
-        for (int j = i - 1; j >= 0; --j) {
-          Line lineB = this._lines[j];
-          if (lineB != null) {
+    Iterator<Line> linesA = this.iteratable.iterator;
+    while (linesA.moveNext()) {
+      Line lineA = linesA.current;
+      if (!lineA.disposed) {
+        Iterator<Line> linesB = this.iteratable.skipWhile((Line lineB) => lineB != lineA).iterator;
+        linesB.moveNext(); // step over lineA
+        while (linesB.moveNext()) {
+          Line lineB = linesB.current;
+          if (!lineB.disposed) {
             if (matcher.matches(lineA, lineB)) {
               lineA.dispose();
               break;
@@ -105,32 +102,21 @@ class ShapeLineCollection {
   /// on the given matcher and share a vertex.
   void removeVertexRepeats([LineMatcher matcher = null]) {
     matcher ??= new ExactLineMatcher();
-    for (int k = this._shape.vertices.length-1; k >= 0; --k) {
-      Vertex ver = this._shape.vertices[k];
-      for (int i = ver._lines.length-1; i >= 0; --i) {
-        Line lineA = ver._lines[i];
-        if (lineA != null) {
-          for (int j = i - 1; j >= 0; --j) {
-            Line lineB = ver._lines[j];
-            if (lineB != null) {
-              if (matcher.matches(lineA, lineB)) {
-                lineA.dispose();
-                break;
-              }
-            }
-          }
-        }
-      }
-    }
+    this._shape.vertices.forEach((Vertex ver) {
+      ver.lines.removeRepeats(matcher);
+    });
   }
 
   /// Removes all the collapsed lines.
   void removeCollapsed() {
-    for (int i = this._lines.length-1; i >= 0; --i) {
-      Line line = this._lines[i];
-      if ((line == null) || line.collapsed) line.dispose();
-    }
+    this.forEach((Line line) {
+      if (line.collapsed) line.dispose();
+    });
   }
+  
+  /// Gets a copy of the lines as a list.
+  List<Line> toList({bool growable = true}) =>
+    this.iteratable.toList(growable: growable);
 
   /// Gets to string for all the lines.
   String toString() => this.format();
@@ -138,12 +124,11 @@ class ShapeLineCollection {
   /// Gets the formatted string for this lines with and optional [indent].
   String format([String indent = ""]) {
     List<String> parts = new List<String>();
-    final int count = this._lines.length;
-    for (int i = 0; i < count; ++i) {
-      Line line = this._lines[i];
-      if (line == null) parts.add("$indent$i. null");
-      else parts.add(line.format(indent+"$i. "));
-    }
+    int index = 0;
+    this.forEach((Line line) {
+      parts.add(line.format(indent+"$index. "));
+      ++index;
+    });
     return parts.join('\n');
   }
 }

@@ -2,17 +2,10 @@ part of ThreeDart.Shapes;
 
 /// A collection of faces for a vertex.
 class VertexFaceCollection {
-  Vertex _vertex;
-  List<Face> _faces1;
-  List<Face> _faces2;
-  List<Face> _faces3;
+  final Vertex _vertex;
 
   /// Creates a new vertex's face collection for the given vertex.
-  VertexFaceCollection._(Vertex this._vertex) {
-    this._faces1 = new List<Face>();
-    this._faces2 = new List<Face>();
-    this._faces3 = new List<Face>();
-  }
+  VertexFaceCollection._(Vertex this._vertex);
 
   /// The vertex which owns this collection.
   Vertex get vertex => this._vertex;

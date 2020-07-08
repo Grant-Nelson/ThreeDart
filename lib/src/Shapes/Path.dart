@@ -16,49 +16,39 @@ class Path {
 
   /// The z component of the path.
   final int z;
-  
-  /// The depth of the path to read the components.
-  final int depth;
 
   /// Determines the path to the given location within the given maximum cube.
-  factory Path.fromPoint(Math.Point3 loc, Math.Cube maxCube, [int depth = maxDepth]) {
+  factory Path.fromPoint(Math.Point3 loc, Math.Cube maxCube) {
     double scalar = maxDepth / maxCube.size;
     return new Path(
       ((loc.x - maxCube.x)*scalar).round(),
       ((loc.y - maxCube.y)*scalar).round(),
-      ((loc.z - maxCube.z)*scalar).round(),
-      depth);
+      ((loc.z - maxCube.z)*scalar).round());
   }
 
   /// Constructs a path with the given coordinates and depth.
-  factory Path(int x, int y, int z, [int depth = maxDepth]) {
+  factory Path(int x, int y, int z) {
     if (x < 0 || x > maxValue)
       throw new Exception("X component in the path must be between 0 and $maxValue ($x)");
     if (y < 0 || y > maxValue)
       throw new Exception("Y component in the path must be between 0 and $maxValue ($y)");
     if (z < 0 || z > maxValue)
       throw new Exception("Z component in the path must be between 0 and $maxValue ($z)");
-    if (depth < 0 || depth > maxDepth)
-      throw new Exception("Depth in the path must be between 0 and $maxDepth ($depth)");
-    return new Path._(x, y, z, depth);
+    return new Path._(x, y, z);
   }
 
   /// Internal constructor to assign final values.
-  Path._(this.x, this.y, this.z, this.depth);
+  Path._(this.x, this.y, this.z);
 
   /// Determines the common path between this and the other path.
   Path common(Path other) {
-    int depth = (this.depth < other.depth)? this.depth: other.depth;
     int diff = (this.x ^ other.x) | (this.y ^ other.y) | (this.z ^ other.z);
     int fullMask = 0x00;
-    for (int d = 0, mask = 0x01; d < depth; d++, mask <<= 1) {
-      if (diff & mask != 0x00) {
-        depth = d;
-        break;
-      }
+    for (int d = 0, mask = 0x01; d < maxDepth; d++, mask <<= 1) {
+      if (diff & mask != 0x00) break;
       fullMask |= mask;
     }
-    return new Path(this.x & fullMask, this.y & fullMask, this.z & fullMask, depth);
+    return new Path(this.x & fullMask, this.y & fullMask, this.z & fullMask);
   }
 
   /// This gets the location this path is for in the given maximum cube.
@@ -81,12 +71,20 @@ class Path {
     return childIndex;
   }
 
+  /// Determines if the given [other] variable is a [Path] equal to this path.
+  bool operator ==(var other) {
+    if (identical(this, other)) return true;
+    if (other is! Path) return false;
+    Path path = other as Path;
+    return (this.x == path.x) && (this.y == path.y) && (this.z == path.z);
+  }
+
   /// Gets the string for this path in binary.
-  String toString() {
+  String toString([int depth = maxDepth]) {
     StringBuffer xstr = new StringBuffer();
     StringBuffer ystr = new StringBuffer();
     StringBuffer zstr = new StringBuffer();
-    for (int d = 0, x = 0, mask = 0x01; d < this.depth; d++, x++, mask <<= 1) {
+    for (int d = 0, x = 0, mask = 0x01; d < depth; d++, x++, mask <<= 1) {
       if (x == 4) {
         x = 0;
         xstr.write(" ");

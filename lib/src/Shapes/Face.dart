@@ -258,9 +258,12 @@ class Face {
   /// Swaps the second and third vertices so the face is wraps the other direction.
   /// Both the normal and binormal vectors are negated if the exist.
   void flip() {
-    Vertex ver = this._ver2;
-    this._ver2 = this._ver3;
-    this._ver3 = ver;
+    Vertex verA = this._ver2;
+    Vertex verB = this._ver3;
+    this._removeVertex2();
+    this._removeVertex3();
+    this._setVertex2(verB);
+    this._setVertex3(verA);
     if (this._norm != null) this._norm = -this._norm;
     if (this._binm != null) this._binm = -this._binm;
     this._ver1._shape.onFaceModified(this);

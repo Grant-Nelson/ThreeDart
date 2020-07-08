@@ -2,22 +2,20 @@ part of ThreeDart.Shapes;
 
 /// A collection of faces for a shape.
 class ShapeFaceCollection {
-  Shape _shape;
-  List<Face> _faces;
+  final Shape _shape;
 
   /// Creates a new shape's face collection for the given shape.
-  ShapeFaceCollection._(Shape this._shape) {
-    this._faces = new List<Face>();
-  }
+  ShapeFaceCollection._(Shape this._shape);
 
   /// The shape which owns this collection.
   Shape get shape => this._shape;
 
   /// Adds a single new face with the given vertices to the shape.
   Face add(Vertex ver1, Vertex ver2, Vertex ver3) {
-    this._shape._vertices.add(ver1);
-    this._shape._vertices.add(ver2);
-    this._shape._vertices.add(ver3);
+    ShapeVertexCollection vcol = this._shape.vertices;
+    vcol.add(ver1);
+    vcol.add(ver2);
+    vcol.add(ver3);
     Face face = new Face(ver1, ver2, ver3);
     return face;
   }
@@ -105,26 +103,16 @@ class ShapeFaceCollection {
   }
 
   /// Determines if the shape contains any faces or not.
-  bool get isEmpty => this._faces.isEmpty;
+  bool get isEmpty => this.length <= 0;
 
   /// The number of faces in the shape.
-  int get length => this._faces.length;
-
-  /// Gets the face at the at given [index].
-  Face operator[](int index) => this._faces[index];
-
-  /// Gets the index of the given [face] or -1 if not found.
-  int indexOf(Face face) => this._faces.indexOf(face);
+  int get length => this._shape._faceCount;
 
   /// Runs the given function handler for every face in the shape.
-  void forEach(void funcHndl(Face face)) => this._faces.forEach(funcHndl);
-
-  /// Removes the face with at the given index.
-  /// The removed face is disposed and returned or null if none removed.
-  Face removeAt(int index) {
-    Face face = this[index];
-    if (face != null) face.dispose();
-    return face;
+  void forEach(void funcHndl(Face face)) {
+    this._shape.vertices.forEach((Vertex vertex) {
+      vertex.faces.forEach1(funcHndl);
+    });
   }
 
   /// Removes the given [face].
@@ -218,6 +206,15 @@ class ShapeFaceCollection {
   /// Flips all the faces in the shape.
   void flip() {
     for (Face face in this._faces) face.flip();
+  }
+
+  /// Gets a copy of the faces as a list.
+  List<Face> copyToList() {
+    List<Face> faces = new List<Face>(this.length);
+    this.forEach((Face face) {
+      faces.add(face);
+    });
+    return faces;
   }
 
   /// Gets to string for all the faces.

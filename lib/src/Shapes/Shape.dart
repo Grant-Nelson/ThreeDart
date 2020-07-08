@@ -1,38 +1,60 @@
 part of ThreeDart.Shapes;
 
 /// A shape defining the renderable shape and collision detection.
+/// This uses an octree for storing a shape.
 class Shape implements ShapeBuilder {
-  VertexCollection _vertices;
-  ShapePointCollection _points;
-  ShapeLineCollection _lines;
-  ShapeFaceCollection _faces;
+  /// The maximum cube that the shape can occupy.
+  final Math.Cube maxCube;
+
+  Node _root;
+  Path _rootPath;
+  int _rootPathDepth;
+
+  int _vertexCount;
+  int _pointCount;
+  int _lineCount;
+  int _faceCount;
+
+  bool _vertexIndicesNeedUpdate;
   Events.Event _changed;
 
   /// Creates a new shape.
-  Shape() {
-    this._vertices = new VertexCollection._(this);
-    this._points = new ShapePointCollection._(this);
-    this._lines = new ShapeLineCollection._(this);
-    this._faces = new ShapeFaceCollection._(this);
+  Shape._(Math.Cube this.maxCube) {
+    this._root = null;
+    this._rootPath = null;
+    this._rootPathDepth = 0;
+
+    this._vertexCount = 0;
+    this._pointCount = 0;
+    this._lineCount = 0;
+    this._faceCount = 0;
+
+    this._vertexIndicesNeedUpdate = false;
     this._changed = null;
   }
 
+  /// Creates a new shape with an optional maximum cube for a shape.
+  factory Shape([Math.Cube maxCube = null]) =>
+    new Shape._(maxCube ?? new Math.Cube(-5000.0, -5000.0, -5000.0, 10000.0));
+
   /// Creates a copy of the given [other] shape.
-  factory Shape.copy(Shape other) {
-    return new Shape()..merge(other);
-  }
+  factory Shape.copy(Shape other) =>
+    new Shape(other.maxCube)..merge(other); // TODO: Make the copy faster than using merge.
+
+  /// The octree for the shape.
+  Octree get octree => new Octree._(this);
 
   /// The collection of vertices for the shape.
-  VertexCollection get vertices => this._vertices;
+  ShapeVertexCollection get vertices => new ShapeVertexCollection._(this);
 
   /// The collection of renderable points for the shape.
-  ShapePointCollection get points => this._points;
+  ShapePointCollection get points => new ShapePointCollection._(this);
 
   /// The collection of renderable lines for the shape.
-  ShapeLineCollection get lines => this._lines;
+  ShapeLineCollection get lines => new ShapeLineCollection._(this);
 
   /// The collection of renderable faces for the shape.
-  ShapeFaceCollection get faces => this._faces;
+  ShapeFaceCollection get faces => new ShapeFaceCollection._(this);
 
   /// The changed event to signal when ever the shape is modified.
   Events.Event get changed {
@@ -45,27 +67,37 @@ class Shape implements ShapeBuilder {
   /// of all the given shape's information into this shape.
   void merge(Shape other) {
     this._changed?.suspend();
-    other._vertices._updateIndices();
-    int offset = this._vertices.length;
-    for (Vertex vertex in other._vertices._vertices) {
-      this.vertices.add(vertex.copy());
-    }
-    this._vertices._updateIndices();
-    for (Point point in other._points._points) {
-      Vertex ver = this._vertices[point.vertex.index + offset];
-      this._points.add(ver);
-    }
-    for (Line line in other._lines._lines) {
-      Vertex ver1 = this._vertices[line.vertex1.index + offset];
-      Vertex ver2 = this._vertices[line.vertex2.index + offset];
-      this._lines.add(ver1, ver2);
-    }
-    for (Face face in other._faces._faces) {
-      Vertex ver1 = this._vertices[face.vertex1.index + offset];
-      Vertex ver2 = this._vertices[face.vertex2.index + offset];
-      Vertex ver3 = this._vertices[face.vertex3.index + offset];
-      this._faces.add(ver1, ver2, ver3);
-    }
+    ShapeVertexCollection otherVCol = other.vertices;
+    otherVCol._updateIndices();
+    
+    List<Vertex> vertices = new List<Vertex>(otherVCol.length);
+    ShapeVertexCollection vcol = this.vertices;
+    otherVCol.forEach((Vertex vertex) {
+      Vertex copy = vertex.copy();
+      vertices.add(copy);
+      vcol.add(copy);
+    });
+
+    ShapePointCollection pcol = this.points;
+    other.points.forEach((Point point) {
+      Vertex vertex = vertices[point.vertex.index];
+      pcol.add(vertex);
+    });
+
+    ShapeLineCollection lcol = this.lines;
+    other.lines.forEach((Line line) {
+      Vertex ver1 = vertices[line.vertex1.index];
+      Vertex ver2 = vertices[line.vertex2.index];
+      lcol.add(ver1, ver2);
+    });
+
+    ShapeFaceCollection fcol = this.faces;
+    other.faces.forEach((Face face) {
+      Vertex ver1 = vertices[face.vertex1.index];
+      Vertex ver2 = vertices[face.vertex2.index];
+      Vertex ver3 = vertices[face.vertex3.index];
+      fcol.add(ver1, ver2, ver3);
+    });
     this._changed?.resume();
   }
 
@@ -74,8 +106,8 @@ class Shape implements ShapeBuilder {
   bool calculateNormals() {
     bool success = true;
     this._changed?.suspend();
-    if (!this._faces.calculateNormals()) success = false;
-    if (!this._vertices.calculateNormals()) success = false;
+    if (!this.faces.calculateNormals()) success = false;
+    if (!this.vertices.calculateNormals()) success = false;
     this._changed?.resume();
     return success;
   }
@@ -86,8 +118,8 @@ class Shape implements ShapeBuilder {
   bool calculateBinormals() {
     bool success = true;
     this._changed?.suspend();
-    if (!this._faces.calculateBinormals()) success = false;
-    if (!this._vertices.calculateBinormals()) success = false;
+    if (!this.faces.calculateBinormals()) success = false;
+    if (!this.vertices.calculateBinormals()) success = false;
     this._changed?.resume();
     return success;
   }
@@ -98,7 +130,7 @@ class Shape implements ShapeBuilder {
   bool calculateCubeTextures() {
     bool success = true;
     this._changed?.suspend();
-    if (!this._vertices.calculateCubeTextures()) success = false;
+    if (!this.vertices.calculateCubeTextures()) success = false;
     this._changed?.resume();
     return success;
   }

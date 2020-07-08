@@ -2,13 +2,10 @@ part of ThreeDart.Shapes;
 
 /// A collection of points for a shape.
 class ShapePointCollection {
-  Shape _shape;
-  List<Point> _points;
+  final Shape _shape;
 
   /// Creates a new shape's point collection for the given shape.
-  ShapePointCollection._(Shape this._shape){
-    this._points = new List<Point>();
-  }
+  ShapePointCollection._(Shape this._shape);
 
   /// The shape which owns this collection.
   Shape get shape => this._shape;
@@ -29,26 +26,22 @@ class ShapePointCollection {
   }
 
   /// Determines if the shape contains any points or not.
-  bool get isEmpty => this._points.isEmpty;
+  bool get isEmpty => this.length <= 0;
 
   /// The number of points in the shape.
-  int get length => this._points.length;
-
-  /// Gets the point at the at given [index].
-  Point operator[](int index) => this._points[index];
-
-  /// Gets the index of the given [point] or -1 if not found.
-  int indexOf(Point point) => this._points.indexOf(point);
+  int get length => this._shape._pointCount;
 
   /// Runs the given function handler for every point in the shape.
-  void forEach(void funcHndl(Point point)) => this._points.forEach(funcHndl);
+  void forEach(void funcHndl(Point point)) {
+    for (Point point in this.iteratable) funcHndl(point);
+  }
 
-  /// Removes the point with at the given [index].
-  /// The removed point is disposed and returned or null if none removed.
-  Point removeAt(int index) {
-    Point pnt = this._points[index];
-    if (pnt != null) pnt.dispose();
-    return pnt;
+  /// Gets an iteratable which steps through all of the points in the collection.
+  Iterable<Point> get iteratable sync* {
+    this._shape.vertices.forEach((Vertex vertex) {
+      List<Point> points = vertex._points.toList(growable: false);
+      yield* points;
+    });
   }
 
   /// Removes the given [point].
@@ -62,10 +55,14 @@ class ShapePointCollection {
 
   /// Removes all points which share the same vertex.
   void removeRepeats() {
-    for (int i = this._points.length-1; i >= 0; --i) {
-      if (this._points[i].vertex.points.length > 1) this.removeAt(i);
-    }
+    this._shape.vertices.forEach((Vertex vertex) {
+      vertex.points.removeRepeats();
+    });
   }
+  
+  /// Gets a copy of the points as a list.
+  List<Point> toList({bool growable = true}) =>
+    this.iteratable.toList(growable: growable);
 
   /// Gets to string for all the points.
   String toString() => this.format();
@@ -73,9 +70,9 @@ class ShapePointCollection {
   /// Gets the formatted string for this points with and optional [indent].
   String format([String indent = ""]) {
     List<String> parts = new List<String>();
-    for (Point pnt in this._points) {
+    this.forEach((Point pnt) {
       parts.add(pnt.format(indent));
-    }
+    });
     return parts.join('\n');
   }
 }
