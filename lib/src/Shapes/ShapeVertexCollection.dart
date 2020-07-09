@@ -73,10 +73,10 @@ class ShapeVertexCollection {
   
   /// Gets an iteratable which steps through all of the vertices in the collection.
   Iterable<Vertex> get iteratable sync* {
-    this._shape.octree.forEachLeaf((LeafNode leaf) {
+    for (LeafNode leaf in this._shape.octree.leafIteratable) {
       List<Vertex> vertices = leaf._vertices.toList(growable: false);
       yield* vertices;
-    });
+    }
   }
 
   /// Removes the given [vertex].

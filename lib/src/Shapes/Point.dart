@@ -11,13 +11,13 @@ class Point {
     if (ver.shape == null)
       throw new Exception("May not create a point with a vertex which is not attached to a shape.");
     this._setVertex(ver);
-    this._ver._shape.onPointAdded(this);
+    this._ver._shape?.onPointAdded(this);
   }
 
   /// Disposes this point.
   void dispose() {
     if (!this.disposed) {
-      this._ver._shape.onPointRemoved(this);
+      this._ver._shape?.onPointRemoved(this);
       this._removeVertex();
     }
   }
@@ -26,13 +26,13 @@ class Point {
   void _setVertex(Vertex ver) {
     this._ver = ver;
     this._ver._points.add(this);
-    this._ver._shape._pointCount++;
+    this._ver._shape?._pointCount++;
   }
 
   /// Removes the vertex.
   void _removeVertex() {
     if (this._ver != null) {
-      this._ver._shape._pointCount--;
+      this._ver._shape?._pointCount--;
       this._ver._points.remove(this);
       this._ver = null;
     }
@@ -60,7 +60,7 @@ class Point {
       ++result;
     }
     if (result > 0)
-      this._ver._shape.onPointModified(this);
+      this._ver._shape?.onPointModified(this);
     return result;
   }
 

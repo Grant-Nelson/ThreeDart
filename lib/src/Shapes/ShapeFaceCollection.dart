@@ -115,6 +115,14 @@ class ShapeFaceCollection {
     });
   }
 
+  /// Gets an iteratable which steps through all of the faces in the collection.
+  Iterable<Face> get iteratable sync* {
+    for (Vertex vertex in this._shape.vertices.iteratable) {
+      List<Face> faces = vertex._faces1.toList(growable: false);
+      yield* faces;
+    };
+  }
+
   /// Removes the given [face].
   /// Returns true if face was removed, false otherwise.
   bool remove(Face face) {
@@ -127,12 +135,15 @@ class ShapeFaceCollection {
   /// Removes all faces which match each other based on the given matcher.
   void removeRepeats([FaceMatcher matcher = null]) {
     matcher ??= new ExactFaceMatcher();
-    for (int i = this._faces.length-1; i >= 0; --i) {
-      Face faceA = this._faces[i];
-      if (faceA != null) {
-        for (int j = i - 1; j >= 0; --j) {
-          Face faceB = this._faces[j];
-          if (faceB != null) {
+    Iterator<Face> facesA = this.iteratable.iterator;
+    while (facesA.moveNext()) {
+      Face faceA = facesA.current;
+      if (!faceA.disposed) {
+        Iterator<Face> facesB = this.iteratable.skipWhile((Face faceB) => faceB != faceA).iterator;
+        facesB.moveNext(); // step over faceA
+        while (facesB.moveNext()) {
+          Face faceB = facesB.current;
+          if (!faceB.disposed) {
             if (matcher.matches(faceA, faceB)) {
               faceA.dispose();
               break;
@@ -147,49 +158,32 @@ class ShapeFaceCollection {
   /// on the given matcher and share a vertex.
   void removeVertexRepeats([FaceMatcher matcher = null]) {
     matcher ??= new ExactFaceMatcher();
-    for (int k = this._shape.vertices.length-1; k >= 0; --k) {
-      Vertex ver = this._shape.vertices[k];
-      for (int i = ver._faces.length-1; i >= 0; --i) {
-        Face faceA = ver._faces[i];
-        if (faceA != null) {
-          for (int j = i - 1; j >= 0; --j) {
-            Face faceB = ver._faces[j];
-            if (faceB != null) {
-              if (matcher.matches(faceA, faceB)) {
-                faceA.dispose();
-                break;
-              }
-            }
-          }
-        }
-      }
-    }
+    this._shape.vertices.forEach((Vertex ver) {
+      ver.faces.removeRepeats(matcher);
+    });
   }
 
   /// Removes all the collapsed faces.
   void removeCollapsed() {
-    for (int i = this._faces.length-1; i >= 0; --i) {
-      Face face = this._faces[i];
-      if ((face == null) || face.collapsed) face.dispose();
-    }
+    this._shape.vertices.forEach((Vertex ver) {
+      ver.faces.removeCollapsed();
+    });
   }
 
   /// Removes all faces.
   void removeAll() {
-    for (int i = this._faces.length-1; i >= 0; --i) {
-      Face face = this._faces[i];
-      face?.dispose();
-    }
-    this._faces.clear();
+    this._shape.vertices.forEach((Vertex ver) {
+      ver.faces.removeAll();
+    });
   }
 
   /// Calculates the normals for all the faces in the shape.
   /// Returns true if faces' normals are calculated, false on error.
   bool calculateNormals() {
     bool success = true;
-    for (Face face in this._faces) {
+    this.forEach((Face face) {
       if (!face.calculateNormal()) success = false;
-    }
+    });
     return success;
   }
 
@@ -197,15 +191,17 @@ class ShapeFaceCollection {
   /// Returns true if faces' binormals are calculated, false on error.
   bool calculateBinormals() {
     bool success = true;
-    for (Face face in this._faces) {
+    this.forEach((Face face) {
       if (!face.calculateBinormal()) success = false;
-    }
+    });
     return success;
   }
 
   /// Flips all the faces in the shape.
   void flip() {
-    for (Face face in this._faces) face.flip();
+    this.forEach((Face face) {
+      face.flip();
+    });
   }
 
   /// Gets a copy of the faces as a list.
@@ -223,9 +219,9 @@ class ShapeFaceCollection {
   /// Gets the formatted string for this faces with and optional [indent].
   String format([String indent = ""]) {
     List<String> parts = new List<String>();
-    for (Face face in this._faces) {
+    this.forEach((Face face) {
       parts.add(face.format(indent));
-    }
+    });
     return parts.join('\n');
   }
 }

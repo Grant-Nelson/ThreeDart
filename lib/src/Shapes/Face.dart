@@ -26,19 +26,17 @@ class Face {
     this._setVertex1(ver1);
     this._setVertex2(ver2);
     this._setVertex3(ver3);
-    this._ver1._shape._faces._faces.add(this);
-    this._ver1._shape.onFaceAdded(this);
+    this._ver1._shape?.onFaceAdded(this);
   }
 
   /// Disposes this face.
   void dispose() {
     if (!this.disposed) {
-      this._ver1._shape._faces._faces.remove(this);
-      this._ver1._shape.onFaceRemoved(this);
+      this._ver1._shape?.onFaceRemoved(this);
+      this._removeVertex1();
+      this._removeVertex2();
+      this._removeVertex3();
     }
-    this._removeVertex1();
-    this._removeVertex2();
-    this._removeVertex3();
   }
 
   /// Trims all the faces down have the true values,
@@ -51,25 +49,27 @@ class Face {
   /// Sets the first vertex to the given value.
   void _setVertex1(Vertex ver1) {
     this._ver1 = ver1;
-    this._ver1._faces._faces1.add(this);
+    this._ver1._faces1.add(this);
+    this._ver1._shape?._pointCount++;
   }
 
   /// Sets the second vertex to the given value.
   void _setVertex2(Vertex ver2) {
     this._ver2 = ver2;
-    this._ver2._faces._faces2.add(this);
+    this._ver2._faces2.add(this);
   }
 
   /// Sets the third vertex to the given value.
   void _setVertex3(Vertex ver3) {
     this._ver3 = ver3;
-    this._ver3._faces._faces3.add(this);
+    this._ver3._faces3.add(this);
   }
 
   /// Removes the first vertex.
   void _removeVertex1() {
     if (this._ver1 != null) {
-      this._ver1._faces._faces1.remove(this);
+      this._ver1._shape?._pointCount--;
+      this._ver1._faces1.remove(this);
       this._ver1 = null;
     }
   }
@@ -77,7 +77,7 @@ class Face {
   /// Removes the second vertex.
   void _removeVertex2() {
     if (this._ver2 != null) {
-      this._ver2._faces._faces2.remove(this);
+      this._ver2._faces2.remove(this);
       this._ver2 = null;
     }
   }
@@ -85,7 +85,7 @@ class Face {
   /// Removes the third vertex.
   void _removeVertex3() {
     if (this._ver3 != null) {
-      this._ver3._faces._faces3.remove(this);
+      this._ver3._faces3.remove(this);
       this._ver3 = null;
     }
   }
@@ -148,7 +148,7 @@ class Face {
       if (norm == null) return false;
     }
     this._norm = norm;
-    this._ver1._shape.onFaceModified(this);
+    this._ver1._shape?.onFaceModified(this);
     return true;
   }
 
@@ -211,7 +211,7 @@ class Face {
       if (binm == null) return false;
     }
     this._binm = binm;
-    this._ver1._shape.onFaceModified(this);
+    this._ver1._shape?.onFaceModified(this);
     return true;
   }
 
@@ -251,7 +251,7 @@ class Face {
       ++result;
     }
     if (result > 0)
-      this._ver1._shape.onFaceModified(this);
+      this._ver1._shape?.onFaceModified(this);
     return result;
   }
 
@@ -266,7 +266,7 @@ class Face {
     this._setVertex3(verA);
     if (this._norm != null) this._norm = -this._norm;
     if (this._binm != null) this._binm = -this._binm;
-    this._ver1._shape.onFaceModified(this);
+    this._ver1._shape?.onFaceModified(this);
   }
 
   /// Indicates if the face is collapsed meaning two or

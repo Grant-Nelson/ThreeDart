@@ -61,10 +61,10 @@ class ShapeLineCollection {
 
   /// Gets an iteratable which steps through all of the lines in the collection.
   Iterable<Line> get iteratable sync* {
-    this._shape.vertices.forEach((Vertex vertex) {
+    for (Vertex vertex in this._shape.vertices.iteratable) {
       List<Line> lines = vertex._lines1.toList(growable: false);
       yield* lines;
-    });
+    }
   }
 
   /// Removes the given [line].

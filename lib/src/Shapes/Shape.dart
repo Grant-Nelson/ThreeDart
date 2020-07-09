@@ -145,20 +145,18 @@ class Shape implements ShapeBuilder {
         center: new Math.Point3(aabb.x, aabb.y, aabb.z),
         scalar: 1.0/length);
     }
-    final int count = this._vertices.length;
-    for (int i = count-1; i >= 0; i--) {
-      Vertex ver = this._vertices[i];
+    this.vertices.forEach((Vertex ver) {
       ver.weight = measure.measure(ver);
-    }
+    });
   }
 
   /// Calculates the axial aligned bounding box of the shape.
   Math.Region3 calculateAABB() {
-    final int count = this._vertices.length;
-    if (count <= 0) return Math.Region3.zero;
-    Math.Region3 result = new Math.Region3.fromPoint(this._vertices[0].location);
-    for (int i = count-1; i >= 1; i--)
-      result = result.expandWithPoint(this._vertices[i].location);
+    Iterator<Vertex> it = this.vertices.iteratable.iterator;
+    if (!it.moveNext()) return Math.Region3.zero;
+    Math.Region3 result = new Math.Region3.fromPoint(it.current.location);
+    while (it.moveNext())
+      result = result.expandWithPoint(it.current.location);
     return result;
   }
 
@@ -168,15 +166,16 @@ class Shape implements ShapeBuilder {
   /// the offset is applied in the direction of the normal vector.
   void applyHeightMap(Textures.TextureReader height, [double scalar = 1.0]) {
     this._changed?.suspend();
-    for (int i = this._vertices.length-1; i >= 0; --i) {
-      Vertex ver = this._vertices[i];
+    this.vertices.forEach((Vertex ver) {
       if ((ver != null) || (ver.location != null) ||
           (ver.normal != null) || (ver.texture2D != null)) {
         Math.Color4 clr = height.atLoc(ver.texture2D);
         double length = (clr.red + clr.green + clr.blue)*scalar/3.0;
+
+        // TODO: MUST UPDATE LOCATION IN OCTREE!!
         ver.location += new Math.Point3.fromVector3(ver.normal*length);
       }
-    }
+    });
     this._changed?.resume();
   }
 
@@ -184,10 +183,9 @@ class Shape implements ShapeBuilder {
   /// everything else is nulled out.
   void trimVertices(Data.VertexType type) {
     this._changed?.suspend();
-    for (int i = this._vertices.length-1; i >= 0; --i) {
-      Vertex ver = this._vertices[i];
-      if (ver != null) ver.trim(type);
-    }
+    this.vertices.forEach((Vertex ver) {
+      ver.trim(type);
+    });
     this._changed?.resume();
   }
 
@@ -195,40 +193,19 @@ class Shape implements ShapeBuilder {
   /// everything else is nulled out.
   void trimFaces({bool norm: true, bool binm: true}) {
     this._changed?.suspend();
-    for (int i = this._faces.length-1; i >= 0; --i) {
-      Face face = this._faces[i];
-      if (face != null) face.trim(norm: norm, binm: binm);
-    }
+    this.faces.forEach((Face face) {
+      if (!face.disposed) face.trim(norm: norm, binm: binm);
+    });
     this._changed?.resume();
-  }
-
-  /// Finds the first index of the vertex which matches the given vertex.
-  /// If no match is found then -1 is returned.
-  int findFirstIndex(Vertex ver, [VertexMatcher matcher = null, int startIndex = 0]) {
-    matcher ??= new FullVertexMatcher();
-    final int count = this._vertices.length;
-    for (int i = startIndex; i < count; ++i) {
-      Vertex ver2 = this._vertices[i];
-      if (ver2 != null) {
-        if (matcher.matches(ver, ver2)) {
-          return i;
-        }
-      }
-    }
-    return -1;
   }
 
   /// Gets the first vertex in this shape which matches the given vertex.
   /// If no match is found then null is returned.
   Vertex findFirst(Vertex ver, [VertexMatcher matcher = null, int startIndex = 0]) {
     matcher ??= new FullVertexMatcher();
-    final int count = this._vertices.length;
-    for (int i = startIndex; i < count; ++i) {
-      Vertex ver2 = this._vertices[i];
-      if (ver2 != null) {
-        if (matcher.matches(ver, ver2)) {
-          return ver2;
-        }
+    for(Vertex ver2 in this.vertices.iteratable) {
+      if (matcher.matches(ver, ver2)) {
+        return ver2;
       }
     }
     return null;
@@ -238,13 +215,9 @@ class Shape implements ShapeBuilder {
   List<Vertex> findAll(Vertex ver, [VertexMatcher matcher = null, int startIndex = 0]) {
     matcher ??= new FullVertexMatcher();
     List<Vertex> results = new List<Vertex>();
-    final int count = this._vertices.length;
-    for (int i = startIndex; i < count; ++i) {
-      Vertex ver2 = this._vertices[i];
-      if (ver2 != null) {
-        if (matcher.matches(ver, ver2)) {
-          results.add(ver2);
-        }
+    for(Vertex ver2 in this.vertices.iteratable) {
+      if (matcher.matches(ver, ver2)) {
+        results.add(ver2);
       }
     }
     return results;
@@ -271,7 +244,7 @@ class Shape implements ShapeBuilder {
   /// repeat points, lines, and faces are removed.
   void mergeVertices(VertexMatcher matcher, VertexMerger merger) {
     this._changed?.suspend();
-    List<Vertex> vertices = this._vertices.copyToList();
+    List<Vertex> vertices = this.vertices.toList();
     while (vertices.isNotEmpty) {
       Vertex ver = vertices.first;
       vertices.removeAt(0);
@@ -299,12 +272,12 @@ class Shape implements ShapeBuilder {
       }
     }
 
-    this._vertices._updateIndices();
-    this._lines.removeCollapsed();
-    this._faces.removeCollapsed();
-    this._points.removeRepeats();
-    this._lines.removeVertexRepeats(new UndirectedLineMatcher());
-    this._faces.removeVertexRepeats(new SimilarFaceMatcher());
+    this.vertices._updateIndices();
+    this.lines.removeCollapsed();
+    this.faces.removeCollapsed();
+    this.points.removeRepeats();
+    this.lines.removeVertexRepeats(new UndirectedLineMatcher());
+    this.faces.removeVertexRepeats(new SimilarFaceMatcher());
     this._changed?.resume();
   }
 
@@ -338,14 +311,11 @@ class Shape implements ShapeBuilder {
   /// Flips the shape inside out.
   void flip() {
     this._changed?.suspend();
-    this._faces.flip();
-    for (int i = this._vertices.length-1; i >= 0; --i) {
-      Vertex ver = this._vertices[i];
-      if (ver != null) {
-        if (ver.normal != null) ver.normal = -ver.normal;
-        if (ver.binormal != null) ver.binormal = -ver.binormal;
-      }
-    }
+    this.faces.flip();
+    this.vertices.forEach((Vertex ver) {
+      if (ver.normal != null) ver.normal = -ver.normal;
+      if (ver.binormal != null) ver.binormal = -ver.binormal;
+    });
     this._changed?.resume();
   }
 
@@ -368,49 +338,42 @@ class Shape implements ShapeBuilder {
   /// Modifies the position, normal, and binormal
   /// by translating it with the given [mat].
   void applyPositionMatrix(Math.Matrix4 mat) {
-    for (int i = this._vertices.length-1; i >= 0; --i) {
-      Vertex ver = this._vertices[i];
-      if (ver != null) {
+    this.vertices.forEach((Vertex ver) {
+        // TODO: MUST UPDATE LOCATION IN OCTREE!!
         if (ver.location != null) ver.location = mat.transPnt3(ver.location);
         if (ver.normal   != null) ver.normal   = mat.transVec3(ver.normal);
         if (ver.binormal != null) ver.binormal = mat.transVec3(ver.binormal);
-      }
-    }
+      });
   }
 
   /// Modifies the color by translating it with the given [mat].
   void applyColorMatrix(Math.Matrix3 mat) {
-    for (int i = this._vertices.length-1; i >= 0; --i) {
-      Vertex ver = this._vertices[i];
-      if ((ver != null) && (ver.color != null)) {
-        ver.color = mat.transClr4(ver.color);
-      }
-    }
+    this.vertices.forEach((Vertex ver) {
+      if (ver.color != null) ver.color = mat.transClr4(ver.color);
+    });
   }
 
   /// Modifies the 2D texture by translating it with the given [mat].
   void applyTexture2DMatrix(Math.Matrix3 mat) {
-    for (int i = this._vertices.length-1; i >= 0; --i) {
-      Vertex ver = this._vertices[i];
-      if ((ver != null) && (ver.color != null)) {
-        ver.texture2D = mat.transPnt2(ver.texture2D);
-      }
-    }
+    this.vertices.forEach((Vertex ver) {
+      if (ver.texture2D != null) ver.texture2D = mat.transPnt2(ver.texture2D);
+    });
   }
 
   /// Modifies the cube texture by translating it with the given [mat].
   void applyTextureCubeMatrix(Math.Matrix4 mat) {
-    for (int i = this._vertices.length-1; i >= 0; --i) {
-      Vertex ver = this._vertices[i];
-      if (ver != null) ver.textureCube = mat.transVec3(ver.textureCube);
-    }
+    this.vertices.forEach((Vertex ver) {
+      if (ver.textureCube != null) ver.textureCube = mat.transVec3(ver.textureCube);
+    });
   }
 
   /// Builds a buffer store for caching the shape for rendering.
   /// This requires the buffer [builder] for WebGL or testing,
   /// and the vertex [type] required for technique.
   Data.BufferStore build(Data.BufferBuilder builder, Data.VertexType type) {
-    final int length = this._vertices.length;
+    this.vertices._updateIndices();
+    List<Vertex> data = this.vertices.toList(growable: false);
+    final int length = data.length;
     final int count = type.count;
     final int stride = type.size;
     final int byteStride = stride*Typed.Float32List.bytesPerElement;
@@ -423,7 +386,7 @@ class Shape implements ShapeBuilder {
       attrs[i] = new Data.BufferAttr(local, size,
         offset*Typed.Float32List.bytesPerElement, byteStride);
       for (int j = 0; j < length; ++j) {
-        Vertex ver = this._vertices[j];
+        Vertex ver = data[j];
         List<double> list = ver.listFor(local);
         int index = offset + j*stride;
         for (int k = 0; k < list.length; ++k) {
@@ -436,32 +399,32 @@ class Shape implements ShapeBuilder {
 
     Data.Buffer vertexBuf = builder.fromDoubleList(WebGL.WebGL.ARRAY_BUFFER, vertices);
     Data.BufferStore store = new Data.BufferStore(vertexBuf, attrs, type);
-    if (!this._points.isEmpty) {
+    if (!this.points.isEmpty) {
       List<int> indices = new List<int>();
-      for (int i = 0; i < this._points.length; ++i) {
-        indices.add(this._points[i].vertex.index);
-      }
+      this.points.forEach((Point point) {
+        indices.add(point.vertex.index);
+      });
       Data.Buffer indexBuf = builder.fromIntList(WebGL.WebGL.ELEMENT_ARRAY_BUFFER, indices);
       store.indexObjects.add(new Data.IndexObject(WebGL.WebGL.POINTS, indices.length, indexBuf));
     }
 
-    if (!this._lines.isEmpty) {
+    if (!this.lines.isEmpty) {
       List<int> indices = new List<int>();
-      for (int i = 0; i < this._lines.length; ++i) {
-        indices.add(this._lines[i].vertex1.index);
-        indices.add(this._lines[i].vertex2.index);
-      }
+      this.lines.forEach((Line line) {
+        indices.add(line.vertex1.index);
+        indices.add(line.vertex2.index);
+      });
       Data.Buffer indexBuf = builder.fromIntList(WebGL.WebGL.ELEMENT_ARRAY_BUFFER, indices);
       store.indexObjects.add(new Data.IndexObject(WebGL.WebGL.LINES, indices.length, indexBuf));
     }
 
-    if (!this._faces.isEmpty) {
+    if (!this.faces.isEmpty) {
       List<int> indices = new List<int>();
-      for (int i = 0; i < this._faces.length; i++) {
-        indices.add(this._faces[i].vertex1.index);
-        indices.add(this._faces[i].vertex2.index);
-        indices.add(this._faces[i].vertex3.index);
-      }
+      this.faces.forEach((Face face) {
+        indices.add(face.vertex1.index);
+        indices.add(face.vertex2.index);
+        indices.add(face.vertex3.index);
+      });
       Data.Buffer indexBuf = builder.fromIntList(WebGL.WebGL.ELEMENT_ARRAY_BUFFER, indices);
       store.indexObjects.add(new Data.IndexObject(WebGL.WebGL.TRIANGLES, indices.length, indexBuf));
     }
@@ -475,21 +438,21 @@ class Shape implements ShapeBuilder {
   /// Gets the formatted string for this shape with and optional [indent].
   String format([String indent = ""]) {
     List<String> parts = new List<String>();
-    if (!this._vertices.isEmpty) {
+    if (!this.vertices.isEmpty) {
       parts.add("${indent}Vertices:");
-      parts.add(this._vertices.format("${indent}   "));
+      parts.add(this.vertices.format("${indent}   "));
     }
-    if (!this._points.isEmpty) {
+    if (!this.points.isEmpty) {
       parts.add('${indent}Points:');
-      parts.add(this._points.format("${indent}   "));
+      parts.add(this.points.format("${indent}   "));
     }
-    if (!this._lines.isEmpty) {
+    if (!this.lines.isEmpty) {
       parts.add('${indent}Lines:');
-      parts.add(this._lines.format("${indent}   "));
+      parts.add(this.lines.format("${indent}   "));
     }
-    if (!this._faces.isEmpty) {
+    if (!this.faces.isEmpty) {
       parts.add('${indent}Faces:');
-      parts.add(this._faces.format("${indent}   "));
+      parts.add(this.faces.format("${indent}   "));
     }
     return parts.join('\n');
   }

@@ -38,10 +38,10 @@ class ShapePointCollection {
 
   /// Gets an iteratable which steps through all of the points in the collection.
   Iterable<Point> get iteratable sync* {
-    this._shape.vertices.forEach((Vertex vertex) {
+    for (Vertex vertex in this._shape.vertices.iteratable) {
       List<Point> points = vertex._points.toList(growable: false);
       yield* points;
-    });
+    }
   }
 
   /// Removes the given [point].
