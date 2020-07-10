@@ -1,16 +1,17 @@
 part of ThreeDart.Shapes;
 
-// TODO: Comment
+/// A collection of points for a vertex.
 class VertexPointCollection {
   final Vertex _vertex;
 
+  /// Creates a new vertex's point collection for the given vertex.
   VertexPointCollection._(Vertex this._vertex);
 
   /// The vertex which owns this collection.
   Vertex get vertex => this._vertex;
 
   /// The shape which owns the vertex which owns this collection.
-  Shape get shape => this._vertex._shape;
+  Shape get shape => this._vertex?.shape;
 
   /// Adds a point to this vertex.
   Point add() {
@@ -25,15 +26,33 @@ class VertexPointCollection {
   /// The number of points in the vertex.
   int get length => this._vertex._points.length;
 
-  /// Runs the given function handler for every point in the vertex.
-  void forEach(void funcHndl(Point point)) =>
-    this._vertex._points.forEach(funcHndl);
+  /// Gets the point at the at given [index].
+  Point operator[](int index) => this._vertex._points[index];
+
+  /// Gets the index of the given [point] or -1 if not found.
+  int indexOf(Point point) => this._vertex._points.indexOf(point);
+
+  /// Gets the iterable for the points in the vertex.
+  Iterable<Point> get iterable sync* {
+    List<Point> points = this._vertex._points.toList(growable: false);
+    for (Point point in points) {
+      if (!point.disposed) yield point;
+    }
+  }
+
+  /// Removes the point with at the given [index].
+  /// The removed point is disposed and returned or null if none removed.
+  Point removeAt(int index) {
+    Point pnt = this._vertex._points[index];
+    if (pnt != null) pnt.dispose();
+    return pnt;
+  }
 
   /// Removes the given [point].
   /// Returns true if point was removed, false otherwise.
   bool remove(Point point) {
     if (point == null) return false;
-    if (point._ver._shape != this.shape) return false;
+    if (point._ver?.shape != this.shape) return false;
     point.dispose();
     return true;
   }
@@ -42,7 +61,7 @@ class VertexPointCollection {
   /// This will remove all but the first point attached to this vector.
   void removeRepeats() {
     for (int i = this._vertex._points.length-1; i >= 1; --i) {
-      this._vertex._points[i].dispose();
+      this.removeAt(i);
     }
   }
 

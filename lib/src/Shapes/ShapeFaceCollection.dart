@@ -108,18 +108,10 @@ class ShapeFaceCollection {
   /// The number of faces in the shape.
   int get length => this._shape._faceCount;
 
-  /// Runs the given function handler for every face in the shape.
-  void forEach(void funcHndl(Face face)) {
-    this._shape.vertices.forEach((Vertex vertex) {
-      vertex.faces.forEach1(funcHndl);
-    });
-  }
-
-  /// Gets an iteratable which steps through all of the faces in the collection.
-  Iterable<Face> get iteratable sync* {
-    for (Vertex vertex in this._shape.vertices.iteratable) {
-      List<Face> faces = vertex._faces1.toList(growable: false);
-      yield* faces;
+  /// Gets an iterable which steps through all of the faces in the collection.
+  Iterable<Face> get iterable sync* {
+    for (Vertex vertex in this._shape.vertices.iterable) {
+      yield* vertex.faces.iterable1;
     };
   }
 
@@ -127,7 +119,7 @@ class ShapeFaceCollection {
   /// Returns true if face was removed, false otherwise.
   bool remove(Face face) {
     if (face == null) return false;
-    if (face._ver1._shape != this.shape) return false;
+    if (face._ver1.shape != this.shape) return false;
     face.dispose();
     return true;
   }
@@ -135,11 +127,11 @@ class ShapeFaceCollection {
   /// Removes all faces which match each other based on the given matcher.
   void removeRepeats([FaceMatcher matcher = null]) {
     matcher ??= new ExactFaceMatcher();
-    Iterator<Face> facesA = this.iteratable.iterator;
+    Iterator<Face> facesA = this.iterable.iterator;
     while (facesA.moveNext()) {
       Face faceA = facesA.current;
       if (!faceA.disposed) {
-        Iterator<Face> facesB = this.iteratable.skipWhile((Face faceB) => faceB != faceA).iterator;
+        Iterator<Face> facesB = this.iterable.skipWhile((Face faceB) => faceB != faceA).iterator;
         facesB.moveNext(); // step over faceA
         while (facesB.moveNext()) {
           Face faceB = facesB.current;
@@ -158,32 +150,30 @@ class ShapeFaceCollection {
   /// on the given matcher and share a vertex.
   void removeVertexRepeats([FaceMatcher matcher = null]) {
     matcher ??= new ExactFaceMatcher();
-    this._shape.vertices.forEach((Vertex ver) {
+    for (Vertex ver in this._shape.vertices.iterable) {
       ver.faces.removeRepeats(matcher);
-    });
+    }
   }
 
   /// Removes all the collapsed faces.
   void removeCollapsed() {
-    this._shape.vertices.forEach((Vertex ver) {
+    for (Vertex ver in this._shape.vertices.iterable)
       ver.faces.removeCollapsed();
-    });
   }
 
   /// Removes all faces.
   void removeAll() {
-    this._shape.vertices.forEach((Vertex ver) {
+    for (Vertex ver in this._shape.vertices.iterable)
       ver.faces.removeAll();
-    });
   }
 
   /// Calculates the normals for all the faces in the shape.
   /// Returns true if faces' normals are calculated, false on error.
   bool calculateNormals() {
     bool success = true;
-    this.forEach((Face face) {
+    for (Face face in this.iterable) {
       if (!face.calculateNormal()) success = false;
-    });
+    }
     return success;
   }
 
@@ -191,27 +181,20 @@ class ShapeFaceCollection {
   /// Returns true if faces' binormals are calculated, false on error.
   bool calculateBinormals() {
     bool success = true;
-    this.forEach((Face face) {
+    for (Face face in this.iterable) {
       if (!face.calculateBinormal()) success = false;
-    });
+    }
     return success;
   }
 
   /// Flips all the faces in the shape.
   void flip() {
-    this.forEach((Face face) {
-      face.flip();
-    });
+    for (Face face in this.iterable) face.flip();
   }
 
   /// Gets a copy of the faces as a list.
-  List<Face> copyToList() {
-    List<Face> faces = new List<Face>(this.length);
-    this.forEach((Face face) {
-      faces.add(face);
-    });
-    return faces;
-  }
+  List<Face> toList({bool growable = true}) =>
+    this.iterable.toList(growable: growable);
 
   /// Gets to string for all the faces.
   String toString() => this.format();
@@ -219,9 +202,11 @@ class ShapeFaceCollection {
   /// Gets the formatted string for this faces with and optional [indent].
   String format([String indent = ""]) {
     List<String> parts = new List<String>();
-    this.forEach((Face face) {
-      parts.add(face.format(indent));
-    });
+    int index = 0;
+    for (Face face in this.iterable) {
+      parts.add(face.format(indent+"$index. "));
+      ++index;
+    }
     return parts.join('\n');
   }
 }

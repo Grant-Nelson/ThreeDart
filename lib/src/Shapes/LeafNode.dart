@@ -4,6 +4,7 @@ part of ThreeDart.Shapes;
 /// and equal to this node's coordinates.
 class LeafNode extends Node {
   Path _path;
+  Shape _shape;
   List<Vertex> _vertices;
   List<Line> _lines;
   List<Face> _faces;
@@ -12,16 +13,19 @@ class LeafNode extends Node {
   LeafNode._(Path path, Shape shape, [Vertex vertex = null]): super._() {
     if (path == null)
       throw new Exception("Must have a non-nil path for a leaf node.");
-    this._path == path;
-    this._vertices = new VertexCollection._(shape);
+    this._path = path;
+    this._shape = shape;
+    this._vertices = new List<Vertex>();
+    this._lines = new List<Line>();
+    this._faces = new List<Face>();
     if (vertex != null) this._vertices.add(vertex);
   }
 
-  /// All the vertices which map tho this leaf node's path.
-  VertexCollection get vertices => this._vertices;
-
   /// Gets the path to this leaf.
   Path get path => this._path;
+
+  /// All the vertices which map tho this leaf node's path.
+  NodeVertexCollection get vertices => new NodeVertexCollection._(this);
 
   /// Adds a vertex to this node.
   /// Returns the node that should be the new root of the

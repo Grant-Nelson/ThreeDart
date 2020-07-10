@@ -31,16 +31,10 @@ class ShapePointCollection {
   /// The number of points in the shape.
   int get length => this._shape._pointCount;
 
-  /// Runs the given function handler for every point in the shape.
-  void forEach(void funcHndl(Point point)) {
-    for (Point point in this.iteratable) funcHndl(point);
-  }
-
-  /// Gets an iteratable which steps through all of the points in the collection.
-  Iterable<Point> get iteratable sync* {
-    for (Vertex vertex in this._shape.vertices.iteratable) {
-      List<Point> points = vertex._points.toList(growable: false);
-      yield* points;
+  /// Gets an iterable which steps through all of the points in the collection.
+  Iterable<Point> get iterable sync* {
+    for (Vertex vertex in this._shape.vertices.iterable) {
+      yield* vertex.points.iterable;
     }
   }
 
@@ -48,21 +42,20 @@ class ShapePointCollection {
   /// Returns true if point was removed, false otherwise.
   bool remove(Point point) {
     if (point == null) return false;
-    if (point._ver._shape != this.shape) return false;
+    if (point._ver.shape != this.shape) return false;
     point.dispose();
     return true;
   }
 
   /// Removes all points which share the same vertex.
   void removeRepeats() {
-    this._shape.vertices.forEach((Vertex vertex) {
+    for (Vertex vertex in this._shape.vertices.iterable)
       vertex.points.removeRepeats();
-    });
   }
   
   /// Gets a copy of the points as a list.
   List<Point> toList({bool growable = true}) =>
-    this.iteratable.toList(growable: growable);
+    this.iterable.toList(growable: growable);
 
   /// Gets to string for all the points.
   String toString() => this.format();
@@ -70,9 +63,11 @@ class ShapePointCollection {
   /// Gets the formatted string for this points with and optional [indent].
   String format([String indent = ""]) {
     List<String> parts = new List<String>();
-    this.forEach((Point pnt) {
-      parts.add(pnt.format(indent));
-    });
+    int index = 0;
+    for (Point pnt in this.iterable) {
+      parts.add(pnt.format(indent+"$index. "));
+      ++index;
+    }
     return parts.join('\n');
   }
 }

@@ -8,6 +8,13 @@ class Path {
   /// The maximum allowed value for any component, 2^32 - 1.
   static const int maxValue = 4294967295;
 
+  /// Clamps the given component into the valid range.
+  static int clamp(int v) {
+    if (v < 0) return 0;
+    if (v > maxValue) return maxValue;
+    return v;
+  }
+
   /// The x component of the path.
   final int x;
   
@@ -20,6 +27,7 @@ class Path {
   /// Determines the path to the given location within the given maximum cube.
   factory Path.fromPoint(Math.Point3 loc, Math.Cube maxCube) {
     double scalar = maxDepth / maxCube.size;
+    if (loc == null) return new Path._(0, 0, 0);
     return new Path(
       ((loc.x - maxCube.x)*scalar).round(),
       ((loc.y - maxCube.y)*scalar).round(),
@@ -27,15 +35,8 @@ class Path {
   }
 
   /// Constructs a path with the given coordinates and depth.
-  factory Path(int x, int y, int z) {
-    if (x < 0 || x > maxValue)
-      throw new Exception("X component in the path must be between 0 and $maxValue ($x)");
-    if (y < 0 || y > maxValue)
-      throw new Exception("Y component in the path must be between 0 and $maxValue ($y)");
-    if (z < 0 || z > maxValue)
-      throw new Exception("Z component in the path must be between 0 and $maxValue ($z)");
-    return new Path._(x, y, z);
-  }
+  factory Path(int x, int y, int z) =>
+    new Path._(clamp(x), clamp(y), clamp(z));
 
   /// Internal constructor to assign final values.
   Path._(this.x, this.y, this.z);

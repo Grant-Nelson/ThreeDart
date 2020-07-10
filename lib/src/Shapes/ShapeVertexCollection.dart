@@ -8,13 +8,14 @@ class ShapeVertexCollection {
   ShapeVertexCollection._(Shape this._shape);
 
   /// Updates the indices of all vertices.
+  /// This is only run when the indices need to be run.
   void _updateIndices() {
     if (this._shape._vertexIndicesNeedUpdate) {
       int index = 0;
-      this.forEach((Vertex vertex) {
+      for (Vertex vertex in this.iterable) {
         vertex._index = index;
         ++index;
-      });
+      }
       this._shape._vertexIndicesNeedUpdate = false;
     }
   }
@@ -26,14 +27,8 @@ class ShapeVertexCollection {
       if (vertex.shape == this._shape) return false;
       throw new Exception("May not add a vertex already attached to another shape to this shape.");
     }
-    vertex._index = this._shape._vertexCount;
-    vertex._shape = this._shape;
-    
     Path path = new Path.fromPoint(vertex.location, this._shape.maxCube);
     this._shape._root = this._shape.octree._addVertex(this._shape._root, path, vertex);
-
-    this._shape._vertexCount++;
-    this._shape.onVertexAdded(vertex);
     return true;
   }
 
@@ -65,17 +60,14 @@ class ShapeVertexCollection {
 
   /// Determines the number of vertices in the collection.
   int get length => this._shape._vertexCount;
-
-  /// Runs the given function handler for every vertex in the shape.
-  void forEach(void funcHndl(Vertex vertex)) {
-    for (Vertex vertex in this.iteratable) funcHndl(vertex);
-  }
   
-  /// Gets an iteratable which steps through all of the vertices in the collection.
-  Iterable<Vertex> get iteratable sync* {
-    for (LeafNode leaf in this._shape.octree.leafIteratable) {
+  /// Gets an iterable which steps through all of the vertices in the collection.
+  Iterable<Vertex> get iterable sync* {
+    for (LeafNode leaf in this._shape.octree.leafIterable) {
       List<Vertex> vertices = leaf._vertices.toList(growable: false);
-      yield* vertices;
+      for (Vertex vertex in vertices) {
+        if (vertex.shape == this._shape) yield vertex;
+      }
     }
   }
 
@@ -83,12 +75,12 @@ class ShapeVertexCollection {
   /// Returns true if vertex was removed, false otherwise.
   bool remove(Vertex vertex) {
     if (vertex == null) return false;
-    if (vertex._shape != this._shape) return false;
+    if (vertex.shape != this._shape) return false;
     if (!vertex.isEmpty)
       throw new Exception("May not remove a vertex without first making it empty.");
-    vertex._shape = null;
-    
+
     // TODO: Implement remove
+    //vertex.shape = null;
     //this._vertices.remove(vertex);
 
     this._shape.onVertexRemoved(vertex);
@@ -100,9 +92,9 @@ class ShapeVertexCollection {
   /// Returns true if faces' normals are calculated, false on error.
   bool calculateNormals() {
     bool success = true;
-    this.forEach((Vertex vertex) {
+    for (Vertex vertex in this.iterable) {
       if (!vertex.calculateNormal()) success = false;
-    });
+    }
     return success;
   }
 
@@ -110,26 +102,26 @@ class ShapeVertexCollection {
   /// Returns true if vertices' binormals are calculated, false on error.
   bool calculateBinormals() {
     bool success = true;
-    this.forEach((Vertex vertex) {
+    for (Vertex vertex in this.iterable) {
       if (!vertex.calculateBinormal()) success = false;
-    });
+    }
     return success;
   }
 
   /// Calculates the cube texture coordinate for the vertices and faces.
   /// True if successful, false on error.
   bool calculateCubeTextures() {
-    this.forEach((Vertex vertex) {
+    for (Vertex vertex in this.iterable) {
       if (vertex.textureCube == null) {
         vertex.textureCube = vertex.normal.normal();
       }
-    });
+    }
     return true;
   }
 
   /// Gets a copy of the vertices as a list.
   List<Vertex> toList({bool growable = true}) =>
-    this.iteratable.toList(growable: growable);
+    this.iterable.toList(growable: growable);
 
   /// Gets to string for all the vertices.
   String toString() => this.format();
@@ -138,9 +130,9 @@ class ShapeVertexCollection {
   String format([String indent = ""]) {
     this._updateIndices();
     List<String> parts = new List<String>();
-    this.forEach((Vertex vertex) {
+    for (Vertex vertex in this.iterable) {
       parts.add(vertex.format(indent));
-    });
+    }
     return parts.join('\n');
   }
 }

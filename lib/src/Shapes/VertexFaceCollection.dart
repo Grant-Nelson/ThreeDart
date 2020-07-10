@@ -11,7 +11,7 @@ class VertexFaceCollection {
   Vertex get vertex => this._vertex;
 
   /// The shape which owns the vertex which owns this collection.
-  Shape get shape => this._vertex._shape;
+  Shape get shape => this._vertex?.shape;
 
   /// Determines if the vertex contains any faces or not.
   bool get isEmpty => this.length <= 0;
@@ -28,34 +28,133 @@ class VertexFaceCollection {
     /// The number of faces which use this vertex as the faces' third vertex.
   int get length3 => this._vertex._faces3.length;
 
-  /// Runs the given function handler for every face in the vertex.
-  void forEach(void funcHndl(Face face)) {
-    this._vertex._faces1.forEach(funcHndl);
-    this._vertex._faces2.forEach((Face face) {
-      if (face.vertex1 != this) funcHndl(face);
-    });
-    this._vertex._faces3.forEach((Face face) {
-      if ((face.vertex1 != this) && (face.vertex2 != this)) funcHndl(face);
-    });
+  /// Gets the face at the given [index].
+  Face operator[](int index) {
+    final int len1 = this._vertex._faces1.length;
+    if (index < len1) return this._vertex._faces1[index];
+    index -= len1;
+    final int len2 = this._vertex._faces2.length;
+    if (index < len2) return this._vertex._faces2[index];
+    index -= len2;
+    return this._vertex._faces3[index];
   }
 
-  /// Runs the given function handler for every face in the vertex
+  /// Gets face with the given [index] from list
+  /// of the faces with this vertex as their first vertex.
+  Face at1(int index) => this._vertex._faces1[index];
+
+  /// Gets face with the given [index] from list
+  /// of the faces with this vertex as their second vertex.
+  Face at2(int index) => this._vertex._faces2[index];
+
+  /// Gets face with the given [index] from list
+  /// of the faces with this vertex as their third vertex.
+  Face at3(int index) => this._vertex._faces3[index];
+
+  /// Gets the index of the given [face].
+  int indexOf(Face face) {
+    int index = this._vertex._faces1.indexOf(face);
+    if (index >= 0) return index;
+    index = this._vertex._faces2.indexOf(face);
+    if (index >= 0) return index + this._vertex._faces1.length;
+    index = this._vertex._faces3.indexOf(face);
+    if (index >= 0) return index + this._vertex._faces1.length + this._vertex._faces2.length;
+    return -1;
+  }
+
+  /// Gets the index of the given [face] in the list
+  /// of the faces with this vertex as their first vertex.
+  /// -1 is returned if the face isn't found.
+  int indexOf1(Face face) => this._vertex._faces1.indexOf(face);
+
+  /// Gets the index of the given [face] in the list
+  /// of the faces with this vertex as their second vertex.
+  /// -1 is returned if the face isn't found.
+  int indexOf2(Face face) => this._vertex._faces2.indexOf(face);
+
+  /// Gets the index of the given [face] in the list
+  /// of the faces with this vertex as their third vertex.
+  /// -1 is returned if the face isn't found.
+  int indexOf3(Face face) => this._vertex._faces3.indexOf(face);
+
+  /// Gets the iterable for every face in the vertex.
+  Iterable<Face> get iterable sync* {
+    yield* this.iterable1;
+    for (Face face in this.iterable2) {
+      if (face.vertex1 != this) yield face;
+    }
+    for (Face face in this.iterable3) {
+      if ((face.vertex1 != this) && (face.vertex2 != this)) yield face;
+    }
+  }
+
+  /// Gets the iterable for every face in the vertex
   /// which has this vertex as their first vertex.
-  void forEach1(void funcHndl(Face face)) => this._vertex._faces1.forEach(funcHndl);
+  Iterable<Face> get iterable1 sync* {
+    List<Face> faces = this._vertex._faces1.toList(growable: false);
+    for (Face face in faces) {
+      if (!face.disposed) yield face;
+    }
+  }
 
-  /// Runs the given function handler for every face in the vertex
+  /// Gets the iterable for every face in the vertex
   /// which has this vertex as their second vertex.
-  void forEach2(void funcHndl(Face face)) => this._vertex._faces2.forEach(funcHndl);
+  Iterable<Face> get iterable2 sync* {
+    List<Face> faces = this._vertex._faces2.toList(growable: false);
+    for (Face face in faces) {
+      if (!face.disposed) yield face;
+    }
+  }
 
-  /// Runs the given function handler for every face in the vertex
+  /// Gets the iterable for every face in the vertex
   /// which has this vertex as their third vertex.
-  void forEach3(void funcHndl(Face face)) => this._vertex._faces3.forEach(funcHndl);
+  Iterable<Face> get iterable3 sync* {
+    List<Face> faces = this._vertex._faces3.toList(growable: false);
+    for (Face face in faces) {
+      if (!face.disposed) yield face;
+    }
+  }
+
+  /// Removes the face with at the given index.
+  /// The removed face is disposed and returned or null if none removed.
+  Face removeAt(int index) {
+    Face face = this[index];
+    if (face != null) face.dispose();
+    return face;
+  }
+
+  /// Removes the face with at the given index of the face from
+  /// the list of the faces with this vertex as their first vertex.
+  /// The removed face is disposed and returned or null if none removed.
+  Face removeAt1(int index) {
+    Face face = this._vertex._faces1[index];
+    if (face != null) face.dispose();
+    return face;
+  }
+
+  /// Removes the face with at the given index of the face from
+  /// the list of the faces with this vertex as their second vertex.
+  /// The removed face is disposed and returned or null if none removed.
+  Face removeAt2(int index) {
+    Face face = this._vertex._faces2[index];
+    if (face != null) face.dispose();
+    return face;
+  }
+
+  /// Removes the face with at the given index of the face from
+  /// the list of the faces with this vertex as their third vertex.
+  /// The removed face is disposed and returned or null if none removed.
+  Face removeAt3(int index) {
+    Face face = this._vertex._faces3[index];
+    if (face != null) face.dispose();
+    return face;
+  }
 
   /// Removes the given [face].
   /// Returns true if face was removed, false otherwise.
   bool remove(Face face) {
     if (face == null) return false;
-    if (face._ver1._shape != this.shape) return false;
+    if (face._ver1?.shape != this.shape) return false;
     face.dispose();
     return true;
   }
@@ -142,9 +241,7 @@ class VertexFaceCollection {
 
   /// Flips all the faces in the vertex.
   void flip() {
-    this.forEach((Face face) {
-      face.flip();
-    });
+    for (Face face in this.iterable) face.flip();
   }
 
   /// Gets to string for all the faces.

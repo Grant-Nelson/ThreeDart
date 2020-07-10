@@ -2,7 +2,7 @@ part of ThreeDart.Shapes;
 
 /// A vertex of a shape with all of the renderable elements it is used.
 class Vertex {
-  Shape _shape;
+  LeafNode _leaf;
 
   List<Point> _points;
 
@@ -28,7 +28,7 @@ class Vertex {
           Math.Point3 loc: null, Math.Vector3 norm: null, Math.Vector3 binm: null,
           Math.Point2 txt2D: null, Math.Vector3 txtCube: null, Math.Color4 clr: null,
           double weight: 0.0, Math.Point4 bending: null}) {
-    this._shape  = null;
+    this._leaf   = null;
     this._points = new List<Point>();
     this._lines1 = new List<Line>();
     this._lines2 = new List<Line>();
@@ -75,8 +75,11 @@ class Vertex {
     if (!type.has(Data.VertexType.Bending)) this._bending = null;
   }
 
+  /// The leaf node this vertex belongs to.
+  LeafNode get leafNode => this._leaf;
+
   /// The shape the vertex belongs to.
-  Shape get shape => this._shape;
+  Shape get shape => this._leaf?._shape;
 
   /// The points which use this vertex.
   VertexPointCollection get points => new VertexPointCollection._(this);
@@ -89,7 +92,7 @@ class Vertex {
 
   /// The index of this vertex in the shape.
   int get index {
-    this._shape.vertices._updateIndices();
+    this.shape?.vertices?._updateIndices();
     return this._index;
   }
 
@@ -101,8 +104,8 @@ class Vertex {
   set location(Math.Point3 loc) {
     if (this._loc != loc) {
       this._loc = loc;
-      if (this._shape != null)
-        this._shape.onVertexModified(this);
+      // TODO: MUST UPDATE LOCATION IN OCTREE!!
+      this._leaf?._shape?.onVertexModified(this);
     }
   }
 
@@ -112,8 +115,7 @@ class Vertex {
     norm = norm?.normal();
     if (this._norm != norm) {
       this._norm = norm;
-      if (this._shape != null)
-        this._shape.onVertexModified(this);
+      this._leaf?._shape?.onVertexModified(this);
     }
   }
 
@@ -123,8 +125,7 @@ class Vertex {
     binm = binm?.normal();
     if (this._binm != binm) {
       this._binm = binm;
-      if (this._shape != null)
-        this._shape.onVertexModified(this);
+      this._leaf?._shape?.onVertexModified(this);
     }
   }
 
@@ -133,8 +134,7 @@ class Vertex {
   set texture2D(Math.Point2 txt2D) {
     if (this._txt2D != txt2D) {
       this._txt2D = txt2D;
-      if (this._shape != null)
-        this._shape.onVertexModified(this);
+      this._leaf?._shape?.onVertexModified(this);
     }
   }
 
@@ -143,8 +143,7 @@ class Vertex {
   set textureCube(Math.Vector3 txtCube) {
     if (this._txtCube != txtCube) {
       this._txtCube = txtCube;
-      if (this._shape != null)
-        this._shape.onVertexModified(this);
+      this._leaf?._shape?.onVertexModified(this);
     }
   }
 
@@ -153,8 +152,7 @@ class Vertex {
   set color(Math.Color4 clr) {
     if (this._clr != clr) {
       this._clr = clr;
-      if (this._shape != null)
-        this._shape.onVertexModified(this);
+      this._leaf?._shape?.onVertexModified(this);
     }
   }
 
@@ -163,8 +161,7 @@ class Vertex {
   set weight(double weight) {
     if (this._weight != weight) {
       this._weight = weight;
-      if (this._shape != null)
-        this._shape.onVertexModified(this);
+      this._leaf?._shape?.onVertexModified(this);
     }
   }
 
@@ -173,8 +170,7 @@ class Vertex {
   set bending(Math.Point4 bending) {
     if (this._bending != bending) {
       this._bending = bending;
-      if (this._shape != null)
-        this._shape.onVertexModified(this);
+      this._leaf?._shape?.onVertexModified(this);
     }
   }
 
@@ -214,17 +210,15 @@ class Vertex {
   /// set then this will have no effect.
   bool calculateNormal() {
     if (this._norm != null) return true;
-    if (this._shape != null) this._shape._changed?.suspend();
+    this._leaf?._shape?._changed?.suspend();
     Math.Vector3 normSum = Math.Vector3.zero;
-    this.faces.forEach((Face face) {
+    for (Face face in this.faces.iterable) {
       Math.Vector3 norm = face?.normal;
       if (norm != null) normSum += norm;
-    });
-    this._norm = normSum.normal();
-    if (this._shape != null) {
-      this._shape.onVertexModified(this);
-      this._shape._changed?.resume();
     }
+    this._norm = normSum.normal();
+    this._leaf?._shape?.onVertexModified(this);
+    this._leaf?._shape?._changed?.resume();
     return true;
   }
 
@@ -233,17 +227,15 @@ class Vertex {
   /// set then this will have no effect.
   bool calculateBinormal() {
     if (this._binm != null) return true;
-    if (this._shape != null) this._shape._changed?.suspend();
+    this._leaf?._shape?._changed?.suspend();
     Math.Vector3 binmSum = Math.Vector3.zero;
-    this.faces.forEach((Face face) {
+    for (Face face in this.faces.iterable) {
       Math.Vector3 binm = face?.binormal;
       if(binm != null) binmSum += binm;
-    });
-    this._binm = binmSum.normal();
-    if (this._shape != null) {
-      this._shape.onVertexModified(this);
-      this._shape._changed?.resume();
     }
+    this._binm = binmSum.normal();
+    this._leaf?._shape?.onVertexModified(this);
+    this._leaf?._shape?._changed?.resume();
     return true;
   }
 

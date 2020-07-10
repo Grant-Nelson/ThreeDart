@@ -18,11 +18,11 @@ class Octree {
 
   /// Runs the given function handler for every leaf in the octree.
   void forEachLeaf(void funcHndl(LeafNode leaf)) {
-    for (LeafNode leaf in this.leafIteratable) funcHndl(leaf);
+    for (LeafNode leaf in this.leafIterable) funcHndl(leaf);
   }
 
-  /// Gets an iteratable which steps through all of the leaves in the octree.
-  Iterable<LeafNode> get leafIteratable sync* {
+  /// Gets an iterable which steps through all of the leaves in the octree.
+  Iterable<LeafNode> get leafIterable sync* {
     // TODO: Implement
   }
 }

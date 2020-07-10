@@ -39,7 +39,7 @@ class Shape implements ShapeBuilder {
 
   /// Creates a copy of the given [other] shape.
   factory Shape.copy(Shape other) =>
-    new Shape(other.maxCube)..merge(other); // TODO: Make the copy faster than using merge.
+    new Shape(other.maxCube)..merge(other);
 
   /// The octree for the shape.
   Octree get octree => new Octree._(this);
@@ -72,32 +72,32 @@ class Shape implements ShapeBuilder {
     
     List<Vertex> vertices = new List<Vertex>(otherVCol.length);
     ShapeVertexCollection vcol = this.vertices;
-    otherVCol.forEach((Vertex vertex) {
+    for (Vertex vertex in otherVCol.iterable) {
       Vertex copy = vertex.copy();
       vertices.add(copy);
       vcol.add(copy);
-    });
+    }
 
     ShapePointCollection pcol = this.points;
-    other.points.forEach((Point point) {
+    for (Point point in other.points.iterable) {
       Vertex vertex = vertices[point.vertex.index];
       pcol.add(vertex);
-    });
+    }
 
     ShapeLineCollection lcol = this.lines;
-    other.lines.forEach((Line line) {
+    for (Line line in other.lines.iterable) {
       Vertex ver1 = vertices[line.vertex1.index];
       Vertex ver2 = vertices[line.vertex2.index];
       lcol.add(ver1, ver2);
-    });
+    }
 
     ShapeFaceCollection fcol = this.faces;
-    other.faces.forEach((Face face) {
+    for (Face face in other.faces.iterable) {
       Vertex ver1 = vertices[face.vertex1.index];
       Vertex ver2 = vertices[face.vertex2.index];
       Vertex ver3 = vertices[face.vertex3.index];
       fcol.add(ver1, ver2, ver3);
-    });
+    }
     this._changed?.resume();
   }
 
@@ -145,14 +145,14 @@ class Shape implements ShapeBuilder {
         center: new Math.Point3(aabb.x, aabb.y, aabb.z),
         scalar: 1.0/length);
     }
-    this.vertices.forEach((Vertex ver) {
+    for (Vertex ver in this.vertices.iterable) {
       ver.weight = measure.measure(ver);
-    });
+    }
   }
 
   /// Calculates the axial aligned bounding box of the shape.
   Math.Region3 calculateAABB() {
-    Iterator<Vertex> it = this.vertices.iteratable.iterator;
+    Iterator<Vertex> it = this.vertices.iterable.iterator;
     if (!it.moveNext()) return Math.Region3.zero;
     Math.Region3 result = new Math.Region3.fromPoint(it.current.location);
     while (it.moveNext())
@@ -166,16 +166,14 @@ class Shape implements ShapeBuilder {
   /// the offset is applied in the direction of the normal vector.
   void applyHeightMap(Textures.TextureReader height, [double scalar = 1.0]) {
     this._changed?.suspend();
-    this.vertices.forEach((Vertex ver) {
+    for (Vertex ver in this.vertices.iterable) {
       if ((ver != null) || (ver.location != null) ||
           (ver.normal != null) || (ver.texture2D != null)) {
         Math.Color4 clr = height.atLoc(ver.texture2D);
         double length = (clr.red + clr.green + clr.blue)*scalar/3.0;
-
-        // TODO: MUST UPDATE LOCATION IN OCTREE!!
         ver.location += new Math.Point3.fromVector3(ver.normal*length);
       }
-    });
+    }
     this._changed?.resume();
   }
 
@@ -183,9 +181,8 @@ class Shape implements ShapeBuilder {
   /// everything else is nulled out.
   void trimVertices(Data.VertexType type) {
     this._changed?.suspend();
-    this.vertices.forEach((Vertex ver) {
+    for (Vertex ver in this.vertices.iterable)
       ver.trim(type);
-    });
     this._changed?.resume();
   }
 
@@ -193,9 +190,8 @@ class Shape implements ShapeBuilder {
   /// everything else is nulled out.
   void trimFaces({bool norm: true, bool binm: true}) {
     this._changed?.suspend();
-    this.faces.forEach((Face face) {
-      if (!face.disposed) face.trim(norm: norm, binm: binm);
-    });
+    for (Face face in this.faces.iterable)
+      face.trim(norm: norm, binm: binm);
     this._changed?.resume();
   }
 
@@ -203,7 +199,7 @@ class Shape implements ShapeBuilder {
   /// If no match is found then null is returned.
   Vertex findFirst(Vertex ver, [VertexMatcher matcher = null, int startIndex = 0]) {
     matcher ??= new FullVertexMatcher();
-    for(Vertex ver2 in this.vertices.iteratable) {
+    for(Vertex ver2 in this.vertices.iterable) {
       if (matcher.matches(ver, ver2)) {
         return ver2;
       }
@@ -215,7 +211,7 @@ class Shape implements ShapeBuilder {
   List<Vertex> findAll(Vertex ver, [VertexMatcher matcher = null, int startIndex = 0]) {
     matcher ??= new FullVertexMatcher();
     List<Vertex> results = new List<Vertex>();
-    for(Vertex ver2 in this.vertices.iteratable) {
+    for(Vertex ver2 in this.vertices.iterable) {
       if (matcher.matches(ver, ver2)) {
         results.add(ver2);
       }
@@ -312,10 +308,10 @@ class Shape implements ShapeBuilder {
   void flip() {
     this._changed?.suspend();
     this.faces.flip();
-    this.vertices.forEach((Vertex ver) {
-      if (ver.normal != null) ver.normal = -ver.normal;
+    for (Vertex ver in this.vertices.iterable) {
+      if (ver.normal   != null) ver.normal   = -ver.normal;
       if (ver.binormal != null) ver.binormal = -ver.binormal;
-    });
+    }
     this._changed?.resume();
   }
 
@@ -338,33 +334,32 @@ class Shape implements ShapeBuilder {
   /// Modifies the position, normal, and binormal
   /// by translating it with the given [mat].
   void applyPositionMatrix(Math.Matrix4 mat) {
-    this.vertices.forEach((Vertex ver) {
-        // TODO: MUST UPDATE LOCATION IN OCTREE!!
-        if (ver.location != null) ver.location = mat.transPnt3(ver.location);
-        if (ver.normal   != null) ver.normal   = mat.transVec3(ver.normal);
-        if (ver.binormal != null) ver.binormal = mat.transVec3(ver.binormal);
-      });
+    for (Vertex ver in this.vertices.iterable) {
+      if (ver.location != null) ver.location = mat.transPnt3(ver.location);
+      if (ver.normal   != null) ver.normal   = mat.transVec3(ver.normal);
+      if (ver.binormal != null) ver.binormal = mat.transVec3(ver.binormal);
+    }
   }
 
   /// Modifies the color by translating it with the given [mat].
   void applyColorMatrix(Math.Matrix3 mat) {
-    this.vertices.forEach((Vertex ver) {
+    for (Vertex ver in this.vertices.iterable) {
       if (ver.color != null) ver.color = mat.transClr4(ver.color);
-    });
+    }
   }
 
   /// Modifies the 2D texture by translating it with the given [mat].
   void applyTexture2DMatrix(Math.Matrix3 mat) {
-    this.vertices.forEach((Vertex ver) {
+    for (Vertex ver in this.vertices.iterable) {
       if (ver.texture2D != null) ver.texture2D = mat.transPnt2(ver.texture2D);
-    });
+    }
   }
 
   /// Modifies the cube texture by translating it with the given [mat].
   void applyTextureCubeMatrix(Math.Matrix4 mat) {
-    this.vertices.forEach((Vertex ver) {
+    for (Vertex ver in this.vertices.iterable) {
       if (ver.textureCube != null) ver.textureCube = mat.transVec3(ver.textureCube);
-    });
+    }
   }
 
   /// Builds a buffer store for caching the shape for rendering.
@@ -401,30 +396,30 @@ class Shape implements ShapeBuilder {
     Data.BufferStore store = new Data.BufferStore(vertexBuf, attrs, type);
     if (!this.points.isEmpty) {
       List<int> indices = new List<int>();
-      this.points.forEach((Point point) {
+      for (Point point in this.points.iterable) {
         indices.add(point.vertex.index);
-      });
+      }
       Data.Buffer indexBuf = builder.fromIntList(WebGL.WebGL.ELEMENT_ARRAY_BUFFER, indices);
       store.indexObjects.add(new Data.IndexObject(WebGL.WebGL.POINTS, indices.length, indexBuf));
     }
 
     if (!this.lines.isEmpty) {
       List<int> indices = new List<int>();
-      this.lines.forEach((Line line) {
+      for (Line line in this.lines.iterable) {
         indices.add(line.vertex1.index);
         indices.add(line.vertex2.index);
-      });
+      }
       Data.Buffer indexBuf = builder.fromIntList(WebGL.WebGL.ELEMENT_ARRAY_BUFFER, indices);
       store.indexObjects.add(new Data.IndexObject(WebGL.WebGL.LINES, indices.length, indexBuf));
     }
 
     if (!this.faces.isEmpty) {
       List<int> indices = new List<int>();
-      this.faces.forEach((Face face) {
+      for (Face face in this.faces.iterable) {
         indices.add(face.vertex1.index);
         indices.add(face.vertex2.index);
         indices.add(face.vertex3.index);
-      });
+      }
       Data.Buffer indexBuf = builder.fromIntList(WebGL.WebGL.ELEMENT_ARRAY_BUFFER, indices);
       store.indexObjects.add(new Data.IndexObject(WebGL.WebGL.TRIANGLES, indices.length, indexBuf));
     }

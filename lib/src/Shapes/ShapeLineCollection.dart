@@ -54,16 +54,10 @@ class ShapeLineCollection {
   /// The number of lines in the shape.
   int get length => this._shape._lineCount;
 
-  /// Runs the given function handler for every line in the shape.
-  void forEach(void funcHndl(Line line)) {
-    for (Line line in this.iteratable) funcHndl(line);
-  }
-
-  /// Gets an iteratable which steps through all of the lines in the collection.
-  Iterable<Line> get iteratable sync* {
-    for (Vertex vertex in this._shape.vertices.iteratable) {
-      List<Line> lines = vertex._lines1.toList(growable: false);
-      yield* lines;
+  /// Gets an iterable which steps through all of the lines in the collection.
+  Iterable<Line> get iterable sync* {
+    for (Vertex vertex in this._shape.vertices.iterable) {
+      yield* vertex.lines.iterable1;
     }
   }
 
@@ -71,7 +65,7 @@ class ShapeLineCollection {
   /// Returns true if line was removed, false otherwise.
   bool remove(Line line) {
     if (line == null) return false;
-    if (line._ver1._shape != this.shape) return false;
+    if (line._ver1.shape != this.shape) return false;
     line.dispose();
     return true;
   }
@@ -79,11 +73,11 @@ class ShapeLineCollection {
   /// Removes all lines which match each other based on the given matcher.
   void removeRepeats([LineMatcher matcher = null]) {
     matcher ??= new ExactLineMatcher();
-    Iterator<Line> linesA = this.iteratable.iterator;
+    Iterator<Line> linesA = this.iterable.iterator;
     while (linesA.moveNext()) {
       Line lineA = linesA.current;
       if (!lineA.disposed) {
-        Iterator<Line> linesB = this.iteratable.skipWhile((Line lineB) => lineB != lineA).iterator;
+        Iterator<Line> linesB = this.iterable.skipWhile((Line lineB) => lineB != lineA).iterator;
         linesB.moveNext(); // step over lineA
         while (linesB.moveNext()) {
           Line lineB = linesB.current;
@@ -102,21 +96,20 @@ class ShapeLineCollection {
   /// on the given matcher and share a vertex.
   void removeVertexRepeats([LineMatcher matcher = null]) {
     matcher ??= new ExactLineMatcher();
-    this._shape.vertices.forEach((Vertex ver) {
+    for (Vertex ver in this._shape.vertices.iterable)
       ver.lines.removeRepeats(matcher);
-    });
   }
 
   /// Removes all the collapsed lines.
   void removeCollapsed() {
-    this.forEach((Line line) {
+    for (Line line in this.iterable) {
       if (line.collapsed) line.dispose();
-    });
+    }
   }
   
   /// Gets a copy of the lines as a list.
   List<Line> toList({bool growable = true}) =>
-    this.iteratable.toList(growable: growable);
+    this.iterable.toList(growable: growable);
 
   /// Gets to string for all the lines.
   String toString() => this.format();
@@ -125,10 +118,10 @@ class ShapeLineCollection {
   String format([String indent = ""]) {
     List<String> parts = new List<String>();
     int index = 0;
-    this.forEach((Line line) {
+    for (Line line in this.iterable) {
       parts.add(line.format(indent+"$index. "));
       ++index;
-    });
+    }
     return parts.join('\n');
   }
 }
