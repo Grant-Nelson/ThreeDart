@@ -106,10 +106,6 @@ class ShapeLineCollection {
       if (line.collapsed) line.dispose();
     }
   }
-  
-  /// Gets a copy of the lines as a list.
-  List<Line> toList({bool growable = true}) =>
-    this.iterable.toList(growable: growable);
 
   /// Gets to string for all the lines.
   String toString() => this.format();

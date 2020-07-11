@@ -25,6 +25,15 @@ class BranchNode extends Node {
   /// Use a Path object to determine the index.
   Node getChild(int index) => this._children[index];
 
+  /// Gets the index for the given child.
+  /// This returns -1 if the node isn't found.
+  int getChildIndex(Node node) {
+    for (int i = 0; i < this._children.length; i++) {
+      if (this._children[i] == node) return i;
+    }
+    return -1;
+  }
+
   /// This sets the child at a given index.
   /// Returns true if the child was changed, false if there was not change.
   bool _setChild(int index, Node node) {
@@ -37,18 +46,21 @@ class BranchNode extends Node {
   /// This handles each node in order.
   /// This will call the handle with any null children.
   void forEach(bool hndl(Node)) => this._children.forEach(hndl);
+  
+  /// Gets an iterable which steps through all of the leaves in this node.
+  Iterable<LeafNode> get leafIterable sync* {
+     for (Node child in this._children) {
+       if (child != null) yield* child.leafIterable;
+     }
+  }
 
-  /// Adds a vertex to this node.
-  /// Returns the node that should be the new root of the
-  /// subtree that was defined by this node.
-  Node _insertVertex(Shape shape, Vertex vertex, Path path, int depth) {
-    int index = path.childIndexAt(depth);
+  /// Adds a leaf to this node. Returns the node that should
+  /// be the new root of the subtree that was defined by this node.
+  Node _insertLeaf(LeafNode leaf, int depth) {
+    int index = leaf.path.childIndexAt(depth);
     Node node = this._children[index];
-
-    if (node == null)
-      node = new LeafNode._(path, shape, vertex);
-    else node = node._insertVertex(shape, vertex, path, depth+1);
-
+    if (node != null) node = leaf;
+    else node = node._insertLeaf(leaf, depth+1);
     if (this._setChild(index, node)) return this._reduce();
     return this;
   }

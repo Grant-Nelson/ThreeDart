@@ -28,12 +28,27 @@ class NodeVertexCollection {
     this.shape.onVertexAdded(vertex);
   }
 
-  /// Runs the given function handler for every vertex in the shape.
-  void forEach(void funcHndl(Vertex vertex)) =>
-    this._leaf._vertices.forEach(funcHndl);
-  
+  /// Gets the vertex at the at given [index].
+  Vertex operator[](int index) => this._leaf._vertices[index];
+
+  /// Gets the index of the given [vertex] or -1 if not found.
+  int indexOf(Vertex vertex) => this._leaf._vertices.indexOf(vertex);
+
   /// Gets an iterable which steps through all of the vertices in the collection.
-  Iterable<Vertex> get iterable => this._leaf._vertices;
+  Iterable<Vertex> get iterable sync* {
+    List<Vertex> vertices = this._leaf._vertices.toList(growable: false);
+    for (Vertex vertex in vertices) {
+      if (vertex.shape == this.shape) yield vertex;
+    }
+  }
+
+  /// Removes the vertex with at the given [index].
+  /// The removed vertex is disposed and returned or null if none removed.
+  Vertex removeAt(int index) {
+    Vertex vertex = this._leaf._vertices[index];
+    this.remove(vertex);
+    return vertex;
+  }
 
   /// Removes the given [vertex].
   /// Returns true if vertex was removed, false otherwise.
@@ -52,40 +67,8 @@ class NodeVertexCollection {
     return true;
   }
 
-  /// Calculates the normals for all the faces in the shape.
-  /// Returns true if faces' normals are calculated, false on error.
-  bool calculateNormals() {
-    bool success = true;
-    this.forEach((Vertex vertex) {
-      if (!vertex.calculateNormal()) success = false;
-    });
-    return success;
-  }
-
-  /// Calculates the binormals for all the vertices in the shape.
-  /// Returns true if vertices' binormals are calculated, false on error.
-  bool calculateBinormals() {
-    bool success = true;
-    this.forEach((Vertex vertex) {
-      if (!vertex.calculateBinormal()) success = false;
-    });
-    return success;
-  }
-
-  /// Calculates the cube texture coordinate for the vertices and faces.
-  /// True if successful, false on error.
-  bool calculateCubeTextures() {
-    this.forEach((Vertex vertex) {
-      if (vertex.textureCube == null) {
-        vertex.textureCube = vertex.normal.normal();
-      }
-    });
-    return true;
-  }
-
-  /// Gets a copy of the vertices as a list.
-  List<Vertex> toList({bool growable = true}) =>
-    this.iterable.toList(growable: growable);
+  // TODO: Add Merge to Average
+  // TODO: Add Snap to Leaf
 
   /// Gets to string for all the vertices.
   String toString() => this.format();
@@ -94,9 +77,9 @@ class NodeVertexCollection {
   String format([String indent = ""]) {
     this.shape?.vertices?._updateIndices();
     List<String> parts = new List<String>();
-    this.forEach((Vertex vertex) {
+    for (Vertex vertex in this.iterable) {
       parts.add(vertex.format(indent));
-    });
+    }
     return parts.join('\n');
   }
 }

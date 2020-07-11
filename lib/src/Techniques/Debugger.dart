@@ -47,7 +47,7 @@ class Debugger extends Technique {
 
     this._results.clear();
     if (obj.shape != null) {
-      obj.shape.vertices.forEach((Shapes.Vertex vertex) {
+      for (Shapes.Vertex vertex in obj.shape.vertices.iterable) {
         Math.Point3 pnt0 = vertex.location;
         Math.Point4 pnt1 = new Math.Point4.fromPoint3(pnt0, 1.0);
         Math.Point4 pnt2 = objMat.transPnt4(pnt1);
@@ -64,7 +64,7 @@ class Debugger extends Technique {
         }
 
         this._results.add(pnt5);
-      });
+      }
     }
   }
 }

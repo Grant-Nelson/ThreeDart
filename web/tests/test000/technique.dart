@@ -2,7 +2,7 @@ part of ThreeDart.test.test000;
 
 void addTechniqueTests(TestManager tests) {
 
-  tests.add("Matrix4 Point Transposition Test", (TestArgs args) {
+  tests.add("Technique Point Transposition Test", (TestArgs args) {
     testTechnique(args,
       Math.Matrix4.identity,
       new Math.Matrix4.translate(0.0, 0.0, -5.0),

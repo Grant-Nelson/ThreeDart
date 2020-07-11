@@ -23,6 +23,7 @@ part 'Node.dart';
 part 'NodeVertexCollection.dart';
 part 'Octree.dart';
 part 'ReducedShape.dart';
+part 'Results.dart';
 part 'Shape.dart';
 part 'ShapeBuilder.dart';
 part 'ShapeFaceCollection.dart';

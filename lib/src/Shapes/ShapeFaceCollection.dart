@@ -192,10 +192,6 @@ class ShapeFaceCollection {
     for (Face face in this.iterable) face.flip();
   }
 
-  /// Gets a copy of the faces as a list.
-  List<Face> toList({bool growable = true}) =>
-    this.iterable.toList(growable: growable);
-
   /// Gets to string for all the faces.
   String toString() => this.format();
 

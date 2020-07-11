@@ -119,10 +119,6 @@ class ShapeVertexCollection {
     return true;
   }
 
-  /// Gets a copy of the vertices as a list.
-  List<Vertex> toList({bool growable = true}) =>
-    this.iterable.toList(growable: growable);
-
   /// Gets to string for all the vertices.
   String toString() => this.format();
 

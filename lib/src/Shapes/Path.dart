@@ -6,7 +6,7 @@ class Path {
   static const int maxDepth = 31;
 
   /// The maximum allowed value for any component, 2^32 - 1.
-  static const int maxValue = 4294967295;
+  static const int maxValue = 0x7FFFFFFF;
 
   /// Clamps the given component into the valid range.
   static int clamp(int v) {
@@ -41,15 +41,32 @@ class Path {
   /// Internal constructor to assign final values.
   Path._(this.x, this.y, this.z);
 
-  /// Determines the common path between this and the other path.
-  Path common(Path other) {
+  /// This gets a new path with the given depth changed to a different index.
+  Path redirect(int index, int depth) {
+    int mask = 1 << depth;
+    int notMask = maxValue - mask;
+    int x = (this.x & notMask) | ((index & 1 != 0)? mask: 0);
+    int y = (this.y & notMask) | ((index & 2 != 0)? mask: 0);
+    int z = (this.z & notMask) | ((index & 4 != 0)? mask: 0);
+    return new Path(x, y, z);
+  }
+
+  /// Determines the depth for the common path between this and the other path.
+  int commonDepth(Path other) {
     int diff = (this.x ^ other.x) | (this.y ^ other.y) | (this.z ^ other.z);
-    int fullMask = 0x00;
-    for (int d = 0, mask = 0x01; d < maxDepth; d++, mask <<= 1) {
-      if (diff & mask != 0x00) break;
-      fullMask |= mask;
+    for (int d = 0, mask = 1; d < maxDepth; d++, mask <<= 1) {
+      if (diff & mask != 0) return d-1;
     }
-    return new Path(this.x & fullMask, this.y & fullMask, this.z & fullMask);
+    return maxDepth-1;
+  }
+
+  /// Determines if the two paths are the same upto the given depth.
+  bool sameUpto(Path other, int depth) {
+    int diff = (this.x ^ other.x) | (this.y ^ other.y) | (this.z ^ other.z);
+    for (int d = 0, mask = 1; d < depth; d++, mask <<= 1) {
+      if (diff & mask != 0) return false;
+    }
+    return true;
   }
 
   /// This gets the location this path is for in the given maximum cube.
@@ -66,9 +83,9 @@ class Path {
   int childIndexAt(int depth) {
     int mask = 1 << depth;
     int childIndex = 0;
-    if (this.x & mask != 0x00) childIndex |= 1;
-    if (this.y & mask != 0x00) childIndex |= 2;
-    if (this.z & mask != 0x00) childIndex |= 4;
+    if (this.x & mask != 0) childIndex |= 1;
+    if (this.y & mask != 0) childIndex |= 2;
+    if (this.z & mask != 0) childIndex |= 4;
     return childIndex;
   }
 
@@ -85,16 +102,16 @@ class Path {
     StringBuffer xstr = new StringBuffer();
     StringBuffer ystr = new StringBuffer();
     StringBuffer zstr = new StringBuffer();
-    for (int d = 0, x = 0, mask = 0x01; d < depth; d++, x++, mask <<= 1) {
+    for (int d = 0, x = 0, mask = 1; d < depth; d++, x++, mask <<= 1) {
       if (x == 4) {
         x = 0;
         xstr.write(" ");
         ystr.write(" ");
         zstr.write(" ");
       }
-      xstr.write((this.x & mask != 0x00)? "1": "0");
-      ystr.write((this.y & mask != 0x00)? "1": "0");
-      zstr.write((this.z & mask != 0x00)? "1": "0");
+      xstr.write((this.x & mask != 0)? "1": "0");
+      ystr.write((this.y & mask != 0)? "1": "0");
+      zstr.write((this.z & mask != 0)? "1": "0");
     }
     return "[${xstr.toString()}, ${ystr.toString()}, ${zstr.toString()}]";
   }

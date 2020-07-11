@@ -2,7 +2,7 @@ part of ThreeDart.Shapes;
 
 /// The node is the base type for an octree.
 abstract class Node {
-  Node _parent;
+  BranchNode _parent;
 
   /// Creates a new node.
   Node._() {
@@ -10,10 +10,12 @@ abstract class Node {
   }
 
   /// Gets the parent to this node.
-  Node get parent => this._parent;
+  BranchNode get parent => this._parent;
 
-  /// Adds a vertex to this node.
-  /// Returns the node that should be the new root of the
-  /// subtree that was defined by this node.
-  Node _insertVertex(Shape shape, Vertex vertex, Path path, int depth);
+  /// Adds a leaf to this node. Returns the node that should
+  /// be the new root of the subtree that was defined by this node.
+  Node _insertLeaf(LeafNode leaf, int depth);
+  
+  /// Gets an iterable which steps through all of the leaves in this node.
+  Iterable<LeafNode> get leafIterable;
 }

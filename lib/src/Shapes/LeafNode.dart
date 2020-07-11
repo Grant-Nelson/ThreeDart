@@ -10,7 +10,7 @@ class LeafNode extends Node {
   List<Face> _faces;
 
   /// Creates a new leaf node.
-  LeafNode._(Path path, Shape shape, [Vertex vertex = null]): super._() {
+  LeafNode._(Path path, Shape shape): super._() {
     if (path == null)
       throw new Exception("Must have a non-nil path for a leaf node.");
     this._path = path;
@@ -18,7 +18,6 @@ class LeafNode extends Node {
     this._vertices = new List<Vertex>();
     this._lines = new List<Line>();
     this._faces = new List<Face>();
-    if (vertex != null) this._vertices.add(vertex);
   }
 
   /// Gets the path to this leaf.
@@ -27,14 +26,15 @@ class LeafNode extends Node {
   /// All the vertices which map tho this leaf node's path.
   NodeVertexCollection get vertices => new NodeVertexCollection._(this);
 
-  /// Adds a vertex to this node.
-  /// Returns the node that should be the new root of the
-  /// subtree that was defined by this node.
-  Node _insertVertex(Shape shape, Vertex vertex, Path path, int depth) {
-    if (path == this._path) {
-      this._vertices.add(vertex);
-      return this;
-    }
+  /// Gets an iterable which steps through all of the leaves in this node.
+  Iterable<LeafNode> get leafIterable sync* {
+     yield this;
+  }
+
+  /// Adds a leaf to this node. Returns the node that should
+  /// be the new root of the subtree that was defined by this node.
+  Node _insertLeaf(LeafNode leaf, int depth) {
+    if (path == this._path) return this;
 
     // Make this node and set is as a child of the new branch.
     int oldIndex = this._path.childIndexAt(depth);
@@ -56,7 +56,7 @@ class LeafNode extends Node {
 
     // Add the vertex to the new branch node, return new node.
     // This allows the branch to grow as needed.
-    return branch._insertVertex(shape, vertex, path, depth);
+    return branch._insertLeaf(leaf, depth);
   }
 
   void _copyOver(PassNode pass) {

@@ -240,7 +240,7 @@ class Shape implements ShapeBuilder {
   /// repeat points, lines, and faces are removed.
   void mergeVertices(VertexMatcher matcher, VertexMerger merger) {
     this._changed?.suspend();
-    List<Vertex> vertices = this.vertices.toList();
+    List<Vertex> vertices = this.vertices.iterable.toList();
     while (vertices.isNotEmpty) {
       Vertex ver = vertices.first;
       vertices.removeAt(0);
@@ -367,7 +367,7 @@ class Shape implements ShapeBuilder {
   /// and the vertex [type] required for technique.
   Data.BufferStore build(Data.BufferBuilder builder, Data.VertexType type) {
     this.vertices._updateIndices();
-    List<Vertex> data = this.vertices.toList(growable: false);
+    List<Vertex> data = this.vertices.iterable.toList(growable: false);
     final int length = data.length;
     final int count = type.count;
     final int stride = type.size;

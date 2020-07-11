@@ -12,14 +12,15 @@ class PassNode extends Node {
     this._faces = new List<Face>();
   }
 
-  /// Adds a vertex to this node.
-  /// Returns the node that should be the new root of the
-  /// subtree that was defined by this node.
-  Node _insertVertex(Shape shape, Vertex vertex, Path path, int depth) {
-    LeafNode leaf = new LeafNode._(path, shape, vertex);
+  /// Adds a leaf to this node. Returns the node that should
+  /// be the new root of the subtree that was defined by this node.
+  Node _insertLeaf(LeafNode leaf, int depth) {
     leaf._copyOver(this);
     return leaf;
   }
+  
+  /// Gets an iterable which steps through all of the leaves in this node.
+  Iterable<LeafNode> get leafIterable sync* {}
 
   void _copyOver(PassNode pass) {
    // TODO: Implement 

@@ -32,8 +32,8 @@ void main() {
   shape.calculateNormals();
   shape.calculateBinormals();
   shape.faces.removeAll();
-  for (int i = shape.vertices.length-1; i >= 0; i--) {
-    Shapes.Vertex ver1 = shape.vertices[i]..weight = 0.0;
+  for (Shapes.Vertex vertex in shape.vertices.iterable) {
+    Shapes.Vertex ver1 = vertex..weight = 0.0;
     Shapes.Vertex ver2 = ver1.copy()..weight = 1.0;
     shape.vertices.add(ver2);
     shape.lines.add(ver1, ver2);

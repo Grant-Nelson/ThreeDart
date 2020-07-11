@@ -52,10 +52,6 @@ class ShapePointCollection {
     for (Vertex vertex in this._shape.vertices.iterable)
       vertex.points.removeRepeats();
   }
-  
-  /// Gets a copy of the points as a list.
-  List<Point> toList({bool growable = true}) =>
-    this.iterable.toList(growable: growable);
 
   /// Gets to string for all the points.
   String toString() => this.format();
