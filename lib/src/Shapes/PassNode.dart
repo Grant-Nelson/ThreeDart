@@ -18,6 +18,9 @@ class PassNode extends Node {
     leaf._copyOver(this);
     return leaf;
   }
+
+  /// Determines if there are any lines or faces.
+  bool get isEmpty => this._lines.isEmpty && this._faces.isEmpty;
   
   /// Gets an iterable which steps through all of the leaves in this node.
   Iterable<LeafNode> get leafIterable sync* {}
@@ -25,7 +28,18 @@ class PassNode extends Node {
   void _copyOver(PassNode pass) {
    // TODO: Implement 
   }
-
-  /// Determines if there are any lines or faces.
-  bool get isEmpty => this._lines.isEmpty && this._faces.isEmpty;
+  
+  /// Gets a string tree for debugging, testing, and printing this node.
+  Collections.StringTree _stringTree() {
+    Collections.StringTree root = new Collections.StringTree("pass");
+    if (this._lines.isNotEmpty) {
+      Collections.StringTree subroot = root.add("passing lines");
+      for (Line line in this._lines) subroot.add(line.toString());
+    }
+    if (this._faces.isNotEmpty) {
+      Collections.StringTree subroot = root.add("passing faces");
+      for (Face face in this._faces) subroot.add(face.toString());
+    }
+    return root;
+  }
 }

@@ -128,4 +128,19 @@ class BranchNode extends Node {
     }
     return leaf;
   }
+  
+  /// Gets a string tree for debugging, testing, and printing this node.
+  Collections.StringTree _stringTree() {
+    Collections.StringTree subroot = new Collections.StringTree("branch");
+    int index = 0;
+    for (Node node in this._children) {
+      if (node != null) {
+        Collections.StringTree child = node._stringTree();
+        child.text = "$index. "+child.text;
+        index++;
+        subroot.append(child);
+      }
+    }
+    return subroot;
+  }
 }

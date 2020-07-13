@@ -3,7 +3,7 @@ part of ThreeDart.Shapes;
 /// The path to a node in the octree.
 class Path {
   /// The maximum allowed depth value.
-  static const int maxDepth = 31;
+  static const int maxDepth = 32;
 
   /// The maximum allowed value for any component, 2^32 - 1.
   static const int maxValue = 0x7FFFFFFF;
@@ -52,6 +52,7 @@ class Path {
   }
 
   /// Determines the depth for the common path between this and the other path.
+  /// If there is no match then this will return -1.
   int commonDepth(Path other) {
     int diff = (this.x ^ other.x) | (this.y ^ other.y) | (this.z ^ other.z);
     for (int d = 0, mask = 1; d < maxDepth; d++, mask <<= 1) {
@@ -61,6 +62,7 @@ class Path {
   }
 
   /// Determines if the two paths are the same upto the given depth.
+  /// If depths is less than zero this will return true.
   bool sameUpto(Path other, int depth) {
     int diff = (this.x ^ other.x) | (this.y ^ other.y) | (this.z ^ other.z);
     for (int d = 0, mask = 1; d < depth; d++, mask <<= 1) {
@@ -81,6 +83,7 @@ class Path {
 
   /// Gets the octree child index, 0 to 7, to take in this path at the given depth.
   int childIndexAt(int depth) {
+    if (depth < 0) return 0;
     int mask = 1 << depth;
     int childIndex = 0;
     if (this.x & mask != 0) childIndex |= 1;
@@ -99,20 +102,17 @@ class Path {
 
   /// Gets the string for this path in binary.
   String toString([int depth = maxDepth]) {
-    StringBuffer xstr = new StringBuffer();
-    StringBuffer ystr = new StringBuffer();
-    StringBuffer zstr = new StringBuffer();
-    for (int d = 0, x = 0, mask = 1; d < depth; d++, x++, mask <<= 1) {
+    StringBuffer str = new StringBuffer();
+    str.write("[");
+    for (int d = 0, x = 0; d < depth; d++, x++) {
       if (x == 4) {
         x = 0;
-        xstr.write(" ");
-        ystr.write(" ");
-        zstr.write(" ");
+        str.write(" ");
       }
-      xstr.write((this.x & mask != 0)? "1": "0");
-      ystr.write((this.y & mask != 0)? "1": "0");
-      zstr.write((this.z & mask != 0)? "1": "0");
+      int index = this.childIndexAt(d);
+      str.write("$index");
     }
-    return "[${xstr.toString()}, ${ystr.toString()}, ${zstr.toString()}]";
+    str.write("]");
+    return str.toString();
   }
 }

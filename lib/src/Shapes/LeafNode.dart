@@ -67,4 +67,23 @@ class LeafNode extends Node {
     //   if ((edge.startNode != point) && (edge.endNode != point)) point.passEdges.add(edge);
     // }
   }
+  
+  /// Gets a string tree for debugging, testing, and printing this node.
+  Collections.StringTree _stringTree() {
+    Collections.StringTree root = new Collections.StringTree("leaf");
+    root.add("path: "+this._path.toString());
+    if (this._vertices.isNotEmpty) {
+      Collections.StringTree subroot = root.add("vertices");
+      for (Vertex ver in this._vertices) subroot.add(ver.toString());
+    }
+    if (this._lines.isNotEmpty) {
+      Collections.StringTree subroot = root.add("passing lines");
+      for (Line line in this._lines) subroot.add(line.toString());
+    }
+    if (this._faces.isNotEmpty) {
+      Collections.StringTree subroot = root.add("passing faces");
+      for (Face face in this._faces) subroot.add(face.toString());
+    }
+    return root;
+  }
 }

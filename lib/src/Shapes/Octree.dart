@@ -14,12 +14,10 @@ class Octree {
   }
 
   /// Adds a vertex to this octree.
-  /// Returns the node that should be the new root of the
-  /// subtree that was defined by this node.
-  Node _addVertex(Node root, Path path, Vertex vertex) {
-
-    // TODO: Implement
-
+  void _addVertex(Vertex vertex) {
+    Path path = new Path.fromPoint(vertex.location, this._shape.maxCube);
+    _InsertLeafResult result = this._tryInsertLeaf(path);
+    result.leaf.vertices._add(vertex);
   }
 
   /// This will locate the smallest non-empty node containing the given path.
@@ -47,11 +45,12 @@ class Octree {
   /// Returns a pair containing the leaf node in the tree, and true if the
   /// leaf is new or false if the leaf already existed in the tree.
   _InsertLeafResult _tryInsertLeaf(Path path) {
+    print("Flag 1: "+path.toString());
     _FindNodeResult findResult = this._findNode(path);
-    LeafNode leaf;
     if (findResult != null) {
       Node node = findResult.node;
       int depth = findResult.depth;
+      print("FLAG 2");
 
       // A node containing the leaf has been found.
       if (node is LeafNode) {
@@ -59,8 +58,10 @@ class Octree {
           return new _InsertLeafResult(node, true);
         }
       }
+      print("FLAG 3");
 
-      leaf = new LeafNode._(path, this._shape);
+      // Node leaf did not exist but is within the root.
+      LeafNode leaf = new LeafNode._(path, this._shape);
       BranchNode parent = node.parent;
       if (parent != null) {
         // Node was not the root.
@@ -74,19 +75,24 @@ class Octree {
         Node replacement = node._insertLeaf(leaf, depth);
         this._setRoot(replacement, path, this._shape._rootPathDepth);
       }
-
-    } else if (this._shape._root == null) {
-      // Tree is empty so create a new tree.
-      leaf = new LeafNode._(path, this._shape);
+      this._reduceFootprint();
+      return new _InsertLeafResult(leaf, false);
+    }
+    
+    // Check if a tree is empty, then create a new tree.
+    if (this._shape._root == null) {
+      print("FLAG 10");
+      LeafNode leaf = new LeafNode._(path, this._shape);
       this._setRoot(leaf, path, Path.maxDepth-1);
-    } else {
-      // Point outside of tree, expand the tree.
-      this._expandFootprint(path);
-      leaf = new LeafNode._(path, this._shape);
-      Node newRoot = this._shape._root._insertLeaf(leaf, this._shape._rootPathDepth);
-      this._setRoot(newRoot, this._shape._rootPath, this._shape._rootPathDepth);
+      this._reduceFootprint();
+      return new _InsertLeafResult(leaf, false);
     }
 
+    // Point outside of tree, expand the tree.
+    this._expandFootprint(path);
+    LeafNode leaf = new LeafNode._(path, this._shape);
+    Node newRoot = this._shape._root._insertLeaf(leaf, this._shape._rootPathDepth);
+    this._setRoot(newRoot, this._shape._rootPath, this._shape._rootPathDepth);
     this._reduceFootprint();
     return new _InsertLeafResult(leaf, false);
   }
@@ -126,39 +132,17 @@ class Octree {
   /// [root] is the original root to expand.
   /// Returns the new expanded root.
   void _expandFootprint(Path path) {
-    while (!root.containsPoint(point)) {
-      Quadrant quad;
-      if (point.y > oldCenterY) {
-        if (point.x > oldCenterX) {
-          // New node is in the 'NorthEast'.
-          quad = Quadrant.SouthWest;
-        } else {
-          // New node is in the 'NorthWest'.
-          newXMin = xmin - width;
-          quad = Quadrant.SouthEast;
-        }
-      } else {
-        if (point.x > oldCenterX) {
-          // New node is in the 'SouthEast'.
-          newYMin = ymin - width;
-          quad = Quadrant.NorthWest;
-        } else {
-          // New node is in the 'SouthWest'.
-          newXMin = xmin - width;
-          newYMin = ymin - width;
-          quad = Quadrant.NorthEast;
-        }
-      }
-
-      BranchNode newRoot = new BranchNode();
-      newRoot.setLocation(newXMin, newYMin, width * 2);
-      newRoot.setChild(quad, root);
-
-      INode replacement = newRoot.reduce();
-      assert(replacement is! EmptyNode);
-      root = replacement as BaseNode;
+    Node root = this._shape._root;
+    Path rootPath = this._shape._rootPath;
+    int depth = this._shape._rootPathDepth;
+    while (!rootPath.sameUpto(path, depth)) {
+      BranchNode newRoot = new BranchNode._();
+      int index = rootPath.childIndexAt(depth);
+      newRoot._setChild(index, root);
+      root = newRoot._reduce();
+      depth--;
+      this._setRoot(root, rootPath, depth);
     }
-    return root;
   }
 
   /// This reduces the footprint to the smallest root needed.
@@ -183,5 +167,19 @@ class Octree {
 
       this._setRoot(onlyChild, path, depth+1);
     }
+  }
+
+  /// Gets the string for the whole octree.
+  @override
+  String toString() {
+    Collections.StringTree root = new Collections.StringTree("Octree");
+    if (this._shape._root != null) {
+      Collections.StringTree root = this._shape._root._stringTree();
+      root.text = "root: "+root.text;
+      root.append(root);
+    }
+    if ((this._shape._rootPath != null) && (this._shape._rootPathDepth >= 0))
+      root.add("path: "+this._shape._rootPath.toString(this._shape._rootPathDepth));
+    return root.toString();
   }
 }

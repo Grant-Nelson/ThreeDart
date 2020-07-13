@@ -27,8 +27,7 @@ class ShapeVertexCollection {
       if (vertex.shape == this._shape) return false;
       throw new Exception("May not add a vertex already attached to another shape to this shape.");
     }
-    Path path = new Path.fromPoint(vertex.location, this._shape.maxCube);
-    this._shape._root = this._shape.octree._addVertex(this._shape._root, path, vertex);
+    this._shape.octree._addVertex(vertex);
     return true;
   }
 
