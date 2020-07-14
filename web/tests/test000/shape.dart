@@ -31,8 +31,33 @@ void addShapeTests(TestManager tests) {
     checkPathStr(args, new Shapes.Path(0, 0, 5), 4, "[4040]");
   });
   
+  tests.add("Shape Octree Path Component Conversions Test", (TestArgs args) {
+    Math.Cube maxCube = new Math.Cube(-5000.0, -5000.0, -5000.0, 10000.0);
+    checkPathCompConv(args, maxCube,   0.0, 1073741824);
+
+    checkPathCompConv(args, maxCube,   1.0, 1073956572);
+    checkPathCompConv(args, maxCube,   2.0, 1074171320);
+    checkPathCompConv(args, maxCube,   3.0, 1074386069);
+
+    checkPathCompConv(args, maxCube,  -1.0, 1073527075);
+    checkPathCompConv(args, maxCube,  -2.0, 1073312327);
+    checkPathCompConv(args, maxCube,  -3.0, 1073097578);
+
+    checkPathCompConv(args, maxCube,  10.0, 1075889307);
+    checkPathCompConv(args, maxCube,  20.0, 1078036791);
+    checkPathCompConv(args, maxCube,  30.0, 1080184274);
+
+    checkPathCompConv(args, maxCube, -10.0, 1071594340);
+    checkPathCompConv(args, maxCube, -20.0, 1069446856);
+    checkPathCompConv(args, maxCube, -30.0, 1067299373);
+
+    checkPathCompConv(args, maxCube,  5000.0, 2147483647);
+    checkPathCompConv(args, maxCube, -5000.0, 0);
+  });
+  
   tests.add("Simple Shapes Octree Test", (TestArgs args) {
-    Shapes.Shape shape = new Shapes.Shape();
+    Math.Cube maxCube = new Math.Cube(-10.0, -10.0, -10.0, 20.0);
+    Shapes.Shape shape = new Shapes.Shape(maxCube);
 
     args.info("Empty Shape:\n");
     checkOctree(args, shape, [
@@ -64,6 +89,20 @@ void checkPathStr(TestArgs args, Shapes.Path path, int depth, String exp) {
       "\n   Result:   " + result.replaceAll("\n", "\n             ") +
       "\n   Expected: " + exp.replaceAll("\n", "\n             ") + "\n\n");
   }
+}
+
+void checkPathCompConv(TestArgs args, Math.Cube maxCube, double x, int v) {
+  Shapes.Path path = new Shapes.Path.fromPoint(new Math.Point3(x, 0.0, 0.0), maxCube);
+  double x2 = path.location(maxCube).x;
+  Shapes.Path path2 = new Shapes.Path.fromPoint(new Math.Point3(x2, 0.0, 0.0), maxCube);
+  if ((path.x != v) || (path2.x != v)) {
+    args.error("Unexpected Path Coordinate Conversion:" +
+      "\n   Component:  $x" +
+      "\n   Nearest:    $x2" +
+      "\n   Expected.X: $v" +
+      "\n   Path.X:     ${path.x}" +
+      "\n   Path2.X:    ${path2.x}\n\n");
+  } else args.info("$x => $v\n");
 }
 
 void checkOctree(TestArgs args, Shapes.Shape shape, List<String> expLines) {

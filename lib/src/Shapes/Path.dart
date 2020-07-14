@@ -26,12 +26,12 @@ class Path {
 
   /// Determines the path to the given location within the given maximum cube.
   factory Path.fromPoint(Math.Point3 loc, Math.Cube maxCube) {
-    double scalar = maxDepth / maxCube.size;
+    final double scalar = maxValue / maxCube.size;
     if (loc == null) return new Path._(0, 0, 0);
     return new Path(
-      ((loc.x - maxCube.x)*scalar).round(),
-      ((loc.y - maxCube.y)*scalar).round(),
-      ((loc.z - maxCube.z)*scalar).round());
+      ((loc.x - maxCube.x) * scalar).round(),
+      ((loc.y - maxCube.y) * scalar).round(),
+      ((loc.z - maxCube.z) * scalar).round());
   }
 
   /// Constructs a path with the given coordinates and depth.
@@ -74,11 +74,11 @@ class Path {
   /// This gets the location this path is for in the given maximum cube.
   /// This does not take into account the depth.
   Math.Point3 location(Math.Cube maxCube) {
-    double scalar = maxCube.size / maxDepth;
+    final double scalar = maxCube.size / maxValue;
     return new Math.Point3(
-      this.x * scalar + maxCube.x,
-      this.y * scalar + maxCube.y,
-      this.z * scalar + maxCube.z);
+      (this.x.toDouble() * scalar) + maxCube.x,
+      (this.y.toDouble() * scalar) + maxCube.y,
+      (this.z.toDouble() * scalar) + maxCube.z);
   }
 
   /// Gets the octree child index, 0 to 7, to take in this path at the given depth.

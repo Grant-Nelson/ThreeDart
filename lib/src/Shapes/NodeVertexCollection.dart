@@ -23,6 +23,7 @@ class NodeVertexCollection {
   void _add(Vertex vertex) {
     vertex._index = this.shape._vertexCount;
     vertex._leaf = this._leaf;
+    this._leaf._vertices.add(vertex);
     this.shape._vertexCount++;
     this.shape._vertexIndicesNeedUpdate = true;
     this.shape.onVertexAdded(vertex);

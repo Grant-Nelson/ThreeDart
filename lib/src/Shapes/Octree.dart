@@ -172,14 +172,16 @@ class Octree {
   /// Gets the string for the whole octree.
   @override
   String toString() {
-    Collections.StringTree root = new Collections.StringTree("Octree");
+    Collections.StringTree tree = new Collections.StringTree("Octree");
+    if ((this._shape._rootPath != null) && (this._shape._rootPathDepth >= 0)) {
+      tree.add("depth: ${this._shape._rootPathDepth}");
+      tree.add("path: "+this._shape._rootPath.toString(this._shape._rootPathDepth));
+    }
     if (this._shape._root != null) {
       Collections.StringTree root = this._shape._root._stringTree();
       root.text = "root: "+root.text;
-      root.append(root);
+      tree.append(root);
     }
-    if ((this._shape._rootPath != null) && (this._shape._rootPathDepth >= 0))
-      root.add("path: "+this._shape._rootPath.toString(this._shape._rootPathDepth));
-    return root.toString();
+    return tree.toString();
   }
 }
