@@ -45,22 +45,18 @@ class Octree {
   /// Returns a pair containing the leaf node in the tree, and true if the
   /// leaf is new or false if the leaf already existed in the tree.
   _InsertLeafResult _tryInsertLeaf(Path path) {
-    print("Flag 1: "+path.toString());
     _FindNodeResult findResult = this._findNode(path);
     if (findResult != null) {
-      Node node = findResult.node;
-      int depth = findResult.depth;
-      print("FLAG 2");
-
       // A node containing the leaf has been found.
+      Node node = findResult.node;
       if (node is LeafNode) {
         if (node.path == path) {
           return new _InsertLeafResult(node, true);
         }
       }
-      print("FLAG 3");
-
+    
       // Node leaf did not exist but is within the root.
+      int depth = findResult.depth;
       LeafNode leaf = new LeafNode._(path, this._shape);
       BranchNode parent = node.parent;
       if (parent != null) {
@@ -70,6 +66,7 @@ class Octree {
         parent._setChild(index, replacement);
         replacement = parent._reduce();
         this._reduceBranch(parent, replacement, path, depth);
+
       } else {
         // Node was the root.
         Node replacement = node._insertLeaf(leaf, depth);
@@ -81,16 +78,15 @@ class Octree {
     
     // Check if a tree is empty, then create a new tree.
     if (this._shape._root == null) {
-      print("FLAG 10");
       LeafNode leaf = new LeafNode._(path, this._shape);
-      this._setRoot(leaf, path, Path.maxDepth-1);
+      this._setRoot(leaf, path, Path.maxDepth);
       this._reduceFootprint();
       return new _InsertLeafResult(leaf, false);
     }
 
     // Point outside of tree, expand the tree.
-    this._expandFootprint(path);
     LeafNode leaf = new LeafNode._(path, this._shape);
+    this._expandFootprint(path);
     Node newRoot = this._shape._root._insertLeaf(leaf, this._shape._rootPathDepth);
     this._setRoot(newRoot, this._shape._rootPath, this._shape._rootPathDepth);
     this._reduceFootprint();
@@ -139,9 +135,9 @@ class Octree {
       BranchNode newRoot = new BranchNode._();
       int index = rootPath.childIndexAt(depth);
       newRoot._setChild(index, root);
-      root = newRoot._reduce();
+      // Do not reduce because it would remove the branch.
       depth--;
-      this._setRoot(root, rootPath, depth);
+      this._setRoot(newRoot, rootPath, depth);
     }
   }
 
@@ -173,6 +169,14 @@ class Octree {
   @override
   String toString() {
     Collections.StringTree tree = new Collections.StringTree("Octree");
+    if (this._shape._vertexCount > 0)
+      tree.add("vertex count: ${this._shape._vertexCount}");
+    if (this._shape._pointCount > 0)
+      tree.add("point count: ${this._shape._pointCount}");
+    if (this._shape._lineCount > 0)
+      tree.add("line count: ${this._shape._lineCount}");
+    if (this._shape._faceCount > 0)
+      tree.add("face count: ${this._shape._faceCount}");
     if ((this._shape._rootPath != null) && (this._shape._rootPathDepth >= 0)) {
       tree.add("depth: ${this._shape._rootPathDepth}");
       tree.add("path: "+this._shape._rootPath.toString(this._shape._rootPathDepth));

@@ -59,7 +59,7 @@ class BranchNode extends Node {
   Node _insertLeaf(LeafNode leaf, int depth) {
     int index = leaf.path.childIndexAt(depth);
     Node node = this._children[index];
-    if (node != null) node = leaf;
+    if (node == null) node = leaf;
     else node = node._insertLeaf(leaf, depth+1);
     if (this._setChild(index, node)) return this._reduce();
     return this;
@@ -128,6 +128,10 @@ class BranchNode extends Node {
     }
     return leaf;
   }
+
+  /// Gets the string for the whole branch node.
+  @override
+  String toString() => this._stringTree().toString();
   
   /// Gets a string tree for debugging, testing, and printing this node.
   Collections.StringTree _stringTree() {

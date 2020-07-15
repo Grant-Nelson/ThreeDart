@@ -29,6 +29,10 @@ class PassNode extends Node {
    // TODO: Implement 
   }
   
+  /// Gets the string for the whole pass node.
+  @override
+  String toString() => this._stringTree().toString();
+  
   /// Gets a string tree for debugging, testing, and printing this node.
   Collections.StringTree _stringTree() {
     Collections.StringTree root = new Collections.StringTree("pass");

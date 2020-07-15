@@ -34,6 +34,7 @@ class LeafNode extends Node {
   /// Adds a leaf to this node. Returns the node that should
   /// be the new root of the subtree that was defined by this node.
   Node _insertLeaf(LeafNode leaf, int depth) {
+    Path path = leaf.path;
     if (path == this._path) return this;
 
     // Make this node and set is as a child of the new branch.
@@ -67,6 +68,10 @@ class LeafNode extends Node {
     //   if ((edge.startNode != point) && (edge.endNode != point)) point.passEdges.add(edge);
     // }
   }
+
+  /// Gets the string for the whole leaf node.
+  @override
+  String toString() => this._stringTree().toString();
   
   /// Gets a string tree for debugging, testing, and printing this node.
   Collections.StringTree _stringTree() {

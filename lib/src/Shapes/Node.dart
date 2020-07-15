@@ -19,6 +19,9 @@ abstract class Node {
   /// Gets an iterable which steps through all of the leaves in this node.
   Iterable<LeafNode> get leafIterable;
 
+  /// Gets the string for this node and any children to this node.
+  String toString();
+
   /// Gets a string tree for debugging, testing, and printing this node.
   Collections.StringTree _stringTree();
 }
