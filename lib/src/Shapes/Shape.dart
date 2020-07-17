@@ -70,12 +70,14 @@ class Shape implements ShapeBuilder {
     ShapeVertexCollection otherVCol = other.vertices;
     otherVCol._updateIndices();
     
+    int index = 0;
     List<Vertex> vertices = new List<Vertex>(otherVCol.length);
     ShapeVertexCollection vcol = this.vertices;
     for (Vertex vertex in otherVCol.iterable) {
       Vertex copy = vertex.copy();
-      vertices.add(copy);
+      vertices[index] = copy;
       vcol.add(copy);
+      index++;
     }
 
     ShapePointCollection pcol = this.points;
@@ -360,6 +362,32 @@ class Shape implements ShapeBuilder {
     for (Vertex ver in this.vertices.iterable) {
       if (ver.textureCube != null) ver.textureCube = mat.transVec3(ver.textureCube);
     }
+  }
+
+  /// Validates the shape to make sure the octree and pointers have been setup correctly.
+  bool validate(Debug.Logger log) {
+    int vertexCount = this.vertices.iterable.length;
+    if (vertexCount != this._vertexCount)
+      log.error("Vertex count was found as $vertexCount but was stored as ${this._vertexCount}.\n");
+
+    int pointCount = this.points.iterable.length;
+    if (pointCount != this._pointCount)
+      log.error("Point count was found as $pointCount but was stored as ${this._pointCount}.\n");
+
+    int lineCount = this.lines.iterable.length;
+    if (lineCount != this._lineCount)
+      log.error("Line count was found as $lineCount but was stored as ${this._lineCount}.\n");
+
+    int faceCount = this.faces.iterable.length;
+    if (faceCount != this._faceCount)
+      log.error("Face count was found as $faceCount but was stored as ${this._faceCount}.\n");
+
+    // TODO: Add move validation
+    // Node _root;
+    // Path _rootPath;
+    // int _rootPathDepth;
+
+    return !log.failed;
   }
 
   /// Builds a buffer store for caching the shape for rendering.

@@ -1,4 +1,4 @@
-part of ThreeDart.Collections;
+part of ThreeDart.Debug;
 
 /// String tree is a collection of hieratical string information.
 class StringTree {

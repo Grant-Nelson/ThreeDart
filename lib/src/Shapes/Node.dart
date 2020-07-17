@@ -23,5 +23,5 @@ abstract class Node {
   String toString();
 
   /// Gets a string tree for debugging, testing, and printing this node.
-  Collections.StringTree _stringTree();
+  Debug.StringTree _stringTree();
 }

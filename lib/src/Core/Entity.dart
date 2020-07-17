@@ -553,8 +553,8 @@ class Entity implements Movers.Movable, Events.Changeable {
   }
 
   /// Gets the string tree for these entity tree.
-  Collections.StringTree _stringTree() {
-    Collections.StringTree tree = new Collections.StringTree(this.toString());
+  Debug.StringTree _stringTree() {
+    Debug.StringTree tree = new Debug.StringTree(this.toString());
     for (Entity child in this.children) tree.append(child._stringTree());
     return tree;
   }

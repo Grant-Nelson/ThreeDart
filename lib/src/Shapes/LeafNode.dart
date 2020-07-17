@@ -24,7 +24,7 @@ class LeafNode extends Node {
   Path get path => this._path;
 
   /// All the vertices which map tho this leaf node's path.
-  NodeVertexCollection get vertices => new NodeVertexCollection._(this);
+  LeafNodeVertexCollection get vertices => new LeafNodeVertexCollection._(this);
 
   /// Gets an iterable which steps through all of the leaves in this node.
   Iterable<LeafNode> get leafIterable sync* {
@@ -74,19 +74,19 @@ class LeafNode extends Node {
   String toString() => this._stringTree().toString();
   
   /// Gets a string tree for debugging, testing, and printing this node.
-  Collections.StringTree _stringTree() {
-    Collections.StringTree root = new Collections.StringTree("leaf");
+  Debug.StringTree _stringTree() {
+    Debug.StringTree root = new Debug.StringTree("leaf");
     root.add("path: "+this._path.toString());
     if (this._vertices.isNotEmpty) {
-      Collections.StringTree subroot = root.add("vertices");
+      Debug.StringTree subroot = root.add("vertices");
       for (Vertex ver in this._vertices) subroot.add(ver.toString());
     }
     if (this._lines.isNotEmpty) {
-      Collections.StringTree subroot = root.add("passing lines");
+      Debug.StringTree subroot = root.add("passing lines");
       for (Line line in this._lines) subroot.add(line.toString());
     }
     if (this._faces.isNotEmpty) {
-      Collections.StringTree subroot = root.add("passing faces");
+      Debug.StringTree subroot = root.add("passing faces");
       for (Face face in this._faces) subroot.add(face.toString());
     }
     return root;

@@ -132,6 +132,11 @@ void addShapeTests(TestManager tests) {
       "      '-vertices",
       "        '-{2, [1.000, 1.000, 0.000], -, -, -, -, -, 0.000, -}"]);
   });
+
+  tests.add("Validate Sphere Test", (TestArgs args) {
+    Shapes.Shape sphere = Shapes.sphere();
+    sphere.validate(args);
+  });
 }
 
 void checkPathStr(TestArgs args, Shapes.Path path, int depth, String exp) {

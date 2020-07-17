@@ -5,7 +5,6 @@ import '../Events/Events.dart' as Events;
 
 part 'Collection.dart';
 part 'Matrix4Stack.dart';
-part 'StringTree.dart';
 
 /// The handler for the call back prior to an item being added.
 typedef bool CollectionPreaddHandle<T>(Iterable<T> added);

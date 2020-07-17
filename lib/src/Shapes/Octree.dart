@@ -168,7 +168,7 @@ class Octree {
   /// Gets the string for the whole octree.
   @override
   String toString() {
-    Collections.StringTree tree = new Collections.StringTree("Octree");
+    Debug.StringTree tree = new Debug.StringTree("Octree");
     if (this._shape._vertexCount > 0)
       tree.add("vertex count: ${this._shape._vertexCount}");
     if (this._shape._pointCount > 0)
@@ -182,7 +182,7 @@ class Octree {
       tree.add("path: "+this._shape._rootPath.toString(this._shape._rootPathDepth));
     }
     if (this._shape._root != null) {
-      Collections.StringTree root = this._shape._root._stringTree();
+      Debug.StringTree root = this._shape._root._stringTree();
       root.text = "root: "+root.text;
       tree.append(root);
     }

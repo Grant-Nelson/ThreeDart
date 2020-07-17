@@ -5,34 +5,18 @@ part of ThreeDart.test.test000;
 typedef void TestHandler(TestArgs args);
 
 /// The interface for the unit-test to callback with.
-abstract class TestArgs {
+abstract class TestArgs extends Debug.Logger{
 
   /// The title of the unit-test.
   String get title;
   set title(String title);
 
-  /// Indicates if the test has failed.
-  bool get failed;
-
   /// Marks this test as failed.
   void fail();
-
-  /// Prints text to the test's output console as an information.
-  void info(String text);
-
-  /// Prints text to the test's output console as a notice.
-  void notice(String text);
-
-  /// Prints text to the test's output console as a warning.
-  void warning(String text);
-
-  /// Prints text to the test's output console as an error.
-  /// This will also mark this test as a failure.
-  void error(String text);
 }
 
 /// The block for the unit-test output and the test arguments.
-class TestBlock extends TestArgs {
+class TestBlock implements TestArgs {
   TestManager _man;
   html.DivElement _body;
   html.DivElement _title;

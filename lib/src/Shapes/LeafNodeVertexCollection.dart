@@ -1,11 +1,11 @@
 part of ThreeDart.Shapes;
 
 /// A collection of vertices for the shapes.
-class NodeVertexCollection {
+class LeafNodeVertexCollection {
   final LeafNode _leaf;
 
   /// Creates a new vertex collection of a shape.
-  NodeVertexCollection._(LeafNode this._leaf);
+  LeafNodeVertexCollection._(LeafNode this._leaf);
 
   /// The leaf node which owns this collection.
   LeafNode get leafNode => this._leaf;

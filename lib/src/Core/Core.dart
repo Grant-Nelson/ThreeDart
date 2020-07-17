@@ -7,6 +7,7 @@ import 'dart:async';
 import '../Audio/Audio.dart' as Audio;
 import '../Collections/Collections.dart' as Collections;
 import '../Data/Data.dart' as Data;
+import '../Debug/Debug.dart' as Debug;
 import '../Events/Events.dart' as Events;
 import '../Input/Input.dart' as Input;
 import '../Math/Math.dart' as Math;

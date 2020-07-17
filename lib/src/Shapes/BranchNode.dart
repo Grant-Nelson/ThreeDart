@@ -134,12 +134,12 @@ class BranchNode extends Node {
   String toString() => this._stringTree().toString();
   
   /// Gets a string tree for debugging, testing, and printing this node.
-  Collections.StringTree _stringTree() {
-    Collections.StringTree subroot = new Collections.StringTree("branch");
+  Debug.StringTree _stringTree() {
+    Debug.StringTree subroot = new Debug.StringTree("branch");
     int index = 0;
     for (Node node in this._children) {
       if (node != null) {
-        Collections.StringTree child = node._stringTree();
+        Debug.StringTree child = node._stringTree();
         child.text = "$index. "+child.text;
         index++;
         subroot.append(child);
