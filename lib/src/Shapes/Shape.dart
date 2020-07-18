@@ -382,11 +382,7 @@ class Shape implements ShapeBuilder {
     if (faceCount != this._faceCount)
       log.error("Face count was found as $faceCount but was stored as ${this._faceCount}.\n");
 
-    // TODO: Add move validation
-    // Node _root;
-    // Path _rootPath;
-    // int _rootPathDepth;
-
+    this._root?._validate(log, this, null, this._rootPath, this._rootPathDepth);
     return !log.failed;
   }
 

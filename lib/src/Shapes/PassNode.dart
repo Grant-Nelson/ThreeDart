@@ -46,4 +46,19 @@ class PassNode extends Node {
     }
     return root;
   }
+
+  /// Validates the node to make sure the nodes' have been setup correctly.
+  void _validate(Debug.Logger log, Shape shape, Node parent, Path path, int depth) {
+    if (depth > Path.maxDepth) {
+      log.error("Pass node was deeper than ${Path.maxDepth}, it was $depth.\n");
+      return;
+    }
+    if (!identical(parent, this._parent))
+      log.error("Parent of pass node at ${path.toString(depth)} does not match expected parent.\n");
+
+    // TODO: Implement
+    // Check that there is at least one line or face.
+    // Check that all the lines and faces pass through this node.
+    // Check that all the lines and faces are part of this shape.
+  }
 }

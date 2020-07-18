@@ -147,4 +147,24 @@ class BranchNode extends Node {
     }
     return subroot;
   }
+
+  /// Validates the node to make sure the nodes' have been setup correctly.
+  void _validate(Debug.Logger log, Shape shape, Node parent, Path path, int depth) {
+    if (depth > Path.maxDepth) {
+      log.error("Branch node was deeper than ${Path.maxDepth}, it was $depth.\n");
+      return;
+    }
+
+    if (!identical(parent, this._parent))
+      log.error("Parent of branch node at ${path.toString(depth)} does not match expected parent.\n");
+
+    int index = 0;
+    for (Node child in this._children) {
+      if (child != null) {
+        Path subPath = path.redirect(index, depth+1);
+        child._validate(log, shape, this, subPath, depth+1);
+      }
+      index++;
+    }
+  }
 }

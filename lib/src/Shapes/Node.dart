@@ -24,4 +24,7 @@ abstract class Node {
 
   /// Gets a string tree for debugging, testing, and printing this node.
   Debug.StringTree _stringTree();
+  
+  /// Validates the node to make sure the nodes' have been setup correctly.
+  void _validate(Debug.Logger log, Shape shape, Node parent, Path path, int depth);
 }
