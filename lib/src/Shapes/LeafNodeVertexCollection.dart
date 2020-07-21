@@ -19,7 +19,7 @@ class LeafNodeVertexCollection {
   /// Determines the number of vertices in the collection.
   int get length => this._leaf._vertices.length;
 
-  /// Adds the vertex to this leaf and updates the tree.
+  /// Adds the vertex to this leaf and updates the shape counts.
   void _add(Vertex vertex) {
     vertex._index = this.shape._vertexCount;
     vertex._leaf = this._leaf;
@@ -27,6 +27,15 @@ class LeafNodeVertexCollection {
     this.shape._vertexCount++;
     this.shape._vertexIndicesNeedUpdate = true;
     this.shape.onVertexAdded(vertex);
+  }
+
+  /// Removes the vertex from this leaf and updates the shape counts.
+  void _remove(Vertex vertex) {
+    if (!this._leaf._vertices.remove(vertex))
+      throw new Exception("Vertex was not in the expected leaf node.");
+    this.shape._vertexCount--;
+    this.shape._vertexIndicesNeedUpdate = true;
+    this.shape.onVertexRemoved(vertex);
   }
 
   /// Gets the vertex at the at given [index].

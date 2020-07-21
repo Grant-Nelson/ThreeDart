@@ -141,9 +141,9 @@ class BranchNode extends Node {
       if (node != null) {
         Debug.StringTree child = node._stringTree();
         child.text = "$index. "+child.text;
-        index++;
         subroot.append(child);
       }
+      index++;
     }
     return subroot;
   }
@@ -158,13 +158,12 @@ class BranchNode extends Node {
     if (!identical(parent, this._parent))
       log.error("Parent of branch node at ${path.toString(depth)} does not match expected parent.\n");
 
-    int index = 0;
-    for (Node child in this._children) {
+    for (int i = 0; i < this._children.length; i++) {
+      Node child = this._children[i];
       if (child != null) {
-        Path subPath = path.redirect(index, depth+1);
+        Path subPath = path.redirect(i, depth);
         child._validate(log, shape, this, subPath, depth+1);
       }
-      index++;
     }
   }
 }

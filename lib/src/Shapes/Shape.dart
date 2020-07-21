@@ -365,7 +365,9 @@ class Shape implements ShapeBuilder {
   }
 
   /// Validates the shape to make sure the octree and pointers have been setup correctly.
-  bool validate(Debug.Logger log) {
+  bool validate([Debug.Logger log = null]) {
+    log ??= new Debug.DefaultLogger();
+
     int vertexCount = this.vertices.iterable.length;
     if (vertexCount != this._vertexCount)
       log.error("Vertex count was found as $vertexCount but was stored as ${this._vertexCount}.\n");

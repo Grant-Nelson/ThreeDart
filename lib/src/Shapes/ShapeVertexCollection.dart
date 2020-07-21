@@ -24,9 +24,10 @@ class ShapeVertexCollection {
   /// True if it was added, false if already in this shape.
   bool add(Vertex vertex) {
     if (vertex.shape != null) {
-      if (vertex.shape == this._shape) return false;
+      if (identical(vertex.shape, this._shape)) return false;
       throw new Exception("May not add a vertex already attached to another shape to this shape.");
     }
+    if (vertex.shape != null) vertex.shape.vertices.remove(vertex);
     this._shape.octree._addVertex(vertex);
     return true;
   }
@@ -78,9 +79,8 @@ class ShapeVertexCollection {
     if (!vertex.isEmpty)
       throw new Exception("May not remove a vertex without first making it empty.");
 
-    // TODO: Implement remove
-    //vertex.shape = null;
-    //this._vertices.remove(vertex);
+    this._shape.octree._removeVertex(vertex);
+    vertex._leaf = null;
 
     this._shape.onVertexRemoved(vertex);
     this._shape._vertexIndicesNeedUpdate = true;

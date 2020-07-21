@@ -133,9 +133,16 @@ void addShapeTests(TestManager tests) {
       "        '-{2, [1.000, 1.000, 0.000], -, -, -, -, -, 0.000, -}"]);
   });
 
+  tests.add("Validate Cube Test", (TestArgs args) {
+    Shapes.Shape cube = Shapes.cube();
+    cube.validate(args);
+    args.info(cube.octree.toString());
+  });
+
   tests.add("Validate Sphere Test", (TestArgs args) {
     Shapes.Shape sphere = Shapes.sphere();
     sphere.validate(args);
+    args.info(sphere.octree.toString());
   });
 }
 

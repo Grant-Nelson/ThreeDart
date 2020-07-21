@@ -104,7 +104,7 @@ class Vertex {
   set location(Math.Point3 loc) {
     if (this._loc != loc) {
       this._loc = loc;
-      // TODO: MUST UPDATE LOCATION IN OCTREE!!
+      this._leaf?._shape?.octree?._updateVertexLocation(this);
       this._leaf?._shape?.onVertexModified(this);
     }
   }

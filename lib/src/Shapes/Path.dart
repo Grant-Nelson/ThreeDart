@@ -43,18 +43,18 @@ class Path {
 
   /// This gets a new path with the given depth changed to a different index.
   Path redirect(int index, int depth) {
-    int mask = 1 << depth;
-    int notMask = maxValue - mask;
-    int x = (this.x & notMask) | ((index & 1 != 0)? mask: 0);
-    int y = (this.y & notMask) | ((index & 2 != 0)? mask: 0);
-    int z = (this.z & notMask) | ((index & 4 != 0)? mask: 0);
+    final int mask = 1 << depth;
+    final int notMask = maxValue - mask;
+    final int x = (this.x & notMask) | ((index & 1 != 0)? mask: 0);
+    final int y = (this.y & notMask) | ((index & 2 != 0)? mask: 0);
+    final int z = (this.z & notMask) | ((index & 4 != 0)? mask: 0);
     return new Path(x, y, z);
   }
 
   /// Determines the depth for the common path between this and the other path.
   /// If there is no match then this will return -1.
   int commonDepth(Path other) {
-    int diff = (this.x ^ other.x) | (this.y ^ other.y) | (this.z ^ other.z);
+    final int diff = (this.x ^ other.x) | (this.y ^ other.y) | (this.z ^ other.z);
     for (int d = 0, mask = 1; d < maxDepth; d++, mask <<= 1) {
       if (diff & mask != 0) return d-1;
     }
@@ -64,7 +64,7 @@ class Path {
   /// Determines if the two paths are the same upto the given depth.
   /// If depths is less than zero this will return true.
   bool sameUpto(Path other, int depth) {
-    int diff = (this.x ^ other.x) | (this.y ^ other.y) | (this.z ^ other.z);
+    final int diff = (this.x ^ other.x) | (this.y ^ other.y) | (this.z ^ other.z);
     for (int d = 0, mask = 1; d < depth; d++, mask <<= 1) {
       if (diff & mask != 0) return false;
     }
@@ -84,7 +84,7 @@ class Path {
   /// Gets the octree child index, 0 to 7, to take in this path at the given depth.
   int childIndexAt(int depth) {
     if (depth < 0) return 0;
-    int mask = 1 << depth;
+    final int mask = 1 << depth;
     int childIndex = 0;
     if (this.x & mask != 0) childIndex |= 1;
     if (this.y & mask != 0) childIndex |= 2;
@@ -104,11 +104,12 @@ class Path {
   String toString([int depth = maxDepth]) {
     StringBuffer str = new StringBuffer();
     str.write("[");
-    for (int d = 0, x = 0; d < depth; d++, x++) {
+    for (int d = 0, x = 0; d < maxDepth; d++, x++) {
       if (x == 4) {
         x = 0;
         str.write(" ");
       }
+      if (d == depth) str.write("|");
       int index = this.childIndexAt(d);
       str.write("$index");
     }

@@ -15,9 +15,51 @@ class Octree {
 
   /// Adds a vertex to this octree.
   void _addVertex(Vertex vertex) {
+    print("================================="); // TODO: REMOVE
+    print(">> ADD VERTEX"); // TODO: REMOVE
+
     Path path = new Path.fromPoint(vertex.location, this._shape.maxCube);
-    _InsertLeafResult result = this._tryInsertLeaf(path);
+    _InsertLeafResult result = this._insertLeaf(path);
     result.leaf.vertices._add(vertex);
+
+    print(this.toString());// TODO: REMOVE
+    if (!this._shape.validate()) {// TODO: REMOVE
+      throw new Exception("FAILED VALIDATION");
+    }
+  }
+
+  /// Removes a vertex from this octree.
+  /// This assumes it has already been checked to be part of this octree.
+  /// Will not update the passing nodes for the lines and faces, but will
+  /// not remove the lines and faces. Make sure they are updated and/or removed.
+  void _removeVertex(Vertex vertex) {
+    print("================================="); // TODO: REMOVE
+    print(">> REMOVE VERTEX"); // TODO: REMOVE
+
+    LeafNode leaf = vertex.leafNode;
+    leaf.vertices._remove(vertex);
+    if (leaf._vertices.isEmpty)
+      this._removeLeaf(leaf);
+    
+    print(this.toString());// TODO: REMOVE
+    if (!this._shape.validate()) {// TODO: REMOVE
+      throw new Exception("FAILED VALIDATION");
+    }
+  }
+
+  /// Updates the location of the current vertex. It checks if the location has
+  /// changed enough to cause the leaf node to need to be changed.
+  void _updateVertexLocation(Vertex vertex) {
+    if (!identical(vertex.shape, this._shape))
+      throw new Exception("To update a vertex, it must be part of the shape already.");
+    Path newPath = Path.fromPoint(vertex.location, this._shape.maxCube);
+    Path oldPath = vertex.leafNode.path;
+
+    /// TODO: Need to update the passing nodes even if the leaf didn't change.
+
+    if (newPath == oldPath) return;
+    this._removeVertex(vertex);
+    this._addVertex(vertex);
   }
 
   /// This will locate the smallest non-empty node containing the given path.
@@ -44,15 +86,16 @@ class Octree {
   /// [path] is the location to insert into the tree.
   /// Returns a pair containing the leaf node in the tree, and true if the
   /// leaf is new or false if the leaf already existed in the tree.
-  _InsertLeafResult _tryInsertLeaf(Path path) {
+  _InsertLeafResult _insertLeaf(Path path) {
+    print("Flag _insertLeaf\n");
+
     _FindNodeResult findResult = this._findNode(path);
     if (findResult != null) {
       // A node containing the leaf has been found.
       Node node = findResult.node;
-      if (node is LeafNode) {
-        if (node.path == path) {
-          return new _InsertLeafResult(node, true);
-        }
+      if ((node is LeafNode) && (node.path == path)) {
+        print("Flag 0\n");
+        return new _InsertLeafResult(node, true);
       }
     
       // Node leaf did not exist but is within the root.
@@ -60,6 +103,7 @@ class Octree {
       LeafNode leaf = new LeafNode._(path, this._shape);
       BranchNode parent = node.parent;
       if (parent != null) {
+        print("Flag 1\n");
         // Node was not the root.
         int index = parent.getChildIndex(node);
         Node replacement = node._insertLeaf(leaf, depth);
@@ -68,6 +112,7 @@ class Octree {
         this._reduceBranch(parent, replacement, path, depth);
 
       } else {
+        print("Flag 2\n");
         // Node was the root.
         Node replacement = node._insertLeaf(leaf, depth);
         this._setRoot(replacement, path, this._shape._rootPathDepth);
@@ -78,12 +123,14 @@ class Octree {
     
     // Check if a tree is empty, then create a new tree.
     if (this._shape._root == null) {
+      print("Flag 3\n");
       LeafNode leaf = new LeafNode._(path, this._shape);
       this._setRoot(leaf, path, Path.maxDepth);
       this._reduceFootprint();
       return new _InsertLeafResult(leaf, false);
     }
 
+    print("Flag 4\n");
     // Point outside of tree, expand the tree.
     LeafNode leaf = new LeafNode._(path, this._shape);
     this._expandFootprint(path);
@@ -91,6 +138,43 @@ class Octree {
     this._setRoot(newRoot, this._shape._rootPath, this._shape._rootPathDepth);
     this._reduceFootprint();
     return new _InsertLeafResult(leaf, false);
+  }
+
+  /// Remove the given leaf node.
+  void _removeLeaf(LeafNode node) {
+    if (identical(this._shape._root, node)) {
+      this._setRoot(null, null, 0);
+      return;
+    }
+
+    // Determine if the leaf will become a passing node.
+    BranchNode parent = node.parent;
+    Node replacement = null;
+    if (node._lines.isNotEmpty || node._faces.isNotEmpty) {
+      PassNode pass = new PassNode._();
+      pass._lines = node._lines;
+      pass._faces = node._faces;
+      replacement = pass;
+    }
+
+    // Replace node and reduce tree.
+    Path path = node.path;
+    int depth = this._nodeDepth(node);
+    int index = parent.getChildIndex(node);
+    parent._setChild(index, replacement);
+    replacement = parent._reduce();
+    this._reduceBranch(parent, replacement, path, depth);
+    this._reduceFootprint();
+  }
+
+  /// Gets the depth of the node in the octree.
+  int _nodeDepth(Node node) {
+    int depth = this._shape._rootPathDepth - 1;
+    while (node != null) {
+      depth++;
+      node = node.parent;
+    }
+    return depth;
   }
   
   /// This reduces the root to the smallest branch needed.
@@ -119,8 +203,7 @@ class Octree {
     this._shape._root = node;
     this._shape._rootPath = path;
     this._shape._rootPathDepth = depth;
-    if (this._shape._root != null)
-      this._shape._root._parent = null;
+    this._shape._root?._parent = null;
     return true;
   }
   
@@ -132,12 +215,13 @@ class Octree {
     Path rootPath = this._shape._rootPath;
     int depth = this._shape._rootPathDepth;
     while (!rootPath.sameUpto(path, depth)) {
+      depth--;
       BranchNode newRoot = new BranchNode._();
       int index = rootPath.childIndexAt(depth);
       newRoot._setChild(index, root);
       // Do not reduce because it would remove the branch.
-      depth--;
       this._setRoot(newRoot, rootPath, depth);
+      root = newRoot;
     }
   }
 
