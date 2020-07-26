@@ -16,7 +16,7 @@ class BranchNode extends Node {
   List<Node> _children;
 
   /// Creates the new branch node.
-  BranchNode._(): super._() {
+  BranchNode._(Path path, int depth, Math.Cube cube): super._(path, depth, cube) {
     this._children = new List<Node>.filled(8, null, growable: false);
   }
 
@@ -43,6 +43,15 @@ class BranchNode extends Node {
     return true;
   }
 
+  /// This gets the cube for the child at the given child index.
+  Math.Cube childCube(int index) {
+    final double size = this.cube.size * 0.5;
+    final double x = this.cube.x + ((index & 1 != 0)? size: 0.0);
+    final double y = this.cube.y + ((index & 2 != 0)? size: 0.0);
+    final double z = this.cube.z + ((index & 4 != 0)? size: 0.0);
+    return new Math.Cube(x, y, z, size);
+  }
+
   /// This handles each node in order.
   /// This will call the handle with any null children.
   void forEach(bool hndl(Node)) => this._children.forEach(hndl);
@@ -56,11 +65,13 @@ class BranchNode extends Node {
 
   /// Adds a leaf to this node. Returns the node that should
   /// be the new root of the subtree that was defined by this node.
-  Node _insertLeaf(LeafNode leaf, int depth) {
-    int index = leaf.path.childIndexAt(depth);
+  Node _insertLeaf(LeafNode leaf) {
+    int index = leaf.path.childIndexAt(depth+1);
     Node node = this._children[index];
-    if (node == null) node = leaf;
-    else node = node._insertLeaf(leaf, depth+1);
+    if (node == null) {
+      leaf._setLoc(path.redirect(index, depth+1), depth+1, this.childCube(index));
+      node = leaf;
+    } else node = node._insertLeaf(leaf);
     if (this._setChild(index, node)) return this._reduce();
     return this;
   }
@@ -93,6 +104,7 @@ class BranchNode extends Node {
         if (pass == null) {
           // Take found pass node child to make as the replacement of this node.
           pass = node;
+          pass._setLoc(this.path, this.depth, this.cube);
           pass._parent = null;
           this._children[index] = null;
         } else {
@@ -114,6 +126,7 @@ class BranchNode extends Node {
         // Leaf node found, relocate and remove the node
         // from this parent node so that it isn't deleted later.
         leaf = node;
+        leaf._setLoc(this.path, this.depth, this.cube);
         leaf._parent = null;
         this._children[index] = null;
         break;
