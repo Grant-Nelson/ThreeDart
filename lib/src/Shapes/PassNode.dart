@@ -7,7 +7,7 @@ class PassNode extends Node {
   List<Face> _faces;
 
   /// Creates a new pass node.
-  PassNode._(Path path, int depth, Math.Cube cube): super._(path, depth, cube) {
+  PassNode._(Path path, int depth): super._(path, depth) {
     this._lines = new List<Line>();
     this._faces = new List<Face>();
   }
@@ -36,6 +36,8 @@ class PassNode extends Node {
   /// Gets a string tree for debugging, testing, and printing this node.
   Debug.StringTree _stringTree() {
     Debug.StringTree root = new Debug.StringTree("pass");
+    root.add("path:  ${this.path.toString(this.depth)}");
+    root.add("depth: ${this.depth}");
     if (this._lines.isNotEmpty) {
       Debug.StringTree subroot = root.add("passing lines");
       for (Line line in this._lines) subroot.add(line.toString());
@@ -48,17 +50,13 @@ class PassNode extends Node {
   }
 
   /// Validates the node to make sure the nodes' have been setup correctly.
-  void _validate(Debug.Logger log, Shape shape, Node parent, Path path, int depth) {
-    if (depth > Path.maxDepth) {
-      log.error("Pass node was deeper than ${Path.maxDepth}, it was $depth.\n");
-      return;
-    }
-    if (!identical(parent, this._parent))
-      log.error("Parent of pass node at ${path.toString(depth)} does not match expected parent.\n");
+  bool _validate(Debug.Logger log, Shape shape, Node parent, Path path, int depth) {
+    if (!super._validate(log, shape, parent, path, depth)) return false;
 
     // TODO: Implement
     // Check that there is at least one line or face.
     // Check that all the lines and faces pass through this node.
     // Check that all the lines and faces are part of this shape.
+    return true;
   }
 }

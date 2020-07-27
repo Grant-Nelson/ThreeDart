@@ -99,10 +99,7 @@ class Octree {
     }
 
     // Creates a new leaf to insert.
-    Math.Point3 loc = path.location(this._shape.maxCube);
-    double smallestSize = this._shape.maxCube.size / Path.maxValue;
-    Math.Cube cube = new Math.Cube.fromPoint(loc, smallestSize);
-    LeafNode leaf = new LeafNode._(loc, this._shape, path, Path.maxDepth, cube);
+    LeafNode leaf = new LeafNode._(this._shape, path, Path.maxDepth);
     
     if (findResult != null) {
       // Node leaf did not exist but is within the root.
@@ -129,7 +126,7 @@ class Octree {
     
     // Check if a tree is empty, then create a new tree.
     if (this._shape._root == null) {
-      this._setRoot(leaf, path, Path.maxDepth-1);
+      this._setRoot(leaf, path, Path.maxDepth);
       this._reduceFootprint();
       return new _InsertLeafResult(leaf, false);
     }
@@ -153,7 +150,7 @@ class Octree {
     BranchNode parent = node.parent;
     Node replacement = null;
     if (node._lines.isNotEmpty || node._faces.isNotEmpty) {
-      PassNode pass = new PassNode._(node.path, node.depth, node.cube);
+      PassNode pass = new PassNode._(node.path, node.depth);
       pass._lines = node._lines;
       pass._faces = node._faces;
       replacement = pass;
@@ -217,8 +214,7 @@ class Octree {
     int depth = this._shape._rootPathDepth;
     while (!rootPath.sameUpto(path, depth)) {
       depth--;
-      Math.Cube cube = rootPath.cube(this._shape.maxCube, depth);
-      BranchNode newRoot = new BranchNode._(rootPath, depth, cube);
+      BranchNode newRoot = new BranchNode._(rootPath, depth);
       int index = rootPath.childIndexAt(depth);
       newRoot._setChild(index, root);
       Node replacement = newRoot._reduce();

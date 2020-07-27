@@ -10,9 +10,9 @@ class LeafNode extends Node {
   List<Face> _faces;
 
   /// Creates a new leaf node.
-  LeafNode._(Math.Point3 point, Shape shape, Path path, int depth, Math.Cube cube):
-    super._(path, depth, cube) {
-    this._point = point;
+  LeafNode._(Shape shape, Path path, int depth): super._(path, depth) {
+    if (shape == null) throw new Exception("May not set a null shape to a leaf node.");
+    this._point = path.location(shape.maxCube);
     this._shape = shape;
     this._vertices = new List<Vertex>();
     this._lines = new List<Line>();
@@ -34,18 +34,19 @@ class LeafNode extends Node {
   /// be the new root of the subtree that was defined by this node.
   Node _insertLeaf(LeafNode leaf) {
     Path path = leaf.path;
-    if (path == this._path) return this;
+    if (path == this.path) return this;
 
     // Make this node and set is as a child of the new branch.
-    int oldIndex = this._path.childIndexAt(depth);
-    BranchNode branch = new BranchNode._(this.path, this.depth, this.cube);
+    int oldIndex = this.path.childIndexAt(depth);
+    BranchNode branch = new BranchNode._(this.path, this.depth);
+    this._setDepth(this.depth+1);
     branch._setChild(oldIndex, this);
 
     // Copy lines to new siblings, keep any non-empty sibling.
     int childIndex = path.childIndexAt(depth);
     for (int i = 0; i < branch._children.length; i++) {
       if (i != childIndex) {
-        PassNode pass = new PassNode._(path.redirect(i, depth+1), depth+1, branch.childCube(i));
+        PassNode pass = new PassNode._(path.redirect(i, depth+1), depth+1);
         // TODO: Add passing lines and faces to pass.
         if (!pass.isEmpty) branch._setChild(i, pass);
       }
@@ -75,7 +76,8 @@ class LeafNode extends Node {
   /// Gets a string tree for debugging, testing, and printing this node.
   Debug.StringTree _stringTree() {
     Debug.StringTree root = new Debug.StringTree("leaf");
-    root.add("path: "+this._path.toString());
+    root.add("path:  ${this.path.toString()}");
+    root.add("depth: ${this.depth}");
     if (this._vertices.isNotEmpty) {
       Debug.StringTree subroot = root.add("vertices");
       for (Vertex ver in this._vertices) subroot.add(ver.toString());
@@ -92,18 +94,11 @@ class LeafNode extends Node {
   }
 
   /// Validates the node to make sure the nodes' have been setup correctly.
-  void _validate(Debug.Logger log, Shape shape, Node parent, Path path, int depth) {
-    if (depth > Path.maxDepth) {
-      log.error("Leaf node was deeper than ${Path.maxDepth}, it was $depth.\n");
-      return;
-    }
+  bool _validate(Debug.Logger log, Shape shape, Node parent, Path path, int depth) {
+    if (!super._validate(log, shape, parent, path, depth)) return false;
 
-    if (!identical(parent, this._parent))
-      log.error("Parent of leaf node at ${path.toString(depth)} does not match expected parent.\n");
     if (!identical(shape, this._shape))
       log.error("Shape of leaf node at ${path.toString(depth)} does not match expected shape.\n");
-    if (!path.sameUpto(this._path, depth))
-      log.error("Leaf node path, ${this._path.toString()}, doesn't match expected path, ${path.toString(depth)}, upto depth $depth.\n");
     if (this._vertices.isEmpty)
       log.error("Leaf node at ${path.toString(depth)} has no vertices.\n");
 
@@ -120,5 +115,6 @@ class LeafNode extends Node {
     // TODO: Implement
     // Check that all the passing lines and faces pass through this node.
     // Check that all the passing lines and faces are part of this shape.
+    return true;
   }
 }

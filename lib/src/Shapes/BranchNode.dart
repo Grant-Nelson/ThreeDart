@@ -16,7 +16,7 @@ class BranchNode extends Node {
   List<Node> _children;
 
   /// Creates the new branch node.
-  BranchNode._(Path path, int depth, Math.Cube cube): super._(path, depth, cube) {
+  BranchNode._(Path path, int depth): super._(path, depth) {
     this._children = new List<Node>.filled(8, null, growable: false);
   }
 
@@ -43,15 +43,6 @@ class BranchNode extends Node {
     return true;
   }
 
-  /// This gets the cube for the child at the given child index.
-  Math.Cube childCube(int index) {
-    final double size = this.cube.size * 0.5;
-    final double x = this.cube.x + ((index & 1 != 0)? size: 0.0);
-    final double y = this.cube.y + ((index & 2 != 0)? size: 0.0);
-    final double z = this.cube.z + ((index & 4 != 0)? size: 0.0);
-    return new Math.Cube(x, y, z, size);
-  }
-
   /// This handles each node in order.
   /// This will call the handle with any null children.
   void forEach(bool hndl(Node)) => this._children.forEach(hndl);
@@ -69,7 +60,7 @@ class BranchNode extends Node {
     int index = leaf.path.childIndexAt(depth+1);
     Node node = this._children[index];
     if (node == null) {
-      leaf._setLoc(path.redirect(index, depth+1), depth+1, this.childCube(index));
+      leaf._setDepth(depth+1);
       node = leaf;
     } else node = node._insertLeaf(leaf);
     if (this._setChild(index, node)) return this._reduce();
@@ -104,7 +95,7 @@ class BranchNode extends Node {
         if (pass == null) {
           // Take found pass node child to make as the replacement of this node.
           pass = node;
-          pass._setLoc(this.path, this.depth, this.cube);
+          pass._setDepth(this.depth);
           pass._parent = null;
           this._children[index] = null;
         } else {
@@ -126,7 +117,7 @@ class BranchNode extends Node {
         // Leaf node found, relocate and remove the node
         // from this parent node so that it isn't deleted later.
         leaf = node;
-        leaf._setLoc(this.path, this.depth, this.cube);
+        leaf._setDepth(this.depth);
         leaf._parent = null;
         this._children[index] = null;
         break;
@@ -148,35 +139,39 @@ class BranchNode extends Node {
   
   /// Gets a string tree for debugging, testing, and printing this node.
   Debug.StringTree _stringTree() {
-    Debug.StringTree subroot = new Debug.StringTree("branch");
+    Debug.StringTree root = new Debug.StringTree("branch");
+    root.add("path:  ${this.path.toString(this.depth)}");
+    root.add("depth: ${this.depth}");
     int index = 0;
     for (Node node in this._children) {
       if (node != null) {
         Debug.StringTree child = node._stringTree();
         child.text = "$index. "+child.text;
-        subroot.append(child);
+        root.append(child);
       }
       index++;
     }
-    return subroot;
+    return root;
   }
 
   /// Validates the node to make sure the nodes' have been setup correctly.
-  void _validate(Debug.Logger log, Shape shape, Node parent, Path path, int depth) {
-    if (depth > Path.maxDepth) {
-      log.error("Branch node was deeper than ${Path.maxDepth}, it was $depth.\n");
-      return;
-    }
+  bool _validate(Debug.Logger log, Shape shape, Node parent, Path path, int depth) {
+    if (!super._validate(log, shape, parent, path, depth)) return false;
 
-    if (!identical(parent, this._parent))
-      log.error("Parent of branch node at ${path.toString(depth)} does not match expected parent.\n");
-
+    bool hasChild = false;
+    bool childernPassed = true;
     for (int i = 0; i < this._children.length; i++) {
       Node child = this._children[i];
       if (child != null) {
-        Path subPath = path.redirect(i, depth);
-        child._validate(log, shape, this, subPath, depth+1);
+        hasChild = true;
+        Path subPath = path.redirect(i, depth+1);
+        if (!child._validate(log, shape, this, subPath, depth+1))
+          childernPassed = false;
       }
     }
+    if (!hasChild)
+      log.error("Branch had no non-nil children.\n");
+
+    return childernPassed;
   }
 }

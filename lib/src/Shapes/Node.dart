@@ -4,12 +4,13 @@ part of ThreeDart.Shapes;
 abstract class Node {
   Path _path;
   int _depth;
-  Math.Cube _cube;
   BranchNode _parent;
 
   /// Creates a new node.
-  Node._(Path path, int depth, Math.Cube cube) {
-    this._setLoc(path, depth, cube);
+  Node._(Path path, int depth) {
+    if (path == null) throw new Exception("May not set a null path to a node.");
+    this._path = path;
+    this._setDepth(depth);
     this._parent = null;
   }
   
@@ -19,21 +20,14 @@ abstract class Node {
   /// Gets the depth to this node.
   int get depth => this._depth;
 
-  /// Gets the cube to this node.
-  Math.Cube get cube => this._cube;
-
   /// Gets the parent to this node.
   BranchNode get parent => this._parent;
 
-  /// Sets the location of this node.
-  void _setLoc(Path path, int depth, Math.Cube cube) {
-    assert(path != null);
-    assert(depth >= 0);
-    assert(depth <= Path.maxDepth);
-    assert(cube != null);
-    this._path = path;
+  /// Sets the depth of this node.
+  void _setDepth(int depth) {
+    if ((depth < 0) || (depth > Path.maxDepth))
+      throw new Exception("May not set a node to depth $depth, it must be between [0 and ${Path.maxDepth}.");
     this._depth = depth;
-    this._cube = cube;
   }
 
   /// Adds a leaf to this node. Returns the node that should
@@ -50,5 +44,23 @@ abstract class Node {
   Debug.StringTree _stringTree();
   
   /// Validates the node to make sure the nodes' have been setup correctly.
-  void _validate(Debug.Logger log, Shape shape, Node parent, Path expPath, int expDepth);
+  bool _validate(Debug.Logger log, Shape shape, Node parent, Path expPath, int expDepth) {
+    if (this.path == null) {
+      log.error("Node's path was null.\n");
+      return false;
+    }
+    if ((this.depth < 0) || (this.depth > Path.maxDepth)) {
+      log.error("Node's depth was not in [0 to ${Path.maxDepth}], it was ${this.depth}.\n");
+      return false;
+    }
+
+    if (expDepth != this._depth)
+      log.error("Node's depth was expected to be $expDepth but was ${this.depth}.\n");
+    if (!path.sameUpto(this.path, depth))
+      log.error("Node path, ${this.path.toString()}, doesn't match expected path, ${path.toString(expDepth)}, upto depth $expDepth.\n");
+    if (!identical(parent, this._parent))
+      log.error("Parent of node at ${path.toString(expDepth)} does not match expected parent.\n");
+    
+    return true;
+  }
 }
