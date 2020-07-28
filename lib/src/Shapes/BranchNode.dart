@@ -63,7 +63,8 @@ class BranchNode extends Node {
       leaf._setDepth(depth+1);
       node = leaf;
     } else node = node._insertLeaf(leaf);
-    if (this._setChild(index, node)) return this._reduce();
+    if (this._setChild(index, node))
+      return this._reduce();
     return this;
   }
 
@@ -140,8 +141,7 @@ class BranchNode extends Node {
   /// Gets a string tree for debugging, testing, and printing this node.
   Debug.StringTree _stringTree() {
     Debug.StringTree root = new Debug.StringTree("branch");
-    root.add("path:  ${this.path.toString(this.depth)}");
-    root.add("depth: ${this.depth}");
+    root.add("path: (${this.depth}) ${this.path.toString(this.depth)}");
     int index = 0;
     for (Node node in this._children) {
       if (node != null) {

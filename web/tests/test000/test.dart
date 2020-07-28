@@ -36,8 +36,6 @@ void main() {
   html.DivElement elem = new html.DivElement();
   TestManager tests = new TestManager(elem);
 
-  tests.testPrefixFilter = "Simple Shapes Octree Test"; // TODO: REMOVE
-
   addBench(tests);
   addVertexTypeTests(tests);
   addMatrix2Tests(tests);

@@ -418,21 +418,25 @@ Shape surface(int widthDiv, int heightDiv, ver2Handle vertexHndl, [Data.VertexTy
   List<Vertex> vers = new List<Vertex>();
   for (int i = 0; i <= heightDiv; i++) {
     double u = i.toDouble()/heightDiv.toDouble();
-    Vertex ver = shape.vertices.addNew(
+    Vertex ver = new Vertex(
       txt2D: new Math.Point2(u, 1.0),
       clr:   new Math.Color4(u, 0.0, 0.0));
     vertexHndl(ver, u, 0.0);
+    ver = ver.copy(type);
+    shape.vertices.add(ver);
     vers.add(ver.copy(type));
   }
   for (int i = 1; i <= widthDiv; i++) {
     double v = i.toDouble()/widthDiv.toDouble();
     for (int j = 0; j <= heightDiv; j++) {
       double u = j.toDouble()/heightDiv.toDouble();
-      Vertex ver = shape.vertices.addNew(
+      Vertex ver = new Vertex(
         txt2D: new Math.Point2(u, 1.0-v),
         clr:   new Math.Color4(u, v, v));
       vertexHndl(ver, u, v);
-      vers.add(ver.copy(type));
+      ver = ver.copy(type);
+      shape.vertices.add(ver);
+      vers.add(ver);
     }
   }
   shape.faces.addGrid(widthDiv+1, heightDiv+1, vers);

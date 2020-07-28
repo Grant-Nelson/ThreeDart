@@ -56,10 +56,10 @@ abstract class Node {
 
     if (expDepth != this._depth)
       log.error("Node's depth was expected to be $expDepth but was ${this.depth}.\n");
-    if (!path.sameUpto(this.path, depth))
-      log.error("Node path, ${this.path.toString()}, doesn't match expected path, ${path.toString(expDepth)}, upto depth $expDepth.\n");
+    if (!expPath.sameUpto(this.path, depth))
+      log.error("Node path, ${this.path.toString(depth)}, doesn't match expected path, ${expPath.toString(expDepth)}, upto depth $expDepth.\n");
     if (!identical(parent, this._parent))
-      log.error("Parent of node at ${path.toString(expDepth)} does not match expected parent.\n");
+      log.error("Parent of node at ${this.path.toString(expDepth)} does not match expected parent.\n");
     
     return true;
   }

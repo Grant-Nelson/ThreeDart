@@ -15,18 +15,9 @@ class Octree {
 
   /// Adds a vertex to this octree.
   void _addVertex(Vertex vertex) {
-    print("================================="); // TODO: REMOVE
-    print(">> ADD VERTEX"); // TODO: REMOVE
-    print(">> vertex: $vertex");// TODO: REMOVE
-
     Path path = new Path.fromPoint(vertex.location, this._shape.maxCube);
     _InsertLeafResult result = this._insertLeaf(path);
     result.leaf.vertices._add(vertex);
-
-    print(this.toString());// TODO: REMOVE
-    if (!this._shape.validate()) {// TODO: REMOVE
-      throw new Exception("FAILED VALIDATION");
-    }
   }
 
   /// Removes a vertex from this octree.
@@ -34,19 +25,10 @@ class Octree {
   /// Will not update the passing nodes for the lines and faces, but will
   /// not remove the lines and faces. Make sure they are updated and/or removed.
   void _removeVertex(Vertex vertex) {
-    print("================================="); // TODO: REMOVE
-    print(">> REMOVE VERTEX"); // TODO: REMOVE
-    print(">> vertex: $vertex");// TODO: REMOVE
-
     LeafNode leaf = vertex.leafNode;
     leaf.vertices._remove(vertex);
     if (leaf._vertices.isEmpty)
       this._removeLeaf(leaf);
-    
-    print(this.toString());// TODO: REMOVE
-    if (!this._shape.validate()) {// TODO: REMOVE
-      throw new Exception("FAILED VALIDATION");
-    }
   }
 
   /// Updates the location of the current vertex. It checks if the location has
@@ -74,12 +56,12 @@ class Octree {
     while (true) {
       if (node == null) return null;
       else if (node is BranchNode) {
+        depth++;
         BranchNode branch = node as BranchNode;
         int index = path.childIndexAt(depth);
         Node child = branch.getChild(index);
         if (child == null) return new _FindNodeResult(branch, depth);
         node = child;
-        depth++;
       } else return new _FindNodeResult(node, depth); // pass, leaf, or empty
     }
   }
@@ -134,7 +116,7 @@ class Octree {
     // Point outside of tree, expand the tree.
     this._expandFootprint(path);
     Node newRoot = this._shape._root._insertLeaf(leaf);
-    this._setRoot(newRoot, this._shape._rootPath, this._shape._rootPathDepth);
+    this._setRoot(newRoot, this._shape._rootPath, this._shape._rootPathDepth);    
     this._reduceFootprint();
     return new _InsertLeafResult(leaf, false);
   }
@@ -215,7 +197,7 @@ class Octree {
     while (!rootPath.sameUpto(path, depth)) {
       depth--;
       BranchNode newRoot = new BranchNode._(rootPath, depth);
-      int index = rootPath.childIndexAt(depth);
+      int index = rootPath.childIndexAt(depth+1);
       newRoot._setChild(index, root);
       Node replacement = newRoot._reduce();
       this._setRoot(replacement, rootPath, depth);
@@ -259,10 +241,8 @@ class Octree {
       tree.add("line count: ${this._shape._lineCount}");
     if (this._shape._faceCount > 0)
       tree.add("face count: ${this._shape._faceCount}");
-    if ((this._shape._rootPath != null) && (this._shape._rootPathDepth >= 0)) {
-      tree.add("depth: ${this._shape._rootPathDepth}");
-      tree.add("path: "+this._shape._rootPath.toString(this._shape._rootPathDepth));
-    }
+    if (this._shape._rootPath != null)
+      tree.add("path: (${this._shape._rootPathDepth}) ${this._shape._rootPath.toString(this._shape._rootPathDepth)}");
     if (this._shape._root != null) {
       Debug.StringTree root = this._shape._root._stringTree();
       root.text = "root: "+root.text;

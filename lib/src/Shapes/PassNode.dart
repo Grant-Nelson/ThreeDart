@@ -36,14 +36,13 @@ class PassNode extends Node {
   /// Gets a string tree for debugging, testing, and printing this node.
   Debug.StringTree _stringTree() {
     Debug.StringTree root = new Debug.StringTree("pass");
-    root.add("path:  ${this.path.toString(this.depth)}");
-    root.add("depth: ${this.depth}");
+    root.add("path: (${this.depth}) ${this.path.toString(this.depth)}");
     if (this._lines.isNotEmpty) {
-      Debug.StringTree subroot = root.add("passing lines");
+      Debug.StringTree subroot = root.add("passing lines (${this._lines.length})");
       for (Line line in this._lines) subroot.add(line.toString());
     }
     if (this._faces.isNotEmpty) {
-      Debug.StringTree subroot = root.add("passing faces");
+      Debug.StringTree subroot = root.add("passing faces (${this._faces.length})");
       for (Face face in this._faces) subroot.add(face.toString());
     }
     return root;

@@ -33,21 +33,19 @@ class LeafNode extends Node {
   /// Adds a leaf to this node. Returns the node that should
   /// be the new root of the subtree that was defined by this node.
   Node _insertLeaf(LeafNode leaf) {
-    Path path = leaf.path;
-    if (path == this.path) return this;
-
     // Make this node and set is as a child of the new branch.
-    int oldIndex = this.path.childIndexAt(depth);
+    int oldIndex = this.path.childIndexAt(this.depth+1);
     BranchNode branch = new BranchNode._(this.path, this.depth);
     this._setDepth(this.depth+1);
     branch._setChild(oldIndex, this);
 
     // Copy lines to new siblings, keep any non-empty sibling.
-    int childIndex = path.childIndexAt(depth);
     for (int i = 0; i < branch._children.length; i++) {
-      if (i != childIndex) {
-        PassNode pass = new PassNode._(path.redirect(i, depth+1), depth+1);
+      if (i != oldIndex) {
+        PassNode pass = new PassNode._(this.path.redirect(i, this.depth+1), this.depth+1);
+
         // TODO: Add passing lines and faces to pass.
+
         if (!pass.isEmpty) branch._setChild(i, pass);
       }
     }
@@ -76,18 +74,17 @@ class LeafNode extends Node {
   /// Gets a string tree for debugging, testing, and printing this node.
   Debug.StringTree _stringTree() {
     Debug.StringTree root = new Debug.StringTree("leaf");
-    root.add("path:  ${this.path.toString()}");
-    root.add("depth: ${this.depth}");
+    root.add("path: (${this.depth}) ${this.path.toString()}");
     if (this._vertices.isNotEmpty) {
-      Debug.StringTree subroot = root.add("vertices");
+      Debug.StringTree subroot = root.add("vertices (${this._vertices.length})");
       for (Vertex ver in this._vertices) subroot.add(ver.toString());
     }
     if (this._lines.isNotEmpty) {
-      Debug.StringTree subroot = root.add("passing lines");
+      Debug.StringTree subroot = root.add("passing lines (${this._lines.length})");
       for (Line line in this._lines) subroot.add(line.toString());
     }
     if (this._faces.isNotEmpty) {
-      Debug.StringTree subroot = root.add("passing faces");
+      Debug.StringTree subroot = root.add("passing faces (${this._faces.length})");
       for (Face face in this._faces) subroot.add(face.toString());
     }
     return root;
