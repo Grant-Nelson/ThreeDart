@@ -16,7 +16,8 @@ class _InsertLeafResult {
 // TODO: Comment
 class _FindNodeResult {
   final Node node;
+  final Path path;
   final int depth;
 
-  _FindNodeResult(Node this.node, int this.depth);
+  _FindNodeResult(Node this.node, Path this.path, int this.depth);
 }

@@ -7,14 +7,15 @@ class PassNode extends Node {
   List<Face> _faces;
 
   /// Creates a new pass node.
-  PassNode._(Path path, int depth): super._(path, depth) {
+  PassNode._(): super._() {
     this._lines = new List<Line>();
     this._faces = new List<Face>();
   }
 
   /// Adds a leaf to this node. Returns the node that should
   /// be the new root of the subtree that was defined by this node.
-  Node _insertLeaf(LeafNode leaf) {
+  /// The depth is the depth of this node which the leaf is being added into.
+  Node _insertLeaf(LeafNode leaf, int depth) {
     leaf._copyOver(this);
     return leaf;
   }
@@ -36,7 +37,6 @@ class PassNode extends Node {
   /// Gets a string tree for debugging, testing, and printing this node.
   Debug.StringTree _stringTree() {
     Debug.StringTree root = new Debug.StringTree("pass");
-    root.add("path: (${this.depth}) ${this.path.toString(this.depth)}");
     if (this._lines.isNotEmpty) {
       Debug.StringTree subroot = root.add("passing lines (${this._lines.length})");
       for (Line line in this._lines) subroot.add(line.toString());
@@ -49,13 +49,18 @@ class PassNode extends Node {
   }
 
   /// Validates the node to make sure the nodes' have been setup correctly.
-  bool _validate(Debug.Logger log, Shape shape, Node parent, Path path, int depth) {
-    if (!super._validate(log, shape, parent, path, depth)) return false;
+  void _validate(Debug.Logger log, Shape shape, Node parent, Path path, int depth) {
+    if ((depth < 0) || (depth > Path.maxDepth)) {
+      log.error("Node's depth was not in [0 to ${Path.maxDepth}], it was $depth.\n");
+      return;
+    }
+
+    if (!identical(parent, this._parent))
+      log.error("Parent of node at ${path.toString(depth)} does not match expected parent.\n");
 
     // TODO: Implement
     // Check that there is at least one line or face.
     // Check that all the lines and faces pass through this node.
     // Check that all the lines and faces are part of this shape.
-    return true;
   }
 }

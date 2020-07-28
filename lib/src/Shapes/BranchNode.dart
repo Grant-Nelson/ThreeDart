@@ -16,7 +16,7 @@ class BranchNode extends Node {
   List<Node> _children;
 
   /// Creates the new branch node.
-  BranchNode._(Path path, int depth): super._(path, depth) {
+  BranchNode._(): super._() {
     this._children = new List<Node>.filled(8, null, growable: false);
   }
 
@@ -56,15 +56,14 @@ class BranchNode extends Node {
 
   /// Adds a leaf to this node. Returns the node that should
   /// be the new root of the subtree that was defined by this node.
-  Node _insertLeaf(LeafNode leaf) {
+  /// The depth is the depth of this node which the leaf is being added into.
+  Node _insertLeaf(LeafNode leaf, int depth) {
     int index = leaf.path.childIndexAt(depth+1);
     Node node = this._children[index];
-    if (node == null) {
-      leaf._setDepth(depth+1);
-      node = leaf;
-    } else node = node._insertLeaf(leaf);
-    if (this._setChild(index, node))
-      return this._reduce();
+    if (node == null) node = leaf;
+    else node = node._insertLeaf(leaf, depth+1);
+
+    if (this._setChild(index, node)) return this._reduce();
     return this;
   }
 
@@ -96,7 +95,6 @@ class BranchNode extends Node {
         if (pass == null) {
           // Take found pass node child to make as the replacement of this node.
           pass = node;
-          pass._setDepth(this.depth);
           pass._parent = null;
           this._children[index] = null;
         } else {
@@ -118,7 +116,6 @@ class BranchNode extends Node {
         // Leaf node found, relocate and remove the node
         // from this parent node so that it isn't deleted later.
         leaf = node;
-        leaf._setDepth(this.depth);
         leaf._parent = null;
         this._children[index] = null;
         break;
@@ -141,7 +138,6 @@ class BranchNode extends Node {
   /// Gets a string tree for debugging, testing, and printing this node.
   Debug.StringTree _stringTree() {
     Debug.StringTree root = new Debug.StringTree("branch");
-    root.add("path: (${this.depth}) ${this.path.toString(this.depth)}");
     int index = 0;
     for (Node node in this._children) {
       if (node != null) {
@@ -155,23 +151,25 @@ class BranchNode extends Node {
   }
 
   /// Validates the node to make sure the nodes' have been setup correctly.
-  bool _validate(Debug.Logger log, Shape shape, Node parent, Path path, int depth) {
-    if (!super._validate(log, shape, parent, path, depth)) return false;
+  void _validate(Debug.Logger log, Shape shape, Node parent, Path path, int depth) {
+    if ((depth < 0) || (depth > Path.maxDepth)) {
+      log.error("Node's depth was not in [0 to ${Path.maxDepth}], it was $depth.\n");
+      return;
+    }
+
+    if (!identical(parent, this._parent))
+      log.error("Parent of node at ${path.toString(depth)} does not match expected parent.\n");
 
     bool hasChild = false;
-    bool childernPassed = true;
     for (int i = 0; i < this._children.length; i++) {
       Node child = this._children[i];
       if (child != null) {
         hasChild = true;
         Path subPath = path.redirect(i, depth+1);
-        if (!child._validate(log, shape, this, subPath, depth+1))
-          childernPassed = false;
+        child._validate(log, shape, this, subPath, depth+1);
       }
     }
     if (!hasChild)
       log.error("Branch had no non-nil children.\n");
-
-    return childernPassed;
   }
 }

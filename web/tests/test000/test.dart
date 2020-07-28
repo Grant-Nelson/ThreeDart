@@ -36,6 +36,8 @@ void main() {
   html.DivElement elem = new html.DivElement();
   TestManager tests = new TestManager(elem);
 
+  tests.testPrefixFilter = "Shapes"; // TODO: Remove
+
   addBench(tests);
   addVertexTypeTests(tests);
   addMatrix2Tests(tests);

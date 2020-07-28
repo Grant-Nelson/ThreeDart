@@ -50,19 +50,21 @@ class Octree {
   /// If no non-empty node could be found from this node then null is returned.
   _FindNodeResult _findNode(Path path) {
     if (this._shape._rootPath == null) return null;
+
     int depth = this._shape._rootPathDepth;
     if (!this._shape._rootPath.sameUpto(path, depth)) return null;
+
     Node node = this._shape._root;
     while (true) {
       if (node == null) return null;
       else if (node is BranchNode) {
-        depth++;
         BranchNode branch = node as BranchNode;
-        int index = path.childIndexAt(depth);
+        int index = path.childIndexAt(depth+1);
         Node child = branch.getChild(index);
-        if (child == null) return new _FindNodeResult(branch, depth);
+        if (child == null) return new _FindNodeResult(branch, path, depth);
+        depth++;
         node = child;
-      } else return new _FindNodeResult(node, depth); // pass, leaf, or empty
+      } else return new _FindNodeResult(node, path, depth); // pass, leaf, or empty
     }
   }
 
@@ -81,7 +83,7 @@ class Octree {
     }
 
     // Creates a new leaf to insert.
-    LeafNode leaf = new LeafNode._(this._shape, path, Path.maxDepth);
+    LeafNode leaf = new LeafNode._(this._shape, path);
     
     if (findResult != null) {
       // Node leaf did not exist but is within the root.
@@ -91,14 +93,14 @@ class Octree {
       if (parent != null) {
         // Node was not the root.
         int index = parent.getChildIndex(node);
-        Node replacement = node._insertLeaf(leaf);
+        Node replacement = node._insertLeaf(leaf, depth);
         parent._setChild(index, replacement);
         replacement = parent._reduce();
         this._reduceBranch(parent, replacement, path, depth);
 
       } else {
         // Node was the root.
-        Node replacement = node._insertLeaf(leaf);
+        Node replacement = node._insertLeaf(leaf, depth);
         this._setRoot(replacement, path, this._shape._rootPathDepth);
       }
 
@@ -115,8 +117,8 @@ class Octree {
 
     // Point outside of tree, expand the tree.
     this._expandFootprint(path);
-    Node newRoot = this._shape._root._insertLeaf(leaf);
-    this._setRoot(newRoot, this._shape._rootPath, this._shape._rootPathDepth);    
+    Node newRoot = this._shape._root._insertLeaf(leaf, this._shape._rootPathDepth);
+    this._setRoot(newRoot, this._shape._rootPath, this._shape._rootPathDepth);
     this._reduceFootprint();
     return new _InsertLeafResult(leaf, false);
   }
@@ -132,7 +134,7 @@ class Octree {
     BranchNode parent = node.parent;
     Node replacement = null;
     if (node._lines.isNotEmpty || node._faces.isNotEmpty) {
-      PassNode pass = new PassNode._(node.path, node.depth);
+      PassNode pass = new PassNode._();
       pass._lines = node._lines;
       pass._faces = node._faces;
       replacement = pass;
@@ -196,7 +198,7 @@ class Octree {
     int depth = this._shape._rootPathDepth;
     while (!rootPath.sameUpto(path, depth)) {
       depth--;
-      BranchNode newRoot = new BranchNode._(rootPath, depth);
+      BranchNode newRoot = new BranchNode._();
       int index = rootPath.childIndexAt(depth+1);
       newRoot._setChild(index, root);
       Node replacement = newRoot._reduce();
@@ -241,8 +243,10 @@ class Octree {
       tree.add("line count: ${this._shape._lineCount}");
     if (this._shape._faceCount > 0)
       tree.add("face count: ${this._shape._faceCount}");
-    if (this._shape._rootPath != null)
-      tree.add("path: (${this._shape._rootPathDepth}) ${this._shape._rootPath.toString(this._shape._rootPathDepth)}");
+    if (this._shape._rootPath != null) {
+      tree.add("depth: ${this._shape._rootPathDepth}");
+      tree.add("path: ${this._shape._rootPath.toString(this._shape._rootPathDepth)}");
+    }
     if (this._shape._root != null) {
       Debug.StringTree root = this._shape._root._stringTree();
       root.text = "root: "+root.text;
