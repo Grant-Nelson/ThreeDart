@@ -97,6 +97,14 @@ class Region3 {
     return new Region3._(x, y, z, x2-x, y2-y, z2-z);
   }
 
+  /// The minimum corner point in the region.
+  Point3 get minCorner =>
+    new Point3(this.x, this.y, this.z);
+
+  /// The maximum corner point in the region.
+  Point3 get maxCorner =>
+    new Point3(this.x + this.dx, this.y + this.dy, this.z + this.dz);
+
   /// The center point of the region.
   Point3 get center => new Point3(
     this.x + this.dx/2.0,

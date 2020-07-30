@@ -83,6 +83,19 @@ class Region2 {
     return new Region2._(x, y, x2-x, y2-y);
   }
 
+  /// The minimum corner point in the region.
+  Point2 get minCorner =>
+    new Point2(this.x, this.y);
+
+  /// The maximum corner point in the region.
+  Point2 get maxCorner =>
+    new Point2(this.x + this.dx, this.y + this.dy);
+
+  /// The center point of the region.
+  Point2 get center => new Point2(
+    this.x + this.dx/2.0,
+    this.y + this.dy/2.0);
+
   /// Expands the region to include the given point, [pnt].
   Region2 expandWithPoint(Point2 pnt) =>
     this.expand(pnt.x, pnt.y);

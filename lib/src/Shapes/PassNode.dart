@@ -25,6 +25,9 @@ class PassNode extends Node {
   
   /// Gets an iterable which steps through all of the leaves in this node.
   Iterable<LeafNode> get leafIterable sync* {}
+  
+  /// Gets an iterable which steps through all of the leaves between these two paths.
+  Iterable<LeafNode> _leafIterablePaths(Path min, Path max, int depth) sync* {}
 
   void _copyOver(PassNode pass) {
    // TODO: Implement 

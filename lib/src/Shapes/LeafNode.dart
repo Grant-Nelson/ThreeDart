@@ -32,6 +32,11 @@ class LeafNode extends Node {
   Iterable<LeafNode> get leafIterable sync* {
      yield this;
   }
+  
+  /// Gets an iterable which steps through all of the leaves between these two paths.
+  Iterable<LeafNode> _leafIterablePaths(Path min, Path max, int depth) sync* {
+    yield this;
+  }
 
   /// Adds a leaf to this node. Returns the node that should
   /// be the new root of the subtree that was defined by this node.

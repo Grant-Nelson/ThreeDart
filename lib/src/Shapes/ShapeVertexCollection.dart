@@ -71,6 +71,16 @@ class ShapeVertexCollection {
     }
   }
 
+  /// Gets an iterable which steps through all of the vertices in the given region.
+  Iterable<Vertex> iterableInRegion(Math.Region3 region) sync* {
+    for (LeafNode leaf in this._shape.octree.leafIterableInRegion(region)) {
+      List<Vertex> vertices = leaf._vertices.toList(growable: false);
+      for (Vertex vertex in vertices) {
+        if ((vertex.shape == this._shape) && (region.contains(vertex.location))) yield vertex;
+      }
+    }
+  }
+
   /// Removes the given [vertex].
   /// Returns true if vertex was removed, false otherwise.
   bool remove(Vertex vertex) {

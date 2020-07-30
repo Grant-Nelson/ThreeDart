@@ -13,6 +13,24 @@ class Octree {
       yield* this._shape._root.leafIterable;
   }
 
+  /// Iterates all the leafs found to at least partially overlap the region.
+  Iterable<LeafNode> leafIterableInRegion(Math.Region3 region) sync* {
+    if (this._shape?._root != null) {
+      Path min = Path.fromPoint(region.minCorner, this._shape.maxCube);
+      Path max = Path.fromPoint(region.maxCorner, this._shape.maxCube);
+      yield* this._shape._root._leafIterablePaths(min, max, this._shape._rootPathDepth);
+    }
+  }
+
+  /// Iterates all the leafs found to fall between the region created by the given paths.
+  Iterable<LeafNode> leafIterablePaths(Path path1, Path path2) sync* {
+    if (this._shape?._root != null) {
+      Path min = Path.min(path1, path2);
+      Path max = Path.max(path1, path2);
+      yield* this._shape._root._leafIterablePaths(min, max, this._shape._rootPathDepth);
+    }
+  }
+
   /// Adds a vertex to this octree.
   void _addVertex(Vertex vertex) {
     Path path = new Path.fromPoint(vertex.location, this._shape.maxCube);

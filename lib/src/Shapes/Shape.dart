@@ -231,7 +231,7 @@ class Shape implements ShapeBuilder {
         ver.lines[0].replaceVertex(ver, newVer);
       while (ver.points.length > 0)
         ver.points[0].replaceVertex(ver, newVer);
-        this.vertices.remove(ver);
+      this.vertices.remove(ver);
     }
   }
 
@@ -240,22 +240,22 @@ class Shape implements ShapeBuilder {
   /// merger returns null for a merge.
   /// After merger collapsed lines and faces are removed and
   /// repeat points, lines, and faces are removed.
-  void mergeVertices(VertexMatcher matcher, VertexMerger merger) {
+  void mergeVertices(VertexMatcher matcher, VertexMerger merger, [double searchRange = Math.Comparer.defaultEpsilon]) {
+    matcher ??= new VertexLocationMatcher();
+
     this._changed?.suspend();
-    List<Vertex> vertices = this.vertices.iterable.toList();
-    while (vertices.isNotEmpty) {
-      Vertex ver = vertices.first;
-      vertices.removeAt(0);
+    Math.Point3 range = new Math.Point3(searchRange, searchRange, searchRange);
+    for (Vertex ver in this.vertices.iterable) {
 
       if (ver != null) {
         // Find all matches
         List<Vertex> matches = new List<Vertex>();
         matches.add(ver);
-        for (int i = vertices.length-1; i >= 0; i--) {
-          Vertex otherVer = vertices[i];
+
+        Math.Region3 region = new Math.Region3.fromCorners(ver.location-range, ver.location+range);
+        for (Vertex otherVer in this.vertices.iterableInRegion(region)) {
           if ((otherVer != null) && matcher.matches(ver, otherVer)) {
             matches.add(otherVer);
-            vertices.removeAt(i);
           }
         }
 
@@ -283,27 +283,24 @@ class Shape implements ShapeBuilder {
   /// By joining vertices the edges will be smoothed hiding seams.
   /// This is useful if you wrap a flat grid into a cylinder and want
   /// to smooth where the opposite edges touch.
-  void joinSeams([VertexMatcher matcher = null]) {
-    matcher ??= new VertexLocationMatcher();
-    this.mergeVertices(matcher, new VertexJoiner());
+  void joinSeams([VertexMatcher matcher = null, double searchRange = Math.Comparer.defaultEpsilon]) {
+    this.mergeVertices(matcher, new VertexJoiner(), searchRange);
   }
 
   /// Adjust normals by summing all the normals for matching vertices.
   /// This is similar to joining seams because it will smooth out edges
   /// however the edges will still have separate vertices meaning the surface
   /// can have texturing without a texture seam.
-  void adjustNormals([VertexMatcher matcher = null]) {
-    matcher ??= new VertexLocationMatcher();
-    this.mergeVertices(matcher, new NormalAdjuster());
+  void adjustNormals([VertexMatcher matcher = null, double searchRange = Math.Comparer.defaultEpsilon]) {
+    this.mergeVertices(matcher, new NormalAdjuster(), searchRange);
   }
 
   /// Adjust binormals by summing all the binormals for matching vertices.
   /// This is similar to joining seams because it will smooth out edges
   /// however the edges will still have separate vertices meaning the surface
   /// can have texturing without a texture seam.
-  void adjustBinormals([VertexMatcher matcher = null]) {
-    matcher ??= new VertexLocationMatcher();
-    this.mergeVertices(matcher, new BinormalAdjuster());
+  void adjustBinormals([VertexMatcher matcher = null, double searchRange = Math.Comparer.defaultEpsilon]) {
+    this.mergeVertices(matcher, new BinormalAdjuster(), searchRange);
   }
 
   /// Flips the shape inside out.

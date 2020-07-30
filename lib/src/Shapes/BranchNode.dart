@@ -54,6 +54,21 @@ class BranchNode extends Node {
      }
   }
 
+  /// Gets an iterable which steps through all of the leaves between these two paths.
+  Iterable<LeafNode> _leafIterablePaths(Path min, Path max, int depth) sync* {
+    int childDepth = depth+1;
+    int minIndex = min.childIndexAt(childDepth);
+    int maxIndex = max.childIndexAt(childDepth);
+    for (int i = minIndex & 4; i <= maxIndex & 4; i+=4) {
+      for (int j = minIndex & 2; j <= maxIndex & 2; j+=2) {
+        for (int k = minIndex & 1; k <= maxIndex & 1; k++) {
+          Node child = this._children[i+j+k];
+          if (child != null) yield* child._leafIterablePaths(min, max, childDepth);
+        } 
+      }
+    }
+  }
+
   /// Adds a leaf to this node. Returns the node that should
   /// be the new root of the subtree that was defined by this node.
   /// The depth is the depth of this node which the leaf is being added into.

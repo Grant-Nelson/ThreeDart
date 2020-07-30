@@ -41,6 +41,20 @@ class Path {
       ((loc.z - maxCube.z) * scalar).round());
   }
 
+  /// Minimum component path from the given paths.
+  factory Path.min(Path path1, Path path2) =>
+    new Path(
+      (path1.x < path2.x)? path1.x: path2.x,
+      (path1.y < path2.y)? path1.y: path2.y,
+      (path1.z < path2.z)? path1.z: path2.z);
+
+  /// Maximum component path from the given paths.
+  factory Path.max(Path path1, Path path2) =>
+    new Path(
+      (path1.x > path2.x)? path1.x: path2.x,
+      (path1.y > path2.y)? path1.y: path2.y,
+      (path1.z > path2.z)? path1.z: path2.z);
+
   /// Constructs a path with the given coordinates and depth.
   factory Path(int x, int y, int z) =>
     new Path._(clamp(x), clamp(y), clamp(z));

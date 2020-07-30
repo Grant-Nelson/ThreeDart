@@ -78,7 +78,7 @@ class LeafNodeVertexCollection {
   }
 
   // TODO: Add Merge to Average
-  // TODO: Add Snap to Leaf
+  // TODO: Add Snap to Leaf/grid
 
   /// Gets to string for all the vertices.
   String toString() => this.format();
