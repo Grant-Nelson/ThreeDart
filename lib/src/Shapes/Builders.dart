@@ -133,7 +133,7 @@ void _addCuboidSide(Shape shape, Data.VertexType type, ver2Handle vertexHndl,
   double index2 = _cornerBendIndex(vec2);
   double index3 = _cornerBendIndex(vec3);
   double index4 = _cornerBendIndex(vec4);
-  Shape face = surface(widthDiv, heightDiv, (Vertex ver, double u, double v) {
+  addSurface(shape, widthDiv, heightDiv, (Vertex ver, double u, double v) {
     Math.Vector3 vec5 = vec1.lerp(vec2, u);
     Math.Vector3 vec6 = vec4.lerp(vec3, u);
     Math.Vector3 vec7 = vec5.lerp(vec6, v);
@@ -143,7 +143,6 @@ void _addCuboidSide(Shape shape, Data.VertexType type, ver2Handle vertexHndl,
                                   index2 + u*(1.0-v), index1 + (1.0-u)*(1.0-v));
     if (vertexHndl != null) vertexHndl(ver, u, v);
   }, type);
-  if (face != null) shape.merge(face);
 }
 
 /// Creates a disk shape.
@@ -151,9 +150,19 @@ void _addCuboidSide(Shape shape, Data.VertexType type, ver2Handle vertexHndl,
 /// [flip] will flip the disk over, and [radiusHndl] is a handle for custom variant radius.
 Shape disk({int sides: 8, double height: 0.0, bool flip: false,
     double bending: -1.0, func1Handle radiusHndl: null, frameOnly: false}) {
-  radiusHndl ??= (double a) => 1.0;
-  if (sides < 3) return null;
   Shape shape = new Shape();
+  if (addDisk(shape, sides: sides, height: height, flip: flip, bending: bending, radiusHndl: frameOnly))
+    return shape;
+  return null;
+}
+
+/// Creates a disk into the given shape.
+/// [sides] is the number of division on the side, and [height] is the y offset of the disk.
+/// [flip] will flip the disk over, and [radiusHndl] is a handle for custom variant radius.
+bool addDisk(Shape shape, {int sides: 8, double height: 0.0, bool flip: false,
+    double bending: -1.0, func1Handle radiusHndl: null, frameOnly: false}) {
+  radiusHndl ??= (double a) => 1.0;
+  if (sides < 3) return false;
   double sign = flip? -1.0: 1.0;
   double step = -2.0*Math.PI/sides.toDouble();
   List<Vertex> vers = new List<Vertex>();
@@ -180,7 +189,7 @@ Shape disk({int sides: 8, double height: 0.0, bool flip: false,
   }
   if (frameOnly) shape.lines.addLoop(vers);
   else shape.faces.addFan(vers);
-  return shape;
+  return true;
 }
 
 /// Creates a cylinder shape.
@@ -216,14 +225,12 @@ Shape cylindrical({func2Handle radiusHndl: null, int sides: 8, int div: 1, bool 
   shape.calculateNormals();
   shape.adjustNormals();
   if (capTop) {
-    Shape top = disk(sides: sides, height: 1.0, flip: false, bending: 3.0,
+    addDisk(shape, sides: sides, height: 1.0, flip: false, bending: 3.0,
       radiusHndl: (double u) => radiusHndl(u, 1.0));
-    shape.merge(top);
   }
   if (capBottom) {
-    Shape bottom = disk(sides: sides, height: -1.0, flip: true, bending: 1.0,
+    addDisk(shape, sides: sides, height: -1.0, flip: true, bending: 1.0,
       radiusHndl: (double u) => radiusHndl(1.0-u, 0.0));
-    shape.merge(bottom);
   }
   return shape;
 }
@@ -412,9 +419,17 @@ Shape grid({int widthDiv: 4, int heightDiv: 4, func2Handle heightHndl: null}) {
 
 /// Creates a grid surface which can be bent and twisted with the given [vertexHndl].
 Shape surface(int widthDiv, int heightDiv, ver2Handle vertexHndl, [Data.VertexType type = null]) {
-  if (widthDiv < 1) return null;
-  if (heightDiv < 1) return null;
   Shape shape = new Shape();
+  if (addSurface(shape, widthDiv, heightDiv, vertexHndl, type))
+    return shape;
+  return null;
+}
+
+/// Creates a grid surface into the given shape which can be bent and twisted with the given [vertexHndl].
+/// Returns fauls if the given div sizes are invalid, otherwise true.
+bool addSurface(Shape shape, int widthDiv, int heightDiv, ver2Handle vertexHndl, [Data.VertexType type = null]) {
+  if (widthDiv < 1) return false;
+  if (heightDiv < 1) return false;
   List<Vertex> vers = new List<Vertex>();
   for (int i = 0; i <= heightDiv; i++) {
     double u = i.toDouble()/heightDiv.toDouble();
@@ -440,5 +455,5 @@ Shape surface(int widthDiv, int heightDiv, ver2Handle vertexHndl, [Data.VertexTy
     }
   }
   shape.faces.addGrid(widthDiv+1, heightDiv+1, vers);
-  return shape;
+  return true;
 }
