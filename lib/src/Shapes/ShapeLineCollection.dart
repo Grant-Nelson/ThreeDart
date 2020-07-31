@@ -107,6 +107,18 @@ class ShapeLineCollection {
     }
   }
 
+  /// Gets all the lines into a list. This is slightly faster than
+  /// using the iterator because we already know the number of lines.
+  List<Line> toList({bool growable: true}) {
+    List<Line> result = new List<Line>.filled(this._shape._lineCount, null, growable: growable);
+    int index = 0;
+    for (Line line in this.iterable) {
+      result[index] = line;
+      index++;
+    }
+    return result;
+  }
+
   /// Gets to string for all the lines.
   String toString() => this.format();
 

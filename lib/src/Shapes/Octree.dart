@@ -9,25 +9,44 @@ class Octree {
 
   /// Gets an iterable which steps through all of the leaves in the octree.
   Iterable<LeafNode> get leafIterable sync* {
-    if (this._shape?._root != null)
-      yield* this._shape._root.leafIterable;
+    if (this._shape?._root != null) {
+      final bool lock = this._shape._iteratorLock;
+      try {
+        this._shape._iteratorLock = true;
+        yield* this._shape._root._leafIterable;
+      } finally {
+        this._shape._iteratorLock = lock;
+      }
+    }
   }
 
   /// Iterates all the leafs found to at least partially overlap the region.
   Iterable<LeafNode> leafIterableInRegion(Math.Region3 region) sync* {
     if (this._shape?._root != null) {
-      Path min = Path.fromPoint(region.minCorner, this._shape.maxCube);
-      Path max = Path.fromPoint(region.maxCorner, this._shape.maxCube);
-      yield* this._shape._root._leafIterablePaths(min, max, this._shape._rootPathDepth);
+      final bool lock = this._shape._iteratorLock;
+      try {
+        Path min = Path.fromPoint(region.minCorner, this._shape.maxCube);
+        Path max = Path.fromPoint(region.maxCorner, this._shape.maxCube);
+        this._shape._iteratorLock = true;
+        yield* this._shape._root._leafIterablePaths(min, max, this._shape._rootPathDepth);
+      } finally {
+        this._shape._iteratorLock = lock;
+      }
     }
   }
 
   /// Iterates all the leafs found to fall between the region created by the given paths.
   Iterable<LeafNode> leafIterablePaths(Path path1, Path path2) sync* {
     if (this._shape?._root != null) {
-      Path min = Path.min(path1, path2);
-      Path max = Path.max(path1, path2);
-      yield* this._shape._root._leafIterablePaths(min, max, this._shape._rootPathDepth);
+      final bool lock = this._shape._iteratorLock;
+      try {
+        Path min = Path.min(path1, path2);
+        Path max = Path.max(path1, path2);
+        this._shape._iteratorLock = true;
+        yield* this._shape._root._leafIterablePaths(min, max, this._shape._rootPathDepth);
+      } finally {
+        this._shape._iteratorLock = lock;
+      }
     }
   }
 
@@ -91,6 +110,9 @@ class Octree {
   /// Returns a pair containing the leaf node in the tree, and true if the
   /// leaf is new or false if the leaf already existed in the tree.
   _InsertLeafResult _insertLeaf(Path path) {
+    if (this._shape._iteratorLock)
+      throw new Exception("May not add new leaf nodes into the octree during an iteration.");
+
     _FindNodeResult findResult = this._findNode(path);
     if (findResult != null) {
       // A node containing the leaf has been found.
@@ -142,7 +164,10 @@ class Octree {
   }
 
   /// Remove the given leaf node.
-  void _removeLeaf(LeafNode node) {
+  void _removeLeaf(LeafNode node) {    
+    if (this._shape._iteratorLock)
+      throw new Exception("May not remove a leaf node from the octree during an iteration.");
+
     if (identical(this._shape._root, node)) {
       this._setRoot(null, null, 0);
       return;

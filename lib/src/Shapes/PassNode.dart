@@ -24,7 +24,7 @@ class PassNode extends Node {
   bool get isEmpty => this._lines.isEmpty && this._faces.isEmpty;
   
   /// Gets an iterable which steps through all of the leaves in this node.
-  Iterable<LeafNode> get leafIterable sync* {}
+  Iterable<LeafNode> get _leafIterable sync* {}
   
   /// Gets an iterable which steps through all of the leaves between these two paths.
   Iterable<LeafNode> _leafIterablePaths(Path min, Path max, int depth) sync* {}

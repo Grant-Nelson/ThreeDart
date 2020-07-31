@@ -16,6 +16,7 @@ class Shape implements ShapeBuilder {
   int _faceCount;
 
   bool _vertexIndicesNeedUpdate;
+  bool _iteratorLock;
   Events.Event _changed;
 
   /// Creates a new shape.
@@ -30,6 +31,7 @@ class Shape implements ShapeBuilder {
     this._faceCount = 0;
 
     this._vertexIndicesNeedUpdate = false;
+    this._iteratorLock = false;
     this._changed = null;
   }
 
@@ -168,7 +170,8 @@ class Shape implements ShapeBuilder {
   /// the offset is applied in the direction of the normal vector.
   void applyHeightMap(Textures.TextureReader height, [double scalar = 1.0]) {
     this._changed?.suspend();
-    for (Vertex ver in this.vertices.iterable) {
+    List<Vertex> vertices = this.vertices.toList(growable: false);
+    for (Vertex ver in vertices) {
       if ((ver != null) || (ver.location != null) ||
           (ver.normal != null) || (ver.texture2D != null)) {
         Math.Color4 clr = height.atLoc(ver.texture2D);
@@ -245,9 +248,9 @@ class Shape implements ShapeBuilder {
 
     this._changed?.suspend();
     Math.Point3 range = new Math.Point3(searchRange, searchRange, searchRange);
-    for (Vertex ver in this.vertices.iterable) {
-
-      if (ver != null) {
+    List<Vertex> vertices = this.vertices.toList(growable: false);
+    for (Vertex ver in vertices) {
+      if ((ver != null) && (ver.shape == this)) {
         // Find all matches
         List<Vertex> matches = new List<Vertex>();
         matches.add(ver);
@@ -262,10 +265,8 @@ class Shape implements ShapeBuilder {
         // If there are any matches, merge them.
         if (matches.length > 1) {
           Vertex newVer = merger.merge(matches);
-          if (newVer != null) {
+          if (newVer != null)
             this._replaceVertices(newVer, matches);
-            vertices.add(newVer);
-          }
         }
       }
     }
@@ -390,7 +391,7 @@ class Shape implements ShapeBuilder {
   /// and the vertex [type] required for technique.
   Data.BufferStore build(Data.BufferBuilder builder, Data.VertexType type) {
     this.vertices._updateIndices();
-    List<Vertex> data = this.vertices.iterable.toList(growable: false);
+    List<Vertex> data = this.vertices.toList(growable: false);
     final int length = data.length;
     final int count = type.count;
     final int stride = type.size;

@@ -18,7 +18,7 @@ abstract class Node {
   Node _insertLeaf(LeafNode leaf, int depth);
   
   /// Gets an iterable which steps through all of the leaves in this node.
-  Iterable<LeafNode> get leafIterable;
+  Iterable<LeafNode> get _leafIterable;
   
   /// Gets an iterable which steps through all of the leaves between these two paths.
   Iterable<LeafNode> _leafIterablePaths(Path min, Path max, int depth);

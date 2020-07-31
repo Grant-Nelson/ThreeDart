@@ -32,7 +32,7 @@ void main() {
   shape.calculateNormals();
   shape.calculateBinormals();
   shape.faces.removeAll();
-  for (Shapes.Vertex vertex in shape.vertices.iterable) {
+  for (Shapes.Vertex vertex in shape.vertices.toList(growable: false)) {
     Shapes.Vertex ver1 = vertex..weight = 0.0;
     Shapes.Vertex ver2 = ver1.copy()..weight = 1.0;
     shape.vertices.add(ver2);

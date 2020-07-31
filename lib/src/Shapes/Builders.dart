@@ -151,7 +151,8 @@ void _addCuboidSide(Shape shape, Data.VertexType type, ver2Handle vertexHndl,
 Shape disk({int sides: 8, double height: 0.0, bool flip: false,
     double bending: -1.0, func1Handle radiusHndl: null, frameOnly: false}) {
   Shape shape = new Shape();
-  if (addDisk(shape, sides: sides, height: height, flip: flip, bending: bending, radiusHndl: radiusHndl, frameOnly: frameOnly))
+  if (addDisk(shape, sides: sides, height: height, flip: flip,
+      bending: bending, radiusHndl: radiusHndl, frameOnly: frameOnly))
     return shape;
   return null;
 }

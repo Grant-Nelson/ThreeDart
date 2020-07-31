@@ -52,6 +52,18 @@ class ShapePointCollection {
     for (Vertex vertex in this._shape.vertices.iterable)
       vertex.points.removeRepeats();
   }
+  
+  /// Gets all the points into a list. This is slightly faster than
+  /// using the iterator because we already know the number of points.
+  List<Point> toList({bool growable: true}) {
+    List<Point> result = new List<Point>.filled(this._shape._pointCount, null, growable: growable);
+    int index = 0;
+    for (Point pnt in this.iterable) {
+      result[index] = pnt;
+      index++;
+    }
+    return result;
+  }
 
   /// Gets to string for all the points.
   String toString() => this.format();

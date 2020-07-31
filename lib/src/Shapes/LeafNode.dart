@@ -29,7 +29,7 @@ class LeafNode extends Node {
   LeafNodeVertexCollection get vertices => new LeafNodeVertexCollection._(this);
 
   /// Gets an iterable which steps through all of the leaves in this node.
-  Iterable<LeafNode> get leafIterable sync* {
+  Iterable<LeafNode> get _leafIterable sync* {
      yield this;
   }
   

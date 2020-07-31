@@ -48,9 +48,9 @@ class BranchNode extends Node {
   void forEach(bool hndl(Node)) => this._children.forEach(hndl);
   
   /// Gets an iterable which steps through all of the leaves in this node.
-  Iterable<LeafNode> get leafIterable sync* {
+  Iterable<LeafNode> get _leafIterable sync* {
      for (Node child in this._children) {
-       if (child != null) yield* child.leafIterable;
+       if (child != null) yield* child._leafIterable;
      }
   }
 

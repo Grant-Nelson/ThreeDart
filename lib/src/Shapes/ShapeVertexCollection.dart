@@ -64,9 +64,7 @@ class ShapeVertexCollection {
   /// Gets an iterable which steps through all of the vertices in the collection.
   Iterable<Vertex> get iterable sync* {
     for (LeafNode leaf in this._shape.octree.leafIterable) {
-      for (Vertex vertex in leaf._vertices) {
-        if (vertex.shape == this._shape) yield vertex;
-      }
+      yield* leaf.vertices.iterable;
     }
   }
 
@@ -124,6 +122,18 @@ class ShapeVertexCollection {
       }
     }
     return true;
+  }
+  
+  /// Gets all the vertices into a list. This is slightly faster than
+  /// using the iterator because we already know the number of vertices.
+  List<Vertex> toList({bool growable: true}) {
+    List<Vertex> result = new List<Vertex>.filled(this._shape._vertexCount, null, growable: growable);
+    int index = 0;
+    for (Vertex ver in this.iterable) {
+      result[index] = ver;
+      index++;
+    }
+    return result;
   }
 
   /// Gets to string for all the vertices.

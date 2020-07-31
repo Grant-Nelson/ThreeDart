@@ -191,6 +191,18 @@ class ShapeFaceCollection {
   void flip() {
     for (Face face in this.iterable) face.flip();
   }
+  
+  /// Gets all the faces into a list. This is slightly faster than
+  /// using the iterator because we already know the number of faces.
+  List<Face> toList({bool growable: true}) {
+    List<Face> result = new List<Face>.filled(this._shape._faceCount, null, growable: growable);
+    int index = 0;
+    for (Face face in this.iterable) {
+      result[index] = face;
+      index++;
+    }
+    return result;
+  }
 
   /// Gets to string for all the faces.
   String toString() => this.format();

@@ -531,7 +531,7 @@ class Inspection extends Technique {
         ..color = color
         ..binormal = Math.Vector3.zero);
     }
-    List<Shapes.Vertex> vertices = result.vertices.iterable.toList(growable: false);
+    List<Shapes.Vertex> vertices = result.vertices.toList(growable: false);
     for (Shapes.Face face in shape.faces.iterable) {
       Shapes.Vertex ver1 = vertices[face.vertex1.index];
       Shapes.Vertex ver2 = vertices[face.vertex2.index];
@@ -555,7 +555,7 @@ class Inspection extends Technique {
         result.lines.add(ver1, ver2);
       }
     }
-    List<Shapes.Vertex> vertices = result.vertices.iterable.toList(growable: false);
+    List<Shapes.Vertex> vertices = result.vertices.toList(growable: false);
     for (Shapes.Line line in shape.lines.iterable) {
       Shapes.Vertex ver1 = vertices[line.vertex1.index];
       Shapes.Vertex ver2 = vertices[line.vertex2.index];
@@ -734,7 +734,7 @@ class Inspection extends Technique {
       result.vertices.add(vertex.copy()
         ..binormal = Math.Vector3.zero);
     }
-    List<Shapes.Vertex> vertices = result.vertices.iterable.toList(growable: false);
+    List<Shapes.Vertex> vertices = result.vertices.toList(growable: false);
     for (Shapes.Face face in shape.faces.iterable) {
       Shapes.Vertex ver1 = vertices[face.vertex1.index];
       Shapes.Vertex ver2 = vertices[face.vertex2.index];
@@ -753,7 +753,7 @@ class Inspection extends Technique {
         ..color = new Math.Color4(txt.x, txt.y, txt.y)
         ..binormal = Math.Vector3.zero);
     }
-    List<Shapes.Vertex> vertices = result.vertices.iterable.toList(growable: false);
+    List<Shapes.Vertex> vertices = result.vertices.toList(growable: false);
     for (Shapes.Face face in shape.faces.iterable) {
       Shapes.Vertex ver1 = vertices[face.vertex1.index];
       Shapes.Vertex ver2 = vertices[face.vertex2.index];
@@ -782,7 +782,7 @@ class Inspection extends Technique {
         ..binormal = Math.Vector3.zero
         ..color = new Math.Color4.fromColor3(clr));
     }
-    List<Shapes.Vertex> vertices = result.vertices.iterable.toList(growable: false);
+    List<Shapes.Vertex> vertices = result.vertices.toList(growable: false);
     for (Shapes.Face face in shape.faces.iterable) {
       Shapes.Vertex ver1 = vertices[face.vertex1.index];
       Shapes.Vertex ver2 = vertices[face.vertex2.index];
@@ -833,7 +833,7 @@ class Inspection extends Technique {
         ..binormal = Math.Vector3.zero
         ..color = new Math.Color4.fromColor3(clr));
     }
-    List<Shapes.Vertex> vertices = result.vertices.iterable.toList(growable: false);
+    List<Shapes.Vertex> vertices = result.vertices.toList(growable: false);
     for (Shapes.Face face in shape.faces.iterable) {
       Shapes.Vertex ver1 = vertices[face.vertex1.index];
       Shapes.Vertex ver2 = vertices[face.vertex2.index];
