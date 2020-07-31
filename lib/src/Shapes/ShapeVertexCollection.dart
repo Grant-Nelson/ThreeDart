@@ -64,8 +64,7 @@ class ShapeVertexCollection {
   /// Gets an iterable which steps through all of the vertices in the collection.
   Iterable<Vertex> get iterable sync* {
     for (LeafNode leaf in this._shape.octree.leafIterable) {
-      List<Vertex> vertices = leaf._vertices.toList(growable: false);
-      for (Vertex vertex in vertices) {
+      for (Vertex vertex in leaf._vertices) {
         if (vertex.shape == this._shape) yield vertex;
       }
     }
@@ -74,8 +73,7 @@ class ShapeVertexCollection {
   /// Gets an iterable which steps through all of the vertices in the given region.
   Iterable<Vertex> iterableInRegion(Math.Region3 region) sync* {
     for (LeafNode leaf in this._shape.octree.leafIterableInRegion(region)) {
-      List<Vertex> vertices = leaf._vertices.toList(growable: false);
-      for (Vertex vertex in vertices) {
+      for (Vertex vertex in leaf._vertices) {
         if ((vertex.shape == this._shape) && (region.contains(vertex.location))) yield vertex;
       }
     }

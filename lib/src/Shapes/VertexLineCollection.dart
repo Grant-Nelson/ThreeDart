@@ -92,8 +92,7 @@ class VertexLineCollection {
   /// Gets the iterable for the lines in the vertex
   /// which has this vertex as their first vertex.
   Iterable<Line> get iterable1 sync* {
-    List<Line> lines = this._vertex._lines1.toList(growable: false);
-    for (Line line in lines) {
+    for (Line line in this._vertex._lines1) {
       if (!line.disposed) yield line;
     }
   }
@@ -101,8 +100,7 @@ class VertexLineCollection {
   /// Gets the iterable for the lines in the vertex
   /// which has this vertex as their second vertex.
   Iterable<Line> get iterable2 sync* {
-    List<Line> lines = this._vertex._lines2.toList(growable: false);
-    for (Line line in lines) {
+    for (Line line in this._vertex._lines2) {
       if (!line.disposed) yield line;
     }
   }

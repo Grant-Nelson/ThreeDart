@@ -151,7 +151,7 @@ void _addCuboidSide(Shape shape, Data.VertexType type, ver2Handle vertexHndl,
 Shape disk({int sides: 8, double height: 0.0, bool flip: false,
     double bending: -1.0, func1Handle radiusHndl: null, frameOnly: false}) {
   Shape shape = new Shape();
-  if (addDisk(shape, sides: sides, height: height, flip: flip, bending: bending, radiusHndl: frameOnly))
+  if (addDisk(shape, sides: sides, height: height, flip: flip, bending: bending, radiusHndl: radiusHndl, frameOnly: frameOnly))
     return shape;
   return null;
 }
@@ -430,18 +430,10 @@ Shape surface(int widthDiv, int heightDiv, ver2Handle vertexHndl, [Data.VertexTy
 bool addSurface(Shape shape, int widthDiv, int heightDiv, ver2Handle vertexHndl, [Data.VertexType type = null]) {
   if (widthDiv < 1) return false;
   if (heightDiv < 1) return false;
-  List<Vertex> vers = new List<Vertex>();
-  for (int i = 0; i <= heightDiv; i++) {
-    double u = i.toDouble()/heightDiv.toDouble();
-    Vertex ver = new Vertex(
-      txt2D: new Math.Point2(u, 1.0),
-      clr:   new Math.Color4(u, 0.0, 0.0));
-    vertexHndl(ver, u, 0.0);
-    ver = ver.copy(type);
-    shape.vertices.add(ver);
-    vers.add(ver.copy(type));
-  }
-  for (int i = 1; i <= widthDiv; i++) {
+  List<Vertex> vers = new List<Vertex>((widthDiv+1)*(heightDiv+1));
+  int index = 0;
+
+  for (int i = 0; i <= widthDiv; i++) {
     double v = i.toDouble()/widthDiv.toDouble();
     for (int j = 0; j <= heightDiv; j++) {
       double u = j.toDouble()/heightDiv.toDouble();
@@ -449,11 +441,13 @@ bool addSurface(Shape shape, int widthDiv, int heightDiv, ver2Handle vertexHndl,
         txt2D: new Math.Point2(u, 1.0-v),
         clr:   new Math.Color4(u, v, v));
       vertexHndl(ver, u, v);
-      ver = ver.copy(type);
+      if (type != null) ver.trim(type);
       shape.vertices.add(ver);
-      vers.add(ver);
+      vers[index] = ver;
+      index++;
     }
   }
+
   shape.faces.addGrid(widthDiv+1, heightDiv+1, vers);
   return true;
 }

@@ -91,8 +91,7 @@ class VertexFaceCollection {
   /// Gets the iterable for every face in the vertex
   /// which has this vertex as their first vertex.
   Iterable<Face> get iterable1 sync* {
-    List<Face> faces = this._vertex._faces1.toList(growable: false);
-    for (Face face in faces) {
+    for (Face face in this._vertex._faces1) {
       if (!face.disposed) yield face;
     }
   }
@@ -100,8 +99,7 @@ class VertexFaceCollection {
   /// Gets the iterable for every face in the vertex
   /// which has this vertex as their second vertex.
   Iterable<Face> get iterable2 sync* {
-    List<Face> faces = this._vertex._faces2.toList(growable: false);
-    for (Face face in faces) {
+    for (Face face in this._vertex._faces2) {
       if (!face.disposed) yield face;
     }
   }
@@ -109,8 +107,7 @@ class VertexFaceCollection {
   /// Gets the iterable for every face in the vertex
   /// which has this vertex as their third vertex.
   Iterable<Face> get iterable3 sync* {
-    List<Face> faces = this._vertex._faces3.toList(growable: false);
-    for (Face face in faces) {
+    for (Face face in this._vertex._faces3) {
       if (!face.disposed) yield face;
     }
   }

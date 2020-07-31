@@ -34,8 +34,7 @@ class VertexPointCollection {
 
   /// Gets the iterable for the points in the vertex.
   Iterable<Point> get iterable sync* {
-    List<Point> points = this._vertex._points.toList(growable: false);
-    for (Point point in points) {
+    for (Point point in this._vertex._points) {
       if (!point.disposed) yield point;
     }
   }

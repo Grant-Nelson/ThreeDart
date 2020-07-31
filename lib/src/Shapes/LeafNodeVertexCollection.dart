@@ -46,8 +46,7 @@ class LeafNodeVertexCollection {
 
   /// Gets an iterable which steps through all of the vertices in the collection.
   Iterable<Vertex> get iterable sync* {
-    List<Vertex> vertices = this._leaf._vertices.toList(growable: false);
-    for (Vertex vertex in vertices) {
+    for (Vertex vertex in this._leaf._vertices) {
       if (vertex.shape == this.shape) yield vertex;
     }
   }
