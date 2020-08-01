@@ -45,14 +45,14 @@ void addBench(TestManager tests) {
     Shapes.Shape shape;
     args.info("With Octree:\n");
     args.bench(0.5, () {
-      shape = Shapes.sphere(useOctree: true);
+      shape = Shapes.cuboid(useOctree: true);
       shape.calculateNormals();
     });
     shape.validate(args);
     
     args.info("\nWithout Octree:\n");
     args.bench(0.5, () {
-      shape = Shapes.sphere(useOctree: false);
+      shape = Shapes.cuboid(useOctree: false);
       shape.calculateNormals();
     });
     shape.validate(args);
@@ -62,14 +62,14 @@ void addBench(TestManager tests) {
     Shapes.Shape shape;
     args.info("With Octree:\n");
     args.bench(0.5, () {
-      shape = Shapes.sphere(useOctree: true);
+      shape = Shapes.cuboid(useOctree: true);
       shape.joinSeams(new Shapes.VertexLocationMatcher());
     });
     shape.validate(args);
 
     args.info("\nWithout Octree:\n");
     args.bench(0.5, () {
-      shape = Shapes.sphere(useOctree: false);
+      shape = Shapes.cuboid(useOctree: false);
       shape.joinSeams(new Shapes.VertexLocationMatcher());
     });
     shape.validate(args);
