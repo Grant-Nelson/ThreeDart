@@ -50,7 +50,7 @@ class Face {
   void _setVertex1(Vertex ver1) {
     this._ver1 = ver1;
     this._ver1._faces1.add(this);
-    this._ver1.shape?._faceCount++;
+    this._ver1.shape?._data?._addFace(this);
   }
 
   /// Sets the second vertex to the given value.
@@ -68,7 +68,7 @@ class Face {
   /// Removes the first vertex.
   void _removeVertex1() {
     if (this._ver1 != null) {
-      this._ver1.shape?._faceCount--;
+      this._ver1.shape?._data?._removeFace(this);
       this._ver1._faces1.remove(this);
       this._ver1 = null;
     }

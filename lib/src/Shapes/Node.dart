@@ -30,5 +30,5 @@ abstract class Node {
   Debug.StringTree _stringTree();
   
   /// Validates the node to make sure the nodes' have been setup correctly.
-  void _validate(Debug.Logger log, Shape shape, Node parent, Path expPath, int expDepth);
+  void _validate(Debug.Logger log, Octree octree, Node parent, Path expPath, int expDepth);
 }

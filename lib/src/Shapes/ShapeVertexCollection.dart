@@ -28,7 +28,7 @@ class ShapeVertexCollection {
       throw new Exception("May not add a vertex already attached to another shape to this shape.");
     }
     if (vertex.shape != null) vertex.shape.vertices.remove(vertex);
-    this._shape.octree._addVertex(vertex);
+    this._shape._data._addVertex(vertex);
     return true;
   }
 
@@ -59,23 +59,15 @@ class ShapeVertexCollection {
   bool get isEmpty => this.length <= 0;
 
   /// Determines the number of vertices in the collection.
-  int get length => this._shape._vertexCount;
-  
+  int get length => this._shape._data._vertexCount;
+
   /// Gets an iterable which steps through all of the vertices in the collection.
-  Iterable<Vertex> get iterable sync* {
-    for (LeafNode leaf in this._shape.octree.leafIterable) {
-      yield* leaf.vertices.iterable;
-    }
-  }
+  Iterable<Vertex> get iterable =>
+    this._shape._data._vertexIteratable;
 
   /// Gets an iterable which steps through all of the vertices in the given region.
-  Iterable<Vertex> iterableInRegion(Math.Region3 region) sync* {
-    for (LeafNode leaf in this._shape.octree.leafIterableInRegion(region)) {
-      for (Vertex vertex in leaf._vertices) {
-        if ((vertex.shape == this._shape) && (region.contains(vertex.location))) yield vertex;
-      }
-    }
-  }
+  Iterable<Vertex> iterableInRegion(Math.Region3 region) =>
+    this._shape._data._vertexIterableInRegion(region);
 
   /// Removes the given [vertex].
   /// Returns true if vertex was removed, false otherwise.
@@ -85,8 +77,7 @@ class ShapeVertexCollection {
     if (!vertex.isEmpty)
       throw new Exception("May not remove a vertex without first making it empty.");
 
-    this._shape.octree._removeVertex(vertex);
-    vertex._leaf = null;
+    this._shape._data._removeVertex(vertex);
 
     this._shape.onVertexRemoved(vertex);
     this._shape._vertexIndicesNeedUpdate = true;
@@ -126,15 +117,8 @@ class ShapeVertexCollection {
   
   /// Gets all the vertices into a list. This is slightly faster than
   /// using the iterator because we already know the number of vertices.
-  List<Vertex> toList({bool growable: true}) {
-    List<Vertex> result = new List<Vertex>.filled(this._shape._vertexCount, null, growable: growable);
-    int index = 0;
-    for (Vertex ver in this.iterable) {
-      result[index] = ver;
-      index++;
-    }
-    return result;
-  }
+  List<Vertex> toList({bool growable: true}) =>
+    this._shape._data._toVertexList(growable);
 
   /// Gets to string for all the vertices.
   String toString() => this.format();

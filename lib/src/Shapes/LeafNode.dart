@@ -3,7 +3,7 @@ part of ThreeDart.Shapes;
 /// A leaf node to contain all vertices which are near
 /// and equal to this node's coordinates.
 class LeafNode extends Node {
-  final Shape _shape;
+  final Octree _octree;
   final Path _path;
 
   List<Vertex> _vertices;
@@ -11,8 +11,8 @@ class LeafNode extends Node {
   List<Face> _faces;
 
   /// Creates a new leaf node.
-  LeafNode._(Shape this._shape, Path this._path): super._() {
-    if (this._shape == null) throw new Exception("May not set a null shape to a leaf node.");
+  LeafNode._(Octree this._octree, Path this._path): super._() {
+    if (this._octree == null) throw new Exception("May not set a null shape to a leaf node.");
     if (this._path == null) throw new Exception("May not set a null path to a leaf node.");
     this._vertices = new List<Vertex>();
     this._lines = new List<Line>();
@@ -23,7 +23,7 @@ class LeafNode extends Node {
   Path get path => this._path;
   
   /// Gets the corner point to this leaf.
-  Math.Point3 get point => path.location(this._shape.maxCube);
+  Math.Point3 get point => path.location(this._octree.maxCube);
 
   /// All the vertices which map tho this leaf node's path.
   LeafNodeVertexCollection get vertices => new LeafNodeVertexCollection._(this);
@@ -99,7 +99,7 @@ class LeafNode extends Node {
   }
 
   /// Validates the node to make sure the nodes' have been setup correctly.
-  void _validate(Debug.Logger log, Shape shape, Node parent, Path expPath, int depth) {
+  void _validate(Debug.Logger log, Octree octree, Node parent, Path expPath, int depth) {
     if (this.path == null) {
       log.error("Node's path was null.\n");
       return;
@@ -114,8 +114,8 @@ class LeafNode extends Node {
     if (!identical(parent, this._parent))
       log.error("Parent of node at ${this.path.toString(depth)} does not match expected parent.\n");
 
-    if (!identical(shape, this._shape))
-      log.error("Shape of leaf node at ${path.toString(depth)} does not match expected shape.\n");
+    if (!identical(octree, this._octree))
+      log.error("Octree of leaf node at ${path.toString(depth)} does not match expected octree.\n");
     if (this._vertices.isEmpty)
       log.error("Leaf node at ${path.toString(depth)} has no vertices.\n");
 

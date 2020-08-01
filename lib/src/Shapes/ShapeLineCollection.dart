@@ -52,14 +52,11 @@ class ShapeLineCollection {
   bool get isEmpty => this.length <= 0;
 
   /// The number of lines in the shape.
-  int get length => this._shape._lineCount;
+  int get length => this._shape._data._lineCount;
 
   /// Gets an iterable which steps through all of the lines in the collection.
-  Iterable<Line> get iterable sync* {
-    for (Vertex vertex in this._shape.vertices.iterable) {
-      yield* vertex.lines.iterable1;
-    }
-  }
+  Iterable<Line> get iterable =>
+    this._shape._data._lineIteratable;
 
   /// Removes the given [line].
   /// Returns true if line was removed, false otherwise.
@@ -109,15 +106,8 @@ class ShapeLineCollection {
 
   /// Gets all the lines into a list. This is slightly faster than
   /// using the iterator because we already know the number of lines.
-  List<Line> toList({bool growable: true}) {
-    List<Line> result = new List<Line>.filled(this._shape._lineCount, null, growable: growable);
-    int index = 0;
-    for (Line line in this.iterable) {
-      result[index] = line;
-      index++;
-    }
-    return result;
-  }
+  List<Line> toList({bool growable: true}) =>
+    this._shape._data._toLineList(growable);
 
   /// Gets to string for all the lines.
   String toString() => this.format();

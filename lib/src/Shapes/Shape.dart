@@ -3,48 +3,32 @@ part of ThreeDart.Shapes;
 /// A shape defining the renderable shape and collision detection.
 /// This uses an octree for storing a shape.
 class Shape implements ShapeBuilder {
-  /// The maximum cube that the shape can occupy.
-  final Math.Cube maxCube;
-
-  Node _root;
-  Path _rootPath;
-  int _rootPathDepth;
-
-  int _vertexCount;
-  int _pointCount;
-  int _lineCount;
-  int _faceCount;
-
+  ShapeData _data;
+  Octree _octree;
   bool _vertexIndicesNeedUpdate;
   bool _iteratorLock;
   Events.Event _changed;
 
   /// Creates a new shape.
-  Shape._(Math.Cube this.maxCube) {
-    this._root = null;
-    this._rootPath = null;
-    this._rootPathDepth = 0;
-
-    this._vertexCount = 0;
-    this._pointCount = 0;
-    this._lineCount = 0;
-    this._faceCount = 0;
-
+  Shape({bool useOctree = true, Math.Cube octreeMaxCube = null}) {
     this._vertexIndicesNeedUpdate = false;
     this._iteratorLock = false;
     this._changed = null;
-  }
 
-  /// Creates a new shape with an optional maximum cube for a shape.
-  factory Shape([Math.Cube maxCube = null]) =>
-    new Shape._(maxCube ?? new Math.Cube(-5000.0, -5000.0, -5000.0, 10000.0));
+    if (useOctree) this.enableOctree(octreeMaxCube);
+    else {
+      // TODO: Setup List data
+      this._data = null;
+      this._octree = null;
+    }
+  }
 
   /// Creates a copy of the given [other] shape.
   factory Shape.copy(Shape other) =>
-    new Shape(other.maxCube)..merge(other);
+    new Shape()..merge(other); // TODO: Improve copy
 
   /// The octree for the shape.
-  Octree get octree => new Octree._(this);
+  Octree get octree => this._octree;
 
   /// The collection of vertices for the shape.
   ShapeVertexCollection get vertices => new ShapeVertexCollection._(this);
@@ -57,6 +41,21 @@ class Shape implements ShapeBuilder {
 
   /// The collection of renderable faces for the shape.
   ShapeFaceCollection get faces => new ShapeFaceCollection._(this);
+
+  /// TODO: Comment
+  void enableOctree([Math.Cube maxCube = null]) {
+    maxCube ??= new Math.Cube(-5000.0, -5000.0, -5000.0, 10000.0);
+    if (this?._octree?.maxCube == maxCube) return;
+    Octree octree = new Octree._(maxCube, this);
+    this._octree = octree;
+    this._data = octree;
+  }
+
+  void disableOctree() {
+    if (this._octree != null) {
+      // TODO: Implement
+    }
+  }
 
   /// The changed event to signal when ever the shape is modified.
   Events.Event get changed {
@@ -368,22 +367,22 @@ class Shape implements ShapeBuilder {
     log ??= new Debug.DefaultLogger();
 
     int vertexCount = this.vertices.iterable.length;
-    if (vertexCount != this._vertexCount)
-      log.error("Vertex count was found as $vertexCount but was stored as ${this._vertexCount}.\n");
+    if (vertexCount != this._data._vertexCount)
+      log.error("Vertex count was found as $vertexCount but was stored as ${this._data._vertexCount}.\n");
 
     int pointCount = this.points.iterable.length;
-    if (pointCount != this._pointCount)
-      log.error("Point count was found as $pointCount but was stored as ${this._pointCount}.\n");
+    if (pointCount != this._data._pointCount)
+      log.error("Point count was found as $pointCount but was stored as ${this._data._pointCount}.\n");
 
     int lineCount = this.lines.iterable.length;
-    if (lineCount != this._lineCount)
-      log.error("Line count was found as $lineCount but was stored as ${this._lineCount}.\n");
+    if (lineCount != this._data._lineCount)
+      log.error("Line count was found as $lineCount but was stored as ${this._data._lineCount}.\n");
 
     int faceCount = this.faces.iterable.length;
-    if (faceCount != this._faceCount)
-      log.error("Face count was found as $faceCount but was stored as ${this._faceCount}.\n");
+    if (faceCount != this._data._faceCount)
+      log.error("Face count was found as $faceCount but was stored as ${this._data._faceCount}.\n");
 
-    this._root?._validate(log, this, null, this._rootPath, this._rootPathDepth);
+    this._data._validate(log, this);
     return !log.failed;
   }
 

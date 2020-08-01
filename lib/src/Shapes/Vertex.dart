@@ -2,7 +2,8 @@ part of ThreeDart.Shapes;
 
 /// A vertex of a shape with all of the renderable elements it is used.
 class Vertex {
-  LeafNode _leaf;
+  LeafNode _leaf; // TODO: Determine if this is actually needed.
+  Shape _shape;
 
   List<Point> _points;
 
@@ -76,10 +77,11 @@ class Vertex {
   }
 
   /// The leaf node this vertex belongs to.
+  /// Will return null if shape isn't using an octree.
   LeafNode get leafNode => this._leaf;
 
   /// The shape the vertex belongs to.
-  Shape get shape => this._leaf?._shape;
+  Shape get shape => this._shape;
 
   /// The points which use this vertex.
   VertexPointCollection get points => new VertexPointCollection._(this);
@@ -104,8 +106,8 @@ class Vertex {
   set location(Math.Point3 loc) {
     if (this._loc != loc) {
       this._loc = loc;
-      this._leaf?._shape?.octree?._updateVertexLocation(this);
-      this._leaf?._shape?.onVertexModified(this);
+      this._shape?.octree?._updateVertexLocation(this);
+      this._shape?.onVertexModified(this);
     }
   }
 
@@ -115,7 +117,7 @@ class Vertex {
     norm = norm?.normal();
     if (this._norm != norm) {
       this._norm = norm;
-      this._leaf?._shape?.onVertexModified(this);
+      this._shape?.onVertexModified(this);
     }
   }
 
@@ -125,7 +127,7 @@ class Vertex {
     binm = binm?.normal();
     if (this._binm != binm) {
       this._binm = binm;
-      this._leaf?._shape?.onVertexModified(this);
+      this._shape?.onVertexModified(this);
     }
   }
 
@@ -134,7 +136,7 @@ class Vertex {
   set texture2D(Math.Point2 txt2D) {
     if (this._txt2D != txt2D) {
       this._txt2D = txt2D;
-      this._leaf?._shape?.onVertexModified(this);
+      this._shape?.onVertexModified(this);
     }
   }
 
@@ -143,7 +145,7 @@ class Vertex {
   set textureCube(Math.Vector3 txtCube) {
     if (this._txtCube != txtCube) {
       this._txtCube = txtCube;
-      this._leaf?._shape?.onVertexModified(this);
+      this._shape?.onVertexModified(this);
     }
   }
 
@@ -152,7 +154,7 @@ class Vertex {
   set color(Math.Color4 clr) {
     if (this._clr != clr) {
       this._clr = clr;
-      this._leaf?._shape?.onVertexModified(this);
+      this._shape?.onVertexModified(this);
     }
   }
 
@@ -161,7 +163,7 @@ class Vertex {
   set weight(double weight) {
     if (this._weight != weight) {
       this._weight = weight;
-      this._leaf?._shape?.onVertexModified(this);
+      this._shape?.onVertexModified(this);
     }
   }
 
@@ -170,7 +172,7 @@ class Vertex {
   set bending(Math.Point4 bending) {
     if (this._bending != bending) {
       this._bending = bending;
-      this._leaf?._shape?.onVertexModified(this);
+      this._shape?.onVertexModified(this);
     }
   }
 
@@ -210,15 +212,15 @@ class Vertex {
   /// set then this will have no effect.
   bool calculateNormal() {
     if (this._norm != null) return true;
-    this._leaf?._shape?._changed?.suspend();
+    this._shape?._changed?.suspend();
     Math.Vector3 normSum = Math.Vector3.zero;
     for (Face face in this.faces.iterable) {
       Math.Vector3 norm = face?.normal;
       if (norm != null) normSum += norm;
     }
     this._norm = normSum.normal();
-    this._leaf?._shape?.onVertexModified(this);
-    this._leaf?._shape?._changed?.resume();
+    this._shape?.onVertexModified(this);
+    this._shape?._changed?.resume();
     return true;
   }
 
@@ -227,15 +229,15 @@ class Vertex {
   /// set then this will have no effect.
   bool calculateBinormal() {
     if (this._binm != null) return true;
-    this._leaf?._shape?._changed?.suspend();
+    this._shape?._changed?.suspend();
     Math.Vector3 binmSum = Math.Vector3.zero;
     for (Face face in this.faces.iterable) {
       Math.Vector3 binm = face?.binormal;
       if(binm != null) binmSum += binm;
     }
     this._binm = binmSum.normal();
-    this._leaf?._shape?.onVertexModified(this);
-    this._leaf?._shape?._changed?.resume();
+    this._shape?.onVertexModified(this);
+    this._shape?._changed?.resume();
     return true;
   }
 
@@ -310,9 +312,11 @@ class Vertex {
     if (!identical(parent, this._leaf))
       log.error("Vertex on parent leaf node at ${parent.path} does not match expected parent.\n");
 
-    Path path = Path.fromPoint(this._loc, this.shape.maxCube);
-    if (this._leaf.path != path)
-      log.error("Vertex path, $path, does not match the leaf's path, ${this._leaf.path}.\n");
+    if (this._leaf?._octree != null) {
+      Path path = Path.fromPoint(this._loc, this._leaf._octree.maxCube);
+      if (this._leaf.path != path)
+        log.error("Vertex path, $path, does not match the leaf's path, ${this._leaf.path}.\n");
+    }
 
     for (int i = 0; i < this._points.length; i++) {
       Point pnt = this._points[i];

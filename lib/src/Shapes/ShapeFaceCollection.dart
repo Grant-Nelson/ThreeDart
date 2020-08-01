@@ -106,14 +106,11 @@ class ShapeFaceCollection {
   bool get isEmpty => this.length <= 0;
 
   /// The number of faces in the shape.
-  int get length => this._shape._faceCount;
+  int get length => this._shape._data._faceCount;
 
   /// Gets an iterable which steps through all of the faces in the collection.
-  Iterable<Face> get iterable sync* {
-    for (Vertex vertex in this._shape.vertices.iterable) {
-      yield* vertex.faces.iterable1;
-    };
-  }
+  Iterable<Face> get iterable =>
+    this._shape._data._faceIteratable;
 
   /// Removes the given [face].
   /// Returns true if face was removed, false otherwise.
@@ -194,15 +191,8 @@ class ShapeFaceCollection {
   
   /// Gets all the faces into a list. This is slightly faster than
   /// using the iterator because we already know the number of faces.
-  List<Face> toList({bool growable: true}) {
-    List<Face> result = new List<Face>.filled(this._shape._faceCount, null, growable: growable);
-    int index = 0;
-    for (Face face in this.iterable) {
-      result[index] = face;
-      index++;
-    }
-    return result;
-  }
+  List<Face> toList({bool growable: true}) =>
+    this._shape._data._toFaceList(growable);
 
   /// Gets to string for all the faces.
   String toString() => this.format();

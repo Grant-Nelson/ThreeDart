@@ -1,19 +1,63 @@
 part of ThreeDart.Shapes;
 
 /// An octree for storing a shape.
-class Octree {
+class Octree extends ShapeData {
+  
+  /// The maximum cube that the shape should occupy.
+  final Math.Cube maxCube;
+
   final Shape _shape;
+  
+  Node _root;
+  Path _rootPath;
+  int _rootPathDepth;
+
+  int _vertexCount;
+  int _pointCount;
+  int _lineCount;
+  int _faceCount;
 
   /// Creates a new octree for accessing a shape.
-  Octree._(Shape this._shape);
+  Octree._(Math.Cube this.maxCube, Shape this._shape): super._() {
+    this._root = null;
+    this._rootPath = null;
+    this._rootPathDepth = 0;
+
+    this._vertexCount = 0;
+    this._pointCount = 0;
+    this._lineCount = 0;
+    this._faceCount = 0;
+
+    this._populate();
+  }
+
+  void _populate() {
+    ShapeData data = this._shape._data;
+    if (data != null) {
+      this._vertexCount = data._vertexCount;
+      this._pointCount  = data._pointCount;
+      this._lineCount   = data._lineCount;
+      this._faceCount   = data._faceCount;
+
+      for (Vertex vertex in data._vertexIteratable) {
+        Path path = new Path.fromPoint(vertex.location, this.maxCube);
+        _InsertLeafResult result = this._insertLeaf(path);
+        vertex._leaf = result.leaf;
+      }
+
+      // TODO: Setup lines and faces.
+
+      this._shape._vertexIndicesNeedUpdate = true;
+    }
+  }
 
   /// Gets an iterable which steps through all of the leaves in the octree.
   Iterable<LeafNode> get leafIterable sync* {
-    if (this._shape?._root != null) {
+    if (this._root != null) {
       final bool lock = this._shape._iteratorLock;
       try {
         this._shape._iteratorLock = true;
-        yield* this._shape._root._leafIterable;
+        yield* this._root._leafIterable;
       } finally {
         this._shape._iteratorLock = lock;
       }
@@ -22,13 +66,13 @@ class Octree {
 
   /// Iterates all the leafs found to at least partially overlap the region.
   Iterable<LeafNode> leafIterableInRegion(Math.Region3 region) sync* {
-    if (this._shape?._root != null) {
+    if (this._root != null) {
       final bool lock = this._shape._iteratorLock;
       try {
-        Path min = Path.fromPoint(region.minCorner, this._shape.maxCube);
-        Path max = Path.fromPoint(region.maxCorner, this._shape.maxCube);
+        Path min = Path.fromPoint(region.minCorner, this.maxCube);
+        Path max = Path.fromPoint(region.maxCorner, this.maxCube);
         this._shape._iteratorLock = true;
-        yield* this._shape._root._leafIterablePaths(min, max, this._shape._rootPathDepth);
+        yield* this._root._leafIterablePaths(min, max, this._rootPathDepth);
       } finally {
         this._shape._iteratorLock = lock;
       }
@@ -37,13 +81,13 @@ class Octree {
 
   /// Iterates all the leafs found to fall between the region created by the given paths.
   Iterable<LeafNode> leafIterablePaths(Path path1, Path path2) sync* {
-    if (this._shape?._root != null) {
+    if (this._root != null) {
       final bool lock = this._shape._iteratorLock;
       try {
         Path min = Path.min(path1, path2);
         Path max = Path.max(path1, path2);
         this._shape._iteratorLock = true;
-        yield* this._shape._root._leafIterablePaths(min, max, this._shape._rootPathDepth);
+        yield* this._root._leafIterablePaths(min, max, this._rootPathDepth);
       } finally {
         this._shape._iteratorLock = lock;
       }
@@ -52,9 +96,20 @@ class Octree {
 
   /// Adds a vertex to this octree.
   void _addVertex(Vertex vertex) {
-    Path path = new Path.fromPoint(vertex.location, this._shape.maxCube);
+    Path path = new Path.fromPoint(vertex.location, this.maxCube);
     _InsertLeafResult result = this._insertLeaf(path);
-    result.leaf.vertices._add(vertex);
+
+    if (result.leaf._vertices.contains(vertex))
+      throw new Exception("Vertex already existed in the leaf node.");
+
+    vertex._index = this._vertexCount;
+    vertex._leaf = result.leaf;
+    vertex._shape = this._shape;
+    result.leaf._vertices.add(vertex);
+
+    this._vertexCount++;
+    this._shape._vertexIndicesNeedUpdate = true;
+    this._shape.onVertexAdded(vertex);
   }
 
   /// Removes a vertex from this octree.
@@ -63,9 +118,124 @@ class Octree {
   /// not remove the lines and faces. Make sure they are updated and/or removed.
   void _removeVertex(Vertex vertex) {
     LeafNode leaf = vertex.leafNode;
-    leaf.vertices._remove(vertex);
+    if (!leaf._vertices.remove(vertex))
+      throw new Exception("Vertex was not in the expected leaf node.");
+
+    vertex._leaf = null;
+    vertex._shape = null;
+    vertex._index = -1;
+
     if (leaf._vertices.isEmpty)
       this._removeLeaf(leaf);
+
+    this._vertexCount--;
+    this._shape._vertexIndicesNeedUpdate = true;
+    this._shape.onVertexRemoved(vertex);
+  }
+
+  void _addPoint(Point pnt) {
+    this._pointCount++;
+  }
+
+  void _removePoint(Point pnt) {
+    this._pointCount--;
+  }
+
+  void _addLine(Line line) {
+    this._lineCount++;
+    // TODO: Add to passing
+  }
+
+  void _removeLine(Line line) {
+    this._lineCount--;
+    // TODO: Remove from passing
+  }
+
+  void _addFace(Face face) {
+    this._faceCount++;
+    // TODO: Add to passing
+  }
+
+  void _removeFace(Face face) {
+    this._faceCount--;
+    // TODO: Remove from passing
+  }
+  
+  Iterable<Vertex> get _vertexIteratable sync* {
+    for (LeafNode leaf in this._shape.octree.leafIterable) {
+      yield* leaf.vertices.iterable;
+    }
+  }
+  
+  /// Gets an iterable which steps through all of the vertices in the given region.
+  Iterable<Vertex> _vertexIterableInRegion(Math.Region3 region) sync* {
+    for (LeafNode leaf in this._shape.octree.leafIterableInRegion(region)) {
+      for (Vertex vertex in leaf._vertices) {
+        if ((vertex.shape == this._shape) && (region.contains(vertex.location))) yield vertex;
+      }
+    }
+  }
+
+  Iterable<Point> get _pointIteratable sync* {
+    for (Vertex vertex in this._shape.vertices.iterable) {
+      yield* vertex.points.iterable;
+    }
+  }
+
+  Iterable<Line> get _lineIteratable sync* {
+    for (Vertex vertex in this._shape.vertices.iterable) {
+      yield* vertex.lines.iterable1;
+    }
+  }
+
+  Iterable<Face> get _faceIteratable sync* {
+    for (Vertex vertex in this._shape.vertices.iterable) {
+      yield* vertex.faces.iterable1;
+    }
+  }
+  
+  /// Gets all the vertices into a list.
+  List<Vertex> _toVertexList(bool growable) {
+    List<Vertex> result = new List<Vertex>.filled(this._vertexCount, null, growable: growable);
+    int index = 0;
+    for (Vertex ver in this._vertexIteratable) {
+      result[index] = ver;
+      index++;
+    }
+    return result;
+  }
+
+  /// Gets all the points into a list.
+  List<Point> _toPointList(bool growable) {
+    List<Point> result = new List<Point>.filled(this._pointCount, null, growable: growable);
+    int index = 0;
+    for (Point pnt in this._pointIteratable) {
+      result[index] = pnt;
+      index++;
+    }
+    return result;
+  }
+
+  /// Gets all the lines into a list.
+  List<Line> _toLineList(bool growable) {
+    List<Line> result = new List<Line>.filled(this._lineCount, null, growable: growable);
+    int index = 0;
+    for (Line line in this._lineIteratable) {
+      result[index] = line;
+      index++;
+    }
+    return result;
+  }
+
+  /// Gets all the faces into a list.
+  List<Face> _toFaceList(bool growable) {
+    List<Face> result = new List<Face>.filled(this._faceCount, null, growable: growable);
+    int index = 0;
+    for (Face face in this._faceIteratable) {
+      result[index] = face;
+      index++;
+    }
+    return result;
   }
 
   /// Updates the location of the current vertex. It checks if the location has
@@ -73,7 +243,7 @@ class Octree {
   void _updateVertexLocation(Vertex vertex) {
     if (!identical(vertex.shape, this._shape))
       throw new Exception("To update a vertex, it must be part of the shape already.");
-    Path newPath = Path.fromPoint(vertex.location, this._shape.maxCube);
+    Path newPath = Path.fromPoint(vertex.location, this.maxCube);
     Path oldPath = vertex.leafNode.path;
 
     /// TODO: Need to update the passing nodes even if the leaf didn't change.
@@ -86,12 +256,12 @@ class Octree {
   /// This will locate the smallest non-empty node containing the given path.
   /// If no non-empty node could be found from this node then null is returned.
   _FindNodeResult _findNode(Path path) {
-    if (this._shape._rootPath == null) return null;
+    if (this._rootPath == null) return null;
 
-    int depth = this._shape._rootPathDepth;
-    if (!this._shape._rootPath.sameUpto(path, depth)) return null;
+    int depth = this._rootPathDepth;
+    if (!this._rootPath.sameUpto(path, depth)) return null;
 
-    Node node = this._shape._root;
+    Node node = this._root;
     while (true) {
       if (node == null) return null;
       else if (node is BranchNode) {
@@ -123,7 +293,7 @@ class Octree {
     }
 
     // Creates a new leaf to insert.
-    LeafNode leaf = new LeafNode._(this._shape, path);
+    LeafNode leaf = new LeafNode._(this, path);
     
     if (findResult != null) {
       // Node leaf did not exist but is within the root.
@@ -141,7 +311,7 @@ class Octree {
       } else {
         // Node was the root.
         Node replacement = node._insertLeaf(leaf, depth);
-        this._setRoot(replacement, path, this._shape._rootPathDepth);
+        this._setRoot(replacement, path, this._rootPathDepth);
       }
 
       this._reduceFootprint();
@@ -149,7 +319,7 @@ class Octree {
     }
     
     // Check if a tree is empty, then create a new tree.
-    if (this._shape._root == null) {
+    if (this._root == null) {
       this._setRoot(leaf, path, Path.maxDepth);
       this._reduceFootprint();
       return new _InsertLeafResult(leaf, false);
@@ -157,8 +327,8 @@ class Octree {
 
     // Point outside of tree, expand the tree.
     this._expandFootprint(path);
-    Node newRoot = this._shape._root._insertLeaf(leaf, this._shape._rootPathDepth);
-    this._setRoot(newRoot, this._shape._rootPath, this._shape._rootPathDepth);
+    Node newRoot = this._root._insertLeaf(leaf, this._rootPathDepth);
+    this._setRoot(newRoot, this._rootPath, this._rootPathDepth);
     this._reduceFootprint();
     return new _InsertLeafResult(leaf, false);
   }
@@ -168,7 +338,7 @@ class Octree {
     if (this._shape._iteratorLock)
       throw new Exception("May not remove a leaf node from the octree during an iteration.");
 
-    if (identical(this._shape._root, node)) {
+    if (identical(this._root, node)) {
       this._setRoot(null, null, 0);
       return;
     }
@@ -195,7 +365,7 @@ class Octree {
 
   /// Gets the depth of the node in the octree.
   int _nodeDepth(Node node) {
-    int depth = this._shape._rootPathDepth - 1;
+    int depth = this._rootPathDepth - 1;
     while (node != null) {
       depth++;
       node = node.parent;
@@ -226,19 +396,19 @@ class Octree {
   void _setRoot(Node node, Path path, int depth) {
     if ((depth < -1) || (depth > Path.maxDepth))
       throw new Exception("Must have the root depth between [-1 and ${Path.maxDepth}]. It was $depth.");
-    this._shape._root = node;
-    this._shape._rootPath = path;
-    this._shape._rootPathDepth = depth;
-    this._shape._root?._parent = null;
+    this._root = node;
+    this._rootPath = path;
+    this._rootPathDepth = depth;
+    this._root?._parent = null;
   }
   
   /// This expands the foot print of the tree to include the given point.
   /// [root] is the original root to expand.
   /// Returns the new expanded root.
   void _expandFootprint(Path path) {
-    Node root = this._shape._root;
-    Path rootPath = this._shape._rootPath;
-    int depth = this._shape._rootPathDepth;
+    Node root = this._root;
+    Path rootPath = this._rootPath;
+    int depth = this._rootPathDepth;
     while (!rootPath.sameUpto(path, depth)) {
       depth--;
       BranchNode newRoot = new BranchNode._();
@@ -253,11 +423,11 @@ class Octree {
   /// This reduces the footprint to the smallest root needed.
   void _reduceFootprint() {
     while (true) {
-      Node root = this._shape._root;
+      Node root = this._root;
       if ((root == null) || (root is! BranchNode)) return;
       BranchNode broot = root as BranchNode;
-      Path path = this._shape._rootPath;
-      int depth = this._shape._rootPathDepth;
+      Path path = this._rootPath;
+      int depth = this._rootPathDepth;
 
       Node onlyChild = null;
       int index = 0;
@@ -273,25 +443,35 @@ class Octree {
       this._setRoot(onlyChild, path, depth+1);
     }
   }
+  
+  void _validate(Debug.Logger log, Shape shape) {
+    if (!identical(shape, this._shape))
+      log.error("Shape of the octree does not match expected shape.\n");
+    if (!identical(shape._data, this))
+      log.error("Shape data of the shape is not this octree.\n");
+    if (!identical(shape._octree, this))
+      log.error("Octree of the shape is not this octree.\n");
+    this._root?._validate(log, this, null, this._rootPath, this._rootPathDepth);
+  }
 
   /// Gets the string for the whole octree.
   @override
   String toString() {
     Debug.StringTree tree = new Debug.StringTree("Octree");
-    if (this._shape._vertexCount > 0)
-      tree.add("vertex count: ${this._shape._vertexCount}");
-    if (this._shape._pointCount > 0)
-      tree.add("point count: ${this._shape._pointCount}");
-    if (this._shape._lineCount > 0)
-      tree.add("line count: ${this._shape._lineCount}");
-    if (this._shape._faceCount > 0)
-      tree.add("face count: ${this._shape._faceCount}");
-    if (this._shape._rootPath != null) {
-      tree.add("depth: ${this._shape._rootPathDepth}");
-      tree.add("path: ${this._shape._rootPath.toString(this._shape._rootPathDepth)}");
+    if (this._vertexCount > 0)
+      tree.add("vertex count: ${this._vertexCount}");
+    if (this._pointCount > 0)
+      tree.add("point count: ${this._pointCount}");
+    if (this._lineCount > 0)
+      tree.add("line count: ${this._lineCount}");
+    if (this._faceCount > 0)
+      tree.add("face count: ${this._faceCount}");
+    if (this._rootPath != null) {
+      tree.add("depth: ${this._rootPathDepth}");
+      tree.add("path: ${this._rootPath.toString(this._rootPathDepth)}");
     }
-    if (this._shape._root != null) {
-      Debug.StringTree root = this._shape._root._stringTree();
+    if (this._root != null) {
+      Debug.StringTree root = this._root._stringTree();
       root.text = "root: "+root.text;
       tree.append(root);
     }

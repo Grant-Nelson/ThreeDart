@@ -26,13 +26,13 @@ class Point {
   void _setVertex(Vertex ver) {
     this._ver = ver;
     this._ver._points.add(this);
-    this._ver.shape?._pointCount++;
+    this._ver.shape?._data?._addPoint(this);
   }
 
   /// Removes the vertex.
   void _removeVertex() {
     if (this._ver != null) {
-      this._ver.shape?._pointCount--;
+      this._ver.shape?._data?._removePoint(this);
       this._ver._points.remove(this);
       this._ver = null;
     }

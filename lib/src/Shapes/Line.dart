@@ -33,7 +33,7 @@ class Line {
   void _setVertex1(Vertex ver1) {
     this._ver1 = ver1;
     this._ver1._lines1.add(this);
-    this._ver1.shape?._lineCount++;
+    this._ver1.shape?._data?._addLine(this);
   }
 
   /// Sets the second vertex to the given value.
@@ -45,7 +45,7 @@ class Line {
   /// Removes the first vertex.
   void _removeVertex1() {
     if (this._ver1 != null) {
-      this._ver1.shape?._lineCount--;
+      this._ver1.shape?._data?._removeLine(this);
       this._ver1._lines1.remove(this);
       this._ver1 = null;
     }

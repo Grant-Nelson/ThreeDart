@@ -10,33 +10,17 @@ class LeafNodeVertexCollection {
   /// The leaf node which owns this collection.
   LeafNode get leafNode => this._leaf;
 
+  /// The octree which owns the vertex which owns this collection.
+  Octree get octree => this._leaf?._octree;
+
   /// The shape which owns the vertex which owns this collection.
-  Shape get shape => this._leaf?._shape;
+  Shape get shape => this._leaf?._octree?._shape;
 
   /// Determines if the collection has any vertices in it.
   bool get isEmpty => this.length <= 0;
 
   /// Determines the number of vertices in the collection.
   int get length => this._leaf._vertices.length;
-
-  /// Adds the vertex to this leaf and updates the shape counts.
-  void _add(Vertex vertex) {
-    vertex._index = this.shape._vertexCount;
-    vertex._leaf = this._leaf;
-    this._leaf._vertices.add(vertex);
-    this.shape._vertexCount++;
-    this.shape._vertexIndicesNeedUpdate = true;
-    this.shape.onVertexAdded(vertex);
-  }
-
-  /// Removes the vertex from this leaf and updates the shape counts.
-  void _remove(Vertex vertex) {
-    if (!this._leaf._vertices.remove(vertex))
-      throw new Exception("Vertex was not in the expected leaf node.");
-    this.shape._vertexCount--;
-    this.shape._vertexIndicesNeedUpdate = true;
-    this.shape.onVertexRemoved(vertex);
-  }
 
   /// Gets the vertex at the at given [index].
   Vertex operator[](int index) => this._leaf._vertices[index];

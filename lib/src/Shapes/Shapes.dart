@@ -28,6 +28,7 @@ part 'ReducedShape.dart';
 part 'Results.dart';
 part 'Shape.dart';
 part 'ShapeBuilder.dart';
+part 'ShapeData.dart';
 part 'ShapeFaceCollection.dart';
 part 'ShapeLineCollection.dart';
 part 'ShapePointCollection.dart';

@@ -29,14 +29,11 @@ class ShapePointCollection {
   bool get isEmpty => this.length <= 0;
 
   /// The number of points in the shape.
-  int get length => this._shape._pointCount;
+  int get length => this._shape._data._pointCount;
 
   /// Gets an iterable which steps through all of the points in the collection.
-  Iterable<Point> get iterable sync* {
-    for (Vertex vertex in this._shape.vertices.iterable) {
-      yield* vertex.points.iterable;
-    }
-  }
+  Iterable<Point> get iterable =>
+    this._shape._data._pointIteratable;
 
   /// Removes the given [point].
   /// Returns true if point was removed, false otherwise.
@@ -55,15 +52,8 @@ class ShapePointCollection {
   
   /// Gets all the points into a list. This is slightly faster than
   /// using the iterator because we already know the number of points.
-  List<Point> toList({bool growable: true}) {
-    List<Point> result = new List<Point>.filled(this._shape._pointCount, null, growable: growable);
-    int index = 0;
-    for (Point pnt in this.iterable) {
-      result[index] = pnt;
-      index++;
-    }
-    return result;
-  }
+  List<Point> toList({bool growable: true}) =>
+    this._shape._data._toPointList(growable);
 
   /// Gets to string for all the points.
   String toString() => this.format();
