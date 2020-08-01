@@ -6,19 +6,16 @@ class Shape implements ShapeBuilder {
   ShapeData _data;
   Octree _octree;
   bool _vertexIndicesNeedUpdate;
-  bool _iteratorLock;
   Events.Event _changed;
 
   /// Creates a new shape.
   Shape({bool useOctree = true, Math.Cube octreeMaxCube = null}) {
     this._vertexIndicesNeedUpdate = false;
-    this._iteratorLock = false;
     this._changed = null;
 
     if (useOctree) this.enableOctree(octreeMaxCube);
     else {
-      // TODO: Setup List data
-      this._data = null;
+      this._data = new ShapeLists._(this);
       this._octree = null;
     }
   }
@@ -51,9 +48,11 @@ class Shape implements ShapeBuilder {
     this._data = octree;
   }
 
+  /// TODO: Comment
   void disableOctree() {
     if (this._octree != null) {
-      // TODO: Implement
+      this._data = new ShapeLists._(this);
+      this._octree = null;
     }
   }
 

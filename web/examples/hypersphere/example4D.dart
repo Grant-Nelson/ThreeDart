@@ -76,7 +76,7 @@ void startup4D(String targetName) {
     ..mover = projUserMover;
 
   ThreeDart.Entity sphere = new ThreeDart.Entity()
-    ..shape = Shapes.isosphere(2)
+    ..shape = Shapes.isosphere(iterations: 2)
     ..mover = (new Movers.Group()
       ..add(sphereScalar)
       ..add(projUserMover));

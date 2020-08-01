@@ -3,8 +3,8 @@ part of ThreeDart.test.test000;
 void addShapeTests(TestManager tests) {
   
   tests.add("Shapes Octree Simple Test", (TestArgs args) {
-    Shapes.Shape shape = new Shapes.Shape();
-    shape.enableOctree(new Math.Cube(-10.0, -10.0, -10.0, 20.0));
+    Math.Cube maxCube = new Math.Cube(-10.0, -10.0, -10.0, 20.0);
+    Shapes.Shape shape = new Shapes.Shape(useOctree: true, octreeMaxCube: maxCube);
 
     args.info("Empty Shape:\n");
     checkOctree(args, shape, [
@@ -113,13 +113,13 @@ void addShapeTests(TestManager tests) {
   });
 
   tests.add("Shapes Octree Validate Cube Test", (TestArgs args) {
-    Shapes.Shape cube = Shapes.cube();
+    Shapes.Shape cube = Shapes.cube(useOctree: true);
     cube.validate(args);
     args.info(cube.octree.toString());
   });
 
   tests.add("Shapes Octree Validate Sphere Test", (TestArgs args) {
-    Shapes.Shape sphere = Shapes.sphere();
+    Shapes.Shape sphere = Shapes.sphere(useOctree: true);
     sphere.validate(args);
     args.info(sphere.octree.toString());
   });

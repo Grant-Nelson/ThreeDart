@@ -17,6 +17,8 @@ class Octree extends ShapeData {
   int _lineCount;
   int _faceCount;
 
+  bool _iteratorLock;
+
   /// Creates a new octree for accessing a shape.
   Octree._(Math.Cube this.maxCube, Shape this._shape): super._() {
     this._root = null;
@@ -27,39 +29,41 @@ class Octree extends ShapeData {
     this._pointCount = 0;
     this._lineCount = 0;
     this._faceCount = 0;
+    
+    this._iteratorLock = false;
 
     this._populate();
   }
 
   void _populate() {
     ShapeData data = this._shape._data;
-    if (data != null) {
-      this._vertexCount = data._vertexCount;
-      this._pointCount  = data._pointCount;
-      this._lineCount   = data._lineCount;
-      this._faceCount   = data._faceCount;
+    if (data == null) return;
 
-      for (Vertex vertex in data._vertexIteratable) {
-        Path path = new Path.fromPoint(vertex.location, this.maxCube);
-        _InsertLeafResult result = this._insertLeaf(path);
-        vertex._leaf = result.leaf;
-      }
+    this._vertexCount = data._vertexCount;
+    this._pointCount  = data._pointCount;
+    this._lineCount   = data._lineCount;
+    this._faceCount   = data._faceCount;
 
-      // TODO: Setup lines and faces.
-
-      this._shape._vertexIndicesNeedUpdate = true;
+    for (Vertex vertex in data._vertexIteratable) {
+      Path path = new Path.fromPoint(vertex.location, this.maxCube);
+      _InsertLeafResult result = this._insertLeaf(path);
+      vertex._leaf = result.leaf;
     }
+
+    // TODO: Setup lines and faces.
+
+    this._shape._vertexIndicesNeedUpdate = true;
   }
 
   /// Gets an iterable which steps through all of the leaves in the octree.
   Iterable<LeafNode> get leafIterable sync* {
     if (this._root != null) {
-      final bool lock = this._shape._iteratorLock;
+      final bool lock = this._iteratorLock;
       try {
-        this._shape._iteratorLock = true;
+        this._iteratorLock = true;
         yield* this._root._leafIterable;
       } finally {
-        this._shape._iteratorLock = lock;
+        this._iteratorLock = lock;
       }
     }
   }
@@ -67,14 +71,14 @@ class Octree extends ShapeData {
   /// Iterates all the leafs found to at least partially overlap the region.
   Iterable<LeafNode> leafIterableInRegion(Math.Region3 region) sync* {
     if (this._root != null) {
-      final bool lock = this._shape._iteratorLock;
+      final bool lock = this._iteratorLock;
       try {
         Path min = Path.fromPoint(region.minCorner, this.maxCube);
         Path max = Path.fromPoint(region.maxCorner, this.maxCube);
-        this._shape._iteratorLock = true;
+        this._iteratorLock = true;
         yield* this._root._leafIterablePaths(min, max, this._rootPathDepth);
       } finally {
-        this._shape._iteratorLock = lock;
+        this._iteratorLock = lock;
       }
     }
   }
@@ -82,14 +86,14 @@ class Octree extends ShapeData {
   /// Iterates all the leafs found to fall between the region created by the given paths.
   Iterable<LeafNode> leafIterablePaths(Path path1, Path path2) sync* {
     if (this._root != null) {
-      final bool lock = this._shape._iteratorLock;
+      final bool lock = this._iteratorLock;
       try {
         Path min = Path.min(path1, path2);
         Path max = Path.max(path1, path2);
-        this._shape._iteratorLock = true;
+        this._iteratorLock = true;
         yield* this._root._leafIterablePaths(min, max, this._rootPathDepth);
       } finally {
-        this._shape._iteratorLock = lock;
+        this._iteratorLock = lock;
       }
     }
   }
@@ -103,7 +107,7 @@ class Octree extends ShapeData {
       throw new Exception("Vertex already existed in the leaf node.");
 
     vertex._index = this._vertexCount;
-    vertex._leaf = result.leaf;
+    vertex._leaf  = result.leaf;
     vertex._shape = this._shape;
     result.leaf._vertices.add(vertex);
 
@@ -121,7 +125,7 @@ class Octree extends ShapeData {
     if (!leaf._vertices.remove(vertex))
       throw new Exception("Vertex was not in the expected leaf node.");
 
-    vertex._leaf = null;
+    vertex._leaf  = null;
     vertex._shape = null;
     vertex._index = -1;
 
@@ -280,7 +284,7 @@ class Octree extends ShapeData {
   /// Returns a pair containing the leaf node in the tree, and true if the
   /// leaf is new or false if the leaf already existed in the tree.
   _InsertLeafResult _insertLeaf(Path path) {
-    if (this._shape._iteratorLock)
+    if (this._iteratorLock)
       throw new Exception("May not add new leaf nodes into the octree during an iteration.");
 
     _FindNodeResult findResult = this._findNode(path);
@@ -335,7 +339,7 @@ class Octree extends ShapeData {
 
   /// Remove the given leaf node.
   void _removeLeaf(LeafNode node) {    
-    if (this._shape._iteratorLock)
+    if (this._iteratorLock)
       throw new Exception("May not remove a leaf node from the octree during an iteration.");
 
     if (identical(this._root, node)) {

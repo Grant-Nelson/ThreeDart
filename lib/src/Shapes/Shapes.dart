@@ -4,7 +4,6 @@ import 'dart:typed_data' as Typed;
 import 'dart:web_gl' as WebGL;
 import 'dart:math';
 
-import '../Collections/Collections.dart' as Collections;
 import '../Events/Events.dart' as Events;
 import '../Data/Data.dart' as Data;
 import '../Debug/Debug.dart' as Debug;
@@ -31,6 +30,7 @@ part 'ShapeBuilder.dart';
 part 'ShapeData.dart';
 part 'ShapeFaceCollection.dart';
 part 'ShapeLineCollection.dart';
+part 'ShapeLists.dart';
 part 'ShapePointCollection.dart';
 part 'ShapeVertexCollection.dart';
 part 'Vertex.dart';

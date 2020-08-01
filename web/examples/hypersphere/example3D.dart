@@ -28,7 +28,7 @@ void startup3D(String targetName) {
     ..technique = cubeTech
     ..shape = (new Shapes.Shape()
       ..merge(Shapes.cube())
-      ..merge(Shapes.isosphere(2)))
+      ..merge(Shapes.isosphere(iterations: 2)))
     ..mover = sliceRotation;
 
   ThreeDart.Entity slice = new ThreeDart.Entity()
