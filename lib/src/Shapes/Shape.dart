@@ -334,7 +334,8 @@ class Shape implements ShapeBuilder {
   /// Modifies the position, normal, and binormal
   /// by translating it with the given [mat].
   void applyPositionMatrix(Math.Matrix4 mat) {
-    for (Vertex ver in this.vertices.iterable) {
+    List<Vertex> vertices = this.vertices.toList(growable: false);
+    for (Vertex ver in vertices) {
       if (ver.location != null) ver.location = mat.transPnt3(ver.location);
       if (ver.normal   != null) ver.normal   = mat.transVec3(ver.normal);
       if (ver.binormal != null) ver.binormal = mat.transVec3(ver.binormal);

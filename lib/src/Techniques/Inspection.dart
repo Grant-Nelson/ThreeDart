@@ -491,7 +491,9 @@ class Inspection extends Technique {
       String name, Shapes.Shape shapeModHndl(Shapes.Shape shape), Math.Color4 ambient, Math.Color4 diffuse) {
     Data.BufferStore store = storeSet.map[name];
     if (store == null) {
-      store = this._buildShape(state, shapeModHndl(shape));
+      Shapes.Shape custom = shapeModHndl(shape);
+      if (custom == null) return;
+      store = this._buildShape(state, custom);
       storeSet.map[name] = store;
     }
     this._shader.setColors(ambient, diffuse);
@@ -820,6 +822,7 @@ class Inspection extends Technique {
   /// Convertes the given [shape] into the bend color shape.
   Shapes.Shape _bendFill(Shapes.Shape shape) {
     int maxIndex = this._maxIndex(shape);
+    if (maxIndex <= 0) return null;
     Shapes.Shape result = new Shapes.Shape();
     for (Shapes.Vertex vertex in shape.vertices.iterable) {
       Math.Point4 bend = vertex.bending;
