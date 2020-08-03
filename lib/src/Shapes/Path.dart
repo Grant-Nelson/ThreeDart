@@ -12,7 +12,7 @@ class Path {
   /// The maximum allowed depth value.
   static const int maxDepth = 32;
 
-  /// The maximum allowed value for any component, 2^31 - 1.
+  /// The maximum allowed value for any component, 2^32 - 1.
   static const int maxValue = 0xFFFFFFFF;
 
   /// Clamps the given component into the valid range.
@@ -66,8 +66,8 @@ class Path {
   Path redirect(int index, int depth) {
     if ((depth <= 0) || (depth > maxDepth))
       throw new Exception("The depth must be between [1 and $maxDepth] when redirecting, it was $depth.");
-    final int mask = 1 << (depth-1);
-    final int notMask = mask-1;
+    final int mask = 1 << (maxDepth - depth);
+    final int notMask = mask - 1;
     final int x = (this.x & notMask) | ((index & 1 != 0)? mask: 0);
     final int y = (this.y & notMask) | ((index & 2 != 0)? mask: 0);
     final int z = (this.z & notMask) | ((index & 4 != 0)? mask: 0);
@@ -113,11 +113,19 @@ class Path {
       throw new Exception("The depth must be between [0 and $maxDepth] for the cube, it was $depth.");
     if (depth == 0) return maxCube;
     final double scalar = maxCube.size / (maxValue + 1);
-    final int mask = (1 << (depth-1)) - 1;
+    final int mask = maxValue - ((1 << (maxDepth-depth)) - 1);
+
+    print(".-- "+this.toString()); // TODO: REMOVE
+    print("|   "+this.location(maxCube).toString());
+    print("|   ($depth) "+mask.toRadixString(2).padLeft(maxDepth, '0'));
+    print("|   x = "+this.x.toRadixString(2).padLeft(maxDepth, '0'));
+    print("|   y = "+this.y.toRadixString(2).padLeft(maxDepth, '0'));
+    print("'-- z = "+this.z.toRadixString(2).padLeft(maxDepth, '0'));
+
     final double x = ((this.x & mask).toDouble() * scalar) + maxCube.x;
     final double y = ((this.y & mask).toDouble() * scalar) + maxCube.y;
     final double z = ((this.z & mask).toDouble() * scalar) + maxCube.z;
-    return new Math.Cube(x, y, z, maxCube.size / (depth + 1));
+    return new Math.Cube(x, y, z, maxCube.size / (maxDepth - depth + 1));
   }
 
   /// Gets the octree child index, 0 to 7, to take in this path at the given depth.

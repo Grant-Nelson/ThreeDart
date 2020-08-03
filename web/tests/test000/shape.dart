@@ -118,6 +118,13 @@ void addShapeTests(TestManager tests) {
     args.info(cube.octree.toString());
   });
 
+  tests.add("Shapes Delayed Octree Validate Cube Test", (TestArgs args) {
+    Shapes.Shape cube = Shapes.cube(useOctree: false);
+    cube.enableOctree(cube.calculateAACube());
+    cube.validate(args);
+    args.info(cube.octree.toString());
+  });
+
   tests.add("Shapes Octree Validate Sphere Test", (TestArgs args) {
     Shapes.Shape sphere = Shapes.sphere(useOctree: true);
     sphere.validate(args);

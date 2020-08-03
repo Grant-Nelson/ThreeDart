@@ -53,6 +53,9 @@ void main() {
     ..add("TexturesCube",    (bool show) { tech.showTxtCube        = show; })
     ..add("Weight",          (bool show) { tech.showWeight         = show; })
     ..add("Bend",            (bool show) { tech.showBend           = show; })
+    ..add("Octree Branches", (bool show) { tech.showOctreeBranch   = show; })
+    ..add("Octree Leaves",   (bool show) { tech.showOctreeLeaf     = show; })
+    ..add("Octree Passes",   (bool show) { tech.showOctreePass     = show; })
     ..add("Axis",            (bool show) { tech.showAxis           = show; }, true)
     ..add("AABB",            (bool show) { tech.showAABB           = show; });
 

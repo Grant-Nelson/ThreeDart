@@ -16,7 +16,7 @@ typedef Math.Point3 func2PntHandle(double a, double b);
 typedef void ver2Handle(Vertex ver, double a, double b);
 
 /// Creates a simple line shape.
-Shape line({bool useOctree: true, Math.Cube octreeMaxCube: null, Data.VertexType type: null}) {
+Shape line({bool useOctree: false, Math.Cube octreeMaxCube: null, Data.VertexType type: null}) {
   Shape shape = new Shape(useOctree: useOctree, octreeMaxCube: octreeMaxCube);
   Vertex ver1 = shape.vertices.addNew(
     type:    type,
@@ -39,7 +39,7 @@ Shape line({bool useOctree: true, Math.Cube octreeMaxCube: null, Data.VertexType
 }
 
 /// Creates a square shape.
-Shape square({bool useOctree: true, Math.Cube octreeMaxCube: null, double width: 2.0,
+Shape square({bool useOctree: false, Math.Cube octreeMaxCube: null, double width: 2.0,
               double height: 2.0, double zOffset: 0.0, Data.VertexType type: null, frameOnly: false}) {
   Shape shape = new Shape(useOctree: useOctree, octreeMaxCube: octreeMaxCube);
   Vertex ver1 = shape.vertices.addNew(
@@ -81,14 +81,14 @@ Shape square({bool useOctree: true, Math.Cube octreeMaxCube: null, double width:
 }
 
 /// Creates a cube shape.
-Shape cube({bool useOctree: true, Math.Cube octreeMaxCube: null, Data.VertexType type: null}) {
+Shape cube({bool useOctree: false, Math.Cube octreeMaxCube: null, Data.VertexType type: null}) {
   return cuboid(useOctree: useOctree, octreeMaxCube: octreeMaxCube, type: type, widthDiv: 1, heightDiv: 1);
 }
 
 /// Creates a cuboid shape designed for cube texturing using six grids.
 /// The [widthDiv] and [heightDiv] define the divisions of the grids used.
 /// The [heightHndl] added addition height to the sides.
-Shape cuboid({bool useOctree: true, Math.Cube octreeMaxCube: null, Data.VertexType type: null,
+Shape cuboid({bool useOctree: false, Math.Cube octreeMaxCube: null, Data.VertexType type: null,
               int widthDiv: 8, int heightDiv: 8, ver2Handle vertexHndl: null}) {
   Shape shape = new Shape(useOctree: useOctree, octreeMaxCube: octreeMaxCube);
   _addCuboidSide(shape, type, vertexHndl, widthDiv, heightDiv,  1.0,  0.0,  0.0, 1);
@@ -101,7 +101,7 @@ Shape cuboid({bool useOctree: true, Math.Cube octreeMaxCube: null, Data.VertexTy
   return shape;
 }
 
-// Determines the bend index for the cuboid corner vector.
+/// Determines the bend index for the cuboid corner vector.
 double _cornerBendIndex(Math.Vector3 vec) {
   int index = 0;
   if (vec.dx > 0.0) index++;
@@ -149,7 +149,7 @@ void _addCuboidSide(Shape shape, Data.VertexType type, ver2Handle vertexHndl,
 /// Creates a disk shape.
 /// [sides] is the number of division on the side, and [height] is the y offset of the disk.
 /// [flip] will flip the disk over, and [radiusHndl] is a handle for custom variant radius.
-Shape disk({bool useOctree: true, Math.Cube octreeMaxCube: null,
+Shape disk({bool useOctree: false, Math.Cube octreeMaxCube: null,
             int sides: 8, double height: 0.0, bool flip: false,
             double bending: -1.0, func1Handle radiusHndl: null, frameOnly: false}) {
   Shape shape = new Shape(useOctree: useOctree, octreeMaxCube: octreeMaxCube);
@@ -200,7 +200,7 @@ bool addDisk(Shape shape, {int sides: 8, double height: 0.0, bool flip: false,
 /// divisions to cut the cylinder. [capTop] and [capBottom] indicated if a
 /// top or bottom respectively should be covered with a disk. The [topRadius]
 /// and [bottomRadius] are the top and bottom radii respectively.
-Shape cylinder({bool useOctree: true, Math.Cube octreeMaxCube: null,
+Shape cylinder({bool useOctree: false, Math.Cube octreeMaxCube: null,
                 double topRadius: 1.0, double bottomRadius: 1.0,
                 int sides: 8, int div: 1, bool capTop: true, bool capBottom: true}) {
   return cylindrical(useOctree: useOctree, octreeMaxCube: octreeMaxCube,
@@ -213,7 +213,7 @@ Shape cylinder({bool useOctree: true, Math.Cube octreeMaxCube: null,
 /// divisions to cut the cylinder. [capTop] and [capBottom] indicated if a
 /// top or bottom respectively should be covered with a disk.
 /// [radiusHndl] is the handle to specify the custom radius of the cylindrical shape.
-Shape cylindrical({bool useOctree: true, Math.Cube octreeMaxCube: null, func2Handle radiusHndl: null,
+Shape cylindrical({bool useOctree: false, Math.Cube octreeMaxCube: null, func2Handle radiusHndl: null,
                    int sides: 8, int div: 1, bool capTop: true, bool capBottom: true}) {
   if (radiusHndl == null)  return null;
   if (sides < 3) return null;
@@ -244,7 +244,7 @@ Shape cylindrical({bool useOctree: true, Math.Cube octreeMaxCube: null, func2Han
 /// Creates a sphere shape constructed as from a latitude and longitude grid.
 /// The [latitudeDiv] is the number of latitude divisions and
 /// the [longitudeDiv] is the number of longitude divisions.
-Shape latLonSphere({bool useOctree: true, Math.Cube octreeMaxCube: null, int latitudeDiv: 12, int longitudeDiv: 24}) {
+Shape latLonSphere({bool useOctree: false, Math.Cube octreeMaxCube: null, int latitudeDiv: 12, int longitudeDiv: 24}) {
   Shape shape = surface(latitudeDiv, longitudeDiv, (Vertex ver, double u, double v) {
     double r = sin(v*Math.PI);
     Math.Vector3 vec = new Math.Vector3(cos(u*Math.TAU)*r,
@@ -259,7 +259,7 @@ Shape latLonSphere({bool useOctree: true, Math.Cube octreeMaxCube: null, int lat
 }
 
 /// Creates a sphere shape fractally with the given number of [iterations].
-Shape isosphere({bool useOctree: true, Math.Cube octreeMaxCube: null, int iterations = 3}) {
+Shape isosphere({bool useOctree: false, Math.Cube octreeMaxCube: null, int iterations = 3}) {
   Shape shape = new Shape(useOctree: useOctree, octreeMaxCube: octreeMaxCube);
   // Create 12 vertices of a icosahedron.
   var t = sqrt(5.0)/2.0 + 0.5;
@@ -351,7 +351,7 @@ void _isoSphereDiv(Shape shape, Vertex ver1, Vertex ver2, Vertex ver3, int itera
 /// Creates a sphere shape designed for smooth cube texturing using six grids.
 /// The [widthDiv] and [heightDiv] define the divisions of the grids used.
 /// The [heightHndl] added addition height to the curved grid.
-Shape sphere({bool useOctree: true, Math.Cube octreeMaxCube: null, double radius: 1.0,
+Shape sphere({bool useOctree: false, Math.Cube octreeMaxCube: null, double radius: 1.0,
               int widthDiv: 8, int heightDiv: 8, func2Handle heightHndl: null}) {
   heightHndl ??= (double a, double b) => 0.0;
   Shape shape = cuboid(useOctree: useOctree, octreeMaxCube: octreeMaxCube, widthDiv: widthDiv, heightDiv: heightDiv,
@@ -367,7 +367,7 @@ Shape sphere({bool useOctree: true, Math.Cube octreeMaxCube: null, double radius
 /// Creates a toroid shape.
 /// The major values are the divisions and radius from the center of the shape.
 /// The minor values are the divisions and radius of the outer ring.
-Shape toroid({bool useOctree: true, Math.Cube octreeMaxCube: null, double minorRadius: 0.5,
+Shape toroid({bool useOctree: false, Math.Cube octreeMaxCube: null, double minorRadius: 0.5,
               double majorRadius: 1.0, int minorCount: 15, int majorCount: 30}) {
   return cylindricalPath(minorCount, majorCount, minorRadius, majorRadius, (double t) {
     return new Math.Point3(cos(t), sin(t), 0.0);
@@ -376,7 +376,7 @@ Shape toroid({bool useOctree: true, Math.Cube octreeMaxCube: null, double minorR
 
 /// Creates a toroidal knot shape. This is similar to a toroid except
 /// the number of full rotations in the major and minor angles may be modified.
-Shape knot({bool useOctree: true, Math.Cube octreeMaxCube: null, int minorCount: 12,
+Shape knot({bool useOctree: false, Math.Cube octreeMaxCube: null, int minorCount: 12,
             int majorCount: 120, double minorRadius: 0.3, double majorRadius: 1.0,
             double minorTurns: 3.0, double majorTurns: 2.0}) {
   return cylindricalPath(minorCount, majorCount, minorRadius, majorRadius, (double t) {
@@ -389,7 +389,7 @@ Shape knot({bool useOctree: true, Math.Cube octreeMaxCube: null, int minorCount:
 
 /// Creates a cylindrical path is a bent cylinder with no cap.
 Shape cylindricalPath(int minorCount, int majorCount, double minorRadius, double majorRadius, func1PntHandle pathHndl,
-                      {bool useOctree: true, Math.Cube octreeMaxCube: null}) {
+                      {bool useOctree: false, Math.Cube octreeMaxCube: null}) {
   Shape shape = surface(minorCount, majorCount, (Vertex ver, double u, double v) {
     double majorAngle = u*Math.TAU;
     Math.Point3 cur = pathHndl(majorAngle)*majorRadius;
@@ -415,7 +415,7 @@ Shape cylindricalPath(int minorCount, int majorCount, double minorRadius, double
 }
 
 /// Creates a flat grid shape with an option custom [heightHndl].
-Shape grid({bool useOctree: true, Math.Cube octreeMaxCube: null,
+Shape grid({bool useOctree: false, Math.Cube octreeMaxCube: null,
             int widthDiv: 4, int heightDiv: 4, func2Handle heightHndl: null}) {
   heightHndl ??= (double u, double v) => 0.0;
   return surface(widthDiv, heightDiv, (Vertex ver, double u, double v) {
@@ -430,7 +430,7 @@ Shape grid({bool useOctree: true, Math.Cube octreeMaxCube: null,
 
 /// Creates a grid surface which can be bent and twisted with the given [vertexHndl].
 Shape surface(int widthDiv, int heightDiv, ver2Handle vertexHndl,
-              {Data.VertexType type = null, bool useOctree: true, Math.Cube octreeMaxCube: null}) {
+              {Data.VertexType type = null, bool useOctree: false, Math.Cube octreeMaxCube: null}) {
   Shape shape = new Shape(useOctree: useOctree, octreeMaxCube: octreeMaxCube);
   if (addSurface(shape, widthDiv, heightDiv, vertexHndl, type))
     return shape;

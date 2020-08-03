@@ -48,6 +48,7 @@ class Octree extends ShapeData {
       Path path = new Path.fromPoint(vertex.location, this.maxCube);
       _InsertLeafResult result = this._insertLeaf(path);
       vertex._leaf = result.leaf;
+      result.leaf._vertices.add(vertex);
     }
 
     // TODO: Setup lines and faces.
@@ -92,6 +93,19 @@ class Octree extends ShapeData {
         Path max = Path.max(path1, path2);
         this._iteratorLock = true;
         yield* this._root._leafIterablePaths(min, max, this._rootPathDepth);
+      } finally {
+        this._iteratorLock = lock;
+      }
+    }
+  }
+  
+  /// Gets an iterable which steps through all of the nodes in the octree.
+  Iterable<NodeDescriptor> get nodeIterable sync* {
+    if (this._root != null) {
+      final bool lock = this._iteratorLock;
+      try {
+        this._iteratorLock = true;
+        yield* this._root._nodeIterable(this._rootPath, this._rootPathDepth);
       } finally {
         this._iteratorLock = lock;
       }

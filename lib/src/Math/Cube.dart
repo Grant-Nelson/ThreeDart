@@ -54,6 +54,10 @@ class Cube {
   /// Constructs a new [Cube] at the given point, [pnt].
   factory Cube.fromPoint(Point3 pnt, [double size = 0.0]) =>
     new Cube(pnt.x, pnt.y, pnt.z, size);
+
+  /// Constructs a new [Cube] at the given center point, [pnt].
+  factory Cube.fromCenter(Point3 pnt, [double size = 0.0]) =>
+    new Cube(pnt.x - size*0.5, pnt.y - size*0.5, pnt.z - size*0.5, size);
     
   /// Constructs a new [Cube] instance given a list of 4 doubles.
   ///
@@ -62,6 +66,14 @@ class Cube {
     assert(values.length == 4);
     return new Cube(values[0], values[1], values[2], values[3]);
   }
+
+  /// Gets a cube which tightly completely contained by the given region.
+  factory Cube.inscribe(Region3 region) =>
+    new Cube.fromCenter(region.center, region.minSide);
+
+  /// Gets a cube which tightly completely contains the given region.
+  factory Cube.circumscribe(Region3 region) =>
+    new Cube.fromCenter(region.center, region.maxSide);
   
   /// The center point of the region.
   Point3 get center {

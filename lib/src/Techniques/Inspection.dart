@@ -30,6 +30,9 @@ class Inspection extends Technique {
   bool _showAxis;
   bool _showAABB;
   bool _showBend;
+  bool _showOctreeBranch;
+  bool _showOctreeLeaf;
+  bool _showOctreePass;
   double _vectorScale;
   Events.Event _changed;
 
@@ -52,6 +55,9 @@ class Inspection extends Technique {
     bool showAxis:           false,
     bool showAABB:           false,
     bool showBend:           false,
+    bool showOctreeBranch:   false,
+    bool showOctreeLeaf:     false,
+    bool showOctreePass:     false,
     double vectorScale:      1.0,
   }) {
     this._shader = null;
@@ -82,6 +88,9 @@ class Inspection extends Technique {
     this._showAxis           = showAxis;
     this._showAABB           = showAABB;
     this._showBend           = showBend;
+    this._showOctreeBranch   = showOctreeBranch;
+    this._showOctreeLeaf     = showOctreeLeaf;
+    this._showOctreePass     = showOctreePass;
     this._vectorScale        = vectorScale;
     this._changed            = null;
   }
@@ -272,6 +281,36 @@ class Inspection extends Technique {
     }
   }
 
+  /// Indicates if the octree branch nodes should be showed.
+  bool get showOctreeBranch => this._showOctreeBranch;
+  void set showOctreeBranch(bool show) {
+    show ??= false;
+    if (this._showOctreeBranch != show) {
+      this._showOctreeBranch = show;
+      this._onBoolChanged("showOctreeBranch", show);
+    }
+  }
+
+  /// Indicates if the octree leaf nodes should be showed.
+  bool get showOctreeLeaf => this._showOctreeLeaf;
+  void set showOctreeLeaf(bool show) {
+    show ??= false;
+    if (this._showOctreeLeaf != show) {
+      this._showOctreeLeaf = show;
+      this._onBoolChanged("showOctreeLeaf", show);
+    }
+  }
+
+  /// Indicates if the octree pass nodes should be showed.
+  bool get showOctreePass => this._showOctreePass;
+  void set showOctreePass(bool show) {
+    show ??= false;
+    if (this._showOctreePass != show) {
+      this._showOctreePass = show;
+      this._onBoolChanged("showOctreePass", show);
+    }
+  }
+
   /// The scalar to apply to vectors lengths.
   /// To make the vectors change length the cache also has to be cleared.
   double get vectorScale => this._vectorScale;
@@ -427,9 +466,9 @@ class Inspection extends Technique {
     state.gl.blendFunc(WebGL.WebGL.ONE, WebGL.WebGL.ONE);
 
     if (this._showAxis)
-      this._renderBuilder(state, store, obj.shapeBuilder, 'Axis', this._axis, this._ambient4, this._diffuse4);
+      this._renderBuilder(state, store, obj.shapeBuilder, 'Axis', this._axisBuilder, this._ambient4, this._diffuse4);
     if (this._showAABB)
-      this._renderBuilder(state, store, obj.shapeBuilder, 'AABB', this._aabb, this._ambient4, this._diffuse4);
+      this._renderBuilder(state, store, obj.shapeBuilder, 'AABB', this._aabbBuilder, this._ambient4, this._diffuse4);
 
     state.gl.enable(WebGL.WebGL.DEPTH_TEST);
     state.gl.blendFunc(WebGL.WebGL.SRC_ALPHA, WebGL.WebGL.ONE_MINUS_SRC_ALPHA);
@@ -476,6 +515,14 @@ class Inspection extends Technique {
       this._render(state, store, obj.shape, 'faceBinormals', this._faceBinormals, this._ambient3, this._diffuse3);
     if (this._showFaceTangentals)
       this._render(state, store, obj.shape, 'faceTangentals', this._faceTangentals, this._ambient3, this._diffuse3);
+
+    if (this._showOctreeBranch)
+      this._render(state, store, obj.shape, 'octreeBranch', this._octreeBranch, this._ambient2, this._diffuse2);
+    if (this._showOctreeLeaf)
+      this._render(state, store, obj.shape, 'octreeLeaf', this._octreeLeaf, this._ambient2, this._diffuse2);
+    if (this._showOctreePass)
+      this._render(state, store, obj.shape, 'octreePass', this._octreePass, this._ambient2, this._diffuse2);
+
     if (this._showAxis)
       this._render(state, store, obj.shape, 'Axis', this._axis, this._ambient4, this._diffuse4);
     if (this._showAABB)
@@ -877,11 +924,11 @@ class Inspection extends Technique {
     return this._aabbBuilder(shape);
   }
 
-  /// Convertes the given [shape] into the axial aligned bounding box
+  /// Convertes the given [builder] into the axial aligned bounding box
   /// shape for a shape builder.
   Shapes.Shape _aabbBuilder(Shapes.ShapeBuilder builder) {
     Math.Region3 aabb = builder.calculateAABB();
-    Shapes.Shape result = new Shapes.Shape();
+    Shapes.Shape result = new Shapes.Shape(); 
     var add = (double dx, double dy, double dz) {
       return result.vertices.addNewLoc(dx, dy, dz)
         ..binormal = Math.Vector3.zero
@@ -907,6 +954,74 @@ class Inspection extends Technique {
     result.lines.add(ver2, ver6);
     result.lines.add(ver3, ver7);
     result.lines.add(ver4, ver8);
+    return result;
+  }
+
+  /// Enables the octree if the octree hasn't been enabled.
+  void _enableOctree(Shapes.Shape shape) {
+    if (shape.octree == null)
+      shape.enableOctree(new Math.Cube.circumscribe(shape.calculateAABB()));
+  }
+
+  /// Adds the given cube to this shape as a wireframe.
+  void _addCube(Shapes.Shape shape, Math.Cube cube) {
+    var add = (double dx, double dy, double dz) {
+      return shape.vertices.addNewLoc(dx, dy, dz)
+        ..binormal = Math.Vector3.zero
+        ..normal = new Math.Vector3(dx, dy, dz);
+    };
+    Shapes.Vertex ver1 = add(cube.x,           cube.y,           cube.z);
+    Shapes.Vertex ver2 = add(cube.x+cube.size, cube.y,           cube.z);
+    Shapes.Vertex ver3 = add(cube.x+cube.size, cube.y+cube.size, cube.z);
+    Shapes.Vertex ver4 = add(cube.x,           cube.y+cube.size, cube.z);
+    Shapes.Vertex ver5 = add(cube.x,           cube.y,           cube.z+cube.size);
+    Shapes.Vertex ver6 = add(cube.x+cube.size, cube.y,           cube.z+cube.size);
+    Shapes.Vertex ver7 = add(cube.x+cube.size, cube.y+cube.size, cube.z+cube.size);
+    Shapes.Vertex ver8 = add(cube.x,           cube.y+cube.size, cube.z+cube.size);
+    shape.lines.add(ver1, ver2);
+    shape.lines.add(ver2, ver3);
+    shape.lines.add(ver3, ver4);
+    shape.lines.add(ver4, ver1);
+    shape.lines.add(ver5, ver6);
+    shape.lines.add(ver6, ver7);
+    shape.lines.add(ver7, ver8);
+    shape.lines.add(ver8, ver5);
+    shape.lines.add(ver1, ver5);
+    shape.lines.add(ver2, ver6);
+    shape.lines.add(ver3, ver7);
+    shape.lines.add(ver4, ver8);
+  }
+
+  /// Creates octree branch node shape the given [shape].
+  Shapes.Shape _octreeBranch(Shapes.Shape shape) {
+    this._enableOctree(shape);
+    Shapes.Shape result = new Shapes.Shape();
+    for (Shapes.NodeDescriptor desc in shape.octree.nodeIterable) {
+      if (desc.node is Shapes.BranchNode)
+        _addCube(result, desc.path.cube(shape.octree.maxCube, desc.depth));
+    }
+    return result;
+  }
+
+  /// Creates octree leaf node shape the given [shape].
+  Shapes.Shape _octreeLeaf(Shapes.Shape shape) {
+    this._enableOctree(shape);
+    Shapes.Shape result = new Shapes.Shape();
+    for (Shapes.NodeDescriptor desc in shape.octree.nodeIterable) {
+      if (desc.node is Shapes.LeafNode)
+        _addCube(result, desc.path.cube(shape.octree.maxCube, desc.depth));
+    }
+    return result;
+  }
+  
+  /// Creates octree pass node shape the given [shape].
+  Shapes.Shape _octreePass(Shapes.Shape shape) {
+    this._enableOctree(shape);
+    Shapes.Shape result = new Shapes.Shape();
+    for (Shapes.NodeDescriptor desc in shape.octree.nodeIterable) {
+      if (desc.node is Shapes.PassNode)
+        _addCube(result, desc.path.cube(shape.octree.maxCube, desc.depth));
+    }
     return result;
   }
 }

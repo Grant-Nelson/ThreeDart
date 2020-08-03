@@ -9,7 +9,7 @@ class Shape implements ShapeBuilder {
   Events.Event _changed;
 
   /// Creates a new shape.
-  Shape({bool useOctree = true, Math.Cube octreeMaxCube = null}) {
+  Shape({bool useOctree = false, Math.Cube octreeMaxCube = null}) {
     this._vertexIndicesNeedUpdate = false;
     this._changed = null;
 
@@ -39,16 +39,22 @@ class Shape implements ShapeBuilder {
   /// The collection of renderable faces for the shape.
   ShapeFaceCollection get faces => new ShapeFaceCollection._(this);
 
-  /// TODO: Comment
+  /// This constructs an Octree for this shape which is required
+  /// for collision detection, intersections, unions, etc.
+  /// Changing vertices in an Octree is slightly slower but many algorithms are faster.
+  /// The given [maxCube] is the size of the extent of the Octree,
+  /// too large and it can't be too course but all points should fit into the Octree.
+  /// You can use [calculateAACube] from a loaded shape to help pick a good Octree size.
   void enableOctree([Math.Cube maxCube = null]) {
-    maxCube ??= new Math.Cube(-5000.0, -5000.0, -5000.0, 10000.0);
+    if ((maxCube == null) || Math.Comparer.lessThanEquals(maxCube.size, 0.0))
+      maxCube = new Math.Cube(-5000.0, -5000.0, -5000.0, 10000.0);
     if (this?._octree?.maxCube == maxCube) return;
     Octree octree = new Octree._(maxCube, this);
     this._octree = octree;
     this._data = octree;
   }
 
-  /// TODO: Comment
+  /// This disables the Octree and returns to list driven shape.
   void disableOctree() {
     if (this._octree != null) {
       this._data = new ShapeLists._(this);
@@ -161,6 +167,10 @@ class Shape implements ShapeBuilder {
       result = result.expandWithPoint(it.current.location);
     return result;
   }
+
+  /// Calculates the acial aligned cube which circumscribes the shape.
+  Math.Cube calculateAACube() =>
+    new Math.Cube.circumscribe(this.calculateAABB());
 
   /// Apply the given [height] map to offset the vertices of the shape.
   /// Use the [scalar] to adjust the amount of offset the height moves the vertices.

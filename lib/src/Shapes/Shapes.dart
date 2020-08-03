@@ -22,6 +22,7 @@ part 'PassNode.dart';
 part 'Path.dart';
 part 'Point.dart';
 part 'Node.dart';
+part 'NodeDescriptor.dart';
 part 'Octree.dart';
 part 'ReducedShape.dart';
 part 'Results.dart';

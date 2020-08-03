@@ -38,6 +38,11 @@ class LeafNode extends Node {
     yield this;
   }
 
+  /// Gets an iterable which steps through all of the nodes in the octree.
+  Iterable<NodeDescriptor> _nodeIterable(Path path, int depth) sync* {
+    yield new NodeDescriptor(this, path, depth);
+  }
+
   /// Adds a leaf to this node. Returns the node that should
   /// be the new root of the subtree that was defined by this node.
   /// The depth is the depth of this node which the leaf is being added into.

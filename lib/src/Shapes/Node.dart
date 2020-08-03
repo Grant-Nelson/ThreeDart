@@ -23,6 +23,9 @@ abstract class Node {
   /// Gets an iterable which steps through all of the leaves between these two paths.
   Iterable<LeafNode> _leafIterablePaths(Path min, Path max, int depth);
 
+   /// Gets an iterable which steps through all of the nodes in the octree.
+  Iterable<NodeDescriptor> _nodeIterable(Path path, int depth);
+
   /// Gets the string for this node and any children to this node.
   String toString();
 
