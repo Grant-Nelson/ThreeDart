@@ -67,7 +67,7 @@ class Path {
     if ((depth <= 0) || (depth > maxDepth))
       throw new Exception("The depth must be between [1 and $maxDepth] when redirecting, it was $depth.");
     final int mask = 1 << (maxDepth - depth);
-    final int notMask = mask - 1;
+    final int notMask = maxValue - (mask | (mask - 1));
     final int x = (this.x & notMask) | ((index & 1 != 0)? mask: 0);
     final int y = (this.y & notMask) | ((index & 2 != 0)? mask: 0);
     final int z = (this.z & notMask) | ((index & 4 != 0)? mask: 0);
@@ -79,8 +79,8 @@ class Path {
   /// If there is no match between these paths 0 is returned.
   int commonDepth(Path other) {
     final int diff = (this.x ^ other.x) | (this.y ^ other.y) | (this.z ^ other.z);
-    for (int d = 1, mask = 1; d <= maxDepth; d++, mask <<= 1) {
-      if (diff & mask != 0) return d-1;
+    for (int d = 1, mask = maxValue >> 1; d <= maxDepth; d++, mask >>= 1) {
+      if (diff & (maxValue - mask) != 0) return d-1;
     }
     return maxDepth;
   }
@@ -92,7 +92,7 @@ class Path {
       throw new Exception("The depth must be between [0 and $maxDepth] for sameUpto, it was $depth.");
     if (depth == 0) return true;
     final int diff = (this.x ^ other.x) | (this.y ^ other.y) | (this.z ^ other.z);
-    final int notMask = (1 << depth) - 1;
+    final int notMask = maxValue - ((1 << (maxDepth - depth)) - 1);
     return diff & notMask == 0;
   }
 
@@ -108,24 +108,26 @@ class Path {
 
   /// This gets the location this path is for in the given maximum cube.
   /// This does not take into account the depth.
-  Math.Cube cube(Math.Cube maxCube, int depth) {
+  Math.Cube cube(Math.Cube maxCube, [int depth = maxDepth]) {
     if ((depth < 0) || (depth > maxDepth))
       throw new Exception("The depth must be between [0 and $maxDepth] for the cube, it was $depth.");
     if (depth == 0) return maxCube;
     final double scalar = maxCube.size / (maxValue + 1);
-    final int mask = maxValue - ((1 << (maxDepth-depth)) - 1);
+    final int notMask = maxValue - ((1 << (maxDepth - depth)) - 1);
+    final double x = ((this.x & notMask).toDouble() * scalar) + maxCube.x;
+    final double y = ((this.y & notMask).toDouble() * scalar) + maxCube.y;
+    final double z = ((this.z & notMask).toDouble() * scalar) + maxCube.z;
+    Math.Cube cube = new Math.Cube(x, y, z, maxCube.size / (maxDepth - depth + 1));
 
     print(".-- "+this.toString()); // TODO: REMOVE
     print("|   "+this.location(maxCube).toString());
-    print("|   ($depth) "+mask.toRadixString(2).padLeft(maxDepth, '0'));
+    print("|   ($depth) "+notMask.toRadixString(2).padLeft(maxDepth, '0'));
     print("|   x = "+this.x.toRadixString(2).padLeft(maxDepth, '0'));
     print("|   y = "+this.y.toRadixString(2).padLeft(maxDepth, '0'));
-    print("'-- z = "+this.z.toRadixString(2).padLeft(maxDepth, '0'));
+    print("|   z = "+this.z.toRadixString(2).padLeft(maxDepth, '0'));
+    print("'-- c = "+cube.toString());
 
-    final double x = ((this.x & mask).toDouble() * scalar) + maxCube.x;
-    final double y = ((this.y & mask).toDouble() * scalar) + maxCube.y;
-    final double z = ((this.z & mask).toDouble() * scalar) + maxCube.z;
-    return new Math.Cube(x, y, z, maxCube.size / (maxDepth - depth + 1));
+    return cube;
   }
 
   /// Gets the octree child index, 0 to 7, to take in this path at the given depth.
@@ -133,7 +135,7 @@ class Path {
     if ((depth < 0) || (depth > maxDepth))
       throw new Exception("The depth must be between [0 and $maxDepth] for the child index, it was $depth.");
     if (depth == 0) return 0;
-    final int mask = 1 << (depth-1);
+    final int mask = 1 << (maxDepth - depth);
     int childIndex = 0;
     if (this.x & mask != 0) childIndex |= 1;
     if (this.y & mask != 0) childIndex |= 2;

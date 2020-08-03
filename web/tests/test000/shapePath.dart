@@ -3,27 +3,26 @@ part of ThreeDart.test.test000;
 void addShapePathTests(TestManager tests) {
 
   tests.add("Shape Octree Path Test", (TestArgs args) {
+    //                                                                   |< MSB                           LSB >|
     checkPathStr(args, new Shapes.Path(0, 0, 0), Shapes.Path.maxDepth, "[0000 0000 0000 0000 0000 0000 0000 0000]");
+    checkPathStr(args, new Shapes.Path(1, 0, 0), Shapes.Path.maxDepth, "[0000 0000 0000 0000 0000 0000 0000 0001]");
+    checkPathStr(args, new Shapes.Path(0, 1, 0), Shapes.Path.maxDepth, "[0000 0000 0000 0000 0000 0000 0000 0002]");
+    checkPathStr(args, new Shapes.Path(1, 1, 0), Shapes.Path.maxDepth, "[0000 0000 0000 0000 0000 0000 0000 0003]");
 
-    checkPathStr(args, new Shapes.Path(0, 0, 0), 4, "[0000]");
-    checkPathStr(args, new Shapes.Path(1, 0, 0), 4, "[1000]");
-    checkPathStr(args, new Shapes.Path(0, 1, 0), 4, "[2000]");
-    checkPathStr(args, new Shapes.Path(1, 1, 0), 4, "[3000]");
+    checkPathStr(args, new Shapes.Path(0, 0, 1), Shapes.Path.maxDepth, "[0000 0000 0000 0000 0000 0000 0000 0004]");
+    checkPathStr(args, new Shapes.Path(1, 0, 1), Shapes.Path.maxDepth, "[0000 0000 0000 0000 0000 0000 0000 0005]");
+    checkPathStr(args, new Shapes.Path(0, 1, 1), Shapes.Path.maxDepth, "[0000 0000 0000 0000 0000 0000 0000 0006]");
+    checkPathStr(args, new Shapes.Path(1, 1, 1), Shapes.Path.maxDepth, "[0000 0000 0000 0000 0000 0000 0000 0007]");
 
-    checkPathStr(args, new Shapes.Path(0, 0, 1), 4, "[4000]");
-    checkPathStr(args, new Shapes.Path(1, 0, 1), 4, "[5000]");
-    checkPathStr(args, new Shapes.Path(0, 1, 1), 4, "[6000]");
-    checkPathStr(args, new Shapes.Path(1, 1, 1), 4, "[7000]");
-
-    checkPathStr(args, new Shapes.Path(2, 2, 2), 4, "[0700]");
-    checkPathStr(args, new Shapes.Path(3, 3, 3), 4, "[7700]");
-    checkPathStr(args, new Shapes.Path(4, 4, 4), 4, "[0070]");
-    checkPathStr(args, new Shapes.Path(5, 5, 5), 4, "[7070]");
+    checkPathStr(args, new Shapes.Path(2, 2, 2), Shapes.Path.maxDepth, "[0000 0000 0000 0000 0000 0000 0000 0070]");
+    checkPathStr(args, new Shapes.Path(3, 3, 3), Shapes.Path.maxDepth, "[0000 0000 0000 0000 0000 0000 0000 0077]");
+    checkPathStr(args, new Shapes.Path(4, 4, 4), Shapes.Path.maxDepth, "[0000 0000 0000 0000 0000 0000 0000 0700]");
+    checkPathStr(args, new Shapes.Path(5, 5, 5), Shapes.Path.maxDepth, "[0000 0000 0000 0000 0000 0000 0000 0707]");
     
-    checkPathStr(args, new Shapes.Path(   10, 0, 0),  7, "[0101 000]");
-    checkPathStr(args, new Shapes.Path(  100, 0, 0), 11, "[0010 0110 000]");
-    checkPathStr(args, new Shapes.Path( 1000, 0, 0), 13, "[0001 0111 1100 0]");
-    checkPathStr(args, new Shapes.Path(10000, 0, 0), 15, "[0000 1000 1110 010]");
+    checkPathStr(args, new Shapes.Path(   10, 0, 0), Shapes.Path.maxDepth, "[0000 0000 0000 0000 0000 0000 0000 1010]");
+    checkPathStr(args, new Shapes.Path(  100, 0, 0), Shapes.Path.maxDepth, "[0000 0000 0000 0000 0000 0000 0110 0100]");
+    checkPathStr(args, new Shapes.Path( 1000, 0, 0), Shapes.Path.maxDepth, "[0000 0000 0000 0000 0000 0011 1110 1000]");
+    checkPathStr(args, new Shapes.Path(10000, 0, 0), Shapes.Path.maxDepth, "[0000 0000 0000 0000 0010 0111 0001 0000]");
   });
   
   tests.add("Shape Octree Path Component Conversions Test", (TestArgs args) {
@@ -56,21 +55,22 @@ void addShapePathTests(TestManager tests) {
     
     Shapes.Path path2 = new Shapes.Path(1234, 4321, 5656);
     Shapes.Path path3 = path2.redirect(1, 5);
-    checkPathStr(args, path2, Shapes.Path.maxDepth, "[2104 5233 0450 6000 0000 0000 0000 0000]");
-    checkPathStr(args, path3, Shapes.Path.maxDepth, "[2104 1000 0000 0000 0000 0000 0000 0000]");
+    checkPathStr(args, path2, Shapes.Path.maxDepth, "[0000 0000 0000 0000 0006 0540 3325 4012]");
+    checkPathStr(args, path3, Shapes.Path.maxDepth, "[0000 1000 0000 0000 0000 0000 0000 0000]");
     checkPathCompare(args, path2, path3, 4);
+    checkPathCompare(args, path2, path2, Shapes.Path.maxDepth);
 
     Shapes.Path path4 = path2.redirect(4, 8);
-    checkPathStr(args, path4, Shapes.Path.maxDepth, "[2104 5234 0000 0000 0000 0000 0000 0000]");
+    checkPathStr(args, path4, Shapes.Path.maxDepth, "[0000 0004 0000 0000 0000 0000 0000 0000]");
     checkPathCompare(args, path2, path4, 7);
 
     Shapes.Path path5 = path2.redirect(5, 29);
-    checkPathStr(args, path5, Shapes.Path.maxDepth, "[2104 5233 0450 6000 0000 0000 0000 5000]");
+    checkPathStr(args, path5, Shapes.Path.maxDepth, "[0000 0000 0000 0000 0006 0540 3325 5000]");
     checkPathCompare(args, path2, path5, 28);
 
-    Shapes.Path path6 = path5.redirect(0, 29);
-    checkPathStr(args, path6, Shapes.Path.maxDepth, "[2104 5233 0450 6000 0000 0000 0000 0000]");
-    checkPathCompare(args, path2, path6, Shapes.Path.maxDepth);
+    Shapes.Path path6 = path5.redirect(2, 32);
+    checkPathStr(args, path6, Shapes.Path.maxDepth, "[0000 0000 0000 0000 0006 0540 3325 5002]");
+    checkPathCompare(args, path5, path6, 31);
   });
 }
 
