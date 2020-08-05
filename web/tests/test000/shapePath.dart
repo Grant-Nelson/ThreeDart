@@ -72,6 +72,26 @@ void addShapePathTests(TestManager tests) {
     checkPathStr(args, path6, Shapes.Path.maxDepth, "[0000 0000 0000 0000 0006 0540 3325 5002]");
     checkPathCompare(args, path5, path6, 31);
   });
+
+  tests.add("Shape Octree Path Cube Test", (TestArgs args) {
+    Math.Cube maxCube = new Math.Cube(-10000.0, -10000.0, -10000.0, 20000.0);
+    Shapes.Path path0 = new Shapes.Path(0, 0, 0);
+    checkShapePathCube(args, maxCube, path0, 0);
+    checkShapePathCube(args, maxCube, path0, 1);
+    checkShapePathCube(args, maxCube, path0, 2);
+    checkShapePathCube(args, maxCube, path0, 4);
+    checkShapePathCube(args, maxCube, path0, 8);
+    checkShapePathCube(args, maxCube, path0, 16);
+    checkShapePathCube(args, maxCube, path0, 30);
+    checkShapePathCube(args, maxCube, path0, 31);
+
+    Shapes.Path path1 = new Shapes.Path(111111111, 222222222, 333333333);
+    checkShapePathCube(args, maxCube, path1, 0);
+    checkShapePathCube(args, maxCube, path1, 1);
+    checkShapePathCube(args, maxCube, path1, 2);
+    checkShapePathCube(args, maxCube, path1, 16);
+    checkShapePathCube(args, maxCube, path1, 20);
+  });
 }
 
 void checkPathStr(TestArgs args, Shapes.Path path, int depth, String exp) {
@@ -139,4 +159,84 @@ void checkPathCompare(TestArgs args, Shapes.Path left, Shapes.Path right, int ex
       "\n   Left Path:  $left" +
       "\n   Right Path: $right\n\n");
   }
+}
+
+Math.Point3 corner(Math.Cube cube, int index) =>
+  new Math.Point3(
+    cube.x + ((index & 1 != 0)? cube.size: 0.0),
+    cube.y + ((index & 2 != 0)? cube.size: 0.0),
+    cube.z + ((index & 4 != 0)? cube.size: 0.0));
+
+void pointsShouldMatch(TestArgs args, int group, double x, double y, double z, List<Math.Cube> cubes, List<int> indices) {
+  bool passed = true;
+  Math.Point3 exp = new Math.Point3(x, y, z);
+  for (int i = 0; i < indices.length; i++) {
+    Math.Cube cube = cubes[indices[i]];
+    int cornerIndex = indices[indices.length-i-1];
+    Math.Point3 point = corner(cube, cornerIndex);
+    if (exp != point) {
+      passed = false;
+      args.error("Points did not match: Group: $group, Index: $i, Corner: $cornerIndex,\n"
+                 "  Cube: $cube, Got: ${point}, Exp: $exp\n");
+    }
+  }
+  if (passed) args.info("Group $group passed: $exp\n");
+}
+
+void checkShapePathCube(TestArgs args, Math.Cube maxCube, Shapes.Path base, int depth) {
+    args.notice("Test Cube: ($depth) $base\n");
+
+    Shapes.Path path0 = base.redirect(0, depth + 1);
+    Shapes.Path path1 = base.redirect(1, depth + 1);
+    Shapes.Path path2 = base.redirect(2, depth + 1);
+    Shapes.Path path3 = base.redirect(3, depth + 1);
+    Shapes.Path path4 = base.redirect(4, depth + 1);
+    Shapes.Path path5 = base.redirect(5, depth + 1);
+    Shapes.Path path6 = base.redirect(6, depth + 1);
+    Shapes.Path path7 = base.redirect(7, depth + 1);
+
+    Math.Cube cubeB = base.cube(maxCube, depth);
+    Math.Cube cube0 = path0.cube(maxCube, depth + 1);
+    Math.Cube cube1 = path1.cube(maxCube, depth + 1);
+    Math.Cube cube2 = path2.cube(maxCube, depth + 1);
+    Math.Cube cube3 = path3.cube(maxCube, depth + 1);
+    Math.Cube cube4 = path4.cube(maxCube, depth + 1);
+    Math.Cube cube5 = path5.cube(maxCube, depth + 1);
+    Math.Cube cube6 = path6.cube(maxCube, depth + 1);
+    Math.Cube cube7 = path7.cube(maxCube, depth + 1);
+    List<Math.Cube> cubes = [cube0, cube1, cube2, cube3, cube4, cube5, cube6, cube7];
+
+    double posX = cubeB.x+cubeB.size, midX = cubeB.x+cubeB.size*0.5, negX = cubeB.x;
+    double posY = cubeB.y+cubeB.size, midY = cubeB.y+cubeB.size*0.5, negY = cubeB.y;
+    double posZ = cubeB.z+cubeB.size, midZ = cubeB.z+cubeB.size*0.5, negZ = cubeB.z;
+
+    pointsShouldMatch(args,  0, negX, negY, negZ, cubes, [0]);
+    pointsShouldMatch(args,  1, midX, negY, negZ, cubes, [0, 1]);
+    pointsShouldMatch(args,  2, posX, negY, negZ, cubes, [1]);
+    pointsShouldMatch(args,  3, negX, midY, negZ, cubes, [0, 2]);
+    pointsShouldMatch(args,  4, midX, midY, negZ, cubes, [0, 1, 2, 3]);
+    pointsShouldMatch(args,  5, posX, midY, negZ, cubes, [1, 3]);
+    pointsShouldMatch(args,  6, negX, posY, negZ, cubes, [2]);
+    pointsShouldMatch(args,  7, midX, posY, negZ, cubes, [2, 3]);
+    pointsShouldMatch(args,  8, posX, posY, negZ, cubes, [3]);
+
+    pointsShouldMatch(args,  9, negX, negY, midZ, cubes, [0, 4]);
+    pointsShouldMatch(args, 10, midX, negY, midZ, cubes, [0, 1, 4, 5]);
+    pointsShouldMatch(args, 11, posX, negY, midZ, cubes, [1, 5]);
+    pointsShouldMatch(args, 12, negX, midY, midZ, cubes, [0, 2, 4, 6]);
+    pointsShouldMatch(args, 13, midX, midY, midZ, cubes, [0, 1, 2, 3, 4, 5, 6, 7]);
+    pointsShouldMatch(args, 14, posX, midY, midZ, cubes, [1, 3, 5, 7]);
+    pointsShouldMatch(args, 15, negX, posY, midZ, cubes, [2, 6]);
+    pointsShouldMatch(args, 16, midX, posY, midZ, cubes, [2, 3, 6, 7]);
+    pointsShouldMatch(args, 17, posX, posY, midZ, cubes, [3, 7]);
+
+    pointsShouldMatch(args, 18, negX, negY, posZ, cubes, [4]);
+    pointsShouldMatch(args, 19, midX, negY, posZ, cubes, [4, 5]);
+    pointsShouldMatch(args, 20, posX, negY, posZ, cubes, [5]);
+    pointsShouldMatch(args, 21, negX, midY, posZ, cubes, [4, 6]);
+    pointsShouldMatch(args, 22, midX, midY, posZ, cubes, [4, 5, 6, 7]);
+    pointsShouldMatch(args, 23, posX, midY, posZ, cubes, [5, 7]);
+    pointsShouldMatch(args, 24, negX, posY, posZ, cubes, [6]);
+    pointsShouldMatch(args, 25, midX, posY, posZ, cubes, [6, 7]);
+    pointsShouldMatch(args, 26, posX, posY, posZ, cubes, [7]);
 }

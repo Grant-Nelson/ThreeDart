@@ -113,21 +113,12 @@ class Path {
       throw new Exception("The depth must be between [0 and $maxDepth] for the cube, it was $depth.");
     if (depth == 0) return maxCube;
     final double scalar = maxCube.size / (maxValue + 1);
+    final double div = (depth == maxDepth)? 4294967296.0: (1 << depth).toDouble();
     final int notMask = maxValue - ((1 << (maxDepth - depth)) - 1);
     final double x = ((this.x & notMask).toDouble() * scalar) + maxCube.x;
     final double y = ((this.y & notMask).toDouble() * scalar) + maxCube.y;
     final double z = ((this.z & notMask).toDouble() * scalar) + maxCube.z;
-    Math.Cube cube = new Math.Cube(x, y, z, maxCube.size / (maxDepth - depth + 1));
-
-    print(".-- "+this.toString()); // TODO: REMOVE
-    print("|   "+this.location(maxCube).toString());
-    print("|   ($depth) "+notMask.toRadixString(2).padLeft(maxDepth, '0'));
-    print("|   x = "+this.x.toRadixString(2).padLeft(maxDepth, '0'));
-    print("|   y = "+this.y.toRadixString(2).padLeft(maxDepth, '0'));
-    print("|   z = "+this.z.toRadixString(2).padLeft(maxDepth, '0'));
-    print("'-- c = "+cube.toString());
-
-    return cube;
+    return new Math.Cube(x, y, z, maxCube.size / div);
   }
 
   /// Gets the octree child index, 0 to 7, to take in this path at the given depth.
