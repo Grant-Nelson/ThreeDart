@@ -34,6 +34,7 @@ class PassNode extends Node {
     yield new NodeDescriptor(this, path, depth);
   }
 
+  /// Copies over all the passing lines and faces from the give pass.
   void _copyOver(PassNode pass) {
    // TODO: Implement 
   }

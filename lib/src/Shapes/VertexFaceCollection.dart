@@ -184,7 +184,7 @@ class VertexFaceCollection {
       Face face = this._vertex._faces2[i];
       if ((face == null) || face.collapsed) face.dispose();
     }
-    // No need to do [_faces3] because two be collapsed
+    // No need to do [_faces3] because to be collapsed
     // it must have more than one point in the same vertex.
   }
 

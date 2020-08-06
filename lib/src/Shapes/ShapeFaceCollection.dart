@@ -109,8 +109,7 @@ class ShapeFaceCollection {
   int get length => this._shape._data._faceCount;
 
   /// Gets an iterable which steps through all of the faces in the collection.
-  Iterable<Face> get iterable =>
-    this._shape._data._faceIteratable;
+  Iterable<Face> get iterable => this._shape._data._faceIteratable;
 
   /// Removes the given [face].
   /// Returns true if face was removed, false otherwise.

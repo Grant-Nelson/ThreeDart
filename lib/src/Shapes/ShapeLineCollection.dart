@@ -55,8 +55,7 @@ class ShapeLineCollection {
   int get length => this._shape._data._lineCount;
 
   /// Gets an iterable which steps through all of the lines in the collection.
-  Iterable<Line> get iterable =>
-    this._shape._data._lineIteratable;
+  Iterable<Line> get iterable => this._shape._data._lineIteratable;
 
   /// Removes the given [line].
   /// Returns true if line was removed, false otherwise.

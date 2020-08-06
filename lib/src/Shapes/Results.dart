@@ -13,11 +13,18 @@ class _InsertLeafResult {
   _InsertLeafResult(LeafNode this.leaf, bool this.existed);
 }
 
-// TODO: Comment
+/// Results from finding a node in the octree.
 class _FindNodeResult {
+
+  /// The node which was found or null if none found.
   final Node node;
+  
+  /// The path to the node which was found.
   final Path path;
+
+  /// The depth of the node which was found.
   final int depth;
 
+  /// Creates a new node result.
   _FindNodeResult(Node this.node, Path this.path, int this.depth);
 }

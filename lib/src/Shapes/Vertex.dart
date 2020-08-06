@@ -2,7 +2,7 @@ part of ThreeDart.Shapes;
 
 /// A vertex of a shape with all of the renderable elements it is used.
 class Vertex {
-  LeafNode _leaf; // TODO: Determine if this is actually needed.
+  LeafNode _leaf;
   Shape _shape;
 
   List<Point> _points;
@@ -308,10 +308,12 @@ class Vertex {
   }
 
   /// Validates the vertex to make sure the vertex has been setup correctly.
-  void _validate(Debug.Logger log, LeafNode parent) {
-    if (!identical(parent, this._leaf))
-      log.error("Vertex on parent leaf node at ${parent.path} does not match expected parent.\n");
+  void _validate(Debug.Logger log, Shape shape, LeafNode leaf) {
+    if (!identical(shape, this._shape))
+      log.error("Vertex has a different shape than expected: $this\n");
 
+    if (!identical(leaf, this._leaf))
+      log.error("Vertex has a different leaf node than expected: $this\n");
     if (this._leaf?._octree != null) {
       Path path = Path.fromPoint(this._loc, this._leaf._octree.maxCube);
       if (this._leaf.path != path)
@@ -320,67 +322,67 @@ class Vertex {
 
     for (int i = 0; i < this._points.length; i++) {
       Point pnt = this._points[i];
-      if (pnt == null) log.error("Point $i in vertex at ${this._leaf.path} in null.\n");
+      if (pnt == null) log.error("Point $i in vertex is null in $this.\n");
       else if (!identical(this, pnt.vertex))
-        log.error("Point $i on vertex at ${this._leaf.path} does not match expected vertex.\n");
+        log.error("Point $i on vertex does not match expected vertex: $this.\n");
       for (int j = 0; j < i; j++) {
         if (identical(this._points[j], pnt))
-          log.error("The points $i and $j in vertex at ${this._leaf.path} are the same.\n");
+          log.error("The points $i and $j in vertex are the same: $this.\n");
       }
     }
 
     for (int i = 0; i < this._lines1.length; i++) {
       Line line = this._lines1[i];
-      if (line == null) log.error("Line $i in line set 1 of vertex at ${this._leaf.path} in null.\n");
+      if (line == null) log.error("Line $i in line set 1 of vertex in null: $this.\n");
       else if (!identical(this, line.vertex1))
-        log.error("Line $i in line set 1 of vertex at ${this._leaf.path} does not have expected vertex 1.\n");
+        log.error("Line $i in line set 1 of vertex does not have expected vertex 1: $this.\n");
       for (int j = 0; j < i; j++) {
         if (identical(this._lines1[j], line))
-          log.error("The lines $i and $j in line set 1 of vertex at ${this._leaf.path} are the same.\n");
+          log.error("The lines $i and $j in line set 1 of vertex are the same: $this.\n");
       }
     }
     
     for (int i = 0; i < this._lines2.length; i++) {
       Line line = this._lines2[i];
-      if (line == null) log.error("Line $i in line set 2 of vertex at ${this._leaf.path} in null.\n");
+      if (line == null) log.error("Line $i in line set 2 of vertex in null: $this.\n");
       else if (!identical(this, line.vertex2))
-        log.error("Line $i in line set 2 of vertex at ${this._leaf.path} does not have expected vertex 2.\n");
+        log.error("Line $i in line set 2 of vertex does not have expected vertex 2: $this.\n");
       for (int j = 0; j < i; j++) {
         if (identical(this._lines2[j], line))
-          log.error("The lines $i and $j in line set 2 of vertex at ${this._leaf.path} are the same.\n");
+          log.error("The lines $i and $j in line set 2 of vertex are the same: $this.\n");
       }
     }
     
     for (int i = 0; i < this._faces1.length; i++) {
       Face face = this._faces1[i];
-      if (face == null) log.error("Face $i in face set 1 of vertex at ${this._leaf.path} in null.\n");
+      if (face == null) log.error("Face $i in face set 1 of vertex in null: $this.\n");
       else if (!identical(this, face.vertex1))
-        log.error("Face $i in face set 1 of vertex at ${this._leaf.path} does not have expected vertex 1.\n");
+        log.error("Face $i in face set 1 of vertex does not have expected vertex 1: $this.\n");
       for (int j = 0; j < i; j++) {
         if (identical(this._faces1[j], face))
-          log.error("The faces $i and $j in face set 1 of vertex at ${this._leaf.path} are the same.\n");
+          log.error("The faces $i and $j in face set 1 of vertex are the same: $this.\n");
       }
     }
     
     for (int i = 0; i < this._faces2.length; i++) {
       Face face = this._faces2[i];
-      if (face == null) log.error("Face $i in face set 2 of vertex at ${this._leaf.path} in null.\n");
+      if (face == null) log.error("Face $i in face set 2 of vertex in null: $this.\n");
       else if (!identical(this, face.vertex2))
-        log.error("Face $i in face set 2 of vertex at ${this._leaf.path} does not have expected vertex 2.\n");
+        log.error("Face $i in face set 2 of vertex does not have expected vertex 2: $this.\n");
       for (int j = 0; j < i; j++) {
         if (identical(this._faces2[j], face))
-          log.error("The faces $i and $j in face set 2 of vertex at ${this._leaf.path} are the same.\n");
+          log.error("The faces $i and $j in face set 2 of vertex are the same: $this.\n");
       }
     }
     
     for (int i = 0; i < this._faces3.length; i++) {
       Face face = this._faces3[i];
-      if (face == null) log.error("Face $i in face set 3 of vertex at ${this._leaf.path} in null.\n");
+      if (face == null) log.error("Face $i in face set 3 of vertex in null: $this.\n");
       else if (!identical(this, face.vertex3))
-        log.error("Face $i in face set 3 of vertex at ${this._leaf.path} does not have expected vertex 3.\n");
+        log.error("Face $i in face set 3 of vertex does not have expected vertex 3: $this.\n");
       for (int j = 0; j < i; j++) {
         if (identical(this._faces3[j], face))
-          log.error("The faces $i and $j in face set 3 of vertex at ${this._leaf.path} are the same.\n");
+          log.error("The faces $i and $j in face set 3 of vertex are the same: $this.\n");
       }
     }
   }

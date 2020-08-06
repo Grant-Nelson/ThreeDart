@@ -43,9 +43,9 @@ class BranchNode extends Node {
     return true;
   }
 
-  /// This handles each node in order.
-  /// This will call the handle with any null children.
-  void forEach(bool hndl(Node)) => this._children.forEach(hndl);
+  /// This iterates through each node in order.
+  /// This will still return a child even if it is null.
+  Iterable<Node> get children => this._children;
   
   /// Gets an iterable which steps through all of the leaves in this node.
   Iterable<LeafNode> get _leafIterable sync* {

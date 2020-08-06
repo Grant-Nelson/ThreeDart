@@ -35,6 +35,7 @@ class Octree extends ShapeData {
     this._populate();
   }
 
+  /// Populates this octree with any existing data in the shape.
   void _populate() {
     ShapeData data = this._shape._data;
     if (data == null) return;
@@ -130,7 +131,7 @@ class Octree extends ShapeData {
     this._shape.onVertexAdded(vertex);
   }
 
-  /// Removes a vertex from this octree.
+  /// Removes a vertex from the shape's data.
   /// This assumes it has already been checked to be part of this octree.
   /// Will not update the passing nodes for the lines and faces, but will
   /// not remove the lines and faces. Make sure they are updated and/or removed.
@@ -151,34 +152,41 @@ class Octree extends ShapeData {
     this._shape.onVertexRemoved(vertex);
   }
 
+  /// Adds a point to the shape's data.
   void _addPoint(Point pnt) {
     this._pointCount++;
   }
 
+  /// Removes a point from the shape's data.
   void _removePoint(Point pnt) {
     this._pointCount--;
   }
 
+  /// Adds a line to the shape's data.
   void _addLine(Line line) {
     this._lineCount++;
     // TODO: Add to passing
   }
 
+  /// Removes a line from the shape's data.
   void _removeLine(Line line) {
     this._lineCount--;
     // TODO: Remove from passing
   }
 
+  /// Adds a face to the shape's data.
   void _addFace(Face face) {
     this._faceCount++;
     // TODO: Add to passing
   }
 
+  /// Removes a face from the shape's data.
   void _removeFace(Face face) {
     this._faceCount--;
     // TODO: Remove from passing
   }
   
+  /// Iterates through all the vertices in the shape.
   Iterable<Vertex> get _vertexIteratable sync* {
     for (LeafNode leaf in this._shape.octree.leafIterable) {
       yield* leaf.vertices.iterable;
@@ -194,18 +202,21 @@ class Octree extends ShapeData {
     }
   }
 
+  /// Iterates through all the points in the shape.
   Iterable<Point> get _pointIteratable sync* {
     for (Vertex vertex in this._shape.vertices.iterable) {
       yield* vertex.points.iterable;
     }
   }
 
+  /// Iterates through all the lines in the shape.
   Iterable<Line> get _lineIteratable sync* {
     for (Vertex vertex in this._shape.vertices.iterable) {
       yield* vertex.lines.iterable1;
     }
   }
 
+  /// Iterates through all the faces in the shape.
   Iterable<Face> get _faceIteratable sync* {
     for (Vertex vertex in this._shape.vertices.iterable) {
       yield* vertex.faces.iterable1;
@@ -462,6 +473,7 @@ class Octree extends ShapeData {
     }
   }
   
+  /// Validates the data.
   void _validate(Debug.Logger log, Shape shape) {
     if (!identical(shape, this._shape))
       log.error("Shape of the octree does not match expected shape.\n");

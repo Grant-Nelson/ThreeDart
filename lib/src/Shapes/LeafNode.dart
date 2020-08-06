@@ -71,6 +71,7 @@ class LeafNode extends Node {
     return branch._insertLeaf(leaf, depth);
   }
 
+  /// Copies over all the passing lines and faces from the give pass.
   void _copyOver(PassNode pass) {
     // TODO: Implement 
     // Add all passing lines to point node unless the line starts or ends
@@ -127,7 +128,7 @@ class LeafNode extends Node {
     for (int i = 0; i < this._vertices.length; i++) {
       Vertex vertex = this._vertices[i];
       if (vertex == null) log.error("Vertex $i in leaf node at ${path.toString(depth)} in null.\n");
-      else vertex._validate(log, this);
+      else vertex._validate(log, this._octree._shape, this);
       for (int j = 0; j < i; j++) {
         if (identical(this._vertices[j], vertex))
           log.error("The vertices $i and $j in leaf node at ${path.toString(depth)} are the same.\n");
