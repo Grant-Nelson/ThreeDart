@@ -177,27 +177,4 @@ class BranchNode extends Node {
     }
     return root;
   }
-
-  /// Validates the node to make sure the nodes' have been setup correctly.
-  void _validate(Debug.Logger log, Octree octree, Node parent, Path path, int depth) {
-    if ((depth < 0) || (depth > Path.maxDepth)) {
-      log.error("Node's depth was not in [0 to ${Path.maxDepth}], it was $depth.\n");
-      return;
-    }
-
-    if (!identical(parent, this._parent))
-      log.error("Parent of node at ${path.toString(depth)} does not match expected parent.\n");
-
-    bool hasChild = false;
-    for (int i = 0; i < this._children.length; i++) {
-      Node child = this._children[i];
-      if (child != null) {
-        hasChild = true;
-        Path subPath = path.redirect(i, depth+1);
-        child._validate(log, octree, this, subPath, depth+1);
-      }
-    }
-    if (!hasChild)
-      log.error("Branch had no non-nil children.\n");
-  }
 }

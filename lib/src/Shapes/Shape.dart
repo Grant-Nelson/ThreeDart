@@ -372,28 +372,7 @@ class Shape implements ShapeBuilder {
   }
 
   /// Validates the shape to make sure the octree and pointers have been setup correctly.
-  bool validate([Debug.Logger log = null]) {
-    log ??= new Debug.DefaultLogger();
-
-    int vertexCount = this.vertices.iterable.length;
-    if (vertexCount != this._data._vertexCount)
-      log.error("Vertex count was found as $vertexCount but was stored as ${this._data._vertexCount}.\n");
-
-    int pointCount = this.points.iterable.length;
-    if (pointCount != this._data._pointCount)
-      log.error("Point count was found as $pointCount but was stored as ${this._data._pointCount}.\n");
-
-    int lineCount = this.lines.iterable.length;
-    if (lineCount != this._data._lineCount)
-      log.error("Line count was found as $lineCount but was stored as ${this._data._lineCount}.\n");
-
-    int faceCount = this.faces.iterable.length;
-    if (faceCount != this._data._faceCount)
-      log.error("Face count was found as $faceCount but was stored as ${this._data._faceCount}.\n");
-
-    this._data._validate(log, this);
-    return !log.failed;
-  }
+  bool validate([Debug.Logger log = null]) => new Validator._(log, this).validate();
 
   /// Builds a buffer store for caching the shape for rendering.
   /// This requires the buffer [builder] for WebGL or testing,

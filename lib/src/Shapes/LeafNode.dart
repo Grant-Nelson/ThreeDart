@@ -103,40 +103,4 @@ class LeafNode extends Node {
     }
     return root;
   }
-
-  /// Validates the node to make sure the nodes' have been setup correctly.
-  void _validate(Debug.Logger log, Octree octree, Node parent, Path expPath, int depth) {
-    if (this.path == null) {
-      log.error("Node's path was null.\n");
-      return;
-    }
-    if ((depth < 0) || (depth > Path.maxDepth)) {
-      log.error("Node's depth was not in [0 to ${Path.maxDepth}], it was $depth.\n");
-      return;
-    }
-
-    if (!expPath.sameUpto(this.path, depth))
-      log.error("Node path, ${this.path.toString(depth)}, doesn't match expected path, ${expPath.toString(depth)}, upto depth $depth.\n");
-    if (!identical(parent, this._parent))
-      log.error("Parent of node at ${this.path.toString(depth)} does not match expected parent.\n");
-
-    if (!identical(octree, this._octree))
-      log.error("Octree of leaf node at ${path.toString(depth)} does not match expected octree.\n");
-    if (this._vertices.isEmpty)
-      log.error("Leaf node at ${path.toString(depth)} has no vertices.\n");
-
-    for (int i = 0; i < this._vertices.length; i++) {
-      Vertex vertex = this._vertices[i];
-      if (vertex == null) log.error("Vertex $i in leaf node at ${path.toString(depth)} in null.\n");
-      else vertex._validate(log, this._octree._shape, this);
-      for (int j = 0; j < i; j++) {
-        if (identical(this._vertices[j], vertex))
-          log.error("The vertices $i and $j in leaf node at ${path.toString(depth)} are the same.\n");
-      }
-    }
-    
-    // TODO: Implement
-    // Check that all the passing lines and faces pass through this node.
-    // Check that all the passing lines and faces are part of this shape.
-  }
 }

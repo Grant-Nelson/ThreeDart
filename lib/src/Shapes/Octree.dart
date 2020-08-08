@@ -472,17 +472,6 @@ class Octree extends ShapeData {
       this._setRoot(onlyChild, path, depth+1);
     }
   }
-  
-  /// Validates the data.
-  void _validate(Debug.Logger log, Shape shape) {
-    if (!identical(shape, this._shape))
-      log.error("Shape of the octree does not match expected shape.\n");
-    if (!identical(shape._data, this))
-      log.error("Shape data of the shape is not this octree.\n");
-    if (!identical(shape._octree, this))
-      log.error("Octree of the shape is not this octree.\n");
-    this._root?._validate(log, this, null, this._rootPath, this._rootPathDepth);
-  }
 
   /// Gets the string for the whole octree.
   @override

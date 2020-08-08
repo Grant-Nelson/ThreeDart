@@ -69,7 +69,4 @@ abstract class ShapeData {
   
   /// Gets an iterable which steps through all of the vertices in the given region.
   Iterable<Vertex> _vertexIterableInRegion(Math.Region3 region);
-
-  /// Validates the data.
-  void _validate(Debug.Logger log, Shape shape);
 }

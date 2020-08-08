@@ -121,15 +121,34 @@ void addShapeTests(TestManager tests) {
 
   tests.add("Shapes Delayed Octree Validate Cube Test", (TestArgs args) {
     Shapes.Shape cube = Shapes.cube(useOctree: false);
+    cube.validate(args);
     cube.enableOctree(cube.calculateAACube());
     cube.validate(args);
     args.info(cube.octree.toString());
   });
 
   tests.add("Shapes Octree Validate Sphere Test", (TestArgs args) {
-    Shapes.Shape sphere = Shapes.sphere(useOctree: true);
+    Shapes.Shape sphere = Shapes.sphere(useOctree: false);
+    sphere.validate(args);
+    sphere.enableOctree();
     sphere.validate(args);
     args.info(sphere.octree.toString());
+  });
+
+  tests.add("Shapes Octree Validate Toroid Test", (TestArgs args) {
+    Shapes.Shape toroid = Shapes.toroid(useOctree: false);
+    toroid.validate(args);
+    toroid.enableOctree();
+    toroid.validate(args);
+    args.info(toroid.octree.toString());
+  });
+
+  tests.add("Shapes Octree Validate Knot Test", (TestArgs args) {
+    Shapes.Shape knot = Shapes.knot(useOctree: false);
+    knot.validate(args);
+    knot.enableOctree();
+    knot.validate(args);
+    args.info(knot.octree.toString());
   });
 }
 

@@ -34,6 +34,7 @@ part 'ShapeLineCollection.dart';
 part 'ShapeLists.dart';
 part 'ShapePointCollection.dart';
 part 'ShapeVertexCollection.dart';
+part 'Validator.dart';
 part 'Vertex.dart';
 part 'VertexFaceCollection.dart';
 part 'VertexLineCollection.dart';

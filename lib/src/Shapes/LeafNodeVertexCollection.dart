@@ -61,8 +61,15 @@ class LeafNodeVertexCollection {
     return true;
   }
 
-  // TODO: Add Merge to Average
-  // TODO: Add Snap to Leaf/grid
+  /// Snaps the vertices to the path location of the octree leaf.
+  void snapToOctreePath() {
+    Math.Point3 loc = this._leaf.point;
+    List<Vertex> vertices = this._leaf._vertices.toList(growable: false);
+    for (Vertex vec in vertices) {
+      vec._loc = loc; 
+      this._leaf._octree?._shape?.onVertexModified(vec);
+    }
+  }
 
   /// Gets to string for all the vertices.
   String toString() => this.format();

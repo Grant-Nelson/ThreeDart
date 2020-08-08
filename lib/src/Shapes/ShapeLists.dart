@@ -124,26 +124,4 @@ class ShapeLists extends ShapeData {
       if ((vertex.shape == this._shape) && (region.contains(vertex.location))) yield vertex;
     }
   }
-
-  /// Validates the data.
-  void _validate(Debug.Logger log, Shape shape) {
-    if (!identical(shape, this._shape))
-      log.error("Shape of the list data does not match expected shape.\n");
-    if (!identical(shape._data, this))
-      log.error("Shape data of the shape is not this list data.\n");
-    if (!identical(shape._octree, null))
-      log.error("Octree of the shape is not null for a list data.\n");
-
-    for (int i = 0; i < this._vertices.length; i++) {
-      Vertex vertex = this._vertices[i];
-      if (vertex == null) log.error("Vertex $i in leaf node in null.\n");
-      else vertex._validate(log, this._shape, null);
-      for (int j = 0; j < i; j++) {
-        if (identical(this._vertices[j], vertex))
-          log.error("The vertices $i and $j in leaf node are the same.\n");
-      }
-    }
-
-    // TODO: Need to check the lines and faces.
-  }
 }

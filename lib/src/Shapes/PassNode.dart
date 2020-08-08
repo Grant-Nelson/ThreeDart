@@ -56,20 +56,4 @@ class PassNode extends Node {
     }
     return root;
   }
-
-  /// Validates the node to make sure the nodes' have been setup correctly.
-  void _validate(Debug.Logger log, Octree octree, Node parent, Path path, int depth) {
-    if ((depth < 0) || (depth > Path.maxDepth)) {
-      log.error("Node's depth was not in [0 to ${Path.maxDepth}], it was $depth.\n");
-      return;
-    }
-
-    if (!identical(parent, this._parent))
-      log.error("Parent of node at ${path.toString(depth)} does not match expected parent.\n");
-
-    // TODO: Implement
-    // Check that there is at least one line or face.
-    // Check that all the lines and faces pass through this node.
-    // Check that all the lines and faces are part of this shape.
-  }
 }
