@@ -263,7 +263,7 @@ class Player {
   Math.Point3 _handleCollide(Math.Point3 prev, Math.Point3 loc) {
     // Traverse the neighboring blocks using player's movement to find first
     // hard block checking both head and foot.
-    Math.Vector3 vector = new Math.Vector3.fromPoint3(loc-prev);
+    Math.Vector3 vector = prev.vectorTo(loc);
     if (vector.length2() < Constants.maxCollisionSpeedSquared) {
       this._collider.collide(Constants.playerRegion, prev, vector);
       this._touchingGround = this._collider.touching.has(Math.HitRegion.YPos);

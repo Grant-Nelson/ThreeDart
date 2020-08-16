@@ -72,6 +72,10 @@ class Region3 {
   factory Region3.fromCorners(Point3 a, Point3 b) =>
     new Region3(a.x, a.y, a.z, b.x-a.x, b.y-a.y, b.z-a.z);
 
+  /// Constructs a new [Region3] from the given [Cube].
+  factory Region3.fromCube(Cube cube) =>
+    new Region3(cube.x, cube.y, cube.z, cube.size, cube.size, cube.size);
+
   /// Constructs a new [Region3] at the given ray.
   factory Region3.fromRay(Ray3 ray) =>
     new Region3(ray.x, ray.y, ray.z, ray.dx, ray.dy, ray.dz);
@@ -464,13 +468,13 @@ class Region3 {
   bool operator ==(var other) {
     if (identical(this, other)) return true;
     if (other is! Region3) return false;
-    Region3 size = other as Region3;
-    if (!Comparer.equals(size.x,  this.x))  return false;
-    if (!Comparer.equals(size.y,  this.y))  return false;
-    if (!Comparer.equals(size.z,  this.z))  return false;
-    if (!Comparer.equals(size.dx, this.dx)) return false;
-    if (!Comparer.equals(size.dy, this.dy)) return false;
-    if (!Comparer.equals(size.dz, this.dz)) return false;
+    Region3 region = other as Region3;
+    if (!Comparer.equals(region.x,  this.x))  return false;
+    if (!Comparer.equals(region.y,  this.y))  return false;
+    if (!Comparer.equals(region.z,  this.z))  return false;
+    if (!Comparer.equals(region.dx, this.dx)) return false;
+    if (!Comparer.equals(region.dy, this.dy)) return false;
+    if (!Comparer.equals(region.dz, this.dz)) return false;
     return true;
   }
 

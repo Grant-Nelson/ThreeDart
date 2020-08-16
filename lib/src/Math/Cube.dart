@@ -77,7 +77,7 @@ class Cube {
   
   /// The center point of the region.
   Point3 get center {
-    final half = this.size/2.0;
+    final double half = this.size/2.0;
     return new Point3(this.x + half, this.y + half, this.z + half);
   }
 

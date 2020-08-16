@@ -394,7 +394,7 @@ Shape cylindricalPath(int minorCount, int majorCount, double minorRadius, double
     double majorAngle = u*Math.TAU;
     Math.Point3 cur = pathHndl(majorAngle)*majorRadius;
     Math.Point3 next = pathHndl(majorAngle + Math.PI/majorCount)*majorRadius;
-    Math.Vector3 heading = new Math.Vector3.fromPoint3(next - cur).normal();
+    Math.Vector3 heading = cur.vectorTo(next).normal();
 
     Math.Vector3 other = Math.Vector3.posX;
     if (heading != other) {

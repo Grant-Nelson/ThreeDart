@@ -15,6 +15,10 @@ class Path {
   /// The maximum allowed value for any component, 2^32 - 1.
   static const int maxValue = 0xFFFFFFFF;
 
+  /// The overflowed value for getting 2^32 as a double.
+  /// Used for creating the smallest cube widths.
+  static const double _overflow = 4294967296.0;
+
   /// Clamps the given component into the valid range.
   static int clamp(int v) {
     if (v < 0) return 0;
@@ -113,7 +117,7 @@ class Path {
       throw new Exception("The depth must be between [0 and $maxDepth] for the cube, it was $depth.");
     if (depth == 0) return maxCube;
     final double scalar = maxCube.size / (maxValue + 1);
-    final double div = (depth == maxDepth)? 4294967296.0: (1 << depth).toDouble();
+    final double div = (depth == maxDepth)? _overflow: (1 << depth).toDouble();
     final int notMask = maxValue - ((1 << (maxDepth - depth)) - 1);
     final double x = ((this.x & notMask).toDouble() * scalar) + maxCube.x;
     final double y = ((this.y & notMask).toDouble() * scalar) + maxCube.y;

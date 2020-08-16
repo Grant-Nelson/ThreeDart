@@ -20,6 +20,28 @@ class PassNode extends Node {
     return leaf;
   }
 
+  /// Inserts a line into this passing node if it passes through this node.
+  Node _insertLine(Line line, Math.Ray3 ray, Math.Cube maxCube, Path path, int depth) {
+    Math.Region3 region = new Math.Region3.fromCube(path.cube(maxCube, depth));
+    Math.IntersectionRayRegion3 inter = region.rayIntersection(ray);
+    if (inter != null) this._lines.add(line);
+    return this;
+  }
+
+  /// Inserts a face into this passing node if it passes through this node.
+  Node _insertFace(Face face, Math.Cube maxCube, Path path, int depth) {
+    Math.Cube cube = path.cube(maxCube, depth);
+    if (cube.intersectsTriangle(face.vertex1.location, face.vertex2.location, face.vertex3.location))
+      this._faces.add(face);
+    return this;
+  }
+
+  /// Iterates through all the lines which pass through this location in the octree.
+  Iterable<Line> get passLines => this._lines;
+
+  /// Iterates through all the faces which pass through this location in the octree.
+  Iterable<Face> get passFaces => this._faces;
+
   /// Determines if there are any lines or faces.
   bool get isEmpty => this._lines.isEmpty && this._faces.isEmpty;
   
@@ -36,7 +58,8 @@ class PassNode extends Node {
 
   /// Copies over all the passing lines and faces from the give pass.
   void _copyOver(PassNode pass) {
-   // TODO: Implement 
+    this._lines = pass._lines.toList();
+    this._faces = pass._faces.toList();
   }
   
   /// Gets the string for the whole pass node.

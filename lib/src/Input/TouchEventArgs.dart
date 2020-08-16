@@ -31,10 +31,10 @@ class TouchEventArgs extends PointEventArgs {
   Math.Point2 get adjustedPreviousPoint => this.size.adjustPoint(this.previousRawPoint);
 
   /// The change, in pixels, between the previous point and this point.
-  Math.Vector2 get rawDelta => new Math.Vector2.fromPoint2(this.rawPoint - this.previousRawPoint);
+  Math.Vector2 get rawDelta => this.previousRawPoint.vectorTo(this.rawPoint);
 
   /// The change, in pixels, between the start point and this point.
-  Math.Vector2 get rawOffset => new Math.Vector2.fromPoint2(this.rawPoint - this.startRawPoint);
+  Math.Vector2 get rawOffset => this.startRawPoint.vectorTo(this.rawPoint);
 
   /// The change from the previous point and this point adjusted into the region.
   Math.Vector2 get adjustedDelta => this.size.adjustVector(this.rawDelta);

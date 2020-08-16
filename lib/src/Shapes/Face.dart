@@ -132,8 +132,8 @@ class Face {
     Math.Point3 loc3 = this._ver3?.location;
     if ((loc1 == null) || (loc2 == null) || (loc3 == null)) return null;
 
-    Math.Vector3 vec1 = new Math.Vector3.fromPoint3(loc2 - loc1).normal();
-    Math.Vector3 vec2 = new Math.Vector3.fromPoint3(loc3 - loc1).normal();
+    Math.Vector3 vec1 = loc1.vectorTo(loc2).normal();
+    Math.Vector3 vec2 = loc1.vectorTo(loc3).normal();
     return vec1.cross(vec2).normal();
   }
 
@@ -182,12 +182,12 @@ class Face {
     Math.Vector3 binm;
     double du = txt2.y - txt3.y;
     if (Math.Comparer.equals(du, 0.0)) {
-      binm = new Math.Vector3.fromPoint3(loc3 - loc2).normal();
+      binm = loc2.vectorTo(loc3).normal();
       if (txt3.x - txt2.x < 0.0) binm = -binm;
     } else {
       double r = (txt2.y - txt1.y) / du;
       Math.Point3 vD = (loc3 - loc2) * r + loc2;
-      binm = new Math.Vector3.fromPoint3(vD - loc1).normal();
+      binm = loc1.vectorTo(vD).normal();
       double u4 = (txt3.x - txt2.x) * r + txt2.x - txt1.x;
       if (u4 < 0.0) binm = -binm;
     }

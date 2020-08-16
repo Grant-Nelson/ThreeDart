@@ -354,11 +354,11 @@ class Region2 {
   bool operator ==(var other) {
     if (identical(this, other)) return true;
     if (other is! Region2) return false;
-    Region2 size = other as Region2;
-    if (!Comparer.equals(size.x,  this.x))  return false;
-    if (!Comparer.equals(size.y,  this.y))  return false;
-    if (!Comparer.equals(size.dx, this.dx)) return false;
-    if (!Comparer.equals(size.dy, this.dy)) return false;
+    Region2 region = other as Region2;
+    if (!Comparer.equals(region.x,  this.x))  return false;
+    if (!Comparer.equals(region.y,  this.y))  return false;
+    if (!Comparer.equals(region.dx, this.dx)) return false;
+    if (!Comparer.equals(region.dy, this.dy)) return false;
     return true;
   }
 

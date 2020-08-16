@@ -211,10 +211,8 @@ class Matrix4 {
   /// [pos] is the position of the camera,
   /// [up] is the top direction of the camera,
   /// and [focus] is the point the camera is looking at.
-  factory Matrix4.lookAtTarget(Point3 pos, Vector3 up, Point3 focus) {
-    Vector3 forward = new Vector3.fromPoint3(focus - pos);
-    return new Matrix4.lookTowards(pos, up, forward);
-  }
+  factory Matrix4.lookAtTarget(Point3 pos, Vector3 up, Point3 focus) =>
+    new Matrix4.lookTowards(pos, up, pos.vectorTo(focus));
 
   /// Constructs a 4x4 matrix from a 2x3 matrix.
   ///
