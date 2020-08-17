@@ -14,6 +14,7 @@ class Plane {
   
   /// The normal's scalar used as an offset from the origin
   /// along the normal to the surface of the plane.
+  /// This vale may be negative if 
   final double offset;
 
   /// Constructs a new [Plane].
@@ -26,18 +27,24 @@ class Plane {
 
   /// Constructs a new [Plane] with the given vector.
   /// The given vector and offset will be normalized.
-  factory Plane.fromVector(Vector3 vector, [double offset = 0.0]) {
-    vector = vector.normal();
-    if (offset < 0.0) {
-      offset = -offset;
-      vector = -vector;
-    }
-    return new Plane._(vector.dx, vector.dy, vector.dz, offset);
+  factory Plane.fromVector(Vector3 normal, [double offset = 0.0]) {
+    final double len = normal.length();
+    return new Plane._(normal.dx/len, normal.dy/len, normal.dz/len, offset);
+  }
+
+  /// Constructs a new [Plane] with the given points on the surface of the plane.
+  factory Plane.fromPoints(Point3 a, Point3 b, Point3 c) {
+    Vector3 ab = a.vectorTo(b);
+    Vector3 bc = b.vectorTo(c);
+    Vector3 normal = ab.cross(bc).normal();
+    Vector3 toA = new Vector3.fromPoint3(a);
+    double offset = normal.dot(toA);
+    return new Plane._(normal.dx, normal.dy, normal.dz, offset);
   }
 
   /// Constructs a new [Plane] instance given a list of 4 doubles.
   ///
-  /// [values] is a list of doubles are in the order dx, dy, dz, offset.
+  /// [values] is a list of doubles are in the order dx, dy, dz, then offset.
   factory Plane.fromList(List<double> values) {
     assert(values.length == 4);
     return new Plane(values[0], values[1], values[2], values[3]);
@@ -72,19 +79,17 @@ class Plane {
     return new Point3.fromVector3(origin + norm*(this.offset - origin.dot(norm)));
   }
 
-
-  // TODO: Add Ray Intersection Result structure.
-  Point3 rayIntersection(Ray3 ray) {
+  /// Determines the intersection between the given [ray] and this plane.
+  /// Will return nil if there is no intersection.
+  IntersectionRayPlane rayIntersection(Ray3 ray) {
     Vector3 norm = this.normal;
     Vector3 p0 = new Vector3(ray.x, ray.y, ray.z);
     Vector3 vec = ray.vector;
     double dem = vec.dot(norm);
-    if (dem == 0.0) {
-      return // No itersection
-    }
-    ###
+    if (dem == 0.0) return null;
     double t = (this.offset - p0.dot(norm)) / dem;
-    return new Point3.fromVector3(p0 + norm*t);
+    if ((t < 0.0) || (t > 1.0)) return null;
+    return new IntersectionRayPlane(Point3.fromVector3(p0 + norm*t), t);
   }
 
   /// Determines if the given [other] variable is a [Plane] equal to this plane.

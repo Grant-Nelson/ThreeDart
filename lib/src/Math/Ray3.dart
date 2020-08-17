@@ -78,6 +78,16 @@ class Ray3 {
   /// Gets the vector of this ray.
   Vector3 get vector => new Vector3(this.dx, this.dy, this.dz);
 
+  /// Determines the intersection between the this ray and the given [region].
+  /// Will return nil if there is no intersection.
+  IntersectionRayRegion3 regionIntersection(Region3 region) =>
+    region.rayIntersection(this);
+    
+  /// Determines the intersection between the this ray and the given [plane].
+  /// Will return nil if there is no intersection.
+  IntersectionRayPlane planeIntersection(Plane plane) =>
+    plane.rayIntersection(this);
+
   /// Creates a ray heading from the tip of this ray backwards to the origin.
   Ray3 get reverse => new Ray3.fromVector(this.end, -this.vector);
 
