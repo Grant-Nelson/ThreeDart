@@ -79,6 +79,12 @@ class Plane {
     return new Point3.fromVector3(origin + norm*(this.offset - origin.dot(norm)));
   }
 
+  Side sideOfPoint(Point3 pnt) {
+
+    // TODO: Implement
+
+  }
+
   /// Determines the intersection between the given [ray] and this plane.
   /// Will return nil if there is no intersection.
   IntersectionRayPlane rayIntersection(Ray3 ray) {

@@ -63,7 +63,7 @@ class IntersectionBetweenMovingRegions {
   String toString() => "$parametric $region";
 }
 
-/// Results from an intersection between a 3D ray and a plane.
+/// Results from an intersection between a 3D ray and plane.
 class IntersectionRayPlane {
 
   /// The point in or on the plane which the ray intersects.
@@ -78,4 +78,11 @@ class IntersectionRayPlane {
   /// Gets the string for this intersection.
   @override
   String toString() => "$point $parametric";
+}
+
+/// Results from an intersection between a 3D plane and region.
+class IntersectionPlaneRegion3 {
+
+    // TODO: Implement
+
 }

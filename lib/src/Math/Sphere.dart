@@ -60,6 +60,22 @@ class Sphere {
     double dist = toPnt.length();
     return center.offset((toPnt * (this.radius / dist)));
   }
+
+  /// Determines the intersection between the this sphere and the given [ray].
+  /// Will return nil if there is no intersection.
+  IntersectionRaySphere rayIntersection(Ray3 ray) {
+
+    // TODO: Implement pg 286
+
+  }
+
+  /// Determines the intersection between two spheres.
+  /// Will return nil if there is no intersection.
+  IntersectionSphereSphere sphereIntersection(Sphere other) {
+
+    // TODO: Implement pg 286
+
+  }
   
   /// Determines if the given [other] variable is a [Sphere] equal to this sphere.
   ///
