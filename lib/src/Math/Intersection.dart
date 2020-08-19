@@ -80,8 +80,8 @@ class IntersectionRayPlane {
   String toString() => "$point $parametric";
 }
 
-/// Results from an intersection between a 3D plane and region.
-class IntersectionPlaneRegion3 {
+/// Results from an intersection between a 3D ray and sphere.
+class IntersectionRaySphere {
 
     // TODO: Implement
 

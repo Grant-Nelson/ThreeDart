@@ -342,13 +342,9 @@ class Region3 {
     }
   }
 
-  /// Determines the intersection between the given [plane] and this region.
-  /// Will return nil if there is no intersection.
-  IntersectionPlaneRegion3 planeIntersection(Plane plane) {
-
-    // TODO: Implement pg 285
-
-  }
+  /// Determines there is a collision between the given [plane] and this range.
+  bool planeCollision(Plane plane) =>
+    plane.regionCollision(this);
 
   /// Determines the collision between this region moving with the given [vector]
   /// and the other region, the [target], not moving.

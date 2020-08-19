@@ -25,6 +25,8 @@ part 'Region2.dart';
 part 'Region3.dart';
 part 'Side.dart';
 part 'Sphere.dart';
+part 'Triangle2.dart';
+part 'Triangle3.dart';
 part 'Vector2.dart';
 part 'Vector3.dart';
 part 'Vector4.dart';
