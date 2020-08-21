@@ -202,6 +202,10 @@ class Triangle3 {
     return null;
   }
 
+  /// Determines if the given [cube] intersects or contains this triangle.
+  bool intersectsCube(Cube cube) =>
+    cube.intersectsTriangle(this);
+
   /// Determines if the given [other] variable is a [Triangle3] equal to this triangle.
   ///
   /// The equality of the doubles is tested with the current [Comparer] method.

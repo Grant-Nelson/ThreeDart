@@ -62,20 +62,26 @@ class Sphere {
   }
 
   /// Determines the intersection between the this sphere and the given [ray].
-  /// Will return nil if there is no intersection.
+  /// Will return null if there is no intersection.
   IntersectionRaySphere rayIntersection(Ray3 ray) {
-
-    // TODO: Implement pg 286
-
+    Point3 start = ray.start;
+    Vector3 e = start.vectorTo(this.center);
+    double e2 = e.length2();
+    double r2 = this.radius*this.radius;
+    if (e2 <= r2) return new IntersectionRaySphere(start, 0.0);
+    double a = e.dot(ray.vector);
+    double t = a - math.sqrt(r2 - e2 + a*a);
+    if ((t < 0.0) || (t > 1.0)) return null;
+    Point3 pnt = new Point3(ray.x + ray.dx*t, ray.y + ray.dy*t, ray.z + ray.dz*t);
+    return new IntersectionRaySphere(pnt, t);
   }
 
-  /// Determines the intersection between two spheres.
-  /// Will return nil if there is no intersection.
-  IntersectionSphereSphere sphereIntersection(Sphere other) {
-
-    // TODO: Implement pg 286
-
-  }
+  /// Determines the collision between two spheres.
+  /// The given ray is the relative movement of the [other] sphere to this sphere.
+  /// Will return null if there is no intersection.
+  // IntersectionSphereSphere sphereCollision(Sphere other, Ray3 ray) {
+  //    TODO: Implement pg 290
+  // }
   
   /// Determines if the given [other] variable is a [Sphere] equal to this sphere.
   ///

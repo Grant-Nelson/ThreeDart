@@ -29,13 +29,9 @@ class PassNode extends Node {
   }
 
   /// Inserts a face into this passing node if it passes through this node.
-  Node _insertFace(Face face, Math.Plane plane, Math.Cube maxCube, Path path, int depth) {
+  Node _insertFace(Face face, Math.Triangle3 tri, Math.Cube maxCube, Path path, int depth) {
     Math.Cube cube = path.cube(maxCube, depth);
-
-    // TODO: Fix
-
-    if (cube.intersectsTriangle(face.vertex1.location, face.vertex2.location, face.vertex3.location))
-      this._faces.add(face);
+    if (cube.intersectsTriangle(tri)) this._faces.add(face);
     return this;
   }
 

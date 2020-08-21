@@ -94,7 +94,7 @@ class Plane {
     this._sideOfPointComponents(pnt.x, pnt.y, pnt.z);
 
   /// Determines the intersection between the given [ray] and this plane.
-  /// Will return nil if there is no intersection.
+  /// Will return null if there is no intersection.
   IntersectionRayPlane rayIntersection(Ray3 ray) {
     Vector3 norm = this.normal;
     Vector3 p0 = new Vector3(ray.x, ray.y, ray.z);

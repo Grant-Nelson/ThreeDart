@@ -79,17 +79,17 @@ class Ray3 {
   Vector3 get vector => new Vector3(this.dx, this.dy, this.dz);
 
   /// Determines the intersection between the this ray and the given [region].
-  /// Will return nil if there is no intersection.
+  /// Will return null if there is no intersection.
   IntersectionRayRegion3 regionIntersection(Region3 region) =>
     region.rayIntersection(this);
     
   /// Determines the intersection between the this ray and the given [plane].
-  /// Will return nil if there is no intersection.
+  /// Will return null if there is no intersection.
   IntersectionRayPlane planeIntersection(Plane plane) =>
     plane.rayIntersection(this);
 
   /// Determines the intersection between the this ray and the given [sphere].
-  /// Will return nil if there is no intersection.
+  /// Will return null if there is no intersection.
   IntersectionRaySphere sphereIntersection(Sphere sphere) =>
     sphere.rayIntersection(this);
 

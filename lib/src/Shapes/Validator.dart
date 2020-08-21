@@ -133,7 +133,7 @@ class Validator {
         this._checkNode(child, node, subPath, expDepth+1);
       }
     }
-    if (!hasChild) this._error("Branch at ${expPath.toString(expDepth)} had no non-nil children.");
+    if (!hasChild) this._error("Branch at ${expPath.toString(expDepth)} had no non-null children.");
   }
   
   /// Validates the node to make sure the nodes' have been setup correctly.

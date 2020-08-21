@@ -231,7 +231,7 @@ class Region3 {
   }
 
   /// Determines the intersection between the given [ray] and this region.
-  /// Will return nil if there is no intersection.
+  /// Will return null if there is no intersection.
   IntersectionRayRegion3 rayIntersection(Ray3 ray) {
     final double maxx = this.x + this.dx;
     final double maxy = this.y + this.dy;
