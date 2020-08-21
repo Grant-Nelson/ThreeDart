@@ -83,6 +83,19 @@ class Region2 {
     return new Region2._(x, y, x2-x, y2-y);
   }
 
+  /// The minimum corner point in the region.
+  Point2 get minCorner =>
+    new Point2(this.x, this.y);
+
+  /// The maximum corner point in the region.
+  Point2 get maxCorner =>
+    new Point2(this.x + this.dx, this.y + this.dy);
+
+  /// The center point of the region.
+  Point2 get center => new Point2(
+    this.x + this.dx/2.0,
+    this.y + this.dy/2.0);
+
   /// Expands the region to include the given point, [pnt].
   Region2 expandWithPoint(Point2 pnt) =>
     this.expand(pnt.x, pnt.y);
@@ -132,16 +145,16 @@ class Region2 {
   }
 
   /// The minimum side of the region.
-  double get minSide {
-    if (this.dx > this.dy) return this.dy;
-    else return this.dx;
-  }
+  double get minSide =>
+    (this.dx > this.dy)? this.dy: this.dx;
 
   /// The maximum side of the region.
-  double get maxSide {
-    if (this.dx > this.dy) return this.dx;
-    else return this.dy;
-  }
+  double get maxSide =>
+    (this.dx > this.dy)? this.dx: this.dy;
+
+  /// Indicates if the region is a square, ie has equal dx and dy.
+  bool get isSquare =>
+    Comparer.equals(this.dx, this.dy);
 
   /// Gets the adjusted point of the given [raw] point.
   /// This point is normalized into the region.
@@ -185,7 +198,7 @@ class Region2 {
   }
 
   /// Determines the intersection between the given [ray] and this region.
-  /// Will return nil if there is no intersection.
+  /// Will return null if there is no intersection.
   IntersectionRayRegion2 rayIntersection(Ray2 ray) {
     final double maxx = this.x + this.dx;
     final double maxy = this.y + this.dy;
@@ -341,11 +354,11 @@ class Region2 {
   bool operator ==(var other) {
     if (identical(this, other)) return true;
     if (other is! Region2) return false;
-    Region2 size = other as Region2;
-    if (!Comparer.equals(size.x,  this.x))  return false;
-    if (!Comparer.equals(size.y,  this.y))  return false;
-    if (!Comparer.equals(size.dx, this.dx)) return false;
-    if (!Comparer.equals(size.dy, this.dy)) return false;
+    Region2 region = other as Region2;
+    if (!Comparer.equals(region.x,  this.x))  return false;
+    if (!Comparer.equals(region.y,  this.y))  return false;
+    if (!Comparer.equals(region.dx, this.dx)) return false;
+    if (!Comparer.equals(region.dy, this.dy)) return false;
     return true;
   }
 

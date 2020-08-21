@@ -91,6 +91,10 @@ class Point2 {
     new Point2(lerpVal(this.x, other.x, i),
                lerpVal(this.y, other.y, i));
 
+  /// Gets the vector from this point to the [other] point.
+  Vector2 vectorTo(Point2 other) =>
+    new Vector2(other.x - this.x, other.y - this.y);
+
   /// Creates a new point as the sum of this point and the [other] point.
   Point2 operator +(Point2 other) =>
     new Point2(this.x + other.x, this.y + other.y);
