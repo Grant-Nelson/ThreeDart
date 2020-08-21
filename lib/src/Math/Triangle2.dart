@@ -71,14 +71,45 @@ class Triangle2 {
 
   /// Gets the third point of the triangle.
   Point2 get point3 => new Point2(this.x3, this.y3);
+  
+  /// Get the area of the triangle.
+  double get area {
+    Vector2 d1 = new Vector2(this.x2-this.x1, this.y2-this.y1);
+    Vector2 d2 = new Vector2(this.x3-this.x2, this.y3-this.y2);
+    // TODO: Check if this is right.
+    return d1.cross(d2) * 0.5;
+  }
 
   /// Gets the average point of the triangles points.
   Point2 get centroid => new Point2((this.x1 + this.x2 + this.x3) / 3.0,
                                     (this.y1 + this.y2 + this.y3) / 3.0);
 
+  /// Convertex from the given barycentric coorinates vector to the cartesian coordinate point.
+  Point2 fromBarycentric(Vector3 vec) =>
+    new Point2(vec.dx * this.x1 + vec.dy * this.x2 + vec.dz * this.x3,
+               vec.dx * this.y1 + vec.dy * this.y2 + vec.dz * this.x3);
+
+  /// Convertex from the given cartesian coordinate point to the barycentric coorinates vector.
+  /// If the triangle is degenerate (area is zero) then null will be returned.
+  Vector3 toBarycentric(Point2 pnt) {
+    double x23 = this.x2 - this.x3;
+    double x31 = this.x3 - this.x1;
+    double y23 = this.y2 - this.y3;
+    double y31 = this.y3 - this.y1;
+    double div = y23 * x31 - y31 * x23;
+    if (div == 0.0) {
+      // Degenerate triangle
+      return null;
+    }
+
+    double x12 = this.x1 - this.x2;
+    double y12 = this.y1 - this.y2;
+    return new Vector3(((pnt.y - this.y3) * x23 + y23 * (this.x3 - pnt.x)) / div,
+                       ((pnt.y - this.y1) * x31 + y31 * (this.x1 - pnt.x)) / div,
+                       ((pnt.y - this.y2) * x12 + y12 * (this.x2 - pnt.x)) / div);
+  }
 
   // TODO: Add incenter and circumcenter
-  // TODO: Add some barycentric coordinates methods
 
 
   /// Determines if the given [other] variable is a [Triangle2] equal to this triangle.

@@ -33,11 +33,9 @@ class Plane {
   }
 
   /// Constructs a new [Plane] with the given points on the surface of the plane.
-  factory Plane.fromPoints(Point3 a, Point3 b, Point3 c) {
-    Vector3 ab = a.vectorTo(b);
-    Vector3 bc = b.vectorTo(c);
-    Vector3 normal = ab.cross(bc).normal();
-    Vector3 toA = new Vector3.fromPoint3(a);
+  factory Plane.fromTriangle(Triangle3 tri) {
+    Vector3 normal = tri.normal;
+    Vector3 toA = new Vector3.fromPoint3(tri.point1);
     double offset = normal.dot(toA);
     return new Plane._(normal.dx, normal.dy, normal.dz, offset);
   }

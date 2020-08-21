@@ -85,6 +85,21 @@ class Triangle3 {
   /// Gets the third point of the triangle.
   Point3 get point3 => new Point3(this.x3, this.y3, this.z3);
 
+  /// Gets the normal of the triangle plane.
+  Vector3 get normal {
+    Vector3 d1 = new Vector3(this.x2-this.x1, this.y2-this.y1, this.z2-this.z1);
+    Vector3 d2 = new Vector3(this.x3-this.x2, this.y3-this.y2, this.z3-this.z2);
+    return d1.cross(d2).normal();
+  }
+
+  /// Get the area of the triangle.
+  double get area {
+    Vector3 d1 = new Vector3(this.x2-this.x1, this.y2-this.y1, this.z2-this.z1);
+    Vector3 d2 = new Vector3(this.x3-this.x2, this.y3-this.y2, this.z3-this.z2);
+    // TODO: Check if there is an easier way.
+    return d1.cross(d2).length() * 0.5;
+  }
+
   /// Gets the average point of the triangles points.
   Point3 get centroid => new Point3((this.x1 + this.x2 + this.x3) / 3.0,
                                     (this.y1 + this.y2 + this.y3) / 3.0,
@@ -94,10 +109,98 @@ class Triangle3 {
   bool planeCollision(Plane plane) =>
     plane.triangleCollision(this);
 
+  /// Convertex from the given barycentric coorinates vector to the cartesian coordinate point.
+  Point3 fromBarycentricCoordinates(double x, double y, double z) =>
+    new Point3(x * this.x1 + y * this.x2 + z * this.x3,
+               x * this.y1 + y * this.y2 + z * this.y3,
+               x * this.z1 + y * this.z2 + z * this.z3);
 
-  // TODO: Add incenter and circumcenter
-  // TODO: Add some barycentric coordinates methods
+  /// Convertex from the given barycentric coorinates vector to the cartesian coordinate point.
+  Point3 fromBarycentric(Vector3 vec) =>
+    fromBarycentricCoordinates(vec.dx, vec.dy, vec.dz);
 
+  /// Convertex from the given cartesian coordinate point to the barycentric coorinates vector.
+  /// If the triangle is degenerate (area is zero) then null will be returned.
+  Vector3 toBarycentric(Point3 pnt) {
+    Vector3 n = this.normal;
+    double nxa = n.dx.abs();
+    double nya = n.dy.abs();
+    double nza = n.dz.abs();
+    double u1, u2, u3, u4;
+    double v1, v2, v3, v4;
+    if ((nxa >= nya) && (nxa >= nza)) {
+      // Discard x, project onto yz plane
+      u1 = this.y1 - this.y3;
+      u2 = this.y2 - this.y3;
+      u3 = pnt.y - this.y1;
+      u4 = pnt.y - this.y3;
+      
+      v1 = this.z1 - this.z3;
+      v2 = this.z2 - this.z3;
+      v3 = pnt.z - this.z1;
+      v4 = pnt.z - this.z3;
+
+    } else if (nya >= nza) {
+      // Discard y, project onto xz plane
+      u1 = this.z1 - this.z3;
+      u2 = this.z2 - this.z3;
+      u3 = pnt.z - this.z1;
+      u4 = pnt.z - this.z3;
+      
+      v1 = this.x1 - this.x3;
+      v2 = this.x2 - this.x3;
+      v3 = pnt.x - this.x1;
+      v4 = pnt.x - this.x3;
+
+    } else {
+      // Discard z, project onto xy plane
+      u1 = this.x1 - this.x3;
+      u2 = this.x2 - this.x3;
+      u3 = pnt.x - this.x1;
+      u4 = pnt.x - this.x3;
+      
+      v1 = this.y1 - this.y3;
+      v2 = this.y2 - this.y3;
+      v3 = pnt.y - this.y1;
+      v4 = pnt.y - this.y3;
+    }
+
+    double div = v1*u3 - v2*u1;
+    if (div == 0.0) {
+      // Degenerate triangle
+      return null;
+    }
+
+    double x = (v4*u2 - v2*u4) / div;
+    double y = (v1*u3 - v3*u1) / div;
+    return new Vector3(x, y, 1.0 - x - y);
+  }
+
+  /// Gets the sphere where the intersection of the sphere and the plane for the triangle is a circle
+  /// which touches each side only once. The circle is inscribed in the triangle.
+  /// If the triangle is degenerate (area is zero) then null will be returned.
+  Sphere get incenter {
+    Point3 v1 = this.point1;
+    Point3 v2 = this.point2;
+    Point3 v3 = this.point3;
+    double len1 = v2.distance(v3);
+    double len2 = v1.distance(v3);
+    double len3 = v1.distance(v2);
+    double p = len1 + len2 + len3;
+    if (p == 0.0) {
+      // Degenerate triangle
+      return null;
+    }
+    Point3 center = this.fromBarycentricCoordinates(len1 / p, len2 / p, len3 / p);
+    return new Sphere.fromPoint(center, this.area / p);
+  }
+
+  /// Gets the sphere where the intersection of the sphere and the plane for the triangle is a circle
+  /// which touches each point of the triangle. The circle is circumscribed around the triangle.
+  Sphere get circumcenter {
+    /// TODO: Implement pg 268
+    return null;
+  }
 
   /// Determines if the given [other] variable is a [Triangle3] equal to this triangle.
   ///
