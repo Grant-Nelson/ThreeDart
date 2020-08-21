@@ -6,6 +6,7 @@ import 'dart:convert' as convert;
 import 'dart:typed_data' as data;
 
 import 'package:ThreeDart/Data.dart' as Data;
+import 'package:ThreeDart/Debug.dart' as Debug;
 import 'package:ThreeDart/Math.dart' as Math;
 import 'package:ThreeDart/Movers.dart' as Movers;
 import 'package:ThreeDart/Scenes.dart' as Scenes;

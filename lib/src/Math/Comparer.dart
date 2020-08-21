@@ -3,11 +3,8 @@ part of ThreeDart.Math;
 /// A set of static methods and values used for comparing doubles.
 class Comparer {
 
-  /// The default epsilon distance used in the default comparer.
-  static const defaultEpsilon = 1.0e-9;
-
   /// The default comparer, an epsilon comparer, to use for comparing doubles.
-  static final CustomComparer defaultComparer = new EpsilonComparer(defaultEpsilon);
+  static final CustomComparer defaultComparer = new EpsilonComparer();
 
   /// The current comparer instance to use for comparing doubles.
   static CustomComparer currentComparer = defaultComparer;
