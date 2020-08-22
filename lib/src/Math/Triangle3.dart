@@ -96,7 +96,6 @@ class Triangle3 {
   double get area {
     Vector3 d1 = new Vector3(this.x2-this.x1, this.y2-this.y1, this.z2-this.z1);
     Vector3 d2 = new Vector3(this.x3-this.x2, this.y3-this.y2, this.z3-this.z2);
-    // TODO: Check if there is an easier way.
     return d1.cross(d2).length() * 0.5;
   }
 
@@ -198,8 +197,21 @@ class Triangle3 {
   /// Gets the sphere where the intersection of the sphere and the plane for the triangle is a circle
   /// which touches each point of the triangle. The circle is circumscribed around the triangle.
   Sphere get circumcenter {
-    /// TODO: Implement pg 268
-    return null;
+    Vector3 e1 = new Vector3(this.x3-this.x2, this.y3-this.y2, this.z3-this.z2);
+    Vector3 e2 = new Vector3(this.x1-this.x3, this.y1-this.y3, this.z1-this.z3);
+    Vector3 e3 = new Vector3(this.x2-this.x1, this.y2-this.y1, this.z2-this.z1);
+    double d1 = -e2.dot(e3);
+    double d2 = -e3.dot(e1);
+    double d3 = -e1.dot(e2);
+    double c1 = d2*d3;
+    double c2 = d3*d1;
+    double c3 = d1*d2;
+    double c = c1 + c2 + c3;
+    if (c == 0) return null;
+    double div = 2.0 * c;
+    Point3 center = this.fromBarycentricCoordinates((c2 + c3)/div, (c2 + c3)/div, (c2 + c3)/div);
+    double diam = math.sqrt((d1 + d2)*(d2 + d3)*(d3 + d1) / c);
+    return new Sphere.fromPoint(center, diam/2.0);
   }
 
   /// Determines if the given [cube] intersects or contains this triangle.

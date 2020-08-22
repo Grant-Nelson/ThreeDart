@@ -83,7 +83,7 @@ class Collider {
       if (!this._hasHit[i]) {
         Math.Region3 block = this._blocks[i];
         Math.HitRegion sides = this._blockSides[i];
-        Math.IntersectionBetweenMovingRegions cur = region.collision(block, this._vector, sides);
+        Math.CollisionBetweenRegions cur = region.collision(block, this._vector, sides);
         if (cur != null) {
           if ((hitRegion == Math.HitRegion.None) || (parametric > cur.parametric)) {
             hitRegion = cur.region;

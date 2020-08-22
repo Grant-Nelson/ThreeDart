@@ -14,7 +14,6 @@ class Plane {
   
   /// The normal's scalar used as an offset from the origin
   /// along the normal to the surface of the plane.
-  /// This vale may be negative if 
   final double offset;
 
   /// Constructs a new [Plane].

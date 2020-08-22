@@ -274,67 +274,6 @@ class Region2 {
     return null;
   }
 
-  /// Determines the collision between this region moving with the given [vector]
-  /// and the other region, the [target], not moving.
-  IntersectionBetweenMovingRegions collision(Region2 target, Vector2 vector, [HitRegion sides = null]) {
-    sides ??= HitRegion.All;
-    if (this.overlaps(target))
-      return new IntersectionBetweenMovingRegions(0.0, HitRegion.Inside);
-    double t = 100.0, d;
-    HitRegion region = HitRegion.None, edge;
-
-    if ((vector.dx != 0.0) && sides.overlaps(HitRegion.XPosNeg))  {
-      if (vector.dx > 0.0) {
-        if (sides.has(HitRegion.XNeg)) {
-          edge = HitRegion.XNeg;
-          if (Comparer.equals(target.x, this.x + this.dx)) d = 0.0;
-          else d = (target.x - (this.x + this.dx)) / vector.dx;
-        }
-      } else {
-        if (sides.has(HitRegion.XPos)) {
-          edge = HitRegion.XPos;
-          if (Comparer.equals(target.x + target.dx, this.x)) d = 0.0;
-          else d = ((target.x + target.dx) - this.x) / vector.dx;
-        }
-      }
-
-      if ((d < t) && (d >= 0.0) && (d <= 1.0)) {
-        double y = this.y + vector.dy*d;
-        if (rangeOverlap(target.y, target.y + target.dy, y, y + this.dy)) {
-          t = d;
-          region = edge;
-        }
-      }
-    }
-
-    if ((vector.dy != 0.0) && sides.overlaps(HitRegion.YPosNeg))  {
-      if (vector.dy > 0.0) {
-        if (sides.has(HitRegion.YNeg)) {
-          edge = HitRegion.YNeg;
-          if (Comparer.equals(target.y, this.y + this.dy)) d = 0.0;
-          else d = (target.y - (this.y + this.dy)) / vector.dy;
-        }
-      } else {
-        if (sides.has(HitRegion.YPos)) {
-          edge = HitRegion.YPos;
-          if (Comparer.equals(target.y + target.dy, this.y)) d = 0.0;
-          else d = ((target.y + target.dy) - this.y) / vector.dy;
-        }
-      }
-
-      if ((d < t) && (d >= 0.0) && (d <= 1.0)) {
-        double x = this.x + vector.dx*d;
-        if (rangeOverlap(target.x, target.x + target.dx, x, x + this.dx)) {
-          t = d;
-          region = edge;
-        }
-      }
-    }
-
-    if (region == HitRegion.None) return null;
-    return new IntersectionBetweenMovingRegions(t, region);
-  }
-
   /// Determines if the given point is contained inside this region.
   bool contains(Point2 a) =>
     inRange(a.x, this.x, this.x+this.dx) &&
