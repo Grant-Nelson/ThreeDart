@@ -12,33 +12,34 @@ class Collision {
   /// TODO: Improve comment
   static CollisionBetweenRegionsResult betweenTwoRegion2s(Region2 regionA, Region2 regionB,
     Vector2 vecA, Vector2 vecB, [HitRegion sidesA = null, HitRegion sidesB = null]) {
-    if (regionA.overlaps(regionB))
-      return new CollisionBetweenRegionsResult(CollisionType.Intesected, 0.0, HitRegion.Inside);
-
     sidesA ??= HitRegion.All;
     sidesB ??= HitRegion.All;
-    HitRegion sides = sidesA & sidesB.inverse();
+    HitRegion sides = sidesB & sidesA.inverse();
     Vector2 vector = vecA - vecB;
 
     double t = 100.0, d;
     HitRegion region = HitRegion.None, edge;
+    bool edgeTest;
 
-    if ((vector.dx != 0.0) && sides.overlaps(HitRegion.XPosNeg))  {
+    if (vector.dx != 0.0) {
+      edgeTest = false;
       if (vector.dx > 0.0) {
         if (sides.has(HitRegion.XNeg)) {
           edge = HitRegion.XNeg;
+          edgeTest = true;
           if (Comparer.equals(regionB.x, regionA.x + regionA.dx)) d = 0.0;
           else d = (regionB.x - (regionA.x + regionA.dx)) / vector.dx;
         }
       } else {
         if (sides.has(HitRegion.XPos)) {
           edge = HitRegion.XPos;
+          edgeTest = true;
           if (Comparer.equals(regionB.x + regionB.dx, regionA.x)) d = 0.0;
           else d = ((regionB.x + regionB.dx) - regionA.x) / vector.dx;
         }
       }
 
-      if ((d < t) && (d >= 0.0) && (d <= 1.0)) {
+      if (edgeTest && (d < t) && (d >= 0.0) && (d <= 1.0)) {
         double y = regionA.y + vector.dy*d;
         if (rangeOverlap(regionB.y, regionB.y + regionB.dy, y, y + regionA.dy)) {
           t = d;
@@ -47,22 +48,25 @@ class Collision {
       }
     }
 
-    if ((vector.dy != 0.0) && sides.overlaps(HitRegion.YPosNeg))  {
+    if (vector.dy != 0.0) {
+      edgeTest = false;
       if (vector.dy > 0.0) {
         if (sides.has(HitRegion.YNeg)) {
           edge = HitRegion.YNeg;
+          edgeTest = true;
           if (Comparer.equals(regionB.y, regionA.y + regionA.dy)) d = 0.0;
           else d = (regionB.y - (regionA.y + regionA.dy)) / vector.dy;
         }
       } else {
         if (sides.has(HitRegion.YPos)) {
           edge = HitRegion.YPos;
+          edgeTest = true;
           if (Comparer.equals(regionB.y + regionB.dy, regionA.y)) d = 0.0;
           else d = ((regionB.y + regionB.dy) - regionA.y) / vector.dy;
         }
       }
 
-      if ((d < t) && (d >= 0.0) && (d <= 1.0)) {
+      if (edgeTest && (d < t) && (d >= 0.0) && (d <= 1.0)) {
         double x = regionA.x + vector.dx*d;
         if (rangeOverlap(regionB.x, regionB.x + regionB.dx, x, x + regionA.dx)) {
           t = d;
@@ -83,12 +87,9 @@ class Collision {
   /// TODO: Improve comment
   static CollisionBetweenRegionsResult betweenTwoRegion3s(Region3 regionA, Region3 regionB,
     Vector3 vecA, Vector3 vecB, [HitRegion sidesA = null, HitRegion sidesB = null]) {
-    if (regionA.overlaps(regionB))
-      return new CollisionBetweenRegionsResult(CollisionType.Intesected, 0.0, HitRegion.Inside);
-
     sidesA ??= HitRegion.All;
     sidesB ??= HitRegion.All;
-    HitRegion sides = sidesA & sidesB.inverse();
+    HitRegion sides = sidesB & sidesA.inverse();
     Vector3 vector = vecA - vecB;
 
     double t = 100.0, d;

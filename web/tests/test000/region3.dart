@@ -17,71 +17,71 @@ void addRegion3Tests(TestManager tests) {
   });
 
   tests.add("Region3 Collision Test", (TestArgs args) {
-    _region3Collision(args,
+    _region3Collision1(args,
       new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
       new Math.Region3(2.0, 2.0, 2.0, 1.0, 1.0, 1.0),
       new Math.Vector3(0.0, 0.0, 0.0),
-      null);
-    _region3Collision(args,
+      new Math.CollisionBetweenRegionsResult(Math.CollisionType.NoCollision, 0.0, Math.HitRegion.None));
+    _region3Collision1(args,
       new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
       new Math.Region3(2.0, 0.0, 0.0, 1.0, 1.0, 1.0),
       new Math.Vector3(0.5, 0.0, 0.0),
-      null);
-    _region3Collision(args,
+      new Math.CollisionBetweenRegionsResult(Math.CollisionType.NoCollision, 0.0, Math.HitRegion.None));
+    _region3Collision1(args,
       new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
       new Math.Region3(2.0, 0.0, 0.0, 1.0, 1.0, 1.0),
       new Math.Vector3(1.0, 0.0, 0.0),
-      new Math.IntersectionBetweenMovingRegions(1.0, Math.HitRegion.XNeg));
-    _region3Collision(args,
+      new Math.CollisionBetweenRegionsResult(Math.CollisionType.Collision, 1.0, Math.HitRegion.XNeg));
+    _region3Collision1(args,
       new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
       new Math.Region3(2.0, 0.0, 0.0, 1.0, 1.0, 1.0),
       new Math.Vector3(4.0, 0.0, 0.0),
-      new Math.IntersectionBetweenMovingRegions(0.25, Math.HitRegion.XNeg));
-    _region3Collision(args,
+      new Math.CollisionBetweenRegionsResult(Math.CollisionType.Collision, 0.25, Math.HitRegion.XNeg));
+    _region3Collision1(args,
       new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
       new Math.Region3(2.0, 0.0, 0.0, 1.0, 1.0, 1.0),
       new Math.Vector3(-4.0, 0.0, 0.0),
-      null);
-    _region3Collision(args,
+      new Math.CollisionBetweenRegionsResult(Math.CollisionType.NoCollision, 0.0, Math.HitRegion.None));
+    _region3Collision1(args,
       new Math.Region3(2.0, 0.0, 0.0, 1.0, 1.0, 1.0),
       new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
       new Math.Vector3(4.0, 0.0, 0.0),
-      null);
-    _region3Collision(args,
+      new Math.CollisionBetweenRegionsResult(Math.CollisionType.NoCollision, 0.0, Math.HitRegion.None));
+    _region3Collision1(args,
       new Math.Region3(2.0, 0.0, 0.0, 1.0, 1.0, 1.0),
       new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
       new Math.Vector3(-4.0, 0.0, 0.0),
-      new Math.IntersectionBetweenMovingRegions(0.25, Math.HitRegion.XPos));
-    _region3Collision(args,
+      new Math.CollisionBetweenRegionsResult(Math.CollisionType.Collision, 0.25, Math.HitRegion.XPos));
+    _region3Collision1(args,
       new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
       new Math.Region3(2.0, 2.0, 2.0, 1.0, 1.0, 1.0),
       new Math.Vector3(4.0, 0.0, 0.0),
-      null);
-    _region3Collision(args,
+      new Math.CollisionBetweenRegionsResult(Math.CollisionType.NoCollision, 0.0, Math.HitRegion.None));
+    _region3Collision1(args,
       new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
       new Math.Region3(2.0, 2.0, 2.0, 1.0, 1.0, 1.0),
       new Math.Vector3(2.0, 2.4, 2.8),
-      new Math.IntersectionBetweenMovingRegions(0.5, Math.HitRegion.XNeg));
-    _region3Collision(args,
+      new Math.CollisionBetweenRegionsResult(Math.CollisionType.Collision, 0.5, Math.HitRegion.XNeg));
+    _region3Collision1(args,
       new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
       new Math.Region3(2.0, 2.0, 2.0, 1.0, 1.0, 1.0),
       new Math.Vector3(2.8, 2.0, 2.4),
-      new Math.IntersectionBetweenMovingRegions(0.5, Math.HitRegion.YNeg));
-    _region3Collision(args,
+      new Math.CollisionBetweenRegionsResult(Math.CollisionType.Collision, 0.5, Math.HitRegion.YNeg));
+    _region3Collision1(args,
       new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
       new Math.Region3(2.0, 2.0, 2.0, 1.0, 1.0, 1.0),
       new Math.Vector3(2.4, 2.8, 2.0),
-      new Math.IntersectionBetweenMovingRegions(0.5, Math.HitRegion.ZNeg));
-    _region3Collision(args,
+      new Math.CollisionBetweenRegionsResult(Math.CollisionType.Collision, 0.5, Math.HitRegion.ZNeg));
+    _region3Collision1(args,
       new Math.Region3(0.0, 11.13, 0.0, 0.0, 1.5, 0.0),
       new Math.Region3(0.0,  8.0,  0.0, 0.0, 1.0, 0.0),
       new Math.Vector3(0.0, -2.45, 0.0),
-      new Math.IntersectionBetweenMovingRegions(0.869387755102041, Math.HitRegion.YPos));
-    _region3Collision(args,
+      new Math.CollisionBetweenRegionsResult(Math.CollisionType.Collision, 0.869387755102041, Math.HitRegion.YPos));
+    _region3Collision1(args,
       new Math.Region3(0.25, 10.0, 0.1, 0.25, 2.0, 0.25),
       new Math.Region3(0.0, 9.0, 0.0, 1.0, 1.0, 1.0),
       new Math.Vector3(0.0, -1.0, -0.3),
-      new Math.IntersectionBetweenMovingRegions(0.0, Math.HitRegion.YPos));
+      new Math.CollisionBetweenRegionsResult(Math.CollisionType.Collision, 0.0, Math.HitRegion.YPos));
   });
 }
 
@@ -102,32 +102,13 @@ Math.Region3 _expandReg3(TestArgs args, Math.Region3 reg, double newX, double ne
   return newReg;
 }
 
-void _region3Collision(TestArgs args, Math.Region3 reg, Math.Region3 target,
-  Math.Vector3 vec, Math.IntersectionBetweenMovingRegions exp) {
-  Math.IntersectionBetweenMovingRegions result = reg.collision(target, vec);
-  if (exp == null) {
-    if (result == null) {
-      args.info("Results from collision:\n"+
-        "   Original: $reg\n"+
-        "   Target:   $target\n"+
-        "   Vector:   $vec\n"+
-        "   Result:   null\n");
-      return;
-    }
-    args.error("Unexpected result from collision:\n"+
-      "   Original: $reg\n"+
-      "   Target:   $target\n"+
-      "   Vector:   $vec\n"+
-      "   Expected: null\n"+
-      "   Result:   $result\n");
-  } else if (result == null) {
-    args.error("Unexpected result from collision:\n"+
-      "   Original: $reg\n"+
-      "   Target:   $target\n"+
-      "   Vector:   $vec\n"+
-      "   Expected: $exp\n"+
-      "   Result:   null\n");
-  } else if (!Math.Comparer.equals(result.parametric, exp.parametric) || (result.region != exp.region)) {
+void _region3Collision1(TestArgs args, Math.Region3 reg, Math.Region3 target,
+  Math.Vector3 vec, Math.CollisionBetweenRegionsResult exp) {
+  Math.CollisionBetweenRegionsResult result = Math.Collision.betweenTwoRegion3s(
+    reg, target, vec, Math.Vector3.zero);
+  if ((result.type != exp.type) ||
+    !Math.Comparer.equals(result.parametric, exp.parametric) ||
+    (result.region != exp.region)) {
     args.error("Unexpected result from collision:\n"+
       "   Original: $reg\n"+
       "   Target:   $target\n"+
