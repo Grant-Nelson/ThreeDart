@@ -1,0 +1,109 @@
+part of ThreeDart.test.test000;
+
+void addCollisionTests(TestManager tests) {
+  tests.add("Collision Between Two AABB Test", (TestArgs args) {
+    _aabb3Collision1(args, "Not moving, not touching",
+      new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
+      new Math.Region3(2.0, 2.0, 2.0, 1.0, 1.0, 1.0),
+      new Math.Vector3(0.0, 0.0, 0.0),
+      new Collisions.TwoAABBResult(Collisions.Type.NoCollision, 0.0, Math.HitRegion.None));
+    _aabb3Collision1(args, "Moving right but not enough to touch",
+      new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
+      new Math.Region3(2.0, 0.0, 0.0, 1.0, 1.0, 1.0),
+      new Math.Vector3(0.5, 0.0, 0.0),
+      new Collisions.TwoAABBResult(Collisions.Type.NoCollision, 0.0, Math.HitRegion.None));
+    _aabb3Collision1(args, "Moving right until they just touch on edge",
+      new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
+      new Math.Region3(2.0, 0.0, 0.0, 1.0, 1.0, 1.0),
+      new Math.Vector3(1.0, 0.0, 0.0),
+      new Collisions.TwoAABBResult(Collisions.Type.Collision, 1.0, Math.HitRegion.XNeg));
+    _aabb3Collision1(args, "Moving to pass eachother and hit early",
+      new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
+      new Math.Region3(2.0, 0.0, 0.0, 1.0, 1.0, 1.0),
+      new Math.Vector3(4.0, 0.0, 0.0),
+      new Collisions.TwoAABBResult(Collisions.Type.Collision, 0.25, Math.HitRegion.XNeg));
+    _aabb3Collision1(args, "Moving away from eachother backwards",
+      new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
+      new Math.Region3(2.0, 0.0, 0.0, 1.0, 1.0, 1.0),
+      new Math.Vector3(-4.0, 0.0, 0.0),
+      new Collisions.TwoAABBResult(Collisions.Type.NoCollision, 0.0, Math.HitRegion.None));
+    _aabb3Collision1(args, "Moving away from eachother already passed",
+      new Math.Region3(2.0, 0.0, 0.0, 1.0, 1.0, 1.0),
+      new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
+      new Math.Vector3(4.0, 0.0, 0.0),
+      new Collisions.TwoAABBResult(Collisions.Type.NoCollision, 0.0, Math.HitRegion.None));
+    _aabb3Collision1(args, "Moving backwards past eachother and hit early",
+      new Math.Region3(2.0, 0.0, 0.0, 1.0, 1.0, 1.0),
+      new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
+      new Math.Vector3(-4.0, 0.0, 0.0),
+      new Collisions.TwoAABBResult(Collisions.Type.Collision, 0.25, Math.HitRegion.XPos));
+    _aabb3Collision1(args, "Moving right but offset to pass eachother",
+      new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
+      new Math.Region3(2.0, 2.0, 2.0, 1.0, 1.0, 1.0),
+      new Math.Vector3(4.0, 0.0, 0.0),
+      new Collisions.TwoAABBResult(Collisions.Type.NoCollision, 0.0, Math.HitRegion.None));
+    _aabb3Collision1(args, "Moving almost diagnally at an angle to collide",
+      new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
+      new Math.Region3(2.0, 2.0, 2.0, 1.0, 1.0, 1.0),
+      new Math.Vector3(2.0, 2.4, 2.8),
+      new Collisions.TwoAABBResult(Collisions.Type.Collision, 0.5, Math.HitRegion.XNeg));
+    _aabb3Collision1(args, "Moving almost diagnally at a different angle to collide",
+      new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
+      new Math.Region3(2.0, 2.0, 2.0, 1.0, 1.0, 1.0),
+      new Math.Vector3(2.8, 2.0, 2.4),
+      new Collisions.TwoAABBResult(Collisions.Type.Collision, 0.5, Math.HitRegion.YNeg));
+    _aabb3Collision1(args, "Moving almost diagnally at another different angle to collide",
+      new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
+      new Math.Region3(2.0, 2.0, 2.0, 1.0, 1.0, 1.0),
+      new Math.Vector3(2.4, 2.8, 2.0),
+      new Collisions.TwoAABBResult(Collisions.Type.Collision, 0.5, Math.HitRegion.ZNeg));
+    _aabb3Collision1(args, "Moving diagnally to collide",
+      new Math.Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
+      new Math.Region3(2.0, 2.0, 2.0, 1.0, 1.0, 1.0),
+      new Math.Vector3(2.0, 2.0, 2.0),
+      new Collisions.TwoAABBResult(Collisions.Type.Collision, 0.5, Math.HitRegion.XNeg));
+    _aabb3Collision1(args, "Moving down and colliding",
+      new Math.Region3(0.0, 11.13, 0.0, 0.0, 1.5, 0.0),
+      new Math.Region3(0.0,  8.0,  0.0, 0.0, 1.0, 0.0),
+      new Math.Vector3(0.0, -2.45, 0.0),
+      new Collisions.TwoAABBResult(Collisions.Type.Collision, 0.869387755102041, Math.HitRegion.YPos));
+    _aabb3Collision1(args, "Moving up at an agle and already touching on edge",
+      new Math.Region3(0.25, 10.0, 0.1, 0.25, 2.0, 0.25),
+      new Math.Region3(0.0, 9.0, 0.0, 1.0, 1.0, 1.0),
+      new Math.Vector3(0.0, -1.0, -0.3),
+      new Collisions.TwoAABBResult(Collisions.Type.Collision, 0.0, Math.HitRegion.YPos));
+    _aabb3Collision1(args, "One already contains the other",
+      new Math.Region3(-2.0, -2.0, -2.0, 4.0, 4.0, 4.0),
+      new Math.Region3(-1.0, -1.0, -1.0, 2.0, 2.0, 2.0),
+      new Math.Vector3(2.0, 2.0, 2.0),
+      new Collisions.TwoAABBResult(Collisions.Type.Intesected, 0.0, Math.HitRegion.None));
+    _aabb3Collision1(args, "Partually overlapping",
+      new Math.Region3(-2.0, -2.0, -2.0, 2.0, 2.0, 2.0),
+      new Math.Region3(-1.0, -1.0, -1.0, 2.0, 2.0, 2.0),
+      new Math.Vector3(2.0, 2.0, 2.0),
+      new Collisions.TwoAABBResult(Collisions.Type.Intesected, 0.0, Math.HitRegion.None));
+  });
+}
+
+void _aabb3Collision1(TestArgs args, String msg, Math.Region3 reg, Math.Region3 target,
+  Math.Vector3 vec, Collisions.TwoAABBResult exp) {
+  Collisions.TwoAABBResult result = Collisions.twoAABB3(reg, target, vec, Math.Vector3.zero);
+  if ((result.type != exp.type) ||
+    !Math.Comparer.equals(result.parametric, exp.parametric) ||
+    (result.region != exp.region)) {
+    args.error("Unexpected result from collision:\n"+
+      "   Message:  $msg\n"+
+      "   Original: $reg\n"+
+      "   Target:   $target\n"+
+      "   Vector:   $vec\n"+
+      "   Expected: $exp\n"+
+      "   Result:   $result\n");
+  } else {
+    args.info("Results from collision:\n"+
+      "   Message:  $msg\n"+
+      "   Original: $reg\n"+
+      "   Target:   $target\n"+
+      "   Vector:   $vec\n"+
+      "   Result:   $result\n");
+  }
+}

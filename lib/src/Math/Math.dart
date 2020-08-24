@@ -2,7 +2,6 @@ library ThreeDart.Math;
 
 import 'dart:math' as math;
 
-part 'Collisions.dart';
 part 'Color3.dart';
 part 'Color4.dart';
 part 'Colors.dart';
