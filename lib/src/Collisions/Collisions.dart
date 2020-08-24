@@ -6,20 +6,21 @@ import '../Math/Math.dart' as Math;
 
 part 'TwoAABB.dart';
 part 'TwoSphere.dart';
+part 'SpherePlane.dart';
 
-// TODO: Add the following:
-// - betweenTwoRegion2s
-// - betweenTwoRegion3s
-// - betweenRegionSphere
-// - betweenAABBSphere
-// - betweenRegionPlane
-// - betweenAABBPlane
-// - betweenSpherePlane
-// - betweenTriangleRegion
-// - betweenTriangleAABB
-// - betweenTriangleSphere
-// - betweenTrianglePlane
-// - betweenTwoTriangles
+// FUTURE: Add the following:
+// - TwoRegion2
+// - TwoRegion3
+// - RegionSphere
+// - AABBSphere
+// - RegionPlane
+// - AABBPlane
+// - SpherePlane
+// - TriangleRegion
+// - TriangleAABB
+// - TriangleSphere
+// - TrianglePlane
+// - TwoTriangle
 
 /// Indicates the result type of the collision.
 enum Type {

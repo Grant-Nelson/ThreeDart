@@ -28,8 +28,8 @@ class TwoSphereResult extends BaseResult {
 
 /// Tests the collision between two moving spheres.
 /// The given vectors represent the constant amount of distance moved in a time span.
-TwoSphereResult betweenTwoSpheres(Math.Sphere  sphereA, Math.Sphere  sphereB,
-                                  Math.Vector3 vecA,    Math.Vector3 vecB) {
+TwoSphereResult twoSphere(Math.Sphere  sphereA, Math.Sphere  sphereB,
+                          Math.Vector3 vecA,    Math.Vector3 vecB) {
   if (sphereA == null || sphereB == null || vecA == null || vecB == null) return null;
 
   Math.Point3 cA = sphereA.center;
