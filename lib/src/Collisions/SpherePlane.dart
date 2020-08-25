@@ -2,6 +2,18 @@ part of ThreeDart.Collisions;
 
 /// The results of a collision test between a sphere and a plane.
 class SpherePlaneResult extends BaseResult {
+
+  /// The sphere in this collision.
+  final Math.Sphere sphere;
+
+  /// The plane in this collision.
+  final Math.Plane plane;
+
+  /// The vector for the sphere moving in the given time frame.
+  final Math.Vector3 vec;
+
+  /// Indicates if the back of the plane should collide or not.
+  final bool backside;
   
   /// The center point of the sphere when the collision occurred.
   /// This is null when no collision occurred.
@@ -12,8 +24,9 @@ class SpherePlaneResult extends BaseResult {
   final Math.Point3 hitPoint;
   
   /// Creates a new collision result for collision between a sphere and a plane.
-  SpherePlaneResult(Type type, [double parametric = 0.0,
-    Math.Point3 this.center = null, Math.Point3 this.hitPoint = null]):
+  SpherePlaneResult(Type type, double parametric,
+    Math.Sphere this.sphere, Math.Plane this.plane, Math.Vector3 this.vec, bool this.backside,
+    [Math.Point3 this.center = null, Math.Point3 this.hitPoint = null]):
     super(type, parametric);
     
   /// Gets the string for this collision.
@@ -30,15 +43,21 @@ SpherePlaneResult spherePlane(Math.Sphere sphere, Math.Plane plane, Math.Vector3
 
   Math.Vector3 n = plane.normal.normal();
   double div = vec.dot(n);
-  if (div == 0.0) return SpherePlaneResult(Type.NoCollision);
-  if ((div > 0.0) && !backside) return SpherePlaneResult(Type.NoCollision);
+  if (div == 0.0)
+    return SpherePlaneResult(Type.NoCollision, 0.0, sphere, plane, vec, backside);
+  if ((div > 0.0) && !backside)
+    return SpherePlaneResult(Type.NoCollision, 0.0, sphere, plane, vec, backside);
 
   Math.Vector3 c = new Math.Vector3(sphere.x, sphere.y, sphere.z);
-  double t = (plane.offset - c.dot(n) - sphere.radius) / div;
-  if (t < 0.0) return new SpherePlaneResult(Type.NoCollision, t); // Heading away from eachother.
-  if (t > 1.0) return new SpherePlaneResult(Type.OutOfRange, t); // Hit's in the future.
+  double t = (plane.offset - c.dot(n) + sphere.radius) / div;
+  if (t < 0.0) // Heading away from eachother.
+    return new SpherePlaneResult(Type.NoCollision, t, sphere, plane, vec, backside);
+  if (t > 1.0) // Hit's in the future.
+    return new SpherePlaneResult(Type.OutOfRange, t, sphere, plane, vec, backside);
 
   Math.Point3 c2 = new Math.Point3(sphere.x + vec.dx*t, sphere.y + vec.dy*t, sphere.z + vec.dz*t);
-  Math.Point3 hit = new Math.Point3(c2.x - n.dx*sphere.radius, c2.y - n.dy*sphere.radius, c2.z - n.dz*sphere.radius);
-  return new SpherePlaneResult(Type.Intesected, t, c2, hit);
+  Math.Point3 hit = plane.nearestPoint(c2);
+  Type type = Type.Collision;
+  if (c2.distance(hit) < sphere.radius) type = Type.Intesected;
+  return new SpherePlaneResult(type, t, sphere, plane, vec, backside, c2, hit);
 }

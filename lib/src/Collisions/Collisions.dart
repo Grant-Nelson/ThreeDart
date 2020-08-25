@@ -4,9 +4,10 @@ import 'dart:math' as math;
 
 import '../Math/Math.dart' as Math;
 
-part 'TwoAABB.dart';
-part 'TwoSphere.dart';
 part 'SpherePlane.dart';
+part 'TwoAABB2.dart';
+part 'TwoAABB3.dart';
+part 'TwoSphere.dart';
 
 // FUTURE: Add the following:
 // - TwoRegion2
@@ -45,7 +46,7 @@ enum Type {
 }
 
 /// The common shared result of a collision test between two shapes.
-class BaseResult {
+abstract class BaseResult {
 
   /// The type of collision which occurred.
   final Type type;
