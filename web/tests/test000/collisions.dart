@@ -83,6 +83,33 @@ void addCollisionTests(TestManager tests) {
       new Math.Vector3(2.0, 2.0, 2.0),
       Collisions.Type.Intesected, 0.0, Math.HitRegion.None);
   });
+
+  tests.add("Collision Between Two Spheres Test", (TestArgs args) {
+    _twoSphereCollision(args, "Same sized spheres colliding after B moves left",
+      new Math.Sphere(0.0, 0.0, 0.0, 1.0),
+      new Math.Sphere(3.0, 0.0, 0.0, 1.0),
+      Math.Vector3.zero,
+      new Math.Vector3(-1.0, 0.0, 0.0),
+      Collisions.Type.Collision, 1.0);
+    _twoSphereCollision(args, "Same sized spheres colliding after A moves left",
+      new Math.Sphere(3.0, 0.0, 0.0, 1.0),
+      new Math.Sphere(0.0, 0.0, 0.0, 1.0),
+      new Math.Vector3(-1.0, 0.0, 0.0),
+      Math.Vector3.zero,
+      Collisions.Type.Collision, 1.0);
+    _twoSphereCollision(args, "Same sized spheres already touching and A moves left",
+      new Math.Sphere(0.0, 0.0, 0.0, 1.0),
+      new Math.Sphere(2.0, 0.0, 0.0, 1.0),
+      new Math.Vector3(-1.0, 0.0, 0.0),
+      Math.Vector3.zero,
+      Collisions.Type.NoCollision, 0.0);
+    _twoSphereCollision(args, "Same sized spheres already touching and A moves right",
+      new Math.Sphere(0.0, 0.0, 0.0, 1.0),
+      new Math.Sphere(2.0, 0.0, 0.0, 1.0),
+      Math.Vector3.zero,
+      new Math.Vector3(-1.0, 0.0, 0.0),
+      Collisions.Type.Collision, 0.0);
+  });
 }
 
 void _aabb3Collision1(TestArgs args, String msg, Math.Region3 reg, Math.Region3 target,
@@ -91,7 +118,7 @@ void _aabb3Collision1(TestArgs args, String msg, Math.Region3 reg, Math.Region3 
   if ((result.type != expType) ||
     !Math.Comparer.equals(result.parametric, expParametric) ||
     (result.region != expHit)) {
-    args.error("Unexpected result from collision:\n"+
+    args.error("Unexpected result from twoAABB3 collision:\n"+
       "   Message:  $msg\n"+
       "   Original: $reg\n"+
       "   Target:   $target\n"+
@@ -99,11 +126,36 @@ void _aabb3Collision1(TestArgs args, String msg, Math.Region3 reg, Math.Region3 
       "   Expected: $expType $expParametric $expHit\n"+
       "   Result:   $result\n");
   } else {
-    args.info("Results from collision:\n"+
+    args.info("Results from twoAABB3 collision:\n"+
       "   Message:  $msg\n"+
       "   Original: $reg\n"+
       "   Target:   $target\n"+
       "   Vector:   $vec\n"+
+      "   Result:   $result\n");
+  }
+}
+
+void _twoSphereCollision(TestArgs args, String msg, Math.Sphere sphereA, Math.Sphere sphereB,
+  Math.Vector3 vecA, Math.Vector3 vecB, Collisions.Type expType, double expParametric) {
+  Collisions.TwoSphereResult result = Collisions.twoSphere(sphereA, sphereB, vecA, vecB);
+  if ((result.type != expType) ||
+    !Math.Comparer.equals(result.parametric, expParametric)) {
+    args.error("Unexpected result from twoSphere collision:\n"+
+      "   Message:  $msg\n"+
+      "   Sphere A: $sphereA\n"+
+      "   Sphere B: $sphereB\n"+
+      "   Vector A: $vecA\n"+
+      "   Vector B: $vecB\n"+
+      "   Expected: $expType $expParametric\n"+
+      "   Result:   ${result.type} ${result.parametric}\n"+
+      "   ResultOb: $result\n");
+  } else {
+    args.info("Results from twoSphere collision:\n"+
+      "   Message:  $msg\n"+
+      "   Sphere A: $sphereA\n"+
+      "   Sphere B: $sphereB\n"+
+      "   Vector A: $vecA\n"+
+      "   Vector B: $vecB\n"+
       "   Result:   $result\n");
   }
 }

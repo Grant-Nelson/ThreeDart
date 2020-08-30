@@ -47,15 +47,20 @@ TwoSphereResult twoSphere(Math.Sphere  sphereA, Math.Sphere  sphereB,
 
   Math.Point3 cA = sphereA.center;
   Math.Point3 cB = sphereB.center;
-  Math.Vector3 e = cA.vectorTo(cB);
+  Math.Vector3 e = cB.vectorTo(cA);
   double r = sphereA.radius + sphereB.radius;
   double r2 = r*r;
-  double ee = e.length2();
+  double ee = e.dot(e);
   if (ee < r2) // Spheres are inside eachother.
-    return new TwoSphereResult(Type.Intesected, 0.0, sphereA, sphereB, vecA, vecB, cA, cB, null);
+    return new TwoSphereResult(Type.Intesected, 0.0, sphereA, sphereB, vecA, vecB, cA, cB);
 
-  Math.Vector3 d = vecA - vecB;
-  double ed = e.dot(d);
+  Math.Vector3 d = (vecB - vecA);
+  double len = d.length();
+  Math.Vector3 d2 = d.normal();
+  double ed = e.dot(d2);
+  if (Math.Comparer.equals(ee, r2) && (ed < 0.0)) // Touching but moving away.
+    return new TwoSphereResult(Type.NoCollision, 0.0, sphereA, sphereB, vecA, vecB);
+
   double f = ed*ed + r2 - ee;
   if (f < 0.0) // No intersection.
     return new TwoSphereResult(Type.NoCollision, 0.0, sphereA, sphereB, vecA, vecB);
@@ -63,11 +68,12 @@ TwoSphereResult twoSphere(Math.Sphere  sphereA, Math.Sphere  sphereB,
   double t = ed - math.sqrt(f);
   if (t < 0.0) // Heading away from eachother.
     return new TwoSphereResult(Type.NoCollision, t, sphereA, sphereB, vecA, vecB);
-  if (t > 1.0) // Hit's in the future.
+  if (t > len) // Hit's in the future.
     return new TwoSphereResult(Type.OutOfRange, t, sphereA, sphereB, vecA, vecB);
 
-  Math.Point3 cA2 = new Math.Point3(sphereA.x + vecA.dx*t, sphereA.y + vecA.dy*t, sphereA.z + vecA.dz*t);
-  Math.Point3 cB2 = new Math.Point3(sphereB.x + vecB.dx*t, sphereB.y + vecB.dy*t, sphereB.z + vecB.dz*t);
+  double t2 = t / len;
+  Math.Point3 cA2 = new Math.Point3(sphereA.x + vecA.dx*t2, sphereA.y + vecA.dy*t2, sphereA.z + vecA.dz*t2);
+  Math.Point3 cB2 = new Math.Point3(sphereB.x + vecB.dx*t2, sphereB.y + vecB.dy*t2, sphereB.z + vecB.dz*t2);
   double scalar = sphereA.radius / math.sqrt(ee);
   Math.Point3 hit = new Math.Point3((cB2.x - cA2.x)*scalar + cA2.x,
                                     (cB2.y - cA2.y)*scalar + cA2.y,

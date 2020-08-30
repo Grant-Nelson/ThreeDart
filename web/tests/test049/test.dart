@@ -17,7 +17,7 @@ import '../../common/common.dart' as common;
 class Ball extends ThreeDart.Entity {
   static Math.Vector3 gravity;
   static Shapes.Shape ballShape;
-  static const double dampening = 0.8;
+  static const double dampening = 0.4;
   static const double terminalVelocity = 10.0;
 
   Movers.Constant ballMover;
@@ -43,7 +43,7 @@ ThreeDart.Entity createFloor(ThreeDart.ThreeDart td) {
 
   Movers.Mover floorMover =
     new Movers.Constant(
-      new Math.Matrix4.translate(0.0, -3.0, 0.0)*
+      new Math.Matrix4.translate(0.0, -5.0, 0.0)*
       new Math.Matrix4.scale(1000.0, 1.0, 1000.0)*
       new Math.Matrix4.rotateX(-Math.PI_2));
 
@@ -78,7 +78,7 @@ class Collider extends Movers.Mover {
 
   Collider() {
     this.balls = new List<Ball>();
-    this.plane = new Math.Plane(0.0, 1.0, 0.0, -3.0);
+    this.plane = new Math.Plane(0.0, 1.0, 0.0, -5.0);
 
     this._spColResults = new List<Collisions.SpherePlaneResult>();
     this._spColBalls = new List<Ball>();
@@ -135,7 +135,6 @@ class Collider extends Movers.Mover {
 
           Collisions.TwoSphereResult result2 = Collisions.twoSphere(sphereA, sphereB, vecA, vecB);
           if (result2.collided) {
-            print("Result: $result2"); // TODO: REMOVE
             double newDT = result2.parametric * dt;
             if (Math.Comparer.lessThanEquals(newDT, minDT)) {
               if (Math.Comparer.notEquals(newDT, minDT)) {
@@ -155,27 +154,40 @@ class Collider extends Movers.Mover {
     return minDT;
   }
 
+  void moveBall(Ball ball, Math.Point3 position, Math.Vector3 velocity) {
+      ball.position = position;
+      double len = velocity.length();
+      if (Math.Comparer.greaterThan(len, 0.01)) {
+        ball.velocity = velocity;
+        ball.active = true;
+      } else {
+        ball.velocity = Math.Vector3.zero;
+        ball.active = false;
+      }
+      print("> ${ball.position}, ${ball.velocity}, ${ball.active}");
+  }
+
   void updateForCollision(double dt) {
     Math.Vector3 pNorm = this.plane.normal.normal();
     for (int i = this._spColResults.length-1; i >= 0; i--) {
       Collisions.SpherePlaneResult col = this._spColResults[i];
       Ball ball = this._spColBalls[i];
-      ball.position = col.center;
-      ball.velocity -= pNorm * (pNorm.dot(ball.velocity) * 2.0 * Ball.dampening);
-      ball.active = !ball.velocity.isZero();
+      double n = pNorm.dot(ball.velocity);
+      Math.Vector3 vec = ball.velocity - pNorm*(n + n*Ball.dampening);
+      this.moveBall(ball, col.center, vec);
     }
 
     for (int i = this._ssColResults.length-1; i >= 0; i--) {
       Collisions.TwoSphereResult col = this._ssColResults[i];
       Ball ballA = this._ssColBalls1[i];
       Ball ballB = this._ssColBalls2[i];
-      ballA.position = col.centerA;
-      ballB.position = col.centerB;
-      Math.Vector3 bNorm = ballA.position.vectorTo(ballB.position);
-      ballA.velocity -= bNorm * (bNorm.dot(ballA.velocity) * 2.0 * Ball.dampening);
-      ballB.velocity -= bNorm * (bNorm.dot(ballB.velocity) * 2.0 * Ball.dampening);
-      ballA.active = !ballA.velocity.isZero();
-      ballB.active = !ballB.velocity.isZero();
+      Math.Vector3 bNorm = col.centerA.vectorTo(col.centerB);
+      double nA = bNorm.dot(ballA.velocity);
+      double nB = bNorm.dot(ballB.velocity);
+      Math.Vector3 vecA = ballA.velocity - bNorm*(nA - nB*Ball.dampening);
+      Math.Vector3 vecB = ballB.velocity - bNorm*(nB - nA*Ball.dampening);
+      this.moveBall(ballA, col.centerA, vecA);
+      this.moveBall(ballB, col.centerB, vecB);
     }
 
     for (int i = this.balls.length-1; i >= 0; i--) {

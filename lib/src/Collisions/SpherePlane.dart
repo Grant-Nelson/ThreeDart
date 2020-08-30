@@ -43,9 +43,9 @@ SpherePlaneResult spherePlane(Math.Sphere sphere, Math.Plane plane, Math.Vector3
 
   Math.Vector3 n = plane.normal.normal();
   double div = vec.dot(n);
-  if (div == 0.0)
+  if (div == 0.0) // Moving parallel to the plane
     return SpherePlaneResult(Type.NoCollision, 0.0, sphere, plane, vec, backside);
-  if ((div > 0.0) && !backside)
+  if ((div > 0.0) && !backside) // Heading in the same direction as the normal.
     return SpherePlaneResult(Type.NoCollision, 0.0, sphere, plane, vec, backside);
 
   Math.Vector3 c = new Math.Vector3(sphere.x, sphere.y, sphere.z);
