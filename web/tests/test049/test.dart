@@ -17,7 +17,7 @@ import '../../common/common.dart' as common;
 class Ball extends ThreeDart.Entity {
   static Math.Vector3 gravity;
   static Shapes.Shape ballShape;
-  static const double dampening = 0.4;
+  static const double dampening = 0.8;
   static const double terminalVelocity = 10.0;
 
   Movers.Constant ballMover;
@@ -69,6 +69,7 @@ class Collider extends Movers.Mover {
   List<Ball> balls;
   Math.Plane plane;
 
+  List<int> _attempts;
   List<Collisions.SpherePlaneResult> _spColResults;
   List<Ball> _spColBalls;
   List<Collisions.TwoSphereResult> _ssColResults;
@@ -80,6 +81,7 @@ class Collider extends Movers.Mover {
     this.balls = new List<Ball>();
     this.plane = new Math.Plane(0.0, 1.0, 0.0, -5.0);
 
+    this._attempts = new List<int>();
     this._spColResults = new List<Collisions.SpherePlaneResult>();
     this._spColBalls = new List<Ball>();
     this._ssColResults = new List<Collisions.TwoSphereResult>();
@@ -104,6 +106,8 @@ class Collider extends Movers.Mover {
     List<Math.Sphere> spheres = new List<Math.Sphere>();
     List<Math.Vector3> vecs = new List<Math.Vector3>();
     for (int i = 0; i < length; i++) {
+      if (this._attempts[i] <= 0) continue;
+
       Ball ballA = this.balls[i];
       Math.Matrix4 mat = ballA.ballMover.matrix;
       Math.Sphere sphereA = new Math.Sphere(mat.m41, mat.m42, mat.m43, 1.0);
@@ -114,6 +118,7 @@ class Collider extends Movers.Mover {
       if (ballA.active) {
         Collisions.SpherePlaneResult result1 = Collisions.spherePlane(sphereA, this.plane, vecA);
         if (result1.collided) {
+          this._attempts[i]--;
           double newDT = result1.parametric * dt;
           if (Math.Comparer.lessThanEquals(newDT, minDT)) {
             if (Math.Comparer.notEquals(newDT, minDT)) {
@@ -135,6 +140,8 @@ class Collider extends Movers.Mover {
 
           Collisions.TwoSphereResult result2 = Collisions.twoSphere(sphereA, sphereB, vecA, vecB);
           if (result2.collided) {
+            this._attempts[i]--;
+            this._attempts[j]--;
             double newDT = result2.parametric * dt;
             if (Math.Comparer.lessThanEquals(newDT, minDT)) {
               if (Math.Comparer.notEquals(newDT, minDT)) {
@@ -164,7 +171,6 @@ class Collider extends Movers.Mover {
         ball.velocity = Math.Vector3.zero;
         ball.active = false;
       }
-      print("> ${ball.position}, ${ball.velocity}, ${ball.active}");
   }
 
   void updateForCollision(double dt) {
@@ -173,7 +179,8 @@ class Collider extends Movers.Mover {
       Collisions.SpherePlaneResult col = this._spColResults[i];
       Ball ball = this._spColBalls[i];
       double n = pNorm.dot(ball.velocity);
-      Math.Vector3 vec = ball.velocity - pNorm*(n + n*Ball.dampening);
+      Math.Vector3 perp = ball.velocity - pNorm*n;
+      Math.Vector3 vec = (perp - pNorm*n)*Ball.dampening;
       this.moveBall(ball, col.center, vec);
     }
 
@@ -184,13 +191,16 @@ class Collider extends Movers.Mover {
       Math.Vector3 bNorm = col.centerA.vectorTo(col.centerB);
       double nA = bNorm.dot(ballA.velocity);
       double nB = bNorm.dot(ballB.velocity);
-      Math.Vector3 vecA = ballA.velocity - bNorm*(nA - nB*Ball.dampening);
-      Math.Vector3 vecB = ballB.velocity - bNorm*(nB - nA*Ball.dampening);
+      Math.Vector3 perpA =  ballA.velocity - pNorm*nA;
+      Math.Vector3 perpB =  ballB.velocity - pNorm*nB;
+      Math.Vector3 vecA = (perpA + bNorm*nB)*Ball.dampening;
+      Math.Vector3 vecB = (perpB + bNorm*nA)*Ball.dampening;
       this.moveBall(ballA, col.centerA, vecA);
       this.moveBall(ballB, col.centerB, vecB);
     }
 
     for (int i = this.balls.length-1; i >= 0; i--) {
+      if (this._attempts[i] <= 0) continue;
       Ball ball = this.balls[i];
       if (!this._ballsHandled.contains(i))
         ball.position = ball.position.offset(ball.velocity * dt);
@@ -204,12 +214,13 @@ class Collider extends Movers.Mover {
 
   Math.Matrix4 update(ThreeDart.RenderState state, Movers.Movable obj) {
     double dt = state.dt;
-    int countDown = 20;
-    while (Math.Comparer.greaterThan(dt, 0.0) && (countDown > 0)) {
+    this._attempts.clear();
+    for (int i = 0; i < this.balls.length; ++i)
+      this._attempts.add(20);
+    while (Math.Comparer.greaterThan(dt, 0.0)) {
       double minDT = this.closestCollisions(dt);
       this.updateForCollision(minDT);
       dt -= minDT;
-      countDown--;
     }
 
     // The collider doesn't move so just return the identity.
@@ -226,7 +237,9 @@ class Collider extends Movers.Mover {
 void main() {
   new common.ShellPage("Test 049")
     ..addLargeCanvas("testCanvas")
-    ..addPar([""])
+    ..addPar(["This is an initial test (still has bugs) of a basic sphere physics collision. ",
+      "This has sphere/sphere collision and sphere/plane collision. Some of the bugs is that ",
+      "the spheres will still pass through eachother and the plane and there are no rotations yet."])
     ..addControlBoxes(["options"])
     ..addPar(["«[Back to Tests|../]"]);
 
@@ -267,6 +280,9 @@ void main() {
     Input.KeyEventArgs kargs = args as Input.KeyEventArgs;
     if (kargs.key.code == Input.Key.spacebar) {
       Ball ball = new Ball();
+      ball.position = trans.location;
+      ball.velocity = new Math.Matrix3.rotateY(-rot.yaw.location).transVec3(new Math.Vector3(0.0, 0.0, -10.0));
+
       balls.children.add(ball);
       collider.balls.add(ball);
     }
