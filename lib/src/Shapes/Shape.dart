@@ -251,7 +251,7 @@ class Shape implements ShapeBuilder {
   /// merger returns null for a merge.
   /// After merger collapsed lines and faces are removed and
   /// repeat points, lines, and faces are removed.
-  void mergeVertices(VertexMatcher matcher, VertexMerger merger, [double searchRange = Math.Comparer.defaultEpsilon]) {
+  void mergeVertices(VertexMatcher matcher, VertexMerger merger, [double searchRange = Math.EpsilonComparer.defaultEpsilon]) {
     matcher ??= new VertexLocationMatcher();
 
     this._changed?.suspend();
@@ -292,7 +292,7 @@ class Shape implements ShapeBuilder {
   /// By joining vertices the edges will be smoothed hiding seams.
   /// This is useful if you wrap a flat grid into a cylinder and want
   /// to smooth where the opposite edges touch.
-  void joinSeams([VertexMatcher matcher = null, double searchRange = Math.Comparer.defaultEpsilon]) {
+  void joinSeams([VertexMatcher matcher = null, double searchRange = Math.EpsilonComparer.defaultEpsilon]) {
     this.mergeVertices(matcher, new VertexJoiner(), searchRange);
   }
 
@@ -300,7 +300,7 @@ class Shape implements ShapeBuilder {
   /// This is similar to joining seams because it will smooth out edges
   /// however the edges will still have separate vertices meaning the surface
   /// can have texturing without a texture seam.
-  void adjustNormals([VertexMatcher matcher = null, double searchRange = Math.Comparer.defaultEpsilon]) {
+  void adjustNormals([VertexMatcher matcher = null, double searchRange = Math.EpsilonComparer.defaultEpsilon]) {
     this.mergeVertices(matcher, new NormalAdjuster(), searchRange);
   }
 
@@ -308,7 +308,7 @@ class Shape implements ShapeBuilder {
   /// This is similar to joining seams because it will smooth out edges
   /// however the edges will still have separate vertices meaning the surface
   /// can have texturing without a texture seam.
-  void adjustBinormals([VertexMatcher matcher = null, double searchRange = Math.Comparer.defaultEpsilon]) {
+  void adjustBinormals([VertexMatcher matcher = null, double searchRange = Math.EpsilonComparer.defaultEpsilon]) {
     this.mergeVertices(matcher, new BinormalAdjuster(), searchRange);
   }
 
