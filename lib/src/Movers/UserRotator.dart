@@ -309,6 +309,9 @@ class UserRotator implements Mover, Input.Interactable {
   /// The yaw component for this rotator.
   ComponentShift get yaw => this._yaw;
 
+  /// Gets the matrix calculated during the last update.
+  Math.Matrix4 get matrix => this._mat;
+
   /// Indicates if the modifiers keys must be pressed or released.
   /// This does not apply when using a touch input.
   Input.Modifiers get modifiers => this._modPressed;

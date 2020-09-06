@@ -46,19 +46,36 @@ class IntersectionRayRegion3 {
   String toString() => "$point <$normal> $parametric $region";
 }
 
-/// Results from an intersection between two regions.
-class IntersectionBetweenMovingRegions {
+/// Results from an intersection between a 3D ray and plane.
+class IntersectionRayPlane {
 
-  /// The parametric value between 0 and 1 inclusively of the vector to the intersection point.
+  /// The point in or on the plane which the ray intersects.
+  final Point3 point;
+
+  /// The parametric value between 0 and 1 inclusively of the ray to the intersection point.
   final double parametric;
 
-  /// The side of the target region which was hit.
-  final HitRegion region;
-
   /// Creates a new intersection result.
-  IntersectionBetweenMovingRegions(this.parametric, this.region);
+  IntersectionRayPlane(this.point, this.parametric);
 
   /// Gets the string for this intersection.
   @override
-  String toString() => "$parametric $region";
+  String toString() => "$point $parametric";
+}
+
+/// Results from an intersection between a 3D ray and sphere.
+class IntersectionRaySphere {
+
+  /// The point in or on the surface of the sphere which the ray intersects.
+  final Point3 point;
+
+  /// The parametric value between 0 and 1 inclusively of the ray to the intersection point.
+  final double parametric;
+
+  /// Creates a new intersection result.
+  IntersectionRaySphere(this.point, this.parametric);
+
+  /// Gets the string for this intersection.
+  @override
+  String toString() => "$point $parametric";
 }

@@ -83,6 +83,19 @@ class Region2 {
     return new Region2._(x, y, x2-x, y2-y);
   }
 
+  /// The minimum corner point in the region.
+  Point2 get minCorner =>
+    new Point2(this.x, this.y);
+
+  /// The maximum corner point in the region.
+  Point2 get maxCorner =>
+    new Point2(this.x + this.dx, this.y + this.dy);
+
+  /// The center point of the region.
+  Point2 get center => new Point2(
+    this.x + this.dx/2.0,
+    this.y + this.dy/2.0);
+
   /// Expands the region to include the given point, [pnt].
   Region2 expandWithPoint(Point2 pnt) =>
     this.expand(pnt.x, pnt.y);
@@ -132,16 +145,16 @@ class Region2 {
   }
 
   /// The minimum side of the region.
-  double get minSide {
-    if (this.dx > this.dy) return this.dy;
-    else return this.dx;
-  }
+  double get minSide =>
+    (this.dx > this.dy)? this.dy: this.dx;
 
   /// The maximum side of the region.
-  double get maxSide {
-    if (this.dx > this.dy) return this.dx;
-    else return this.dy;
-  }
+  double get maxSide =>
+    (this.dx > this.dy)? this.dx: this.dy;
+
+  /// Indicates if the region is a square, ie has equal dx and dy.
+  bool get isSquare =>
+    Comparer.equals(this.dx, this.dy);
 
   /// Gets the adjusted point of the given [raw] point.
   /// This point is normalized into the region.
@@ -185,7 +198,7 @@ class Region2 {
   }
 
   /// Determines the intersection between the given [ray] and this region.
-  /// Will return nil if there is no intersection.
+  /// Will return null if there is no intersection.
   IntersectionRayRegion2 rayIntersection(Ray2 ray) {
     final double maxx = this.x + this.dx;
     final double maxy = this.y + this.dy;
@@ -261,67 +274,6 @@ class Region2 {
     return null;
   }
 
-  /// Determines the collision between this region moving with the given [vector]
-  /// and the other region, the [target], not moving.
-  IntersectionBetweenMovingRegions collision(Region2 target, Vector2 vector, [HitRegion sides = null]) {
-    sides ??= HitRegion.All;
-    if (this.overlaps(target))
-      return new IntersectionBetweenMovingRegions(0.0, HitRegion.Inside);
-    double t = 100.0, d;
-    HitRegion region = HitRegion.None, edge;
-
-    if ((vector.dx != 0.0) && sides.overlaps(HitRegion.XPosNeg))  {
-      if (vector.dx > 0.0) {
-        if (sides.has(HitRegion.XNeg)) {
-          edge = HitRegion.XNeg;
-          if (Comparer.equals(target.x, this.x + this.dx)) d = 0.0;
-          else d = (target.x - (this.x + this.dx)) / vector.dx;
-        }
-      } else {
-        if (sides.has(HitRegion.XPos)) {
-          edge = HitRegion.XPos;
-          if (Comparer.equals(target.x + target.dx, this.x)) d = 0.0;
-          else d = ((target.x + target.dx) - this.x) / vector.dx;
-        }
-      }
-
-      if ((d < t) && (d >= 0.0) && (d <= 1.0)) {
-        double y = this.y + vector.dy*d;
-        if (rangeOverlap(target.y, target.y + target.dy, y, y + this.dy)) {
-          t = d;
-          region = edge;
-        }
-      }
-    }
-
-    if ((vector.dy != 0.0) && sides.overlaps(HitRegion.YPosNeg))  {
-      if (vector.dy > 0.0) {
-        if (sides.has(HitRegion.YNeg)) {
-          edge = HitRegion.YNeg;
-          if (Comparer.equals(target.y, this.y + this.dy)) d = 0.0;
-          else d = (target.y - (this.y + this.dy)) / vector.dy;
-        }
-      } else {
-        if (sides.has(HitRegion.YPos)) {
-          edge = HitRegion.YPos;
-          if (Comparer.equals(target.y + target.dy, this.y)) d = 0.0;
-          else d = ((target.y + target.dy) - this.y) / vector.dy;
-        }
-      }
-
-      if ((d < t) && (d >= 0.0) && (d <= 1.0)) {
-        double x = this.x + vector.dx*d;
-        if (rangeOverlap(target.x, target.x + target.dx, x, x + this.dx)) {
-          t = d;
-          region = edge;
-        }
-      }
-    }
-
-    if (region == HitRegion.None) return null;
-    return new IntersectionBetweenMovingRegions(t, region);
-  }
-
   /// Determines if the given point is contained inside this region.
   bool contains(Point2 a) =>
     inRange(a.x, this.x, this.x+this.dx) &&
@@ -341,11 +293,11 @@ class Region2 {
   bool operator ==(var other) {
     if (identical(this, other)) return true;
     if (other is! Region2) return false;
-    Region2 size = other as Region2;
-    if (!Comparer.equals(size.x,  this.x))  return false;
-    if (!Comparer.equals(size.y,  this.y))  return false;
-    if (!Comparer.equals(size.dx, this.dx)) return false;
-    if (!Comparer.equals(size.dy, this.dy)) return false;
+    Region2 region = other as Region2;
+    if (!Comparer.equals(region.x,  this.x))  return false;
+    if (!Comparer.equals(region.y,  this.y))  return false;
+    if (!Comparer.equals(region.dx, this.dx)) return false;
+    if (!Comparer.equals(region.dy, this.dy)) return false;
     return true;
   }
 

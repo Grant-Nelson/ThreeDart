@@ -5,14 +5,16 @@ import 'dart:math' as math;
 part 'Color3.dart';
 part 'Color4.dart';
 part 'Colors.dart';
-part 'CustomComparer.dart';
 part 'Comparer.dart';
+part 'Cube.dart';
+part 'CustomComparer.dart';
 part 'EpsilonComparer.dart';
 part 'HitRegion.dart';
 part 'Intersection.dart';
 part 'Matrix2.dart';
 part 'Matrix3.dart';
 part 'Matrix4.dart';
+part 'Plane.dart';
 part 'Point2.dart';
 part 'Point3.dart';
 part 'Point4.dart';
@@ -22,6 +24,9 @@ part 'Ray3.dart';
 part 'Region2.dart';
 part 'Region3.dart';
 part 'Side.dart';
+part 'Sphere.dart';
+part 'Triangle2.dart';
+part 'Triangle3.dart';
 part 'Vector2.dart';
 part 'Vector3.dart';
 part 'Vector4.dart';
@@ -47,7 +52,7 @@ const double TAU = PI*2.0;
 /// 1.0 or more will return the [b]. Between 0.0 and 1.0 will be
 /// a scaled mixture of the two given doubles.
 double lerpVal(double a, double b, double i) =>
-  a + i * (b - a);
+  (i <= 0.0)? a: (i >= 1.0)? b: a + i * (b - a);
 
 /// Gets the clamped value.
 ///

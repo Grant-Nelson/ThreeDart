@@ -13,8 +13,8 @@ import '../../common/common.dart' as common;
 void main() {
   common.ShellPage page = new common.ShellPage("Test 045")
     ..addLargeCanvas("testCanvas")
-    ..addPar(["Test of the Material Lighting shader with a textured spot light. ",
-      "Use Ctrl plus the mouse to move the light."])
+    ..addPar(["WIP ([Issue #104|https://github.com/Grant-Nelson/ThreeDart/issues/104]) ",
+      "Test of shadow projection with a spot light."])
     ..addControlBoxes(["shapes"])
     ..addPar(["«[Back to Tests|../]"]);
 

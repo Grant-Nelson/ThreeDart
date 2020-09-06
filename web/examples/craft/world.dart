@@ -109,7 +109,7 @@ class World {
   }
 
   /// Frees the given chunk and puts it in the graveyard
-  /// if the chunk is non-nil and currently in use.
+  /// if the chunk is non-null and currently in use.
   /// Returns true if disposed, false if not.
   bool disposeChunk(Chunk chunk) {
     if ((chunk != null) && this._chunks.remove(chunk)) {

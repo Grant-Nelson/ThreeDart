@@ -5,6 +5,7 @@ import 'package:ThreeDart/Shapes.dart' as Shapes;
 import 'package:ThreeDart/Lights.dart' as Lights;
 import 'package:ThreeDart/Movers.dart' as Movers;
 import 'package:ThreeDart/Math.dart' as Math;
+import 'package:ThreeDart/Collisions.dart' as Collisions;
 import 'package:ThreeDart/Textures.dart' as Textures;
 import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Data.dart' as Data;
