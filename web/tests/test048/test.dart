@@ -12,7 +12,6 @@ import '../../common/common.dart' as common;
 void main() {
   common.ShellPage page = new common.ShellPage("Test 048")
     ..addLargeCanvas("testCanvas")
-    
     ..addPar(["WIP ([Issue #120|https://github.com/Grant-Nelson/ThreeDart/issues/120]) ",
       "Test of the Material Lighting shader with a bar light. ",
       "The bar light hasn't been finished yet so this test is more of a ",
