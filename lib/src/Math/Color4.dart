@@ -137,9 +137,7 @@ class Color4 {
 
   /// Creates a new color inversely scaled by the given [scalar].
   Color4 operator /(double scalar) {
-    if (Comparer.equals(scalar, 0.0)) {
-      return new Color4.transparent();
-    }
+    if (Comparer.equals(scalar, 0.0)) return new Color4.transparent();
     return new Color4(this.red  / scalar, this.green / scalar,
                       this.blue / scalar, this.alpha / scalar);
   }

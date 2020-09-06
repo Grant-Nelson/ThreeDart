@@ -5,6 +5,7 @@ import 'dart:async' as asy;
 import 'dart:convert' as convert;
 import 'dart:typed_data' as data;
 
+import 'package:ThreeDart/Collisions.dart' as Collisions;
 import 'package:ThreeDart/Data.dart' as Data;
 import 'package:ThreeDart/Debug.dart' as Debug;
 import 'package:ThreeDart/Math.dart' as Math;
@@ -20,6 +21,7 @@ import '../../examples/chess/game/game.dart' as chess;
 
 part 'bench.dart';
 part 'chess.dart';
+part 'collisions.dart';
 part 'craft.dart';
 part 'testTools.dart';
 part 'matrix2.dart';
@@ -45,6 +47,7 @@ void main() {
   addRegion3Tests(tests);
   addShapeTests(tests);
   addShapePathTests(tests);
+  addCollisionTests(tests);
   addTechniqueTests(tests);
   addCraftTests(tests);
   addChessTests(tests);

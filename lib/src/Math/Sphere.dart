@@ -75,13 +75,6 @@ class Sphere {
     Point3 pnt = new Point3(ray.x + ray.dx*t, ray.y + ray.dy*t, ray.z + ray.dz*t);
     return new IntersectionRaySphere(pnt, t);
   }
-
-  /// Determines the collision between two spheres.
-  /// The given ray is the relative movement of the [other] sphere to this sphere.
-  /// Will return null if there is no intersection.
-  // IntersectionSphereSphere sphereCollision(Sphere other, Ray3 ray) {
-  //    TODO: Implement pg 290
-  // }
   
   /// Determines if the given [other] variable is a [Sphere] equal to this sphere.
   ///

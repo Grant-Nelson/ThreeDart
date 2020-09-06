@@ -76,7 +76,6 @@ class Triangle2 {
   double get area {
     Vector2 d1 = new Vector2(this.x2-this.x1, this.y2-this.y1);
     Vector2 d2 = new Vector2(this.x3-this.x2, this.y3-this.y2);
-    // TODO: Check if this is right.
     return d1.cross(d2) * 0.5;
   }
 
@@ -85,9 +84,13 @@ class Triangle2 {
                                     (this.y1 + this.y2 + this.y3) / 3.0);
 
   /// Convertex from the given barycentric coorinates vector to the cartesian coordinate point.
+  Point2 fromBarycentricCoordinates(double x, double y, double z) =>
+    new Point2(x * this.x1 + y * this.x2 + z * this.x3,
+               x * this.y1 + y * this.y2 + z * this.y3);
+
+  /// Convertex from the given barycentric coorinates vector to the cartesian coordinate point.
   Point2 fromBarycentric(Vector3 vec) =>
-    new Point2(vec.dx * this.x1 + vec.dy * this.x2 + vec.dz * this.x3,
-               vec.dx * this.y1 + vec.dy * this.y2 + vec.dz * this.x3);
+    this.fromBarycentricCoordinates(vec.dx, vec.dy, vec.dz);
 
   /// Convertex from the given cartesian coordinate point to the barycentric coorinates vector.
   /// If the triangle is degenerate (area is zero) then null will be returned.
@@ -109,8 +112,44 @@ class Triangle2 {
                        ((pnt.y - this.y2) * x12 + y12 * (this.x2 - pnt.x)) / div);
   }
 
-  // TODO: Add incenter and circumcenter
+  /// Gets the sphere where the intersection of the sphere and the plane for the triangle is a circle
+  /// which touches each side only once. The circle is inscribed in the triangle.
+  /// If the triangle is degenerate (area is zero) then null will be returned.
+  Sphere get incenter {
+    Point2 v1 = this.point1;
+    Point2 v2 = this.point2;
+    Point2 v3 = this.point3;
+    double len1 = v2.distance(v3);
+    double len2 = v1.distance(v3);
+    double len3 = v1.distance(v2);
+    double p = len1 + len2 + len3;
+    if (p == 0.0) {
+      // Degenerate triangle
+      return null;
+    }
+    Point2 center = this.fromBarycentricCoordinates(len1 / p, len2 / p, len3 / p);
+    return new Sphere.fromPoint(new Point3.fromPoint2(center), this.area / p);
+  }
 
+  /// Gets the sphere where the intersection of the sphere and the plane for the triangle is a circle
+  /// which touches each point of the triangle. The circle is circumscribed around the triangle.
+  Sphere get circumcenter {
+    Vector2 e1 = new Vector2(this.x3-this.x2, this.y3-this.y2);
+    Vector2 e2 = new Vector2(this.x1-this.x3, this.y1-this.y3);
+    Vector2 e3 = new Vector2(this.x2-this.x1, this.y2-this.y1);
+    double d1 = -e2.dot(e3);
+    double d2 = -e3.dot(e1);
+    double d3 = -e1.dot(e2);
+    double c1 = d2*d3;
+    double c2 = d3*d1;
+    double c3 = d1*d2;
+    double c = c1 + c2 + c3;
+    if (c == 0) return null;
+    double div = 2.0 * c;
+    Point2 center = this.fromBarycentricCoordinates((c2 + c3)/div, (c2 + c3)/div, (c2 + c3)/div);
+    double diam = math.sqrt((d1 + d2)*(d2 + d3)*(d3 + d1) / c);
+    return new Sphere.fromPoint(new Point3.fromPoint2(center), diam/2.0);
+  }
 
   /// Determines if the given [other] variable is a [Triangle2] equal to this triangle.
   ///
