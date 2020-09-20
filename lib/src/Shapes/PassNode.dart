@@ -23,15 +23,16 @@ class PassNode extends Node {
   /// Inserts a line into this passing node if it passes through this node.
   Node _insertLine(Line line, Math.Ray3 ray, Math.Cube maxCube, Path path, int depth) {
     Math.Region3 region = new Math.Region3.fromCube(path.cube(maxCube, depth));
-    Math.IntersectionRayRegion3 inter = region.rayIntersection(ray);
-    if (inter != null) this._lines.add(line);
+    Intersections.RayRegion3Result inter = Intersections.rayRegion3(ray, region);
+    if (inter.intesects) this._lines.add(line);
     return this;
   }
 
   /// Inserts a face into this passing node if it passes through this node.
   Node _insertFace(Face face, Math.Triangle3 tri, Math.Cube maxCube, Path path, int depth) {
     Math.Cube cube = path.cube(maxCube, depth);
-    if (cube.intersectsTriangle(tri)) this._faces.add(face);
+    Intersections.BaseResult inter = Intersections.cubeTriangle(cube, tri);
+    if (inter.intesects) this._faces.add(face);
     return this;
   }
 

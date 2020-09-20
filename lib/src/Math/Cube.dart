@@ -125,14 +125,6 @@ class Cube {
     return region;
   }
 
-  /// Determines if the this intersects or contains given [triangle].
-  bool intersectsTriangle(Triangle3 tri) {
-    
-    // TODO: Implement
-
-    return false;
-  }
-
   /// Determines if the given point is contained inside this cube.
   bool contains(Point3 a) =>
     inRange(a.x, this.x, this.x+this.size) &&

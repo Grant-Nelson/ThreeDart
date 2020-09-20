@@ -103,10 +103,6 @@ class Triangle3 {
   Point3 get centroid => new Point3((this.x1 + this.x2 + this.x3) / 3.0,
                                     (this.y1 + this.y2 + this.y3) / 3.0,
                                     (this.z1 + this.z2 + this.z3) / 3.0);
-      
-  /// Determines there is a collision between the given [plane] and this triangle.
-  bool planeCollision(Plane plane) =>
-    plane.triangleCollision(this);
 
   /// Convertex from the given barycentric coorinates vector to the cartesian coordinate point.
   Point3 fromBarycentricCoordinates(double x, double y, double z) =>
@@ -213,10 +209,6 @@ class Triangle3 {
     double diam = math.sqrt((d1 + d2)*(d2 + d3)*(d3 + d1) / c);
     return new Sphere.fromPoint(center, diam/2.0);
   }
-
-  /// Determines if the given [cube] intersects or contains this triangle.
-  bool intersectsCube(Cube cube) =>
-    cube.intersectsTriangle(this);
 
   /// Determines if the given [other] variable is a [Triangle3] equal to this triangle.
   ///

@@ -10,7 +10,6 @@ part 'Cube.dart';
 part 'CustomComparer.dart';
 part 'EpsilonComparer.dart';
 part 'HitRegion.dart';
-part 'Intersection.dart';
 part 'Matrix2.dart';
 part 'Matrix3.dart';
 part 'Matrix4.dart';

@@ -8,6 +8,7 @@ import '../Events/Events.dart' as Events;
 import '../Data/Data.dart' as Data;
 import '../Debug/Debug.dart' as Debug;
 import '../Math/Math.dart' as Math;
+import '../Intersections/Intersections.dart' as Intersections;
 import '../Textures/Textures.dart' as Textures;
 
 part 'BranchNode.dart';

@@ -53,11 +53,6 @@ class Ray2 {
 
   /// Gets the vector of this ray.
   Vector2 get vector => new Vector2(this.dx, this.dy);
-  
-  /// Determines the intersection between the this ray and the given [region].
-  /// Will return null if there is no intersection.
-  IntersectionRayRegion2 regionIntersection(Region2 region) =>
-    region.rayIntersection(this);
 
   /// Gets an list of 4 doubles in the order x, y, dx, then dy.
   List<double> toList() =>
