@@ -62,7 +62,7 @@ BaseResult regionTriangle(Math.Region3 region, Math.Triangle3 tri) {
   Math.Point3 center = region.center;
   Math.Vector3 size = center.vectorTo(region.maxCorner);
   final bool hasSep = _hasSeparatingAxis(center, size, tri);
-  return new BaseResult(hasSep);
+  return new BaseResult(!hasSep);
 }
 
 /// Determines if the [cube] intersects or contains given [triangle].
@@ -71,5 +71,5 @@ BaseResult cubeTriangle(Math.Cube cube, Math.Triangle3 tri) {
   final double halfSize = cube.size * 0.5;
   Math.Vector3 size = new Math.Vector3(halfSize, halfSize, halfSize);
   final bool hasSep = _hasSeparatingAxis(center, size, tri);
-  return new BaseResult(hasSep);
+  return new BaseResult(!hasSep);
 }
