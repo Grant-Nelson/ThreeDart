@@ -7,10 +7,12 @@ bool _isSeparatingAxis(Math.Vector3 regionSize, Math.Vector3 axis, Math.Vector3 
   final double p0 = v1.dot(axis);
   final double p1 = v2.dot(axis);
   final double p2 = v3.dot(axis);
+
   // Project the AABB size onto the seperating axis, since the AABB will be centered on the origin.
   final double r = regionSize.dx * Math.Vector3.posX.dot(axis).abs() +
                    regionSize.dy * Math.Vector3.posY.dot(axis).abs() +
                    regionSize.dz * Math.Vector3.posZ.dot(axis).abs();
+
   // Check if the extreme points from the triangle intersect r.
   final double max = math.max(math.max(p0, p1), p2);
   final double min = math.min(math.min(p0, p1), p2);
@@ -19,6 +21,7 @@ bool _isSeparatingAxis(Math.Vector3 regionSize, Math.Vector3 axis, Math.Vector3 
       // projected AABB size. Therefore the axis is seperating and we can exit.
       return true;
   }
+
   // Can not seperate along this axis.
   return false;
 }
