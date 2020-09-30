@@ -148,9 +148,9 @@ class Cube {
     if (identical(this, other)) return true;
     if (other is! Cube) return false;
     Cube size = other as Cube;
-    if (!Comparer.equals(size.x,  this.x))  return false;
-    if (!Comparer.equals(size.y,  this.y))  return false;
-    if (!Comparer.equals(size.z,  this.z))  return false;
+    if (!Comparer.equals(size.x,    this.x))  return false;
+    if (!Comparer.equals(size.y,    this.y))  return false;
+    if (!Comparer.equals(size.z,    this.z))  return false;
     if (!Comparer.equals(size.size, this.size)) return false;
     return true;
   }
@@ -160,8 +160,8 @@ class Cube {
 
   /// Gets the formatted string for this cube.
   String format([int fraction = 3, int whole = 0]) =>
-    '['+ formatDouble(this.x,  fraction, whole)+
-    ', '+formatDouble(this.y,  fraction, whole)+
-    ', '+formatDouble(this.z,  fraction, whole)+
+    '['+ formatDouble(this.x,    fraction, whole)+
+    ', '+formatDouble(this.y,    fraction, whole)+
+    ', '+formatDouble(this.z,    fraction, whole)+
     ', '+formatDouble(this.size, fraction, whole)+']';
 }
