@@ -36,7 +36,7 @@ void main() {
     ..lights.add(new Lights.Directional(
           mover: new Movers.Constant.vectorTowards(-1.0, -1.0, -1.0),
           color: new Math.Color3.white()))
-    ..ambient.color=  new Math.Color3(0.5, 0.5, 0.5)
+    ..ambient.color = new Math.Color3(0.5, 0.5, 0.5)
     ..diffuse.color = new Math.Color3(0.5, 0.5, 0.5)
     ..ambient.textureCube = color
     ..diffuse.textureCube = color

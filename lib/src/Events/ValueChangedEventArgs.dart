@@ -6,7 +6,7 @@ class ValueChangedEventArgs<T> extends EventArgs {
   /// The name of the value which was changed in the sender.
   final String name;
 
-  /// The previous value (or nil) of the value before it was changed.
+  /// The previous value (or null) of the value before it was changed.
   final T previous;
 
   /// The current value that the value was just changed to.

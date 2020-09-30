@@ -109,7 +109,7 @@ class World {
   }
 
   /// Frees the given chunk and puts it in the graveyard
-  /// if the chunk is non-nil and currently in use.
+  /// if the chunk is non-null and currently in use.
   /// Returns true if disposed, false if not.
   bool disposeChunk(Chunk chunk) {
     if ((chunk != null) && this._chunks.remove(chunk)) {
@@ -200,9 +200,9 @@ class World {
   /// given [ray] pointing at the side to get the neighbor for.
   NeighborBlockInfo getNeighborBlock(BlockInfo info, Math.Ray3 ray, Math.Ray3 back, int depth) {
     Math.Region3 region = info.blockRegion;
-    Math.IntersectionRayRegion3 inter = region.rayIntersection(back);
+    Intersections.RayRegion3Result inter = Intersections.rayRegion3(back, region);
 
-    if (inter == null) return null;
+    if (!inter.intesects) return null;
     else info = info.neighbor(inter.region);
     if (info == null) return null;
 

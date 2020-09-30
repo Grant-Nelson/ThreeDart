@@ -72,6 +72,10 @@ class Region3 {
   factory Region3.fromCorners(Point3 a, Point3 b) =>
     new Region3(a.x, a.y, a.z, b.x-a.x, b.y-a.y, b.z-a.z);
 
+  /// Constructs a new [Region3] from the given [Cube].
+  factory Region3.fromCube(Cube cube) =>
+    new Region3(cube.x, cube.y, cube.z, cube.size, cube.size, cube.size);
+
   /// Constructs a new [Region3] at the given ray.
   factory Region3.fromRay(Ray3 ray) =>
     new Region3(ray.x, ray.y, ray.z, ray.dx, ray.dy, ray.dz);
@@ -96,6 +100,14 @@ class Region3 {
     double z2 = math.max(a.z+a.dz, b.z+b.dz);
     return new Region3._(x, y, z, x2-x, y2-y, z2-z);
   }
+
+  /// The minimum corner point in the region.
+  Point3 get minCorner =>
+    new Point3(this.x, this.y, this.z);
+
+  /// The maximum corner point in the region.
+  Point3 get maxCorner =>
+    new Point3(this.x + this.dx, this.y + this.dy, this.z + this.dz);
 
   /// The center point of the region.
   Point3 get center => new Point3(
@@ -178,6 +190,10 @@ class Region3 {
     return side;
   }
 
+  /// Indicates if the region is a cube, ie has equal dx, dy, and dz.
+  bool get isCube =>
+    Comparer.equals(this.dx, this.dy) && Comparer.equals(this.dx, this.dz);
+
   /// Gets the adjusted point of the given [raw] point.
   /// This point is normalized into the region.
   Point3 adjustPoint(Point3 raw) {
@@ -214,222 +230,6 @@ class Region3 {
     return region;
   }
 
-  /// Determines the intersection between the given [ray] and this region.
-  /// Will return nil if there is no intersection.
-  IntersectionRayRegion3 rayIntersection(Ray3 ray) {
-    final double maxx = this.x + this.dx;
-    final double maxy = this.y + this.dy;
-    final double maxz = this.z + this.dz;
-
-    // Check for point inside box, trivial reject, and determine
-    // parametric distance to each front face
-    bool inside = true;
-    double xt, xn, xp;
-    HitRegion xregion;
-    if (ray.x < this.x) {
-      xt = this.x - ray.x;
-      if (xt > ray.dx) return null;
-      xt /= ray.dx;
-      inside = false;
-      xn = -1.0;
-      xp = this.x;
-      xregion = HitRegion.XNeg;
-    } else {
-      if (ray.x > maxx) {
-        xt = maxx - ray.x;
-        if (xt < ray.dx) return null;
-        xt /= ray.dx;
-        inside = false;
-        xn = 1.0;
-        xp = maxx;
-        xregion = HitRegion.XPos;
-      } else {
-        xt = -1.0;
-      }
-    }
-
-    double yt, yn, yp;
-    HitRegion yregion;
-    if (ray.y < this.y) {
-      yt = this.y - ray.y;
-      if (yt > ray.dy) return null;
-      yt /= ray.dy;
-      inside = false;
-      yn = -1.0;
-      yp = this.y;
-      yregion = HitRegion.YNeg;
-    } else {
-      if (ray.y > maxy) {
-        yt = maxy - ray.y;
-        if (yt < ray.dy) return null;
-        yt /= ray.dy;
-        inside = false;
-        yn = 1.0;
-        yp = maxy;
-        yregion = HitRegion.YPos;
-      } else {
-        yt = -1.0;
-      }
-    }
-
-    double zt, zn, zp;
-    HitRegion zregion;
-    if (ray.z < this.z) {
-      zt = this.z - ray.z;
-      if (zt > ray.dz) return null;
-      zt /= ray.dz;
-      inside = false;
-      zn = -1.0;
-      zp = this.z;
-      zregion = HitRegion.ZNeg;
-    } else {
-      if (ray.z > maxz) {
-        zt = maxz - ray.z;
-        if (zt < ray.dz) return null;
-        zt /= ray.dz;
-        inside = false;
-        zn = 1.0;
-        zp = maxz;
-        zregion = HitRegion.ZPos;
-      } else {
-        zt = -1.0;
-      }
-    }
-
-    if (inside) {
-      return new IntersectionRayRegion3(ray.start, -ray.vector.normal(), 0.0, HitRegion.Inside);
-    }
-
-    // The farthest plane is the plane of intersection.
-    int which = (yt > xt)? ((zt > yt)? 2: 1): ((zt > xt)? 2: 0);
-    switch (which) {
-    case 0: // intersect with yz plane
-      double y = ray.y + ray.dy*xt;
-      if (!inRange(y, this.y, maxy)) return null;
-      double z = ray.z + ray.dz*xt;
-      if (!inRange(z, this.z, maxz)) return null;
-      return new IntersectionRayRegion3(new Point3(xp, y, z), new Vector3(xn, 0.0, 0.0), xt, xregion);
-
-    case 1: // intersect with xz plane
-      double x = ray.x + ray.dx*yt;
-      if (!inRange(x, this.x, maxx)) return null;
-      double z = ray.z + ray.dz*yt;
-      if (!inRange(z, this.z, maxz)) return null;
-      return new IntersectionRayRegion3(new Point3(x, yp, z), new Vector3(0.0, yn, 0.0), yt, yregion);
-
-    default: // 2, intersect with xy plane
-      double x = ray.x + ray.dx*zt;
-      if (!inRange(x, this.x, maxx)) return null;
-      double y = ray.y + ray.dy*zt;
-      if (!inRange(y, this.y, maxy)) return null;
-      return new IntersectionRayRegion3(new Point3(x, y, zp), new Vector3(0.0, 0.0, zn), zt, zregion);
-    }
-  }
-
-  /// Determines the collision between this region moving with the given [vector]
-  /// and the other region, the [target], not moving.
-  /// This will not detect collisions where the two rectangles are already within
-  /// each other, this is so that "already hit" can be handled as needed.
-  IntersectionBetweenMovingRegions collision(Region3 target, Vector3 vector, [HitRegion sides = null]) {
-    sides ??= HitRegion.All;
-    double t = 100.0, d;
-    HitRegion region = HitRegion.None, edge;
-    bool edgeTest;
-
-    if (vector.dx != 0.0) {
-      edgeTest = false;
-      if (vector.dx > 0.0) {
-        if (sides.has(HitRegion.XNeg)) {
-          edge = HitRegion.XNeg;
-          edgeTest = true;
-          if (Comparer.equals(target.x, this.x + this.dx)) d = 0.0;
-          else d = (target.x - (this.x + this.dx)) / vector.dx;
-        }
-      } else {
-        if (sides.has(HitRegion.XPos)) {
-          edge = HitRegion.XPos;
-          edgeTest = true;
-          if (Comparer.equals(target.x + target.dx, this.x)) d = 0.0;
-          else d = ((target.x + target.dx) - this.x) / vector.dx;
-        }
-      }
-
-      if (edgeTest && (d < t) && (d >= 0.0) && (d <= 1.0)) {
-        double y = this.y + vector.dy*d;
-        if (rangeOverlap(target.y, target.y + target.dy, y, y + this.dy)) {
-          double z = this.z + vector.dz*d;
-          if (rangeOverlap(target.z, target.z + target.dz, z, z + this.dz)) {
-            t = d;
-            region = edge;
-          }
-        }
-      }
-    }
-
-    if (vector.dy != 0.0) {
-      edgeTest = false;
-      if (vector.dy > 0.0) {
-        if (sides.has(HitRegion.YNeg)) {
-          edge = HitRegion.YNeg;
-          edgeTest = true;
-          if (Comparer.equals(target.y, this.y + this.dy)) d = 0.0;
-          else d = (target.y - (this.y + this.dy)) / vector.dy;
-        }
-      } else {
-        if (sides.has(HitRegion.YPos)) {
-          edge = HitRegion.YPos;
-          edgeTest = true;
-          if (Comparer.equals(target.y + target.dy, this.y)) d = 0.0;
-          else d = ((target.y + target.dy) - this.y) / vector.dy;
-        }
-      }
-
-      if (edgeTest && (d < t) && (d >= 0.0) && (d <= 1.0)) {
-        double x = this.x + vector.dx*d;
-        if (rangeOverlap(target.x, target.x + target.dx, x, x + this.dx)) {
-          double z = this.z + vector.dz*d;
-          if (rangeOverlap(target.z, target.z + target.dz, z, z + this.dz)) {
-            t = d;
-            region = edge;
-          }
-        }
-      }
-    }
-
-    if (vector.dz != 0.0) {
-      edgeTest = false;
-      if (vector.dz > 0.0) {
-        if (sides.has(HitRegion.ZNeg)) {
-          edge = HitRegion.ZNeg;
-          edgeTest = true;
-          if (Comparer.equals(target.z, this.z + this.dz)) d = 0.0;
-          else d = (target.z - (this.z + this.dz)) / vector.dz;
-        }
-      } else {
-        if (sides.has(HitRegion.ZPos)) {
-          edge = HitRegion.ZPos;
-          edgeTest = true;
-          if (Comparer.equals(target.z + target.dz, this.z)) d = 0.0;
-          else d = ((target.z + target.dz) - this.z) / vector.dz;
-        }
-      }
-
-      if (edgeTest && (d < t) && (d >= 0.0) && (d <= 1.0)) {
-        double x = this.x + vector.dx*d;
-        if (rangeOverlap(target.x, target.x + target.dx, x, x + this.dx)) {
-          double y = this.y + vector.dy*d;
-          if (rangeOverlap(target.y, target.y + target.dy, y, y + this.dy)) {
-            t = d;
-            region = edge;
-          }
-        }
-      }
-    }
-
-    if (region == HitRegion.None) return null;
-    return new IntersectionBetweenMovingRegions(t, region);
-  }
-
   /// Determines if the given point is contained inside this region.
   bool contains(Point3 a) =>
     inRange(a.x, this.x, this.x+this.dx) &&
@@ -452,13 +252,13 @@ class Region3 {
   bool operator ==(var other) {
     if (identical(this, other)) return true;
     if (other is! Region3) return false;
-    Region3 size = other as Region3;
-    if (!Comparer.equals(size.x,  this.x))  return false;
-    if (!Comparer.equals(size.y,  this.y))  return false;
-    if (!Comparer.equals(size.z,  this.z))  return false;
-    if (!Comparer.equals(size.dx, this.dx)) return false;
-    if (!Comparer.equals(size.dy, this.dy)) return false;
-    if (!Comparer.equals(size.dz, this.dz)) return false;
+    Region3 region = other as Region3;
+    if (!Comparer.equals(region.x,  this.x))  return false;
+    if (!Comparer.equals(region.y,  this.y))  return false;
+    if (!Comparer.equals(region.z,  this.z))  return false;
+    if (!Comparer.equals(region.dx, this.dx)) return false;
+    if (!Comparer.equals(region.dy, this.dy)) return false;
+    if (!Comparer.equals(region.dz, this.dz)) return false;
     return true;
   }
 

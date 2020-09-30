@@ -98,6 +98,14 @@ class Point3 {
                lerpVal(this.y, other.y, i),
                lerpVal(this.z, other.z, i));
 
+  /// Gets the vector from this point to the [other] point.
+  Vector3 vectorTo(Point3 other) =>
+    new Vector3(other.x - this.x, other.y - this.y, other.z - this.z);
+    
+  /// Gets the point of this point offset with the given vector.
+  Point3 offset(Vector3 offset) =>
+    new Point3(this.x + offset.dx, this.y + offset.dy, this.z + offset.dz);
+
   /// Creates a new point as the sum of this point and the [other] point.
   Point3 operator +(Point3 other) =>
     new Point3(this.x + other.x, this.y + other.y, this.z + other.z);

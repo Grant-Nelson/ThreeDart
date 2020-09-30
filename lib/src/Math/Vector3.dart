@@ -139,7 +139,11 @@ class Vector3 {
                 lerpVal(this.dz, other.dz, i));
 
   /// Gets normalized vector of this vector.
-  Vector3 normal() => this/this.length();
+  Vector3 normal() {
+    final double len = this.length();
+    if (len == 1.0) return this;
+    return this / len;
+  }
 
   /// Gets the cross of this vector and the given [other] vector.
   Vector3 cross(Vector3 other) =>

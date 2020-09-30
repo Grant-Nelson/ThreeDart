@@ -136,9 +136,7 @@ class Color3 {
 
   /// Creates a new color inversely scaled by the given [scalar].
   Color3 operator /(double scalar) {
-    if (Comparer.equals(scalar, 0.0)) {
-      return new Color3.black();
-    }
+    if (Comparer.equals(scalar, 0.0)) return new Color3.black();
     return new Color3(this.red / scalar, this.green / scalar, this.blue / scalar);
   }
 

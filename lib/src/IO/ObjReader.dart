@@ -107,7 +107,7 @@ class _objReader {
       line = line.trim();
       if (line.length <= 0) return;
 
-            // Strip off first part of line.
+      // Strip off first part of line.
       List<String> parts = _stripFront(line);
       if (parts.length < 1) return;
 

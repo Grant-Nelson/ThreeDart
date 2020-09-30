@@ -10,12 +10,12 @@ class State {
   /// The tile values for all of the tiles on a chess board.
   List<int> _data;
 
-  /// The next state after this state or nil if there is none.
+  /// The next state after this state or null if there is none.
   /// This next state is usually set to be used for redo and
   /// is overwrote when a movement is applied.
   State next;
 
-  /// The previous state before this state or nil if there is none.
+  /// The previous state before this state or null if there is none.
   /// This previous state is usually set to be used for undo.
   State prev;
 
@@ -307,7 +307,7 @@ class State {
   /// If a list of movements is provided, that list is added to.
   List<Movement> getMovements(Location loc, [List<Movement> movers = null]) {
     movers ??= new List<Movement>();
-    this.foreachMovements(movers.add, loc);
+    this.forEachMovements(movers.add, loc);
     return movers;
   }
 
@@ -325,7 +325,7 @@ class State {
   /// Determines if the given location has any movements.
   bool hasMovements(Location loc) {
     bool hadMovement = false;
-    this.foreachMovements((Movement move) { hadMovement = true; }, loc);
+    this.forEachMovements((Movement move) { hadMovement = true; }, loc);
     return hadMovement;
   }
 
@@ -333,7 +333,7 @@ class State {
   bool isValidMovement(Movement move) {
     if (move == null) return false;
     bool movementFound = false;
-    this.foreachMovements((Movement other) {
+    this.forEachMovements((Movement other) {
       if (movementFound) return;
       if ((other.source == move.source) &&
           (other.destination == move.destination) &&
@@ -345,7 +345,7 @@ class State {
   }
 
   /// Calls back any possible movements via the given handler for the given location.
-  void foreachMovements(MovementCallback hndl, Location loc) {
+  void forEachMovements(MovementCallback hndl, Location loc) {
     if (!loc.onBoard) return;
     TileValue value = this.getValue(loc);
 

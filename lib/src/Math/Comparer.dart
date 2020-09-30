@@ -4,7 +4,7 @@ part of ThreeDart.Math;
 class Comparer {
 
   /// The default comparer, an epsilon comparer, to use for comparing doubles.
-  static final CustomComparer defaultComparer = new EpsilonComparer(1.0e-9);
+  static final CustomComparer defaultComparer = new EpsilonComparer();
 
   /// The current comparer instance to use for comparing doubles.
   static CustomComparer currentComparer = defaultComparer;

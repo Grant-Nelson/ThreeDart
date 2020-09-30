@@ -70,15 +70,17 @@ class HitRegion {
   HitRegion operator ~() =>
     new HitRegion._(All._value & ~this._value);
 
+  /// Gets the reverse of the the two opposite values.
+  int _partialInverse(HitRegion pos, HitRegion neg) =>
+    (this.has(pos)? neg._value: None._value) |
+    (this.has(neg)? pos._value: None._value);
+
   /// Gets the opposite of all the directions of the region.
-  HitRegion inverse() {
-    int value = this._value;
-    int result = 0x0000;
-    if ((0x0005 & value) != 0x0000) result |= (0x0005 - (0x0005 & value));
-    if ((0x0028 & value) != 0x0000) result |= (0x0028 - (0x0028 & value));
-    if ((0x0140 & value) != 0x0000) result |= (0x0140 - (0x0140 & value));
-    return new HitRegion._(result);
-  }
+  HitRegion inverse() =>
+    new HitRegion._((Inside._value & this._value) |
+                    this._partialInverse(XPos, XNeg) |
+                    this._partialInverse(YPos, YNeg) |
+                    this._partialInverse(ZPos, ZNeg));
 
   /// The internal value of the hit region value.
   int get value => this._value;
