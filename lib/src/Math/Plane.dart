@@ -80,7 +80,7 @@ class Plane {
 
   /// Gets the side of the point on the plain were Right is on the positive normal size (above),
   /// Same is on the plane and Left is on the negative normal size (below).
-  Side _sideOfPointComponents(double x, double y, double z) {
+  Side sideOfPointComponents(double x, double y, double z) {
     double value = this.dx*x + this.dy*y + this.dz*z;
     if (Comparer.equals(value, 0.0)) return Side.Inside;
     if (value < 0.0) return Side.Right;
@@ -90,76 +90,7 @@ class Plane {
   /// Gets the side of the point on the plain were Right is on the positive normal size (above),
   /// Same is on the plane and Left is on the negative normal size (below).
   Side sideOfPoint(Point3 pnt) =>
-    this._sideOfPointComponents(pnt.x, pnt.y, pnt.z);
-
-  /// Determines the intersection between the given [ray] and this plane.
-  /// Will return null if there is no intersection.
-  IntersectionRayPlane rayIntersection(Ray3 ray) {
-    Vector3 norm = this.normal;
-    Vector3 p0 = new Vector3(ray.x, ray.y, ray.z);
-    Vector3 vec = ray.vector;
-    double dem = vec.dot(norm);
-    if (dem == 0.0) return null;
-    double t = (this.offset - p0.dot(norm)) / dem;
-    if ((t < 0.0) || (t > 1.0)) return null;
-    return new IntersectionRayPlane(Point3.fromVector3(p0 + norm*t), t);
-  }
-  
-  /// Determines there is a collision between the given [region] and this plane.
-  bool regionCollision(Region3 range) {
-    Point3 min = range.minCorner;
-    Point3 max = range.maxCorner;
-    Side side = this._sideOfPointComponents(min.x, min.y, min.z);
-    if (side == Side.Inside) return true;
-    Side other = this._sideOfPointComponents(min.x, min.y, max.z);
-    if (other == Side.Inside) return true;
-    if (side != other) return true;
-    other = this._sideOfPointComponents(min.x, max.y, min.z);
-    if (other == Side.Inside) return true;
-    if (side != other) return true;
-    other = this._sideOfPointComponents(min.x, max.y, max.z);
-    if (other == Side.Inside) return true;
-    if (side != other) return true;
-    other = this._sideOfPointComponents(max.x, min.y, min.z);
-    if (other == Side.Inside) return true;
-    if (side != other) return true;
-    other = this._sideOfPointComponents(max.x, min.y, max.z);
-    if (other == Side.Inside) return true;
-    if (side != other) return true;
-    other = this._sideOfPointComponents(max.x, max.y, min.z);
-    if (other == Side.Inside) return true;
-    if (side != other) return true;
-    other = this._sideOfPointComponents(max.x, max.y, max.z);
-    if (other == Side.Inside) return true;
-    return side != other;
-  }
-  
-  /// Determines there is a collision between the given [triangle] and this plane.
-  bool triangleCollision(Triangle3 tri) {
-    Side side = this._sideOfPointComponents(tri.x1, tri.y1, tri.z1);
-    if (side == Side.Inside) return true;
-    Side other = this._sideOfPointComponents(tri.x2, tri.y2, tri.z2);
-    if (other == Side.Inside) return true;
-    if (side != other) return true;
-    other = this._sideOfPointComponents(tri.x3, tri.y3, tri.z3);
-    if (other == Side.Inside) return true;
-    return side != other;
-  }
-
-  /// Get the point intersection of three planes.
-  /// Will return null if one or more plane are parallel.
-  Point3 intersectionOf3(Plane plane2, Plane plane3) {
-    Vector3 normal1 = this.normal;
-    Vector3 normal2 = plane2.normal;
-    Vector3 normal3 = plane3.normal;
-    Vector3 cross12 = normal1.cross(normal2);
-    double div = cross12.dot(normal3);
-    if (Comparer.equals(div, 0.0)) return null;
-    Vector3 cross23 = normal2.cross(normal3);
-    Vector3 cross31 = normal3.cross(normal1);
-    return new Point3.fromVector3((cross23*this.offset +
-      cross31*plane2.offset + cross12*plane3.offset) / div);
-  }
+    this.sideOfPointComponents(pnt.x, pnt.y, pnt.z);
 
   /// Determines if the given [other] variable is a [Plane] equal to this plane.
   ///
