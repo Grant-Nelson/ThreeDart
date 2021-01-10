@@ -27,11 +27,9 @@ class ParallaxShader extends Shaders.Shader {
       "{                                                                 \n"+
       "   normalVec   = normalize((viewObjMat*vec4(normAttr, 0.0)).xyz); \n"+
       "   binormalVec = normalize((viewObjMat*vec4(binmAttr, 0.0)).xyz); \n"+
-      "   txt2D = txt2DAttr;                                             \n"+ // vs_out.TexCoords
-      "   objPos  = (objMat    *vec4(posAttr, 1.0)).xyz;                 \n"+ // vs_out.FragPos
+      "   txt2D = txt2DAttr;                                             \n"+
+      "   objPos  = (objMat    *vec4(posAttr, 1.0)).xyz;                 \n"+
       "   viewPos = (viewObjMat*vec4(posAttr, 1.0)).xyz;                 \n"+
-      "                                                                  \n"+
-      "                                                                  \n"+
       "   gl_Position = projViewObjMat*vec4(posAttr, 1.0);               \n"+
       "}                                                                 \n";
 
@@ -69,15 +67,30 @@ class ParallaxShader extends Shaders.Shader {
       "                  n.x,  n.y,  n.z);                                      \n"+
       "}                                                                        \n"+
       "                                                                         \n"+
+      "const float numLayers = 10.0;                                             \n"+
+      "                                                                         \n"+
       "vec2 txtCoords;                                                          \n"+
       "void setParallaxMapping()                                                \n"+
       "{                                                                        \n"+
-      "   vec3 viewDir = normalize(tbnMat*viewPos);                             \n"+
-      "   float height = texture2D(heightTxt, txt2D).r;                         \n"+
-      "   vec2 txtOffset = viewDir.xy / viewDir.z * (height * heightScale);     \n"+
+      "   //vec3 viewDir = normalize(tbnMat*viewPos);                             \n"+
+      "   vec3 viewDir = normalize(tbnMat*vec3(0.0, 0.0, -1.0));                  \n"+
+      "   float layerDepth = 1.0/numLayers;                                     \n"+
+      "   vec2 txtOffset = -viewDir.xy * heightScale;                           \n"+
+      "   vec2 deltaTxtCoords = txtOffset / numLayers;                          \n"+
       "                                                                         \n"+
+      "   float curLayerDepth = 0.0;                                            \n"+
+      "   vec2 curTxtCoords = txt2D;                                            \n"+
+      "   float curDepthMapValue = 1.0-texture2D(heightTxt, curTxtCoords).r;        \n"+
       "                                                                         \n"+
-      "   txtCoords = txt2D + txtOffset;                                        \n"+
+      "   for(int i = 0; i < 10; ++i)                                           \n"+
+      "   {                                                                     \n"+
+      "      if(curLayerDepth >= curDepthMapValue) break;                       \n"+
+      "      curTxtCoords -= deltaTxtCoords;                                    \n"+
+      "      curDepthMapValue = 1.0-texture2D(heightTxt, curTxtCoords).r;           \n"+
+      "      curLayerDepth += layerDepth;                                       \n"+
+      "   }                                                                     \n"+
+      "                                                                         \n"+
+      "   txtCoords = curTxtCoords;                                             \n"+
       "   if(txtCoords.x > 1.0 || txtCoords.y > 1.0 ||                          \n"+
       "      txtCoords.x < 0.0 || txtCoords.y < 0.0)                            \n"+
       "      discard;                                                           \n"+

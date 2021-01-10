@@ -59,7 +59,8 @@ void main() {
     ..add("../resources/HeightMap3.png")
     ..add("../resources/HeightMap4.png")
     ..add("../resources/HeightMap5.png", true)
-    ..add("../resources/ScrewHeightMap.png");
+    ..add("../resources/ScrewHeightMap.png")
+    ..add("../resources/gravel/heightLarge.png");
 
   new common.Texture2DGroup("bumpMaps", (String fileName) {
     tech.bumpTexture = td.textureLoader.load2DFromFile(fileName);
@@ -71,17 +72,20 @@ void main() {
     ..add("../resources/BumpMap4.png")
     ..add("../resources/BumpMap5.png")
     ..add("../resources/BumpMap6.png", true)
-    ..add("../resources/ScrewBumpMap.png");
+    ..add("../resources/ScrewBumpMap.png")
+    ..add("../resources/gravel/bumpLarge.png");
     
   new common.Texture2DGroup("colorMaps", (String fileName) {
     tech.colorTexture = td.textureLoader.load2DFromFile(fileName);
   })
+    ..add("../resources/Grid.png")
     ..add("../resources/Dirt.png")
     ..add("../resources/Grass.png")
     ..add("../resources/ScrewColor.png")
     ..add("../resources/LightWood.png", true)
     ..add("../resources/DarkWood.png")
-    ..add("../resources/Test.png");
+    ..add("../resources/Test.png")
+    ..add("../resources/gravel/colorLarge.png");
 
   new common.RadioGroup("scalars")
     ..add("0.0125", () { tech.heightScale = 0.0125; })
