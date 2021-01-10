@@ -8,55 +8,32 @@ class ParallaxShader extends Shaders.Shader {
 
   /// The vertex shader source code in glsl.
   static String _vertexSource =
-      "uniform mat4 objMat;                                       \n"+
-      "uniform mat4 viewObjMat;                                   \n"+
-      "uniform mat4 projViewObjMat;                               \n"+
-      "                                                           \n"+
-      "attribute vec3 posAttr;                                    \n"+
-      "attribute vec3 normAttr;                                   \n"+
-      "attribute vec3 binmAttr;                                   \n"+
-      "attribute vec2 txt2DAttr;                                  \n"+
-      "                                                           \n"+
-      "varying vec3 normalVec;                                    \n"+
-      "varying vec3 binormalVec;                                  \n"+
-      "varying vec2 txt2D;                                        \n"+
-      "varying vec3 objPos;                                       \n"+
-      "varying vec3 viewPos;                                      \n"+
-      "                                                           \n"+
-      "vec3 getNorm()                                             \n"+
-      "{                                                          \n"+
-      "   return normalize((viewObjMat*vec4(normAttr, 0.0)).xyz); \n"+
-      "}                                                          \n"+
-      "                                                           \n"+
-      "vec3 getBinm()                                             \n"+
-      "{                                                          \n"+
-      "   return normalize((viewObjMat*vec4(binmAttr, 0.0)).xyz); \n"+
-      "}                                                          \n"+
-      "                                                           \n"+
-      "vec3 getObjPos()                                           \n"+
-      "{                                                          \n"+
-      "   return (objMat*vec4(posAttr, 1.0)).xyz;                 \n"+
-      "}                                                          \n"+
-      "                                                           \n"+
-      "vec3 getViewPos()                                          \n"+
-      "{                                                          \n"+
-      "   return (viewObjMat*vec4(posAttr, 1.0)).xyz;             \n"+
-      "}                                                          \n"+
-      "                                                           \n"+
-      "vec4 getPos()                                              \n"+
-      "{                                                          \n"+
-      "   return projViewObjMat*vec4(posAttr, 1.0);               \n"+
-      "}                                                          \n"+
-      "                                                           \n"+
-      "void main()                                                \n"+
-      "{                                                          \n"+
-      "   normalVec = getNorm();                                  \n"+
-      "   binormalVec = getBinm();                                \n"+
-      "   txt2D = txt2DAttr;                                      \n"+
-      "   objPos = getObjPos();                                   \n"+
-      "   viewPos = getViewPos();                                 \n"+
-      "   gl_Position = getPos();                                 \n"+
-      "}                                                          \n";
+      "uniform mat4 objMat;                                              \n"+
+      "uniform mat4 viewObjMat;                                          \n"+
+      "uniform mat4 projViewObjMat;                                      \n"+
+      "                                                                  \n"+
+      "attribute vec3 posAttr;                                           \n"+
+      "attribute vec3 normAttr;                                          \n"+
+      "attribute vec3 binmAttr;                                          \n"+
+      "attribute vec2 txt2DAttr;                                         \n"+
+      "                                                                  \n"+
+      "varying vec3 normalVec;                                           \n"+
+      "varying vec3 binormalVec;                                         \n"+
+      "varying vec2 txt2D;                                               \n"+
+      "varying vec3 objPos;                                              \n"+
+      "varying vec3 viewPos;                                             \n"+
+      "                                                                  \n"+
+      "void main()                                                       \n"+
+      "{                                                                 \n"+
+      "   normalVec   = normalize((viewObjMat*vec4(normAttr, 0.0)).xyz); \n"+
+      "   binormalVec = normalize((viewObjMat*vec4(binmAttr, 0.0)).xyz); \n"+
+      "   txt2D = txt2DAttr;                                             \n"+ // vs_out.TexCoords
+      "   objPos  = (objMat    *vec4(posAttr, 1.0)).xyz;                 \n"+ // vs_out.FragPos
+      "   viewPos = (viewObjMat*vec4(posAttr, 1.0)).xyz;                 \n"+
+      "                                                                  \n"+
+      "                                                                  \n"+
+      "   gl_Position = projViewObjMat*vec4(posAttr, 1.0);               \n"+
+      "}                                                                 \n";
 
   /// The fragment shader source code in glsl.
   static String _fragmentSource =
@@ -95,10 +72,12 @@ class ParallaxShader extends Shaders.Shader {
       "vec2 txtCoords;                                                          \n"+
       "void setParallaxMapping()                                                \n"+
       "{                                                                        \n"+
-      "   vec3 viewDir = normalize(tbnMat*viewPos - tbnMat*objPos);             \n"+
+      "   vec3 viewDir = normalize(tbnMat*viewPos);                             \n"+
       "   float height = texture2D(heightTxt, txt2D).r;                         \n"+
-      "   vec2 p = viewDir.xy / viewDir.z * (height * heightScale);             \n"+
-      "   txtCoords = txt2D - p;                                                \n"+
+      "   vec2 txtOffset = viewDir.xy / viewDir.z * (height * heightScale);     \n"+
+      "                                                                         \n"+
+      "                                                                         \n"+
+      "   txtCoords = txt2D + txtOffset;                                        \n"+
       "   if(txtCoords.x > 1.0 || txtCoords.y > 1.0 ||                          \n"+
       "      txtCoords.x < 0.0 || txtCoords.y < 0.0)                            \n"+
       "      discard;                                                           \n"+

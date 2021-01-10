@@ -84,16 +84,14 @@ void main() {
     ..add("../resources/Test.png");
 
   new common.RadioGroup("scalars")
-    ..add("0.1", () { tech.heightScale = 0.1; })
-    ..add("0.2", () { tech.heightScale = 0.2; })
-    ..add("0.3", () { tech.heightScale = 0.3; })
-    ..add("0.4", () { tech.heightScale = 0.4; })
-    ..add("0.5", () { tech.heightScale = 0.5; })
-    ..add("0.6", () { tech.heightScale = 0.6; })
-    ..add("0.7", () { tech.heightScale = 0.7; })
-    ..add("0.8", () { tech.heightScale = 0.8; })
-    ..add("0.9", () { tech.heightScale = 0.9; })
-    ..add("1.0", () { tech.heightScale = 1.0; }, true);
+    ..add("0.0125", () { tech.heightScale = 0.0125; })
+    ..add("0.025",  () { tech.heightScale = 0.025;  })
+    ..add("0.05",   () { tech.heightScale = 0.05;   })
+    ..add("0.1",    () { tech.heightScale = 0.1; }, true)
+    ..add("0.2",    () { tech.heightScale = 0.2; })
+    ..add("0.4",    () { tech.heightScale = 0.4; })
+    ..add("0.8",    () { tech.heightScale = 0.8; })
+    ..add("1.0",    () { tech.heightScale = 1.0; });
 
   td.postrender.once((_){
     page
