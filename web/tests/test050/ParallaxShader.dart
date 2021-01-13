@@ -52,6 +52,7 @@ class ParallaxShader extends Shaders.Shader {
       "uniform sampler2D heightTxt;                                             \n"+
       "uniform vec3 lightViewDir;                                               \n"+
       "uniform float heightScale;                                               \n"+
+      "uniform mat4 viewMat; // TODO: Remove if not used.                       \n"+
       "                                                                         \n"+
       "// === Parallax & Normal ===                                             \n"+
       "                                                                         \n"+
@@ -67,26 +68,26 @@ class ParallaxShader extends Shaders.Shader {
       "                  n.x,  n.y,  n.z);                                      \n"+
       "}                                                                        \n"+
       "                                                                         \n"+
-      "const float numLayers = 10.0;                                             \n"+
+      "const float numLayers = 10.0;                                            \n"+
       "                                                                         \n"+
       "vec2 txtCoords;                                                          \n"+
       "void setParallaxMapping()                                                \n"+
       "{                                                                        \n"+
-      "   //vec3 viewDir = normalize(tbnMat*viewPos);                             \n"+
+      "   float layerDepth = 1.0 / numLayers;                                   \n"+
+      "   //vec3 viewDir = normalize(tbnMat*objPos);                             \n"+
       "   vec3 viewDir = normalize(tbnMat*vec3(0.0, 0.0, -1.0));                  \n"+
-      "   float layerDepth = 1.0/numLayers;                                     \n"+
-      "   vec2 txtOffset = -viewDir.xy * heightScale;                           \n"+
+      "   vec2 txtOffset = viewDir.xy * heightScale;                            \n"+
       "   vec2 deltaTxtCoords = txtOffset / numLayers;                          \n"+
       "                                                                         \n"+
       "   float curLayerDepth = 0.0;                                            \n"+
       "   vec2 curTxtCoords = txt2D;                                            \n"+
-      "   float curDepthMapValue = 1.0-texture2D(heightTxt, curTxtCoords).r;        \n"+
+      "   float curDepthMapValue = texture2D(heightTxt, curTxtCoords).r;        \n"+
       "                                                                         \n"+
       "   for(int i = 0; i < 10; ++i)                                           \n"+
       "   {                                                                     \n"+
       "      if(curLayerDepth >= curDepthMapValue) break;                       \n"+
       "      curTxtCoords -= deltaTxtCoords;                                    \n"+
-      "      curDepthMapValue = 1.0-texture2D(heightTxt, curTxtCoords).r;           \n"+
+      "      curDepthMapValue = texture2D(heightTxt, curTxtCoords).r;           \n"+
       "      curLayerDepth += layerDepth;                                       \n"+
       "   }                                                                     \n"+
       "                                                                         \n"+
@@ -159,6 +160,7 @@ class ParallaxShader extends Shaders.Shader {
   Shaders.Attribute _txt2DAttr;
 
   Shaders.UniformMat4 _objMat;
+  Shaders.UniformMat4 _viewMat;
   Shaders.UniformMat4 _viewObjMat;
   Shaders.UniformMat4 _projViewObjMat;
 
@@ -194,6 +196,7 @@ class ParallaxShader extends Shaders.Shader {
     this._txt2DAttr = this.attributes["txt2DAttr"];
 
     this._objMat         = this.uniforms["objMat"] as Shaders.UniformMat4;
+    this._viewMat        = this.uniforms["viewMat"] as Shaders.UniformMat4;
     this._viewObjMat     = this.uniforms["viewObjMat"] as Shaders.UniformMat4;
     this._projViewObjMat = this.uniforms["projViewObjMat"] as Shaders.UniformMat4;
 
@@ -223,52 +226,56 @@ class ParallaxShader extends Shaders.Shader {
 
   /// The object matrix.
   Math.Matrix4 get objectMatrix => this._objMat.getMatrix4();
-  set objectMatrix(Math.Matrix4 mat) => this._objMat.setMatrix4(mat);
+  set objectMatrix(Math.Matrix4 mat) => this._objMat?.setMatrix4(mat);
+
+  /// The view matrix.
+  Math.Matrix4 get viewMatrix => this._viewMat.getMatrix4();
+  set viewMatrix(Math.Matrix4 mat) => this._viewMat?.setMatrix4(mat);
 
   /// The view object matrix.
   Math.Matrix4 get viewObjectMatrix => this._viewObjMat.getMatrix4();
-  set viewObjectMatrix(Math.Matrix4 mat) => this._viewObjMat.setMatrix4(mat);
+  set viewObjectMatrix(Math.Matrix4 mat) => this._viewObjMat?.setMatrix4(mat);
 
   /// The projection view object matrix.
   Math.Matrix4 get projectionViewObjectMatrix => this._projViewObjMat.getMatrix4();
-  set projectionViewObjectMatrix(Math.Matrix4 mat) => this._projViewObjMat.setMatrix4(mat);
+  set projectionViewObjectMatrix(Math.Matrix4 mat) => this._projViewObjMat?.setMatrix4(mat);
 
   /// The color texture of the object.
   set colorTexture(Textures.Texture2D txt) {
-    if (txt != null) this._colorTxt.setTexture2D(txt);
+    if (txt != null) this._colorTxt?.setTexture2D(txt);
   }
 
   /// The bump texture of the object.
   set bumpTexture(Textures.Texture2D txt) {
-    if (txt != null) this._bumpTxt.setTexture2D(txt);
+    if (txt != null) this._bumpTxt?.setTexture2D(txt);
   }
 
   /// The height texture of the object.
   set heightTexture(Textures.Texture2D txt) {
-    if (txt != null) this._heightTxt.setTexture2D(txt);
+    if (txt != null) this._heightTxt?.setTexture2D(txt);
   }
 
   /// The light view direction.
   Math.Vector3 get lightViewDirection => this._lightViewDir.getVector3();
-  set lightViewDirection(Math.Vector3 vec) => this._lightViewDir.setVector3(vec);
+  set lightViewDirection(Math.Vector3 vec) => this._lightViewDir?.setVector3(vec);
   
   /// The ambient color for the material.
   Math.Color3 get ambientColor => this._ambientClr.getColor3();
-  set ambientColor(Math.Color3 clr) => this._ambientClr.setColor3(clr);
+  set ambientColor(Math.Color3 clr) => this._ambientClr?.setColor3(clr);
   
   /// The diffuse color for the material.
   Math.Color3 get diffuseColor => this._diffuseClr.getColor3();
-  set diffuseColor(Math.Color3 clr) => this._diffuseClr.setColor3(clr);
+  set diffuseColor(Math.Color3 clr) => this._diffuseClr?.setColor3(clr);
   
   /// The specular color for the material.
   Math.Color3 get specularColor => this._specularClr.getColor3();
-  set specularColor(Math.Color3 clr) => this._specularClr.setColor3(clr);
+  set specularColor(Math.Color3 clr) => this._specularClr?.setColor3(clr);
   
   /// The shininess value.
   double get shininess => this._shininess.getValue();
-  set shininess(double value) => this._shininess.setValue(value);
+  set shininess(double value) => this._shininess?.setValue(value);
   
   /// The scalar for parallax height.
   double get heightScale => this._heightScale.getValue();
-  set heightScale(double value) => this._heightScale.setValue(value);
+  set heightScale(double value) => this._heightScale?.setValue(value);
 }

@@ -54,6 +54,8 @@ void main() {
   new common.Texture2DGroup("heightMaps", (String fileName) {
     tech.heightTexture = td.textureLoader.load2DFromFile(fileName);
   })
+    ..add("../resources/White.png")
+    ..add("../resources/Black.png")
     ..add("../resources/HeightMap1.png")
     ..add("../resources/HeightMap2.png")
     ..add("../resources/HeightMap3.png")

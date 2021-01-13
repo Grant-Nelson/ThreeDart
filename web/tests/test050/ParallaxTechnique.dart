@@ -175,6 +175,7 @@ class ParallaxTechnique extends Techniques.Technique {
         ..heightTexture = this._heightTxt
         ..projectionViewObjectMatrix = state.projectionViewObjectMatrix
         ..viewObjectMatrix           = state.viewObjectMatrix
+        ..viewMatrix                 = state.view.matrix
         ..objectMatrix               = state.object.matrix
         ..lightViewDirection = lightViewDir
         ..ambientColor  = this._ambientClr
