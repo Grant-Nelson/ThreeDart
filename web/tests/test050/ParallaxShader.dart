@@ -74,8 +74,8 @@ class ParallaxShader extends Shaders.Shader {
       "void setParallaxMapping()                                                \n"+
       "{                                                                        \n"+
       "   float layerDepth = 1.0 / numLayers;                                   \n"+
-      "   //vec3 viewDir = normalize(tbnMat*objPos);                             \n"+
-      "   vec3 viewDir = normalize(tbnMat*vec3(0.0, 0.0, -1.0));                  \n"+
+      "   //vec3 viewDir = normalize(tbnMat*objPos);                            \n"+
+      "   vec3 viewDir = normalize(tbnMat*vec3(0.0, 0.0, -1.0));                \n"+
       "   vec2 txtOffset = viewDir.xy * heightScale;                            \n"+
       "   vec2 deltaTxtCoords = txtOffset / numLayers;                          \n"+
       "                                                                         \n"+
