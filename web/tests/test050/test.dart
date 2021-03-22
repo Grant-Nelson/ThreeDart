@@ -54,6 +54,7 @@ void main() {
   new common.Texture2DGroup("heightMaps", (String fileName) {
     tech.heightTexture = td.textureLoader.load2DFromFile(fileName);
   })
+    ..add("../resources/bricks2_disp.jpg")
     ..add("../resources/White.png")
     ..add("../resources/Black.png")
     ..add("../resources/HeightMap1.png")
@@ -67,6 +68,7 @@ void main() {
   new common.Texture2DGroup("bumpMaps", (String fileName) {
     tech.bumpTexture = td.textureLoader.load2DFromFile(fileName);
   })
+    ..add("../resources/bricks2_normal.jpg")
     ..add("../resources/BumpMapFlat.png")
     ..add("../resources/BumpMap1.png")
     ..add("../resources/BumpMap2.png")
@@ -80,6 +82,7 @@ void main() {
   new common.Texture2DGroup("colorMaps", (String fileName) {
     tech.colorTexture = td.textureLoader.load2DFromFile(fileName);
   })
+    ..add("../resources/bricks2.jpg")
     ..add("../resources/Grid.png")
     ..add("../resources/Dirt.png")
     ..add("../resources/Grass.png")
