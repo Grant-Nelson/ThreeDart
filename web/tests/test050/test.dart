@@ -104,7 +104,7 @@ void main() {
 
   td.postrender.once((_){
     page
-      ..addCode("Vertex Shader", "glsl", 0, tech.vertexSourceCode.split("\n"))
+      ..addCode("Vertex Shader",   "glsl", 0, tech.vertexSourceCode.split("\n"))
       ..addCode("Fragment Shader", "glsl", 0, tech.fragmentSourceCode.split("\n"));
   });
   common.showFPS(td);
