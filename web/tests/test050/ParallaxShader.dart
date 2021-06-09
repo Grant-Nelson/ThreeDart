@@ -9,10 +9,8 @@ class ParallaxShader extends Shaders.Shader {
   /// The vertex shader source code in glsl.
   static String _vertexSource =
       "uniform mat4 objMat;                                              \n"+
-      "uniform mat4 viewMat;                                             \n"+
       "uniform mat4 viewObjMat;                                          \n"+
       "uniform mat4 projViewObjMat;                                      \n"+
-      "uniform vec3 viewPoint;                                           \n"+
       "                                                                  \n"+
       "attribute vec3 posAttr;                                           \n"+
       "attribute vec3 normAttr;                                          \n"+
@@ -22,17 +20,13 @@ class ParallaxShader extends Shaders.Shader {
       "varying vec3 normalVec;                                           \n"+
       "varying vec3 binormalVec;                                         \n"+
       "varying vec2 txt2D;                                               \n"+
-      "varying vec3 objPos;                                              \n"+
       "varying vec3 viewPos;                                             \n"+
-      "varying vec3 viewPnt;                                             \n"+
       "                                                                  \n"+
       "void main()                                                       \n"+
       "{                                                                 \n"+
       "   normalVec   = normalize((viewObjMat*vec4(normAttr, 0.0)).xyz); \n"+
       "   binormalVec = normalize((viewObjMat*vec4(binmAttr, 0.0)).xyz); \n"+
       "   txt2D = txt2DAttr;                                             \n"+
-      "   objPos  = (objMat    *vec4(posAttr, 1.0)).xyz;                 \n"+
-      "   viewPnt = (objMat    *vec4(viewPoint, 1.0)).xyz;               \n"+
       "   viewPos = (viewObjMat*vec4(posAttr, 1.0)).xyz;                 \n"+
       "   gl_Position = projViewObjMat*vec4(posAttr, 1.0);               \n"+
       "}                                                                 \n";
@@ -44,9 +38,7 @@ class ParallaxShader extends Shaders.Shader {
       "varying vec3 normalVec;                                                  \n"+
       "varying vec3 binormalVec;                                                \n"+
       "varying vec2 txt2D;                                                      \n"+
-      "varying vec3 objPos;                                                     \n"+
       "varying vec3 viewPos;                                                    \n"+
-      "varying vec3 viewPnt;                                                    \n"+
       "                                                                         \n"+
       "uniform vec3 ambientClr;                                                 \n"+
       "uniform vec3 diffuseClr;                                                 \n"+
@@ -57,7 +49,6 @@ class ParallaxShader extends Shaders.Shader {
       "uniform sampler2D heightTxt;                                             \n"+
       "uniform vec3 lightViewDir;                                               \n"+
       "uniform float heightScale;                                               \n"+
-      "//uniform mat4 viewMat; // TODO: Remove if not used.                     \n"+
       "                                                                         \n"+
       "// === Parallax & Normal ===                                             \n"+
       "                                                                         \n"+
@@ -80,7 +71,7 @@ class ParallaxShader extends Shaders.Shader {
       "void setParallaxMapping()                                                \n"+
       "{                                                                        \n"+
       "   float layerDepth = 1.0 / numLayers;                                   \n"+
-      "   viewDir = tbnMat * normalize(objPos - viewPnt);                       \n"+
+      "   viewDir = tbnMat * normalize(viewPos);                                \n"+
       "   vec2 txtOffset = viewDir.xy * heightScale;                            \n"+
       "   vec2 deltaTxtCoords = txtOffset / numLayers;                          \n"+
       "                                                                         \n"+
