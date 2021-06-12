@@ -26,7 +26,8 @@ void main() {
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
 
-  Shapes.Shape shape = Shapes.cube();
+  //Shapes.Shape shape = Shapes.cube();
+  Shapes.Shape shape = Shapes.square();
   shape.calculateNormals();
   shape.calculateBinormals();
 
@@ -39,13 +40,23 @@ void main() {
   ThreeDart.Entity objTech = new ThreeDart.Entity()
     ..shape = shape
     ..technique = tech;
+    
+  ThreeDart.Entity objTech2 = new ThreeDart.Entity()
+    ..shape = shape
+    ..technique = new Techniques.Inspection(
+      showNormals: true, // yellow
+      showBinormals: true, // red
+      showTangentals: true, // magenta
+      vectorScale: 0.2);
 
   ThreeDart.Entity group = new ThreeDart.Entity()
     ..children.add(objTech)
+    ..children.add(objTech2)
     ..mover = (new Movers.Group()
       ..add(new Movers.UserRotator(input: td.userInput, invertY: true))
       ..add(new Movers.UserRoller(input: td.userInput, ctrl: true))
-      ..add(new Movers.UserZoom(input: td.userInput)));
+      ..add(new Movers.UserZoom(input: td.userInput))
+      ..add(new Movers.UserTranslator(input: td.userInput)));
 
   td.scene = new Scenes.EntityPass()
     ..children.add(group)

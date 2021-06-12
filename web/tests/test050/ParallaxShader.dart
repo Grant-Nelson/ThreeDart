@@ -1,6 +1,9 @@
 part of ThreeDart.test.test008;
 
 /// A shader for rendering and testing parallax texturing.
+/// See: https://casual-effects.com/research/McGuire2005Parallax/index.html
+/// See: https://www.robg3d.com/parallax.html
+/// See: https://stackoverflow.com/questions/35490615/parallax-mapping-works-in-only-one-direction
 class ParallaxShader extends Shaders.Shader {
 
   /// The name for this shader.
@@ -64,7 +67,7 @@ class ParallaxShader extends Shaders.Shader {
       "                  n.x,  n.y,  n.z);                                      \n"+
       "}                                                                        \n"+
       "                                                                         \n"+
-      "const float numLayers = 10.0;                                            \n"+
+      "const float numLayers = 4.0;                                             \n"+
       "                                                                         \n"+
       "vec2 txtCoords;                                                          \n"+
       "vec3 viewDir;                                                            \n"+
@@ -72,7 +75,7 @@ class ParallaxShader extends Shaders.Shader {
       "{                                                                        \n"+
       "   float layerDepth = 1.0 / numLayers;                                   \n"+
       "   viewDir = tbnMat * normalize(viewPos);                                \n"+
-      "   vec2 txtOffset = viewDir.xy * heightScale;                            \n"+
+      "   vec2 txtOffset = normalize(viewDir).xy * heightScale;                 \n"+
       "   vec2 deltaTxtCoords = txtOffset / numLayers;                          \n"+
       "                                                                         \n"+
       "   float curLayerDepth = 0.0;                                            \n"+
@@ -147,7 +150,7 @@ class ParallaxShader extends Shaders.Shader {
       "   vec3 norm = normal();                                                 \n"+
       "   setMaterialColors();                                                  \n"+
       "   vec3 lightAccum = dirLightValue(norm);                                \n"+
-      "   gl_FragColor = vec4(lightAccum, 1.0);//*0.05 + vec4(viewDir.x*0.5+0.5, 0.0, 0.0, 1.0); \n"+
+      "   gl_FragColor = vec4(lightAccum, 1.0);//*0.0005 + vec4(viewDir.x*0.5+0.5, 0.0, 0.0, 1.0); \n"+
       "}                                                                        \n";
 
   Shaders.Attribute _posAttr;

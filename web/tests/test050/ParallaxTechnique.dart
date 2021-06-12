@@ -167,6 +167,7 @@ class ParallaxTechnique extends Techniques.Technique {
 
       Math.Matrix4 viewMat = state.view.matrix;
       Math.Vector3 lightViewDir = viewMat.transVec3(this._lightDirection).normal();
+      Math.Point3 viewPoint = viewMat.transPnt3(Math.Point3.zero);
 
       this._shader
         ..bind(state)
@@ -182,7 +183,8 @@ class ParallaxTechnique extends Techniques.Technique {
         ..diffuseColor  = this._diffuseClr
         ..specularColor = this._specularClr
         ..shininess     = this._shininess
-        ..heightScale   = this._heightScale;
+        ..heightScale   = this._heightScale
+        ..viewPoint = viewPoint;
 
       this._colorTxt.bind(state);
       this._bumpTxt.bind(state);
