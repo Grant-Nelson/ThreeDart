@@ -7,100 +7,82 @@ part of ThreeDart.Core;
 class Entity implements Movers.Movable, Events.Changeable {
 
   /// The name for this entity.
-  String _name;
+  String _name = '';
 
   /// Indicates if this entity and its children
   /// will be rendered or not.
-  bool _enabled;
+  bool _enabled = false;
 
   /// The shape to render.
   /// May be null to not render this Entity which is useful
   /// when grouping other Entities.
-  Shapes.Shape _shape;
+  Shapes.Shape? _shape = null;
 
   /// The shape builder used to build the rendering data.
   /// When using a shape this will be a shape.
   /// May be null to not when not rendering.
-  Shapes.ShapeBuilder _shapeBuilder;
+  Shapes.ShapeBuilder? _shapeBuilder = null;
 
   /// The cache of the shape transformed into the buffers required
   /// by the shader in the currently set technique.
   /// TODO: Need to make the cache work for two techniques when there are parents.
-  Data.TechniqueCache _cache;
+  Data.TechniqueCache? _cache = null;
 
   /// The technique to render with or null to inherit from it's parent.
-  Techniques.Technique _tech;
+  Techniques.Technique? _tech = null;
 
   /// The mover to position, rotate, and scale this Entity and children.
   /// May be null to not move the Entity.
-  Movers.Mover _mover;
+  Movers.Mover? _mover = null;
 
   /// The location and rotation of this entity.
-  Math.Matrix4 _matrix;
+  Math.Matrix4? _matrix = null;
 
   /// The list of children entities to this entity.
-  Collections.Collection<Entity> _children;
+  Collections.Collection<Entity> _children = new Collections.Collection<Entity>();
 
   /// The event emitted when any part of the entity is changed.
-  Events.Event _changed;
+  Events.Event? _changed = null;
 
   /// The event emitted when the shape has been changed.
-  Events.Event _shapeChanged;
+  Events.Event? _shapeChanged = null;
 
   /// The event emitted when the shape builder has been changed.
-  Events.Event _shapeBuilderChanged;
+  Events.Event? _shapeBuilderChanged = null;
 
   /// The event emitted when the technique has been changed.
-  Events.Event _techChanged;
+  Events.Event? _techChanged = null;
 
   /// The event emitted when the mover has been changed.
-  Events.Event _moverChanged;
+  Events.Event? _moverChanged = null;
 
   /// The event emitted when the matrix has been changed.
-  Events.Event _matrixChanged;
+  Events.Event? _matrixChanged = null;
 
   /// The event emitted when one or more children is added.
-  Events.Event _childrenAdded;
+  Events.Event? _childrenAdded = null;
 
   /// The event emitted when one or more children is removed.
-  Events.Event _childrenRemoved;
+  Events.Event? _childrenRemoved = null;
 
   /// The event emitted when an extension is added.
-  Events.Event _extensionAdded;
+  Events.Event? _extensionAdded = null;
 
   /// The event emitted when an extension is removed.
-  Events.Event _extensionRemoved;
+  Events.Event? _extensionRemoved = null;
 
   /// Creates a new Entity.
-  Entity({String name: "",
+  Entity({String name: '',
           bool enabled: true,
-          Shapes.Shape shape: null,
-          Techniques.Technique tech: null,
-          Movers.Mover mover: null,
-          List<Entity> children: null}) {
+          Shapes.Shape? shape: null,
+          Techniques.Technique? tech: null,
+          Movers.Mover? mover: null,
+          List<Entity>? children: null}) {
     this._name = name;
     this._enabled = enabled;
-    this._shape = null;
-    this._shapeBuilder = null;
-    this._cache = null;
-    this._tech = null;
-    this._mover = null;
-    this._matrix = null;
-    this._children = new Collections.Collection<Entity>();
     this._children.setHandlers(
-      onAddedHndl: this.onChildrenAdded,
+      onAddedHndl:   this.onChildrenAdded,
       onRemovedHndl: this.onChildrenRemoved);
-    this._changed = null;
-    this._shapeChanged = null;
-    this._shapeBuilderChanged = null;
-    this._techChanged = null;
-    this._moverChanged = null;
-    this._matrixChanged = null;
-    this._childrenAdded = null;
-    this._childrenRemoved = null;
-    this._extensionAdded = null;
-    this._extensionRemoved = null;
-
     this.shape = shape;
     this.technique = tech;
     this.mover = mover;
@@ -143,8 +125,8 @@ class Entity implements Movers.Movable, Events.Changeable {
   }
 
   /// The cache of the current shape in buffers for the current technique.
-  Data.TechniqueCache get cache => this._cache;
-  set cache(Data.TechniqueCache cache) => this._cache = cache;
+  Data.TechniqueCache? get cache => this._cache;
+  set cache(Data.TechniqueCache? cache) => this._cache = cache;
 
   /// The children Entities of this Entity.
   Collections.Collection<Entity> get children => this._children;
@@ -152,16 +134,16 @@ class Entity implements Movers.Movable, Events.Changeable {
   /// The shape to draw at this Entity.
   /// May be null to not draw anything, useful if this Entity
   /// is just a container for child Entities.
-  Shapes.Shape get shape => this._shape;
-  set shape(Shapes.Shape shape) {
+  Shapes.Shape? get shape => this._shape;
+  set shape(Shapes.Shape? shape) {
     if (this._shape != shape) {
-      Shapes.Shape oldShape = this._shape;
+      Shapes.Shape? oldShape = this._shape;
       this._shape = shape;
       this._shapeBuilder = shape;
       this.clearCache();
       if (oldShape != null) oldShape.changed.remove(this.onShapeModified);
-      if (this._shape != null) this._shape.changed.add(this.onShapeModified);
-      this.onShapeChanged(oldShape, this._shape);
+      if (shape != null) shape.changed.add(this.onShapeModified);
+      this.onShapeChanged(oldShape, shape);
     }
   }
 
@@ -170,55 +152,55 @@ class Entity implements Movers.Movable, Events.Changeable {
   /// Typically this is set through [shape] but is exposed so that
   /// renders with higher requirements can precalculate shapes or provide
   /// custom shapes to the entity.
-  Shapes.ShapeBuilder get shapeBuilder => this._shapeBuilder;
-  set shapeBuilder(Shapes.ShapeBuilder builder) {
+  Shapes.ShapeBuilder? get shapeBuilder => this._shapeBuilder;
+  set shapeBuilder(Shapes.ShapeBuilder? builder) {
     if (this._shapeBuilder != builder) {
-      Shapes.ShapeBuilder oldBuilder = this._shapeBuilder;
+      Shapes.ShapeBuilder? oldBuilder = this._shapeBuilder;
       this._shape = null;
       this._shapeBuilder = builder;
       this.clearCache();
       if (oldBuilder != null) oldBuilder.changed.remove(this.onShapeModified);
-      if (this._shapeBuilder != null) this._shapeBuilder.changed.add(this.onShapeModified);
-      this.onShapeBuilderChanged(oldBuilder, this._shapeBuilder);
+      if (builder != null) builder.changed.add(this.onShapeModified);
+      this.onShapeBuilderChanged(oldBuilder, builder);
     }
   }
 
   /// The technique to render this Entity and/or it's children with.
   /// May be null to inherit the technique from this Entities parent.
-  Techniques.Technique get technique => this._tech;
-  set technique(Techniques.Technique technique) {
+  Techniques.Technique? get technique => this._tech;
+  set technique(Techniques.Technique? technique) {
     if (this._tech != technique) {
-      if (this._tech != null) this._tech.changed.remove(this.onTechModified);
-      Techniques.Technique oldTech = this._tech;
+      Techniques.Technique? oldTech = this._tech;
       this._tech = technique;
-      if (this._tech != null) this._tech.changed.add(this.onTechModified);
+      if (oldTech != null) oldTech.changed.remove(this.onTechModified);
+      if (technique != null) technique.changed.add(this.onTechModified);
       this._cacheUpdateForTech();
-      this.onTechChanged(oldTech, this._tech);
+      this.onTechChanged(oldTech, technique);
     }
   }
 
   /// The mover which moves this Entity.
   /// May be null to not move the Entity.
-  Movers.Mover get mover => this._mover;
-  void set mover(Movers.Mover mover) {
+  Movers.Mover? get mover => this._mover;
+  void set mover(Movers.Mover? mover) {
     if (this._mover != mover) {
-      Movers.Mover oldMover = this._mover;
+      Movers.Mover? oldMover = this._mover;
+      this._mover = mover;
       if (oldMover != null) oldMover.changed.remove(this.onMoverModified);
       if (mover != null) mover.changed.add(this.onMoverModified);
-      this._mover = mover;
       this.onMoverChanged(oldMover, this._mover);
     }
   }
 
   /// The matrix for the location and rotation of the entity.
-  Math.Matrix4 get matrix => this._matrix;
+  Math.Matrix4? get matrix => this._matrix;
 
   /// Finds this or the first child entity with the given name.
   /// Null is returned if none was found.
-  Entity findFirstByName(String name) {
+  Entity? findFirstByName(String name) {
     if (this.name == name) return this;
     for(Entity child in this._children) {
-      Entity result = child.findFirstByName(name);
+      Entity? result = child.findFirstByName(name);
       if (result != null) return result;
     }
     return null;
@@ -227,8 +209,8 @@ class Entity implements Movers.Movable, Events.Changeable {
   /// Finds this and all a children entities with the given name.
   /// If the optional given entity list is not null,
   /// then the found entities are added to that list.
-  List<Entity> findAllByName(String name, [List<Entity> entities = null]) {
-    entities ??= new List<Entity>();
+  List<Entity> findAllByName(String name, [List<Entity>? entities = null]) {
+    entities ??= [];
     if (this.name == name) entities.add(this);
     for(Entity child in this._children) {
       child.findAllByName(name, entities);
@@ -237,19 +219,20 @@ class Entity implements Movers.Movable, Events.Changeable {
   }
 
   /// Calculates the axial aligned bounding box of this entity and its children.
-  Math.Region3 calculateAABB() {
-    Math.Region3 region = null;
+  Math.Region3? calculateAABB() {
+    Math.Region3? region = null;
     if (this._shapeBuilder != null)
-      region = new Math.Region3.union(region, this._shapeBuilder.calculateAABB());
+      region = Math.Region3.union(region, this._shapeBuilder?.calculateAABB());
     for (Entity child in this._children)
-      region = new Math.Region3.union(region, child.calculateAABB());
+      region = Math.Region3.union(region, child.calculateAABB());
     return region;
   }
 
   /// Scales the AABB so that the longest size the given [size],
   /// and the shape is centered then offset by the given [offset].
-  void resizeCenter([double size = 2.0, Math.Point3 offset = null]) {
-    Math.Region3 aabb = this.calculateAABB();
+  void resizeCenter([double size = 2.0, Math.Point3? offset = null]) {
+    Math.Region3? aabb = this.calculateAABB();
+    if (aabb == null) return;
     offset ??= Math.Point3.zero;
     offset -= aabb.center;
     double maxSize = aabb.dx;
@@ -266,8 +249,7 @@ class Entity implements Movers.Movable, Events.Changeable {
   /// by translating it with the given [mat]
   /// for this entity's shape and children shapes.
   void applyPositionMatrix(Math.Matrix4 mat) {
-    if (this.shape != null)
-      this.shape.applyPositionMatrix(mat);
+    this.shape?.applyPositionMatrix(mat);
     for (Entity child in this._children)
       child.applyPositionMatrix(mat);
   }
@@ -275,8 +257,7 @@ class Entity implements Movers.Movable, Events.Changeable {
   /// Modifies the color by translating it with the given [mat]
   /// for this entity's shape and children shapes.
   void applyColorMatrix(Math.Matrix3 mat) {
-    if (this.shape != null)
-      this.shape.applyColorMatrix(mat);
+    this.shape?.applyColorMatrix(mat);
     for (Entity child in this._children)
       child.applyColorMatrix(mat);
   }
@@ -284,8 +265,7 @@ class Entity implements Movers.Movable, Events.Changeable {
   /// Modifies the 2D texture by translating it with the given [mat]
   /// for this entity's shape and children shapes.
   void applyTexture2DMatrix(Math.Matrix3 mat) {
-    if (this.shape != null)
-      this.shape.applyTexture2DMatrix(mat);
+    this.shape?.applyTexture2DMatrix(mat);
     for (Entity child in this._children)
       child.applyTexture2DMatrix(mat);
   }
@@ -293,31 +273,26 @@ class Entity implements Movers.Movable, Events.Changeable {
   /// Modifies the cube texture by translating it with the given [mat]
   /// for this entity's shape and children shapes.
   void applyTextureCubeMatrix(Math.Matrix4 mat) {
-    if (this.shape != null)
-      this.shape.applyTextureCubeMatrix(mat);
+    this.shape?.applyTextureCubeMatrix(mat);
     for (Entity child in this._children)
       child.applyTextureCubeMatrix(mat);
   }
 
   /// Updates the Entity with the given [UpdateState].
   void update(RenderState state) {
-    Math.Matrix4 mat = null;
-    if (this._mover != null) {
-      mat = this._mover.update(state, this);
-    }
+    Math.Matrix4? mat = this._mover?.update(state, this);
     if (mat != this._matrix) {
-      Math.Matrix4 oldMat = this._matrix;
+      Math.Matrix4? oldMat = this._matrix;
       this._matrix = mat;
       this.onMatrixChanged(oldMat, this._matrix);
     }
 
     // Updated the technique.
-    if (this._tech != null) this._tech.update(state);
+    this._tech?.update(state);
 
     // Update all children.
-    for (Entity child in this._children) {
+    for (Entity child in this._children)
       child.update(state);
-    }
   }
 
   /// Renders the Entity with the given [RenderState].
@@ -329,7 +304,7 @@ class Entity implements Movers.Movable, Events.Changeable {
     state.pushTechnique(this._tech);
 
     // Render this entity.
-    Techniques.Technique tech = state.technique;
+    Techniques.Technique? tech = state.technique;
     if ((tech != null) && (this._shapeBuilder != null)) {
       tech.render(state, this);
     }
@@ -427,8 +402,8 @@ class Entity implements Movers.Movable, Events.Changeable {
   /// This isn't meant to be called from outside the entity, in other languages this would
   /// be a protected method. This method is exposed to that the entity is extended and
   /// these methods can be overwritten. If overwritten call this super method to still emit events.
-  void onShapeChanged(Shapes.Shape oldShape, Shapes.Shape newShape) {
-    Events.EventArgs args = new Events.ValueChangedEventArgs(this, "shape", oldShape, newShape);
+  void onShapeChanged(Shapes.Shape? oldShape, Shapes.Shape? newShape) {
+    Events.EventArgs args = new Events.ValueChangedEventArgs(this, 'shape', oldShape, newShape);
     this._shapeChanged?.emit(args);
     this._shapeBuilderChanged?.emit(args);
     this.onChanged(args);
@@ -441,8 +416,8 @@ class Entity implements Movers.Movable, Events.Changeable {
   /// This isn't meant to be called from outside the entity, in other languages this would
   /// be a protected method. This method is exposed to that the entity is extended and
   /// these methods can be overwritten. If overwritten call this super method to still emit events.
-  void onShapeBuilderChanged(Shapes.ShapeBuilder oldShape, Shapes.ShapeBuilder newShape) {
-    Events.EventArgs args = new Events.ValueChangedEventArgs(this, "shapeBuilder", oldShape, newShape);
+  void onShapeBuilderChanged(Shapes.ShapeBuilder? oldShape, Shapes.ShapeBuilder? newShape) {
+    Events.EventArgs args = new Events.ValueChangedEventArgs(this, 'shapeBuilder', oldShape, newShape);
     this._shapeBuilderChanged?.emit(args);
     this.onChanged(args);
   }
@@ -463,8 +438,8 @@ class Entity implements Movers.Movable, Events.Changeable {
   /// This isn't meant to be called from outside the entity, in other languages this would
   /// be a protected method. This method is exposed to that the entity is extended and
   /// these methods can be overwritten. If overwritten call this super method to still emit events.
-  void onTechChanged(Techniques.Technique oldTech, Techniques.Technique newTech) {
-    Events.EventArgs args = new Events.ValueChangedEventArgs(this, "technique", oldTech, newTech);
+  void onTechChanged(Techniques.Technique? oldTech, Techniques.Technique? newTech) {
+    Events.EventArgs args = new Events.ValueChangedEventArgs(this, 'technique', oldTech, newTech);
     this._techChanged?.emit(args);
     this.onChanged(args);
   }
@@ -485,8 +460,8 @@ class Entity implements Movers.Movable, Events.Changeable {
   /// This isn't meant to be called from outside the entity, in other languages this would
   /// be a protected method. This method is exposed to that the entity is extended and
   /// these methods can be overwritten. If overwritten call this super method to still emit events.
-  void onMoverChanged(Movers.Mover oldMover, Movers.Mover newMover) {
-    Events.EventArgs args = new Events.ValueChangedEventArgs(this, "mover", oldMover, newMover);
+  void onMoverChanged(Movers.Mover? oldMover, Movers.Mover? newMover) {
+    Events.EventArgs args = new Events.ValueChangedEventArgs(this, 'mover', oldMover, newMover);
     this._moverChanged?.emit(args);
     this.onChanged(args);
   }
@@ -498,8 +473,8 @@ class Entity implements Movers.Movable, Events.Changeable {
   /// This isn't meant to be called from outside the entity, in other languages this would
   /// be a protected method. This method is exposed to that the entity is extended and
   /// these methods can be overwritten. If overwritten call this super method to still emit events.
-  void onMatrixChanged(Math.Matrix4 oldMatrix, Math.Matrix4 newMatrix) {
-    Events.EventArgs args = new Events.ValueChangedEventArgs(this, "matrix", oldMatrix, newMatrix);
+  void onMatrixChanged(Math.Matrix4? oldMatrix, Math.Matrix4? newMatrix) {
+    Events.EventArgs args = new Events.ValueChangedEventArgs(this, 'matrix', oldMatrix, newMatrix);
     this._matrixChanged?.emit(args);
     this.onChanged(args);
   }
@@ -548,7 +523,7 @@ class Entity implements Movers.Movable, Events.Changeable {
   /// Gets a string for this entity, the name if it has one.
   @override
   String toString() {
-    if ((this._name?.length ?? 0) <= 0) return "Unnamed entity";
+    if ((this._name?.length ?? 0) <= 0) return 'Unnamed entity';
     return this._name;
   }
 

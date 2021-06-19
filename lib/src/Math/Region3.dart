@@ -5,25 +5,32 @@ part of ThreeDart.Math;
 class Region3 {
 
   /// Gets a [Region3] at the origin.
-  static Region3 get zero {
+  static Region3 get zero =>
     _zeroSingleton ??= new Region3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-    return _zeroSingleton;
-  }
-  static Region3 _zeroSingleton;
+  static Region3? _zeroSingleton;
 
   /// Gets a [Region3] at the origin with a width, height, and depth of 1.
-  static Region3 get unit {
+  static Region3 get unit =>
     _unitSingleton ??= new Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
-    return _unitSingleton;
-  }
-  static Region3 _unitSingleton;
+  static Region3? _unitSingleton;
 
   /// Gets a [Region3] at the origin with a width, height, and depth of 2 centered on origin.
-  static Region3 get unit2 {
+  static Region3 get unit2 =>
     _unit2Singleton ??= new Region3(-1.0, -1.0, -1.0, 2.0, 2.0, 2.0);
-    return _unit2Singleton;
+  static Region3? _unit2Singleton;
+
+  /// Constructs the union of the given regions. If both are null, null is returned.
+  static Region3? union(Region3? a, Region3? b) {
+    if (a == null) return b ?? zero;
+    if (b == null) return a;
+    double x  = math.min(a.x,      b.x);
+    double y  = math.min(a.y,      b.y);
+    double z  = math.min(a.z,      b.z);
+    double x2 = math.max(a.x+a.dx, b.x+b.dx);
+    double y2 = math.max(a.y+a.dy, b.y+b.dy);
+    double z2 = math.max(a.z+a.dz, b.z+b.dz);
+    return new Region3._(x, y, z, x2-x, y2-y, z2-z);
   }
-  static Region3 _unit2Singleton;
 
   /// The left edge component of the region.
   final double x;
@@ -86,19 +93,6 @@ class Region3 {
   factory Region3.fromList(List<double> values) {
     assert(values.length == 6);
     return new Region3(values[0], values[1], values[2], values[3], values[4], values[5]);
-  }
-
-  /// Constructs the union of the given regions. If both are null, null is returned.
-  factory Region3.union(Region3 a, Region3 b) {
-    if (a == null) return b;
-    if (b == null) return a;
-    double x  = math.min(a.x,      b.x);
-    double y  = math.min(a.y,      b.y);
-    double z  = math.min(a.z,      b.z);
-    double x2 = math.max(a.x+a.dx, b.x+b.dx);
-    double y2 = math.max(a.y+a.dy, b.y+b.dy);
-    double z2 = math.max(a.z+a.dz, b.z+b.dz);
-    return new Region3._(x, y, z, x2-x, y2-y, z2-z);
   }
 
   /// The minimum corner point in the region.
