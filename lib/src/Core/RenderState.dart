@@ -95,7 +95,7 @@ class RenderState {
         this._projViewObjMat = null;
         this._viewObjMat = null;
       });
-    this._tech = new List<Techniques.Technique>();
+    this._tech = [];
     this._tech.add(null);
     this._shaderCache = new Map<String, Shaders.Shader>();
   }
@@ -182,15 +182,13 @@ class RenderState {
 
   /// Pushes a new technique onto the stack of techniques.
   /// Pushing null will put the current technique onto the top of the stack.
-  void pushTechnique(Techniques.Technique tech) {
+  void pushTechnique(Techniques.Technique tech) =>
     this._tech.add(tech ?? this.technique);
-  }
 
   /// Pops the current technique off of the top of the stack.
+  /// This will not remove the last technique on the stack.
   void popTechnique() {
-    if (this._tech.length > 1) {
-      this._tech.removeLast();
-    }
+    if (this._tech.length > 1) this._tech.removeLast();
   }
 
   /// Gets the cached shader by the given [name].
@@ -199,12 +197,12 @@ class RenderState {
   /// Adds the given [shader] to the shader cache.
   void addShader(Shaders.Shader shader) {
     if (shader == null)
-      throw new Exception("May not cache a null shader.");
+      throw new Exception('May not cache a null shader.');
     String name = shader.name;
     if (name.isEmpty)
-      throw new Exception("May not cache a shader with no name.");
+      throw new Exception('May not cache a shader with no name.');
     if (this._shaderCache.containsKey(name))
-      throw new Exception("Shader cache already contains a shader by the name \"${name}\".");
+      throw new Exception('Shader cache already contains a shader by the name "$name".');
     this._shaderCache[name] = shader;
   }
 }
