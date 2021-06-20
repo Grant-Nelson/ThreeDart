@@ -4,14 +4,12 @@ part of ThreeDart.Math;
 class Matrix3 {
 
   /// Gets a 3x3 identity matrix.
-  static Matrix3 get identity {
+  static Matrix3 get identity =>
     _identSingleton ??= new Matrix3(
       1.0, 0.0, 0.0,
       0.0, 1.0, 0.0,
       0.0, 0.0, 1.0);
-    return _identSingleton;
-  }
-  static Matrix3 _identSingleton;
+  static Matrix3? _identSingleton;
 
   /// The 1st row and 1st column of the matrix, XX.
   final double m11;
@@ -252,16 +250,15 @@ class Matrix3 {
   bool operator ==(var other) {
     if (identical(this, other)) return true;
     if (other is! Matrix3) return false;
-    Matrix3 mat = other as Matrix3;
-    if (!Comparer.equals(mat.m11, this.m11)) return false;
-    if (!Comparer.equals(mat.m21, this.m21)) return false;
-    if (!Comparer.equals(mat.m31, this.m31)) return false;
-    if (!Comparer.equals(mat.m12, this.m12)) return false;
-    if (!Comparer.equals(mat.m22, this.m22)) return false;
-    if (!Comparer.equals(mat.m32, this.m32)) return false;
-    if (!Comparer.equals(mat.m13, this.m13)) return false;
-    if (!Comparer.equals(mat.m23, this.m23)) return false;
-    if (!Comparer.equals(mat.m33, this.m33)) return false;
+    if (!Comparer.equals(other.m11, this.m11)) return false;
+    if (!Comparer.equals(other.m21, this.m21)) return false;
+    if (!Comparer.equals(other.m31, this.m31)) return false;
+    if (!Comparer.equals(other.m12, this.m12)) return false;
+    if (!Comparer.equals(other.m22, this.m22)) return false;
+    if (!Comparer.equals(other.m32, this.m32)) return false;
+    if (!Comparer.equals(other.m13, this.m13)) return false;
+    if (!Comparer.equals(other.m23, this.m23)) return false;
+    if (!Comparer.equals(other.m33, this.m33)) return false;
     return true;
   }
 

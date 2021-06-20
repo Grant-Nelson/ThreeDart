@@ -144,28 +144,20 @@ class RenderState {
   double get dt => this._dt;
 
   /// The projection matrix multiplied by the view matrix.
-  Math.Matrix4 get projectionViewMatrix {
+  Math.Matrix4 get projectionViewMatrix =>
     this._projViewMat ??= this.projection.matrix * this.view.matrix;
-    return this._projViewMat;
-  }
 
   /// The inverse of the view matrix.
-  Math.Matrix4 get inverseViewMatrix {
+  Math.Matrix4 get inverseViewMatrix =>
     this._invViewMat ??= this.view.matrix.inverse();
-    return this._invViewMat;
-  }
 
   /// The product of the projection matrix, the view matrix, and the object matrix.
-  Math.Matrix4 get projectionViewObjectMatrix {
+  Math.Matrix4 get projectionViewObjectMatrix =>
     this._projViewObjMat ??= this.projectionViewMatrix * this.object.matrix;
-    return this._projViewObjMat;
-  }
 
   /// The view matrix multiplied by the object matrix.
-  Math.Matrix4 get viewObjectMatrix {
+  Math.Matrix4 get viewObjectMatrix =>
     this._viewObjMat ??= this.view.matrix * this.object.matrix;
-    return this._viewObjMat;
-  }
 
   /// The stack of projection matrices.
   Collections.Matrix4Stack get projection => this._projStack;
@@ -182,7 +174,7 @@ class RenderState {
 
   /// Pushes a new technique onto the stack of techniques.
   /// Pushing null will put the current technique onto the top of the stack.
-  void pushTechnique(Techniques.Technique tech) =>
+  void pushTechnique(Techniques.Technique? tech) =>
     this._tech.add(tech ?? this.technique);
 
   /// Pops the current technique off of the top of the stack.

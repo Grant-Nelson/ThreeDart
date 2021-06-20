@@ -4,76 +4,56 @@ part of ThreeDart.Math;
 class Vector4 {
 
   /// Gets a zeroed [Vector3].
-  static Vector4 get zero {
+  static Vector4 get zero =>
     _zeroSingleton ??= new Vector4(0.0, 0.0, 0.0, 0.0);
-    return _zeroSingleton;
-  }
-  static Vector4 _zeroSingleton;
+  static Vector4? _zeroSingleton;
 
   /// Gets a new positive X [Vector4].
-  static Vector4 get posX {
+  static Vector4 get posX =>
     _posXSingleton ??= new Vector4(1.0, 0.0, 0.0, 0.0);
-    return _posXSingleton;
-  }
-  static Vector4 _posXSingleton;
+  static Vector4? _posXSingleton;
 
   /// Gets a new negative X [Vector4].
-  static Vector4 get negX {
+  static Vector4 get negX =>
     _negXSingleton ??= new Vector4(-1.0, 0.0, 0.0, 0.0);
-    return _negXSingleton;
-  }
-  static Vector4 _negXSingleton;
+  static Vector4? _negXSingleton;
 
   /// Gets a new positive Y [Vector4].
-  static Vector4 get posY {
+  static Vector4 get posY =>
     _posYSingleton ??= new Vector4(0.0, 1.0, 0.0, 0.0);
-    return _posYSingleton;
-  }
-  static Vector4 _posYSingleton;
+  static Vector4? _posYSingleton;
 
   /// Gets a new negative Y [Vector4].
-  static Vector4 get negY {
+  static Vector4 get negY =>
     _negYSingleton ??= new Vector4(0.0, -1.0, 0.0, 0.0);
-    return _negYSingleton;
-  }
-  static Vector4 _negYSingleton;
+  static Vector4? _negYSingleton;
 
   /// Gets a new positive Z [Vector4].
-  static Vector4 get posZ {
+  static Vector4 get posZ =>
     _posZSingleton ??= new Vector4(0.0, 0.0, 1.0, 0.0);
-    return _posZSingleton;
-  }
-  static Vector4 _posZSingleton;
+  static Vector4? _posZSingleton;
 
   /// Gets a new negative Z [Vector4].
-  static Vector4 get negZ {
+  static Vector4 get negZ =>
     _negZSingleton ??= new Vector4(0.0, 0.0, -1.0, 0.0);
-    return _negZSingleton;
-  }
-  static Vector4 _negZSingleton;
+  static Vector4? _negZSingleton;
 
   /// Gets a new positive W [Vector4].
-  static Vector4 get posW {
+  static Vector4 get posW =>
     _posWSingleton ??= new Vector4(0.0, 0.0, 0.0, 1.0);
-    return _posWSingleton;
-  }
-  static Vector4 _posWSingleton;
+  static Vector4? _posWSingleton;
 
   /// Gets a new negative W [Vector4].
-  static Vector4 get negW {
+  static Vector4 get negW =>
     _negWSingleton ??= new Vector4(0.0, 0.0, 0.0, -1.0);
-    return _negWSingleton;
-  }
-  static Vector4 _negWSingleton;
+  static Vector4? _negWSingleton;
 
   /// Gets the default shadow adjustment.
   /// The RGB higher quality depth vector `<1.0, 1.0/256.0, 1.0/65536.0, 0.0>`
   /// which is the default for shadow depth adjustment.
-  static Vector4 get shadowAdjust {
+  static Vector4 get shadowAdjust =>
     _shadowAdjust ??= new Vector4(1.0, 1.0/256.0, 1.0/65536.0, 0.0);
-    return _shadowAdjust;
-  }
-  static Vector4 _shadowAdjust;
+  static Vector4? _shadowAdjust;
 
   /// The dX component of the vector.
   final double dx;
@@ -197,11 +177,10 @@ class Vector4 {
   bool operator ==(var other) {
     if (identical(this, other)) return true;
     if (other is! Vector4) return false;
-    Vector4 pnt = other as Vector4;
-    if (!Comparer.equals(pnt.dx, this.dx)) return false;
-    if (!Comparer.equals(pnt.dy, this.dy)) return false;
-    if (!Comparer.equals(pnt.dz, this.dz)) return false;
-    if (!Comparer.equals(pnt.dw, this.dw)) return false;
+    if (!Comparer.equals(other.dx, this.dx)) return false;
+    if (!Comparer.equals(other.dy, this.dy)) return false;
+    if (!Comparer.equals(other.dz, this.dz)) return false;
+    if (!Comparer.equals(other.dw, this.dw)) return false;
     return true;
   }
 

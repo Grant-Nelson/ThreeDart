@@ -4,11 +4,9 @@ part of ThreeDart.Math;
 class Point4 {
 
   /// Gets a [Point4] at the origin.
-  static Point4 get zero {
+  static Point4 get zero =>
     _zeroSingleton ??= new Point4(0.0, 0.0, 0.0, 0.0);
-    return _zeroSingleton;
-  }
-  static Point4 _zeroSingleton;
+  static Point4? _zeroSingleton;
 
   /// The x component of the point.
   final double x;
@@ -132,11 +130,10 @@ class Point4 {
   bool operator ==(var other) {
     if (identical(this, other)) return true;
     if (other is! Point4) return false;
-    Point4 pnt = other as Point4;
-    if (!Comparer.equals(pnt.x, this.x)) return false;
-    if (!Comparer.equals(pnt.y, this.y)) return false;
-    if (!Comparer.equals(pnt.z, this.z)) return false;
-    if (!Comparer.equals(pnt.w, this.w)) return false;
+    if (!Comparer.equals(other.x, this.x)) return false;
+    if (!Comparer.equals(other.y, this.y)) return false;
+    if (!Comparer.equals(other.z, this.z)) return false;
+    if (!Comparer.equals(other.w, this.w)) return false;
     return true;
   }
 
