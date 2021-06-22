@@ -4,53 +4,41 @@ part of ThreeDart.Collections;
 class Collection<T> implements Iterable<T> {
 
   /// The list of all the items.
-  List<T> _list;
+  List<T> _list = [];
 
   /// The handler method for before adding items to this collection.
-  CollectionPreaddHandle<T> _onPreaddHndl;
+  CollectionPreaddHandle<T>? _onPreaddHndl;
 
   /// The handler method for added items to this collection.
-  CollectionChangeHandle<T> _onAddedHndl;
+  CollectionChangeHandle<T>? _onAddedHndl;
 
   /// The handler method for remvoed items to this collection.
-  CollectionChangeHandle<T> _onRemovedHndl;
+  CollectionChangeHandle<T>? _onRemovedHndl;
 
   /// Constructs a new collection.
-  Collection() {
-    this._list = new List<T>();
-    this._onPreaddHndl  = null;
-    this._onAddedHndl   = null;
-    this._onRemovedHndl = null;
-  }
+  Collection();
 
   /// Sets the handlers for this collection.
   ///
   /// This method should be protected (if dart had protected methods).
   /// Do not call this method unless calling from an inheriting or including
   /// class otherwise unexpected errors may occur.
-  void setHandlers({CollectionPreaddHandle<T> onPreaddHndl:  null,
-                    CollectionChangeHandle<T> onAddedHndl:   null,
-                    CollectionChangeHandle<T> onRemovedHndl: null}) {
+  void setHandlers({CollectionPreaddHandle<T>? onPreaddHndl:  null,
+                    CollectionChangeHandle<T>? onAddedHndl:   null,
+                    CollectionChangeHandle<T>? onRemovedHndl: null}) {
     this._onPreaddHndl  = onPreaddHndl;
     this._onAddedHndl   = onAddedHndl;
     this._onRemovedHndl = onRemovedHndl;
   }
 
   /// Is called when one or more items are about to be added to this collection.
-  bool _onPreadd(Iterable<T> items) {
-    if (this._onPreaddHndl != null) return this._onPreaddHndl(items);
-    return true;
-  }
+  bool _onPreadd(Iterable<T> items) => this._onPreaddHndl?.call(items) ?? true;
 
   /// Is called when one or more items are added to this collection.
-  void _onAdded(int index, Iterable<T> added) {
-    if (this._onAddedHndl != null) this._onAddedHndl(index, added);
-  }
+  void _onAdded(int index, Iterable<T> added) => this._onAddedHndl?.call(index, added);
 
   /// Is called when one or more items are removed from this collection.
-  void _onRemoved(int index, Iterable<T> removed) {
-    if (this._onRemovedHndl != null) this._onRemovedHndl(index, removed);
-  }
+  void _onRemoved(int index, Iterable<T> removed) => this._onRemovedHndl?.call(index, removed);
 
   /// Gets the first item in the list.
   T get first => this._list.first;
@@ -80,7 +68,7 @@ class Collection<T> implements Iterable<T> {
   Iterable<T2> cast<T2>() => this._list.cast<T2>();
 
   /// Indicates if the given [item] is contained.
-  bool contains(Object item) => this._list.contains(item);
+  bool contains(Object? item) => this._list.contains(item);
 
   /// Gets the item at the given index.
   T elementAt(int index) => this._list.elementAt(index);
@@ -92,7 +80,7 @@ class Collection<T> implements Iterable<T> {
   Iterable<T2> expand<T2>(Iterable<T2> hndl(T element)) => this._list.expand<T2>(hndl);
 
   /// Returns the first element that satisfies the given predicate test.
-  T firstWhere(bool test(T element), {T orElse()}) =>
+  T firstWhere(bool test(T element), {T orElse()?}) =>
     this._list.firstWhere(test, orElse: orElse);
 
   /// Reduces a collection to a single value by iteratively
@@ -112,7 +100,7 @@ class Collection<T> implements Iterable<T> {
     this._list.join(separator);
 
   /// Returns the last element that satisfies the given predicate test.
-  T lastWhere(bool test(T element), {T orElse()}) =>
+  T lastWhere(bool test(T element), {T orElse()?}) =>
     this._list.lastWhere(test, orElse: orElse);
 
   /// Returns a new lazy Iterable with elements that are created by calling
@@ -124,7 +112,7 @@ class Collection<T> implements Iterable<T> {
   T reduce(T combine(T value, T element)) => this._list.reduce(combine);
 
   /// Returns the single element that satisfies test.
-  T singleWhere(bool test(T element), {T orElse()}) => this._list.singleWhere(test, orElse: orElse);
+  T singleWhere(bool test(T element), {T orElse()?}) => this._list.singleWhere(test, orElse: orElse);
 
   /// Returns an Iterable that provides all but the first count elements.
   Iterable<T> skip(int count) => this._list.skip(count);
@@ -219,7 +207,7 @@ class Collection<T> implements Iterable<T> {
   /// Removes the item at the given [index] in this collection.
   /// The removed item is returned or null if out-of-bounds.
   T removeAt(int index) {
-    if ((index < 0) || (index >= this._list.length)) return null;
+    if ((index < 0) || (index >= this._list.length)) return null as T;
     T item = this._list.removeAt(index);
     this._onRemoved(index, [item]);
     return item;
@@ -242,7 +230,7 @@ class Collection<T> implements Iterable<T> {
   void clear() {
     if (this._list.length > 0) {
       List<T> items = this._list;
-      this._list = new List<T>();
+      this._list = [];
       this._onRemoved(0, items);
     }
   }

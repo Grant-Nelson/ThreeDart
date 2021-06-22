@@ -1,6 +1,5 @@
 part of ThreeDart.Input;
 
-
 /// The modifiers on the keyboard.
 class Modifiers {
 
@@ -32,17 +31,16 @@ class Modifiers {
   bool operator ==(var other) {
     if (identical(this, other)) return true;
     if (other is! Modifiers) return false;
-    Modifiers mods = other as Modifiers;
-    if (this.ctrl  != mods.ctrl)  return false;
-    if (this.alt   != mods.alt)   return false;
-    if (this.shift != mods.shift) return false;
+    if (this.ctrl  != other.ctrl)  return false;
+    if (this.alt   != other.alt)   return false;
+    if (this.shift != other.shift) return false;
     return true;
   }
 
   /// Gets the string for the the modifiers.
   /// Will be an empty string if no modifiers are true.
   String toString() =>
-    "${this.ctrl?"Ctrl+":""}"+
-    "${this.alt?"Alt+":""}"+
-    "${this.shift?"Shift+":""}";
+    (this.ctrl  ? 'Ctrl+'  : '')+
+    (this.alt   ? 'Alt+'   : '')+
+    (this.shift ? 'Shift+' : '');
 }

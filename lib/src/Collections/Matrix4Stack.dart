@@ -4,16 +4,13 @@ part of ThreeDart.Collections;
 class Matrix4Stack implements Events.Changeable {
 
   /// The list storing the stack.
-  List<Math.Matrix4> _mat;
+  List<Math.Matrix4> _mat = [];
 
   /// The event indicating the stack has changed.
-  Events.Event _changed;
+  Events.Event? _changed = null;
 
   /// Creates a new matrix stack.
-  Matrix4Stack() {
-    this._mat = new List<Math.Matrix4>();
-    this._changed = null;
-  }
+  Matrix4Stack();
 
   /// Clears the stack.
   void clear() {
@@ -25,15 +22,12 @@ class Matrix4Stack implements Events.Changeable {
   int get length => this._mat.length;
 
   /// The event emitted when the stack has changed.
-  Events.Event get changed {
+  Events.Event get changed =>
     this._changed ??= new Events.Event();
-    return this._changed;
-  }
 
   /// Handles changes to the stack.
-  void _onChanged([Events.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs? args = null]) =>
     this._changed?.emit(args);
-  }
 
   /// The current matrix on the top of the stack.
   /// Returns the identity matrix if the stack is empty.
@@ -44,7 +38,7 @@ class Matrix4Stack implements Events.Changeable {
 
   /// Pushes a new matrix onto the stack.
   /// If null is pushed the identity matrix will be put on the top of the stack.
-  void push(Math.Matrix4 mat) {
+  void push(Math.Matrix4? mat) {
     if (mat == null) this._mat.add(Math.Matrix4.identity);
     else this._mat.add(mat);
     this._onChanged();
@@ -53,7 +47,7 @@ class Matrix4Stack implements Events.Changeable {
   /// Pushes a new matrix onto the stack which is the multiple of this and the given [mat].
   /// If null is pushed the current top of the stack will be pushed on the top
   /// of the stack as if multiplies by the identity.
-  void pushMul(Math.Matrix4 mat) {
+  void pushMul(Math.Matrix4? mat) {
     if (mat == null) this._mat.add(this.matrix);
     else this._mat.add(mat * this.matrix);
     this._onChanged();

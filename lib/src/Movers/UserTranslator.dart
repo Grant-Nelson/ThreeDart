@@ -5,92 +5,82 @@ typedef Math.Point3 CollisionHandle(Math.Point3 prev, Math.Point3 next);
 
 /// A translation mover which translates on an object in response to user input.
 class UserTranslator implements Mover, Input.Interactable {
-  Input.KeyGroup _xNegKey;
-  Input.KeyGroup _xPosKey;
-  Input.KeyGroup _yNegKey;
-  Input.KeyGroup _yPosKey;
-  Input.KeyGroup _zNegKey;
-  Input.KeyGroup _zPosKey;
-  ComponentShift _offsetX;
-  ComponentShift _offsetY;
-  ComponentShift _offsetZ;
-  Math.Matrix3 _velRot;
-  Math.Matrix3 _velRotInv;
-  double _deccel;
-  double _accel;
+  Input.KeyGroup _xNegKey = new Input.KeyGroup();
+  Input.KeyGroup _xPosKey = new Input.KeyGroup();
+  Input.KeyGroup _yNegKey = new Input.KeyGroup();
+  Input.KeyGroup _yPosKey = new Input.KeyGroup();
+  Input.KeyGroup _zNegKey = new Input.KeyGroup();
+  Input.KeyGroup _zPosKey = new Input.KeyGroup();
+  ComponentShift _offsetX = new ComponentShift();
+  ComponentShift _offsetY = new ComponentShift();
+  ComponentShift _offsetZ = new ComponentShift();
+  Math.Matrix3 _velRot    = Math.Matrix3.identity;
+  Math.Matrix3 _velRotInv = Math.Matrix3.identity;
+  double _deccel = 60.0;
+  double _accel = 15.0;
 
   /// The last frame the mover was updated for.
-  int _frameNum;
+  int _frameNum = 0;
 
   /// The matrix describing the translation.
-  Math.Matrix4 _mat;
+  Math.Matrix4 _mat = Math.Matrix4.identity;
 
   /// Event for handling changes to this mover.
-  Events.Event _changed;
+  Events.Event? _changed = null;
 
   /// A handler for optionally handling collisions in movement.
-  CollisionHandle _collision;
+  CollisionHandle? _collision = null;
 
   /// Creates an instance of [UserTranslator].
-  UserTranslator({Input.UserInput input: null}) {
-    this._xNegKey = new Input.KeyGroup()
+  UserTranslator({Input.UserInput? input: null}) {
+    this._xNegKey
       ..addKey(Input.Key.rightArrow)
       ..addKey(Input.Key.keyD)
       ..keyDown.add(this._onKeyDown);
-    this._xPosKey = new Input.KeyGroup()
+    this._xPosKey
       ..addKey(Input.Key.leftArrow)
       ..addKey(Input.Key.keyA)
       ..keyDown.add(this._onKeyDown);
-    this._yNegKey = new Input.KeyGroup()
+    this._yNegKey
       ..addKey(Input.Key.keyQ)
       ..keyDown.add(this._onKeyDown);
-    this._yPosKey = new Input.KeyGroup()
+    this._yPosKey
       ..addKey(Input.Key.keyE)
       ..keyDown.add(this._onKeyDown);
-    this._zNegKey = new Input.KeyGroup()
+    this._zNegKey
       ..addKey(Input.Key.downArrow)
       ..addKey(Input.Key.keyS)
       ..keyDown.add(this._onKeyDown);
-    this._zPosKey = new Input.KeyGroup()
+    this._zPosKey
       ..addKey(Input.Key.upArrow)
       ..addKey(Input.Key.keyW)
       ..keyDown.add(this._onKeyDown);
 
     final double maxVel = 30.0;
     final double dampening = 0.0;
-    this._offsetX = new ComponentShift()
+    this._offsetX
       ..maximumVelocity = maxVel
       ..dampening = dampening
       ..changed.add(this._onChanged);
-    this._offsetY = new ComponentShift()
+    this._offsetY
       ..maximumVelocity = maxVel
       ..dampening = dampening
       ..changed.add(this._onChanged);
-    this._offsetZ = new ComponentShift()
+    this._offsetZ
       ..maximumVelocity = maxVel
       ..dampening = dampening
       ..changed.add(this._onChanged);
-    this._velRot    = null;
-    this._velRotInv = null;
-    this._deccel    = 60.0;
-    this._accel     = 15.0;
-    this._frameNum  = 0;
-    this._mat       = null;
-    this._changed   = null;
-    this._collision = null;
+
     this.attach(input);
   }
 
   /// Emits when the mover has changed.
-  Events.Event get changed {
+  Events.Event get changed =>
     this._changed ??= new Events.Event();
-    return this._changed;
-  }
 
   /// Handles a child mover being changed.
-  void _onChanged([Events.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs? args = null]) =>
     this._changed?.emit(args);
-  }
 
   /// The group of keys which will cause movement down a negative X vector.
   Input.KeyGroup get negativeXKey => this._xNegKey;
@@ -125,7 +115,7 @@ class UserTranslator implements Mover, Input.Interactable {
     if (this._deccel != deccel) {
       double prev = this._deccel;
       this._deccel = deccel;
-      this._onChanged(new Events.ValueChangedEventArgs(this, "deceleration", prev, this._deccel));
+      this._onChanged(new Events.ValueChangedEventArgs(this, 'deceleration', prev, this._deccel));
     }
   }
 
@@ -135,7 +125,7 @@ class UserTranslator implements Mover, Input.Interactable {
     if (this._accel != accel) {
       double prev = this._accel;
       this._accel = accel;
-      this._onChanged(new Events.ValueChangedEventArgs(this, "acceleration", prev, this._accel));
+      this._onChanged(new Events.ValueChangedEventArgs(this, 'acceleration', prev, this._accel));
     }
   }
 
@@ -147,7 +137,7 @@ class UserTranslator implements Mover, Input.Interactable {
       Math.Matrix3 prev = this._velRot;
       this._velRot = velRot;
       this._velRotInv = this._velRot.inverse();
-      this._onChanged(new Events.ValueChangedEventArgs(this, "velocityRotation", prev, this._velRot));
+      this._onChanged(new Events.ValueChangedEventArgs(this, 'velocityRotation', prev, this._velRot));
     }
   }
 
@@ -161,15 +151,8 @@ class UserTranslator implements Mover, Input.Interactable {
   }
 
   /// Direction is the velocity vector relative to the users rotation.
-  Math.Vector3 get direction {
-    Math.Vector3 vec = this.velocity;
-    if (this._velRotInv != null) vec = this._velRotInv.transVec3(vec);
-    return vec;
-  }
-  set direction(Math.Vector3 vec) {
-    if (this._velRot != null) vec = this._velRot.transVec3(vec);
-    this.velocity = vec;
-  }
+  Math.Vector3 get direction => this._velRotInv.transVec3(this.velocity);
+  set direction(Math.Vector3 vec) => this.velocity = this._velRot.transVec3(vec);
 
   /// Location is the position of the user in the world.
   Math.Point3 get location => new Math.Point3(
@@ -181,15 +164,11 @@ class UserTranslator implements Mover, Input.Interactable {
   }
 
   /// The amount to add to the velocity when a key in a direction is being pressed.
-  CollisionHandle get collisionHandle => this._collision;
-  void set collisionHandle(CollisionHandle collision) {
-    this._collision = collision;
-  }
+  CollisionHandle? get collisionHandle => this._collision;
+  void set collisionHandle(CollisionHandle? collision) => this._collision = collision;
 
   /// Handles a key pressed.
-  void _onKeyDown(Events.EventArgs args) {
-    this._onChanged(args);
-  }
+  void _onKeyDown(Events.EventArgs args) => this._onChanged(args);
 
   /// Updates a single component of the movement for the given keys.
   double _updateComponent(Input.KeyGroup negKey, Input.KeyGroup posKey, double deccel, double accel, double value) {
@@ -219,7 +198,7 @@ class UserTranslator implements Mover, Input.Interactable {
   }
 
   /// Attaches this mover to the user input.
-  bool attach(Input.UserInput input) {
+  bool attach(Input.UserInput? input) {
     bool result = true;
     result = this._xNegKey.attach(input) && result;
     result = this._xPosKey.attach(input) && result;
@@ -247,8 +226,10 @@ class UserTranslator implements Mover, Input.Interactable {
 
       Math.Point3 prev = this.location;
       this._updateMovement(state.dt);
-      if (this._collision != null)
-        this.location = this._collision(prev, this.location);
+
+      CollisionHandle? collision = this._collision;
+      if (collision != null)
+        this.location = collision(prev, this.location);
 
       this._mat = new Math.Matrix4.translate(
         this._offsetX.location,

@@ -10,94 +10,83 @@ class RenderState {
   html.CanvasElement _canvas;
 
   /// The width of the render viewport in pixels.
-  int _width;
+  int _width = 512;
 
     /// The height of the render viewport in pixels.
-  int _height;
+  int _height = 512;
 
   /// The number of this frame.
-  int _frameNum;
+  int _frameNum = 0;
 
   /// The time that the graphics were created.
-  DateTime _startTime;
+  DateTime _startTime = new DateTime.now();
 
   /// The time the last render was started at.
-  DateTime _lastTime;
+  DateTime _lastTime = new DateTime.now();
 
   /// The time the current render was started at.
-  DateTime _curTime;
+  DateTime _curTime = new DateTime.now();
 
   /// The seconds which have passed since the previous render.
-  double _dt;
+  double _dt = 0.0;
 
   /// The projection matrix multiplied by the view matrix.
   /// This is the cache, it is reset to null when either component is changed.
   /// Null indicated the value must be recalculated.
-  Math.Matrix4 _projViewMat;
+  Math.Matrix4? _projViewMat = null;
 
   /// The inverse of the view matrix.
   /// This is the cache, it is reset to null when the view is changed.
   /// Null indicated the value must be recalculated.
-  Math.Matrix4 _invViewMat;
+  Math.Matrix4? _invViewMat = null;
 
   /// The product of the projection matrix, the view matrix, and the object matrix.
   /// This is the cache, it is reset to null when either component is changed.
   /// Null indicated the value must be recalculated.
-  Math.Matrix4 _projViewObjMat;
+  Math.Matrix4? _projViewObjMat = null;
 
   /// The view matrix multiplied by the object matrix.
   /// This is the cache, it is reset to null when either component is changed.
   /// Null indicated the value must be recalculated.
-  Math.Matrix4 _viewObjMat;
+  Math.Matrix4? _viewObjMat = null;
 
   /// The stack of projection matrices.
-  Collections.Matrix4Stack _projStack;
+  Collections.Matrix4Stack _projStack = new Collections.Matrix4Stack();
 
   /// The stack of the view matrices.
-  Collections.Matrix4Stack _viewStack;
+  Collections.Matrix4Stack _viewStack = new Collections.Matrix4Stack();
 
   /// The stack of Entity matrices.
-  Collections.Matrix4Stack _objStack;
+  Collections.Matrix4Stack _objStack = new Collections.Matrix4Stack();
 
   /// The stack of techniques.
-  List<Techniques.Technique> _tech;
+  List<Techniques.Technique?> _tech = [null];
 
   /// The cache of compiled shaders.
-  Map<String, Shaders.Shader> _shaderCache;
+  Map<String, Shaders.Shader> _shaderCache = {};
 
   /// Constructs a new render state with the given context and canvas.
   RenderState(this._gl, this._canvas) {
-    this._width = 512;
-    this._height = 512;
-    this._frameNum = 0;
-    this._startTime = new DateTime.now();
     this._lastTime = this._startTime;
     this._curTime = this._startTime;
-    this._dt = 0.0;
-    this._projViewMat = null;
-    this._invViewMat = null;
-    this._projViewObjMat = null;
-    this._viewObjMat = null;
-    this._projStack = new Collections.Matrix4Stack()
+    
+    this._projStack
       ..changed.add((Events.EventArgs e) {
         this._projViewMat = null;
         this._projViewObjMat = null;
       });
-    this._viewStack = new Collections.Matrix4Stack()
+    this._viewStack
       ..changed.add((Events.EventArgs e) {
         this._projViewMat = null;
         this._invViewMat = null;
         this._projViewObjMat = null;
         this._viewObjMat = null;
       });
-    this._objStack = new Collections.Matrix4Stack()
+    this._objStack
       ..changed.add((Events.EventArgs e) {
         this._projViewObjMat = null;
         this._viewObjMat = null;
       });
-    this._tech = [];
-    this._tech.add(null);
-    this._shaderCache = new Map<String, Shaders.Shader>();
   }
 
   /// Resets the state to start another render.
@@ -170,7 +159,7 @@ class RenderState {
 
   /// The current technique to render with.
   /// May return null if the technique stack is empty.
-  Techniques.Technique get technique => this._tech.last;
+  Techniques.Technique? get technique => this._tech.last;
 
   /// Pushes a new technique onto the stack of techniques.
   /// Pushing null will put the current technique onto the top of the stack.
@@ -184,12 +173,10 @@ class RenderState {
   }
 
   /// Gets the cached shader by the given [name].
-  Shaders.Shader shader(String name) => this._shaderCache[name];
+  Shaders.Shader? shader(String name) => this._shaderCache[name];
 
   /// Adds the given [shader] to the shader cache.
   void addShader(Shaders.Shader shader) {
-    if (shader == null)
-      throw new Exception('May not cache a null shader.');
     String name = shader.name;
     if (name.isEmpty)
       throw new Exception('May not cache a shader with no name.');

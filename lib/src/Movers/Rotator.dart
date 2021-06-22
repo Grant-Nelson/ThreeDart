@@ -2,15 +2,15 @@ part of ThreeDart.Movers;
 
 /// A mover for rotating an object at a constant rate with euler angles.
 class Rotator extends Mover {
-  double _yaw;
-  double _pitch;
-  double _roll;
-  double _deltaYaw;
-  double _deltaPitch;
-  double _deltaRoll;
-  int _frameNum;
-  Math.Matrix4 _mat;
-  Events.Event _changed;
+  double _yaw   = 0.0;
+  double _pitch = 0.0;
+  double _roll  = 0.0;
+  double _deltaYaw   = 0.0;
+  double _deltaPitch = 0.0;
+  double _deltaRoll  = 0.0;
+  int _frameNum = 0;
+  Math.Matrix4 _mat = Math.Matrix4.identity;
+  Events.Event? _changed;
 
   /// Creates a new rotator.
   Rotator({
@@ -20,16 +20,6 @@ class Rotator extends Mover {
       double deltaYaw:   0.1,
       double deltaPitch: 0.21,
       double deltaRoll:  0.32}) {
-    this._yaw   = 0.0;
-    this._pitch = 0.0;
-    this._roll  = 0.0;
-    this._deltaYaw   = 0.0;
-    this._deltaPitch = 0.0;
-    this._deltaRoll  = 0.0;
-    this._frameNum   = 0;
-    this._mat     = null;
-    this._changed = null;
-
     this.yaw   = yaw;
     this.pitch = pitch;
     this.roll  = roll;
@@ -39,79 +29,73 @@ class Rotator extends Mover {
   }
 
   /// Emits when the mover has changed.
-  Events.Event get changed {
+  Events.Event get changed =>
     this._changed ??= new Events.Event();
-    return this._changed;
-  }
 
   /// Handles a child mover being changed.
-  void _onChanged([Events.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs? args = null]) =>
     this._changed?.emit(args);
-  }
 
   /// The yaw rotation, in radians.
   double get yaw => this._yaw;
   void set yaw(double value) {
-    value = Math.wrapVal(value ?? 0.0, 0.0, Math.TAU);
+    value = Math.wrapVal(value, 0.0, Math.TAU);
     if (!Math.Comparer.equals(this._yaw, value)) {
       double prev = this._yaw;
       this._yaw = value;
-      this._onChanged(new Events.ValueChangedEventArgs(this, "yaw", prev, this._yaw));
+      this._onChanged(new Events.ValueChangedEventArgs(this, 'yaw', prev, this._yaw));
     }
   }
 
   /// The pitch rotation, in radians.
   double get pitch => this._pitch;
   void set pitch(double value) {
-    value = Math.wrapVal(value ?? 0.0, 0.0, Math.TAU);
+    value = Math.wrapVal(value, 0.0, Math.TAU);
     if (!Math.Comparer.equals(this._pitch, value)) {
       double prev = this._pitch;
       this._pitch = value;
-      this._onChanged(new Events.ValueChangedEventArgs(this, "pitch", prev, this._pitch));
+      this._onChanged(new Events.ValueChangedEventArgs(this, 'pitch', prev, this._pitch));
     }
   }
 
   /// The roll rotation, in radians.
   double get roll => this._roll;
   void set roll(double value) {
-    value = Math.wrapVal(value ?? 0.0, 0.0, Math.TAU);
+    value = Math.wrapVal(value, 0.0, Math.TAU);
     if (!Math.Comparer.equals(this._roll, value)) {
       double prev = this._roll;
       this._roll = value;
-      this._onChanged(new Events.ValueChangedEventArgs(this, "roll", prev, this._roll));
+      this._onChanged(new Events.ValueChangedEventArgs(this, 'roll', prev, this._roll));
     }
   }
 
   /// The change in yaw, in radians per second.
   double get deltaYaw => this._deltaYaw;
   void set deltaYaw(double value) {
-    value ??= 0.0;
     if (!Math.Comparer.equals(this._deltaYaw, value)) {
       double prev = this._deltaYaw;
       this._deltaYaw = value;
-      this._onChanged(new Events.ValueChangedEventArgs(this, "deltaYaw", prev, this._deltaYaw));
+      this._onChanged(new Events.ValueChangedEventArgs(this, 'deltaYaw', prev, this._deltaYaw));
     }
   }
 
   /// The change in pitch, in radians per second.
   double get deltaPitch => this._deltaPitch;
   void set deltaPitch(double value) {
-    value ??= 0.0;
     if (!Math.Comparer.equals(this._deltaPitch, value)) {
       double prev = this._deltaPitch;
       this._deltaPitch = value;
-      this._onChanged(new Events.ValueChangedEventArgs(this, "deltaPitch", prev, this._deltaPitch));
+      this._onChanged(new Events.ValueChangedEventArgs(this, 'deltaPitch', prev, this._deltaPitch));
     }
   }
 
   /// The change in roll, in radians per second.
   double get deltaRoll => this._deltaRoll;
   void set deltaRoll(double value) {
-    value ??= 0.0;
     if (!Math.Comparer.equals(this._deltaRoll, value)) {
       double prev = this._deltaRoll;
       this._deltaRoll = value;
-      this._onChanged(new Events.ValueChangedEventArgs(this, "deltaRoll", prev, this._deltaRoll));
+      this._onChanged(new Events.ValueChangedEventArgs(this, 'deltaRoll', prev, this._deltaRoll));
     }
   }
 
@@ -139,13 +123,12 @@ class Rotator extends Mover {
   bool operator ==(var other) {
     if (identical(this, other)) return true;
     if (other is! Rotator) return false;
-    Rotator rot = other as Rotator;
-    if (!Math.Comparer.equals(this._yaw,        rot._yaw))        return false;
-    if (!Math.Comparer.equals(this._pitch,      rot._pitch))      return false;
-    if (!Math.Comparer.equals(this._roll,       rot._roll))       return false;
-    if (!Math.Comparer.equals(this._deltaYaw,   rot._deltaYaw))   return false;
-    if (!Math.Comparer.equals(this._deltaPitch, rot._deltaPitch)) return false;
-    if (!Math.Comparer.equals(this._deltaRoll,  rot._deltaRoll))  return false;
+    if (!Math.Comparer.equals(this._yaw,        other._yaw))        return false;
+    if (!Math.Comparer.equals(this._pitch,      other._pitch))      return false;
+    if (!Math.Comparer.equals(this._roll,       other._roll))       return false;
+    if (!Math.Comparer.equals(this._deltaYaw,   other._deltaYaw))   return false;
+    if (!Math.Comparer.equals(this._deltaPitch, other._deltaPitch)) return false;
+    if (!Math.Comparer.equals(this._deltaRoll,  other._deltaRoll))  return false;
     return true;
   }
 
@@ -154,12 +137,12 @@ class Rotator extends Mover {
 
   /// Gets the formatted string for this constant mover.
   String format([int fraction = 3, int whole = 0]) {
-    return "Rotator: ["+
-      Math.formatDouble(this._yaw,        fraction, whole)+", "+
-      Math.formatDouble(this._pitch,      fraction, whole)+", "+
-      Math.formatDouble(this._roll,       fraction, whole)+"], ["+
-      Math.formatDouble(this._deltaYaw,   fraction, whole)+", "+
-      Math.formatDouble(this._deltaPitch, fraction, whole)+", "+
-      Math.formatDouble(this._deltaRoll,  fraction, whole)+"]";
+    return 'Rotator: ['+
+      Math.formatDouble(this._yaw,        fraction, whole)+', '+
+      Math.formatDouble(this._pitch,      fraction, whole)+', '+
+      Math.formatDouble(this._roll,       fraction, whole)+'], ['+
+      Math.formatDouble(this._deltaYaw,   fraction, whole)+', '+
+      Math.formatDouble(this._deltaPitch, fraction, whole)+', '+
+      Math.formatDouble(this._deltaRoll,  fraction, whole)+']';
   }
 }

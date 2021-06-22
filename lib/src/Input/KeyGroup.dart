@@ -100,7 +100,7 @@ class KeyGroup extends Collections.Collection<Key> implements Interactable, Even
 
   /// Attaches this object onto the given [UserInput].
   /// Returns true if this object is attached, false otherwise.
-  bool attach(UserInput input) {
+  bool attach(UserInput? input) {
     if (input == null) return false;
     if (this._input != null) return false;
     this._input = input;

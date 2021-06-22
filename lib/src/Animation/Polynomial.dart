@@ -6,7 +6,7 @@ typedef double PolynomialHandle(double);
 /// A smoother which is initialized with a polynomial.
 class Polynomial extends Smoother {
   /// The precalculated data for the polynomial.
-  List<double> _data;
+  List<double> _data = [];
 
   /// Finds a specific t value for a given x value and the t to x function.
   /// This reverses the given function so that a x to y can be figured out.
@@ -27,7 +27,7 @@ class Polynomial extends Smoother {
   /// The more the samples, the slower the precalculations take and more memory used.
   /// The less samples, the rougher the polynomial result data is.
   Polynomial(PolynomialHandle xFunc, PolynomialHandle yFunc, [int samples = 20]) : super._() {
-    List<double> yValues = new List<double>(samples);
+    List<double> yValues = List.filled(samples, 0.0);
     double t = 0.0;
     for (int i = 0; i < samples; i++) {
       double x = i / samples;

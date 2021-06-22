@@ -3,7 +3,7 @@ part of ThreeDart.Animation;
 /// Shifter for changing several values from start values to another in a specific duration.
 class Shifter {
   /// Set of values to be modified.
-  List<_modifier> _mods;
+  List<_modifier> _mods = [];
 
   /// The milliseconds to delay before starting shifting.
   final int _delay;
@@ -18,20 +18,16 @@ class Shifter {
   final Smoother _smoother;
 
   /// Indicates the shifter is done.
-  bool _done;
+  bool _done = false;
 
   /// Indicates the shifter has been initialized.
-  bool _inited;
+  bool _inited = false;
 
   /// Constructs a shifter with the final information set.
-  Shifter._(this._delay, this._duration, this._init, this._smoother) {
-    this._mods = new List<_modifier>();
-    this._done = false;
-    this._inited = false;
-  }
+  Shifter._(this._delay, this._duration, this._init, this._smoother);
 
   /// Creates a new shifter for the given duration and optional smoother.
-  factory Shifter({int delay:0, int duration:1000, bool init: false, Smoother easing:null}) {
+  factory Shifter({int delay:0, int duration:1000, bool init: false, Smoother? easing:null}) {
     if (delay < 0) delay = 0;
     if (duration < 1) duration = 1;
     easing ??= Smoothers.linear;

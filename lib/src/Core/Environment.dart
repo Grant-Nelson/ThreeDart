@@ -37,14 +37,12 @@ enum OperatingSystem {
 /// scenarios. This is designed to be used to adjust for problems in the environment
 /// which makes the code function differently.
 class Environment {
-  static _EnvironmentData _singleton = null;
+  static _EnvironmentData? _singleton = null;
   Environment._();
   
   /// Gets the lazy created singleton with the environment data.
-  static _EnvironmentData get _env {
+  static _EnvironmentData get _env =>
     _singleton ??= new _EnvironmentData();
-    return _singleton;
-  }
 
   /// Gets the browser that this code is running on.
   static Browser get browser => _env.browser;
