@@ -8,60 +8,46 @@ class LockedMouseInput {
   UserInput _input;
 
   /// The event to emit when the mouse button is pressed.
-  Events.Event _down;
+  Events.Event? _down = null;
 
   /// The event to emit when the mouse button is released.
-  Events.Event _up;
+  Events.Event? _up = null;
 
   /// The event to emit when the mouse is moved.
-  Events.Event _move;
+  Events.Event? _move = null;
 
   /// The event to emit when the mouse wheel is moved.
-  Events.Event _wheel;
+  Events.Event? _wheel = null;
 
   /// The event to emit when the mouse is locked or unlocked.
-  Events.Event _lockChanged;
+  Events.Event? _lockChanged = null;
 
   /// Indicates if the mouse buttons which are pressed or not.
-  int _buttons;
+  int _buttons = 0;
 
   /// The point, in pixels, of the last mouse event.
-  Math.Point2 _prevPnt;
+  Math.Point2 _prevPnt = Math.Point2.zero;
 
   /// The time in which the mouse button was last pressed or released.
-  DateTime _startTime;
+  DateTime _startTime = DateTime.now();
 
   /// The time of the last mouse event.
-  DateTime _prevTime;
+  DateTime _prevTime = DateTime.now();
 
   /// The horizontal mouse movement sensitivity.
-  double _hSensitivity;
+  double _hSensitivity = 1.0;
 
   /// The vertical mouse movement sensitivity.
-  double _vSensitivity;
+  double _vSensitivity = 1.0;
 
   /// The horizontal mouse wheel movement sensitivity.
-  double _whSensitivity;
+  double _whSensitivity = 1.0;
 
   /// The vertical mouse wheel movement sensitivity.
-  double _wvSensitivity;
+  double _wvSensitivity = 1.0;
 
   /// Creates a new user input for the given [_elem].
-  LockedMouseInput._(this._input) {
-    this._down = null;
-    this._up = null;
-    this._move = null;
-    this._wheel = null;
-    this._lockChanged = null;
-    this._buttons = 0;
-    this._startTime = null;
-    this._prevTime = null;
-    this._prevPnt = Math.Point2.zero;
-    this._hSensitivity = 1.0;
-    this._vSensitivity = 1.0;
-    this._whSensitivity = 1.0;
-    this._wvSensitivity = 1.0;
-  }
+  LockedMouseInput._(this._input);
 
   /// Indicates the mouse buttons which are currently pressed.
   int get buttons => this._buttons;
@@ -84,7 +70,7 @@ class LockedMouseInput {
   bool performDown(Button button, Math.Vector2 vec) {
     this._buttons = button.code;
     if (this._down == null) return false;
-    this._down.emit(this._getMouseArgs(button, vec));
+    this._down?.emit(this._getMouseArgs(button, vec));
     return true;
   }
 
@@ -94,7 +80,7 @@ class LockedMouseInput {
   bool performUp(Button button, Math.Vector2 vec) {
     this._buttons &= ~button.code;
     if (this._up == null) return false;
-    this._up.emit(this._getMouseArgs(button, vec));
+    this._up?.emit(this._getMouseArgs(button, vec));
     return true;
   }
 
@@ -102,7 +88,7 @@ class LockedMouseInput {
   // Returns true if any events were called, false if none were called.
   bool performMove(Button button, Math.Vector2 vec) {
     if (this._move == null) return false;
-    this._move.emit(this._getMouseArgs(button, vec));
+    this._move?.emit(this._getMouseArgs(button, vec));
     return true;
   }
 
@@ -110,7 +96,7 @@ class LockedMouseInput {
   // Returns true if any events were called, false if none were called.
   bool performWheel(Math.Vector2 wheel) {
     if (this._wheel == null) return false;
-    this._wheel.emit(new MouseWheelEventArgs(this, this._input.clientRect, this._prevPnt,
+    this._wheel?.emit(new MouseWheelEventArgs(this, this._input.clientRect, this._prevPnt,
       new DateTime.now(), new Math.Vector2(wheel.dx*this._whSensitivity, wheel.dy*this._wvSensitivity)));
     return true;
   }
@@ -119,7 +105,7 @@ class LockedMouseInput {
   void _onLockChanged(Button button, Math.Point2 pnt, bool locked) {
     if (this._lockChanged == null) return;
     final DateTime curTime = new DateTime.now();
-    this._lockChanged.emit(new LockedEventArgs(this, locked, button, this._input.clientRect, pnt, curTime));
+    this._lockChanged?.emit(new LockedEventArgs(this, locked, button, this._input.clientRect, pnt, curTime));
     this._startTime = curTime;
     this._prevPnt = Math.Point2.zero;
   }
@@ -141,32 +127,22 @@ class LockedMouseInput {
   void set wheelVerticalSensitivity(double sensitivity) => this._wvSensitivity = sensitivity;
 
   /// The mouse down event.
-  Events.Event get down {
+  Events.Event get down =>
     this._down ??= new Events.Event();
-    return this._down;
-  }
 
   /// The mouse up event.
-  Events.Event get up {
+  Events.Event get up =>
     this._up ??= new Events.Event();
-    return this._up;
-  }
 
   /// The mouse move event.
-  Events.Event get move {
+  Events.Event get move =>
     this._move ??= new Events.Event();
-    return this._move;
-  }
 
   /// The mouse wheel move event.
-  Events.Event get wheel {
+  Events.Event get wheel =>
     this._wheel ??= new Events.Event();
-    return this._wheel;
-  }
 
   /// The mouse has been locked or unlocked.
-  Events.Event get lockChanged {
+  Events.Event get lockChanged =>
     this._lockChanged ??= new Events.Event();
-    return this._lockChanged;
-  }
 }

@@ -4,12 +4,10 @@ part of ThreeDart.Data;
 class BufferStoreSet implements TechniqueCache {
 
   /// The map of cached buffer stores.
-  Map<String, BufferStore> _map;
+  Map<String, BufferStore> _map = {};
 
   /// Creates a new buffer store map.
-  BufferStoreSet() {
-    this._map = new Map<String, BufferStore>();
-  }
+  BufferStoreSet();
 
   /// The map of cached buffer stores.
   Map<String, BufferStore> get map => this._map;

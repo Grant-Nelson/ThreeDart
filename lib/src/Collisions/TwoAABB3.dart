@@ -39,18 +39,16 @@ class TwoAABB3Result extends BaseResult {
 /// Determines the collision between two moving axial aligned bounding box (AABB).
 /// The given vectors represent the constant amount of distance moved in a time span.
 /// Optionally sides of the AABBs can be disabled to provide single sided collision.
-TwoAABB3Result twoAABB3(Math.Region3   regionA,       Math.Region3   regionB,
-                        Math.Vector3   vecA,          Math.Vector3   vecB,
-                       [Math.HitRegion sidesA = null, Math.HitRegion sidesB = null]) {
-  if (regionA == null || regionB == null || vecA == null || vecB == null) return null;
-
+TwoAABB3Result twoAABB3(Math.Region3    regionA,       Math.Region3    regionB,
+                        Math.Vector3    vecA,          Math.Vector3    vecB,
+                       [Math.HitRegion? sidesA = null, Math.HitRegion? sidesB = null]) {
   sidesA ??= Math.HitRegion.All;
   sidesB ??= Math.HitRegion.All;
   Math.HitRegion sides = sidesB & sidesA.inverse();
   Math.Vector3 vector = vecA - vecB;
 
-  double t = 100.0, d;
-  Math.HitRegion region = Math.HitRegion.None, edge;
+  double t = 100.0, d = 0.0;
+  Math.HitRegion region = Math.HitRegion.None, edge = Math.HitRegion.None;
   bool edgeTest;
 
   if (vector.dx != 0.0) {

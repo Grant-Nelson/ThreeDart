@@ -73,7 +73,7 @@ class TestDoubleBuffer implements Buffer {
 
   /// Gets the string for this buffer.
   String toString() {
-    List<String> parts = new List<String>();
+    List<String> parts = [];
     for (int i = 0; i < this._buf.length; ++i) {
       parts.add(Math.formatDouble(this._buf[i]));
     }
@@ -105,7 +105,7 @@ class TestIntBuffer implements Buffer {
 
   /// Gets the string for this buffer.
   String toString() {
-    List<String> parts = new List<String>();
+    List<String> parts = [];
     for (int i = 0; i < this._buf.length; ++i) {
       parts.add("${this._buf[i]}");
     }

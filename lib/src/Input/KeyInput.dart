@@ -5,53 +5,41 @@ part of ThreeDart.Input;
 class KeyInput {
 
   /// The event to emit when a key is released.
-  Events.Event _up;
+  Events.Event? _up = null;
 
   /// The event to emit when a key is pressed.
-  Events.Event _down;
+  Events.Event? _down = null;
 
   /// Indicates the modifiers which have been pressed.
-  Modifiers _mods;
+  Modifiers _mods = Modifiers.none();
 
   /// The set of key codes which are currently pressed.
-  Set<int> _pressed;
+  Set<int> _pressed = Set();
 
   /// Creates a new user input for the given [_elem].
-  KeyInput._() {
-    this._up = null;
-    this._down = null;
-
-    this._mods = new Modifiers.none();
-    this._pressed = new Set<int>();
-  }
+  KeyInput._();
 
   /// Programmatically performs the key up event.
   bool performUp(Key key) {
     this._mods = key.modifiers;
     this._pressed.add(key.code);
-    if (this._up == null) return false;
-    return this._up.emit(new KeyEventArgs(this, key));
+    return this._up?.emit(new KeyEventArgs(this, key)) ?? false;
   }
 
   /// Programmatically performs the key down event.
   bool performDown(Key key) {
     this._mods = key.modifiers;
     this._pressed.remove(key.code);
-    if (this._down == null) return false;
-    return this._down.emit(new KeyEventArgs(this, key));
+    return this._down?.emit(new KeyEventArgs(this, key)) ?? false;
   }
 
   /// The keyboard key released event.
-  Events.Event get up {
+  Events.Event get up =>
     this._up ??= new Events.Event();
-    return this._up;
-  }
 
   /// The keyboard key pressed event.
-  Events.Event get down {
+  Events.Event get down =>
     this._down ??= new Events.Event();
-    return this._down;
-  }
 
   /// The set of key codes which are currently pressed.
   Set<int> get pressed => this._pressed;

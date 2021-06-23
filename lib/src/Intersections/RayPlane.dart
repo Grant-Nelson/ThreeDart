@@ -18,7 +18,7 @@ RayPlaneResult rayPlane(Math.Ray3 ray, Math.Plane plane) {
 class RayPlaneResult extends BaseResult {
 
   /// The point in or on the plane which the ray intersects.
-  final Math.Point3 point;
+  final Math.Point3? point;
 
   /// The parametric value between 0 and 1 inclusively of the ray to the intersection point.
   final double parametric;

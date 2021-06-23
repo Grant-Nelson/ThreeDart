@@ -14,12 +14,10 @@ class StringTree {
   String text;
 
   /// These are the children to this part of the tree.
-  List<StringTree> children;
+  List<StringTree> children = [];
 
   /// Creates a new string tree.
-  StringTree([String this.text = ""]) {
-    this.children = new List<StringTree>();
-  }
+  StringTree([this.text = ""]);
 
   /// Adds a child to this string tree.
   void append(StringTree child) => this.children.add(child);

@@ -20,7 +20,7 @@ PlanesResult planes(Math.Plane plane1, Math.Plane plane2, Math.Plane plane3) {
 class PlanesResult extends BaseResult {
 
   /// The point where the 3 planes intersect at or null when not intersection.
-  final Math.Point3 point;
+  final Math.Point3? point;
 
   /// Creates a new intersection result.
   PlanesResult(bool intesects, this.point): super(intesects);

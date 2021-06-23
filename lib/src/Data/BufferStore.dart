@@ -7,7 +7,7 @@ class BufferStore implements Core.Bindable, TechniqueCache {
   Buffer _vertexBuf;
 
   /// The list of indices for the order of vertex rendering and type of rasterization.
-  List<IndexObject> _indexObjs;
+  List<IndexObject> _indexObjs = [];
 
   /// The list of buffer attributes describing the type of vertices in the buffer.
   List<BufferAttr> _attrs;
@@ -16,9 +16,7 @@ class BufferStore implements Core.Bindable, TechniqueCache {
   VertexType _vertexType;
 
   /// Creates a new buffer store.
-  BufferStore(this._vertexBuf, this._attrs, this._vertexType) {
-    this._indexObjs = new List<IndexObject>();
-  }
+  BufferStore(this._vertexBuf, this._attrs, this._vertexType);
 
   /// The list of buffer attributes describing the type of vertices in the buffer.
   List<BufferAttr> get attributes => this._attrs;
@@ -30,7 +28,7 @@ class BufferStore implements Core.Bindable, TechniqueCache {
   VertexType get vertexType => this._vertexType;
 
   /// Finds the attribute which has the given type.
-  BufferAttr findAttribute(VertexType type) {
+  BufferAttr? findAttribute(VertexType type) {
     for (BufferAttr attr in this._attrs) {
       if (attr._type.has(type)) return attr;
     }
@@ -75,11 +73,11 @@ class BufferStore implements Core.Bindable, TechniqueCache {
 
   /// Gets the string for this buffer store.
   String toString() {
-    List<String> indexStr = new List<String>();
+    List<String> indexStr = [];
     for (IndexObject obj in this._indexObjs) {
       indexStr.add(obj.toString());
     }
-    List<String> attrStr = new List<String>();
+    List<String> attrStr = [];
     for (BufferAttr attr in this._attrs) {
       attrStr.add(attr.toString());
     }

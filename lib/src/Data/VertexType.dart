@@ -228,7 +228,7 @@ class VertexType {
 
   /// The string for this vertex type.
   String toString() {
-    List<String> parts = new List<String>();
+    List<String> parts = [];
     if (this.has(Pos))     parts.add("Pos");
     if (this.has(Norm))    parts.add("Norm");
     if (this.has(Binm))    parts.add("Binm");

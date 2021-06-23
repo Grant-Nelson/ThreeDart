@@ -17,20 +17,20 @@ class TwoSphereResult extends BaseResult {
 
   /// The center point of sphere A when the collision occurred.
   /// This is null when no collision occurred.
-  final Math.Point3 centerA;
+  final Math.Point3? centerA;
 
   /// The center point of sphere B when the collision occurred.
   /// This is null when no collision occurred.
-  final Math.Point3 centerB;
+  final Math.Point3? centerB;
 
   /// The point on the surface of sphere A and B the collision occurred at.
   /// This is null when no collision occurred or intersected.
-  final Math.Point3 hitPoint;
+  final Math.Point3? hitPoint;
   
   /// Creates a new collision result for collision between spheres.
   TwoSphereResult(Type type, double parametric,
     Math.Sphere this.sphereA, Math.Sphere this.sphereB, Math.Vector3 this.vecA, Math.Vector3 this.vecB,
-    [Math.Point3 this.centerA = null, Math.Point3 this.centerB = null, Math.Point3 this.hitPoint = null]):
+    [Math.Point3? this.centerA = null, Math.Point3? this.centerB = null, Math.Point3? this.hitPoint = null]):
     super(type, parametric);
     
   /// Gets the string for this collision.
@@ -43,8 +43,6 @@ class TwoSphereResult extends BaseResult {
 /// The given vectors represent the constant amount of distance moved in a time span.
 TwoSphereResult twoSphere(Math.Sphere  sphereA, Math.Sphere  sphereB,
                           Math.Vector3 vecA,    Math.Vector3 vecB) {
-  if (sphereA == null || sphereB == null || vecA == null || vecB == null) return null;
-
   Math.Point3 cA = sphereA.center;
   Math.Point3 cB = sphereB.center;
   Math.Vector3 e = cB.vectorTo(cA);
