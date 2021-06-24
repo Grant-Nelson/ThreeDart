@@ -53,7 +53,7 @@ class Normal extends Technique {
 
   /// The 2D texture modification matrix.
   Math.Matrix3 get texture2DMatrix => this._txt2DMat;
-  void set texture2DMatrix(Math.Matrix3 mat) {
+  set texture2DMatrix(Math.Matrix3 mat) {
     mat ??= Math.Matrix3.identity;
     if (this._txt2DMat != mat) {
       Math.Matrix3 prev = this._txt2DMat;
@@ -64,7 +64,7 @@ class Normal extends Technique {
 
   /// The cube texture modification matrix.
   Math.Matrix4 get textureCubeMatrix => this._txtCubeMat;
-  void set textureCubeMatrix(Math.Matrix4 mat) {
+  set textureCubeMatrix(Math.Matrix4 mat) {
     mat ??= Math.Matrix4.identity;
     if (this._txtCubeMat != mat) {
       Math.Matrix4 prev = this._txtCubeMat;

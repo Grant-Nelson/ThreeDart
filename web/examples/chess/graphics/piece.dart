@@ -89,7 +89,7 @@ abstract class Piece extends ThreeDart.Entity {
 
   /// Gets or sets the location of this piece.
   game.Location get location => this._loc;
-  void set location(game.Location loc) {
+  set location(game.Location loc) {
     if (this._loc != loc) {
       this._loc = loc;
       this._updateLocation();

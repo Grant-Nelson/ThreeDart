@@ -111,7 +111,7 @@ class UserTranslator implements Mover, Input.Interactable {
 
   /// The amount to remove from the velocity when no key in a direction is being pressed.
   double get deceleration => this._deccel;
-  void set deceleration(double deccel) {
+  set deceleration(double deccel) {
     if (this._deccel != deccel) {
       double prev = this._deccel;
       this._deccel = deccel;
@@ -121,7 +121,7 @@ class UserTranslator implements Mover, Input.Interactable {
 
   /// The amount to add to the velocity when a key in a direction is being pressed.
   double get acceleration => this._accel;
-  void set acceleration(double accel) {
+  set acceleration(double accel) {
     if (this._accel != accel) {
       double prev = this._accel;
       this._accel = accel;
@@ -132,7 +132,7 @@ class UserTranslator implements Mover, Input.Interactable {
   /// The matrix describing the rotation to apply to the velocity of thr translation.
   /// This is typically the yaw rotation for the direction the user is looking.
   Math.Matrix3 get velocityRotation => this._velRot;
-  void set velocityRotation(Math.Matrix3 velRot) {
+  set velocityRotation(Math.Matrix3 velRot) {
     if (this._velRot != velRot) {
       Math.Matrix3 prev = this._velRot;
       this._velRot = velRot;
@@ -165,7 +165,7 @@ class UserTranslator implements Mover, Input.Interactable {
 
   /// The amount to add to the velocity when a key in a direction is being pressed.
   CollisionHandle? get collisionHandle => this._collision;
-  void set collisionHandle(CollisionHandle? collision) => this._collision = collision;
+  set collisionHandle(CollisionHandle? collision) => this._collision = collision;
 
   /// Handles a key pressed.
   void _onKeyDown(Events.EventArgs args) => this._onChanged(args);

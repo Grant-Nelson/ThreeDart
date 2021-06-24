@@ -98,11 +98,11 @@ class MouseInput {
 
   /// The horizontal mouse wheel movement sensitivity.
   double get wheelHorizontalSensitivity => this._whSensitivity;
-  void set wheelHorizontalSensitivity(double sensitivity) => this._whSensitivity = sensitivity;
+  set wheelHorizontalSensitivity(double sensitivity) => this._whSensitivity = sensitivity;
 
   /// The vertical mouse wheel movement sensitivity.
   double get wheelVerticalSensitivity => this._wvSensitivity;
-  void set wheelVerticalSensitivity(double sensitivity) => this._wvSensitivity = sensitivity;
+  set wheelVerticalSensitivity(double sensitivity) => this._wvSensitivity = sensitivity;
 
   /// The mouse down event.
   Events.Event get down =>

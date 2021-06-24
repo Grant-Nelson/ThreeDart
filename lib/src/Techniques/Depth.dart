@@ -44,7 +44,7 @@ class Depth extends Technique {
 
   /// The value of the depth labelled 1. Closer than this will all be 1.
   double get start => this._start;
-  void set start(double start) {
+  set start(double start) {
     start ??= 1.0;
     if (!Math.Comparer.equals(this._start, start)) {
       double prev = this._start;
@@ -55,7 +55,7 @@ class Depth extends Technique {
 
   /// The value of the depth labelled 0. Farther than this will all be 0.
   double get stop => this._stop;
-  void set stop(double stop) {
+  set stop(double stop) {
     stop ??= 10.0;
     if (!Math.Comparer.equals(this._stop, stop)) {
       double prev = this._stop;
@@ -67,7 +67,7 @@ class Depth extends Technique {
   /// Indicates that grey scale should be outputted,
   /// otherwise high quality depth using RGB values.
   bool get grey => this._grey;
-  void set grey(bool grey) {
+  set grey(bool grey) {
     grey ??= false;
     if (this._grey != grey) {
       bool prev = this._grey;
@@ -80,7 +80,7 @@ class Depth extends Technique {
   /// Indicates that the backside of the shape should be used
   /// instead of the front. This is used when getting shadow depth textures.
   bool get invert => this._invert;
-  void set invert(bool invert) {
+  set invert(bool invert) {
     invert ??= false;
     if (this._invert != invert) {
       bool prev = this._invert;
@@ -91,7 +91,7 @@ class Depth extends Technique {
 
   /// Indicates that the depth should be based off of the camera's focal point instead of the camera's view.
   bool get focus => this._focus;
-  void set focus(bool focus) {
+  set focus(bool focus) {
     if (this._focus != focus) {
       bool prev = this._focus;
       this._focus = focus;

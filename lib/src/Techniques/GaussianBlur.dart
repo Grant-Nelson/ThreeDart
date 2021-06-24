@@ -54,7 +54,7 @@ class GaussianBlur extends Technique {
 
   /// The blur value, this will be overridden by blur texture.
   double get blurValue => this._blurValue;
-  void set blurValue(double value) {
+  set blurValue(double value) {
     value ??= 0.0;
     if (!Math.Comparer.equals(this._blurValue, value)) {
       double prev = this._blurValue;
@@ -65,7 +65,7 @@ class GaussianBlur extends Technique {
 
   /// The color texture.
   Textures.Texture2D get colorTexture => this._colorTxt;
-  void set colorTexture(Textures.Texture2D txt) {
+  set colorTexture(Textures.Texture2D txt) {
     if (this._colorTxt != txt) {
       if (this._colorTxt != null) this._colorTxt.changed.remove(this._onChanged);
       Textures.Texture2D prev = this._colorTxt;
@@ -77,7 +77,7 @@ class GaussianBlur extends Technique {
 
   /// The blur texture, this will override the blur value.
   Textures.Texture2D get blurTexture => this._blurTxt;
-  void set blurTexture(Textures.Texture2D txt) {
+  set blurTexture(Textures.Texture2D txt) {
     if (this._blurTxt != txt) {
       if (this._blurTxt != null) this._blurTxt.changed.remove(this._onChanged);
       Textures.Texture2D prev = this._blurTxt;
@@ -92,7 +92,7 @@ class GaussianBlur extends Technique {
 
   /// The texture modification matrix.
   Math.Matrix3 get textureMatrix => this._txtMat;
-  void set textureMatrix(Math.Matrix3 mat) {
+  set textureMatrix(Math.Matrix3 mat) {
     mat ??= Math.Matrix3.identity;
     if (this._txtMat != mat) {
       Math.Matrix3 prev = this._txtMat;
@@ -105,7 +105,7 @@ class GaussianBlur extends Technique {
   /// This is the vector to apply to the color from the blur texture
   /// to get the blur value from the blur texture.
   Math.Vector4 get blurAdjust => this._blurAdj;
-  void set blurAdjust(Math.Vector4 vec) {
+  set blurAdjust(Math.Vector4 vec) {
     vec ??= Math.Vector4.shadowAdjust;
     if (this._blurAdj != vec) {
       Math.Vector4 prev = this._blurAdj;
@@ -116,7 +116,7 @@ class GaussianBlur extends Technique {
 
   /// The direction to apply the direction, by default it is horizontal.
   Math.Vector2 get blurDirection => this._blurDir;
-  void set blurDirection(Math.Vector2 vec) {
+  set blurDirection(Math.Vector2 vec) {
     vec ??= Math.Vector2.posX;
     if (this._blurDir != vec) {
       Math.Vector2 prev = this._blurDir;

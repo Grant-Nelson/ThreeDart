@@ -2,56 +2,37 @@ part of ThreeDart.Views;
 
 /// A rendering target which renders to a texture instead of the screen.
 class BackTarget extends Target {
-  int _width;
-  int _height;
-  int _actualWidth;
-  int _actualHeight;
-  bool _hasDepth;
-  bool _autoResize;
-  double _autoResizeScalarX;
-  double _autoResizeScalarY;
-  WebGL.Framebuffer _framebuffer;
-  WebGL.Texture _colorBuffer;
-  WebGL.Renderbuffer _depthBuffer;
-  Textures.Texture2DSolid _colorTxt;
-  Math.Color4 _color;
-  bool _clearColor;
-  double _depth;
-  bool _clearDepth;
-  Math.Region2 _region;
-  Events.Event _changed;
+  int _width  = 512;
+  int _height = 512;
+  int _actualWidth  = 512;
+  int _actualHeight = 512;
+  bool _hasDepth   = true;
+  bool _autoResize = false;
+  double _autoResizeScalarX = 1.0;
+  double _autoResizeScalarY = 1.0;
+  WebGL.Framebuffer? _framebuffer = null;
+  WebGL.Texture? _colorBuffer = null;
+  WebGL.Renderbuffer? _depthBuffer = null;
+  Textures.Texture2DSolid _colorTxt = new Textures.Texture2DSolid();
+  Math.Color4? _color = Math.Color4.black();
+  bool _clearColor = true;
+  double _depth = 2000.0;
+  bool _clearDepth = true;
+  Math.Region2? _region = Math.Region2.unit;
+  Events.Event? _changed = null;
 
   /// Creates a new back target.
-  BackTarget({int          width:             512,
-              int          height:            512,
-              bool         hasDepth:          true,
-              bool         autoResize:        false,
-              double       autoResizeScalarX: 1.0,
-              double       autoResizeScalarY: 1.0,
-              Math.Color4  color:             null,
-              bool         clearColor:        true,
-              double       depth:             2000.0,
-              bool         clearDepth:        true,
-              Math.Region2 region:            null}) {
-    this._width             = 512;
-    this._height            = 512;
-    this._actualWidth       = 512;
-    this._actualHeight      = 512;
-    this._hasDepth          = true;
-    this._autoResize        = false;
-    this._autoResizeScalarX = 1.0;
-    this._autoResizeScalarY = 1.0;
-    this._framebuffer       = null;
-    this._colorBuffer       = null;
-    this._depthBuffer       = null;
-    this._colorTxt          = new Textures.Texture2DSolid();
-    this._color             = new Math.Color4.black();
-    this._clearColor        = true;
-    this._depth             = 2000.0;
-    this._clearDepth        = true;
-    this._region            = Math.Region2.unit;
-    this._changed           = null;
-
+  BackTarget({int           width:             512,
+              int           height:            512,
+              bool          hasDepth:          true,
+              bool          autoResize:        false,
+              double        autoResizeScalarX: 1.0,
+              double        autoResizeScalarY: 1.0,
+              Math.Color4?  color:             null,
+              bool          clearColor:        true,
+              double        depth:             2000.0,
+              bool          clearDepth:        true,
+              Math.Region2? region:            null}) {
     this.width             = width;
     this.height            = height;
     this.color             = color;
@@ -65,46 +46,40 @@ class BackTarget extends Target {
   }
 
   /// Indicates that this target has changed.
-  Events.Event get changed {
+  Events.Event get changed =>
     this._changed ??= new Events.Event();
-    return this._changed;
-  }
 
   /// Handles a change in this target.
-  void _onChanged([Events.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs? args = null]) =>
     this._changed?.emit(args);
-  }
 
   /// Handles a change of a boolean value.
-  void _onBoolChanged(String name, bool value) {
+  void _onBoolChanged(String name, bool value) =>
     this._onChanged(new Events.ValueChangedEventArgs(this, name, !value, value));
-  }
 
   /// The requested width in pixels of the back buffer.
   int get width => this._width;
-  void set width(int width) {
-    width ??= 512;
+  set width(int width) {
     if (width < 1) width = 1;
     if (this._width != width) {
       int old = this._width;
       this._framebuffer = null;
       this._width       = width;
       this._actualWidth = width;
-      this._onChanged(new Events.ValueChangedEventArgs(this, "width", old, width));
+      this._onChanged(new Events.ValueChangedEventArgs(this, 'width', old, width));
     }
   }
 
   /// The requested height in pixels of the back buffer.
   int get height => this._height;
-  void set height(int height) {
-    height ??= 512;
+  set height(int height) {
     if (height < 1) height = 1;
     if (this._height != height) {
       int old = this._height;
       this._framebuffer  = null;
       this._height       = height;
       this._actualHeight = height;
-      this._onChanged(new Events.ValueChangedEventArgs(this, "height", old, height));
+      this._onChanged(new Events.ValueChangedEventArgs(this, 'height', old, height));
     }
   }
 
@@ -122,88 +97,82 @@ class BackTarget extends Target {
   Textures.Texture2D get colorTexture => this._colorTxt;
 
   /// The clear color to clear the target to before rendering.
-  Math.Color4 get color => this._color;
-  void set color(Math.Color4 color) {
+  Math.Color4? get color => this._color;
+  set color(Math.Color4? color) {
     color ??= Math.Color4.black();
     if (this._color != color) {
-      Math.Color4 prev = this._color;
+      Math.Color4? prev = this._color;
       this._color = color;
-      this._onChanged(new Events.ValueChangedEventArgs(this, "color", prev, this._color));
+      this._onChanged(new Events.ValueChangedEventArgs(this, 'color', prev, this._color));
     }
   }
 
   /// Indicates if the color target should be cleared with the clear color.
   bool get clearColor => this._clearColor;
-  void set clearColor(bool clearColor) {
-    clearColor ??= true;
+  set clearColor(bool clearColor) {
     if (this._clearColor != clearColor) {
       this._clearColor = clearColor;
-      this._onBoolChanged("clearColor", this._clearColor);
+      this._onBoolChanged('clearColor', this._clearColor);
     }
   }
 
   /// The clear depth to clear the target to before rendering.
   double get depth => this._depth;
-  void set depth(double depth) {
-    depth ??= 2000.0;
+  set depth(double depth) {
     if (!Math.Comparer.equals(this._depth, depth)) {
       double prev = this._depth;
       this._depth = depth;
-      this._onChanged(new Events.ValueChangedEventArgs(this, "depth", prev, this._depth));
+      this._onChanged(new Events.ValueChangedEventArgs(this, 'depth', prev, this._depth));
     }
   }
 
   /// Indicates if the depth target should be cleared with the clear depth.
   bool get clearDepth => this._clearDepth;
-  void set clearDepth(bool clearDepth) {
-    clearDepth ??= true;
+  set clearDepth(bool clearDepth) {
     if (this._clearDepth != clearDepth) {
       this._clearDepth = clearDepth;
-      this._onBoolChanged("clearDepth", this._clearDepth);
+      this._onBoolChanged('clearDepth', this._clearDepth);
     }
   }
 
   /// Indicates if the target buffer should automatically resize to the size of the canvas.
   bool get autoResize => this._autoResize;
-  void set autoResize(bool autoResize) {
-    autoResize ??= false;
+  set autoResize(bool autoResize) {
     if (this._autoResize != autoResize) {
       this._autoResize = autoResize;
-      this._onBoolChanged("autoResize", this._autoResize);
+      this._onBoolChanged('autoResize', this._autoResize);
     }
   }
 
   /// The scalar to apply to the width when an automatic resize occurs.
   double get autoResizeScalarX => this._autoResizeScalarX;
-  void set autoResizeScalarX(double scalar) {
-    scalar ??= 1.0;
+  set autoResizeScalarX(double scalar) {
     if (!Math.Comparer.equals(this._autoResizeScalarX, scalar)) {
       double prev = this._autoResizeScalarX;
       this._autoResizeScalarX = scalar;
-      this._onChanged(new Events.ValueChangedEventArgs(this, "autoResizeScalarX", prev, this._autoResizeScalarX));
+      this._onChanged(new Events.ValueChangedEventArgs(this, 'autoResizeScalarX', prev, this._autoResizeScalarX));
     }
   }
 
   /// The scalar to apply to the height when an automatic resize occurs.
   double get autoResizeScalarY => this._autoResizeScalarY;
-  void set autoResizeScalarY(double scalar) {
-    scalar ??= 1.0;
+  set autoResizeScalarY(double scalar) {
     if (!Math.Comparer.equals(this._autoResizeScalarY, scalar)) {
       double prev = this._autoResizeScalarY;
       this._autoResizeScalarY = scalar;
-      this._onChanged(new Events.ValueChangedEventArgs(this, "autoResizeScalarY", prev, this._autoResizeScalarY));
+      this._onChanged(new Events.ValueChangedEventArgs(this, 'autoResizeScalarY', prev, this._autoResizeScalarY));
     }
   }
 
   /// The region of the front target to render to.
   /// <0, 0> is top left corner and <1, 1> is bottom right.
-  Math.Region2 get region => this._region;
-  void set region(Math.Region2 region) {
+  Math.Region2? get region => this._region;
+  set region(Math.Region2? region) {
     region ??= Math.Region2.unit;
     if (this._region != region) {
-      Math.Region2 prev = this._region;
+      Math.Region2? prev = this._region;
       this._region = region;
-      this._onChanged(new Events.ValueChangedEventArgs(this, "region", prev, this._region));
+      this._onChanged(new Events.ValueChangedEventArgs(this, 'region', prev, this._region));
     }
   }
 
@@ -239,8 +208,8 @@ class BackTarget extends Target {
   /// Binds this target to the [state].
   void bind(Core.RenderState state) {
     if (this._autoResize) {
-      this.width  = (state.gl.drawingBufferWidth * this._autoResizeScalarX).round();
-      this.height = (state.gl.drawingBufferHeight * this._autoResizeScalarY).round();
+      this.width  = ((state.gl.drawingBufferWidth  ?? 512) * this._autoResizeScalarX).round();
+      this.height = ((state.gl.drawingBufferHeight ?? 512) * this._autoResizeScalarY).round();
     }
 
     if (this._framebuffer == null) {
@@ -252,12 +221,13 @@ class BackTarget extends Target {
     if (this._hasDepth) state.gl.enable(WebGL.WebGL.DEPTH_TEST);
     state.gl.depthFunc(WebGL.WebGL.LESS);
 
-    state.width  = (this._region.dx*this._width ).round();
-    state.height = (this._region.dy*this._height).round();
-    int xOffset  = (this._region.x *this._actualWidth ).round();
-    int yOffset  = (this._region.y *this._actualHeight).round();
-    int width    = (this._region.dx*this._actualWidth ).round();
-    int height   = (this._region.dy*this._actualHeight).round();
+    Math.Region2 region = this._region ?? Math.Region2.unit;
+    state.width  = (region.dx*this._width ).round();
+    state.height = (region.dy*this._height).round();
+    int xOffset  = (region.x *this._actualWidth ).round();
+    int yOffset  = (region.y *this._actualHeight).round();
+    int width    = (region.dx*this._actualWidth ).round();
+    int height   = (region.dy*this._actualHeight).round();
     state.gl.viewport(xOffset, yOffset, width, height);
 
     int clearMask = 0;
@@ -266,7 +236,7 @@ class BackTarget extends Target {
       clearMask |= WebGL.WebGL.DEPTH_BUFFER_BIT;
     }
     if (this._clearColor) {
-      state.gl.clearColor(this._color.red, this._color.green, this._color.blue, this._color.alpha);
+      state.gl.clearColor(this._color?.red ?? 0.0, this._color?.green ?? 0.0, this._color?.blue ?? 0.0, this._color?.alpha ?? 1.0);
       clearMask |= WebGL.WebGL.COLOR_BUFFER_BIT;
     }
     if (clearMask > 0) {

@@ -2,52 +2,40 @@ part of ThreeDart.Lights;
 
 /// A collection of lights.
 class LightCollection extends Collections.Collection<Light> {
-  List<Bar> _barLights;
-  List<Directional> _dirLights;
-  List<Point> _pntLights;
-  List<Spot> _spotLights;
-  Events.Event _changed;
-  Events.Event _lightChanged;
+  List<Bar> _barLights = [];
+  List<Directional> _dirLights = [];
+  List<Point> _pntLights = [];
+  List<Spot> _spotLights = [];
+  Events.Event? _changed;
+  Events.Event? _lightChanged;
 
   /// Creates a new light collection.
   LightCollection() {
-    this._barLights    = new List<Bar>();
-    this._dirLights    = new List<Directional>();
-    this._pntLights    = new List<Point>();
-    this._spotLights   = new List<Spot>();
-    this._changed      = null;
-    this._lightChanged = null;
     this.setHandlers(onPreaddHndl:  this._onPreaddLights,
                      onAddedHndl:   this._onAddedLights,
                      onRemovedHndl: this._onRemovedLights);
   }
 
   /// The event emitted when the collection has changed.
-  Events.Event get changed {
+  Events.Event get changed =>
     this._changed ??= new Events.Event();
-    return this._changed;
-  }
 
   /// The event emitted when a light's value has changed.
-  Events.Event get lightChanged {
+  Events.Event get lightChanged =>
     this._lightChanged ??= new Events.Event();
-    return this._lightChanged;
-  }
 
   /// Handles changes to the collection.
-  void _onChanged([Events.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs? args = null]) =>
     this._changed?.emit(args);
-  }
 
   /// Handles changes to the light's values.
-  void _onLightChanged([Events.EventArgs args = null]) {
+  void _onLightChanged([Events.EventArgs? args = null]) =>
     this._lightChanged?.emit(args);
-  }
 
   /// Checks if the light can be added to this set.
   bool _onPreaddLights(Iterable<Light> added) {
     for (Light light in added) {
-      if ((light == null) || this._contains(light)) return false;
+      if (this._contains(light)) return false;
     }
     return true;
   }

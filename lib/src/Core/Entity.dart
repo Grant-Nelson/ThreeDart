@@ -92,12 +92,12 @@ class Entity implements Movers.Movable, Events.Changeable {
 
   /// The name for this entity.
   String get name => this._name;
-  void set name(String name) { this._name = name; }
+  set name(String name) { this._name = name; }
 
   /// Indicates if this entity and its children
   /// will be rendered or not.
   bool get enabled => this._enabled;
-  void set enabled(bool enabled) { this._enabled = enabled; }
+  set enabled(bool enabled) { this._enabled = enabled; }
 
   /// Indicates if the shape cache needs to be updated.
   bool get cacheNeedsUpdate => this._cache == null;
@@ -182,7 +182,7 @@ class Entity implements Movers.Movable, Events.Changeable {
   /// The mover which moves this Entity.
   /// May be null to not move the Entity.
   Movers.Mover? get mover => this._mover;
-  void set mover(Movers.Mover? mover) {
+  set mover(Movers.Mover? mover) {
     if (this._mover != mover) {
       Movers.Mover? oldMover = this._mover;
       this._mover = mover;

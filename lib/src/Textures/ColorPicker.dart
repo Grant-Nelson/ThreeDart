@@ -111,7 +111,7 @@ class ColorPicker implements Input.Interactable, Events.Changeable {
 
   /// The texture to pick color from.
   Texture2D get texture => this._txt;
-  void set texture(Texture2D txt) {
+  set texture(Texture2D txt) {
     if (this._txt != txt) {
       if (this._txt != null) this._txt.changed.remove(this._onChanged);
       Texture2D prev = this._txt;
@@ -123,7 +123,7 @@ class ColorPicker implements Input.Interactable, Events.Changeable {
 
   /// Indicates if the modifiers keys must be pressed or released.
   Input.Modifiers get modifiers => this._modPressed;
-  void set modifiers(Input.Modifiers mods) {
+  set modifiers(Input.Modifiers mods) {
     mods ??= new Input.Modifiers.none();
     if (this._modPressed != mods) {
       Input.Modifiers prev = this._modPressed;
@@ -135,7 +135,7 @@ class ColorPicker implements Input.Interactable, Events.Changeable {
   /// The dead-band, in pixels, before any movement is made.
   /// This does not apply when the mouse is locked.
   double get deadBand => this._deadBand;
-  void set deadBand(double value) {
+  set deadBand(double value) {
     value ??= 0.0;
     if (!Math.Comparer.equals(this._deadBand, value)) {
       double prev = this._deadBand;

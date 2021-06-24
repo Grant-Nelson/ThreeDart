@@ -28,7 +28,7 @@ class BumpyTechnique extends Techniques.Technique {
 
   /// The bumpy texture to render with.
   Textures.Texture2D get bumpyTexture => this._txt;
-  void set bumpyTexture(Textures.Texture2D txt) {
+  set bumpyTexture(Textures.Texture2D txt) {
     if (this._txt != txt) {
       if (this._txt != null) this._txt.changed.remove(this._onChanged);
       Textures.Texture2D prev = this._txt;
@@ -40,7 +40,7 @@ class BumpyTechnique extends Techniques.Technique {
 
   /// The offset scalar for the size of the normal vectors.
   double get offsetScalar => this._offsetScalar;
-  void set offsetScalar(double scalar) {
+  set offsetScalar(double scalar) {
     if (!Math.Comparer.equals(this._offsetScalar, scalar)) {
       double prev = this._offsetScalar;
       this._offsetScalar = scalar;

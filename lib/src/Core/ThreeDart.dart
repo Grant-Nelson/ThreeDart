@@ -148,7 +148,7 @@ class ThreeDart implements Events.Changeable {
   /// Indicates if a refresh is automatically called
   /// when something internally is changed.
   bool get autoRefresh => this._autoRefresh;
-  void set autoRefresh(bool autoRefresh) {
+  set autoRefresh(bool autoRefresh) {
     if (this._autoRefresh == autoRefresh) {
       this._autoRefresh = autoRefresh;
       this._onChanged();

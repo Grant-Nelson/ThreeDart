@@ -296,7 +296,7 @@ class UserRotator implements Mover, Input.Interactable {
   /// Indicates if the modifiers keys must be pressed or released.
   /// This does not apply when using a touch input.
   Input.Modifiers get modifiers => this._modPressed;
-  void set modifiers(Input.Modifiers mods) {
+  set modifiers(Input.Modifiers mods) {
     if (this._modPressed != mods) {
       Input.Modifiers prev = this._modPressed;
       this._modPressed = mods;
@@ -307,7 +307,7 @@ class UserRotator implements Mover, Input.Interactable {
   /// Indicates if the rotations should be continuous or not.
   /// This does not apply when the mouse is locked.
   bool get cumulative => this._cumulative;
-  void set cumulative(bool enable) {
+  set cumulative(bool enable) {
     if (this._cumulative != enable) {
       bool prev = this._cumulative;
       this._cumulative = enable;
@@ -317,7 +317,7 @@ class UserRotator implements Mover, Input.Interactable {
 
   /// Inverts the X mouse axis.
   bool get invertX => this._invertX;
-  void set invertX(bool invert) {
+  set invertX(bool invert) {
     if (this._invertX != invert) {
       bool prev = this._invertX;
       this._invertX = invert;
@@ -327,7 +327,7 @@ class UserRotator implements Mover, Input.Interactable {
 
   /// Inverts the Y mouse axis.
   bool get invertY => this._invertY;
-  void set invertY(bool invert) {
+  set invertY(bool invert) {
     if (this._invertY != invert) {
       bool prev = this._invertY;
       this._invertY = invert;
@@ -337,7 +337,7 @@ class UserRotator implements Mover, Input.Interactable {
 
   /// The scalar to apply to the mouse movements pitch.
   double get pitchScalar => this._pitchScalar;
-  void set pitchScalar(double value) {
+  set pitchScalar(double value) {
     if (!Math.Comparer.equals(this._pitchScalar, value)) {
       double prev = this._pitchScalar;
       this._pitchScalar = value;
@@ -347,7 +347,7 @@ class UserRotator implements Mover, Input.Interactable {
 
   /// The scalar to apply to the mouse movements yaw.
   double get yawScalar => this._yawScalar;
-  void set yawScalar(double value) {
+  set yawScalar(double value) {
     if (!Math.Comparer.equals(this._yawScalar, value)) {
       double prev = this._yawScalar;
       this._yawScalar = value;
@@ -358,7 +358,7 @@ class UserRotator implements Mover, Input.Interactable {
   /// The dead-band, in pixels, before any movement is made.
   /// This does not apply when the mouse is locked.
   double get deadBand => this._deadBand;
-  void set deadBand(double value) {
+  set deadBand(double value) {
     if (!Math.Comparer.equals(this._deadBand, value)) {
       double prev = this._deadBand;
       this._deadBand = value;

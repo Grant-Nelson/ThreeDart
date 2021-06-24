@@ -143,5 +143,5 @@ class BlockInfo {
 
   /// Gets or sets the block value for this block.
   int get value => this.chunk?.getBlock(x, y, z) ?? ((y < 0)? BlockType.Boundary: BlockType.Air);
-  void set value(int value) { this.chunk?.setBlock(x, y, z, value); }
+  set value(int value) { this.chunk?.setBlock(x, y, z, value); }
 }

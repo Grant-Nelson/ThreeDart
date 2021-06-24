@@ -104,7 +104,7 @@ class Event {
   ///
   /// The pending argument is used once the event is resumed.
   EventArgs? get pendingArgs => this._pendingArgs;
-  void set pendingArgs(EventArgs? args) => this._pendingArgs = args;
+  set pendingArgs(EventArgs? args) => this._pendingArgs = args;
 
   /// Resumes the event or removes a level of suspension.
   ///

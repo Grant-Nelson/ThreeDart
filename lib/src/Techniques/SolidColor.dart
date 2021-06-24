@@ -28,7 +28,7 @@ class SolidColor extends Technique {
 
   /// The color to draw the shape with.
   Math.Color4 get color => this._clr;
-  void set color(Math.Color4 clr) {
+  set color(Math.Color4 clr) {
     clr ??= new Math.Color4.white();
     if (this._clr != clr) {
       Math.Color4 prev = this._clr;

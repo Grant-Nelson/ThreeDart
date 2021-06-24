@@ -62,7 +62,7 @@ class UserInput {
 
   /// Gets or sets if the mouse should lock the pointer on click.
   bool get lockOnClick => this._lockOnClick;
-  void set lockOnClick(bool enable) { this._lockOnClick = enable; }
+  set lockOnClick(bool enable) { this._lockOnClick = enable; }
 
   /// Determines if this element is focused.
   bool get hasFocus => this._focused;

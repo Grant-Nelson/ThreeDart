@@ -80,26 +80,26 @@ class GaussianBlur implements Scene {
 
   /// The blur value, this will be overridden by blur texture.
   double get blurValue => this._horzBlurTech.blurValue;
-  void set blurValue(double value) {
+  set blurValue(double value) {
     this._horzBlurTech.blurValue = value;
     this._vertBlurTech.blurValue = value;
   }
 
   /// The color texture.
   Textures.Texture2D get colorTexture => this._horzBlurTech.colorTexture;
-  void set colorTexture(Textures.Texture2D txt) =>
+  set colorTexture(Textures.Texture2D txt) =>
     this._horzBlurTech.colorTexture = txt;
 
   /// The blur texture, this will override the blur value.
   Textures.Texture2D get blurTexture => this._horzBlurTech.blurTexture;
-  void set blurTexture(Textures.Texture2D txt) {
+  set blurTexture(Textures.Texture2D txt) {
     this._horzBlurTech.blurTexture = txt;
     this._vertBlurTech.blurTexture = txt;
   }
 
   /// The texture modification matrix.
   Math.Matrix3 get textureMatrix => this._horzBlurTech.textureMatrix;
-  void set textureMatrix(Math.Matrix3 mat) {
+  set textureMatrix(Math.Matrix3 mat) {
     this._horzBlurTech.textureMatrix = mat;
     this._vertBlurTech.textureMatrix = mat;
   }
@@ -108,7 +108,7 @@ class GaussianBlur implements Scene {
   /// This is the vector to apply to the color from the blur texture
   /// to get the blur value from the blur texture, by default it just uses red.
   Math.Vector4 get blurAdjust => this._horzBlurTech.blurAdjust;
-  void set blurAdjust(Math.Vector4 vec) {
+  set blurAdjust(Math.Vector4 vec) {
     this._horzBlurTech.blurAdjust = vec;
     this._vertBlurTech.blurAdjust = vec;
   }
@@ -116,7 +116,7 @@ class GaussianBlur implements Scene {
   /// The target defining the storage to render to.
   /// If null is set, the target is set to an FrontTarget.
   Views.Target get target => this._vertBlurPass.target;
-  void set target(Views.Target target) =>
+  set target(Views.Target target) =>
     this._vertBlurPass.target = target;
 
   /// Indicates if this scene should be rendered or not.

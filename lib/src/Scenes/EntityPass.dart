@@ -100,7 +100,7 @@ class EntityPass implements RenderPass {
   /// The camera describing the view of the scene.
   /// If null is set, the camera is set to a Perspective.
   Views.Camera get camera => this._camera;
-  void set camera(Views.Camera camera) {
+  set camera(Views.Camera camera) {
     camera ??= new Views.Perspective();
     if (this._camera != camera) {
       if (this._camera != null) this._camera.changed.remove(this._onChanged);
@@ -114,7 +114,7 @@ class EntityPass implements RenderPass {
   /// The target defining the storage to render to.
   /// If null is set, the target is set to an FrontTarget.
   Views.Target get target => this._target;
-  void set target(Views.Target target) {
+  set target(Views.Target target) {
     target ??= new Views.FrontTarget();
     if (this._target != target) {
       if (this._target != null) this._target.changed.remove(this._onChanged);
@@ -127,7 +127,7 @@ class EntityPass implements RenderPass {
 
   /// The default technique to render with.
   Techniques.Technique get technique => this._tech;
-  void set technique(Techniques.Technique tech) {
+  set technique(Techniques.Technique tech) {
     if (this._tech != tech) {
       if (this._tech != null) this._tech.changed.remove(this._onChanged);
       Techniques.Technique prev = this._tech;

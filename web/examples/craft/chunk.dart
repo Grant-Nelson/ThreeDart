@@ -175,7 +175,7 @@ class Chunk {
   }
 
   /// Sets all of the entities to either enabled or disabled.
-  void set _enabled(bool enabled) {
+  set _enabled(bool enabled) {
     for (ThreeDart.Entity entity in this._entities)
       entity.enabled = enabled;
   }
