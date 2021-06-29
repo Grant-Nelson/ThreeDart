@@ -3,12 +3,10 @@ part of ThreeDart.Shapes;
 /// A collection of points for a shape.
 class ShapePointCollection {
   Shape _shape;
-  List<Point> _points;
+  List<Point> _points = [];
 
   /// Creates a new shape's point collection for the given shape.
-  ShapePointCollection._(Shape this._shape){
-    this._points = new List<Point>();
-  }
+  ShapePointCollection._(this._shape);
 
   /// The shape which owns this collection.
   Shape get shape => this._shape;
@@ -21,7 +19,7 @@ class ShapePointCollection {
 
   /// Adds a set of new points with the given vertices to shape.
   List<Point> addList(List<Vertex> vertices) {
-    List<Point> points = new List<Point>();
+    List<Point> points = [];
     final int count = vertices.length;
     for (int i = 0; i < count; ++i)
       points.add(this.add(vertices[i]));
@@ -47,15 +45,15 @@ class ShapePointCollection {
   /// The removed point is disposed and returned or null if none removed.
   Point removeAt(int index) {
     Point pnt = this._points[index];
-    if (pnt != null) pnt.dispose();
+    pnt.dispose();
     return pnt;
   }
 
   /// Removes the given [point].
   /// Returns true if point was removed, false otherwise.
-  bool remove(Point point) {
+  bool remove(Point? point) {
     if (point == null) return false;
-    if (point._ver._shape != this.shape) return false;
+    if (point._ver?.shape != this.shape) return false;
     point.dispose();
     return true;
   }
@@ -63,7 +61,8 @@ class ShapePointCollection {
   /// Removes all points which share the same vertex.
   void removeRepeats() {
     for (int i = this._points.length-1; i >= 0; --i) {
-      if (this._points[i].vertex.points.length > 1) this.removeAt(i);
+      final int length = this._points[i].vertex?.points.length ?? 0;
+      if (length > 1) this.removeAt(i);
     }
   }
 
@@ -72,7 +71,7 @@ class ShapePointCollection {
 
   /// Gets the formatted string for this points with and optional [indent].
   String format([String indent = ""]) {
-    List<String> parts = new List<String>();
+    List<String> parts = [];
     for (Point pnt in this._points) {
       parts.add(pnt.format(indent));
     }

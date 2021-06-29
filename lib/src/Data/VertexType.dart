@@ -4,40 +4,40 @@ part of ThreeDart.Data;
 class VertexType {
 
   /// [None] indicates no vertex type at all.
-  static VertexType None = new VertexType._(0x0000);
+  static final VertexType None = new VertexType._(0x0000);
 
   /// [All] indicates all vertex types.
-  static VertexType All = new VertexType._(0x01FF);
+  static final VertexType All = new VertexType._(0x01FF);
 
   /// [Pos] indicates 3D positional data.
-  static VertexType Pos = new VertexType._(0x0001);
+  static final VertexType Pos = new VertexType._(0x0001);
 
   /// [Norm] indicates 3D normal data.
-  static VertexType Norm = new VertexType._(0x0002);
+  static final VertexType Norm = new VertexType._(0x0002);
 
   /// [Binm] indicates 3D binormal data.
-  static VertexType Binm = new VertexType._(0x0004);
+  static final VertexType Binm = new VertexType._(0x0004);
 
   /// [Txt2D] indicates 2D texture data.
-  static VertexType Txt2D = new VertexType._(0x0008);
+  static final VertexType Txt2D = new VertexType._(0x0008);
 
   /// [TxtCube] indicates cube texture data.
-  static VertexType TxtCube = new VertexType._(0x0010);
+  static final VertexType TxtCube = new VertexType._(0x0010);
 
   /// [Clr3] indicates RGB color data.
-  static VertexType Clr3 = new VertexType._(0x0020);
+  static final VertexType Clr3 = new VertexType._(0x0020);
 
   /// [Clr4] indicates RGBA color data.
-  static VertexType Clr4 = new VertexType._(0x0040);
+  static final VertexType Clr4 = new VertexType._(0x0040);
 
   /// [Clr3] indicates RGB or RGBA color data.
-  static VertexType Color = new VertexType._(0x0060);
+  static final VertexType Color = new VertexType._(0x0060);
 
   /// [Weight] indicates an additional single float data.
-  static VertexType Weight = new VertexType._(0x0080);
+  static final VertexType Weight = new VertexType._(0x0080);
 
   /// [Bending] indicates float data for bending a shape.
-  static VertexType Bending = new VertexType._(0x0100);
+  static final VertexType Bending = new VertexType._(0x0100);
 
   /// The combined vertex type value.
   final int _value;

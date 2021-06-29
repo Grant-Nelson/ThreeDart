@@ -61,6 +61,7 @@ class UserRotator implements Mover, Input.Interactable {
   Events.Event? _changed = null;
 
   /// Creates a new user rotator instance.
+  /// If [mod] is provided it will override any value given to [ctrl], [alt], and [shift].
   UserRotator({
       bool ctrl:    false,
       bool alt:     false,

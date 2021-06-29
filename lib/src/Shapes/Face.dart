@@ -2,15 +2,15 @@ part of ThreeDart.Shapes;
 
 /// A face is a filled triangle defined by three vertices.
 class Face {
-  Vertex _ver1;
-  Vertex _ver2;
-  Vertex _ver3;
+  Vertex? _ver1;
+  Vertex? _ver2;
+  Vertex? _ver3;
 
-  Math.Vector3 _norm;
-  Math.Vector3 _binm;
+  Math.Vector3? _norm;
+  Math.Vector3? _binm;
 
   /// Creates a new face with the given vertices.
-  Face(Vertex ver1, Vertex ver2, Vertex ver3) {
+  Face(Vertex? ver1, Vertex? ver2, Vertex? ver3) {
     if (ver1 == null)
       throw new Exception("May not create a face with a null first vertex.");
     if (ver2 == null)
@@ -26,15 +26,15 @@ class Face {
     this._setVertex1(ver1);
     this._setVertex2(ver2);
     this._setVertex3(ver3);
-    this._ver1._shape._faces._faces.add(this);
-    this._ver1._shape.onFaceAdded(this);
+    this._ver1?.shape?.faces._faces.add(this);
+    this._ver1?.shape?.onFaceAdded(this);
   }
 
   /// Disposes this face.
   void dispose() {
     if (!this.disposed) {
-      this._ver1._shape._faces._faces.remove(this);
-      this._ver1._shape.onFaceRemoved(this);
+      this._ver1?.shape?.faces._faces.remove(this);
+      this._ver1?.shape?.onFaceRemoved(this);
     }
     this._removeVertex1();
     this._removeVertex2();
@@ -49,74 +49,68 @@ class Face {
   }
 
   /// Sets the first vertex to the given value.
-  void _setVertex1(Vertex ver1) {
+  void _setVertex1(Vertex? ver1) {
     this._ver1 = ver1;
-    this._ver1._faces._faces1.add(this);
+    this._ver1?.faces._faces1.add(this);
   }
 
   /// Sets the second vertex to the given value.
-  void _setVertex2(Vertex ver2) {
+  void _setVertex2(Vertex? ver2) {
     this._ver2 = ver2;
-    this._ver2._faces._faces2.add(this);
+    this._ver2?.faces._faces2.add(this);
   }
 
   /// Sets the third vertex to the given value.
-  void _setVertex3(Vertex ver3) {
+  void _setVertex3(Vertex? ver3) {
     this._ver3 = ver3;
-    this._ver3._faces._faces3.add(this);
+    this._ver3?.faces._faces3.add(this);
   }
 
   /// Removes the first vertex.
   void _removeVertex1() {
-    if (this._ver1 != null) {
-      this._ver1._faces._faces1.remove(this);
-      this._ver1 = null;
-    }
+    this._ver1?.faces._faces1.remove(this);
+    this._ver1 = null;
   }
 
   /// Removes the second vertex.
   void _removeVertex2() {
-    if (this._ver2 != null) {
-      this._ver2._faces._faces2.remove(this);
-      this._ver2 = null;
-    }
+    this._ver2?.faces._faces2.remove(this);
+    this._ver2 = null;
   }
 
   /// Removes the third vertex.
   void _removeVertex3() {
-    if (this._ver3 != null) {
-      this._ver3._faces._faces3.remove(this);
-      this._ver3 = null;
-    }
+    this._ver3?.faces._faces3.remove(this);
+    this._ver3 = null;
   }
 
   /// Indicates if the face is disposed or not.
   bool get disposed => (this._ver1 == null) || (this._ver2 == null) || (this._ver3 == null);
 
   /// The first vertex of the face.
-  Vertex get vertex1 => this._ver1;
+  Vertex? get vertex1 => this._ver1;
 
   /// The second vertex of the face.
-  Vertex get vertex2 => this._ver2;
+  Vertex? get vertex2 => this._ver2;
 
   /// The third vertex of the face.
-  Vertex get vertex3 => this._ver3;
+  Vertex? get vertex3 => this._ver3;
 
   /// The normal for this face or null if not specified yet.
-  Math.Vector3 get normal => this._norm;
-  set normal(Math.Vector3 norm) => this._norm = norm.normal();
+  Math.Vector3? get normal => this._norm;
+  set normal(Math.Vector3? norm) => this._norm = norm?.normal();
 
   /// The binormal for this face or null if not specified yet.
-  Math.Vector3 get binormal => this._binm;
-  set binormal(Math.Vector3 binm) => this._binm = binm.normal();
+  Math.Vector3? get binormal => this._binm;
+  set binormal(Math.Vector3? binm) => this._binm = binm?.normal();
 
   /// Calculates the normal vector from the average of the vertex normals.
   /// Returns null if not all vertices have normals.
-  Math.Vector3 _averageNormal() {
-    Math.Vector3 norm1 = this._ver1?.normal;
-    Math.Vector3 norm2 = this._ver2?.normal;
-    Math.Vector3 norm3 = this._ver3?.normal;
-    Math.Vector3 sum = Math.Vector3.zero;
+  Math.Vector3? _averageNormal() {
+    Math.Vector3? norm1 = this._ver1?.normal;
+    Math.Vector3? norm2 = this._ver2?.normal;
+    Math.Vector3? norm3 = this._ver3?.normal;
+    Math.Vector3? sum = Math.Vector3.zero;
     if (norm1 != null) sum += norm1;
     if (norm2 != null) sum += norm2;
     if (norm3 != null) sum += norm3;
@@ -126,10 +120,10 @@ class Face {
 
   /// Calculates the normal vector from the cross product of locations.
   /// Returns null if not all vertices have locations.
-  Math.Vector3 _calcNormal() {
-    Math.Point3 loc1 = this._ver1?.location;
-    Math.Point3 loc2 = this._ver2?.location;
-    Math.Point3 loc3 = this._ver3?.location;
+  Math.Vector3? _calcNormal() {
+    Math.Point3? loc1 = this._ver1?.location;
+    Math.Point3? loc2 = this._ver2?.location;
+    Math.Point3? loc3 = this._ver3?.location;
     if ((loc1 == null) || (loc2 == null) || (loc3 == null)) return null;
 
     Math.Vector3 vec1 = new Math.Vector3.fromPoint3(loc2 - loc1).normal();
@@ -142,23 +136,23 @@ class Face {
   /// of the plane this face lays on.
   bool calculateNormal() {
     if (this._norm != null) return true;
-    Math.Vector3 norm = this._averageNormal();
+    Math.Vector3? norm = this._averageNormal();
     if (norm == null) {
       norm = this._calcNormal();
       if (norm == null) return false;
     }
     this._norm = norm;
-    this._ver1._shape.onFaceModified(this);
+    this._ver1?.shape?.onFaceModified(this);
     return true;
   }
 
   /// Calculates the binormal vector from the average of the vertex binormals.
   /// Returns null if not all vertices have binormals.
-  Math.Vector3 _averageBinormal() {
-    Math.Vector3 binm1 = this._ver1?.binormal;
-    Math.Vector3 binm2 = this._ver2?.binormal;
-    Math.Vector3 binm3 = this._ver3?.binormal;
-    Math.Vector3 sum = Math.Vector3.zero;
+  Math.Vector3? _averageBinormal() {
+    Math.Vector3? binm1 = this._ver1?.binormal;
+    Math.Vector3? binm2 = this._ver2?.binormal;
+    Math.Vector3? binm3 = this._ver3?.binormal;
+    Math.Vector3? sum = Math.Vector3.zero;
     if (binm1 != null) sum += binm1;
     if (binm2 != null) sum += binm2;
     if (binm3 != null) sum += binm3;
@@ -168,15 +162,15 @@ class Face {
 
   /// Calculates the binormal vector from the location and texture values.
   /// Returns null if not all vertices have location and texture values.
-  Math.Vector3 _calcBinormal() {
-    Math.Point3 loc1 = this._ver1?.location;
-    Math.Point3 loc2 = this._ver2?.location;
-    Math.Point3 loc3 = this._ver3?.location;
+  Math.Vector3? _calcBinormal() {
+    Math.Point3? loc1 = this._ver1?.location;
+    Math.Point3? loc2 = this._ver2?.location;
+    Math.Point3? loc3 = this._ver3?.location;
     if ((loc1 == null) || (loc2 == null) || (loc3 == null)) return null;
 
-    Math.Point2 txt1 = this._ver1?.texture2D;
-    Math.Point2 txt2 = this._ver2?.texture2D;
-    Math.Point2 txt3 = this._ver3?.texture2D;
+    Math.Point2? txt1 = this._ver1?.texture2D;
+    Math.Point2? txt2 = this._ver2?.texture2D;
+    Math.Point2? txt3 = this._ver3?.texture2D;
     if ((txt1 == null) || (txt2 == null) || (txt3 == null)) return null;
 
     Math.Vector3 binm;
@@ -192,8 +186,9 @@ class Face {
       if (u4 < 0.0) binm = -binm;
     }
 
-    if (this._norm != null) {
-      Math.Vector3 norm = this._norm.normal();
+    var norm = this._norm;
+    if (norm != null) {
+      norm = norm.normal();
       Math.Vector3 trnm = norm.cross(binm).normal();
       binm = trnm.cross(norm).normal();
     }
@@ -205,30 +200,30 @@ class Face {
   /// See Shapes/README.md for more information.
   bool calculateBinormal() {
     if (this._binm != null) return true;
-    Math.Vector3 binm = this._averageBinormal();
+    Math.Vector3? binm = this._averageBinormal();
     if (binm == null) {
       binm = this._calcBinormal();
       if (binm == null) return false;
     }
     this._binm = binm;
-    this._ver1._shape.onFaceModified(this);
+    this._ver1?.shape?.onFaceModified(this);
     return true;
   }
 
   /// Checks if the given vertex can be replaced by the new given vertex.
   /// If there is any reason it can't and exception is thrown.
-  void _checkReplaceVertex(Vertex oldVer, Vertex newVer) {
+  void _checkReplaceVertex(Vertex? oldVer, Vertex? newVer) {
     if (newVer == null)
       throw new Exception("May not replace a face's vertex with a null vertex.");
     if (newVer.shape == null)
       throw new Exception("May not replace a face's vertex with a vertex which is not attached to a shape.");
-    if (oldVer.shape != newVer.shape)
+    if (oldVer?.shape != newVer.shape)
       throw new Exception("May not replace a face's vertex with a vertex attached to a different shape.");
   }
 
   /// Replaces the given old vertex with the given new vertex if this face contains
   /// the given old vertex. It returns the number of vertices which were replaced.
-  int replaceVertex(Vertex oldVer, Vertex newVer) {
+  int replaceVertex(Vertex? oldVer, Vertex? newVer) {
     if (this.disposed)
       throw new Exception("May not replace a face's vertex when the point has been disposed.");
     int result = 0;
@@ -251,19 +246,21 @@ class Face {
       ++result;
     }
     if (result > 0)
-      this._ver1._shape.onFaceModified(this);
+      this._ver1?.shape?.onFaceModified(this);
     return result;
   }
 
   /// Swaps the second and third vertices so the face is wraps the other direction.
   /// Both the normal and binormal vectors are negated if the exist.
   void flip() {
-    Vertex ver = this._ver2;
+    Vertex? ver = this._ver2;
     this._ver2 = this._ver3;
     this._ver3 = ver;
-    if (this._norm != null) this._norm = -this._norm;
-    if (this._binm != null) this._binm = -this._binm;
-    this._ver1._shape.onFaceModified(this);
+    var norm = this._norm;
+    if (norm != null) this._norm = -norm;
+    var binm = this._binm;
+    if (binm != null) this._binm = -binm;
+    this._ver1?.shape?.onFaceModified(this);
   }
 
   /// Indicates if the face is collapsed meaning two or
@@ -280,12 +277,11 @@ class Face {
   bool same(var other) {
     if (identical(this, other)) return true;
     if (other is! Face) return false;
-    Face ver = other as Face;
-    if (this._ver1 != ver._ver1) return false;
-    if (this._ver2 != ver._ver2) return false;
-    if (this._ver3 != ver._ver3) return false;
-    if (this._norm != ver._norm) return false;
-    if (this._binm != ver._binm) return false;
+    if (this._ver1 != other._ver1) return false;
+    if (this._ver2 != other._ver2) return false;
+    if (this._ver3 != other._ver3) return false;
+    if (this._norm != other._norm) return false;
+    if (this._binm != other._binm) return false;
     return true;
   }
 
@@ -300,19 +296,11 @@ class Face {
   String format([String indent = ""]) {
     if (this.disposed) return "${indent}disposed";
     String result = indent +
-        Math.formatInt(this._ver1._index)+', '+
-        Math.formatInt(this._ver2._index)+', '+
-        Math.formatInt(this._ver3._index)+' {';
-    if (this._norm != null) {
-      result += this._norm.toString()+', ';
-    } else {
-      result += '-, ';
-    }
-    if (this._binm != null) {
-      result += this._binm.toString()+'}';
-    } else {
-      result += '-}';
-    }
+        Math.formatInt(this._ver1?.index ?? 0)+', '+
+        Math.formatInt(this._ver2?.index ?? 0)+', '+
+        Math.formatInt(this._ver3?.index ?? 0)+' {';
+    result += (this._norm?.toString() ?? '-')+', ';
+    result += (this._binm?.toString() ?? '-')+'}';
     return result;
   }
 }

@@ -7,56 +7,48 @@ class ReducedShape implements ShapeBuilder {
   final Data.VertexType _type;
 
   /// The number of base vertex types in the vertex type.
-  int _typeCount;
+  int _typeCount = 0;
 
   /// The stride between vertex data.
-  int _stride;
+  int _stride = 0;
 
   /// The current number of vertices in this shape.
-  int _vertexCount;
+  int _vertexCount = 0;
 
   /// The set of buffer attributes for setting up to render this shape.
-  List<Data.BufferAttr> _attrs;
+  List<Data.BufferAttr> _attrs = [];
 
   /// The set of vertex data for the shape.
-  List<double> _vertices;
+  List<double> _vertices = [];
 
   /// The set of indices for the points to render.
-  List<int> _points;
+  List<int> _points = [];
 
   /// The set of indices to vertices in sets of two for each line to render.
-  List<int> _lines;
+  List<int> _lines = [];
 
   /// The set of indices to vertices in sets of three for each face to render.
-  List<int> _faces;
+  List<int> _faces = [];
 
   /// The calculated axial aligned bounding box.
-  Math.Region3 _aabb;
+  Math.Region3? _aabb = null;
 
   /// The event emitted when the shape has been changed.
-  Events.Event _changed;
+  Events.Event? _changed = null;
 
   /// Creates a new reduced shape with a specific vertex type.
   /// This isn't nearly as flexible as [Shape] and doesn't provides
   /// the ability to calculate values and change vertex types.
   /// The reduced shape uses much less memory and is faster.
-  ReducedShape(Data.VertexType this._type) {
+  ReducedShape(this._type) {
     this._typeCount = this._type.count;
     this._stride = this._type.size;
     this._vertexCount = 0;
-    this._vertices = new List<double>();
-    this._points = new List<int>();
-    this._lines = new List<int>();
-    this._faces = new List<int>();
-    this._aabb = null;
-    this._changed = null;
   }
 
   /// The changed event to signal when ever the shape is modified.
-  Events.Event get changed {
+  Events.Event get changed =>
     this._changed ??= new Events.Event();
-    return this._changed;
-  }
 
   /// The set of vertex data for the shape.
   List<double> get vertices => this._vertices;
@@ -74,7 +66,7 @@ class ReducedShape implements ShapeBuilder {
   /// to the first vertex added.
   int addVertices(List<Vertex> vertices) {
     final int length = vertices.length;
-    List<double> data = new List<double>(length*this._stride);
+    List<double> data = new List<double>.filled(length*this._stride, 0.0);
     int offset = 0;
     for (int i = 0; i < this._typeCount; ++i) {
       Data.VertexType local = this._type.at(i);
@@ -91,9 +83,15 @@ class ReducedShape implements ShapeBuilder {
     }
 
     if (this._type.has(Data.VertexType.Pos)) {
-      this._aabb ??= new Math.Region3.fromPoint(vertices[0].location);
-      for (int i = length-1; i >= 0; i--)
-        this._aabb = this._aabb.expandWithPoint(vertices[i].location);
+      Math.Region3? aabb = this._aabb;
+      for (int i = length-1; i >= 0; i--) {
+        Math.Point3? loc = vertices[i].location;
+        if (loc != null) {
+          if (aabb == null) aabb = new Math.Region3.fromPoint(loc);
+          else aabb = aabb.expandWithPoint(loc);
+        }
+      }
+      this._aabb = aabb;
     }
 
     final int index = this._vertexCount;
@@ -113,7 +111,7 @@ class ReducedShape implements ShapeBuilder {
   void addLineStrip(List<int> indices) {
     final int count = indices.length;
     if (count >= 2) {
-      List<int> lines = new List<int>(count*2-1);
+      List<int> lines = new List<int>.filled(count*2-1, 0);
       for (int i = 1, j = 0; i < count; i++, j+=2) {
         lines[j  ] = indices[i-1];
         lines[j+1] = indices[i  ];
@@ -127,7 +125,7 @@ class ReducedShape implements ShapeBuilder {
   void addLineLoop(List<int> indices) {
     final int count = indices.length;
     if (count >= 2) {
-      List<int> lines = new List<int>(count*2);
+      List<int> lines = new List<int>.filled(count*2, 0);
       lines[0] = indices[count-1];
       lines[1] = indices[0];
       for (int i = 1, j = 2; i < count; i++, j+=2) {
@@ -149,7 +147,7 @@ class ReducedShape implements ShapeBuilder {
   void addTriangleFan(List<int> indices) {
     final int count = indices.length;
     if (count >= 3) {
-      List<int> tris = new List<int>((count-2)*3);
+      List<int> tris = new List<int>.filled((count-2)*3, 0);
       int ver0 = indices[0];
       for (int i = 2, j = 0; i < count; i++, j+=3) {
         tris[j  ] = ver0;
@@ -165,7 +163,7 @@ class ReducedShape implements ShapeBuilder {
   void addTriangleStrip(List<int> indices) {
     final int count = indices.length;
     if (count >= 3) {
-      List<int> tris = new List<int>((count-2)*3);
+      List<int> tris = new List<int>.filled((count-2)*3, 0);
       bool flip = false;
       for (int i = 2, j = 0; i < count; i++, j+=3) {
         if (flip) {
@@ -189,7 +187,7 @@ class ReducedShape implements ShapeBuilder {
   void addTriangleLoop(List<int> indices) {
     final int count = indices.length;
     if (count >= 3) {
-      List<int> tris = new List<int>(count*3);
+      List<int> tris = new List<int>.filled(count*3, 0);
       bool flip = false;
       for (int i = 2, j = 0; i < count+2; i++, j+=3) {
         int k = i % count;
@@ -211,17 +209,15 @@ class ReducedShape implements ShapeBuilder {
   }
 
   /// Adds a set of separate faces with the given indices for vertices.
-  void addTriangles(List<int> indices) {
+  void addTriangles(List<int> indices) =>
     this._faces.addAll(indices);
-  }
 
   /// Handles any change to this shape.
   /// This isn't meant to be called from outside the entity, in other languages this would
   /// be a protected method. This method is exposed to that the shape is extended and
   /// these methods can be overwritten. If overwritten call this super method to still emit events.
-  void onChanged([Events.EventArgs args = null]) {
+  void onChanged([Events.EventArgs? args = null]) =>
     this._changed?.emit(args);
-  }
 
   /// Calculates the normals for the vertices and faces.
   /// True if successful, false on error.
@@ -249,18 +245,16 @@ class ReducedShape implements ShapeBuilder {
   Data.BufferStore build(Data.BufferBuilder builder, Data.VertexType type) {
     if (type != this._type) throw new Exception("Shape was reduced to ${this._type} so can not build for $type.");
 
-    if (this._attrs == null) {
-      final int byteStride = this._stride*Typed.Float32List.bytesPerElement;
-      this._attrs = new List<Data.BufferAttr>(this._typeCount);
-      int offset = 0;
-      for (int i = 0; i < this._typeCount; ++i) {
-        Data.VertexType local = this._type.at(i);
-        final int size = local.size;
-        this._attrs[i] = new Data.BufferAttr(local, size,
-          offset*Typed.Float32List.bytesPerElement, byteStride);
-        offset += size;
-      }
-    }
+    final int byteStride = this._stride*Typed.Float32List.bytesPerElement;
+    int offset = 0;
+    this._attrs = new List<Data.BufferAttr>.generate(this._typeCount, (int i) { 
+      Data.VertexType local = this._type.at(i);
+      final int size = local.size;
+      var attr = new Data.BufferAttr(local, size,
+        offset*Typed.Float32List.bytesPerElement, byteStride);
+      offset += size;
+      return attr;
+    });
 
     Data.Buffer vertexBuf = builder.fromDoubleList(WebGL.WebGL.ARRAY_BUFFER, this._vertices);
     Data.BufferStore store = new Data.BufferStore(vertexBuf, this._attrs, this._type);

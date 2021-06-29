@@ -2,27 +2,25 @@ part of ThreeDart.Shapes;
 
 /// A collection of lines for a shape.
 class ShapeLineCollection {
-  Shape _shape;
-  List<Line> _lines;
+  final Shape _shape;
+  List<Line> _lines = [];
 
   /// Creates a new shape's line collection for the given shape.
-  ShapeLineCollection._(Shape this._shape) {
-    this._lines = new List<Line>();
-  }
+  ShapeLineCollection._(this._shape);
 
   /// The shape which owns this collection.
   Shape get shape => this._shape;
 
   /// Adds a new line with the given vertices to the shape.
   Line add(Vertex ver1, Vertex ver2) {
-    this._shape._vertices.add(ver1);
-    this._shape._vertices.add(ver2);
+    this._shape.vertices.add(ver1);
+    this._shape.vertices.add(ver2);
     return new Line(ver1, ver2);
   }
 
   /// Adds a new strip of lines to the given vertices to the shape.
   List<Line> addStrip(List<Vertex> vertices) {
-    List<Line> lines = new List<Line>();
+    List<Line> lines = [];
     final int count = vertices.length;
     for (int i = 1; i < count; i++)
       lines.add(this.add(vertices[i-1], vertices[i]));
@@ -31,7 +29,7 @@ class ShapeLineCollection {
 
   /// Adds a new loop of lines to the given vertices to the shape.
   List<Line> addLoop(List<Vertex> vertices) {
-    List<Line> lines = new List<Line>();
+    List<Line> lines = [];
     final int count = vertices.length;
     if (count > 0) {
       for (int i = 1; i < count; i++)
@@ -43,7 +41,7 @@ class ShapeLineCollection {
 
   /// Adds a set of lines to the given vertices to the shape.
   List<Line> addLines(List<Vertex> vertices) {
-    List<Line> lines = new List<Line>();
+    List<Line> lines = [];
     final int count = vertices.length;
     for (int i = 1; i < count; i += 2)
       lines.add(this.add(vertices[i-1], vertices[i]));
@@ -69,33 +67,29 @@ class ShapeLineCollection {
   /// The removed line is disposed and returned or null if none removed.
   Line removeAt(int index) {
     Line line = this[index];
-    if (line != null) line.dispose();
+    line.dispose();
     return line;
   }
 
   /// Removes the given [line].
   /// Returns true if line was removed, false otherwise.
-  bool remove(Line line) {
+  bool remove(Line? line) {
     if (line == null) return false;
-    if (line._ver1._shape != this.shape) return false;
+    if (line._ver1?.shape != this.shape) return false;
     line.dispose();
     return true;
   }
 
   /// Removes all lines which match each other based on the given matcher.
-  void removeRepeats([LineMatcher matcher = null]) {
+  void removeRepeats([LineMatcher? matcher = null]) {
     matcher ??= new ExactLineMatcher();
     for (int i = this._lines.length-1; i >= 0; --i) {
       Line lineA = this._lines[i];
-      if (lineA != null) {
-        for (int j = i - 1; j >= 0; --j) {
-          Line lineB = this._lines[j];
-          if (lineB != null) {
-            if (matcher.matches(lineA, lineB)) {
-              lineA.dispose();
-              break;
-            }
-          }
+      for (int j = i - 1; j >= 0; --j) {
+        Line lineB = this._lines[j];
+        if (matcher.matches(lineA, lineB)) {
+          lineA.dispose();
+          break;
         }
       }
     }
@@ -103,21 +97,17 @@ class ShapeLineCollection {
 
   /// Removes all lines which match each other based
   /// on the given matcher and share a vertex.
-  void removeVertexRepeats([LineMatcher matcher = null]) {
+  void removeVertexRepeats([LineMatcher? matcher = null]) {
     matcher ??= new ExactLineMatcher();
     for (int k = this._shape.vertices.length-1; k >= 0; --k) {
       Vertex ver = this._shape.vertices[k];
-      for (int i = ver._lines.length-1; i >= 0; --i) {
-        Line lineA = ver._lines[i];
-        if (lineA != null) {
-          for (int j = i - 1; j >= 0; --j) {
-            Line lineB = ver._lines[j];
-            if (lineB != null) {
-              if (matcher.matches(lineA, lineB)) {
-                lineA.dispose();
-                break;
-              }
-            }
+      for (int i = ver.lines.length-1; i >= 0; --i) {
+        Line lineA = ver.lines[i];
+        for (int j = i - 1; j >= 0; --j) {
+          Line lineB = ver.lines[j];
+          if (matcher.matches(lineA, lineB)) {
+            lineA.dispose();
+            break;
           }
         }
       }
@@ -128,7 +118,7 @@ class ShapeLineCollection {
   void removeCollapsed() {
     for (int i = this._lines.length-1; i >= 0; --i) {
       Line line = this._lines[i];
-      if ((line == null) || line.collapsed) line.dispose();
+      if (line.collapsed) line.dispose();
     }
   }
 
@@ -137,12 +127,11 @@ class ShapeLineCollection {
 
   /// Gets the formatted string for this lines with and optional [indent].
   String format([String indent = ""]) {
-    List<String> parts = new List<String>();
+    List<String> parts = [];
     final int count = this._lines.length;
     for (int i = 0; i < count; ++i) {
       Line line = this._lines[i];
-      if (line == null) parts.add("$indent$i. null");
-      else parts.add(line.format(indent+"$i. "));
+      parts.add(line.format(indent+"$i. "));
     }
     return parts.join('\n');
   }

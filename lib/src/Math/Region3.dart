@@ -110,8 +110,8 @@ class Region3 {
     this.z + this.dz/2.0);
 
   /// Expands the region to include the given point, [pnt].
-  Region3 expandWithPoint(Point3 pnt) =>
-    this.expand(pnt.x, pnt.y, pnt.z);
+  Region3 expandWithPoint(Point3? pnt) =>
+    (pnt == null) ? this : this.expand(pnt.x, pnt.y, pnt.z);
 
   /// Expands the region to include the given location components.
   Region3 expand(double x, double y, double z) {
