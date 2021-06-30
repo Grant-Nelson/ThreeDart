@@ -36,10 +36,10 @@ class AttributeContainer {
   int get count => this._attrs.length;
 
   /// Gets the attribute at [i].
-  Attribute at(int i) => this._attrs[i];
+  Attribute? at(int i) => this._attrs[i];
 
   /// Gets the attribute with the given [name].
-  Attribute operator [](String name) {
+  Attribute? operator [](String name) {
     for (Attribute attr in this._attrs) {
         if(attr.name == name) return attr;
     }

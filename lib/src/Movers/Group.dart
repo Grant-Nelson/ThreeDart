@@ -1,13 +1,13 @@
 part of ThreeDart.Movers;
 
 /// A mover which groups several movers.
-class Group extends Collections.Collection<Mover> implements Mover {
+class Group extends Collections.Collection<Mover?> implements Mover {
   Events.Event? _changed = null;
   Math.Matrix4 _mat = Math.Matrix4.identity;
   int _frameNum = 0;
 
   /// Creates a new group of movers.
-  Group([List<Mover>? movers = null]) {
+  Group([List<Mover?>? movers = null]) {
     this.setHandlers(
       onAddedHndl:   this._onAdded,
       onRemovedHndl: this._onRemoved);
@@ -57,12 +57,11 @@ class Group extends Collections.Collection<Mover> implements Mover {
       this._frameNum = state.frameNumber;
       this._changed?.suspend();
       Math.Matrix4? mat = null;
-      for (Mover mover in this) {
-        Math.Matrix4 next = mover.update(state, obj);
-        if (mat == null) {
-          mat = next;
-        } else {
-          mat = next*mat;
+      for (Mover? mover in this) {
+        if (mover != null) {
+          Math.Matrix4 next = mover.update(state, obj);
+          if (mat == null) mat = next;
+          else mat = next*mat;
         }
       }
       this._mat = mat ?? Math.Matrix4.identity;

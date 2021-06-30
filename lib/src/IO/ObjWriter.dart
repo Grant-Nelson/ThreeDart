@@ -30,9 +30,8 @@ class _objWriter {
   List<String> get lines => this._lines;
 
   /// Stringifies the given double with the configured decimals.
-  String _toStr(double value) {
-    return value.toStringAsFixed(this._decimals);
-  }
+  String _toStr(double value) =>
+    value.toStringAsFixed(this._decimals);
 
   /// Adds a shape to the object file.
   void addShape(Shapes.Shape shape) {
@@ -43,22 +42,38 @@ class _objWriter {
     if (this._texture && this._txtCube) shape.calculateCubeTextures();
     for (int i = 0; i < vertexCount; i++) {
       Shapes.Vertex vertex = shape.vertices[i];
-      this._lines.add('v '+this._toStr(vertex.location.x)+' '+this._toStr(vertex.location.y)+' '+this._toStr(vertex.location.z));
+
+      var loc = vertex.location;
+      if (loc == null)
+        throw new Exception('May not write vertex $i because it has a null location.');
+      this._lines.add('v '+this._toStr(loc.x)+' '+this._toStr(loc.y)+' '+this._toStr(loc.z));
+
       if (this._texture) {
-        if (this._txtCube)
-          this._lines.add('vt '+this._toStr(vertex.textureCube.dx)+' '+this._toStr(vertex.textureCube.dy)+' '+this._toStr(vertex.textureCube.dz));
-        else this._lines.add('vt '+this._toStr(vertex.texture2D.x)+' '+this._toStr(vertex.texture2D.y));
+        if (this._txtCube) {
+          var txt = vertex.textureCube;
+          if (txt != null)
+            this._lines.add('vt '+this._toStr(txt.dx)+' '+this._toStr(txt.dy)+' '+this._toStr(txt.dz));
+        } else {
+          var txt = vertex.texture2D;
+          if (txt != null)
+            this._lines.add('vt '+this._toStr(txt.x)+' '+this._toStr(txt.y));
+        }
       }
-      if (this._normals) this._lines.add('vn '+this._toStr(vertex.normal.dx)+' '+this._toStr(vertex.normal.dy)+' '+this._toStr(vertex.normal.dz));
+
+      if (this._normals) {
+        var norm = vertex.normal;
+        if (norm != null)
+          this._lines.add('vn '+this._toStr(norm.dx)+' '+this._toStr(norm.dy)+' '+this._toStr(norm.dz));
+      }
     }
     this._totalVertices += vertexCount;
 
     final int faceCount = shape.faces.length;
     for (int i = 0; i < faceCount; i++) {
       Shapes.Face face = shape.faces[i];
-      int v1 = face.vertex1.index + offset;
-      int v2 = face.vertex2.index + offset;
-      int v3 = face.vertex3.index + offset;
+      int v1 = (face.vertex1?.index ?? 0) + offset;
+      int v2 = (face.vertex2?.index ?? 0) + offset;
+      int v3 = (face.vertex3?.index ?? 0) + offset;
       if (this._texture) {
         if (this._normals)
           this._lines.add('f ${v1}/${v1}/${v1} ${v2}/${v2}/${v2} ${v3}/${v3}/${v3}');

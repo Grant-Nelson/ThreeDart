@@ -292,7 +292,7 @@ class _materialLightFS {
       buf.writeln("   if(attenuation <= 0.005) return vec3(0.0, 0.0, 0.0);");
       buf.writeln("");
     }
-    List<String> parts = new List<String>();
+    List<String> parts = [];
     parts.add("lit.color");
     if (light.hasAttenuation) parts.add("attenuation");
     buf.writeln("   return ${parts.join(" * ")};");
@@ -301,7 +301,7 @@ class _materialLightFS {
 
     buf.writeln("vec3 ${name}Value(vec3 norm, $title lit)");
     buf.writeln("{");
-    parts = new List<String>();
+    parts = [];
     if (cfg.ambient.hasAny) parts.add("ambientColor");
     if (cfg.intense) {
       buf.writeln("   vec3 highLight = vec3(0.0, 0.0, 0.0);");
@@ -317,7 +317,7 @@ class _materialLightFS {
 
       buf.writeln("   vec3 intensity = ${name}Intensity(normDir, litPnt, lit);");
       buf.writeln("   if(length(intensity) > 0.0001) {");
-      List<String> subparts = new List<String>();
+      List<String> subparts = [];
       if (cfg.diffuse.hasAny)    subparts.add("diffuse(norm, normDir)");
       if (cfg.invDiffuse.hasAny) subparts.add("invDiffuse(norm, normDir)");
       if (cfg.specular.hasAny)   subparts.add("specular(norm, normDir)");
@@ -372,11 +372,11 @@ class _materialLightFS {
     if (light.colorTexture) params += ", sampler2D txt2D";
     buf.writeln("vec3 ${name}Value(vec3 norm, $title lit${params})");
     buf.writeln("{");
-    List<String> parts = new List<String>();
+    List<String> parts = [];
     if (cfg.ambient.hasAny) parts.add("ambientColor");
     if (cfg.intense) {
       buf.writeln("   vec3 highLight = vec3(0.0, 0.0, 0.0);");
-      List<String> subparts = new List<String>();
+      List<String> subparts = [];
       if (cfg.diffuse.hasAny)    subparts.add("diffuse(norm, lit.viewDir)");
       if (cfg.invDiffuse.hasAny) subparts.add("invDiffuse(norm, lit.viewDir)");
       if (cfg.specular.hasAny)   subparts.add("specular(norm, lit.viewDir)");
@@ -468,7 +468,7 @@ class _materialLightFS {
       buf.writeln("   if(depth > dist2) return vec3(0.0, 0.0, 0.0);");
       buf.writeln("");
     }
-    List<String> parts = new List<String>();
+    List<String> parts = [];
     parts.add("lit.color");
     if (light.hasAttenuation) parts.add("attenuation");
     if (light.colorTexture)   parts.add("textureCube(txtCube, invNormDir).rgb");
@@ -478,7 +478,7 @@ class _materialLightFS {
 
     buf.writeln("vec3 ${name}Value(vec3 norm, $title lit$params)");
     buf.writeln("{");
-    parts = new List<String>();
+    parts = [];
     if (cfg.ambient.hasAny) parts.add("ambientColor");
     if (cfg.intense) {
       buf.writeln("   vec3 highLight = vec3(0.0, 0.0, 0.0);");
@@ -490,7 +490,7 @@ class _materialLightFS {
       buf.writeln("   vec3 normDir = normalize(viewPos - lit.viewPnt);");
       buf.writeln("   vec3 intensity = ${name}Intensity(normDir, lit$params);");
       buf.writeln("   if(length(intensity) > 0.0001) {");
-      List<String> subparts = new List<String>();
+      List<String> subparts = [];
       if (cfg.diffuse.hasAny)    subparts.add("diffuse(norm, normDir)");
       if (cfg.invDiffuse.hasAny) subparts.add("invDiffuse(norm, normDir)");
       if (cfg.specular.hasAny)   subparts.add("specular(norm, normDir)");
@@ -612,7 +612,7 @@ class _materialLightFS {
       buf.writeln("   if(depth > dist2) return vec3(0.0, 0.0, 0.0);");
       buf.writeln("");
     }
-    List<String> parts = new List<String>();
+    List<String> parts = [];
     if (light.hasAttenuation) parts.add("attenuation");
     if (light.hasCutOff)      parts.add("scale");
     if (light.colorTexture)   parts.add("texture2D(txt2D, txtLoc).rgb");
@@ -623,7 +623,7 @@ class _materialLightFS {
 
     buf.writeln("vec3 ${name}Value(vec3 norm, $title lit$params)");
     buf.writeln("{");
-    parts = new List<String>();
+    parts = [];
     if (cfg.ambient.hasAny) parts.add("ambientColor");
     if (cfg.intense) {
       buf.writeln("   vec3 highLight = vec3(0.0, 0.0, 0.0);");
@@ -635,7 +635,7 @@ class _materialLightFS {
       buf.writeln("   vec3 intensity = ${name}Intensity(lit$params);");
       buf.writeln("   if(length(intensity) > 0.0001) {");
       buf.writeln("      vec3 litVec = normalize(viewPos - lit.viewPnt);");
-      List<String> subparts = new List<String>();
+      List<String> subparts = [];
       if (cfg.diffuse.hasAny)    subparts.add("diffuse(norm, litVec)");
       if (cfg.invDiffuse.hasAny) subparts.add("invDiffuse(norm, litVec)");
       if (cfg.specular.hasAny)   subparts.add("specular(norm, litVec)");
@@ -678,7 +678,7 @@ class _materialLightFS {
     buf.writeln("vec3 nonLightValues(vec3 norm)");
     buf.writeln("{");
     if (cfg.intense) buf.writeln("   vec3 litVec = vec3(0.0, 0.0, 1.0);");
-    List<String> parts = new List<String>();
+    List<String> parts = [];
     if (cfg.ambient.hasAny)    parts.add("ambientColor");
     if (cfg.diffuse.hasAny)    parts.add("diffuse(norm, litVec)");
     if (cfg.invDiffuse.hasAny) parts.add("invDiffuse(norm, litVec)");
@@ -753,7 +753,7 @@ class _materialLightFS {
     if (cfg.environmental) {
       buf.writeln("   vec3 refl = reflect(normalize(viewPos), norm);");
     }
-    List<String> fragParts = new List<String>();
+    List<String> fragParts = [];
     if (cfg.lights) {
       buf.writeln("   vec3 lightAccum = vec3(0.0, 0.0, 0.0);");
       fragParts.add("lightAccum");

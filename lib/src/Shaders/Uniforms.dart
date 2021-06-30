@@ -38,7 +38,7 @@ class UniformContainer {
   Uniform at(int i) => this._uniforms[i];
 
   /// Gets the uniform variable by the name.
-  Uniform operator [](String name) {
+  Uniform? operator [](String name) {
     for (Uniform uniform in this._uniforms) {
         if(uniform.name == name) return uniform;
     }
@@ -48,7 +48,7 @@ class UniformContainer {
   /// Gets the uniform variable by the name.
   /// If the uniform doesn't exist an exception will be thrown.
   Uniform required(String name) {
-    Uniform uniform = this[name];
+    Uniform? uniform = this[name];
     if (uniform == null) {
       throw new Exception("Required uniform value, $name, was not defined or used in shader.");
     }
@@ -189,7 +189,7 @@ class Uniform4i extends Uniform {
 
 /// The uniform variable for a single integer array.
 class Uniform1iv extends Uniform {
-  List<int> _values;
+  List<int> _values = [];
 
   /// Creates a new single integer array uniform variable.
   Uniform1iv._(gl, program, name, size, loc): super._(gl, program, name, loc) {
@@ -199,7 +199,7 @@ class Uniform1iv extends Uniform {
 
   /// The size of the array;
   int get size => this._size;
-  int _size;
+  int _size = 0;
 
   /// Gets the list containing a single integer array.
   List<int> getList() => this.rawValue;

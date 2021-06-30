@@ -12,11 +12,11 @@ class GaussianBlur extends Technique {
   Events.Event _changed;
 
   /// Creates a new cover Gaussian blur technique with the given initial values.
-  GaussianBlur({Textures.Texture2D colorTxt: null,
-                Textures.Texture2D blurTxt:  null,
-                Math.Matrix3       txtMat:   null,
-                Math.Vector4       blurAdj:  null,
-                Math.Vector2       blurDir:  null,
+  GaussianBlur({Textures.Texture2D? colorTxt: null,
+                Textures.Texture2D? blurTxt:  null,
+                Math.Matrix3?       txtMat:   null,
+                Math.Vector4?       blurAdj:  null,
+                Math.Vector2?       blurDir:  null,
                 double blurValue:  0.0}) {
     this._shader     = null;
     this._txtMat     = null;

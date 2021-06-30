@@ -107,22 +107,22 @@ class TextureLayout extends Shader {
     return buf.toString();
   }
 
-  Attribute _posAttr;
-  Uniform1i _txtCount;
-  Uniform4f _backClr;
-  List<UniformSampler2D> _txts;
-  List<UniformMat4> _clrMats;
-  List<Uniform2f> _srcLocs;
-  List<Uniform2f> _srcSizes;
-  List<Uniform2f> _destLocs;
-  List<Uniform2f> _destSizes;
-  List<Uniform1i> _flips;
+  Attribute? _posAttr  = null;
+  Uniform1i? _txtCount = null;
+  Uniform4f? _backClr  = null;
+  List<UniformSampler2D?> _txts = [];
+  List<UniformMat4?> _clrMats = [];
+  List<Uniform2f?> _srcLocs   = [];
+  List<Uniform2f?> _srcSizes  = [];
+  List<Uniform2f?> _destLocs  = [];
+  List<Uniform2f?> _destSizes = [];
+  List<Uniform1i?> _flips     = [];
 
   /// Checks for the shader in the shader cache in the given [state],
   /// if it is not found then this shader is compiled and added
   /// to the shader cache before being returned.
   factory TextureLayout.cached(int maxTxtCount, ColorBlendType blend, Core.RenderState state) {
-    TextureLayout shader = state.shader(_getName(maxTxtCount, blend));
+    TextureLayout? shader = state.shader(_getName(maxTxtCount, blend)) as TextureLayout?;
     if (shader == null) {
       shader = new TextureLayout(maxTxtCount, blend, state.gl);
       state.addShader(shader);
@@ -137,59 +137,51 @@ class TextureLayout extends Shader {
     this._posAttr   = this.attributes["posAttr"];
     this._txtCount  = this.uniforms.required("txtCount") as Uniform1i;
     this._backClr   = this.uniforms.required("backClr") as Uniform4f;
-    this._txts      = new List<UniformSampler2D>();
-    this._clrMats   = new List<UniformMat4>();
-    this._srcLocs   = new List<Uniform2f>();
-    this._srcSizes  = new List<Uniform2f>();
-    this._destLocs  = new List<Uniform2f>();
-    this._destSizes = new List<Uniform2f>();
-    this._flips     = new List<Uniform1i>();
     for (int i = 0; i < maxTxtCount; ++i) {
-      this._txts.add(this._uniforms.required("txt$i") as UniformSampler2D);
-      this._clrMats.add(this._uniforms.required("clrMat$i") as UniformMat4);
-      this._srcLocs.add(this._uniforms.required("srcLoc$i") as Uniform2f);
-      this._srcSizes.add(this._uniforms.required("srcSize$i") as Uniform2f);
-      this._destLocs.add(this._uniforms.required("destLoc$i") as Uniform2f);
-      this._destSizes.add(this._uniforms.required("destSize$i") as Uniform2f);
-      this._flips.add(this._uniforms.required("flip$i") as Uniform1i);
+      this._txts.add(this.uniforms.required("txt$i") as UniformSampler2D?);
+      this._clrMats.add(this.uniforms.required("clrMat$i") as UniformMat4?);
+      this._srcLocs.add(this.uniforms.required("srcLoc$i") as Uniform2f?);
+      this._srcSizes.add(this.uniforms.required("srcSize$i") as Uniform2f?);
+      this._destLocs.add(this.uniforms.required("destLoc$i") as Uniform2f?);
+      this._destSizes.add(this.uniforms.required("destSize$i") as Uniform2f?);
+      this._flips.add(this.uniforms.required("flip$i") as Uniform1i?);
     }
   }
 
   /// The position vertex shader attribute.
-  Attribute get posAttr => this._posAttr;
+  Attribute? get posAttr => this._posAttr;
 
   /// The background color to put behind the layout.
-  Math.Color4 get backgroundColor => this._backClr.getColor4();
-  set backgroundColor(Math.Color4 value) => this._backClr.setColor4(value);
+  Math.Color4 get backgroundColor => this._backClr?.getColor4() ?? Math.Color4.white();
+  set backgroundColor(Math.Color4 value) => this._backClr?.setColor4(value);
 
   /// The number of textures to layout.
-  int get textureCount => this._txtCount.getValue();
-  set textureCount(int value) => this._txtCount.setValue(value);
+  int get textureCount => this._txtCount?.getValue() ?? 0;
+  set textureCount(int value) => this._txtCount?.setValue(value);
 
   /// Sets the texture at the given [index] to cover with.
   void setTexture(int index, Textures.Texture2D txt) =>
-    this._txts[index].setTexture2D(txt);
+    this._txts[index]?.setTexture2D(txt);
 
   /// Sets the color matrix at the given [index].
-  void setColorMatrix(int index, Math.Matrix4 mat) =>
-    this._clrMats[index].setMatrix4(mat ?? Math.Matrix4.identity);
+  void setColorMatrix(int index, Math.Matrix4? mat) =>
+    this._clrMats[index]?.setMatrix4(mat ?? Math.Matrix4.identity);
 
   /// Sets the source rectangle at the given [index].
-  void setSourceRect(int index, Math.Region2 rect) {
+  void setSourceRect(int index, Math.Region2? rect) {
     rect ??= Math.Region2.unit;
-    this._srcLocs[index].setValues(rect.x, rect.y);
-    this._srcSizes[index].setValues(rect.dx, rect.dy);
+    this._srcLocs[index]?.setValues(rect.x, rect.y);
+    this._srcSizes[index]?.setValues(rect.dx, rect.dy);
   }
 
   /// Sets the destination rectangle at the given [index].
-  void setDestinationRect(int index, Math.Region2 rect) {
+  void setDestinationRect(int index, Math.Region2? rect) {
     rect ??= Math.Region2.unit;
-    this._destLocs[index].setValues(rect.x, rect.y);
-    this._destSizes[index].setValues(rect.dx, rect.dy);
+    this._destLocs[index]?.setValues(rect.x, rect.y);
+    this._destSizes[index]?.setValues(rect.dx, rect.dy);
   }
 
   /// Sets if the texture should be flipped at the given [index].
-  void setFlip(int index, bool flip) {
-    this._flips[index].setValue(flip? 1: 0);
-  }
+  void setFlip(int index, bool flip) =>
+    this._flips[index]?.setValue(flip? 1: 0);
 }
