@@ -2,19 +2,17 @@ part of ThreeDart.Techniques;
 
 /// A material light color component which allows a specular value to be assigned.
 class MaterialLightSpecularComponent extends MaterialLightColorComponent {
-  double _shininess;
+  double _shininess = 100.0;
 
   /// Creates a new specular component for the given [owner].
-  MaterialLightSpecularComponent._(MaterialLight owner, String name): super._(owner, name) {
-    this._shininess = 100.0;
-  }
+  MaterialLightSpecularComponent._(MaterialLight owner, String name): super._(owner, name);
 
   /// Handles setting the shininess specular member.
   void _setShininess(double shininess) {
     if (!Math.Comparer.equals(this._shininess, shininess)) {
       double prev = this._shininess;
       this._shininess = shininess;
-      this._onChanged(new Events.ValueChangedEventArgs(this, "${this._name}.shininess", prev, this._shininess));
+      this._onChanged(new Events.ValueChangedEventArgs(this, this._name+'.shininess', prev, this._shininess));
     }
   }
 
@@ -33,7 +31,6 @@ class MaterialLightSpecularComponent extends MaterialLightColorComponent {
   /// The specular color or scalar on the specular texture for the material.
   double get shininess => this._shininess;
   set shininess(double value) {
-    value ??= 100.0;
     if (value <= 0.0) {
       this._setNewType(this._type.enableSolid(false));
       this._setShininess(0.0);

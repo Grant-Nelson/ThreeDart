@@ -2,12 +2,10 @@ part of ThreeDart.Techniques;
 
 /// A material light component which allows setting an alpha value.
 class MaterialLightAlphaComponent extends MaterialLightBaseComponent {
-  double _alpha;
+  double _alpha = 1.0;
 
   /// Creates a new alpha material light component for the given [owner].
-  MaterialLightAlphaComponent._(MaterialLight owner, String name): super._(owner, name) {
-    this._alpha = 1.0;
-  }
+  MaterialLightAlphaComponent._(MaterialLight owner, String name): super._(owner, name);
 
   /// Handles setting the alpha member if it has changed.
   void _setAlpha(double alpha) {
@@ -33,7 +31,6 @@ class MaterialLightAlphaComponent extends MaterialLightBaseComponent {
   /// The alpha scalar for the color for the material.
   double get value => this._alpha;
   set value(double value) {
-    value ??= 1.0;
     if (value <= 0.0) {
       this._setNewType(this._type.enableSolid(false));
       this._setAlpha(0.0);

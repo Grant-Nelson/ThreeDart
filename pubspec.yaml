@@ -1,6 +1,8 @@
 name: ThreeDart
 version: 0.1.2
 description: 3D graphical rendering tool for websites written in Dart.
+publish_to: none
+
 environment:
   sdk: '>=2.13.3'
 

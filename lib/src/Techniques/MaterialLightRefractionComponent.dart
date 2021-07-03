@@ -2,19 +2,17 @@ part of ThreeDart.Techniques;
 
 /// A material light component which allows refraction to be assigned.
 class MaterialLightRefractionComponent extends MaterialLightColorComponent {
-  double _refraction;
+  double _refraction = 1.0;
 
   /// Creates a new refraction material light component for the given [owner].
-  MaterialLightRefractionComponent._(MaterialLight owner, String name): super._(owner, name) {
-    this._refraction = 1.0;
-  }
+  MaterialLightRefractionComponent._(MaterialLight owner, String name): super._(owner, name);
 
   /// Handles setting the refraction member if it has changed.
   void _setRefraction(double refraction) {
     if (!Math.Comparer.equals(this._refraction, refraction)) {
       double prev = this._refraction;
       this._refraction = refraction;
-      this._onChanged(new Events.ValueChangedEventArgs(this, "${this._name}.refraction", prev, this._refraction));
+      this._onChanged(new Events.ValueChangedEventArgs(this, this._name+'.refraction', prev, this._refraction));
     }
   }
 
@@ -33,7 +31,6 @@ class MaterialLightRefractionComponent extends MaterialLightColorComponent {
   /// The refraction scalar for the distortion for the material.
   double get deflection => this._refraction;
   set deflection(double value) {
-    value ??= 1.0;
     if (value <= 0.0) {
       this._setNewType(this._type.enableSolid(false));
       this._setRefraction(0.0);

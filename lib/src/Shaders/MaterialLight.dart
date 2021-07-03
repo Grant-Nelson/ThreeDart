@@ -427,11 +427,11 @@ class MaterialLight extends Shader {
   set emissionColor(Math.Color3 clr) => this._emissionClr?.setColor3(clr);
 
   /// The emission texture 2D of the object.
-  set emissionTexture2D(Textures.Texture2D txt) =>
+  set emissionTexture2D(Textures.Texture2D? txt) =>
     this._setTexture2D(this._emission2D, txt);
 
   /// The emission texture cube of the object.
-  set emissionTextureCube(Textures.TextureCube txt) =>
+  set emissionTextureCube(Textures.TextureCube? txt) =>
     this._setTextureCube(this._emissionCube, txt);
 
   /// The ambient color scalar of the object.
@@ -439,11 +439,11 @@ class MaterialLight extends Shader {
   set ambientColor(Math.Color3 clr) => this._ambientClr?.setColor3(clr);
 
   /// The ambient texture 2D of the object.
-  set ambientTexture2D(Textures.Texture2D txt) =>
+  set ambientTexture2D(Textures.Texture2D? txt) =>
     this._setTexture2D(this._ambient2D, txt);
 
   /// The ambient texture cube of the object.
-  set ambientTextureCube(Textures.TextureCube txt) =>
+  set ambientTextureCube(Textures.TextureCube? txt) =>
     this._setTextureCube(this._ambientCube, txt);
 
   /// The diffuse color scalar of the object.
@@ -451,11 +451,11 @@ class MaterialLight extends Shader {
   set diffuseColor(Math.Color3 clr) => this._diffuseClr?.setColor3(clr);
 
   /// The diffuse texture 2D of the object.
-  set diffuseTexture2D(Textures.Texture2D txt) =>
+  set diffuseTexture2D(Textures.Texture2D? txt) =>
     this._setTexture2D(this._diffuse2D, txt);
 
   /// The diffuse texture cube of the object.
-  set diffuseTextureCube(Textures.TextureCube txt) =>
+  set diffuseTextureCube(Textures.TextureCube? txt) =>
     this._setTextureCube(this._diffuseCube, txt);
 
   /// The inverse diffuse color scalar of the object.
@@ -463,11 +463,11 @@ class MaterialLight extends Shader {
   set invDiffuseColor(Math.Color3 clr) => this._invDiffuseClr?.setColor3(clr);
 
   /// The inverse diffuse texture 2D of the object.
-  set invDiffuseTexture2D(Textures.Texture2D txt) =>
+  set invDiffuseTexture2D(Textures.Texture2D? txt) =>
     this._setTexture2D(this._invDiffuse2D, txt);
 
   /// The inverse diffuse texture cube of the object.
-  set invDiffuseTextureCube(Textures.TextureCube txt) =>
+  set invDiffuseTextureCube(Textures.TextureCube? txt) =>
     this._setTextureCube(this._invDiffuseCube, txt);
 
   /// The specular color scalar of the object.
@@ -475,11 +475,11 @@ class MaterialLight extends Shader {
   set specularColor(Math.Color3 clr) => this._specularClr?.setColor3(clr);
 
   /// The specular texture 2D of the object.
-  set specularTexture2D(Textures.Texture2D txt) =>
+  set specularTexture2D(Textures.Texture2D? txt) =>
     this._setTexture2D(this._specular2D, txt);
 
   /// The specular texture cube of the object.
-  set specularTextureCube(Textures.TextureCube txt) =>
+  set specularTextureCube(Textures.TextureCube? txt) =>
     this._setTextureCube(this._specularCube, txt);
 
   /// The shininess value of the specular.
@@ -487,15 +487,15 @@ class MaterialLight extends Shader {
   set shininess(double value) => this._shininess?.setValue(value);
 
   /// The normal distortion texture 2D of the object.
-  set bumpTexture2D(Textures.Texture2D txt) =>
+  set bumpTexture2D(Textures.Texture2D? txt) =>
     this._setTexture2D(this._bump2D, txt);
 
   /// The normal distortion texture cube of the object.
-  set bumpTextureCube(Textures.TextureCube txt) =>
+  set bumpTextureCube(Textures.TextureCube? txt) =>
     this._setTextureCube(this._bumpCube, txt);
 
   /// The environment texture cube of the object.
-  set environmentTextureCube(Textures.TextureCube txt) =>
+  set environmentTextureCube(Textures.TextureCube? txt) =>
     this._setTextureCube(this._envSampler, txt);
 
   /// The refraction value of the specular.
@@ -507,11 +507,11 @@ class MaterialLight extends Shader {
   set reflectionColor(Math.Color3 clr) => this._reflectClr?.setColor3(clr);
 
   /// The reflection texture 2D scalar of the object.
-  set reflectionTexture2D(Textures.Texture2D txt) =>
+  set reflectionTexture2D(Textures.Texture2D? txt) =>
     this._setTexture2D(this._reflect2D, txt);
 
   /// The reflection texture cube scalar of the object.
-  set reflectionTextureCube(Textures.TextureCube txt) =>
+  set reflectionTextureCube(Textures.TextureCube? txt) =>
     this._setTextureCube(this._reflectCube, txt);
 
   /// The refraction color scalar of the object.
@@ -519,11 +519,11 @@ class MaterialLight extends Shader {
   set refractionColor(Math.Color3 clr) => this._refractClr?.setColor3(clr);
 
   /// The refraction texture 2D scalar of the object.
-  set refractionTexture2D(Textures.Texture2D txt) =>
+  set refractionTexture2D(Textures.Texture2D? txt) =>
     this._setTexture2D(this._refract2D, txt);
 
   /// The refraction texture cube scalar of the object.
-  set refractionTextureCube(Textures.TextureCube txt) =>
+  set refractionTextureCube(Textures.TextureCube? txt) =>
     this._setTextureCube(this._refractCube, txt);
 
   /// The alpha scalar of the object.
@@ -531,11 +531,11 @@ class MaterialLight extends Shader {
   set alpha(double alpha) => this._alpha?.setValue(alpha);
 
   /// The alpha texture 2D of the object.
-  set alphaTexture2D(Textures.Texture2D txt) =>
+  set alphaTexture2D(Textures.Texture2D? txt) =>
     this._setTexture2D(this._alpha2D, txt);
 
   /// The alpha texture cube of the object.
-  set alphaTextureCube(Textures.TextureCube txt) =>
+  set alphaTextureCube(Textures.TextureCube? txt) =>
     this._setTextureCube(this._alphaCube, txt);
     
   /// The number of currently used bar lights.

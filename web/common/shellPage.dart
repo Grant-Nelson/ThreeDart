@@ -4,11 +4,16 @@ part of ThreeDart.web.common;
 /// easily which will have a consistent look and feel.
 class ShellPage {
   html.DivElement _page;
-  Tokenizer.Tokenizer _parTokenizer;
+  Tokenizer.Tokenizer? _parTokenizer = null;
+  
+  /// Creates a new shell page.
+  ShellPage._(this._page);
 
   /// Creates a new shell page with an optional [title].
-  ShellPage([String title = "", bool showTopTitle = true]) {
-    html.BodyElement body = html.document.body;
+  factory ShellPage([String title = "", bool showTopTitle = true]) {
+    html.BodyElement? body = html.document.body;
+    if (body == null)
+      throw new Exception('The html document body was null.');
 
     html.DivElement scrollTop = new html.DivElement()
       ..className = "scrollTop";
@@ -32,16 +37,17 @@ class ShellPage {
       }
     }
 
-    this._page = new html.DivElement();
-    pageCenter.append(this._page);
-    this._parTokenizer = null;
+    final page = new html.DivElement();
+    pageCenter.append(page);
 
     html.document.onScroll.listen((html.Event e) {
       Timer.run(() {
-        int offset = html.document.documentElement.scrollTop;
+        int offset = html.document.documentElement?.scrollTop ?? 0;
         scrollTop.style.top = "${-0.01*offset}px";
       });
     });
+
+    return new ShellPage._(page);
   }
 
   /// The page element to append new data to.
@@ -81,10 +87,10 @@ class ShellPage {
   /// If the text has square brackets around the text it will be a link.
   /// The link can have a custom location after a vertical bar.
   void addPar(List<String> text) {
-    this._setupParTokenizer();
+    final tok = this._setupParTokenizer();
     html.DivElement parElem = new html.DivElement()
       ..className = "textPar";
-    for (Tokenizer.Token token in this._parTokenizer.tokenize(text.join())) {
+    for (Tokenizer.Token token in tok.tokenize(text.join())) {
       switch(token.name) {
         case "Bold":
           html.DivElement textElem = new html.DivElement()
@@ -135,13 +141,13 @@ class ShellPage {
   /// Gets the code parser for the given [lang].
   CodeParser getCodeParser(String lang) {
     // Full list of parsers, add more as needed.
-    List<CodeParser> parsers = [
+    List<CodeParser?> parsers = [
       new DartParser(),
       new GLSLParser(),
       new HTMLParser()
     ];
 
-    CodeParser parser = parsers.firstWhere((CodeParser parser) => parser.name == lang);
+    CodeParser? parser = parsers.firstWhere((CodeParser? parser) => parser?.name == lang);
     if (parser != null) return parser;
     return new PlainParser();
   }
@@ -368,9 +374,10 @@ class ShellPage {
   ///   (The URL is optional for links internal to the page)
   /// - For code use: "`Code`"
   ///   (This code is not color coded and for short snippets like identifiers)
-  void _setupParTokenizer() {
-    if (this._parTokenizer != null) return;
-    Tokenizer.Tokenizer tok = new Tokenizer.Tokenizer();
+  Tokenizer.Tokenizer _setupParTokenizer() {
+    Tokenizer.Tokenizer? tok = this._parTokenizer;
+    if (tok != null) return tok;
+    tok = new Tokenizer.Tokenizer();
     tok.start("Start");
     tok.join("Start", "Bold")
       ..addSet("*")
@@ -421,5 +428,6 @@ class ShellPage {
     tok.setToken("LinkEnd", "Link");
     tok.setToken("Other", "Other");
     this._parTokenizer = tok;
+    return tok;
   }
 }

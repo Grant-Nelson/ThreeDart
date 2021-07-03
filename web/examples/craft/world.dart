@@ -2,25 +2,23 @@ part of craft;
 
 /// Defines the world shown in 3Dart craft.
 class World {
-  Materials _mats;
+  Materials? _mats;
   Generator _gen;
   List<Chunk> _graveyard;
   List<Chunk> _chunks;
   List<ThreeDart.Entity> _entities;
-  Player _player;
-  Chunk _lastChunk;
+  Player? _player;
+  Chunk? _lastChunk;
 
   /// Creates a new world with the given materials.
-  World(this._mats, this._gen) {
-    this._graveyard = new List<Chunk>();
-    this._chunks = new List<Chunk>();
-    this._entities = new List<ThreeDart.Entity>();
-    this._lastChunk = null;
+  World(this._mats, this._gen) :
+    this._graveyard = [],
+    this._chunks = [],
+    this._entities = [],
+    this._lastChunk = null {
 
-    if (this._mats != null) {
-      for (Techniques.MaterialLight tech in this._mats.materials)
-        this.entities.add(new ThreeDart.Entity(tech: tech));
-    }
+    for (Techniques.MaterialLight tech in this._mats?.materials ?? [])
+      this.entities.add(new ThreeDart.Entity(tech: tech));
 
     // Pre-allocate several chunks into the graveyard.
     for (int i = 0; i < Constants.initialGraveyardSize; i++)
@@ -38,19 +36,19 @@ class World {
   Generator get generator => this._gen;
 
   /// Gets the materials for this world.
-  Materials get materials => this._mats;
+  Materials? get materials => this._mats;
 
   /// Gets all the entities for the world.
   /// These is an entity for each material in the world.
   List<ThreeDart.Entity> get entities => this._entities;
 
   /// Gets or sets the player which is playing in this world.
-  Player get player => this._player;
-  set player(Player player) => this._player = player;
+  Player? get player => this._player;
+  set player(Player? player) => this._player = player;
 
   /// Finds a chunk with the specific given [x] and [z].
   /// Returns null if no chunk for that location is found.
-  Chunk findChunk(int x, int z) {
+  Chunk? findChunk(int x, int z) {
     for (Chunk chunk in this._chunks) {
       if ((chunk.x == x) && (chunk.z == z)) return chunk;
     }
@@ -58,7 +56,7 @@ class World {
   }
 
   /// Gets the block closest to this given location.
-  BlockInfo getBlock(double x, double y, double z) {
+  BlockInfo? getBlock(double x, double y, double z) {
     int tx = x.floor();
     int ty = y.floor();
     int tz = z.floor();
@@ -67,7 +65,8 @@ class World {
     int cz = (tz < 0)? tz - Constants.chunkSideSize + 1: tz;
     cx = (cx ~/ Constants.chunkSideSize) * Constants.chunkSideSize;
     cz = (cz ~/ Constants.chunkSideSize) * Constants.chunkSideSize;
-    Chunk chunk = this.findChunk(cx, cz);
+    Chunk? chunk = this.findChunk(cx, cz);
+    if (chunk == null) return null;
 
     int bx = tx - cx;
     int by = ty;
@@ -79,7 +78,7 @@ class World {
   }
 
   /// The location of the player in the world.
-  Math.Point3 get _playerPoint => this._player.point ?? Math.Point3.zero;
+  Math.Point3 get _playerPoint => this._player?.point ?? Math.Point3.zero;
 
   /// Adds and removes chunks as needed.
   void worldTick(_) {
@@ -95,14 +94,13 @@ class World {
   }
 
   // Animates the water texture.
-  void animationTick(_) {
-    this._mats.waterChanger.nextTexture();
-  }
+  void animationTick(_) =>
+    this._mats?.waterChanger.nextTexture();
 
   /// Gets a chunk from the graveyard or creates a new one.
   /// This will prepare the chunk for the given [x] and [z] world location.
   Chunk prepareChunk(int x, int z) {
-    Chunk chunk = this._graveyard.removeLast() ?? new Chunk(this);
+    Chunk chunk = (this._graveyard.isNotEmpty ? this._graveyard.removeLast() : null) ?? new Chunk(this);
     chunk.prepare(x, z);
     this._chunks.add(chunk);
     return chunk;
@@ -111,7 +109,7 @@ class World {
   /// Frees the given chunk and puts it in the graveyard
   /// if the chunk is non-null and currently in use.
   /// Returns true if disposed, false if not.
-  bool disposeChunk(Chunk chunk) {
+  bool disposeChunk(Chunk? chunk) {
     if ((chunk != null) && this._chunks.remove(chunk)) {
       chunk.freeup();
       this._graveyard.add(chunk);
@@ -123,7 +121,8 @@ class World {
   /// Updates chunks which are loaded and removes any loaded chunks
   /// which aren't needed anymore.
   void _updateLoadedChunks(Math.Point3 player) {
-    BlockInfo pBlock = this.getBlock(player.x, player.y, player.z);
+    BlockInfo? pBlock = this.getBlock(player.x, player.y, player.z);
+    if (pBlock == null) return;
 
     // Check if the last chunk
     if (this._lastChunk != pBlock.chunk) {
@@ -144,7 +143,7 @@ class World {
       int minZIn = pBlock.chunkZ - Constants.minChunkDist, maxZIn = pBlock.chunkZ + Constants.minChunkDist;
       for (int x = minXIn; x < maxXIn; x += Constants.chunkSideSize) {
         for (int z = minZIn; z < maxZIn; z += Constants.chunkSideSize) {
-          Chunk oldChunk = this.findChunk(x, z);
+          Chunk? oldChunk = this.findChunk(x, z);
           if (oldChunk == null) this.prepareChunk(x, z);
         }
       }
@@ -155,7 +154,7 @@ class World {
   void _generateChunk(Math.Point3 player) {
     double edgeX = player.x - Constants.chunkSideSize*0.5;
     double edgeZ = player.z - Constants.chunkSideSize*0.5;
-    Chunk nearest = null;
+    Chunk? nearest = null;
     double minDist2 = 1.0e-9;
     for (Chunk chunk in this._chunks) {
       if (chunk.needToGenerate) {
@@ -177,7 +176,7 @@ class World {
   void _refreshDirty(Math.Point3 player) {
     double edgeX = player.x - Constants.chunkSideSize*0.5;
     double edgeZ = player.z - Constants.chunkSideSize*0.5;
-    Chunk nearest = null;
+    Chunk? nearest = null;
     double minDist2 = 1.0e-9;
     for (Chunk chunk in this._chunks) {
       if (chunk.dirty) {
@@ -198,7 +197,8 @@ class World {
 
   /// Gets the neighboring block to the given block with the
   /// given [ray] pointing at the side to get the neighbor for.
-  NeighborBlockInfo getNeighborBlock(BlockInfo info, Math.Ray3 ray, Math.Ray3 back, int depth) {
+  NeighborBlockInfo? getNeighborBlock(BlockInfo? info, Math.Ray3 ray, Math.Ray3 back, int depth) {
+    if (info == null) return null;
     Math.Region3 region = info.blockRegion;
     Intersections.RayRegion3Result inter = Intersections.rayRegion3(back, region);
 
@@ -215,7 +215,7 @@ class World {
 
   /// Updates the world to the player's view.
   void update(Events.EventArgs args) {
-    Math.Matrix4 mat = this.player.location.matrix;
+    Math.Matrix4 mat = this.player?.location.matrix ?? Math.Matrix4.identity;
     Math.Point3 loc3 = mat.transPnt3(Math.Point3.zero);
     Math.Point3 front3 = mat.transPnt3(new Math.Point3(0.0, 0.0, -Constants.chunkSideSize.toDouble()));
     Math.Point2 loc = new Math.Point2(loc3.x, loc3.z);

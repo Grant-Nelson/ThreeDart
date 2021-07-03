@@ -18,16 +18,18 @@ void main() {
       "Resizing the canvas works better in Chrome."])
     ..addPar(["«[Back to Tests|../]"]);
 
-  Element canvas = document.getElementById("testCanvas");
+  Element? canvas = document.getElementById("testCanvas");
+  if (canvas == null)
+    throw new Exception('Failed to find test canvas');
   canvas.style
-    ..width = "100%"
+    ..width  = "100%"
     ..height = "100%"
     ..margin = "-4px";
   Element div = new DivElement();
   div.style
-    ..border = "2px solid"
-    ..padding = "10px"
-    ..resize = "both"
+    ..border   = "2px solid"
+    ..padding  = "10px"
+    ..resize   = "both"
     ..overflow = "auto";
   canvas.replaceWith(div);
   div.children.add(canvas);

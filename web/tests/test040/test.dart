@@ -42,15 +42,15 @@ void main() {
   Shapes.Shape flatShape = Shapes.square();
   ThreeDart.Entity entity = new ThreeDart.Entity(shape: flatShape);
 
-  Shapes.Shape heightShape;
+  Shapes.Shape? heightShape = null;
   height.changed.add((_) {
     Textures.TextureReader heightReader = td.textureLoader.readAll(height);
-    heightShape = Shapes.grid(widthDiv: 150, heightDiv: 150);
-    heightShape.calculateNormals();
-    heightShape.applyHeightMap(heightReader, 0.05);
-    heightShape.trimVertices(~Data.VertexType.Norm);
-    heightShape.trimFaces(norm: false);
-    heightShape.calculateNormals();
+    Shapes.Shape shape = heightShape = Shapes.grid(widthDiv: 150, heightDiv: 150);
+    shape.calculateNormals();
+    shape.applyHeightMap(heightReader, 0.05);
+    shape.trimVertices(~Data.VertexType.Norm);
+    shape.trimFaces(norm: false);
+    shape.calculateNormals();
   });
 
   Views.Perspective userCamera = new Views.Perspective()

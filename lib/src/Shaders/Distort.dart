@@ -108,11 +108,11 @@ class Distort extends Shader {
   set bumpTextureMatrix(Math.Matrix3 mat) => this._bumpTxt2DMat?.setMatrix3(mat);
 
   /// The color texture to cover with.
-  set colorTexture(Textures.Texture2D txt) =>
+  set colorTexture(Textures.Texture2D? txt) =>
     this._setTexture2D(this._colorTxt, txt);
 
   /// The bump distortion texture to cover with.
-  set bumpTexture(Textures.Texture2D txt) =>
+  set bumpTexture(Textures.Texture2D? txt) =>
     this._setTexture2D(this._bumpTxt, txt);
 
   /// The matrix for modifying the bump normals.

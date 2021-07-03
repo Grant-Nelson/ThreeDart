@@ -2,44 +2,41 @@ part of ThreeDart.Techniques;
 
 /// A technique for a cover pass with a distorted image based off depth.
 class Distort extends Technique {
-  Shaders.Distort _shader;
+  Shaders.Distort? _shader = null;
 
   /// TODO: Need to allow the color texture to also be a Cube texture.
-  Textures.Texture2D _colorTxt;
-  Textures.Texture2D _bumpTxt;
-  Math.Matrix3 _colorTxt2DMat;
-  Math.Matrix3 _bumpTxt2DMat;
-  Math.Matrix4 _bumpMat;
-  Events.Event _changed;
+  Textures.Texture2D? _colorTxt = null;
+  Textures.Texture2D? _bumpTxt = null;
+  Math.Matrix3 _colorTxt2DMat = Math.Matrix3.identity;
+  Math.Matrix3 _bumpTxt2DMat = Math.Matrix3.identity;
+  Math.Matrix4 _bumpMat = Math.Matrix4.identity;
+  Events.Event? _changed = null;
 
   /// Creates a new distort cover technique with the given initial values.
-  Distort({Textures.Texture2D colorTxt: null,
-           Textures.Texture2D bumpTxt: null,
-           Math.Matrix3 colorTxt2DMat: null,
-           Math.Matrix3 bumpTxt2DMat: null,
-           Math.Matrix4 bumpMat: null}) {
+  Distort({Textures.Texture2D? colorTxt: null,
+           Textures.Texture2D? bumpTxt: null,
+           Math.Matrix3? colorTxt2DMat: null,
+           Math.Matrix3? bumpTxt2DMat: null,
+           Math.Matrix4? bumpMat: null}) {
     this._shader = null;
     this.colorTexture = colorTxt;
     this.bumpTexture = bumpTxt;
-    this.colorTexture2DMatrix = colorTxt2DMat;
-    this.bumpTexture2DMatrix = bumpTxt2DMat;
-    this.bumpMatrix = bumpMat;
+    this.colorTexture2DMatrix = colorTxt2DMat ?? Math.Matrix3.identity;
+    this.bumpTexture2DMatrix = bumpTxt2DMat ?? Math.Matrix3.identity;
+    this.bumpMatrix = bumpMat ?? Math.Matrix4.identity;
   }
 
   /// Indicates that this technique has changed.
-  Events.Event get changed {
+  Events.Event get changed =>
     this._changed ??= new Events.Event();
-    return this._changed;
-  }
 
   /// Handles a change in this technique.
-  void _onChanged([Events.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs? args = null]) =>
     this._changed?.emit(args);
-  }
 
   /// The color texture.
-  Textures.Texture2D get colorTexture => this._colorTxt;
-  set colorTexture(Textures.Texture2D txt) {
+  Textures.Texture2D? get colorTexture => this._colorTxt;
+  set colorTexture(Textures.Texture2D? txt) {
     if (this._colorTxt != txt) {
       this._colorTxt = txt;
       this._onChanged();
@@ -47,8 +44,8 @@ class Distort extends Technique {
   }
 
   /// The bump texture.
-  Textures.Texture2D get bumpTexture => this._bumpTxt;
-  set bumpTexture(Textures.Texture2D txt) {
+  Textures.Texture2D? get bumpTexture => this._bumpTxt;
+  set bumpTexture(Textures.Texture2D? txt) {
     if (this._bumpTxt != txt) {
       this._bumpTxt = txt;
       this._onChanged();
@@ -58,7 +55,6 @@ class Distort extends Technique {
   /// The color texture modification matrix.
   Math.Matrix3 get colorTexture2DMatrix => this._colorTxt2DMat;
   set colorTexture2DMatrix(Math.Matrix3 mat) {
-    mat ??= Math.Matrix3.identity;
     if (this._colorTxt2DMat != mat) {
       this._colorTxt2DMat = mat;
       this._onChanged();
@@ -68,7 +64,6 @@ class Distort extends Technique {
   /// The bump texture modification matrix.
   Math.Matrix3 get bumpTexture2DMatrix => this._bumpTxt2DMat;
   set bumpTexture2DMatrix(Math.Matrix3 mat) {
-    mat ??= Math.Matrix3.identity;
     if (this._bumpTxt2DMat != mat) {
       this._bumpTxt2DMat = mat;
       this._onChanged();
@@ -78,7 +73,6 @@ class Distort extends Technique {
   /// The matrix to modify the bump normal with.
   Math.Matrix4 get bumpMatrix => this._bumpMat;
   set bumpMatrix(Math.Matrix4 mat) {
-    this._bumpMat = mat ?? Math.Matrix4.identity;
     if (this._bumpMat != mat) {
       this._bumpMat = mat;
       this._onChanged();
@@ -86,10 +80,10 @@ class Distort extends Technique {
   }
 
   /// Gets the vertex source code used for the shader used by this technique.
-  String get vertexSourceCode => this._shader?.vertexSourceCode;
+  String get vertexSourceCode => this._shader?.vertexSourceCode ?? '';
 
   /// Gets the fragment source code used for the shader used by this technique.
-  String get fragmentSourceCode => this._shader?.fragmentSourceCode;
+  String get fragmentSourceCode => this._shader?.fragmentSourceCode ?? '';
 
   /// Updates this technique for the given state.
   void update(Core.RenderState state) {
@@ -97,7 +91,7 @@ class Distort extends Technique {
   }
 
   /// Checks if the texture is in the list and if not, sets it's index and adds it to the list.
-  void _addToTextureList(List<Textures.Texture> textures, Textures.Texture txt) {
+  void _addToTextureList(List<Textures.Texture> textures, Textures.Texture? txt) {
     if (txt != null) {
       if (!textures.contains(txt)) {
         txt.index = textures.length;
@@ -111,19 +105,22 @@ class Distort extends Technique {
     this._shader ??= new Shaders.Distort.cached(state);
 
     if (obj.cacheNeedsUpdate) {
-      obj.cache = obj.shapeBuilder.build(new Data.WebGLBufferBuilder(state.gl), Data.VertexType.Pos|Data.VertexType.Txt2D)
-        ..findAttribute(Data.VertexType.Pos).attr = this._shader.posAttr.loc
-        ..findAttribute(Data.VertexType.Txt2D).attr = this._shader.txtAttr.loc;
+      obj.cache = obj.shapeBuilder?.build(new Data.WebGLBufferBuilder(state.gl), Data.VertexType.Pos|Data.VertexType.Txt2D)
+        ?..findAttribute(Data.VertexType.Pos)?.attr = this._shader?.posAttr?.loc ?? 0
+        ..findAttribute(Data.VertexType.Txt2D)?.attr = this._shader?.txtAttr?.loc ?? 1;
     }
 
-    List<Textures.Texture> textures = new List<Textures.Texture>();
+    List<Textures.Texture> textures = [];
     this._addToTextureList(textures, this._colorTxt);
     this._addToTextureList(textures, this._bumpTxt);
+    if (textures.length <= 0) return;
+
     for (int i = 0; i < textures.length; i++) {
       textures[i].bind(state);
     }
+  
     this._shader
-      ..bind(state)
+      ?..bind(state)
       ..colorTexture = this._colorTxt
       ..bumpTexture = this._bumpTxt
       ..projectViewObjectMatrix = state.projectionViewObjectMatrix
@@ -137,7 +134,7 @@ class Distort extends Technique {
         ..render(state)
         ..unbind(state);
     } else obj.clearCache();
-    this._shader.unbind(state);
+    this._shader?.unbind(state);
 
     for (int i = 0; i < textures.length; i++) {
       textures[i].unbind(state);

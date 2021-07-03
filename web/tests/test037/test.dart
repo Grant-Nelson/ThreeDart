@@ -42,17 +42,18 @@ void main() {
 
   td.scene = new Scenes.EntityPass()
     ..children.add(group)
-    ..camera.mover = new Movers.Constant.translate(0.0, 0.0, 5.0);
+    ..camera?.mover = new Movers.Constant.translate(0.0, 0.0, 5.0);
 
-  Shapes.Shape baseShape = null;
+  Shapes.Shape? baseShape = null;
   String textureFile = "";
   double scalar = 1.0;
   var updateShape = () {
-    if ((baseShape != null) && (textureFile.isNotEmpty)) {
+    Shapes.Shape? localShape = baseShape;
+    if ((localShape != null) && (textureFile.isNotEmpty)) {
       Textures.Texture2D heightMap = td.textureLoader.load2DFromFile(textureFile);
       heightMap.changed.add((_) {
         Textures.TextureReader heightReader = td.textureLoader.readAll(heightMap);
-        Shapes.Shape shape = new Shapes.Shape.copy(baseShape);
+        Shapes.Shape shape = new Shapes.Shape.copy(localShape);
         shape.calculateNormals();
         shape.applyHeightMap(heightReader, scalar);
         shape.trimVertices(~Data.VertexType.Norm);

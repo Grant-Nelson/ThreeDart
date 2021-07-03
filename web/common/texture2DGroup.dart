@@ -16,13 +16,16 @@ class Texture2DGroup {
 
   /// The handler to change the selected texture.
   texture2DSelectedHndl _hndl;
+  
+  /// Creates a new radio button group for selecting a texture.
+  Texture2DGroup._(this._elemId, this._hndl, this._keepInURL, this._elem);
 
   /// Creates a new radio button group for selecting a texture.
-  Texture2DGroup(this._elemId, texture2DSelectedHndl this._hndl, [this._keepInURL = true]) {
-    this._elem = html.document.getElementById(this._elemId);
-    if (this._elem == null) {
-      throw "Failed to find $_elemId for Texture2DGroup";
-    }
+  factory Texture2DGroup(String elemId, texture2DSelectedHndl hndl, [bool keepInURL = true]) {
+    html.Element? elem = html.document.getElementById(elemId);
+    if (elem == null)
+      throw new Exception('Failed to find $elemId for Texture2DGroup');
+    return new Texture2DGroup._(elemId, hndl, keepInURL, elem);
   }
 
   /// Adds a new texture radio button.
@@ -31,15 +34,15 @@ class Texture2DGroup {
       ..src = fileName
       ..width = 64
       ..height = 64
-      ..style.border = "solid 2px white";
+      ..style.border = 'solid 2px white';
 
     final int index = this._elem.children.length;
     imgElem.onClick.listen((_) {
         this._elem.children.forEach((html.Element elem) {
           if (elem is html.ImageElement)
-            elem.style.border = "solid 2px white";
+            elem.style.border = 'solid 2px white';
         });
-        imgElem.style.border = "solid 2px black";
+        imgElem.style.border = 'solid 2px black';
 
         this._hndl(fileName);
         this._updateUrl(index);
@@ -49,7 +52,7 @@ class Texture2DGroup {
     this._elem.children.add(new html.BRElement());
 
     bool itemIsChecked = false;
-    String urlText = Uri.base.queryParameters['$_elemId'];
+    String? urlText = Uri.base.queryParameters[this._elemId];
     if (urlText == null) {
       itemIsChecked = checkedByDefault;
       this._updateUrl(index);

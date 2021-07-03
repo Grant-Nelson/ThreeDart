@@ -102,7 +102,7 @@ class Rotator extends Mover {
   /// Updates the rotation mover.
   ///
   /// This updates with the given [state] and the [obj] this mover is attached to.
-  Math.Matrix4 update(Core.RenderState state, Movable obj) {
+  Math.Matrix4 update(Core.RenderState state, Movable? obj) {
     if (this._frameNum < state.frameNumber) {
       this._frameNum = state.frameNumber;
       this._changed?.suspend();

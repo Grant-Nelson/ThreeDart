@@ -19,7 +19,7 @@ class PlainParser extends CodeParser {
   }
 
   /// Implmented but has no effect for the plain parser.
-  Tokenizer.Tokenizer createTokenizer() {
+  Tokenizer.Tokenizer? createTokenizer() {
     // Do Nothing
     return null;
   }

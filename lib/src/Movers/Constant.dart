@@ -109,7 +109,7 @@ class Constant extends Mover {
   /// Updates the mover, in this case just returns the current matrix.
   ///
   /// This updates with the given [state] and the [obj] this mover is attached to.
-  Math.Matrix4 update(Core.RenderState state, Movable obj) => this._mat;
+  Math.Matrix4 update(Core.RenderState state, Movable? obj) => this._mat;
 
   /// Determines if the given [other] variable is a [Constant] equal to this one.
   ///

@@ -80,11 +80,11 @@ class GaussianBlur extends Shader {
   set blurScalar(Math.Vector2 vec) => this._blurScale?.setVector2(vec);
 
   /// The color texture to cover with.
-  set colorTexture(Textures.Texture2D txt) =>
+  set colorTexture(Textures.Texture2D? txt) =>
     this._setTexture2D(this._colorTxt, txt);
 
   /// The blur texture to cover with.
-  set blurTexture(Textures.Texture2D txt) =>
+  set blurTexture(Textures.Texture2D? txt) =>
     this._setTexture2D(this._blurTxt, txt);
 
   /// The blur value to use when not using a texture.

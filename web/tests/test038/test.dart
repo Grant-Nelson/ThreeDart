@@ -98,7 +98,7 @@ void main() {
 
   td.scene = new Scenes.EntityPass()
     ..children.add(group)
-    ..camera.mover = camera;
+    ..camera?.mover = camera;
 
   new common.CheckGroup("options")
     ..add("Mouse Locking", (bool enable) { td.userInput.lockOnClick = enable; }, false);

@@ -15,12 +15,15 @@ class RadioGroup {
   /// The element to fill with radio buttons.
   html.Element _elem;
 
+  /// Creates a new radio button group.
+  RadioGroup._(this._elemId, this._keepInURL, this._elem);
+
   /// Creates a new radio button group in the element with the given [elemId] name.
-  RadioGroup(this._elemId, [this._keepInURL = true]) {
-    this._elem = html.document.getElementById(this._elemId);
-    if (this._elem == null) {
-      throw "Failed to find $_elemId for RadioGroup";
-    }
+  factory RadioGroup(String elemId, [bool keepInURL = true]) {
+    html.Element? elem = html.document.getElementById(elemId);
+    if (elem == null)
+      throw new Exception('Failed to find $elemId for RadioGroup');
+    return new RadioGroup._(elemId, keepInURL, elem);
   }
 
   /// Adds a new radio button to this group.
@@ -28,7 +31,7 @@ class RadioGroup {
     if (this._elem == null) return;
 
     bool itemIsChecked = false;
-    String selectedItem = Uri.base.queryParameters['$_elemId'];
+    String? selectedItem = Uri.base.queryParameters[this._elemId];
     if (selectedItem == null) {
       if (selectedByDefault) {
         itemIsChecked = true;
@@ -40,13 +43,13 @@ class RadioGroup {
       hndl();
     }
 
-    html.LabelElement label = new html.LabelElement()..style.whiteSpace = "nowrap";
+    html.LabelElement label = new html.LabelElement()..style.whiteSpace = 'nowrap';
     this._elem.children.add(label);
     html.RadioButtonInputElement checkBox = new html.RadioButtonInputElement()
       ..checked = itemIsChecked
       ..name = this._elemId;
     checkBox.onChange.listen((_) {
-      if (checkBox.checked) {
+      if (checkBox.checked ?? false) {
         hndl();
         this._updateUrl(text);
       }

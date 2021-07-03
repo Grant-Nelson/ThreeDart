@@ -45,7 +45,7 @@ void main() {
     ..technique = tech
     ..children.add(room)
     ..children.add(centerObj)
-    ..camera.mover = camMover;
+    ..camera?.mover = camMover;
   td.scene = pass;
 
   Math.Color3 clr = new Math.Color3(1.0, 0.0, 0.0);

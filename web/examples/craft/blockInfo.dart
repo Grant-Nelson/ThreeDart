@@ -24,7 +24,7 @@ class BlockInfo {
   final int chunkZ;
 
   /// The chunk this block belongs to or null if the chunk doesn't exist.
-  final Chunk chunk;
+  final Chunk? chunk;
 
   /// Creates a new block info.
   BlockInfo(this.x, this.y, this.z, this.chunkX, this.chunkZ, this.chunk);
@@ -36,18 +36,18 @@ class BlockInfo {
   int get worldZ => this.z + this.chunkZ;
 
   /// Creates a new block info for the one above this info.
-  BlockInfo get above =>
+  BlockInfo? get above =>
     new BlockInfo(this.x, this.y+1, this.z, this.chunkX, this.chunkZ, this.chunk);
 
   /// Creates a new block info for the one below this info.
-  BlockInfo get below =>
+  BlockInfo? get below =>
     new BlockInfo(this.x, this.y-1, this.z, this.chunkX, this.chunkZ, this.chunk);
 
   /// Creates a new block info for the one to the right of this info.
-  BlockInfo get right {
+  BlockInfo? get right {
     int x = this.x + 1;
     int chunkX = this.chunkX;
-    Chunk chunk = this.chunk;
+    Chunk? chunk = this.chunk;
     if (x >= Constants.chunkSideSize) {
       x = 0;
       chunkX += Constants.chunkSideSize;
@@ -57,10 +57,10 @@ class BlockInfo {
   }
 
   /// Creates a new block info for the one to the left of this info.
-  BlockInfo get left {
+  BlockInfo? get left {
     int x = this.x - 1;
     int chunkX = this.chunkX;
-    Chunk chunk = this.chunk;
+    Chunk? chunk = this.chunk;
     if (x < 0) {
       x = Constants.chunkSideSize-1;
       chunkX -= Constants.chunkSideSize;
@@ -70,10 +70,10 @@ class BlockInfo {
   }
 
   /// Creates a new block info for the one to the front of this info.
-  BlockInfo get front {
+  BlockInfo? get front {
     int z = this.z + 1;
     int chunkZ = this.chunkZ;
-    Chunk chunk = this.chunk;
+    Chunk? chunk = this.chunk;
     if (z >= Constants.chunkSideSize) {
       z = 0;
       chunkZ += Constants.chunkSideSize;
@@ -83,10 +83,10 @@ class BlockInfo {
   }
 
   /// Creates a new block info for the one to the back of this info.
-  BlockInfo get back {
+  BlockInfo? get back {
     int z = this.z - 1;
     int chunkZ = this.chunkZ;
-    Chunk chunk = this.chunk;
+    Chunk? chunk = this.chunk;
     if (z < 0) {
       z = Constants.chunkSideSize-1;
       chunkZ -= Constants.chunkSideSize;
@@ -97,7 +97,7 @@ class BlockInfo {
 
   /// Creates a new block info for the one to the given region direction from this info.
   /// This only works for single direction component, no diagonals.
-  BlockInfo neighbor(Math.HitRegion region) {
+  BlockInfo? neighbor(Math.HitRegion region) {
     if (region == Math.HitRegion.XNeg) return this.left;
     else if (region == Math.HitRegion.XPos) return this.right;
     else if (region == Math.HitRegion.YNeg) return this.below;
@@ -118,7 +118,7 @@ class BlockInfo {
   Math.HitRegion solidNeighbors() {
     Math.HitRegion neighbors = Math.HitRegion.None;
 
-    BlockInfo info = this.left;
+    BlockInfo? info = this.left;
     if ((info != null) && BlockType.solid(info.value)) neighbors |= Math.HitRegion.XNeg;
     info = this.right;
     if ((info != null) && BlockType.solid(info.value)) neighbors |= Math.HitRegion.XPos;
@@ -136,10 +136,9 @@ class BlockInfo {
     return neighbors;
   }
 
-
   /// Gets the block info string for debugging.
   @override
-  String toString() => "$chunk.block($x, $y, $z, ($chunkX, $chunkZ), ${BlockType.string(value)})";
+  String toString() => '$chunk.block($x, $y, $z, ($chunkX, $chunkZ), ${BlockType.string(value)})';
 
   /// Gets or sets the block value for this block.
   int get value => this.chunk?.getBlock(x, y, z) ?? ((y < 0)? BlockType.Boundary: BlockType.Air);

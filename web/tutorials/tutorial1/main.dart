@@ -105,7 +105,7 @@ void main() {
 
   Scenes.EntityPass pass = new Scenes.EntityPass()
     ..children.add(obj)
-    ..camera.mover = new Movers.Constant.translate(0.0, 0.0, 5.0);
+    ..camera?.mover = new Movers.Constant.translate(0.0, 0.0, 5.0);
 
   new ThreeDart.ThreeDart.fromId("tutorial1")
     ..scene = pass;

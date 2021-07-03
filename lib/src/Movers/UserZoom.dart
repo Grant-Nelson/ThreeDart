@@ -102,7 +102,7 @@ class UserZoom implements Mover, Input.Interactable {
   }
 
   /// Updates this mover and returns the matrix for the given object.
-  Math.Matrix4 update(Core.RenderState state, Movable obj) {
+  Math.Matrix4 update(Core.RenderState state, Movable? obj) {
     if (this._frameNum < state.frameNumber) {
       this._frameNum = state.frameNumber;
       double pow = math.pow(10.0, this._zoom).toDouble();
