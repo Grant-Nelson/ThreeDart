@@ -121,7 +121,7 @@ class Line {
   /// The [indent] is added to the front when provided.
   String format([String indent = ""]) {
     if (this.disposed) return "${indent}disposed";
-    return indent + Math.formatInt(this._ver1?.index ?? 0) +
-             ", " + Math.formatInt(this._ver2?.index ?? 0);
+    return indent + Math.formatInt(this._ver1?.index ?? -1) +
+             ", " + Math.formatInt(this._ver2?.index ?? -1);
   }
 }

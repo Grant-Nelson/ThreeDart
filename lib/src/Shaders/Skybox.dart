@@ -40,12 +40,12 @@ class Skybox extends Shader {
       "   gl_FragColor = vec4(boxClr*textureCube(boxTxt, txtCube).xyz, 1.0); \n"+
       "}                                                                     \n";
 
-  Attribute? _posAttr;
-  Uniform1f? _fov;
-  Uniform1f? _ratio;
-  Uniform3f? _boxClr;
-  UniformSamplerCube? _boxTxt;
-  UniformMat4? _viewMat;
+  Attribute? _posAttr = null;
+  Uniform1f? _fov     = null;
+  Uniform1f? _ratio   = null;
+  Uniform3f? _boxClr  = null;
+  UniformSamplerCube? _boxTxt = null;
+  UniformMat4? _viewMat = null;
 
   /// Checks for the shader in the shader cache in the given [state],
   /// if it is not found then this shader is compiled and added

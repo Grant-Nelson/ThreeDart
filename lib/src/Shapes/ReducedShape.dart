@@ -7,44 +7,51 @@ class ReducedShape implements ShapeBuilder {
   final Data.VertexType _type;
 
   /// The number of base vertex types in the vertex type.
-  int _typeCount = 0;
+  final int _typeCount;
 
   /// The stride between vertex data.
-  int _stride = 0;
+  final int _stride;
 
   /// The current number of vertices in this shape.
-  int _vertexCount = 0;
+  int _vertexCount;
 
   /// The set of buffer attributes for setting up to render this shape.
-  List<Data.BufferAttr> _attrs = [];
+  List<Data.BufferAttr> _attrs;
 
   /// The set of vertex data for the shape.
-  List<double> _vertices = [];
+  List<double> _vertices;
 
   /// The set of indices for the points to render.
-  List<int> _points = [];
+  List<int> _points;
 
   /// The set of indices to vertices in sets of two for each line to render.
-  List<int> _lines = [];
+  List<int> _lines;
 
   /// The set of indices to vertices in sets of three for each face to render.
-  List<int> _faces = [];
+  List<int> _faces;
 
   /// The calculated axial aligned bounding box.
-  Math.Region3? _aabb = null;
+  Math.Region3? _aabb;
 
   /// The event emitted when the shape has been changed.
-  Events.Event? _changed = null;
+  Events.Event? _changed;
 
   /// Creates a new reduced shape with a specific vertex type.
   /// This isn't nearly as flexible as [Shape] and doesn't provides
   /// the ability to calculate values and change vertex types.
   /// The reduced shape uses much less memory and is faster.
-  ReducedShape(this._type) {
-    this._typeCount = this._type.count;
-    this._stride = this._type.size;
-    this._vertexCount = 0;
-  }
+  ReducedShape(Data.VertexType type):
+    this._type      = type,
+    this._typeCount = type.count,
+    this._stride    = type.size,
+    this._vertexCount = 0,
+    this._attrs    = [],
+    this._vertices = [],
+    this._points   = [],
+    this._lines    = [],
+    this._faces    = [],
+    this._aabb     = null,
+    this._changed  = null;
 
   /// The changed event to signal when ever the shape is modified.
   Events.Event get changed =>

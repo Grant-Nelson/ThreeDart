@@ -81,6 +81,6 @@ class Point {
   /// The [indent] is added to the front when provided.
   String format([String indent = ""]) {
     if (this.disposed) return "${indent}disposed";
-    return "${indent}${Math.formatInt(this._ver?.index ?? 0)}";
+    return "${indent}${Math.formatInt(this._ver?.index ?? -1)}";
   }
 }

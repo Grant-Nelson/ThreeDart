@@ -296,9 +296,9 @@ class Face {
   String format([String indent = ""]) {
     if (this.disposed) return "${indent}disposed";
     String result = indent +
-        Math.formatInt(this._ver1?.index ?? 0)+', '+
-        Math.formatInt(this._ver2?.index ?? 0)+', '+
-        Math.formatInt(this._ver3?.index ?? 0)+' {';
+        Math.formatInt(this._ver1?.index ?? -1)+', '+
+        Math.formatInt(this._ver2?.index ?? -1)+', '+
+        Math.formatInt(this._ver3?.index ?? -1)+' {';
     result += (this._norm?.toString() ?? '-')+', ';
     result += (this._binm?.toString() ?? '-')+'}';
     return result;
