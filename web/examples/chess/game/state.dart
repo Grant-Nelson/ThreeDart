@@ -8,22 +8,22 @@ class State {
   static final int Stalemate = 3; /// Indicates the game condition has reached stalemate.
 
   /// The tile values for all of the tiles on a chess board.
-  List<int> _data = [];
+  List<int> _data;
 
   /// The next state after this state or null if there is none.
   /// This next state is usually set to be used for redo and
   /// is overwrote when a movement is applied.
-  State? next = null;
+  State? next;
 
   /// The previous state before this state or null if there is none.
   /// This previous state is usually set to be used for undo.
-  State? prev = null;
+  State? prev;
 
   /// Creates a new state.
-  State() {
-    int empty = TileValue.Empty.value;
-    this._data = new List<int>.generate(64, (_) => empty, growable: false);
-  }
+  State():
+    this._data = new List<int>.filled(64, TileValue.Empty.value, growable: false),
+    this.next = null,
+    this.prev = null;
 
   /// Creates a new state which is set to the initial chess board state.
   factory State.initial() {

@@ -21,25 +21,31 @@ class Tile extends ThreeDart.Entity {
   bool _white;
 
   /// Indicates if this tile is selected.
-  bool _selected = false;
+  bool _selected;
 
   /// Indicates if this tile is highlighted.
-  bool _highlighted = false;
+  bool _highlighted;
 
   /// Indicates that the pick color should be rendered.
-  bool _showPick = false;
+  bool _showPick;
   
   /// The technique for drawing the pick color for this tile.
-  Techniques.SolidColor? _pickTech = null;
+  Techniques.SolidColor? _pickTech;
 
   /// The child entity for the shown color of this tile.
-  ThreeDart.Entity? _colorEntity = null;
+  ThreeDart.Entity? _colorEntity;
 
   /// The child entity for the pick color of this tile.
-  ThreeDart.Entity? _pickEntity = null;
+  ThreeDart.Entity? _pickEntity;
 
   /// Creates a new tile entity.
-  Tile(ThreeDart.ThreeDart td, Board this._board, bool this._white, game.Location this._loc) {
+  Tile(ThreeDart.ThreeDart td, Board this._board, bool this._white, game.Location this._loc):
+    this._selected    = false,
+    this._highlighted = false,
+    this._showPick    = false,
+    this._pickTech    = null,
+    this._colorEntity = null,
+    this._pickEntity  = null {
     ThreeDart.Entity? colorShapeEntity = _colorShapeEntity;
     ThreeDart.Entity? pickShapeEntity  = _pickShapeEntity;
     if (colorShapeEntity == null || pickShapeEntity == null) {

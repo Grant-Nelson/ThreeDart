@@ -15,20 +15,24 @@ typedef MovementCallback = void Function(Movement move);
 class Game {
 
   /// Indicates if it is (true) white's turn or (false) black's turn.
-  bool _whiteTurn = true;
+  bool _whiteTurn;
 
   /// The condition of the current state of the game.
-  int _condition = State.Normal;
+  int _condition;
 
   /// The current board state of the game with potentially previous
   /// and future states for undo/redo.
-  State _state = new State.initial();
+  State _state;
 
   /// Indicates the game has changed state, condition, and/or turn.
-  Events.Event? _changed = null;
+  Events.Event? _changed;
 
   /// Creates a new chess game.
-  Game();
+  Game():
+    this._whiteTurn = true,
+    this._condition = State.Normal,
+    this._state     = new State.initial(),
+    this._changed   = null;
 
   /// Indicates if it is (true) white's turn or (false) black's turn.
   bool get whiteTurn => this._whiteTurn;

@@ -11,15 +11,17 @@ class StringGrid {
   final int columns;
   
   /// The content for each cell of the grid stored by column then row.
-  List<String> _content = [];
+  List<String> _content;
 
   /// A flag to indicate if the row and column numbers should be shown.
-  bool showLabels = false;
+  bool showLabels;
 
   /// Constructs a new empty string grid tool.
-  StringGrid([int this.rows = 8, int this.columns = 8]) {
-    this._content = new List.filled(this.rows * this.columns, '');
-  }
+  StringGrid([int rows = 8, int columns = 8]):
+    this.rows    = rows,
+    this.columns = columns,
+    this._content = new List.filled(rows * columns, ''),
+    this.showLabels = false;
 
   /// Parses a set of strings which represents a grid.
   /// The columns in each given row are separated by a pipe character.

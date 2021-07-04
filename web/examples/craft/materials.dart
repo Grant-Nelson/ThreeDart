@@ -30,16 +30,23 @@ class CubeData {
 /// This loads and prepares all the materials (colors and textures) used for rendering.
 class Materials {
   ThreeDart.ThreeDart _td;
-  Map<int, CubeData> _cubeData = {};
-  Map<int, List<int>> _matData = {};
-  List<Techniques.MaterialLight> _mats = [];
-  Lights.Directional? _light = null;
-  Techniques.MaterialLight? _selection = null;
-  Techniques.MaterialLight? _crosshair = null;
-  Textures.Texture2DChanger? _waterChanger = null;
+  Map<int, CubeData> _cubeData;
+  Map<int, List<int>> _matData;
+  List<Techniques.MaterialLight> _mats;
+  Lights.Directional? _light;
+  Techniques.MaterialLight? _selection;
+  Techniques.MaterialLight? _crosshair;
+  Textures.Texture2DChanger? _waterChanger;
 
   /// Creates a new material collection and starts loading the materials.
-  Materials(this._td) {
+  Materials(this._td):
+    this._cubeData = {},
+    this._matData  = {},
+    this._mats     = [],
+    this._light        = null,
+    this._selection    = null,
+    this._crosshair    = null,
+    this._waterChanger = null {
     // Create the light source attached to most of the textures a used for the world being created.
     this._light = new Lights.Directional(color: new Math.Color3.white(),
       mover: new Movers.Constant.lookAtTarget(Math.Point3.zero,

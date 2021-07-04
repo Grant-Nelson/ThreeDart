@@ -3,17 +3,23 @@ part of graphics;
 /// The board entity which contains tiles, pieces, and edges.
 class Board extends ThreeDart.Entity {
   game.Game _game;
-  List<Piece> _pieces = [];
-  List<Tile> _tiles = [];
-  List<game.Movement> _moves = [];
-  ThreeDart.Entity? _table = null;
-  ThreeDart.Entity? _edges = null;
+  List<Piece> _pieces;
+  List<Tile> _tiles;
+  List<game.Movement> _moves;
+  ThreeDart.Entity? _table;
+  ThreeDart.Entity? _edges;
   Materials _mats;
-  bool _showPick = false;
+  bool _showPick;
 
   /// Creates a board for the given game.
   Board(ThreeDart.ThreeDart td, this._game):
-    this._mats = new Materials(td) {
+    this._pieces = [],
+    this._tiles  = [],
+    this._moves  = [],
+    this._table = null,
+    this._edges = null,
+    this._mats  = new Materials(td),
+    this._showPick = false {
     this.name = "board";
 
     for (int i = 1; i <= 8; i++) {

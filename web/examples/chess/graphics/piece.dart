@@ -7,19 +7,28 @@ abstract class Piece extends ThreeDart.Entity {
   double _angle;
   double _scalar;
 
-  game.Location _loc = new game.Location(0, 0);
-  Movers.Constant _mover = new Movers.Constant();
-  game.TileValue _stateItem = game.TileValue.Empty;
-  bool _selected    = false;
-  bool _highlighted = false;
-  bool _showPick    = false;
+  game.Location _loc;
+  Movers.Constant _mover;
+  game.TileValue _stateItem;
+  bool _selected;
+  bool _highlighted;
+  bool _showPick;
 
-  Techniques.SolidColor? _pickTech = null;
-  ThreeDart.Entity? _colorEntity = null;
-  ThreeDart.Entity? _pickEntity  = null;
+  Techniques.SolidColor? _pickTech;
+  ThreeDart.Entity? _colorEntity;
+  ThreeDart.Entity? _pickEntity;
 
   /// Creates a new piece.
-  Piece._(this._board, this._white, this._angle, this._scalar);
+  Piece._(this._board, this._white, this._angle, this._scalar):
+    this._loc = new game.Location(0, 0),
+    this._mover       = new Movers.Constant(),
+    this._stateItem   = game.TileValue.Empty,
+    this._selected    = false,
+    this._highlighted = false,
+    this._showPick    = false,
+    this._pickTech    = null,
+    this._colorEntity = null,
+    this._pickEntity  = null;
 
   /// Must be called by the inheriting piece kind to finish initialize the piece.
   void _initialize(String name, game.TileValue stateItem, ThreeDart.Entity colorShapeEntity, ThreeDart.Entity pickShapeEntity) {
