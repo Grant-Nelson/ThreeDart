@@ -13,21 +13,23 @@ part 'Smoothers.dart';
 /// Animation is used for running a set of timed events.
 class Animation {
   /// Indicates the animation is running.
-  bool _running = false;
+  bool _running;
 
   /// Indicates the animation should restart after the last shifter finishes.
-  bool _loop = false;
+  bool _loop;
 
   /// Is the start time for the animation.
-  DateTime _start = DateTime.now();
+  DateTime _start;
 
   /// The set of shifters for the animation.
-  List<Shifter> _shifters = [];
+  List<Shifter> _shifters;
 
   /// Creates a new animation which optionally loops.
-  Animation({bool loop: false}) {
-    this._loop = loop;
-  }
+  Animation({bool loop: false}):
+    this._running = false,
+    this._loop = loop,
+    this._start = DateTime.now(),
+    this._shifters = [];
 
   /// Adds a shifter to this animation.
   Shifter add({int delay: 0, int duration: 1000, bool init: false, Smoother? easing: null}) {

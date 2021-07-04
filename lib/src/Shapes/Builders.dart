@@ -376,7 +376,7 @@ Shape knot({int minorCount: 12, int majorCount: 120, double minorRadius: 0.3, do
   });
 }
 
-/// Creates a cylindrical path is a bend cylinder with no cap.
+/// Creates a cylindrical path is a bendable cylinder with no caps.
 Shape cylindricalPath(int minorCount, int majorCount, double minorRadius, double majorRadius, func1PntHandle pathHndl) {
   Shape shape = surface(minorCount, majorCount, (Vertex ver, double u, double v) {
     double majorAngle = u*Math.TAU;

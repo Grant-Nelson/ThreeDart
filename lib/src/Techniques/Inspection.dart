@@ -792,8 +792,8 @@ class Inspection extends Technique {
 
   /// Gets the spectrum color for the [bendVal] in the [maxIndex] range.
   Math.Color3 _bendColor(double bendVal, int maxIndex) {
-    if (bendVal < 0.0) {
-      return new Math.Color3.black();
+    if (bendVal < 0.0 || maxIndex <= 0) {
+      return new Math.Color3(0.0, 0.0, 1.0);
     } else {
       double index = ((bendVal + 0.5)*0.5).floorToDouble();
       double value = (bendVal - index*2.0);

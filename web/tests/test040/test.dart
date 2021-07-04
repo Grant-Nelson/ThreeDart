@@ -45,12 +45,12 @@ void main() {
   Shapes.Shape? heightShape = null;
   height.changed.add((_) {
     Textures.TextureReader heightReader = td.textureLoader.readAll(height);
-    Shapes.Shape shape = heightShape = Shapes.grid(widthDiv: 150, heightDiv: 150);
-    shape.calculateNormals();
-    shape.applyHeightMap(heightReader, 0.05);
-    shape.trimVertices(~Data.VertexType.Norm);
-    shape.trimFaces(norm: false);
-    shape.calculateNormals();
+    heightShape = Shapes.grid(widthDiv: 150, heightDiv: 150)
+      ..calculateNormals()
+      ..applyHeightMap(heightReader, 0.05)
+      ..trimVertices(~Data.VertexType.Norm)
+      ..trimFaces(norm: false)
+      ..calculateNormals();
   });
 
   Views.Perspective userCamera = new Views.Perspective()
