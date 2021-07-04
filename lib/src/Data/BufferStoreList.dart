@@ -4,10 +4,11 @@ part of ThreeDart.Data;
 class BufferStoreList implements TechniqueCache {
 
   /// The list of cached buffer stores.
-  List<BufferStore> _list = [];
+  List<BufferStore> _list;
 
   /// Creates a new buffer store list.
-  BufferStoreList();
+  BufferStoreList(): 
+    this._list = [];
 
   /// The list of cached buffer stores.
   List<BufferStore> get list => this._list;
