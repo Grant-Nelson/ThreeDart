@@ -4,50 +4,49 @@ part of ThreeDart.Scenes;
 class Stereoscopic implements Scene {
 
   /// Indicates if the scene is rendered or not.
-  bool _enabled = true;
+  bool _enabled;
 
   /// The left constant for offsetting the camera.
-  Movers.Constant? _leftConstMat = null;
+  Movers.Constant? _leftConstMat;
 
   /// The right constant for offsetting the camera.
-  Movers.Constant? _rightConstMat = null;
+  Movers.Constant? _rightConstMat;
 
   /// The left camera's main mover group.
-  Movers.Group? _leftMovGroup = null;
+  Movers.Group? _leftMovGroup;
 
   /// The right camera's main mover group.
-  Movers.Group? _rightMovGroup = null;
+  Movers.Group? _rightMovGroup;
 
   /// The left camera describing the view of the scene.
-  Views.Perspective? _leftCamera = null;
+  Views.Perspective? _leftCamera;
 
   /// The right camera describing the view of the scene.
-  Views.Perspective? _rightCamera = null;
+  Views.Perspective? _rightCamera;
 
   /// The left target region.
-  Math.Region2? _leftRegion = null;
+  Math.Region2? _leftRegion;
 
   /// The right target region.
-  Math.Region2? _rightRegion = null;
+  Math.Region2? _rightRegion;
 
   /// The target defining the storage to render to.
-  Views.Target? _target = null;
+  Views.Target? _target;
 
   /// The set of passes to run on each side.
-  Collections.Collection<RenderPass> _passes =
-    new Collections.Collection<RenderPass>();
+  Collections.Collection<RenderPass> _passes;
 
   /// The distance between the left and right eye.
-  double _eyeSpacing = 0.1;
+  double _eyeSpacing;
 
   /// The distance to when the left and right image cross.
-  double _focusDistance = 12.0;
+  double _focusDistance;
 
   /// Event emitted on an render for this pass.
-  Events.Event? _onRender = null;
+  Events.Event? _onRender;
 
   /// Event emitted when a pass has changed.
-  Events.Event? _changed = null;
+  Events.Event? _changed;
 
   /// Creates a new render pass.
   Stereoscopic({
@@ -56,27 +55,33 @@ class Stereoscopic implements Scene {
     Views.Target?     target:  null,
     List<RenderPass>? passes:  null,
     double            eyeSpacing:    0.1,
-    double            focusDistance: 12.0
-  }) {
-    this._enabled       = enabled;
-    this._leftConstMat  = new Movers.Constant();
-    this._rightConstMat = new Movers.Constant();
+    double            focusDistance: 12.0}):
+    this._enabled = enabled,
+    this._leftConstMat  = new Movers.Constant(),
+    this._rightConstMat = new Movers.Constant(),
+    this._leftMovGroup  = null,
+    this._rightMovGroup = null,
+    this._leftCamera    = null,
+    this._rightCamera   = null,
+    this._leftRegion    = new Math.Region2(0.0, 0.0, 0.5, 1.0),
+    this._rightRegion   = new Math.Region2(0.5, 0.0, 0.5, 1.0),
+    this._target = null,
+    this._passes = new Collections.Collection<RenderPass>(),
+    this._eyeSpacing    = eyeSpacing,
+    this._focusDistance = focusDistance,
+    this._onRender = null,
+    this._changed  = null {
     this._leftMovGroup  = new Movers.Group([null, this._leftConstMat]);
     this._rightMovGroup = new Movers.Group([null, this._rightConstMat]);
     this._leftCamera    = new Views.Perspective(mover: this._leftMovGroup);
     this._rightCamera   = new Views.Perspective(mover: this._rightMovGroup);
-    this._leftRegion    = new Math.Region2(0.0, 0.0, 0.5, 1.0);
-    this._rightRegion   = new Math.Region2(0.5, 0.0, 0.5, 1.0);
     this._passes.setHandlers(
       onAddedHndl: this._onAddedRenderPass,
       onRemovedHndl: this._onRemovedRenderPass);
     if (passes != null) this._passes.addAll(passes);
-
     this.cameraMover = mover;
     this.target      = target;
     if (passes != null) this._passes.addAll(passes);
-    this._eyeSpacing    = eyeSpacing;
-    this._focusDistance = focusDistance;
     this._updateConstMats();
   }
 

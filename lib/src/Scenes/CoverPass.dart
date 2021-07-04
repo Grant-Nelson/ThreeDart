@@ -4,34 +4,39 @@ part of ThreeDart.Scenes;
 class CoverPass implements RenderPass {
 
   /// Indicates if the scene is rendered or not.
-  bool _enabled = true;
+  bool _enabled;
 
   /// The camera describing the view of the scene.
-  Views.Camera? _camera = null;
+  Views.Camera? _camera;
 
   /// The target defining the storage to render to.
-  Views.Target? _target = null;
+  Views.Target? _target;
 
   /// The default technique to render with.
-  Techniques.Technique? _tech = null;
+  Techniques.Technique? _tech;
 
   /// The box entity to render.
-  Core.Entity _box = new Core.Entity();
+  Core.Entity _box;
 
   /// Event emitted on an render for this pass.
-  Events.Event? _onRender = null;
+  Events.Event? _onRender;
 
   /// Emits when the cover changes.
-  Events.Event? _changed = null;
+  Events.Event? _changed;
 
   /// Creates a new cover render pass.
   CoverPass({
     bool enabled: true,
     Views.Camera? camera: null,
     Views.Target? target: null,
-    Techniques.Technique? tech: null
-  }) {
-    this._enabled   = enabled;
+    Techniques.Technique? tech: null}):
+    this._enabled = enabled,
+    this._camera = null,
+    this._target = null,
+    this._tech   = null,
+    this._box = new Core.Entity(),
+    this._onRender = null,
+    this._changed  = null {
     this._box.shape = Shapes.square();
     this.camera     = camera;
     this.target     = target;
@@ -40,10 +45,9 @@ class CoverPass implements RenderPass {
 
   /// Creates a new cover render pass preset with a skybox technique.
   /// The given [boxTexture] is the cube texture of the skybox.
-  factory CoverPass.skybox(Textures.TextureCube boxTexture) {
-    return new CoverPass()
+  factory CoverPass.skybox(Textures.TextureCube boxTexture) =>
+    new CoverPass()
       ..technique = new Techniques.Skybox(boxTexture: boxTexture);
-  }
 
   /// Event emitted on an render for this pass.
   Events.Event get onRender =>

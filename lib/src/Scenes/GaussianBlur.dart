@@ -4,25 +4,25 @@ part of ThreeDart.Scenes;
 class GaussianBlur implements Scene {
 
   /// Indicates if the scene is rendered or not.
-  bool _enabled = true;
+  bool _enabled;
 
   /// Emits when any scene in the list changes.
-  Events.Event? _changed = null;
+  Events.Event? _changed;
 
   /// The target to render the horizontal blur to.
-  Views.BackTarget? _horzBlurTarget = null;
+  Views.BackTarget _horzBlurTarget;
 
   /// The horizontal blur technique.
-  Techniques.GaussianBlur? _horzBlurTech = null;
+  Techniques.GaussianBlur? _horzBlurTech;
 
   /// The horizontal blur pass.
-  CoverPass? _horzBlurPass = null;
+  CoverPass? _horzBlurPass;
 
   /// The vertical blur technique.
-  Techniques.GaussianBlur? _vertBlurTech = null;
+  Techniques.GaussianBlur? _vertBlurTech;
 
   /// The vertical blur pass.
-  CoverPass? _vertBlurPass = null;
+  CoverPass? _vertBlurPass;
 
   /// Creates a new gaussian blue scene.
   GaussianBlur({
@@ -32,13 +32,14 @@ class GaussianBlur implements Scene {
     Textures.Texture2D? blurTxt:   null,
     Math.Matrix3?       txtMatrix: null,
     Math.Vector4?       blurAdj:   null,
-    Views.Target?       target:    null
-  }) {
-    this._enabled = enabled;
-    this._changed = null;
-
-    this._horzBlurTarget = new Views.BackTarget(autoResize: true, clearColor: false);
-
+    Views.Target?       target:    null}):
+    this._enabled = enabled,
+    this._changed = null,
+    this._horzBlurTarget = new Views.BackTarget(autoResize: true, clearColor: false),
+    this._horzBlurTech = null,
+    this._horzBlurPass = null,
+    this._vertBlurTech = null,
+    this._vertBlurPass = null {
     this._horzBlurTech = new Techniques.GaussianBlur()
       ..changed.add(this._onChanged);
 
@@ -47,7 +48,7 @@ class GaussianBlur implements Scene {
       tech: this._horzBlurTech);
 
     this._vertBlurTech = new Techniques.GaussianBlur(
-      colorTxt: this._horzBlurTarget?.colorTexture,
+      colorTxt: this._horzBlurTarget.colorTexture,
       blurDir: Math.Vector2.posY)
       ..changed.add(this._onChanged);
 

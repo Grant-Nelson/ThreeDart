@@ -4,20 +4,19 @@ part of ThreeDart.Scenes;
 class Compound extends Collections.Collection<Scene> implements Scene {
 
   /// Indicates if the scene is rendered or not.
-  bool _enabled = true;
+  bool _enabled;
 
   /// The control to stop infinite loops by a compound containing itself.
-  bool _loopProtection = false;
+  bool _loopProtection;
 
   /// Emits when any scene in the list changes.
-  Events.Event? _changed = null;
+  Events.Event? _changed;
 
   /// Creates a new compound scene.
-  Compound({bool enabled: true, List<Scene>? passes: null}) {
-    this._enabled        = enabled;
-    this._loopProtection = false;
-    this._changed        = null;
-
+  Compound({bool enabled: true, List<Scene>? passes: null}):
+    this._enabled        = enabled,
+    this._loopProtection = false,
+    this._changed        = null {
     this.setHandlers(
       onAddedHndl:   this._onSceneAdded,
       onRemovedHndl: this._onSceneRemoved);

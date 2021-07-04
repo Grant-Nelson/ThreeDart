@@ -4,32 +4,31 @@ part of ThreeDart.Scenes;
 class EntityPass implements RenderPass {
 
   /// Indicates if the scene is rendered or not.
-  bool _enabled = true;
+  bool _enabled;
 
   /// The camera describing the view of the scene.
-  Views.Camera? _camera = null;
+  Views.Camera? _camera;
 
   /// The target defining the storage to render to.
-  Views.Target? _target = null;
+  Views.Target? _target;
 
   /// The default technique to render with.
-  Techniques.Technique? _tech = null;
+  Techniques.Technique? _tech;
 
   /// The children entities to render.
-  Collections.Collection<Core.Entity> _children
-    = new Collections.Collection<Core.Entity>();
+  Collections.Collection<Core.Entity> _children;
 
   /// Event emitted before an update for this pass.
-  Events.Event? _onPreUpdate = null;
+  Events.Event? _onPreUpdate;
 
   /// Event emitted after an update for this pass.
-  Events.Event? _onPostUpdate = null;
+  Events.Event? _onPostUpdate;
 
   /// Event emitted on an render for this pass.
-  Events.Event? _onRender = null;
+  Events.Event? _onRender;
 
   /// Event emitted on an render for this pass.
-  Events.Event? _changed = null;
+  Events.Event? _changed;
 
   /// Creates a new render pass.
   /// The given clear color is only used if target is null or a FrontTarget.
@@ -39,9 +38,17 @@ class EntityPass implements RenderPass {
     Views.Target? target: null,
     Techniques.Technique? tech: null,
     List<Core.Entity>? children: null,
-    Math.Color4? clearColor: null,
-  }) {
-    this._enabled = enabled;
+    Math.Color4? clearColor: null}):
+    this._enabled = true,
+    this._camera = null,
+    this._target = null,
+    this._tech   = null,
+    this._children = new Collections.Collection<Core.Entity>(),
+    this._onPreUpdate  = null,
+    this._onPostUpdate = null,
+    this._onRender = null,
+    this._changed  = null {
+    this._enabled  = enabled;
     this._children.setHandlers(
       onAddedHndl: this._onChildrenAdded,
       onRemovedHndl: this._onChildrenRemoved);
