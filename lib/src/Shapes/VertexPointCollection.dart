@@ -2,9 +2,10 @@ part of ThreeDart.Shapes;
 
 class VertexPointCollection {
   final Vertex _vertex;
-  List<Point> _points = [];
+  List<Point> _points;
 
-  VertexPointCollection._(this._vertex);
+  VertexPointCollection._(this._vertex):
+    this._points = [];
 
   /// The vertex which owns this collection.
   Vertex get vertex => this._vertex;

@@ -3,10 +3,11 @@ part of ThreeDart.Shapes;
 /// A collection of points for a shape.
 class ShapePointCollection {
   Shape _shape;
-  List<Point> _points = [];
+  List<Point> _points;
 
   /// Creates a new shape's point collection for the given shape.
-  ShapePointCollection._(this._shape);
+  ShapePointCollection._(this._shape):
+    this._points = [];
 
   /// The shape which owns this collection.
   Shape get shape => this._shape;

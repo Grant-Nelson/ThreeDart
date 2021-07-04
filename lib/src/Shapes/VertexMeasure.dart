@@ -13,16 +13,15 @@ abstract class VertexMeasure {
 class RadialVertexMeasure extends VertexMeasure {
 
   /// The scalar to apply to the distance.
-  double _scalar = 0.0;
+  double _scalar;
 
   /// The center point to get this distance from.
-  Math.Point3 _center = Math.Point3.zero;
+  Math.Point3 _center;
 
   /// Creates a new radial measure tool with optional [center] and [scalar].
-  RadialVertexMeasure({double scalar: 1.0, Math.Point3? center: null}) {
-    this._scalar = scalar;
+  RadialVertexMeasure({double scalar: 1.0, Math.Point3? center: null}):
+    this._scalar = scalar,
     this._center = center ?? Math.Point3.zero;
-  }
 
   /// Determines the distance from the center point to the given vertex scaled.
   double measure(Vertex? ver) {
@@ -37,16 +36,15 @@ class RadialVertexMeasure extends VertexMeasure {
 class Radial2VertexMeasure extends VertexMeasure {
 
   /// The scalar to apply to the distance.
-  double _scalar = 0.0;
+  double _scalar;
 
   /// The center point to get this distance squared from.
-  Math.Point3 _center = Math.Point3.zero;
+  Math.Point3 _center;
 
   /// Creates a new radial 2 measure tool with optional [center] and [scalar].
-  Radial2VertexMeasure({double scalar: 1.0, Math.Point3? center: null}) {
-    this._scalar = scalar;
+  Radial2VertexMeasure({double scalar: 1.0, Math.Point3? center: null}):
+    this._scalar = scalar,
     this._center = center ?? Math.Point3.zero;
-  }
 
   /// Determines the distance  squared from the center point to the given vertex scaled.
   double measure(Vertex? ver) {
@@ -62,21 +60,21 @@ class Radial2VertexMeasure extends VertexMeasure {
 class DirectionalVertexMeasure extends VertexMeasure {
 
   /// The vector for the direction and magnitude of projection measurement.
-  Math.Vector3 _vector = Math.Vector3.posZ;
+  Math.Vector3 _vector;
 
   /// The length of the vector doubled.
-  double _idist2 = 0.0;
+  double _idist2;
 
   /// The center point for the measurements and start of the vector's ray.
-  Math.Point3 _center = Math.Point3.zero;
+  Math.Point3 _center;
 
   /// Creates a new directional measure tool with optional [center] and [vector].
-  DirectionalVertexMeasure({Math.Point3? center: null, Math.Vector3? vector: null}) {
-    this._center = center ?? Math.Point3.zero;
-    this._vector = vector ?? Math.Vector3.posZ;
+  DirectionalVertexMeasure({Math.Point3? center: null, Math.Vector3? vector: null}):
+    this._center = center ?? Math.Point3.zero,
+    this._idist2 = 0.0,
+    this._vector = vector ?? Math.Vector3.posZ {
     double dist2 = this._vector.length2();
-    if (dist2 == 0.0) this._idist2 = 1.0;
-    else this._idist2 = 1.0/dist2;
+    this._idist2 = (dist2 == 0.0)? 1.0: 1.0/dist2;
   }
 
   /// Determines the distance from the center point of the given vertex
@@ -97,17 +95,16 @@ class ExpVertexMeasure extends VertexMeasure {
   VertexMeasure _measure;
 
   /// The high power to shift measurement with.
-  double _power = 0.0;
+  double _power;
 
   /// The number of divisions to split the exponential shape into.
-  double _divs = 0.0;
+  double _divs;
 
   /// Creates an exponential measurement adjustment.
   /// [_measure] is adjusted by the given [exponent].
-  ExpVertexMeasure(this._measure, double exponent, double divs) {
-    this._power = pow(2.0, exponent).toDouble();
+  ExpVertexMeasure(this._measure, double exponent, double divs):
+    this._power = pow(2.0, exponent).toDouble(),
     this._divs = (divs <= 0.0)? 1.0: divs;
-  }
 
   /// Determines the distance from the center point
   /// of the given vertex projected on the vector.

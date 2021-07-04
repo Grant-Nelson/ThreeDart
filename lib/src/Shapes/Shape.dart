@@ -2,14 +2,20 @@ part of ThreeDart.Shapes;
 
 /// A shape defining the renderable shape and collision detection.
 class Shape implements ShapeBuilder {
-  VertexCollection? _vertices = null;
-  ShapePointCollection? _points = null;
-  ShapeLineCollection? _lines = null;
-  ShapeFaceCollection? _faces = null;
-  Events.Event? _changed = null;
+  VertexCollection? _vertices;
+  ShapePointCollection? _points;
+  ShapeLineCollection? _lines;
+  ShapeFaceCollection? _faces;
+  Events.Event? _changed;
 
   /// Creates a new shape.
-  Shape() ;
+  Shape():
+    this._vertices = null,
+    this._points   = null,
+    this._lines    = null,
+    this._faces    = null,
+    this._changed  = null;
+
   /// Creates a copy of the given [other] shape.
   factory Shape.copy(Shape other) =>
     new Shape()..merge(other);

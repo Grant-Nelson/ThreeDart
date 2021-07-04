@@ -3,10 +3,11 @@ part of ThreeDart.Shapes;
 /// A collection of lines for a shape.
 class ShapeLineCollection {
   final Shape _shape;
-  List<Line> _lines = [];
+  List<Line> _lines;
 
   /// Creates a new shape's line collection for the given shape.
-  ShapeLineCollection._(this._shape);
+  ShapeLineCollection._(this._shape):
+    this._lines = [];
 
   /// The shape which owns this collection.
   Shape get shape => this._shape;

@@ -2,36 +2,55 @@ part of ThreeDart.Shapes;
 
 /// A vertex of a shape with all of the renderable elements it is used.
 class Vertex {
-  Shape? _shape = null;
+  Shape? _shape;
 
-  VertexPointCollection? _points = null;
-  VertexLineCollection? _lines = null;
-  VertexFaceCollection? _faces = null;
+  VertexPointCollection? _points;
+  VertexLineCollection? _lines;
+  VertexFaceCollection? _faces;
 
-  int _index = 0;
-  Math.Point3? _loc = null;
-  Math.Vector3? _norm = null;
-  Math.Vector3? _binm = null;
-  Math.Point2? _txt2D = null;
-  Math.Vector3? _txtCube = null;
-  Math.Color4? _clr = null;
-  double _weight = 0.0;
-  Math.Point4? _bending = null;
+  int _index;
+  Math.Point3? _loc;
+  Math.Vector3? _norm;
+  Math.Vector3? _binm;
+  Math.Point2? _txt2D;
+  Math.Vector3? _txtCube;
+  Math.Color4? _clr;
+  double _weight;
+  Math.Point4? _bending;
 
   /// Creates a new vertex with the default values.
-  Vertex({Data.VertexType? type: null,
-          Math.Point3? loc: null, Math.Vector3? norm: null, Math.Vector3? binm: null,
-          Math.Point2? txt2D: null, Math.Vector3? txtCube: null, Math.Color4? clr: null,
-          double weight: 0.0, Math.Point4? bending: null}) {
+  Vertex({
+    Data.VertexType? type: null,
+    Math.Point3?  loc:     null,
+    Math.Vector3? norm:    null,
+    Math.Vector3? binm:    null,
+    Math.Point2?  txt2D:   null,
+    Math.Vector3? txtCube: null,
+    Math.Color4?  clr:     null,
+    double        weight:  0.0,
+    Math.Point4?  bending: null}):
+    this._shape   = null,
+    this._points  = null,
+    this._lines   = null,
+    this._faces   = null,
+    this._index   = 0,
+    this._loc     = null,
+    this._norm    = null,
+    this._binm    = null,
+    this._txt2D   = null,
+    this._txtCube = null,
+    this._clr     = null,
+    this._weight  = 0.0,
+    this._bending = null {
     type ??= Data.VertexType.All;
-    this._loc     = type.has(Data.VertexType.Pos)?     loc:     null;
-    this._norm    = type.has(Data.VertexType.Norm)?    norm:    null;
-    this._binm    = type.has(Data.VertexType.Binm)?    binm:    null;
-    this._txt2D   = type.has(Data.VertexType.Txt2D)?   txt2D:   null;
-    this._txtCube = type.has(Data.VertexType.TxtCube)? txtCube: null;
-    this._clr     = type.has(Data.VertexType.Color)?   clr:     null;
-    this._weight  = type.has(Data.VertexType.Weight)?  weight:  0.0;
-    this._bending = type.has(Data.VertexType.Bending)? bending: null;
+    if (type.has(Data.VertexType.Pos))     this._loc     = loc;
+    if (type.has(Data.VertexType.Norm))    this._norm    = norm;
+    if (type.has(Data.VertexType.Binm))    this._binm    = binm;
+    if (type.has(Data.VertexType.Txt2D))   this._txt2D   = txt2D;
+    if (type.has(Data.VertexType.TxtCube)) this._txtCube = txtCube;
+    if (type.has(Data.VertexType.Color))   this._clr     = clr;
+    if (type.has(Data.VertexType.Weight))  this._weight  = weight;
+    if (type.has(Data.VertexType.Bending)) this._bending = bending;
   }
 
   /// Creates a copy of the vertex values.

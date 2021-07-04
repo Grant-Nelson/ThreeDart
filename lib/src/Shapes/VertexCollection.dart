@@ -3,11 +3,13 @@ part of ThreeDart.Shapes;
 /// A collection of vertices for the shapes.
 class VertexCollection {
   Shape _shape;
-  bool _indicesNeedUpdate = false;
-  List<Vertex> _vertices = [];
+  bool _indicesNeedUpdate;
+  List<Vertex> _vertices;
 
   /// Creates a new vertex collection of a shape.
-  VertexCollection._(this._shape);
+  VertexCollection._(this._shape):
+    this._indicesNeedUpdate = false,
+    this._vertices = [];
 
   /// Updates the indices of all vertices.
   void _updateIndices() {

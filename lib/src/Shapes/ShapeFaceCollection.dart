@@ -3,10 +3,11 @@ part of ThreeDart.Shapes;
 /// A collection of faces for a shape.
 class ShapeFaceCollection {
   Shape _shape;
-  List<Face> _faces = [];
+  List<Face> _faces;
 
   /// Creates a new shape's face collection for the given shape.
-  ShapeFaceCollection._(this._shape);
+  ShapeFaceCollection._(this._shape):
+    this._faces = [];
 
   /// The shape which owns this collection.
   Shape get shape => this._shape;

@@ -3,11 +3,13 @@ part of ThreeDart.Shapes;
 /// A collection of lines for a vertex.
 class VertexLineCollection {
   Vertex _vertex;
-  List<Line> _lines1 = [];
-  List<Line> _lines2 = [];
+  List<Line> _lines1;
+  List<Line> _lines2;
 
   /// Creates a new vertex's line collection for the given vertex.
-  VertexLineCollection._(this._vertex);
+  VertexLineCollection._(this._vertex):
+    this._lines1 = [],
+    this._lines2 = [];
 
   /// The vertex which owns this collection.
   Vertex get vertex => this._vertex;
