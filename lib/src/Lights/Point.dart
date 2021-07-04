@@ -2,29 +2,40 @@ part of ThreeDart.Lights;
 
 /// Storage for point light data.
 class Point implements Light {
-  Math.Matrix4 _matrix = Math.Matrix4.identity;
-  Movers.Mover? _mover = null;
-  Math.Color3? _color = Math.Color3.white();
-  Textures.TextureCube? _texture = null;
-  Textures.TextureCube? _shadow = null;
-  Math.Vector4? _shadowAdj = null;
-  double _attenuation0 = 1.0;
-  double _attenuation1 = 0.0;
-  double _attenuation2 = 0.0;
-  bool _enableAttn = true;
-  Events.Event? _changed = null;
+  Math.Matrix4 _matrix;
+  Movers.Mover? _mover;
+  Math.Color3? _color;
+  Textures.TextureCube? _texture;
+  Textures.TextureCube? _shadow ;
+  Math.Vector4? _shadowAdj;
+  double _attenuation0;
+  double _attenuation1;
+  double _attenuation2;
+  bool _enableAttn;
+  Events.Event? _changed;
 
   /// Creates a new point light data.
   Point({
-      Movers.Mover? mover: null,
-      Math.Color3?  color: null,
-      Textures.TextureCube? texture: null,
-      Textures.TextureCube? shadow:  null,
-      Math.Vector4? shadowAdj: null,
-      double attenuation0: 1.0,
-      double attenuation1: 0.0,
-      double attenuation2: 0.0,
-      bool enableAttenuation: true}) {
+    Movers.Mover? mover: null,
+    Math.Color3?  color: null,
+    Textures.TextureCube? texture: null,
+    Textures.TextureCube? shadow:  null,
+    Math.Vector4? shadowAdj: null,
+    double attenuation0: 1.0,
+    double attenuation1: 0.0,
+    double attenuation2: 0.0,
+    bool enableAttenuation: true}):
+    this._matrix = Math.Matrix4.identity,
+    this._mover = null,
+    this._color = Math.Color3.white(),
+    this._texture   = null,
+    this._shadow    = null,
+    this._shadowAdj = null,
+    this._attenuation0 = 1.0,
+    this._attenuation1 = 0.0,
+    this._attenuation2 = 0.0,
+    this._enableAttn = true,
+    this._changed = null {
     this.mover        = mover;
     this.color        = color;
     this.texture      = texture;

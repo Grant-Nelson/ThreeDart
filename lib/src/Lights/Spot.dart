@@ -2,44 +2,65 @@ part of ThreeDart.Lights;
 
 /// Storage for spot light data.
 class Spot implements Light {
-  Math.Point3 _position   = Math.Point3.zero;
-  Math.Vector3 _direction = Math.Vector3.posZ;
-  Math.Vector3 _up        = Math.Vector3.posY;
-  Math.Vector3 _right     = Math.Vector3.negX;
-  Math.Vector4? _shadowAdj = null;
-  Movers.Mover? _mover = null;
-  Math.Color3? _color = Math.Color3.white();
-  Textures.Texture2D? _texture = null;
-  Textures.Texture2D? _shadow  = null;
-  double _tuScalar = 1.0;
-  double _tvScalar = 1.0;
-  double _fov = Math.PI_3;
-  double _ratio = 1.0;
-  double _cutoff = Math.PI_2;
-  bool _enableCutOff = true;
-  double _coneAngle = Math.PI_2;
-  double _attenuation0 = 1.0;
-  double _attenuation1 = 0.0;
-  double _attenuation2 = 0.0;
-  bool _enableAttn = true;
-  Events.Event? _changed = null;
+  Math.Point3 _position;
+  Math.Vector3 _direction;
+  Math.Vector3 _up;
+  Math.Vector3 _right;
+  Math.Vector4? _shadowAdj;
+  Movers.Mover? _mover;
+  Math.Color3? _color;
+  Textures.Texture2D? _texture;
+  Textures.Texture2D? _shadow;
+  double _tuScalar;
+  double _tvScalar;
+  double _fov;
+  double _ratio;
+  double _cutoff;
+  bool _enableCutOff;
+  double _coneAngle;
+  double _attenuation0;
+  double _attenuation1;
+  double _attenuation2;
+  bool _enableAttn;
+  Events.Event? _changed;
 
   /// Creates a new spot light data.
   Spot({
-      Movers.Mover? mover: null,
-      Math.Color3?  color: null,
-      Textures.Texture2D? texture:   null,
-      Textures.Texture2D? shadow:    null,
-      Math.Vector4?       shadowAdj: null,
-      double fov:          Math.PI_3,
-      double ratio:        1.0,
-      double cutoff:       Math.PI_2,
-      double coneAngle:    Math.PI_2,
-      double attenuation0: 1.0,
-      double attenuation1: 0.0,
-      double attenuation2: 0.0,
-      bool enableCutOff:      true,
-      bool enableAttenuation: true}) {
+    Movers.Mover? mover: null,
+    Math.Color3?  color: null,
+    Textures.Texture2D? texture:   null,
+    Textures.Texture2D? shadow:    null,
+    Math.Vector4?       shadowAdj: null,
+    double fov:          Math.PI_3,
+    double ratio:        1.0,
+    double cutoff:       Math.PI_2,
+    double coneAngle:    Math.PI_2,
+    double attenuation0: 1.0,
+    double attenuation1: 0.0,
+    double attenuation2: 0.0,
+    bool enableCutOff:      true,
+    bool enableAttenuation: true}):
+    this._position  = Math.Point3.zero,
+    this._direction = Math.Vector3.posZ,
+    this._up        = Math.Vector3.posY,
+    this._right     = Math.Vector3.negX,
+    this._shadowAdj = null,
+    this._mover = null,
+    this._color = Math.Color3.white(),
+    this._texture = null,
+    this._shadow  = null,
+    this._tuScalar = 1.0,
+    this._tvScalar = 1.0,
+    this._fov = Math.PI_3,
+    this._ratio = 1.0,
+    this._cutoff = Math.PI_2,
+    this._enableCutOff = true,
+    this._coneAngle = Math.PI_2,
+    this._attenuation0 = 1.0,
+    this._attenuation1 = 0.0,
+    this._attenuation2 = 0.0,
+    this._enableAttn = true,
+    this._changed = null {
     this.mover     = mover;
     this.color     = color;
     this.texture   = texture;

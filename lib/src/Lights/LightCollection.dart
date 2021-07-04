@@ -2,15 +2,21 @@ part of ThreeDart.Lights;
 
 /// A collection of lights.
 class LightCollection extends Collections.Collection<Light> {
-  List<Bar> _barLights = [];
-  List<Directional> _dirLights = [];
-  List<Point> _pntLights = [];
-  List<Spot> _spotLights = [];
+  List<Bar> _barLights;
+  List<Directional> _dirLights;
+  List<Point> _pntLights;
+  List<Spot> _spotLights;
   Events.Event? _changed;
   Events.Event? _lightChanged;
 
   /// Creates a new light collection.
-  LightCollection() {
+  LightCollection():
+    this._barLights  = [],
+    this._dirLights  = [],
+    this._pntLights  = [],
+    this._spotLights = [],
+    this._changed      = null,
+    this._lightChanged = null {
     this.setHandlers(onPreaddHndl:  this._onPreaddLights,
                      onAddedHndl:   this._onAddedLights,
                      onRemovedHndl: this._onRemovedLights);

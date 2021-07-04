@@ -2,29 +2,40 @@ part of ThreeDart.Lights;
 
 /// Storage for bar light data.
 class Bar implements Light {
-  Math.Matrix4 _startMatrix = Math.Matrix4.identity;
-  Math.Matrix4 _endMatrix   = Math.Matrix4.identity;
-  Movers.Mover? _startMover = null;
-  Movers.Mover? _endMover   = null;
-  Math.Color3? _color = Math.Color3.white();
-  Math.Vector4? _shadowAdj = Math.Vector4.zero;
-  double _attenuation0 = 1.0;
-  double _attenuation1 = 0.0;
-  double _attenuation2 = 0.0;
-  bool _enableAttn = true;
-  Events.Event? _changed = null;
+  Math.Matrix4 _startMatrix;
+  Math.Matrix4 _endMatrix;
+  Movers.Mover? _startMover;
+  Movers.Mover? _endMover;
+  Math.Color3? _color;
+  Math.Vector4? _shadowAdj;
+  double _attenuation0;
+  double _attenuation1;
+  double _attenuation2;
+  bool _enableAttn;
+  Events.Event? _changed;
 
   /// Creates a new bar light data.
   Bar({
-      Movers.Mover? startMover: null,
-      Movers.Mover? endMover:   null,
-      Math.Color3?  color:      null,
-      //Textures.Texture2D? texture: null, // TODO: Add Texture
-      Math.Vector4? shadowAdj: null,
-      double attenuation0: 1.0,
-      double attenuation1: 0.0,
-      double attenuation2: 0.0,
-      bool enableAttenuation: true}) {
+    Movers.Mover? startMover: null,
+    Movers.Mover? endMover:   null,
+    Math.Color3?  color:      null,
+    //Textures.Texture2D? texture: null, // TODO: Add Texture
+    Math.Vector4? shadowAdj: null,
+    double attenuation0: 1.0,
+    double attenuation1: 0.0,
+    double attenuation2: 0.0,
+    bool enableAttenuation: true}):
+    this._startMatrix = Math.Matrix4.identity,
+    this._endMatrix   = Math.Matrix4.identity,
+    this._startMover = null,
+    this._endMover   = null,
+    this._color = Math.Color3.white(),
+    this._shadowAdj = Math.Vector4.zero,
+    this._attenuation0 = 1.0,
+    this._attenuation1 = 0.0,
+    this._attenuation2 = 0.0,
+    this._enableAttn = true,
+    this._changed = null {
     this.startMover   = startMover;
     this.endMover     = endMover;
     this.color        = color;

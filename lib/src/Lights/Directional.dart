@@ -2,19 +2,26 @@ part of ThreeDart.Lights;
 
 /// Storage for directional light data.
 class Directional implements Light {
-  Movers.Mover? _mover = null;
-  Math.Color3? _color = Math.Color3.white();
-  Math.Vector3 _direction = Math.Vector3.posZ;
-  Math.Vector3 _up        = Math.Vector3.posY;
-  Math.Vector3 _right     = Math.Vector3.negX;
-  Textures.Texture2D? _texture = null;
-  Events.Event? _changed = null;
+  Movers.Mover? _mover;
+  Math.Color3? _color;
+  Math.Vector3 _direction;
+  Math.Vector3 _up;
+  Math.Vector3 _right;
+  Textures.Texture2D? _texture;
+  Events.Event? _changed;
 
   /// Creates a new directional light data.
   Directional({
-      Movers.Mover? mover: null,
-      Math.Color3?  color: null,
-      Textures.Texture2D? texture: null}) {
+    Movers.Mover? mover: null,
+    Math.Color3?  color: null,
+    Textures.Texture2D? texture: null}):
+    this._mover = null,
+    this._color = Math.Color3.white(),
+    this._direction = Math.Vector3.posZ,
+    this._up        = Math.Vector3.posY,
+    this._right     = Math.Vector3.negX,
+    this._texture = null,
+    this._changed = null {
     this.mover   = mover;
     this.color   = color ?? Math.Color3.white();
     this.texture = texture;
