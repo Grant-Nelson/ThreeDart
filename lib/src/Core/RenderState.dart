@@ -10,66 +10,79 @@ class RenderState {
   html.CanvasElement _canvas;
 
   /// The width of the render viewport in pixels.
-  int _width = 512;
+  int _width;
 
     /// The height of the render viewport in pixels.
-  int _height = 512;
+  int _height;
 
   /// The number of this frame.
-  int _frameNum = 0;
+  int _frameNum;
 
   /// The time that the graphics were created.
-  DateTime _startTime = new DateTime.now();
+  DateTime _startTime;
 
   /// The time the last render was started at.
-  DateTime _lastTime = new DateTime.now();
+  DateTime _lastTime;
 
   /// The time the current render was started at.
-  DateTime _curTime = new DateTime.now();
+  DateTime _curTime;
 
   /// The seconds which have passed since the previous render.
-  double _dt = 0.0;
+  double _dt;
 
   /// The projection matrix multiplied by the view matrix.
   /// This is the cache, it is reset to null when either component is changed.
   /// Null indicated the value must be recalculated.
-  Math.Matrix4? _projViewMat = null;
+  Math.Matrix4? _projViewMat;
 
   /// The inverse of the view matrix.
   /// This is the cache, it is reset to null when the view is changed.
   /// Null indicated the value must be recalculated.
-  Math.Matrix4? _invViewMat = null;
+  Math.Matrix4? _invViewMat;
 
   /// The product of the projection matrix, the view matrix, and the object matrix.
   /// This is the cache, it is reset to null when either component is changed.
   /// Null indicated the value must be recalculated.
-  Math.Matrix4? _projViewObjMat = null;
+  Math.Matrix4? _projViewObjMat;
 
   /// The view matrix multiplied by the object matrix.
   /// This is the cache, it is reset to null when either component is changed.
   /// Null indicated the value must be recalculated.
-  Math.Matrix4? _viewObjMat = null;
+  Math.Matrix4? _viewObjMat;
 
   /// The stack of projection matrices.
-  Collections.Matrix4Stack _projStack = new Collections.Matrix4Stack();
+  Collections.Matrix4Stack _projStack;
 
   /// The stack of the view matrices.
-  Collections.Matrix4Stack _viewStack = new Collections.Matrix4Stack();
+  Collections.Matrix4Stack _viewStack ;
 
   /// The stack of Entity matrices.
-  Collections.Matrix4Stack _objStack = new Collections.Matrix4Stack();
+  Collections.Matrix4Stack _objStack;
 
   /// The stack of techniques.
-  List<Techniques.Technique?> _tech = [null];
+  List<Techniques.Technique?> _tech;
 
   /// The cache of compiled shaders.
-  Map<String, Shaders.Shader> _shaderCache = {};
+  Map<String, Shaders.Shader> _shaderCache;
 
   /// Constructs a new render state with the given context and canvas.
-  RenderState(this._gl, this._canvas) {
-    this._lastTime = this._startTime;
-    this._curTime = this._startTime;
-    
+  RenderState(this._gl, this._canvas):
+    this._width    = 512,
+    this._height   = 512,
+    this._frameNum = 0,
+    this._startTime = new DateTime.now(),
+    this._lastTime  = new DateTime.now(),
+    this._curTime   = new DateTime.now(),
+    this._dt = 0.0,
+    this._projViewMat    = null,
+    this._invViewMat     = null,
+    this._projViewObjMat = null,
+    this._viewObjMat     = null,
+    this._projStack = new Collections.Matrix4Stack(),
+    this._viewStack = new Collections.Matrix4Stack(),
+    this._objStack  = new Collections.Matrix4Stack(),
+    this._tech = [null],
+    this._shaderCache = {} {
     this._projStack
       ..changed.add((Events.EventArgs e) {
         this._projViewMat = null;
