@@ -8,8 +8,9 @@ class EventArgs {
 
   /// Indicates if the event should be passed onto the next event handler (true),
   /// or stopped being handled (false).
-  bool propagate = true;
+  bool propagate;
 
   /// Creates a new event argument.
-  EventArgs(this.sender);
+  EventArgs(this.sender):
+    this.propagate = true;
 }

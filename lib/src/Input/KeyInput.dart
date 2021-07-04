@@ -5,19 +5,23 @@ part of ThreeDart.Input;
 class KeyInput {
 
   /// The event to emit when a key is released.
-  Events.Event? _up = null;
+  Events.Event? _up;
 
   /// The event to emit when a key is pressed.
-  Events.Event? _down = null;
+  Events.Event? _down;
 
   /// Indicates the modifiers which have been pressed.
-  Modifiers _mods = Modifiers.none();
+  Modifiers _mods;
 
   /// The set of key codes which are currently pressed.
-  Set<int> _pressed = Set();
+  Set<int> _pressed;
 
   /// Creates a new user input for the given [_elem].
-  KeyInput._();
+  KeyInput._():
+    this._up   = null,
+    this._down = null,
+    this._mods = Modifiers.none(),
+    this._pressed = Set();
 
   /// Programmatically performs the key up event.
   bool performUp(Key key) {

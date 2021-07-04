@@ -8,13 +8,15 @@ class _mtlReader {
   Textures.TextureLoader? _txtLoader;
 
   /// The map of material names to materials which have been loaded.
-  Map<String, Techniques.MaterialLight> _mtls = {};
+  Map<String, Techniques.MaterialLight> _mtls;
 
   /// The material currently being loaded.
-  Techniques.MaterialLight? _cur = null;
+  Techniques.MaterialLight? _cur;
 
   /// Creates a new material loader.
-  _mtlReader(Textures.TextureLoader? this._txtLoader);
+  _mtlReader(Textures.TextureLoader? this._txtLoader):
+    this._mtls = {},
+    this._cur  = null;
 
   /// The map of material names to materials which have been loaded.
   Map<String, Techniques.MaterialLight> get materials => this._mtls;

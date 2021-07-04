@@ -7,19 +7,23 @@ part of ThreeDart.Events;
 class Event {
 
   /// The list of the event handlers to call when this event is emitted.
-  List<EventHandler>? _hndls = null;
+  List<EventHandler>? _hndls;
 
   /// The list of the event handlers to call only once when this event is emitted.
-  List<EventHandler>? _onceHndls = null;
+  List<EventHandler>? _onceHndls;
 
   /// The pending argument from the first emit while the event is suspended.
-  EventArgs? _pendingArgs = null;
+  EventArgs? _pendingArgs;
 
   /// Indicates if the event is suspended or not.
-  int _suspended = 0;
+  int _suspended;
 
   /// Constructs a new event.
-  Event();
+  Event():
+    this._hndls       = null,
+    this._onceHndls   = null,
+    this._pendingArgs = null,
+    this._suspended   = 0;
 
   /// Indicates that there are no handlers attached to this events.
   bool get isEmpty => (this._hndls?.isEmpty ?? true) && (this._onceHndls?.isEmpty ?? true);

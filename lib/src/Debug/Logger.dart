@@ -23,10 +23,11 @@ abstract class Logger {
 
 /// DefaultLogger writes the output to the console.
 class DefaultLogger implements Logger {
-  bool _failed = false;
+  bool _failed;
 
   /// Creates a new console logger.
-  DefaultLogger();
+  DefaultLogger():
+    this._failed = false;
 
   /// Indicates if an error occurred.
   bool get failed => this._failed;

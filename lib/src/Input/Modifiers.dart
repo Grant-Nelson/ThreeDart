@@ -39,8 +39,11 @@ class Modifiers {
 
   /// Gets the string for the the modifiers.
   /// Will be an empty string if no modifiers are true.
-  String toString() =>
-    (this.ctrl  ? 'Ctrl+'  : '')+
-    (this.alt   ? 'Alt+'   : '')+
-    (this.shift ? 'Shift+' : '');
+  String toString() {
+    var parts = [];
+    if (this.ctrl)  parts.add('Ctrl');
+    if (this.alt)   parts.add('Alt');
+    if (this.shift) parts.add('Shift');
+    return parts.join('+');
+  }
 }

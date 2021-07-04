@@ -8,10 +8,11 @@ class _objVertex {
 
   /// All the vertices for this location.
   /// Vertices will have unique normal and texture coordinates.
-  List<Shapes.Vertex> verts = [];
+  List<Shapes.Vertex> verts;
 
   /// Creates a new vertex store for the given location, [pos].
-  _objVertex(Math.Point3 this.pos);
+  _objVertex(this.pos):
+    this.verts = [];
 }
 
 /// Entity loader for loading *.obj files.
@@ -21,39 +22,48 @@ class _objReader {
   Textures.TextureLoader _txtLoader;
 
   /// The list of locations paired with created objects.
-  List<_objVertex> _posList = [];
+  List<_objVertex> _posList;
 
   /// The list of 2D texture coordinates.
-  List<Math.Point2> _texList = [];
+  List<Math.Point2> _texList;
 
   /// The list of normal vectors.
-  List<Math.Vector3> _normList = [];
+  List<Math.Vector3> _normList;
 
   /// The map of material names to loaded material techniques.
-  Map<String, Techniques.MaterialLight> _mtls = {};
+  Map<String, Techniques.MaterialLight> _mtls;
 
   /// The event to fire to update the progress with.
-  Events.Event? _progress = null;
+  Events.Event? _progress;
 
   /// The current name of the object part being loaded.
-  String _name = '';
+  String _name;
 
   /// The current material technique for the object being loaded.
   Techniques.MaterialLight? _mat;
 
   /// The current shape being loaded for the current part of the object.
-  Shapes.Shape? _shape = null;
+  Shapes.Shape? _shape;
 
   /// The current entity for the shape being loaded.
-  Core.Entity? _entity = null;
+  Core.Entity? _entity;
 
   /// The root entity for the whole object containing other entities.
-  Core.Entity _rootEntity = new Core.Entity();
+  Core.Entity _rootEntity;
 
   /// Creates a new object loader.
-  _objReader(this._txtLoader, {Map<String, Techniques.MaterialLight>? mtls: null, Events.Event? progress: null}) {
-    this._progress = progress;
-    this._mat = new Techniques.MaterialLight() 
+  _objReader(this._txtLoader, {Map<String, Techniques.MaterialLight>? mtls: null, Events.Event? progress: null}):
+    this._posList  = [],
+    this._texList  = [],
+    this._normList = [],
+    this._mtls = {},
+    this._progress = progress,
+    this._name = '',
+    this._mat    = null,
+    this._shape  = null,
+    this._entity = null,
+    this._rootEntity = new Core.Entity() {
+    this._mat = new Techniques.MaterialLight()
       ..ambient.color = new Math.Color3.gray(0.35)
       ..diffuse.color = new Math.Color3.gray(0.65);
     if (mtls != null) this._mtls.addAll(mtls);

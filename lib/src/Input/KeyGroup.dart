@@ -2,14 +2,19 @@ part of ThreeDart.Input;
 
 /// A group of keyboard keys for user interactions.
 class KeyGroup extends Collections.Collection<Key> implements Interactable, Events.Changeable {
-  Events.Event? _changed = null;
-  UserInput? _input = null;
-  bool _pressed = false;
-  Events.Event? _keyUp = null;
-  Events.Event? _keyDown = null;
+  Events.Event? _changed;
+  UserInput? _input;
+  bool _pressed;
+  Events.Event? _keyUp;
+  Events.Event? _keyDown;
 
   /// Creates a new user key group.
-  KeyGroup() {
+  KeyGroup():
+    this._changed = null,
+    this._input   = null,
+    this._pressed = false,
+    this._keyUp   = null,
+    this._keyDown = null {
     this.setHandlers(onPreaddHndl:  this._onPreadd,
                      onAddedHndl:   this._onAdded,
                      onRemovedHndl: this._onRemoved);
@@ -28,9 +33,8 @@ class KeyGroup extends Collections.Collection<Key> implements Interactable, Even
     this._keyDown ??= new Events.Event();
 
   /// Adds a key to this collection.
-  void addKey(int key, {bool ctrl: false, bool alt: false, bool shift: false}) {
+  void addKey(int key, {bool ctrl: false, bool alt: false, bool shift: false}) =>
     this.add(new Key(key, ctrl: ctrl, alt: alt, shift: shift));
-  }
 
   /// Handles emitting a change.
   void _onChanged([Events.EventArgs? args = null]) =>
