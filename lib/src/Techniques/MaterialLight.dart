@@ -120,31 +120,31 @@ class MaterialLight extends Technique {
 
   /// The emission component of the material.
   MaterialLightColorComponent get emission =>
-    this._emission ?? new MaterialLightColorComponent._(this, 'emission');
+    this._emission ??= new MaterialLightColorComponent._(this, 'emission');
 
   /// The ambient component of the material.
   MaterialLightColorComponent get ambient =>
-    this._ambient ?? new MaterialLightColorComponent._(this, 'ambient');
+    this._ambient ??= new MaterialLightColorComponent._(this, 'ambient');
 
   /// The diffuse component of the material.
   MaterialLightColorComponent get diffuse =>
-    this._diffuse ?? new MaterialLightColorComponent._(this, 'diffuse');
+    this._diffuse ??= new MaterialLightColorComponent._(this, 'diffuse');
 
   /// The inverse diffuse (transmission) component of the material.
   MaterialLightColorComponent get invDiffuse =>
-    this._invDiffuse ?? new MaterialLightColorComponent._(this, 'invDiffuse');
+    this._invDiffuse ??= new MaterialLightColorComponent._(this, 'invDiffuse');
 
   /// The specular component of the material.
   MaterialLightSpecularComponent get specular =>
-    this._specular ?? new MaterialLightSpecularComponent._(this, 'specular');
+    this._specular ??= new MaterialLightSpecularComponent._(this, 'specular');
 
   /// The specular component of the material.
   MaterialLightBumpComponent get bump =>
-    this._bump ?? new MaterialLightBumpComponent._(this, 'bump');
+    this._bump ??= new MaterialLightBumpComponent._(this, 'bump');
 
   /// The fog component of to render with.
   MaterialLightFogComponent get fog =>
-    this._fog ?? new MaterialLightFogComponent._(this);
+    this._fog ??= new MaterialLightFogComponent._(this);
 
   /// The environment cube texture for reflective and refractive materials.
   Textures.TextureCube? get environment => this._envSampler;
@@ -160,15 +160,15 @@ class MaterialLight extends Technique {
 
   /// The reflection component of the material.
   MaterialLightColorComponent get reflection =>
-    this._reflect ?? new MaterialLightColorComponent._(this, 'reflect');
+    this._reflect ??= new MaterialLightColorComponent._(this, 'reflect');
 
   /// The refraction component of the material.
   MaterialLightRefractionComponent get refraction =>
-    this._refract ?? new MaterialLightRefractionComponent._(this, 'refract');
+    this._refract ??= new MaterialLightRefractionComponent._(this, 'refract');
 
   /// The alpha value or scalar on the alpha texture for the material.
   MaterialLightAlphaComponent get alpha =>
-    this._alpha ?? new MaterialLightAlphaComponent._(this, 'alpha');
+    this._alpha ??= new MaterialLightAlphaComponent._(this, 'alpha');
 
   /// Gets the vertex source code used for the shader used by this technique.
   String get vertexSourceCode => this._shader?.vertexSourceCode ?? '';
@@ -223,16 +223,8 @@ class MaterialLight extends Technique {
     int bendMats = this._lengthLimit(this._bendMats.length);
     return new Shaders.MaterialLightConfig(
       this._txt2DMat != null, this._txtCubeMat != null, this._colorMat != null,
-      this._fog?.enabled ?? false, bendMats,
-      this._emission?.type ?? Shaders.ColorSourceType(),
-      this._ambient?.type ?? Shaders.ColorSourceType(),
-      this._diffuse?.type ?? Shaders.ColorSourceType(),
-      this._invDiffuse?.type ?? Shaders.ColorSourceType(),
-      this._specular?.type ?? Shaders.ColorSourceType(),
-      this._bump?.type ?? Shaders.ColorSourceType(),
-      this._reflect?.type ?? Shaders.ColorSourceType(),
-      this._refract?.type ?? Shaders.ColorSourceType(),
-      this._alpha?.type ?? Shaders.ColorSourceType(),
+      this.fog.enabled, bendMats, this.emission.type, this.ambient.type, this.diffuse.type, this.invDiffuse.type,
+      this.specular.type, this.bump.type, this.reflection.type, this.refraction.type, this.alpha.type,
       barLights, dirLights, pointLights, spotLights);
   }
 
