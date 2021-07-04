@@ -2,16 +2,23 @@ part of ThreeDart.Techniques;
 
 /// The normal rendering technique.
 class Normal extends Technique {
-  Shaders.Normal? _shader = null;
-  Math.Matrix3 _txt2DMat = Math.Matrix3.identity;
-  Math.Matrix4 _txtCubeMat = Math.Matrix4.identity;
-  Shaders.ColorSourceType _bumpyType = Shaders.ColorSourceType();
-  Textures.Texture2D? _bump2D = null;
-  Textures.TextureCube? _bumpCube = null;
-  Events.Event? _changed = null;
+  Shaders.Normal? _shader;
+  Math.Matrix3 _txt2DMat;
+  Math.Matrix4 _txtCubeMat;
+  Shaders.ColorSourceType _bumpyType;
+  Textures.Texture2D? _bump2D;
+  Textures.TextureCube? _bumpCube;
+  Events.Event? _changed;
 
   /// Creates a new material/light technique.
-  Normal() {
+  Normal():
+    this._shader = null,
+    this._txt2DMat   = Math.Matrix3.identity,
+    this._txtCubeMat = Math.Matrix4.identity,
+    this._bumpyType  = Shaders.ColorSourceType(),
+    this._bump2D   = null,
+    this._bumpCube = null,
+    this._changed  = null {
     this.clearBump();
   }
 

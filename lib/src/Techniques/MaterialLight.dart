@@ -2,27 +2,45 @@ part of ThreeDart.Techniques;
 
 /// The material/light rendering technique.
 class MaterialLight extends Technique {
-  Shaders.MaterialLight? _shader = null;
-  Math.Matrix3? _txt2DMat   = null;
-  Math.Matrix4? _txtCubeMat = null;
-  Math.Matrix4? _colorMat   = null;
-  Collections.Collection<Math.Matrix4> _bendMats = new Collections.Collection<Math.Matrix4>();
-  MaterialLightColorComponent? _emission    = null;
-  MaterialLightColorComponent? _ambient     = null;
-  MaterialLightColorComponent? _diffuse     = null;
-  MaterialLightColorComponent? _invDiffuse  = null;
-  MaterialLightSpecularComponent? _specular = null;
-  MaterialLightBumpComponent? _bump = null;
-  Textures.TextureCube? _envSampler = null;
-  MaterialLightColorComponent? _reflect = null;
-  MaterialLightRefractionComponent? _refract = null;
-  MaterialLightAlphaComponent? _alpha = null;
-  Lights.LightCollection? _lights = null;
-  MaterialLightFogComponent? _fog = null;
-  Events.Event? _changed = null;
+  Shaders.MaterialLight? _shader;
+  Math.Matrix3? _txt2DMat;
+  Math.Matrix4? _txtCubeMat;
+  Math.Matrix4? _colorMat;
+  Collections.Collection<Math.Matrix4> _bendMats;
+  MaterialLightColorComponent? _emission;
+  MaterialLightColorComponent? _ambient;
+  MaterialLightColorComponent? _diffuse;
+  MaterialLightColorComponent? _invDiffuse;
+  MaterialLightSpecularComponent? _specular;
+  MaterialLightBumpComponent? _bump;
+  Textures.TextureCube? _envSampler;
+  MaterialLightColorComponent? _reflect;
+  MaterialLightRefractionComponent? _refract;
+  MaterialLightAlphaComponent? _alpha;
+  Lights.LightCollection? _lights;
+  MaterialLightFogComponent? _fog;
+  Events.Event? _changed;
 
   /// Creates a new material/light technique.
-  MaterialLight() {
+  MaterialLight():
+    this._shader     = null,
+    this._txt2DMat   = null,
+    this._txtCubeMat = null,
+    this._colorMat   = null,
+    this._bendMats   = Collections.Collection<Math.Matrix4>(),
+    this._emission   = null,
+    this._ambient    = null,
+    this._diffuse    = null,
+    this._invDiffuse = null,
+    this._specular   = null,
+    this._bump       = null,
+    this._envSampler = null,
+    this._reflect    = null,
+    this._refract    = null,
+    this._alpha      = null,
+    this._lights     = null,
+    this._fog        = null,
+    this._changed    = null {
     this._bendMats.setHandlers(
       onAddedHndl:   this._onBendMatsAdded,
       onRemovedHndl: this._onBendMatsRemoved);

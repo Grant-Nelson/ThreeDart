@@ -2,10 +2,12 @@ part of ThreeDart.Techniques;
 
 /// A material light component which allows refraction to be assigned.
 class MaterialLightRefractionComponent extends MaterialLightColorComponent {
-  double _refraction = 1.0;
+  double _refraction;
 
   /// Creates a new refraction material light component for the given [owner].
-  MaterialLightRefractionComponent._(MaterialLight owner, String name): super._(owner, name);
+  MaterialLightRefractionComponent._(MaterialLight owner, String name):
+    this._refraction = 1.0,
+    super._(owner, name);
 
   /// Handles setting the refraction member if it has changed.
   void _setRefraction(double refraction) {

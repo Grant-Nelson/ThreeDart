@@ -8,13 +8,15 @@ class Debugger extends Technique {
   StringBuffer? _buf;
 
   /// The list of resulting points from a render.
-  List<Math.Point3> _results = [];
+  List<Math.Point3> _results;
 
   /// An event to indicate when this technique has been changed.
-  Events.Event? _changed = null;
+  Events.Event? _changed;
 
   /// Creates a new debugging technique.
-  Debugger([StringBuffer? this._buf = null]);
+  Debugger([StringBuffer? this._buf = null]):
+    this._results = [],
+    this._changed = null;
 
   /// The list of resulting points from a render.
   List<Math.Point3> get results => this._results;

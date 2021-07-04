@@ -2,23 +2,28 @@ part of ThreeDart.Techniques;
 
 /// A technique for a cover pass which draws several textures.
 class TextureLayout extends Technique {
-  Shaders.TextureLayout? _shader = null;
-  Math.Color4 _backClr = Math.Color4.transparent();
-  Collections.Collection<TextureLayoutEntry> _entries = new Collections.Collection<TextureLayoutEntry>();
-  int _lastCount = 0;
-  Shaders.ColorBlendType _blend     = Shaders.ColorBlendType.AlphaBlend;
-  Shaders.ColorBlendType _lastBlend = Shaders.ColorBlendType.AlphaBlend;
-  Events.Event? _changed = null;
+  Shaders.TextureLayout? _shader;
+  Math.Color4 _backClr;
+  Collections.Collection<TextureLayoutEntry> _entries;
+  int _lastCount;
+  Shaders.ColorBlendType _blend;
+  Shaders.ColorBlendType _lastBlend;
+  Events.Event? _changed;
 
   /// Creates a new sky box technique with the given initial values.
   TextureLayout({
       Math.Color4?           backColor: null,
-      Shaders.ColorBlendType blend:     Shaders.ColorBlendType.AlphaBlend}) {
+      Shaders.ColorBlendType blend:     Shaders.ColorBlendType.AlphaBlend}):
+    this._shader    = null,
+    this._backClr   = backColor ?? new Math.Color4.transparent(),
+    this._entries   = new Collections.Collection<TextureLayoutEntry>(),
+    this._lastCount = 0,
+    this._blend     = blend,
+    this._lastBlend = Shaders.ColorBlendType.AlphaBlend,
+    this._changed   = null {
     this._entries.setHandlers(
       onAddedHndl: _onEntityAdded,
       onRemovedHndl: _onEntityRemoved);
-    this.backColor = backColor ?? new Math.Color4.transparent();
-    this.blend     = blend;
   }
 
   /// Indicates that this technique has changed.

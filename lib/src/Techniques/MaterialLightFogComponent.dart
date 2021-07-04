@@ -3,15 +3,17 @@ part of ThreeDart.Techniques;
 /// A material light component for fog.
 class MaterialLightFogComponent {
   MaterialLight _owner;
-  Math.Color4? _clr = null;
-  double _start = 1.0;
-  double _stop  = 10.0;
-  bool _enabled = false;
+  Math.Color4? _clr;
+  double _start;
+  double _stop;
+  bool _enabled;
 
   /// Creates a new fog component for the given [owner].
-  MaterialLightFogComponent._(this._owner) {
-    this._clr = Math.Color4.transparent();
-  }
+  MaterialLightFogComponent._(this._owner):
+    this._clr = Math.Color4.transparent(),
+    this._start = 1.0,
+    this._stop  = 10.0,
+    this._enabled = false;
 
   /// Handles changes in the component.
   void _onChanged([Events.EventArgs? args = null]) =>

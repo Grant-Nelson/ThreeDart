@@ -267,12 +267,12 @@ class Vertex {
   bool same(var other) {
     if (identical(this, other)) return true;
     if (other is! Vertex) return false;
-    if (this._loc != other._loc) return false;
-    if (this._norm != other._norm) return false;
-    if (this._binm != other._binm) return false;
-    if (this._txt2D != other._txt2D) return false;
+    if (this._loc     != other._loc)     return false;
+    if (this._norm    != other._norm)    return false;
+    if (this._binm    != other._binm)    return false;
+    if (this._txt2D   != other._txt2D)   return false;
     if (this._txtCube != other._txtCube) return false;
-    if (this._clr != other._clr) return false;
+    if (this._clr     != other._clr)     return false;
     if (Math.Comparer.equals(this._weight, other._weight)) return false;
     if (this._bending != other._bending) return false;
     return true;

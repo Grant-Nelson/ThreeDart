@@ -2,25 +2,25 @@ part of ThreeDart.Techniques;
 
 /// An entry in the TextureLayout technique describing the layout of one texture.
 class TextureLayoutEntry implements Events.Changeable {
-  Textures.Texture2D? _txt = null;
-  Math.Matrix4 _clrMat = Math.Matrix4.identity;
-  Math.Region2 _src  = Math.Region2.unit;
-  Math.Region2 _dest = Math.Region2.unit;
-  bool _flip = false;
-  Events.Event? _changed = null;
+  Textures.Texture2D? _txt;
+  Math.Matrix4 _clrMat;
+  Math.Region2 _src;
+  Math.Region2 _dest;
+  bool _flip;
+  Events.Event? _changed;
 
   /// Creates an entry for the texture layout technique.
   TextureLayoutEntry({Textures.Texture2D? texture:     null,
                       Math.Matrix4?       colorMatrix: null,
                       Math.Region2?       source:      null,
                       Math.Region2?       destination: null,
-                      bool                flip:        false}) {
-    this.texture     = texture;
-    this.colorMatrix = colorMatrix ?? Math.Matrix4.identity;
-    this.source      = source ?? Math.Region2.unit;
-    this.destination = destination ?? Math.Region2.unit;
-    this.flip        = flip;
-  }
+                      bool                flip:        false}):
+    this._txt     = texture,
+    this._clrMat  = colorMatrix ?? Math.Matrix4.identity,
+    this._src     = source ?? Math.Region2.unit,
+    this._dest    = destination ?? Math.Region2.unit,
+    this._flip    = flip,
+    this._changed = null;
 
   /// Indicates that this entity has changed.
   Events.Event get changed =>

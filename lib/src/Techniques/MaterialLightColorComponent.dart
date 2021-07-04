@@ -2,12 +2,12 @@ part of ThreeDart.Techniques;
 
 /// A material light component which allows a solid color.
 class MaterialLightColorComponent extends MaterialLightBaseComponent {
-  Math.Color3? _color = null;
+  Math.Color3? _color;
 
   /// Creates a new material light color component for the given [owner].
-  MaterialLightColorComponent._(MaterialLight owner, String name): super._(owner, name) {
-    this._color = new Math.Color3.black();
-  }
+  MaterialLightColorComponent._(MaterialLight owner, String name):
+    this._color = new Math.Color3.black(),
+    super._(owner, name);
 
   /// Handles setting the color member if it has changed.
   void _setColor(Math.Color3? color) {

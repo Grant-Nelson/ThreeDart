@@ -2,14 +2,14 @@ part of ThreeDart.Techniques;
 
 /// A technique for a cover pass with a Gaussian blurred image based off of a file.
 class GaussianBlur extends Technique {
-  Shaders.GaussianBlur? _shader = null;
-  Math.Matrix3 _txtMat = Math.Matrix3.identity;
-  Math.Vector4 _blurAdj = Math.Vector4.zero;
-  Math.Vector2 _blurDir = Math.Vector2.zero;
-  Textures.Texture2D? _colorTxt = null;
-  Textures.Texture2D? _blurTxt  = null;
-  double _blurValue = 0.0;
-  Events.Event? _changed = null;
+  Shaders.GaussianBlur? _shader;
+  Math.Matrix3 _txtMat;
+  Math.Vector4 _blurAdj;
+  Math.Vector2 _blurDir;
+  Textures.Texture2D? _colorTxt;
+  Textures.Texture2D? _blurTxt;
+  double _blurValue;
+  Events.Event? _changed;
 
   /// Creates a new cover Gaussian blur technique with the given initial values.
   GaussianBlur({Textures.Texture2D? colorTxt: null,
@@ -17,7 +17,15 @@ class GaussianBlur extends Technique {
                 Math.Matrix3?       txtMat:   null,
                 Math.Vector4?       blurAdj:  null,
                 Math.Vector2?       blurDir:  null,
-                double blurValue:  0.0}) {
+                double blurValue:  0.0}):
+    this._shader    = null,
+    this._txtMat    = Math.Matrix3.identity,
+    this._blurAdj   = Math.Vector4.zero,
+    this._blurDir   = Math.Vector2.zero,
+    this._colorTxt  = null,
+    this._blurTxt   = null,
+    this._blurValue = 0.0,
+    this._changed   = null {
     this.textureMatrix = txtMat ?? Math.Matrix3.identity;
     this.blurAdjust    = blurAdj ?? Math.Vector4.zero;
     this.blurDirection = blurDir ?? Math.Vector2.zero;

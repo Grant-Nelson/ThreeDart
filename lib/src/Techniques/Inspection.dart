@@ -2,36 +2,36 @@ part of ThreeDart.Techniques;
 
 /// The inspection rendering technique for checking shape components.
 class Inspection extends Technique {
-  Shaders.Inspection? _shader = null;
-  Math.Vector3 _lightVec = Math.Vector3.negZ;
-  Math.Color4 _diffuse1 = new Math.Color4(0.2, 0.3, 0.4);
-  Math.Color4 _ambient1 = new Math.Color4(0.1, 0.2, 0.3);
-  Math.Color4 _diffuse2 = new Math.Color4.gray(0.7);
-  Math.Color4 _ambient2 = new Math.Color4.gray(0.3);
-  Math.Color4 _diffuse3 = new Math.Color4.gray(0.5);
-  Math.Color4 _ambient3 = new Math.Color4.gray(0.5);
-  Math.Color4 _diffuse4 = new Math.Color4.white();
-  Math.Color4 _ambient4 = new Math.Color4.gray(0.8);
+  Shaders.Inspection? _shader;
+  Math.Vector3 _lightVec;
+  Math.Color4 _diffuse1;
+  Math.Color4 _ambient1;
+  Math.Color4 _diffuse2;
+  Math.Color4 _ambient2;
+  Math.Color4 _diffuse3;
+  Math.Color4 _ambient3;
+  Math.Color4 _diffuse4;
+  Math.Color4 _ambient4;
 
-  bool _showFilled         = false;
-  bool _showWireFrame      = false;
-  bool _showVertices       = false;
-  bool _showNormals        = false;
-  bool _showBinormals      = false;
-  bool _showTangentals     = false;
-  bool _showTxtCube        = false;
-  bool _showFaceCenters    = false;
-  bool _showFaceNormals    = false;
-  bool _showFaceBinormals  = false;
-  bool _showFaceTangentals = false;
-  bool _showColorFill      = false;
-  bool _showTxt2DColor     = false;
-  bool _showWeight         = false;
-  bool _showAxis           = false;
-  bool _showAABB           = false;
-  bool _showBend           = false;
-  double _vectorScale = 1.0;
-  Events.Event? _changed = null;
+  bool _showFilled;
+  bool _showWireFrame;
+  bool _showVertices;
+  bool _showNormals;
+  bool _showBinormals;
+  bool _showTangentals;
+  bool _showTxtCube;
+  bool _showFaceCenters;
+  bool _showFaceNormals;
+  bool _showFaceBinormals;
+  bool _showFaceTangentals;
+  bool _showColorFill;
+  bool _showTxt2DColor;
+  bool _showWeight;
+  bool _showAxis;
+  bool _showAABB;
+  bool _showBend;
+  double _vectorScale;
+  Events.Event? _changed;
 
   /// Creates a new inspection technique.
   Inspection({
@@ -52,28 +52,36 @@ class Inspection extends Technique {
     bool showAxis:           false,
     bool showAABB:           false,
     bool showBend:           false,
-    double vectorScale:      1.0,
-  }) {
-    this._showFilled         = showFilled;
-    this._showWireFrame      = showWireFrame;
-    this._showVertices       = showVertices;
-    this._showNormals        = showNormals;
-    this._showBinormals      = showBinormals;
-    this._showTangentals     = showTangentals;
-    this._showTxtCube        = showTxtCube;
-    this._showFaceCenters    = showFaceCenters;
-    this._showFaceNormals    = showFaceNormals;
-    this._showFaceBinormals  = showFaceBinormals;
-    this._showFaceTangentals = showFaceTangentals;
-    this._showColorFill      = showColorFill;
-    this._showTxt2DColor     = showTxt2DColor;
-    this._showWeight         = showWeight;
-    this._showAxis           = showAxis;
-    this._showAABB           = showAABB;
-    this._showBend           = showBend;
-    this._vectorScale        = vectorScale;
+    double vectorScale:      1.0}):
+    this._shader   = null,
+    this._lightVec = Math.Vector3.negZ,
+    this._diffuse1 = new Math.Color4(0.2, 0.3, 0.4),
+    this._ambient1 = new Math.Color4(0.1, 0.2, 0.3),
+    this._diffuse2 = new Math.Color4.gray(0.7),
+    this._ambient2 = new Math.Color4.gray(0.3),
+    this._diffuse3 = new Math.Color4.gray(0.5),
+    this._ambient3 = new Math.Color4.gray(0.5),
+    this._diffuse4 = new Math.Color4.white(),
+    this._ambient4 = new Math.Color4.gray(0.8),
+    this._showFilled         = showFilled,
+    this._showWireFrame      = showWireFrame,
+    this._showVertices       = showVertices,
+    this._showNormals        = showNormals,
+    this._showBinormals      = showBinormals,
+    this._showTangentals     = showTangentals,
+    this._showTxtCube        = showTxtCube,
+    this._showFaceCenters    = showFaceCenters,
+    this._showFaceNormals    = showFaceNormals,
+    this._showFaceBinormals  = showFaceBinormals,
+    this._showFaceTangentals = showFaceTangentals,
+    this._showColorFill      = showColorFill,
+    this._showTxt2DColor     = showTxt2DColor,
+    this._showWeight         = showWeight,
+    this._showAxis           = showAxis,
+    this._showAABB           = showAABB,
+    this._showBend           = showBend,
+    this._vectorScale        = vectorScale,
     this._changed            = null;
-  }
 
   /// Indicates that this technique has changed.
   Events.Event get changed =>

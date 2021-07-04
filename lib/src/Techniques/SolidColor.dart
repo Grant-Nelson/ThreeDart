@@ -2,14 +2,15 @@ part of ThreeDart.Techniques;
 
 /// A technique for rendering entities with a solid color.
 class SolidColor extends Technique {
-  Shaders.SolidColor? _shader = null;
-  Math.Color4 _clr = new Math.Color4.white();
-  Events.Event? _changed = null;
+  Shaders.SolidColor? _shader;
+  Math.Color4 _clr;
+  Events.Event? _changed;
 
   /// Creates a new solid color technique with the given initial values.
-  SolidColor({Math.Color4? color: null}) {
-    this.color = color ?? new Math.Color4.white();
-  }
+  SolidColor({Math.Color4? color: null}):
+    this._shader  = null,
+    this._clr     = color ?? new Math.Color4.white(),
+    this._changed = null;
 
   /// Indicates that this technique has changed.
   Events.Event get changed =>

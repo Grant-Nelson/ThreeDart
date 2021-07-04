@@ -2,20 +2,27 @@ part of ThreeDart.Techniques;
 
 /// A technique for rendering entities with a depth fog.
 class Depth extends Technique {
-  Shaders.Depth? _shader = null;
-  double _start = 1.0;
-  double _stop  = 10.0;
-  bool _grey   = false;
-  bool _invert = false;
-  bool _focus  = false;
-  Events.Event? _changed = null;
+  Shaders.Depth? _shader;
+  double _start;
+  double _stop;
+  bool _grey;
+  bool _invert;
+  bool _focus;
+  Events.Event? _changed;
 
   /// Creates a new depth technique with the given initial values.
   Depth({double start:  1.0,
          double stop:   10.0,
          bool   grey:   false,
          bool   invert: false,
-         bool   focus:  false}) {
+         bool   focus:  false}):
+    this._shader  = null,
+    this._start   = 1.0,
+    this._stop    = 10.0,
+    this._grey    = false,
+    this._invert  = false,
+    this._focus   = false,
+    this._changed = null {
     this.start  = start;
     this.stop   = stop;
     this.grey   = grey;

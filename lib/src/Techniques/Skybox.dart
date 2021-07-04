@@ -2,18 +2,21 @@ part of ThreeDart.Techniques;
 
 /// A technique for a cover pass with a sky box.
 class Skybox extends Technique {
-  Shaders.Skybox? _shader = null;
-  double _fov = Math.PI_3;
-  Textures.TextureCube? _boxTxt = null;
-  Math.Color3 _boxClr = new Math.Color3.white();
-  Events.Event? _changed = null;
+  Shaders.Skybox? _shader;
+  double _fov;
+  Textures.TextureCube? _boxTxt;
+  Math.Color3 _boxClr;
+  Events.Event? _changed;
 
   /// Creates a new sky box technique with the given initial values.
   Skybox({double fov: Math.PI_3,
           Textures.TextureCube? boxTexture: null,
-          Math.Color3? boxColor: null}) {
-    this._fov     = fov;
-    this._boxClr  = boxColor ?? new Math.Color3.white();
+          Math.Color3? boxColor: null}):
+    this._shader  = null,
+    this._fov     = fov,
+    this._boxTxt  = null,
+    this._boxClr  = boxColor ?? new Math.Color3.white(),
+    this._changed = null {
     this.boxTexture = boxTexture;
   }
 

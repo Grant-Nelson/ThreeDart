@@ -7,12 +7,15 @@ part of ThreeDart.Techniques;
 abstract class MaterialLightBaseComponent {
   MaterialLight _owner;
   String _name;
-  Shaders.ColorSourceType _type = new Shaders.ColorSourceType();
-  Textures.Texture2D? _txt2D = null;
-  Textures.TextureCube? _txtCube = null;
+  Shaders.ColorSourceType _type;
+  Textures.Texture2D? _txt2D;
+  Textures.TextureCube? _txtCube;
 
   /// Creates a new base component for the given [owner] and [name].
-  MaterialLightBaseComponent._(this._owner, this._name);
+  MaterialLightBaseComponent._(this._owner, this._name):
+    this._type    = new Shaders.ColorSourceType(),
+    this._txt2D   = null,
+    this._txtCube = null;
 
   /// Handles changes in the component.
   void _onChanged([Events.EventArgs? args = null]) =>

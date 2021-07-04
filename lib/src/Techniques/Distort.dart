@@ -2,27 +2,33 @@ part of ThreeDart.Techniques;
 
 /// A technique for a cover pass with a distorted image based off depth.
 class Distort extends Technique {
-  Shaders.Distort? _shader = null;
+  Shaders.Distort? _shader;
 
   /// TODO: Need to allow the color texture to also be a Cube texture.
-  Textures.Texture2D? _colorTxt = null;
-  Textures.Texture2D? _bumpTxt = null;
-  Math.Matrix3 _colorTxt2DMat = Math.Matrix3.identity;
-  Math.Matrix3 _bumpTxt2DMat = Math.Matrix3.identity;
-  Math.Matrix4 _bumpMat = Math.Matrix4.identity;
-  Events.Event? _changed = null;
+  Textures.Texture2D? _colorTxt;
+  Textures.Texture2D? _bumpTxt;
+  Math.Matrix3 _colorTxt2DMat;
+  Math.Matrix3 _bumpTxt2DMat;
+  Math.Matrix4 _bumpMat;
+  Events.Event? _changed;
 
   /// Creates a new distort cover technique with the given initial values.
   Distort({Textures.Texture2D? colorTxt: null,
-           Textures.Texture2D? bumpTxt: null,
-           Math.Matrix3? colorTxt2DMat: null,
-           Math.Matrix3? bumpTxt2DMat: null,
-           Math.Matrix4? bumpMat: null}) {
-    this._shader = null;
+           Textures.Texture2D? bumpTxt:  null,
+           Math.Matrix3? colorTxt2DMat:  null,
+           Math.Matrix3? bumpTxt2DMat:   null,
+           Math.Matrix4? bumpMat:        null}):       
+    this._shader   = null,
+    this._colorTxt = null,
+    this._bumpTxt  = null,
+    this._colorTxt2DMat = Math.Matrix3.identity,
+    this._bumpTxt2DMat  = Math.Matrix3.identity,
+    this._bumpMat       = Math.Matrix4.identity,
+    this._changed = null {
     this.colorTexture = colorTxt;
-    this.bumpTexture = bumpTxt;
+    this.bumpTexture  = bumpTxt;
     this.colorTexture2DMatrix = colorTxt2DMat ?? Math.Matrix3.identity;
-    this.bumpTexture2DMatrix = bumpTxt2DMat ?? Math.Matrix3.identity;
+    this.bumpTexture2DMatrix  = bumpTxt2DMat ?? Math.Matrix3.identity;
     this.bumpMatrix = bumpMat ?? Math.Matrix4.identity;
   }
 
