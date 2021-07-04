@@ -7,69 +7,69 @@ part of ThreeDart.Core;
 class Entity implements Movers.Movable, Events.Changeable {
 
   /// The name for this entity.
-  String _name = '';
+  String _name;
 
   /// Indicates if this entity and its children
   /// will be rendered or not.
-  bool _enabled = false;
+  bool _enabled;
 
   /// The shape to render.
   /// May be null to not render this Entity which is useful
   /// when grouping other Entities.
-  Shapes.Shape? _shape = null;
+  Shapes.Shape? _shape;
 
   /// The shape builder used to build the rendering data.
   /// When using a shape this will be a shape.
   /// May be null to not when not rendering.
-  Shapes.ShapeBuilder? _shapeBuilder = null;
+  Shapes.ShapeBuilder? _shapeBuilder;
 
   /// The cache of the shape transformed into the buffers required
   /// by the shader in the currently set technique.
   /// TODO: Need to make the cache work for two techniques when there are parents.
-  Data.TechniqueCache? _cache = null;
+  Data.TechniqueCache? _cache;
 
   /// The technique to render with or null to inherit from it's parent.
-  Techniques.Technique? _tech = null;
+  Techniques.Technique? _tech;
 
   /// The mover to position, rotate, and scale this Entity and children.
   /// May be null to not move the Entity.
-  Movers.Mover? _mover = null;
+  Movers.Mover? _mover;
 
   /// The location and rotation of this entity.
-  Math.Matrix4? _matrix = null;
+  Math.Matrix4? _matrix;
 
   /// The list of children entities to this entity.
-  Collections.Collection<Entity> _children = new Collections.Collection<Entity>();
+  Collections.Collection<Entity> _children;
 
   /// The event emitted when any part of the entity is changed.
-  Events.Event? _changed = null;
+  Events.Event? _changed;
 
   /// The event emitted when the shape has been changed.
-  Events.Event? _shapeChanged = null;
+  Events.Event? _shapeChanged;
 
   /// The event emitted when the shape builder has been changed.
-  Events.Event? _shapeBuilderChanged = null;
+  Events.Event? _shapeBuilderChanged;
 
   /// The event emitted when the technique has been changed.
-  Events.Event? _techChanged = null;
+  Events.Event? _techChanged;
 
   /// The event emitted when the mover has been changed.
-  Events.Event? _moverChanged = null;
+  Events.Event? _moverChanged;
 
   /// The event emitted when the matrix has been changed.
-  Events.Event? _matrixChanged = null;
+  Events.Event? _matrixChanged;
 
   /// The event emitted when one or more children is added.
-  Events.Event? _childrenAdded = null;
+  Events.Event? _childrenAdded;
 
   /// The event emitted when one or more children is removed.
-  Events.Event? _childrenRemoved = null;
+  Events.Event? _childrenRemoved;
 
   /// The event emitted when an extension is added.
-  Events.Event? _extensionAdded = null;
+  Events.Event? _extensionAdded;
 
   /// The event emitted when an extension is removed.
-  Events.Event? _extensionRemoved = null;
+  Events.Event? _extensionRemoved;
 
   /// Creates a new Entity.
   Entity({String name: '',
@@ -77,9 +77,26 @@ class Entity implements Movers.Movable, Events.Changeable {
           Shapes.Shape? shape: null,
           Techniques.Technique? tech: null,
           Movers.Mover? mover: null,
-          List<Entity>? children: null}) {
-    this._name = name;
-    this._enabled = enabled;
+          List<Entity>? children: null}): 
+    this._name    = name,
+    this._enabled = enabled,
+    this._shape        = null,
+    this._shapeBuilder = null,
+    this._cache    = null,
+    this._tech     = null,
+    this._mover    = null,
+    this._matrix   = null,
+    this._children = new Collections.Collection<Entity>(),
+    this._changed      = null,
+    this._shapeChanged = null,
+    this._shapeBuilderChanged = null,
+    this._techChanged      = null,
+    this._moverChanged     = null,
+    this._matrixChanged    = null,
+    this._childrenAdded    = null,
+    this._childrenRemoved  = null,
+    this._extensionAdded   = null,
+    this._extensionRemoved = null {
     this._children.setHandlers(
       onAddedHndl:   this.onChildrenAdded,
       onRemovedHndl: this.onChildrenRemoved);
@@ -141,8 +158,8 @@ class Entity implements Movers.Movable, Events.Changeable {
       this._shape = shape;
       this._shapeBuilder = shape;
       this.clearCache();
-      if (oldShape != null) oldShape.changed.remove(this.onShapeModified);
-      if (shape != null) shape.changed.add(this.onShapeModified);
+      oldShape?.changed.remove(this.onShapeModified);
+      shape?.changed.add(this.onShapeModified);
       this.onShapeChanged(oldShape, shape);
     }
   }
@@ -159,8 +176,8 @@ class Entity implements Movers.Movable, Events.Changeable {
       this._shape = null;
       this._shapeBuilder = builder;
       this.clearCache();
-      if (oldBuilder != null) oldBuilder.changed.remove(this.onShapeModified);
-      if (builder != null) builder.changed.add(this.onShapeModified);
+      oldBuilder?.changed.remove(this.onShapeModified);
+      builder?.changed.add(this.onShapeModified);
       this.onShapeBuilderChanged(oldBuilder, builder);
     }
   }
@@ -172,8 +189,8 @@ class Entity implements Movers.Movable, Events.Changeable {
     if (this._tech != technique) {
       Techniques.Technique? oldTech = this._tech;
       this._tech = technique;
-      if (oldTech != null) oldTech.changed.remove(this.onTechModified);
-      if (technique != null) technique.changed.add(this.onTechModified);
+      oldTech?.changed.remove(this.onTechModified);
+      technique?.changed.add(this.onTechModified);
       this._cacheUpdateForTech();
       this.onTechChanged(oldTech, technique);
     }
@@ -186,8 +203,8 @@ class Entity implements Movers.Movable, Events.Changeable {
     if (this._mover != mover) {
       Movers.Mover? oldMover = this._mover;
       this._mover = mover;
-      if (oldMover != null) oldMover.changed.remove(this.onMoverModified);
-      if (mover != null) mover.changed.add(this.onMoverModified);
+      oldMover?.changed.remove(this.onMoverModified);
+      mover?.changed.add(this.onMoverModified);
       this.onMoverChanged(oldMover, this._mover);
     }
   }
@@ -212,9 +229,8 @@ class Entity implements Movers.Movable, Events.Changeable {
   List<Entity> findAllByName(String name, [List<Entity>? entities = null]) {
     entities ??= [];
     if (this.name == name) entities.add(this);
-    for(Entity child in this._children) {
+    for(Entity child in this._children)
       child.findAllByName(name, entities);
-    }
     return entities;
   }
 
