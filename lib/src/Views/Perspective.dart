@@ -8,19 +8,25 @@ class Perspective implements Camera {
       Math.Vector3.posY,
       Math.Vector3.negZ);
 
-  Movers.Mover? _premover = null;
-  Movers.Mover? _mover    = null;
-  double _fov  = Math.PI_3;
-  double _near = 0.1;
-  double _far  = 2000.0;
-  Events.Event? _changed = null;
+  Movers.Mover? _premover;
+  Movers.Mover? _mover;
+  double _fov;
+  double _near;
+  double _far;
+  Events.Event? _changed;
 
   /// Creates a new perspective camera.
   Perspective({Movers.Mover? premover: null,
                Movers.Mover? mover:    null,
                double fov:  Math.PI_3,
                double near: 0.1,
-               double far:  2000.0}) {
+               double far:  2000.0}):
+    this._premover = null,
+    this._mover    = null,
+    this._fov  = Math.PI_3,
+    this._near = 0.1,
+    this._far  = 2000.0,
+    this._changed = null {
     this.premover = premover;
     this.mover    = mover;
     this.fov      = fov;

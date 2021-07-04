@@ -2,13 +2,20 @@ part of ThreeDart.Views;
 
 /// A camera for an orthogonal rendering of a scene.
 class Orthogonal implements Camera {
-  Movers.Mover? _mover = null;
-  double _near = 1.0;
-  double _far  = 100.0;
-  Events.Event? _changed = null;
+  Movers.Mover? _mover;
+  double _near;
+  double _far;
+  Events.Event? _changed;
 
   /// Creates a new orthogonal camera.
-  Orthogonal();
+  Orthogonal({
+    Movers.Mover? mover = null,
+    double near = 1.0,
+    double far  = 100.0}):
+    this._mover = mover,
+    this._near  = near,
+    this._far   = far,
+    this._changed = null;
 
   /// Indicates that this target has changed.
   Events.Event get changed =>

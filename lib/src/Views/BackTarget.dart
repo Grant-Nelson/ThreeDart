@@ -2,24 +2,24 @@ part of ThreeDart.Views;
 
 /// A rendering target which renders to a texture instead of the screen.
 class BackTarget extends Target {
-  int _width  = 512;
-  int _height = 512;
-  int _actualWidth  = 512;
-  int _actualHeight = 512;
-  bool _hasDepth   = true;
-  bool _autoResize = false;
-  double _autoResizeScalarX = 1.0;
-  double _autoResizeScalarY = 1.0;
-  WebGL.Framebuffer? _framebuffer = null;
-  WebGL.Texture? _colorBuffer = null;
-  WebGL.Renderbuffer? _depthBuffer = null;
-  Textures.Texture2DSolid _colorTxt = new Textures.Texture2DSolid();
-  Math.Color4? _color = Math.Color4.black();
-  bool _clearColor = true;
-  double _depth = 2000.0;
-  bool _clearDepth = true;
-  Math.Region2? _region = Math.Region2.unit;
-  Events.Event? _changed = null;
+  int _width;
+  int _height;
+  int _actualWidth;
+  int _actualHeight;
+  bool _hasDepth;
+  bool _autoResize;
+  double _autoResizeScalarX;
+  double _autoResizeScalarY;
+  WebGL.Framebuffer? _framebuffer;
+  WebGL.Texture? _colorBuffer;
+  WebGL.Renderbuffer? _depthBuffer;
+  Textures.Texture2DSolid _colorTxt;
+  Math.Color4? _color;
+  bool _clearColor;
+  double _depth;
+  bool _clearDepth;
+  Math.Region2? _region;
+  Events.Event? _changed;
 
   /// Creates a new back target.
   BackTarget({int           width:             512,
@@ -32,7 +32,25 @@ class BackTarget extends Target {
               bool          clearColor:        true,
               double        depth:             2000.0,
               bool          clearDepth:        true,
-              Math.Region2? region:            null}) {
+              Math.Region2? region:            null}):
+    this._width  = 512,
+    this._height = 512,
+    this._actualWidth  = 512,
+    this._actualHeight = 512,
+    this._hasDepth   = true,
+    this._autoResize = false,
+    this._autoResizeScalarX = 1.0,
+    this._autoResizeScalarY = 1.0,
+    this._framebuffer = null,
+    this._colorBuffer = null,
+    this._depthBuffer = null,
+    this._colorTxt = new Textures.Texture2DSolid(),
+    this._color = Math.Color4.black(),
+    this._clearColor = true,
+    this._depth = 2000.0,
+    this._clearDepth = true,
+    this._region = Math.Region2.unit,
+    this._changed = null {
     this.width             = width;
     this.height            = height;
     this.color             = color;

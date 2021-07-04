@@ -2,13 +2,13 @@ part of ThreeDart.Views;
 
 /// A identity camera for rendering of a scene.
 class IdentityCamera implements Camera {
-  Movers.Mover? _mover   = null;
-  Events.Event? _changed = null;
+  Movers.Mover? _mover;
+  Events.Event? _changed;
 
   /// Creates a new identity camera.
-  IdentityCamera({Movers.Mover? mover: null}) {
-    this._mover = mover;
-  }
+  IdentityCamera({Movers.Mover? mover: null}):
+    this._mover = mover,
+    this._changed = null;
 
   /// Indicates that this target has changed.
   Events.Event get changed =>

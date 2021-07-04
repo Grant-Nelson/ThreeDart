@@ -2,14 +2,14 @@ part of ThreeDart.Views;
 
 /// The front target to write the result of a render to the HTML canvas.
 class FrontTarget extends Target {
-  Math.Color4 _color = Math.Color4.black();
-  bool _clearColor = true;
-  double _depth = 2000.0;
-  bool _clearDepth = true;
-  int _stencil = 0;
-  bool _clearStencil = false;
-  Math.Region2 _region = Math.Region2.unit;
-  Events.Event? _changed = null;
+  Math.Color4 _color;
+  bool _clearColor;
+  double _depth;
+  bool _clearDepth;
+  int _stencil;
+  bool _clearStencil;
+  Math.Region2 _region;
+  Events.Event? _changed;
 
   /// Constructs a new front target.
   FrontTarget({Math.Color4?  color:        null,
@@ -18,15 +18,15 @@ class FrontTarget extends Target {
                bool          clearDepth:   true,
                int           stencil:      0,
                bool          clearStencil: false,
-               Math.Region2? region:       null}) {
-    this._color        = color ?? Math.Color4.black();
-    this._clearColor   = clearColor;
-    this._depth        = depth;
-    this._clearDepth   = clearDepth;
-    this._stencil      = stencil;
-    this._clearStencil = clearStencil;
-    this._region       = region ?? Math.Region2.unit;
-  }
+               Math.Region2? region:       null}):
+    this._color        = color ?? Math.Color4.black(),
+    this._clearColor   = clearColor,
+    this._depth        = depth,
+    this._clearDepth   = clearDepth,
+    this._stencil      = stencil,
+    this._clearStencil = clearStencil,
+    this._region       = region ?? Math.Region2.unit,
+    this._changed      = null;
 
   /// Indicates that this target has changed.
   Events.Event get changed =>

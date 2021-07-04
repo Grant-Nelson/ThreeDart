@@ -9,10 +9,8 @@ class TextureReader {
   /// Reads the given range of the given [texture] into the reader buffer.
   /// The x, y, width, and height are based on actual buffer size.
   factory TextureReader._read(WebGL.RenderingContext2 gl, Texture2D texture,
-    {int? x: null, int? y: null, int? width: null, int? height: null, bool flipY: false}) {
-    x ??= 0;
-    y ??= 0;
-    width ??= texture.actualWidth;
+    {int x: 0, int y: 0, int? width: null, int? height: null, bool flipY: false}) {
+    width  ??= texture.actualWidth;
     height ??= texture.actualHeight;
 
     if (flipY) y = texture.actualHeight-height-y;
