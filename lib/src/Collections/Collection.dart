@@ -4,7 +4,7 @@ part of ThreeDart.Collections;
 class Collection<T> implements Iterable<T> {
 
   /// The list of all the items.
-  List<T> _list = [];
+  List<T> _list;
 
   /// The handler method for before adding items to this collection.
   CollectionPreaddHandle<T>? _onPreaddHndl;
@@ -16,7 +16,11 @@ class Collection<T> implements Iterable<T> {
   CollectionChangeHandle<T>? _onRemovedHndl;
 
   /// Constructs a new collection.
-  Collection();
+  Collection():
+    this._list = [],
+    this._onPreaddHndl  = null,
+    this._onAddedHndl   = null,
+    this._onRemovedHndl = null;
 
   /// Sets the handlers for this collection.
   ///

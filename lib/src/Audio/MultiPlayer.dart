@@ -4,14 +4,15 @@ part of ThreeDart.Audio;
 /// multiple times overlapping each other.
 class MultiPlayer {
   Player _original;
-  List<Player> _players = [];
-  int _limit = 10;
+  List<Player> _players;
+  int _limit;
 
   /// Creates a player which can play the same sound overlapping each other.
   MultiPlayer(Player player, [int limit = 10]):
-    this._original = player {
+    this._original = player,
+    this._players = [],
+    this._limit = (limit < 1)? 1: limit {
     this._players.add(player);
-    this._limit = (limit < 1) ? 1: limit;
   }
 
   /// Gets the next player which is currently not playing,

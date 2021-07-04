@@ -3,13 +3,17 @@ part of ThreeDart.Audio;
 /// A player for starting and stopping a sound, music, or any audio.
 class Player {
   html.AudioElement _elem;
-  bool _loaded = false;
+  bool _loaded;
   Events.Event? _changed;
   Events.Event? _onPlaying;
   Events.Event? _onPause;
 
   /// Creates a new audio player.
-  Player._(this._elem) {
+  Player._(this._elem):
+    this._loaded = false,
+    this._changed = null,
+    this._onPlaying = null,
+    this._onPause = null {
     this._elem.onPlaying.listen(this._onElemPlaying);
     this._elem.onPause.listen(this._onElemPause);
   }

@@ -2,11 +2,13 @@ part of ThreeDart.Audio;
 
 /// A loader for loading sounds.
 class AudioLoader {
-  int _soundCount = 0;
-  int _loadedCount = 0;
+  int _soundCount;
+  int _loadedCount;
 
   /// Creates a new audio loader.
-  AudioLoader();
+  AudioLoader():
+    this._soundCount = 0,
+    this._loadedCount = 0;
   
   /// The number of sounds being loaded.
   int get loading => this._soundCount - this._loadedCount;

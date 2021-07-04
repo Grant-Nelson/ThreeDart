@@ -4,13 +4,15 @@ part of ThreeDart.Collections;
 class Matrix4Stack implements Events.Changeable {
 
   /// The list storing the stack.
-  List<Math.Matrix4> _mat = [];
+  List<Math.Matrix4> _mat;
 
   /// The event indicating the stack has changed.
-  Events.Event? _changed = null;
+  Events.Event? _changed;
 
   /// Creates a new matrix stack.
-  Matrix4Stack();
+  Matrix4Stack():
+    this._mat = [],
+    this._changed = null;
 
   /// Clears the stack.
   void clear() {
