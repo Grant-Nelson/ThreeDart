@@ -13,7 +13,7 @@ class ThreeDart implements Events.Changeable {
   WebGL.RenderingContext2 _gl;
 
   /// The current scene to draw.
-  Scenes.Scene? _scene = null;
+  Scenes.Scene? _scene;
 
   /// The rendering state.
   RenderState _state;
@@ -28,25 +28,25 @@ class ThreeDart implements Events.Changeable {
   Input.UserInput _input;
 
   /// Event to indicate something attached to this instance has changed.
-  Events.Event? _changed = null;
+  Events.Event? _changed;
 
   /// Event to indicate a render is about to occur.
-  Events.Event? _prerender = null;
+  Events.Event? _prerender;
 
   /// Event to indicate a render has just finished.
-  Events.Event? _postrender = null;
+  Events.Event? _postrender;
 
-  /// Indicates the refresh should be automatically
-  bool _autoRefresh = true;
+  /// Indicates the refresh should be automatically.
+  bool _autoRefresh;
 
   /// Indicates that a refresh is pending.
-  bool _pendingRender = false;
+  bool _pendingRender;
 
   /// The last time that a frames per second were updated.
-  DateTime _frameTime = new DateTime.now();
+  DateTime _frameTime;
 
   /// The number of times render has been called in the last sec or more.
-  int _frameCount = 0;
+  int _frameCount;
 
   /// Creates a new 3Dart rendering on an element with the given [id].
   ///
@@ -120,9 +120,20 @@ class ThreeDart implements Events.Changeable {
 
   /// Creates a new 3Dart instance with the given values.
   ThreeDart._(this._elem, this._canvas, this._gl,
-    this._state, this._txtLoader, this._audioLoader, this._input) {
+    this._state, this._txtLoader, this._audioLoader, this._input):
+    this._scene      = null,
+    this._changed    = null,
+    this._prerender  = null,
+    this._postrender = null,
+    this._autoRefresh   = true,
+    this._pendingRender = false,
+    this._frameTime = new DateTime.now(),
+    this._frameCount = 0 {
     this._resize();
   }
+  
+  /// The rendering context to draw with.
+  WebGL.RenderingContext2 get glContext => this._gl;
 
   /// The width of the canvas in pixels.
   int get width => this._canvas.width ?? 100;
