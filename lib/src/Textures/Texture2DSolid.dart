@@ -2,21 +2,27 @@ part of ThreeDart.Textures;
 
 /// A 2D texture.
 class Texture2DSolid extends Texture2D {
-  int _index = 0;
-  WebGL.Texture? _texture = null;
-  bool _bound  = false;
-  bool _loaded = false;
-  int _width  = 0;
-  int _height = 0;
-  int _actualWidth  = 0;
-  int _actualHeight = 0;
-  Events.Event? _changed = null;
+  int _index;
+  WebGL.Texture? _texture;
+  bool _bound;
+  bool _loaded;
+  int _width;
+  int _height;
+  int _actualWidth;
+  int _actualHeight;
+  Events.Event? _changed;
 
   /// Creates a new 2D texture.
-  Texture2DSolid({int index: 0, WebGL.Texture? texture: null}) {
-    this._index   = index;
-    this._texture = texture;
-  }
+  Texture2DSolid({int index: 0, WebGL.Texture? texture: null}):
+    this._index   = index,
+    this._texture = texture,
+    this._bound  = false,
+    this._loaded = false,
+    this._width  = 0,
+    this._height = 0,
+    this._actualWidth  = 0,
+    this._actualHeight = 0,
+    this._changed = null;
 
   /// Creates a new 2D image from the given [width] and [height].
   factory Texture2DSolid.fromSize(WebGL.RenderingContext2 gl, int width, int height, {bool wrapEdges: false}) {

@@ -3,25 +3,25 @@ part of ThreeDart.Textures;
 /// A loader for loading textures.
 class TextureLoader {
   WebGL.RenderingContext2 _gl;
-  int _max2DSize = 0;
-  int _maxCubeSize = 0;
-  int _imageCount = 0;
-  int _loadedCount = 0;
+  int _max2DSize;
+  int _maxCubeSize;
+  int _imageCount;
+  int _loadedCount;
 
   /// Creates a new texture loader.
-  TextureLoader(this._gl) {
-    this._max2DSize = this._gl.getParameter(WebGL.WebGL.MAX_TEXTURE_SIZE) as int;
-    this._maxCubeSize = this._gl.getParameter(WebGL.WebGL.MAX_CUBE_MAP_TEXTURE_SIZE) as int;
-  }
+  TextureLoader(WebGL.RenderingContext2 gl):
+    this._gl = gl,
+    this._max2DSize   = gl.getParameter(WebGL.WebGL.MAX_TEXTURE_SIZE) as int,
+    this._maxCubeSize = gl.getParameter(WebGL.WebGL.MAX_CUBE_MAP_TEXTURE_SIZE) as int,
+    this._imageCount  = 0,
+    this._loadedCount = 0;
 
   /// The number of textures being loaded.
   int get loading => this._imageCount - this._loadedCount;
 
   /// The percentage of textures loaded.
-  double get percentage {
-    if (this._imageCount == 0) return 100.0;
-    return this._loadedCount*100.0/this._imageCount;
-  }
+  double get percentage =>
+    (this._imageCount == 0) ? 100.0 : this._loadedCount*100.0/this._imageCount;
 
   /// Resets the loading counters.
   void resetCounter() {

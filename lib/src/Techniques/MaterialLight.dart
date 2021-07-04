@@ -44,8 +44,8 @@ class MaterialLight extends Technique {
     this._bendMats.setHandlers(
       onAddedHndl:   this._onBendMatsAdded,
       onRemovedHndl: this._onBendMatsRemoved);
-    this._lights
-      ?..changed.add(this._resetShader)
+    this.lights
+      ..changed.add(this._resetShader)
       ..lightChanged.add(this._onChanged);
   }
 

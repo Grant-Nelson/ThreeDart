@@ -2,18 +2,21 @@ part of ThreeDart.Textures;
 
 /// A 2D texture changer for cycling between images.
 class Texture2DChanger extends Texture2D {
-  int _index = 0;
-  int _listIndex = 0;
-  Texture2D? _current = null;
-  Texture2D? _bound = null;
-  List<Texture2D> _textures = [];
-  Events.Event? _changed = null;
+  int _index;
+  int _listIndex;
+  Texture2D? _current;
+  Texture2D? _bound;
+  List<Texture2D> _textures;
+  Events.Event? _changed;
 
   /// Creates a new 2D texture.
-  Texture2DChanger({int index: 0, List<Texture2D>? textures: null}) {
-    this._index    = index;
-    this._textures = textures ?? [];
-  }
+  Texture2DChanger({int index: 0, List<Texture2D>? textures: null}):
+    this._index     = index,
+    this._listIndex = 0,
+    this._current  = null,
+    this._bound    = null,
+    this._textures = textures ?? [],
+    this._changed  = null;
 
   /// The index of the texture when bound to the rendering context.
   int get index => this._index;

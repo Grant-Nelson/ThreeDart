@@ -7,37 +7,37 @@ class ColorPicker implements Input.Interactable, Events.Changeable {
   TextureLoader _loader;
 
   /// The user input this roller is attached to.
-  Input.UserInput? _input = null;
+  Input.UserInput? _input;
 
   /// Indicates if the modifier keys which must be pressed or released.
-  Input.Modifiers? _modPressed = null;
+  Input.Modifiers? _modPressed;
 
   /// The texture to pick colors from.
-  Texture2D? _txt = null;
+  Texture2D? _txt;
 
   /// Event for handling changes to this picker.
-  Events.Event? _changed = null;
+  Events.Event? _changed;
   
   /// Event emitted before an update for this picker.
-  Events.Event? _preUpdate = null;
+  Events.Event? _preUpdate;
 
   /// Event emitted after an update for this picker.
-  Events.Event? _postUpdate = null;
+  Events.Event? _postUpdate;
   
   /// Event for handling when a color has been picked.
-  Events.Event? _colorPicked = null;
+  Events.Event? _colorPicked;
 
   /// The range, in pixels, of the dead band.
-  double _deadBand = 2.0;
+  double _deadBand;
 
   /// The dead band squared.
-  double _deadBand2 = 4.0;
+  double _deadBand2;
 
   /// True indicating the mouse is pressed, false for released.
-  bool _pressed = false;
+  bool _pressed;
 
   /// Indicates if the mouse has left the dead band area yet.
-  bool _inDeadBand = false;
+  bool _inDeadBand;
 
   /// Creates a new user rotator instance.
   /// If [mod] is provided it will override any value given to [ctrl], [alt], and [shift].
@@ -47,7 +47,18 @@ class ColorPicker implements Input.Interactable, Events.Changeable {
       bool shift:     false,
       Texture2D?       txt:    null,
       Input.Modifiers? mod:    null,
-      Input.UserInput? input:  null}) {
+      Input.UserInput? input:  null}):
+    this._input       = null,
+    this._modPressed  = null,
+    this._txt         = null,
+    this._changed     = null,
+    this._preUpdate   = null,
+    this._postUpdate  = null,
+    this._colorPicked = null,
+    this._deadBand    = 2.0,
+    this._deadBand2   = 4.0,
+    this._pressed     = false,
+    this._inDeadBand  = false {
     this.modifiers = mod ?? new Input.Modifiers(ctrl, alt, shift);
     this.texture   = txt;
     this.attach(input);

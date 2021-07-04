@@ -5,17 +5,19 @@ part of ThreeDart.Textures;
 /// Cube map textures are good for rendering reflections,
 /// refractions, and sky boxes.
 class TextureCube extends Texture {
-  int _index = 0;
-  WebGL.Texture? _texture = null;
-  bool _bound = false;
-  int _loaded = 0;
-  Events.Event? _changed = null;
+  int _index;
+  WebGL.Texture? _texture;
+  bool _bound;
+  int _loaded;
+  Events.Event? _changed;
 
   /// Creates a new cube map texture.
-  TextureCube({int index: 0, WebGL.Texture? texture: null}) {
-    this._index   = index;
-    this._texture = texture;
-  }
+  TextureCube({int index: 0, WebGL.Texture? texture: null}):
+    this._index   = index,
+    this._texture = texture,
+    this._bound   = false,
+    this._loaded  = 0,
+    this._changed = null;
 
   /// Increments the loaded value of the images.
   void _incLoaded() {
