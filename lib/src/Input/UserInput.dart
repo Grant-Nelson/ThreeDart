@@ -8,16 +8,25 @@ class UserInput {
   MouseInput? _mouse;
   LockedMouseInput? _locked;
   TouchInput? _touch;
-  bool _focused = false;
-  bool _lockOnClick = false;
-  bool _pointerLocked = false;
-  html.MouseEvent? _msEventOnLock = null;
-  List<async.StreamSubscription<Object>> _eventStreams = [];
-  double _wheelScalar = 1.0;
+  bool _focused;
+  bool _lockOnClick;
+  bool _pointerLocked;
+  html.MouseEvent? _msEventOnLock;
+  List<async.StreamSubscription<Object>> _eventStreams;
+  double _wheelScalar;
 
   /// Creates a new user input for the given [_elem].
-  UserInput(this._elem) {
-    this._wheelScalar = (Core.Environment.browser == Core.Browser.firefox)? 1.0/6.0: 1.0/180.0;
+  UserInput(this._elem):
+    this._key    = null,
+    this._mouse  = null,
+    this._locked = null,
+    this._touch  = null,
+    this._focused       = false,
+    this._lockOnClick   = false,
+    this._pointerLocked = false,
+    this._msEventOnLock = null,
+    this._eventStreams = [],
+    this._wheelScalar = (Core.Environment.browser == Core.Browser.firefox)? 1.0/6.0: 1.0/180.0 {
     this._eventStreams.add(html.document.onContextMenu.listen(this._onContentMenu));
     this._eventStreams.add(this._elem.onFocus.listen(this._onFocus));
     this._eventStreams.add(this._elem.onBlur.listen(this._onBlur));
@@ -76,7 +85,10 @@ class UserInput {
 
   /// Converts the html key into the 3Dart key.
   Key _convertKey(html.KeyboardEvent kEvent) =>
-    new Key(kEvent.keyCode, ctrl: kEvent.ctrlKey||kEvent.metaKey, alt: kEvent.altKey, shift: kEvent.shiftKey);
+    new Key(kEvent.keyCode,
+      ctrl:  kEvent.ctrlKey||kEvent.metaKey,
+      alt:   kEvent.altKey,
+      shift: kEvent.shiftKey);
 
   /// Sets the modifier keys for a mouse event.
   void _setMouseModifiers(html.MouseEvent msEvent) {
@@ -119,7 +131,10 @@ class UserInput {
   /// Converts the html button into the 3Dart button.
   Button _convertButton(html.MouseEvent? msEvent) {
     if (msEvent == null) return Button(0);
-    return new Button(msEvent.buttons ?? 0, ctrl: msEvent.ctrlKey||msEvent.metaKey, alt: msEvent.altKey, shift: msEvent.shiftKey);
+    return new Button(msEvent.buttons ?? 0,
+      ctrl:  msEvent.ctrlKey||msEvent.metaKey,
+      alt:   msEvent.altKey,
+      shift: msEvent.shiftKey);
   }
 
   /// Determines if the given mouse location is contained in the canvas.

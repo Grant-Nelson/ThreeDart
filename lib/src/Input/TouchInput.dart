@@ -8,31 +8,35 @@ class TouchInput {
   UserInput _input;
 
   /// The event to emit when a touch has started.
-  Events.Event? _start = null;
+  Events.Event? _start;
 
   /// The event to emit when a touch has ended.
-  Events.Event? _end = null;
+  Events.Event? _end ;
 
   /// The event to emit when the mouse is moved.
-  Events.Event? _move = null;
-
-  /// Indicates if the touch equivalent buttons which are pressed or not.
-  int _buttons = 0;
+  Events.Event? _move;
 
   /// The point, in pixels, in which the mouse button was last pressed or released.
-  Math.Point2 _startPnt = Math.Point2.zero;
+  Math.Point2 _startPnt;
 
   /// The point, in pixels, of the last mouse event.
-  Math.Point2 _prevPnt = Math.Point2.zero;
+  Math.Point2 _prevPnt;
 
   /// The time in which the mouse button was last pressed or released.
-  DateTime _startTime = DateTime.now();
+  DateTime _startTime;
 
   /// The time of the last mouse event.
-  DateTime _prevTime = DateTime.now();
+  DateTime _prevTime;
 
   /// Creates a new user input for the given [_elem].
-  TouchInput._(this._input);
+  TouchInput._(this._input):
+    this._start = null,
+    this._end   = null,
+    this._move  = null,
+    this._startPnt = Math.Point2.zero,
+    this._prevPnt  = Math.Point2.zero,
+    this._startTime = DateTime.now(),
+    this._prevTime  = DateTime.now();
 
   /// Gets the locked mouse arguments.
   /// If [setStart] is true then the start point and time are set.
