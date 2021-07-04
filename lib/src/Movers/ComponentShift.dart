@@ -2,18 +2,27 @@ part of ThreeDart.Movers;
 
 /// A simple single component for shifting and smoothing movement.
 class ComponentShift extends Events.Changeable {
-  bool _wrap = true;
-  double _maxLoc  = 1.0e12;
-  double _minLoc  = -1.0e12;
-  double _loc     = 0.0;
-  double _maxVel  = 100.0;
-  double _vel     = 0.0;
-  double _acc     = 0.0;
-  double _velDamp = 0.0;
-  Events.Event? _changed = null;
+  bool _wrap;
+  double _maxLoc;
+  double _minLoc;
+  double _loc;
+  double _maxVel;
+  double _vel;
+  double _acc;
+  double _velDamp;
+  Events.Event? _changed;
 
   /// Creates a new [ComponentShift] instance.
-  ComponentShift();
+  ComponentShift():
+    this._wrap    = true,
+    this._maxLoc  =  1.0e12,
+    this._minLoc  = -1.0e12,
+    this._loc     = 0.0,
+    this._maxVel  = 100.0,
+    this._vel     = 0.0,
+    this._acc     = 0.0,
+    this._velDamp = 0.0,
+    this._changed = null;
 
   /// Clamps or wraps the given location to the given minimum and maximum range.
   double _clapWrap(double loc) {

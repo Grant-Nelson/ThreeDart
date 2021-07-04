@@ -4,61 +4,61 @@ part of ThreeDart.Movers;
 class UserRotator implements Mover, Input.Interactable {
 
   /// The user input this rotator is attached to.
-  Input.UserInput? _input = null;
+  Input.UserInput? _input;
 
   /// The pitch component for this rotator.
-  ComponentShift _pitch = new ComponentShift();
+  ComponentShift _pitch;
 
   /// The yaw component for this rotator.
-  ComponentShift _yaw = new ComponentShift();
+  ComponentShift _yaw;
 
   /// Indicates if the modifier keys which must be pressed or released.
-  Input.Modifiers _modPressed = Input.Modifiers.none();
+  Input.Modifiers _modPressed;
 
   /// Indicates if the rotations should be continuous or not.
-  bool _cumulative = false;
+  bool _cumulative;
 
   /// The invert the X mouse axis.
-  bool _invertX = false;
+  bool _invertX;
 
   /// The invert the Y mouse axis.
-  bool _invertY = false;
+  bool _invertY;
 
   /// The value to scale the pitch by.
-  double _pitchScalar = 2.5;
+  double _pitchScalar;
 
   /// The value to scale the yaw by.
-  double _yawScalar = 2.5;
+  double _yawScalar;
 
   /// The range, in pixels, of the dead band.
-  double _deadBand = 2.0;
+  double _deadBand;
 
   /// The dead band squared.
-  double _deadBand2 = 4.0;
+  double _deadBand2;
 
   /// Indicates if the mouse has left the dead band area yet.
-  bool _inDeadBand = false;
+  bool _inDeadBand;
 
   /// True indicating the mouse is pressed, false for released.
-  bool _pressed = false;
+  bool _pressed;
 
   /// The yaw rotation in radians when the button was pressed.
-  double _lastYaw = 0.0;
+  double _lastYaw;
 
   /// The pitch rotation in radians when the button was pressed.
-  double _lastPitch = 0.0;
+  double _lastPitch;
 
   /// The previous change of the mouse, the offset or delta.
-  Math.Vector2 _prevVal = Math.Vector2.zero;
+  Math.Vector2 _prevVal;
 
   /// The last frame the mover was updated for.
-  int _frameNum = 0;
+  int _frameNum;
 
   /// The matrix describing the mover's rotation.
-  Math.Matrix4 _mat = Math.Matrix4.identity;
+  Math.Matrix4 _mat;
 
   /// Event for handling changes to this mover.
-  Events.Event? _changed = null;
+  Events.Event? _changed;
 
   /// Creates a new user rotator instance.
   /// If [mod] is provided it will override any value given to [ctrl], [alt], and [shift].
@@ -70,7 +70,26 @@ class UserRotator implements Mover, Input.Interactable {
       bool invertX: false,
       bool invertY: false,
       Input.Modifiers? mod:   null,
-      Input.UserInput? input: null}) {
+      Input.UserInput? input: null}):
+    this._input = null,
+    this._pitch = new ComponentShift(),
+    this._yaw   = new ComponentShift(),
+    this._modPressed = Input.Modifiers.none(),
+    this._cumulative = false,
+    this._invertX    = false,
+    this._invertY    = false,
+    this._pitchScalar = 2.5,
+    this._yawScalar   = 2.5,
+    this._deadBand    = 2.0,
+    this._deadBand2   = 4.0,
+    this._inDeadBand = false,
+    this._pressed    = false,
+    this._lastYaw   = 0.0,
+    this._lastPitch = 0.0,
+    this._prevVal  = Math.Vector2.zero,
+    this._frameNum = 0,
+    this._mat      = Math.Matrix4.identity,
+    this._changed  = null {
     this._pitch
       ..wrap = true
       ..maximumLocation = Math.PI * 2.0

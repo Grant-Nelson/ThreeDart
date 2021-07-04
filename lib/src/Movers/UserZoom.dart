@@ -4,25 +4,25 @@ part of ThreeDart.Movers;
 class UserZoom implements Mover, Input.Interactable {
 
   /// The user input this zoomer is attached to.
-  Input.UserInput? _input = null;
+  Input.UserInput? _input;
 
   /// Indicates if the modifier keys which must be pressed or released.
-  Input.Modifiers _modPressed = Input.Modifiers.none();
+  Input.Modifiers _modPressed;
 
   /// The scalar to change how fast the zoom occurs.
-  double _zoomScalar = 0.01;
+  double _zoomScalar;
 
   /// The current zoom value.
-  double _zoom = 0.0;
+  double _zoom;
 
   /// The last frame the mover was updated for.
-  int _frameNum = 0;
+  int _frameNum;
 
   /// The matrix describing the zoom.
-  Math.Matrix4 _mat = Math.Matrix4.identity;
+  Math.Matrix4 _mat;
 
   /// Event for handling changes to this mover.
-  Events.Event? _changed = null;
+  Events.Event? _changed;
 
   /// Creates an instance of [UserZoom].
   /// If [mod] is provided it will override any value given to [ctrl], [alt], and [shift].
@@ -31,7 +31,14 @@ class UserZoom implements Mover, Input.Interactable {
       bool alt:   false,
       bool shift: false,
       Input.Modifiers? mod:   null,
-      Input.UserInput? input: null}) {
+      Input.UserInput? input: null}):
+    this._input = null,
+    this._modPressed = Input.Modifiers.none(),
+    this._zoomScalar = 0.01,
+    this._zoom       = 0.0,
+    this._frameNum   = 0,
+    this._mat = Math.Matrix4.identity,
+    this._changed = null {
     this.modifiers = mod ?? new Input.Modifiers(ctrl, alt, shift);
     this.attach(input);
   }

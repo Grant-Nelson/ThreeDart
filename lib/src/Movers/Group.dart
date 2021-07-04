@@ -2,12 +2,15 @@ part of ThreeDart.Movers;
 
 /// A mover which groups several movers.
 class Group extends Collections.Collection<Mover?> implements Mover {
-  Events.Event? _changed = null;
-  Math.Matrix4 _mat = Math.Matrix4.identity;
-  int _frameNum = 0;
+  Events.Event? _changed;
+  Math.Matrix4 _mat;
+  int _frameNum;
 
   /// Creates a new group of movers.
-  Group([List<Mover?>? movers = null]) {
+  Group([List<Mover?>? movers = null]):
+    this._changed = null,
+    this._mat = Math.Matrix4.identity,
+    this._frameNum = 0 {
     this.setHandlers(
       onAddedHndl:   this._onAdded,
       onRemovedHndl: this._onRemoved);

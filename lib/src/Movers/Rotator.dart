@@ -2,14 +2,14 @@ part of ThreeDart.Movers;
 
 /// A mover for rotating an object at a constant rate with euler angles.
 class Rotator extends Mover {
-  double _yaw   = 0.0;
-  double _pitch = 0.0;
-  double _roll  = 0.0;
-  double _deltaYaw   = 0.0;
-  double _deltaPitch = 0.0;
-  double _deltaRoll  = 0.0;
-  int _frameNum = 0;
-  Math.Matrix4 _mat = Math.Matrix4.identity;
+  double _yaw;
+  double _pitch;
+  double _roll;
+  double _deltaYaw;
+  double _deltaPitch;
+  double _deltaRoll;
+  int _frameNum;
+  Math.Matrix4 _mat;
   Events.Event? _changed;
 
   /// Creates a new rotator.
@@ -19,7 +19,16 @@ class Rotator extends Mover {
       double roll:       0.0,
       double deltaYaw:   0.1,
       double deltaPitch: 0.21,
-      double deltaRoll:  0.32}) {
+      double deltaRoll:  0.32}):
+    this._yaw   = 0.0,
+    this._pitch = 0.0,
+    this._roll  = 0.0,
+    this._deltaYaw   = 0.0,
+    this._deltaPitch = 0.0,
+    this._deltaRoll  = 0.0,
+    this._frameNum = 0,
+    this._mat = Math.Matrix4.identity,
+    this._changed = null {
     this.yaw   = yaw;
     this.pitch = pitch;
     this.roll  = roll;

@@ -5,34 +5,51 @@ typedef Math.Point3 CollisionHandle(Math.Point3 prev, Math.Point3 next);
 
 /// A translation mover which translates on an object in response to user input.
 class UserTranslator implements Mover, Input.Interactable {
-  Input.KeyGroup _xNegKey = new Input.KeyGroup();
-  Input.KeyGroup _xPosKey = new Input.KeyGroup();
-  Input.KeyGroup _yNegKey = new Input.KeyGroup();
-  Input.KeyGroup _yPosKey = new Input.KeyGroup();
-  Input.KeyGroup _zNegKey = new Input.KeyGroup();
-  Input.KeyGroup _zPosKey = new Input.KeyGroup();
-  ComponentShift _offsetX = new ComponentShift();
-  ComponentShift _offsetY = new ComponentShift();
-  ComponentShift _offsetZ = new ComponentShift();
-  Math.Matrix3 _velRot    = Math.Matrix3.identity;
-  Math.Matrix3 _velRotInv = Math.Matrix3.identity;
-  double _deccel = 60.0;
-  double _accel = 15.0;
+  Input.KeyGroup _xNegKey;
+  Input.KeyGroup _xPosKey;
+  Input.KeyGroup _yNegKey;
+  Input.KeyGroup _yPosKey;
+  Input.KeyGroup _zNegKey;
+  Input.KeyGroup _zPosKey;
+  ComponentShift _offsetX;
+  ComponentShift _offsetY;
+  ComponentShift _offsetZ;
+  Math.Matrix3 _velRot;
+  Math.Matrix3 _velRotInv;
+  double _deccel;
+  double _accel;
 
   /// The last frame the mover was updated for.
-  int _frameNum = 0;
+  int _frameNum;
 
   /// The matrix describing the translation.
-  Math.Matrix4 _mat = Math.Matrix4.identity;
+  Math.Matrix4 _mat;
 
   /// Event for handling changes to this mover.
-  Events.Event? _changed = null;
+  Events.Event? _changed;
 
   /// A handler for optionally handling collisions in movement.
-  CollisionHandle? _collision = null;
+  CollisionHandle? _collision;
 
   /// Creates an instance of [UserTranslator].
-  UserTranslator({Input.UserInput? input: null}) {
+  UserTranslator({Input.UserInput? input: null}):
+    this._xNegKey = new Input.KeyGroup(),
+    this._xPosKey = new Input.KeyGroup(),
+    this._yNegKey = new Input.KeyGroup(),
+    this._yPosKey = new Input.KeyGroup(),
+    this._zNegKey = new Input.KeyGroup(),
+    this._zPosKey = new Input.KeyGroup(),
+    this._offsetX = new ComponentShift(),
+    this._offsetY = new ComponentShift(),
+    this._offsetZ = new ComponentShift(),
+    this._velRot    = Math.Matrix3.identity,
+    this._velRotInv = Math.Matrix3.identity,
+    this._deccel   = 60.0,
+    this._accel    = 15.0,
+    this._frameNum = 0,
+    this._mat       = Math.Matrix4.identity,
+    this._changed   = null,
+    this._collision = null {
     this._xNegKey
       ..addKey(Input.Key.rightArrow)
       ..addKey(Input.Key.keyD)

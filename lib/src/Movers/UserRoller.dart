@@ -52,7 +52,21 @@ class UserRoller implements Mover, Input.Interactable {
       bool alt:   false,
       bool shift: false,
       Input.Modifiers? mod:   null,
-      Input.UserInput? input: null}) {
+      Input.UserInput? input: null}):
+    this._input = null,
+    this._roll  = new ComponentShift(),
+    this._modPressed = new Input.Modifiers.none(),
+    this._cumulative = false,
+    this._rollScalar = 2.5,
+    this._deadBand   = 2.0,
+    this._deadBand2  = 4.0,
+    this._inDeadBand = false,
+    this._pressed    = false,
+    this._lastRoll = 0.0,
+    this._prevVal  = Math.Vector2.zero,
+    this._frameNum = 0,
+    this._mat      = Math.Matrix4.identity,
+    this._changed  = null {
     this._roll
       ..wrap = true
       ..maximumLocation = Math.PI * 2.0

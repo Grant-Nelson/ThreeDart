@@ -2,13 +2,17 @@ part of ThreeDart.Movers;
 
 /// A mover which inverts the matrix from another mover.
 class Invert implements Mover {
-  Mover? _mover = null;
-  Events.Event? _changed = null;
-  Math.Matrix4 _mat = Math.Matrix4.identity;
-  int _frameNum = 0;
+  Mover? _mover;
+  Events.Event? _changed;
+  Math.Matrix4 _mat;
+  int _frameNum;
 
   /// Creates a new invert mover.
-  Invert([Mover? mover = null]) {
+  Invert([Mover? mover = null]):
+    this._mover = null,
+    this._changed = null,
+    this._mat = Math.Matrix4.identity,
+    this._frameNum = 0 {
     this.mover = mover;
   }
 

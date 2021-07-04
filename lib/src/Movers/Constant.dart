@@ -2,11 +2,13 @@ part of ThreeDart.Movers;
 
 /// Constant mover applies a constant matrix to an entity or group.
 class Constant extends Mover {
-  Math.Matrix4 _mat = Math.Matrix4.identity;
-  Events.Event? _changed = null;
+  Math.Matrix4 _mat;
+  Events.Event? _changed;
 
   /// Creates a new constant mover.
-  Constant([Math.Matrix4? mat = null]) {
+  Constant([Math.Matrix4? mat = null]):
+    this._mat = Math.Matrix4.identity,
+    this._changed = null {
     this.matrix = mat;
   }
 
