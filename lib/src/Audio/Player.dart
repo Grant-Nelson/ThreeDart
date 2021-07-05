@@ -4,22 +4,23 @@ part of ThreeDart.Audio;
 class Player {
   html.AudioElement _elem;
   bool _loaded;
-  Events.Event _changed;
-  Events.Event _onPlaying;
-  Events.Event _onPause;
+  Events.Event? _changed;
+  Events.Event? _onPlaying;
+  Events.Event? _onPause;
 
   /// Creates a new audio player.
-  Player._(html.AudioElement this._elem) {
-    this._loaded  = false;
-    this._changed = null;
-    this._onPlaying  = null;
-    this._onPause = null;
+  Player._(this._elem):
+    this._loaded = false,
+    this._changed = null,
+    this._onPlaying = null,
+    this._onPause = null {
     this._elem.onPlaying.listen(this._onElemPlaying);
     this._elem.onPause.listen(this._onElemPause);
   }
 
   /// Create a copy of this audio player.
-  Player copy() => new Player._(this._elem.clone(true));
+  Player copy() =>
+    new Player._(this._elem.clone(true) as html.AudioElement);
 
   /// Sets the loaded state for this audio.
   void _setLoaded() {
@@ -45,7 +46,6 @@ class Player {
   /// again once it is done, the audio will loop.
   bool get loop => this._elem.loop;
   set loop(bool loop) {
-    loop ??= false;
     if (this.loop != loop) {
       this._elem.loop = loop;
       this._changed?.emit();
@@ -53,9 +53,9 @@ class Player {
   }
 
   /// This is the volume to playback the audio at.
-  double get volume => this._elem.volume;
+  double get volume => this._elem.volume.toDouble();
   set volume(double volume) {
-    volume = Math.clampVal(volume ?? 1.0);
+    volume = Math.clampVal(volume);
     if (Math.Comparer.notEquals(this.volume, volume)) {
       this._elem.volume = volume;
       this._changed?.emit();
@@ -63,9 +63,9 @@ class Player {
   }
 
   /// This is the rate to playback the audio at.
-  double get rate => this._elem.playbackRate;
+  double get rate => this._elem.playbackRate.toDouble();
   set rate(double rate) {
-    rate = Math.clampVal(rate ?? 1.0, 0.001, 100.0);
+    rate = Math.clampVal(rate, 0.001, 100.0);
     if (Math.Comparer.notEquals(this.rate, rate)) {
       this._elem.playbackRate = rate;
       this._changed?.emit();
@@ -73,7 +73,7 @@ class Player {
   }
 
   /// Plays this audio.
-  void play({double volume = null, double rate = null, bool loop = null}) {
+  void play({double? volume = null, double? rate = null, bool? loop = null}) {
     if (volume != null) this.volume = volume;
     if (rate   != null) this.rate   = rate;
     if (loop   != null) this.loop   = loop;
@@ -84,20 +84,14 @@ class Player {
   void pause() => this._elem.pause();
 
   /// Emitted when the audio has finished being loading.
-  Events.Event get changed {
+  Events.Event get changed =>
     this._changed ??= new Events.Event();
-    return this._changed;
-  }
 
   /// Emitted when the audio starts playing.
-  Events.Event get onPlaying {
+  Events.Event get onPlaying =>
     this._onPlaying ??= new Events.Event();
-    return this._onPlaying;
-  }
 
   /// Emitted when the audio has paused.
-  Events.Event get onPause {
+  Events.Event get onPause =>
     this._onPause ??= new Events.Event();
-    return this._onPause;
-  }
 }

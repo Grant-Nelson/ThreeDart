@@ -43,7 +43,7 @@ void main() {
   td.scene = new Scenes.EntityPass()
     ..technique = tech
     ..children.add(obj)
-    ..camera.mover = new Movers.Constant.translate(0.0, 0.0, 3.0);
+    ..camera?.mover = new Movers.Constant.translate(0.0, 0.0, 3.0);
 
   new common.RadioGroup("shapes")
     ..add("Cube",         () { obj.shape = Shapes.cube(); })

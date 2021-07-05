@@ -31,7 +31,7 @@ part 'tile.dart';
 
 /// Starts the graphics for the chess game.
 void startGraphics(game.Game game) {
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("targetCanvas");
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId('targetCanvas');
 
   Views.Perspective camera = new Views.Perspective(
     mover: new Movers.Group([
@@ -79,11 +79,11 @@ void startGraphics(game.Game game) {
 
   td.scene = new Scenes.Compound(passes: [skybox, mainScene]);
 
-  html.Element elem = html.document.getElementById("buttons");
+  html.Element? elem = html.document.getElementById('buttons');
   html.ButtonElement button = new html.ButtonElement()
-    ..text = "Fullscreen"
-    ..onClick.listen((_) => td.fullscreen());
-  elem.children.add(button);
+    ..text = 'Fullscreen'
+    ..onClick.listen((_) => td.fullscreen = true);
+  elem?.children.add(button);
 
   common.showFPS(td);
 }

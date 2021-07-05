@@ -46,8 +46,8 @@ void main() {
     ..specular.shininess = 10.0
     ..bump.textureCube = td.textureLoader.loadCubeFromPath("../resources/diceBumpMap");
 
-  List<Movers.Rotator> cubeMovers = new List<Movers.Rotator>();
-  List<Math.Color4> pickerColors = new List<Math.Color4>();
+  List<Movers.Rotator> cubeMovers = [];
+  List<Math.Color4> pickerColors = [];
   final int cubeCount = 125;
 
   ThreeDart.Entity cubeEntity  = new ThreeDart.Entity(shape: Shapes.cube());
@@ -58,7 +58,7 @@ void main() {
       for (double z = -1.6; z <= 1.7; z += 0.8) {
         Math.Matrix4 mat = new Math.Matrix4.translate(x, y, z)*
                            new Math.Matrix4.scale(0.2, 0.2, 0.2);
-        Movers.Mover mover = new Movers.Rotator(deltaPitch: 0.0, deltaRoll: 0.0, deltaYaw: 0.0);
+        Movers.Rotator mover = new Movers.Rotator(deltaPitch: 0.0, deltaRoll: 0.0, deltaYaw: 0.0);
         cubeMovers.add(mover);
 
         Movers.Group group = new Movers.Group()

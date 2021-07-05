@@ -44,36 +44,36 @@ part 'world.dart';
 
 /// Starts up the 3Dart Craft example
 void main() {
-  new common.ShellPage("3Dart Craft")
-    ..addPar(["This example is in development and may still have a few issues and glitches."])
-    ..addLargeCanvas("targetCanvas")
-    ..addControlBoxes(["buttons"])
-    ..addHeader(1, "About")
-    ..addPar(["3Dart Craft is an example of how [3Dart|https://github.com/Grant-Nelson/ThreeDart] can be used ",
-      "to create a [voxel|https://en.wikipedia.org/wiki/Voxel] environment for browser driven video games. ",
-      "This example has no server backing it so none of the changes are persisted. It would take very little ",
-      "to turn this into a simple online game."])
-    ..addPar(["«[Back to Examples List|../../]"])
-    ..addHeader(1, "Controls")
-    ..addPar(["• _Currently there are no controls for mobile browsers_"])
-    ..addPar(["• *Esc* to release the mouse capture"])
-    ..addPar(["• *W* or *Up arrow* to move forward"])
-    ..addPar(["• *S* or *Down arrow* to move backward"])
-    ..addPar(["• *A* or *Left arrow* to strife left"])
-    ..addPar(["• *D* or *Right arrow* to strife right"])
-    ..addPar(["• *Space bar* to jump"])
-    ..addPar(["• *Tab* cycles the block selected which can be placed"])
-    ..addPar(["• *Shift-Tab* cycles the selection in the reverse direction"])
-    ..addPar(["• *Left click* or *Q* removes the currently highlighted block"])
-    ..addPar(["• *Right click* or *E* places the selected block on the highlighted block"])
-    ..addPar(["• *O* to return the starting location"])
-    ..addHeader(1, "Help wanted")
-    ..addPar(["There is still much to be done, many cool new features, and several little bugs. ",
-      "If you would like to contribute to this example, have an idea, find a bug, or just want to learn more about it, ",
-      "check out the [project page|https://github.com/Grant-Nelson/ThreeDart/projects/1] or ",
-      "[source code|https://github.com/Grant-Nelson/ThreeDart/tree/master/web/examples/craft]."])
-    ..addPar(["There are tons of ways to contribute. You could even start your own example. ",
-      "See the [3Dart Project|https://github.com/Grant-Nelson/ThreeDart] for more."]);
+  new common.ShellPage('3Dart Craft')
+    ..addPar(['This example is in development and may still have a few issues and glitches.'])
+    ..addLargeCanvas('targetCanvas')
+    ..addControlBoxes(['buttons'])
+    ..addHeader(1, 'About')
+    ..addPar(['3Dart Craft is an example of how [3Dart|https://github.com/Grant-Nelson/ThreeDart] can be used ',
+      'to create a [voxel|https://en.wikipedia.org/wiki/Voxel] environment for browser driven video games. ',
+      'This example has no server backing it so none of the changes are persisted. It would take very little ',
+      'to turn this into a simple online game.'])
+    ..addPar(['«[Back to Examples List|../../]'])
+    ..addHeader(1, 'Controls')
+    ..addPar(['• _Currently there are no controls for mobile browsers_'])
+    ..addPar(['• *Esc* to release the mouse capture'])
+    ..addPar(['• *W* or *Up arrow* to move forward'])
+    ..addPar(['• *S* or *Down arrow* to move backward'])
+    ..addPar(['• *A* or *Left arrow* to strife left'])
+    ..addPar(['• *D* or *Right arrow* to strife right'])
+    ..addPar(['• *Space bar* to jump'])
+    ..addPar(['• *Tab* cycles the block selected which can be placed'])
+    ..addPar(['• *Shift-Tab* cycles the selection in the reverse direction'])
+    ..addPar(['• *Left click* or *Q* removes the currently highlighted block'])
+    ..addPar(['• *Right click* or *E* places the selected block on the highlighted block'])
+    ..addPar(['• *O* to return the starting location'])
+    ..addHeader(1, 'Help wanted')
+    ..addPar(['There is still much to be done, many cool new features, and several little bugs. ',
+      'If you would like to contribute to this example, have an idea, find a bug, or just want to learn more about it, ',
+      'check out the [project page|https://github.com/Grant-Nelson/ThreeDart/projects/1] or ',
+      '[source code|https://github.com/Grant-Nelson/ThreeDart/tree/master/web/examples/craft].'])
+    ..addPar(['There are tons of ways to contribute. You could even start your own example. ',
+      'See the [3Dart Project|https://github.com/Grant-Nelson/ThreeDart] for more.']);
 
   Timer.run(startCraft);
 }
@@ -81,7 +81,7 @@ void main() {
 /// Start the craft game.
 /// This is deferred so that if loading takes a while the page is at least loaded.
 void startCraft() {
-  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("targetCanvas");
+  ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId('targetCanvas');
   Materials mats = new Materials(td);
   Generator gen = _getGenerator();
   World world = new World(mats, gen);
@@ -91,7 +91,7 @@ void startCraft() {
   Scenes.EntityPass scene = new Scenes.EntityPass(
     clearColor: new Math.Color4(0.576, 0.784, 0.929))
     ..onPreUpdate.add(world.update)
-    ..camera.mover = player.camera;
+    ..camera?.mover = player.camera;
 
   for (ThreeDart.Entity entity in world.entities)
     scene.children.add(entity);
@@ -106,16 +106,16 @@ void startCraft() {
   new Timer.periodic(const Duration(milliseconds: Constants.generateTickMs), world.generateTick);
   new Timer.periodic(const Duration(milliseconds: Constants.animationTickMs), world.animationTick);
 
-  html.Element elem = html.document.getElementById("buttons");
+  html.Element? elem = html.document.getElementById('buttons');
   html.ButtonElement button = new html.ButtonElement()
-    ..text = "Fullscreen"
-    ..onClick.listen((_) => td.fullscreen());
-  elem.children.add(button);
+    ..text = 'Fullscreen'
+    ..onClick.listen((_) => td.fullscreen = true);
+  elem?.children.add(button);
 
   // Start debug output
   new Timer.periodic(const Duration(milliseconds: Constants.debugPrintTickMs), (Timer time) {
     String fps = td.fps.toStringAsFixed(2);
-    print("$fps fps, "+world.debugString());
+    print('$fps fps, '+world.debugString());
   });
 }
 
@@ -123,17 +123,17 @@ void startCraft() {
 /// If no seed was given or it is invalid then a new seed is randomly picked.
 Generator _getGenerator() {
   int seed = -1;
-  String seedQueryParam = Uri.base.queryParameters["seed"];
+  String? seedQueryParam = Uri.base.queryParameters['seed'];
   if (seedQueryParam != null) {
-    if (seedQueryParam == "test") return new TestGenerator();
-    if (seedQueryParam == "checkers") return new CheckersGenerator();
+    if (seedQueryParam == 'test') return new TestGenerator();
+    if (seedQueryParam == 'checkers') return new CheckersGenerator();
     seed = int.tryParse(seedQueryParam) ?? -1;
   }
 
   if (seed <= 0) {
     seed = new math.Random().nextInt(Constants.maxSeed);
-    Uri newUri = Uri.base.replace(queryParameters: {"seed": "$seed"});
-    html.window.history.pushState(null, null, newUri.toString());
+    Uri newUri = Uri.base.replace(queryParameters: {'seed': '$seed'});
+    html.window.history.pushState(null, '3Dart Craft', newUri.toString());
   }
   return new RandomGenerator(seed);
 }

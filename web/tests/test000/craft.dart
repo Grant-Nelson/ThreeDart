@@ -109,7 +109,7 @@ void addCraftTests(TestManager tests) {
     _checkCollide(args, world,   0.5, 11.5, 0.5,  -1.0, -5.0, -1.0,   -0.5, 11.5, -0.5,  Math.HitRegion.YPos);
 
     // Falling onto a block and falling beside a block.
-    world.getBlock(0.0, 10.0, 0.0).value=craft.BlockType.Turf;
+    world.getBlock(0.0, 10.0, 0.0)?.value = craft.BlockType.Turf;
     _checkCollide(args, world,   0.5, 14.0,  0.5,   0.0, -5.0, 0.0,   0.5, 12.5, 0.5,  Math.HitRegion.YPos);
     _checkCollide(args, world,   0.5, 14.0,  1.5,   0.0, -5.0, 0.0,   0.5, 11.5, 1.5,  Math.HitRegion.YPos);
     _checkCollide(args, world,   0.5, 14.0, -0.5,   0.0, -5.0, 0.0,   0.5, 11.5,-0.5,  Math.HitRegion.YPos);
@@ -127,7 +127,13 @@ void addCraftTests(TestManager tests) {
 
 void _checkGetBlock(TestArgs args, craft.World world, double x, double y, double z,
   int expChunkX, int expChunkZ, int expBlockX, int expBlockY, int expBlockZ) {
-  craft.BlockInfo block = world.getBlock(x, y, z);
+  craft.BlockInfo? block = world.getBlock(x, y, z);
+  if (block == null) {
+    args.error("Testing getBlock($x, $y, $z): Failed\n");
+    args.notice("  Block was null\n");
+    args.info("\n");
+    return;
+  }
 
   if (block.chunkX != expChunkX || block.chunkZ != expChunkZ ||
       block.x != expBlockX || block.y != expBlockY || block.z != expBlockZ) {
@@ -140,9 +146,10 @@ void _checkGetBlock(TestArgs args, craft.World world, double x, double y, double
     if (block.y != expBlockY) args.error("  Block Y value ${block.y} should be $expBlockY.\n");
     if (block.z != expBlockZ) args.error("  Block Z value ${block.z} should be $expBlockZ.\n");
     args.info("\n");
-  } else {
-    args.info("Testing getBlock($x, $y, $z): Passed\n");
+    return;
   }
+
+  args.info("Testing getBlock($x, $y, $z): Passed\n");
 }
 
 void _checkCollide(TestArgs args, craft.World world, double locX, double locY, double locZ,

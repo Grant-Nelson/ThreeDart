@@ -25,15 +25,14 @@ class Game {
   State _state;
 
   /// Indicates the game has changed state, condition, and/or turn.
-  Events.Event _changed;
+  Events.Event? _changed;
 
   /// Creates a new chess game.
-  Game() {
-    this._whiteTurn = true;
-    this._condition = State.Normal;
-    this._state     = new State.initial();
+  Game():
+    this._whiteTurn = true,
+    this._condition = State.Normal,
+    this._state     = new State.initial(),
     this._changed   = null;
-  }
 
   /// Indicates if it is (true) white's turn or (false) black's turn.
   bool get whiteTurn => this._whiteTurn;
@@ -52,13 +51,11 @@ class Game {
   bool get hasRedo => this._state.next != null;
 
   /// The event is fired when the game has changed state, condition, and/or turn.
-  Events.Event get changed {
+  Events.Event get changed =>
     this._changed ??= new Events.Event();
-    return this._changed;
-  }
   
   /// Is called to fire the game changed event.
-  void _onChanged([Events.EventArgs args = null]) => this._changed?.emit(args);
+  void _onChanged([Events.EventArgs? args = null]) => this._changed?.emit(args);
 
   /// Gets the tile value indicating the state of the game board at the given location.
   TileValue getValue(Location loc) => this._state.getValue(loc);
@@ -102,7 +99,7 @@ class Game {
   bool undo([int steps = 1]) {
     bool changed = false;
     for (int i = 0; i < steps; ++i) {
-      State prev = this._state.prev;
+      State? prev = this._state.prev;
       if (prev == null) break;
 
       changed = true;
@@ -121,7 +118,7 @@ class Game {
   bool redo([int steps = 1]) {
     bool changed = false;
     for (int i = 0; i < steps; ++i) {
-      State next = this._state.next;
+      State? next = this._state.next;
       if (next == null) break;
 
       changed = true;

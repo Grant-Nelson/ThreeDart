@@ -4,7 +4,7 @@ part of ThreeDart.Textures;
 abstract class Texture2D extends Texture {
 
   /// The internal texture instance.
-  WebGL.Texture get texture;
+  WebGL.Texture? get texture;
 
   /// The loaded state of the texture.
   bool get loaded;

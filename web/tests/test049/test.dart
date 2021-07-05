@@ -15,8 +15,8 @@ import 'package:ThreeDart/Scenes.dart' as Scenes;
 import '../../common/common.dart' as common;
 
 class Ball extends ThreeDart.Entity {
-  static Math.Vector3 gravity;
-  static Shapes.Shape ballShape;
+  static Math.Vector3 gravity = new Math.Vector3(0.0, -9.8, 0.0);
+  static Shapes.Shape ballShape = Shapes.sphere(radius: 1.0, widthDiv: 5, heightDiv: 5);
   static const double dampening = 0.8;
   static const double terminalVelocity = 10.0;
 
@@ -25,16 +25,14 @@ class Ball extends ThreeDart.Entity {
   Math.Vector3 velocity;
   bool active;
 
-  Ball() {
-    gravity ??= new Math.Vector3(0.0, -9.8, 0.0);
-    ballShape ??= Shapes.sphere(radius: 1.0, widthDiv: 5, heightDiv: 5);
-    this.shape = ballShape;
-    this.ballMover = new Movers.Constant();
-    this.mover = this.ballMover;
-    this.position = Math.Point3.zero;
-    this.velocity = Math.Vector3.zero;
-    this.active = true;
-  }
+  Ball():
+    this.ballMover = new Movers.Constant(),
+    this.position = Math.Point3.zero,
+    this.velocity = Math.Vector3.zero,
+    this.active = true {
+      this.shape = ballShape;
+      this.mover = ballMover;
+    }
 }
 
 ThreeDart.Entity createFloor(ThreeDart.ThreeDart td) {
@@ -65,7 +63,7 @@ ThreeDart.Entity createFloor(ThreeDart.ThreeDart td) {
 }
 
 class Collider extends Movers.Mover {
-  Events.Event _changed;
+  Events.Event? _changed = null;
   List<Ball> balls;
   Math.Plane plane;
 
@@ -77,18 +75,16 @@ class Collider extends Movers.Mover {
   List<Ball> _ssColBalls2;
   List<int> _ballsHandled;
 
-  Collider() {
-    this.balls = new List<Ball>();
-    this.plane = new Math.Plane(0.0, 1.0, 0.0, -5.0);
-
-    this._attempts = new List<int>();
-    this._spColResults = new List<Collisions.SpherePlaneResult>();
-    this._spColBalls = new List<Ball>();
-    this._ssColResults = new List<Collisions.TwoSphereResult>();
-    this._ssColBalls1 = new List<Ball>();
-    this._ssColBalls2 = new List<Ball>();
-    this._ballsHandled = new List<int>();
-  }
+  Collider() :
+    this.balls = [],
+    this.plane = new Math.Plane(0.0, 1.0, 0.0, -5.0),
+    this._attempts     = [],
+    this._spColResults = [],
+    this._spColBalls   = [],
+    this._ssColResults = [],
+    this._ssColBalls1  = [],
+    this._ssColBalls2  = [],
+    this._ballsHandled = [];
 
   void clearCollisions() {
     this._spColResults.clear();
@@ -103,13 +99,13 @@ class Collider extends Movers.Mover {
     double minDT = dt;
     this.clearCollisions();
     final int length = this.balls.length;
-    List<Math.Sphere> spheres = new List<Math.Sphere>();
-    List<Math.Vector3> vecs = new List<Math.Vector3>();
+    List<Math.Sphere> spheres = [];
+    List<Math.Vector3> vecs = [];
     for (int i = 0; i < length; i++) {
       if (this._attempts[i] <= 0) continue;
 
       Ball ballA = this.balls[i];
-      Math.Matrix4 mat = ballA.ballMover.matrix;
+      Math.Matrix4 mat = ballA.ballMover.matrix ?? Math.Matrix4.identity;
       Math.Sphere sphereA = new Math.Sphere(mat.m41, mat.m42, mat.m43, 1.0);
       Math.Vector3 vecA = ballA.velocity * dt;
       spheres.add(sphereA);
@@ -161,8 +157,8 @@ class Collider extends Movers.Mover {
     return minDT;
   }
 
-  void moveBall(Ball ball, Math.Point3 position, Math.Vector3 velocity) {
-      ball.position = position;
+  void moveBall(Ball ball, Math.Point3? position, Math.Vector3 velocity) {
+      ball.position = position ?? Math.Point3.zero;
       double len = velocity.length();
       if (Math.Comparer.greaterThan(len, 0.01)) {
         ball.velocity = velocity;
@@ -188,7 +184,7 @@ class Collider extends Movers.Mover {
       Collisions.TwoSphereResult col = this._ssColResults[i];
       Ball ballA = this._ssColBalls1[i];
       Ball ballB = this._ssColBalls2[i];
-      Math.Vector3 bNorm = col.centerA.vectorTo(col.centerB);
+      Math.Vector3 bNorm = (col.centerA ?? Math.Point3.zero).vectorTo(col.centerB ?? Math.Point3.zero);
       double nA = bNorm.dot(ballA.velocity);
       double nB = bNorm.dot(ballB.velocity);
       Math.Vector3 perpA =  ballA.velocity - pNorm*nA;
@@ -212,7 +208,7 @@ class Collider extends Movers.Mover {
     }
   }
 
-  Math.Matrix4 update(ThreeDart.RenderState state, Movers.Movable obj) {
+  Math.Matrix4 update(ThreeDart.RenderState state, Movers.Movable? obj) {
     double dt = state.dt;
     this._attempts.clear();
     for (int i = 0; i < this.balls.length; ++i)
@@ -228,10 +224,8 @@ class Collider extends Movers.Mover {
   }
 
   /// Emits when the mover has changed.
-  Events.Event get changed {
+  Events.Event get changed =>
     this._changed ??= new Events.Event();
-    return this._changed;
-  }
 }
 
 void main() {
@@ -274,7 +268,7 @@ void main() {
   td.scene = new Scenes.EntityPass()
     ..children.add(group)
     ..children.add(balls)
-    ..camera.mover = camera;
+    ..camera?.mover = camera;
   
   td.userInput.key.down.add((Events.EventArgs args) {
     Input.KeyEventArgs kargs = args as Input.KeyEventArgs;

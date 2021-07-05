@@ -13,7 +13,7 @@ void main() {
   common.ShellPage page = new common.ShellPage("Test 010")
     ..addLargeCanvas("testCanvas")
     ..addPar(["A test of the Material Lighting shader with solid color and ",
-      "a directional light= with a cube texture bump map."])
+      "a directional light with a cube texture bump map."])
     ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
@@ -38,7 +38,7 @@ void main() {
   td.scene = new Scenes.EntityPass()
     ..technique = tech
     ..children.add(obj)
-    ..camera.mover = new Movers.Constant.translate(0.0, 0.0, 5.0);
+    ..camera?.mover = new Movers.Constant.translate(0.0, 0.0, 5.0);
 
   td.postrender.once((_){
     page

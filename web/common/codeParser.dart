@@ -2,10 +2,10 @@ part of ThreeDart.web.common;
 
 /// An abstract class for parsing code into colored lines of code.
 abstract class CodeParser {
-  String _name;
-  convert.HtmlEscape _escape;
-  Tokenizer.Tokenizer _tokenizer;
-  List<List<html.DivElement>> _lineList;
+  String _name = '';
+  convert.HtmlEscape? _escape = null;
+  Tokenizer.Tokenizer? _tokenizer = null;
+  List<List<html.DivElement>> _lineList = [];
 
   /// Constructs a new code parser.
   /// The lowercase [name] of the type of code to parse, e.g. html, dart, or glsl
@@ -22,19 +22,18 @@ abstract class CodeParser {
   List<List<html.DivElement>> get lineList => _lineList;
 
   /// Escapes the given [text] for html.
-  String _escapeText(String text) {
-    return this._escape.convert(text).replaceAll(" ", "&nbsp;");
-  }
+  String _escapeText(String text) =>
+    this._escape?.convert(text).replaceAll(" ", "&nbsp;") ?? text;
 
   /// Adds line parts to the list of code lines, the [lineList].
   /// The given [code] to add as lines in the given [color].
   void addLineParts(String code, String color) {
-    if (this._lineList.isEmpty) this._lineList.add(new List<html.DivElement>());
+    if (this._lineList.isEmpty) this._lineList.add([]);
     List<String> lines = code.split("\n");
     bool first = true;
     for (String line in lines) {
       if (first) first = false;
-      else this._lineList.add(new List<html.DivElement>());
+      else this._lineList.add([]);
       html.DivElement partElem = new html.DivElement()
         ..className = "codePart"
         ..innerHtml = this._escapeText(line)
@@ -48,9 +47,14 @@ abstract class CodeParser {
   void parse(List<String> lines) {
     this._lineList = [];
     String code = lines.join("\n");
-    this._tokenizer ??= this.createTokenizer();
-    for (Tokenizer.Token token in this._tokenizer.tokenize(code)) {
-      this.processToken(token);
+    var tok = this._tokenizer;
+    if (tok == null) {
+      tok = this.createTokenizer();
+      this._tokenizer = tok;
+    }
+    if (tok != null) {
+      for (Tokenizer.Token token in tok.tokenize(code))
+        this.processToken(token);
     }
   }
 
@@ -60,5 +64,5 @@ abstract class CodeParser {
 
   /// Creates the tokenizer to parse the code with.
   /// This needs to be implemented by the inheriting class.
-  Tokenizer.Tokenizer createTokenizer();
+  Tokenizer.Tokenizer? createTokenizer();
 }

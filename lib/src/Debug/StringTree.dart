@@ -17,9 +17,8 @@ class StringTree {
   List<StringTree> children;
 
   /// Creates a new string tree.
-  StringTree([String this.text = ""]) {
-    this.children = new List<StringTree>();
-  }
+  StringTree([this.text = '']):
+    this.children = [];
 
   /// Adds a child to this string tree.
   void append(StringTree child) => this.children.add(child);
@@ -32,7 +31,7 @@ class StringTree {
   }
 
   /// Outputs the string tree.
-  String toString([String indent = ""]) {
+  String toString([String indent = '']) {
     StringBuffer buf = new StringBuffer();
     this._subString(buf, indent, true, true);
     return buf.toString();

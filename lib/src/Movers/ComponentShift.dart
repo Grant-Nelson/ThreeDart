@@ -10,20 +10,19 @@ class ComponentShift extends Events.Changeable {
   double _vel;
   double _acc;
   double _velDamp;
-  Events.Event _changed;
+  Events.Event? _changed;
 
   /// Creates a new [ComponentShift] instance.
-  ComponentShift() {
-    this._wrap    = true;
-    this._maxLoc  = 1.0e12;
-    this._minLoc  = -1.0e12;
-    this._loc     = 0.0;
-    this._maxVel  = 100.0;
-    this._vel     = 0.0;
-    this._velDamp = 0.0;
-    this._acc     = 0.0;
+  ComponentShift():
+    this._wrap    = true,
+    this._maxLoc  =  1.0e12,
+    this._minLoc  = -1.0e12,
+    this._loc     = 0.0,
+    this._maxVel  = 100.0,
+    this._vel     = 0.0,
+    this._acc     = 0.0,
+    this._velDamp = 0.0,
     this._changed = null;
-  }
 
   /// Clamps or wraps the given location to the given minimum and maximum range.
   double _clapWrap(double loc) {
@@ -32,21 +31,17 @@ class ComponentShift extends Events.Changeable {
   }
 
   /// Emits when the component has changed.
-  Events.Event get changed {
+  Events.Event get changed =>
     this._changed ??= new Events.Event();
-    return this._changed;
-  }
 
   /// Handles emitting a change.
-  void _onChanged([Events.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs? args = null]) =>
     this._changed?.emit(args);
-  }
 
   /// True to wrap the location around the maximum and minimum values,
   /// false to clap to the maximum and minimum values.
   bool get wrap => this._wrap;
-  void set wrap(bool wrap) {
-    wrap ??= true;
+  set wrap(bool wrap) {
     if (this._wrap != wrap) {
       bool prev = this._wrap;
       this._wrap = wrap;
@@ -56,8 +51,7 @@ class ComponentShift extends Events.Changeable {
 
   /// The maximum allowed location.
   double get maximumLocation => this._maxLoc;
-  void set maximumLocation(double max) {
-    max ??= 1.0e12;
+  set maximumLocation(double max) {
     if (!Math.Comparer.equals(this._maxLoc, max)) {
       double prev = this._maxLoc;
       this._maxLoc = max;
@@ -72,8 +66,7 @@ class ComponentShift extends Events.Changeable {
 
   /// The minimum allowed location.
   double get minimumLocation => this._minLoc;
-  void set minimumLocation(double min) {
-    min ??= -1.0e12;
+  set minimumLocation(double min) {
     if (!Math.Comparer.equals(this._minLoc, min)) {
       double prev = this._minLoc;
       this._minLoc = min;
@@ -88,8 +81,8 @@ class ComponentShift extends Events.Changeable {
 
   /// The location which is the component being shifted.
   double get location => this._loc;
-  void set location(double loc) {
-    loc = this._clapWrap(loc ?? 0.0);
+  set location(double loc) {
+    loc = this._clapWrap(loc);
     if (!Math.Comparer.equals(this._loc, loc)) {
       double prev = this._loc;
       this._loc = loc;
@@ -100,8 +93,7 @@ class ComponentShift extends Events.Changeable {
   /// The maximum allowed velocity.
   /// The minimum allowed velocity is the negation of this value.
   double get maximumVelocity => this._maxVel;
-  void set maximumVelocity(double max) {
-    max ??= 100.0;
+  set maximumVelocity(double max) {
     if (!Math.Comparer.equals(this._maxVel, max)) {
       double prev = this._maxVel;
       this._maxVel = max;
@@ -115,8 +107,8 @@ class ComponentShift extends Events.Changeable {
 
   /// The velocity of the component.
   double get velocity => this._vel;
-  void set velocity(double vel) {
-    vel = Math.clampVal(vel ?? 0.0, -this._maxVel, this._maxVel);
+  set velocity(double vel) {
+    vel = Math.clampVal(vel, -this._maxVel, this._maxVel);
     if (!Math.Comparer.equals(this._vel, vel)) {
       double prev = this._vel;
       this._vel = vel;
@@ -126,7 +118,7 @@ class ComponentShift extends Events.Changeable {
 
   /// The acceleration of the component.
   double get acceleration => this._acc;
-  void set acceleration(double acc) {
+  set acceleration(double acc) {
     if (!Math.Comparer.equals(this._acc, acc)) {
       double prev = this._acc;
       this._acc = acc;
@@ -139,8 +131,8 @@ class ComponentShift extends Events.Changeable {
   /// 0 means no dampening to slow down the velocity,
   /// 1 means total dampening to apply no velocity.
   double get dampening => this._velDamp;
-  void set dampening(double dampening) {
-    dampening = Math.clampVal(dampening ?? 0.0);
+  set dampening(double dampening) {
+    dampening = Math.clampVal(dampening);
     if (!Math.Comparer.equals(this._velDamp, dampening)) {
       double prev = this._velDamp;
       this._velDamp = dampening;

@@ -103,7 +103,7 @@ class HitRegion {
   String toString() {
     if (this._value == All) return "All";
     if (this._value == Inside) return "Inside";
-    List<String> parts = new List<String>();
+    List<String> parts = [];
     if (this.has(XPos))    parts.add("XPos");
     if (this.has(XCenter)) parts.add("XCenter");
     if (this.has(XNeg))    parts.add("XNeg");

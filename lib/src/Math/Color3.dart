@@ -146,10 +146,9 @@ class Color3 {
   bool operator ==(var other) {
     if (identical(this, other)) return true;
     if (other is! Color3) return false;
-    Color3 clr = other as Color3;
-    if (!Comparer.equals(clr.red,   this.red))   return false;
-    if (!Comparer.equals(clr.green, this.green)) return false;
-    if (!Comparer.equals(clr.blue,  this.blue))  return false;
+    if (!Comparer.equals(other.red,   this.red))   return false;
+    if (!Comparer.equals(other.green, this.green)) return false;
+    if (!Comparer.equals(other.blue,  this.blue))  return false;
     return true;
   }
 

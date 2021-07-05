@@ -40,14 +40,13 @@ class ColorSourceType {
   int get value => (this.hasSolid?1:0) | (this.hasTxt2D?2:0) | (this.hasTxtCube?4:0);
 
   /// Gets a string for the source color.
-  String toString() => "$value";
+  String toString() => '$value';
 
   /// Checks if this source color is equal to the given other type.
   bool operator == (dynamic other) {
     if (other is! ColorSourceType) return false;
-    ColorSourceType otherType = other as ColorSourceType;
-    return (this.hasSolid   == otherType.hasSolid) &&
-           (this.hasTxt2D   == otherType.hasTxt2D) &&
-           (this.hasTxtCube == otherType.hasTxtCube);
+    return (this.hasSolid   == other.hasSolid) &&
+           (this.hasTxt2D   == other.hasTxt2D) &&
+           (this.hasTxtCube == other.hasTxtCube);
   }
 }

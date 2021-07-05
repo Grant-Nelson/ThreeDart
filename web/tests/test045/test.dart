@@ -70,7 +70,7 @@ void main() {
     ..children.add(centerObj)
     ..children.add(room)
     ..children.add(lightSource)
-    ..camera.mover = camMover;
+    ..camera?.mover = camMover;
 
   // TODO: Determine how to setup camera without the hardcoded constants.
   Views.Perspective shadowCam = new Views.Perspective(

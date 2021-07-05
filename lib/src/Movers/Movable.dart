@@ -4,6 +4,6 @@ part of ThreeDart.Movers;
 abstract class Movable {
 
   /// The mover to mover this object.
-  Mover get mover;
-  set mover(Mover mover);
+  Mover? get mover;
+  set mover(Mover? mover);
 }

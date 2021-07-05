@@ -4,39 +4,29 @@ part of ThreeDart.Math;
 class Vector2 {
 
   /// Gets a zeroed [Vector2].
-  static Vector2 get zero {
+  static Vector2 get zero =>
     _zeroSingleton ??= new Vector2(0.0, 0.0);
-    return _zeroSingleton;
-  }
-  static Vector2 _zeroSingleton;
+  static Vector2? _zeroSingleton;
 
   /// Gets a new positive X [Vector2].
-  static Vector2 get posX {
+  static Vector2 get posX =>
     _posXSingleton ??= new Vector2(1.0, 0.0);
-    return _posXSingleton;
-  }
-  static Vector2 _posXSingleton;
+  static Vector2? _posXSingleton;
 
   /// Gets a new negative X [Vector2].
-  static Vector2 get negX {
+  static Vector2 get negX =>
     _negXSingleton ??= new Vector2(-1.0, 0.0);
-    return _negXSingleton;
-  }
-  static Vector2 _negXSingleton;
+  static Vector2? _negXSingleton;
 
   /// Gets a new positive Y [Vector2].
-  static Vector2 get posY {
+  static Vector2 get posY =>
     _posYSingleton ??= new Vector2(0.0, 1.0);
-    return _posYSingleton;
-  }
-  static Vector2 _posYSingleton;
+  static Vector2? _posYSingleton;
 
   /// Gets a new negative Y [Vector2].
-  static Vector2 get negY {
+  static Vector2 get negY =>
     _negYSingleton ??= new Vector2(0.0, -1.0);
-    return _negYSingleton;
-  }
-  static Vector2 _negYSingleton;
+  static Vector2? _negYSingleton;
 
   /// The dX component of the vector.
   final double dx;
@@ -169,9 +159,8 @@ class Vector2 {
   bool operator ==(var other) {
     if (identical(this, other)) return true;
     if (other is! Vector2) return false;
-    Vector2 pnt = other as Vector2;
-    if (!Comparer.equals(pnt.dx, this.dx)) return false;
-    if (!Comparer.equals(pnt.dy, this.dy)) return false;
+    if (!Comparer.equals(other.dx, this.dx)) return false;
+    if (!Comparer.equals(other.dy, this.dy)) return false;
     return true;
   }
 

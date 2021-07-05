@@ -116,7 +116,7 @@ class Triangle3 {
 
   /// Convertex from the given cartesian coordinate point to the barycentric coorinates vector.
   /// If the triangle is degenerate (area is zero) then null will be returned.
-  Vector3 toBarycentric(Point3 pnt) {
+  Vector3? toBarycentric(Point3 pnt) {
     Vector3 n = this.normal;
     double nxa = n.dx.abs();
     double nya = n.dy.abs();
@@ -174,7 +174,7 @@ class Triangle3 {
   /// Gets the sphere where the intersection of the sphere and the plane for the triangle is a circle
   /// which touches each side only once. The circle is inscribed in the triangle.
   /// If the triangle is degenerate (area is zero) then null will be returned.
-  Sphere get incenter {
+  Sphere? get incenter {
     Point3 v1 = this.point1;
     Point3 v2 = this.point2;
     Point3 v3 = this.point3;
@@ -192,7 +192,7 @@ class Triangle3 {
 
   /// Gets the sphere where the intersection of the sphere and the plane for the triangle is a circle
   /// which touches each point of the triangle. The circle is circumscribed around the triangle.
-  Sphere get circumcenter {
+  Sphere? get circumcenter {
     Vector3 e1 = new Vector3(this.x3-this.x2, this.y3-this.y2, this.z3-this.z2);
     Vector3 e2 = new Vector3(this.x1-this.x3, this.y1-this.y3, this.z1-this.z3);
     Vector3 e3 = new Vector3(this.x2-this.x1, this.y2-this.y1, this.z2-this.z1);
@@ -216,16 +216,15 @@ class Triangle3 {
   bool operator ==(var other) {
     if (identical(this, other)) return true;
     if (other is! Triangle3) return false;
-    Triangle3 tri = other as Triangle3;
-    if (!Comparer.equals(tri.x1, this.x1)) return false;
-    if (!Comparer.equals(tri.y1, this.y1)) return false;
-    if (!Comparer.equals(tri.z1, this.z1)) return false;
-    if (!Comparer.equals(tri.x2, this.x2)) return false;
-    if (!Comparer.equals(tri.y2, this.y2)) return false;
-    if (!Comparer.equals(tri.z2, this.z2)) return false;
-    if (!Comparer.equals(tri.x3, this.x3)) return false;
-    if (!Comparer.equals(tri.y3, this.y3)) return false;
-    if (!Comparer.equals(tri.z3, this.z3)) return false;
+    if (!Comparer.equals(other.x1, this.x1)) return false;
+    if (!Comparer.equals(other.y1, this.y1)) return false;
+    if (!Comparer.equals(other.z1, this.z1)) return false;
+    if (!Comparer.equals(other.x2, this.x2)) return false;
+    if (!Comparer.equals(other.y2, this.y2)) return false;
+    if (!Comparer.equals(other.z2, this.z2)) return false;
+    if (!Comparer.equals(other.x3, this.x3)) return false;
+    if (!Comparer.equals(other.y3, this.y3)) return false;
+    if (!Comparer.equals(other.z3, this.z3)) return false;
     return true;
   }
 

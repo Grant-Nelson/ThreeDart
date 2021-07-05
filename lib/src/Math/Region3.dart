@@ -5,25 +5,32 @@ part of ThreeDart.Math;
 class Region3 {
 
   /// Gets a [Region3] at the origin.
-  static Region3 get zero {
+  static Region3 get zero =>
     _zeroSingleton ??= new Region3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-    return _zeroSingleton;
-  }
-  static Region3 _zeroSingleton;
+  static Region3? _zeroSingleton;
 
   /// Gets a [Region3] at the origin with a width, height, and depth of 1.
-  static Region3 get unit {
+  static Region3 get unit =>
     _unitSingleton ??= new Region3(0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
-    return _unitSingleton;
-  }
-  static Region3 _unitSingleton;
+  static Region3? _unitSingleton;
 
   /// Gets a [Region3] at the origin with a width, height, and depth of 2 centered on origin.
-  static Region3 get unit2 {
+  static Region3 get unit2 =>
     _unit2Singleton ??= new Region3(-1.0, -1.0, -1.0, 2.0, 2.0, 2.0);
-    return _unit2Singleton;
+  static Region3? _unit2Singleton;
+
+  /// Constructs the union of the given regions. If both are null, null is returned.
+  static Region3? union(Region3? a, Region3? b) {
+    if (a == null) return b ?? zero;
+    if (b == null) return a;
+    double x  = math.min(a.x,      b.x);
+    double y  = math.min(a.y,      b.y);
+    double z  = math.min(a.z,      b.z);
+    double x2 = math.max(a.x+a.dx, b.x+b.dx);
+    double y2 = math.max(a.y+a.dy, b.y+b.dy);
+    double z2 = math.max(a.z+a.dz, b.z+b.dz);
+    return new Region3._(x, y, z, x2-x, y2-y, z2-z);
   }
-  static Region3 _unit2Singleton;
 
   /// The left edge component of the region.
   final double x;
@@ -88,19 +95,6 @@ class Region3 {
     return new Region3(values[0], values[1], values[2], values[3], values[4], values[5]);
   }
 
-  /// Constructs the union of the given regions. If both are null, null is returned.
-  factory Region3.union(Region3 a, Region3 b) {
-    if (a == null) return b;
-    if (b == null) return a;
-    double x  = math.min(a.x,      b.x);
-    double y  = math.min(a.y,      b.y);
-    double z  = math.min(a.z,      b.z);
-    double x2 = math.max(a.x+a.dx, b.x+b.dx);
-    double y2 = math.max(a.y+a.dy, b.y+b.dy);
-    double z2 = math.max(a.z+a.dz, b.z+b.dz);
-    return new Region3._(x, y, z, x2-x, y2-y, z2-z);
-  }
-
   /// The minimum corner point in the region.
   Point3 get minCorner =>
     new Point3(this.x, this.y, this.z);
@@ -116,8 +110,8 @@ class Region3 {
     this.z + this.dz/2.0);
 
   /// Expands the region to include the given point, [pnt].
-  Region3 expandWithPoint(Point3 pnt) =>
-    this.expand(pnt.x, pnt.y, pnt.z);
+  Region3 expandWithPoint(Point3? pnt) =>
+    (pnt == null) ? this : this.expand(pnt.x, pnt.y, pnt.z);
 
   /// Expands the region to include the given location components.
   Region3 expand(double x, double y, double z) {
@@ -252,13 +246,12 @@ class Region3 {
   bool operator ==(var other) {
     if (identical(this, other)) return true;
     if (other is! Region3) return false;
-    Region3 region = other as Region3;
-    if (!Comparer.equals(region.x,  this.x))  return false;
-    if (!Comparer.equals(region.y,  this.y))  return false;
-    if (!Comparer.equals(region.z,  this.z))  return false;
-    if (!Comparer.equals(region.dx, this.dx)) return false;
-    if (!Comparer.equals(region.dy, this.dy)) return false;
-    if (!Comparer.equals(region.dz, this.dz)) return false;
+    if (!Comparer.equals(other.x,  this.x))  return false;
+    if (!Comparer.equals(other.y,  this.y))  return false;
+    if (!Comparer.equals(other.z,  this.z))  return false;
+    if (!Comparer.equals(other.dx, this.dx)) return false;
+    if (!Comparer.equals(other.dy, this.dy)) return false;
+    if (!Comparer.equals(other.dz, this.dz)) return false;
     return true;
   }
 

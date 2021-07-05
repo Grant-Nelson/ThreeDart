@@ -40,18 +40,18 @@ class Skybox extends Shader {
       "   gl_FragColor = vec4(boxClr*textureCube(boxTxt, txtCube).xyz, 1.0); \n"+
       "}                                                                     \n";
 
-  Attribute _posAttr;
-  Uniform1f _fov;
-  Uniform1f _ratio;
-  Uniform3f _boxClr;
-  UniformSamplerCube _boxTxt;
-  UniformMat4 _viewMat;
+  Attribute? _posAttr = null;
+  Uniform1f? _fov     = null;
+  Uniform1f? _ratio   = null;
+  Uniform3f? _boxClr  = null;
+  UniformSamplerCube? _boxTxt = null;
+  UniformMat4? _viewMat = null;
 
   /// Checks for the shader in the shader cache in the given [state],
   /// if it is not found then this shader is compiled and added
   /// to the shader cache before being returned.
   factory Skybox.cached(Core.RenderState state) {
-    Skybox shader = state.shader(defaultName);
+    Skybox? shader = state.shader(defaultName) as Skybox?;
     if (shader == null) {
       shader = new Skybox(state.gl);
       state.addShader(shader);
@@ -71,25 +71,25 @@ class Skybox extends Shader {
   }
 
   /// The position vertex shader attribute.
-  Attribute get posAttr => this._posAttr;
+  Attribute? get posAttr => this._posAttr;
 
   /// Field of view vertically in radians of the camera.
-  double get fov => this._fov.getValue();
-  set fov(double value) => this._fov.setValue(value);
+  double get fov => this._fov?.getValue() ?? 1.0;
+  set fov(double value) => this._fov?.setValue(value);
 
   /// The render target's width over height aspect ratio.
-  double get ratio => this._ratio.getValue();
-  set ratio(double value) => this._ratio.setValue(value);
+  double get ratio => this._ratio?.getValue() ?? 1.0;
+  set ratio(double value) => this._ratio?.setValue(value);
 
   /// The color to scale the sky box texture with..
-  Math.Color3 get boxColor => this._boxClr.getColor3();
-  set boxColor(Math.Color3 clr) => this._boxClr.setColor3(clr);
+  Math.Color3 get boxColor => this._boxClr?.getColor3() ?? Math.Color3.white();
+  set boxColor(Math.Color3 clr) => this._boxClr?.setColor3(clr);
 
   /// The sky box texture to cover with.
   set boxTexture(Textures.TextureCube txt) =>
-    this._boxTxt.setTextureCube(txt);
+    this._boxTxt?.setTextureCube(txt);
 
   /// The view matrix.
-  Math.Matrix4 get viewMatrix => this._viewMat.getMatrix4();
-  set viewMatrix(Math.Matrix4 mat) => this._viewMat.setMatrix4(mat);
+  Math.Matrix4 get viewMatrix => this._viewMat?.getMatrix4() ?? Math.Matrix4.identity;
+  set viewMatrix(Math.Matrix4 mat) => this._viewMat?.setMatrix4(mat);
 }

@@ -13,7 +13,7 @@ class ThreeDart implements Events.Changeable {
   WebGL.RenderingContext2 _gl;
 
   /// The current scene to draw.
-  Scenes.Scene _scene;
+  Scenes.Scene? _scene;
 
   /// The rendering state.
   RenderState _state;
@@ -28,15 +28,15 @@ class ThreeDart implements Events.Changeable {
   Input.UserInput _input;
 
   /// Event to indicate something attached to this instance has changed.
-  Events.Event _changed;
+  Events.Event? _changed;
 
   /// Event to indicate a render is about to occur.
-  Events.Event _prerender;
+  Events.Event? _prerender;
 
   /// Event to indicate a render has just finished.
-  Events.Event _postrender;
+  Events.Event? _postrender;
 
-  /// Indicates the refresh should be automatically
+  /// Indicates the refresh should be automatically.
   bool _autoRefresh;
 
   /// Indicates that a refresh is pending.
@@ -55,9 +55,9 @@ class ThreeDart implements Events.Changeable {
   /// [stencil] indicates if the target will have a stencil buffer or not.
   /// [antialias] indicates if the target is antialiased or not.
   factory ThreeDart.fromId(String elementId, {bool alpha: true, bool depth: true, stencil: false, antialias: true}) {
-    html.Element elem = html.document.getElementById(elementId);
+    html.Element? elem = html.document.getElementById(elementId);
     if (elem == null) {
-      throw new Exception("Failed to find an element with the identifier, ${elementId}.");
+      throw new Exception('Failed to find an element with the identifier, ${elementId}.');
     }
     return new ThreeDart.fromElem(elem,
         alpha: alpha, depth: depth, stencil: stencil, antialias: antialias);
@@ -69,9 +69,9 @@ class ThreeDart implements Events.Changeable {
   /// [depth] indicates if the target will have a back buffer or not.
   /// [stencil] indicates if the target will have a stencil buffer or not.
   /// [antialias] indicates if the target is antialiased or not.
-  factory ThreeDart.fromElem(html.Element elem, {bool alpha: true, bool depth: true, stencil: false, antialias: true}) {
+  factory ThreeDart.fromElem(html.Element? elem, {bool alpha: true, bool depth: true, stencil: false, antialias: true}) {
     if (elem == null) {
-      throw new Exception("May not create a manager from a null element.");
+      throw new Exception('May not create a manager from a null element.');
     }
     if (elem is html.CanvasElement) {
       return new ThreeDart.fromCanvas(elem,
@@ -80,8 +80,8 @@ class ThreeDart implements Events.Changeable {
 
     html.CanvasElement canvas = new html.CanvasElement();
     canvas.style
-      ..width  = "100%"
-      ..height = "100%";
+      ..width  = '100%'
+      ..height = '100%';
     elem.children.add(canvas);
     ThreeDart td = new ThreeDart.fromCanvas(canvas,
         alpha: alpha, depth: depth, stencil: stencil, antialias: antialias);
@@ -95,41 +95,51 @@ class ThreeDart implements Events.Changeable {
   /// [depth] indicates if the target will have a back buffer or not.
   /// [stencil] indicates if the target will have a stencil buffer or not.
   /// [antialias] indicates if the target is antialiased or not.
-  ThreeDart.fromCanvas(html.CanvasElement canvas, {bool alpha: true, bool depth: true, stencil: false, antialias: true}) {
+  factory ThreeDart.fromCanvas(html.CanvasElement? canvas, {bool alpha: true, bool depth: true, stencil: false, antialias: true}) {
     if (canvas == null) {
-      throw new Exception("May not create a manager from a null canvas.");
+      throw new Exception('May not create a manager from a null canvas.');
     }
 
     // Create a WebGL 2.0 render target
     // https://www.khronos.org/registry/webgl/specs/latest/2.0/
-    WebGL.RenderingContext2 gl = canvas.getContext("webgl2",
-        {"alpha": alpha, "depth": depth, "stencil": stencil, "antialias": antialias});
+    WebGL.RenderingContext2? gl = canvas.getContext('webgl2',
+        {'alpha':     alpha,
+         'depth':     depth,
+         'stencil':   stencil,
+         'antialias': antialias}) as WebGL.RenderingContext2?;
     if (gl == null) {
-      throw new Exception("Failed to get the rendering context for WebGL.");
+      throw new Exception('Failed to get the rendering context for WebGL.');
     }
-    this._canvas = canvas;
-    this._elem   = canvas;
-    this._gl     = gl;
-    this._scene  = null;
-    this._state       = new RenderState(this._gl, this._canvas);
-    this._txtLoader   = new Textures.TextureLoader(this._gl);
-    this._audioLoader = new Audio.AudioLoader();
-    this._input       = new Input.UserInput(this._canvas);
-    this._changed       = null;
-    this._prerender     = null;
-    this._postrender    = null;
-    this._autoRefresh   = true;
-    this._pendingRender = false;
-    this._frameTime     = new DateTime.now();
-    this._frameCount    = 0;
-    this._resize();
+
+    var state       = new RenderState(gl, canvas);
+    var txtLoader   = new Textures.TextureLoader(gl);
+    var audioLoader = new Audio.AudioLoader();
+    var input       = new Input.UserInput(canvas);
+    return new ThreeDart._(canvas, canvas, gl, state, txtLoader, audioLoader, input);
   }
 
+  /// Creates a new 3Dart instance with the given values.
+  ThreeDart._(this._elem, this._canvas, this._gl,
+    this._state, this._txtLoader, this._audioLoader, this._input):
+    this._scene      = null,
+    this._changed    = null,
+    this._prerender  = null,
+    this._postrender = null,
+    this._autoRefresh   = true,
+    this._pendingRender = false,
+    this._frameTime = new DateTime.now(),
+    this._frameCount = 0 {
+    this._resize();
+  }
+  
+  /// The rendering context to draw with.
+  WebGL.RenderingContext2 get glContext => this._gl;
+
   /// The width of the canvas in pixels.
-  int get width => this._canvas.width;
+  int get width => this._canvas.width ?? 100;
 
   /// The height of the canvas in pixels.
-  int get height => this._canvas.height;
+  int get height => this._canvas.height ?? 100;
 
   /// The canvas being written to.
   html.CanvasElement get canvas => this._canvas;
@@ -149,7 +159,7 @@ class ThreeDart implements Events.Changeable {
   /// Indicates if a refresh is automatically called
   /// when something internally is changed.
   bool get autoRefresh => this._autoRefresh;
-  void set autoRefresh(bool autoRefresh) {
+  set autoRefresh(bool autoRefresh) {
     if (this._autoRefresh == autoRefresh) {
       this._autoRefresh = autoRefresh;
       this._onChanged();
@@ -160,46 +170,38 @@ class ThreeDart implements Events.Changeable {
   bool get pendingRender => this._pendingRender;
 
   /// Indicates that this instance or something attached to is has changed.
-  Events.Event get changed {
+  Events.Event get changed =>
     this._changed ??= new Events.Event();
-    return this._changed;
-  }
 
   /// Handles a change in this instance.
-  void _onChanged([Events.EventArgs args = null]) {
+  void _onChanged([Events.EventArgs? args = null]) {
     this._changed?.emit(args);
     if (this._autoRefresh) this.requestRender();
   }
 
   /// Indicates that a render is about to occur.
-  Events.Event get prerender {
+  Events.Event get prerender =>
     this._prerender ??= new Events.Event();
-    return this._prerender;
-  }
 
   /// Handles an event to fire prior to rendering.
-  void _onPrerender([Events.EventArgs args = null]) {
+  void _onPrerender([Events.EventArgs? args = null]) =>
     this._prerender?.emit(args);
-  }
 
   /// Indicates that a render has just occurred.
-  Events.Event get postrender {
+  Events.Event get postrender =>
     this._postrender ??= new Events.Event();
-    return this._postrender;
-  }
 
   /// Handles an event to fire after a render.
-  void _onPostrender([Events.EventArgs args = null]) {
+  void _onPostrender([Events.EventArgs? args = null]) =>
     this._postrender?.emit(args);
-  }
 
   /// The scene to render to the canvas.
-  Scenes.Scene get scene => this._scene;
-  set scene(Scenes.Scene scene) {
+  Scenes.Scene? get scene => this._scene;
+  set scene(Scenes.Scene? scene) {
     if (this._scene != scene) {
-      if (this._scene != null) this._scene.changed.remove(this._onChanged);
+      this._scene?.changed.remove(this._onChanged);
       this._scene = scene;
-      if (this._scene != null) this._scene.changed.add(this._onChanged);
+      this._scene?.changed.add(this._onChanged);
       this._onChanged();
     }
   }
@@ -232,9 +234,52 @@ class ThreeDart implements Events.Changeable {
     }
   }
 
-  /// Requests the render to be full screen.
-  void fullscreen() {
-    this._canvas.requestFullscreen();
+  /// Determines if this page can be fullscreened or not.
+  bool get fullscreenAvailable {
+    //return html.document.fullscreenEnabled ?? false;
+    return Environment.getProperty<bool>(html.document, [
+      'webkitFullscreenEnabled',
+      'mozFullScreenEnabled',
+      'msFullscreenEnabled',
+      'oFullscreenEnabled',
+      'fullscreenEnabled']) ?? false;
+  }
+
+  /// Gets or sets if the ThreeDart cancas is full screen or not.
+  /// Note: This should be called within a user interaction with the pages since
+  ///       some browsers will deny full screen any other time.
+  /// 
+  /// TODO: There is a bug which causes the built-in methods to sometimes be undefined so use JS
+  ///       to find the correct method instead. Periodically check if this issue has been fixed.
+  /// Errors "Uncaught TypeError: this.webkitRequestFullscreen is undefined in dartx.requestFullscreen"
+  /// and "Uncaught TypeError: this.webkitExitFullscreen is undefined"
+  /// This fix si from https://stackoverflow.com/a/29751708
+  bool get fullscreen {
+    return Environment.getProperty<Object>(html.document, [
+      'webkitFullscreenElement',
+      'mozFullScreenElement',
+      'msFullscreenElement',
+      'oFullscreenElement',
+      'fullscreenElement']) != null;
+  }
+  set fullscreen(bool enable) {
+    if (enable) {
+      //this._canvas.requestFullscreen();
+      Environment.callMethod(this._canvas, [
+        'webkitRequestFullscreen',
+        'mozRequestFullScreen',
+        'msRequestFullscreen',
+        'oRequestFullscreen',
+        'requestFullscreen']);
+    } else {
+      // html.document.exitFullscreen();
+      Environment.callMethod(html.document, [
+        'webkitExitFullscreen',
+        'mozCancelFullScreen',
+        'msExitFullscreen',
+        'oExitFullscreen',
+        'exitFullscreen']);
+    }
   }
 
   /// Requests a render to start the next time the main message loop
@@ -256,7 +301,7 @@ class ThreeDart implements Events.Changeable {
   /// An optional different scene can be provided but
   /// typically the scene attached to this object should be used.
   /// If the scene parameter isn't set, the attached scene is used.
-  void render([Scenes.Scene scene = null]) {
+  void render([Scenes.Scene? scene = null]) {
     try {
       this._frameCount++;
       this._pendingRender = false;
@@ -269,22 +314,16 @@ class ThreeDart implements Events.Changeable {
       }
       this._onPostrender();
     } catch(exception, stackTrace) {
-      print("Error: $exception");
-      print("Stack: $stackTrace");
+      print('Error: $exception');
+      print('Stack: $stackTrace');
       throw exception;
     }
   }
 
   /// Disposes this instance of 3Dart.
   void dispose() {
-    if (this._elem != this._canvas) {
+    if (this._elem != this._canvas)
       this._elem.children.remove(this._canvas);
-    }
-    this._input.dispose();
-    this._elem = null;
-    this._canvas = null;
-    this._gl = null;
     this._scene = null;
-    this._state = null;
   }
 }

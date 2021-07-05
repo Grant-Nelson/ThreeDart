@@ -8,17 +8,16 @@ class VertexFaceCollection {
   List<Face> _faces3;
 
   /// Creates a new vertex's face collection for the given vertex.
-  VertexFaceCollection._(Vertex this._vertex) {
-    this._faces1 = new List<Face>();
-    this._faces2 = new List<Face>();
-    this._faces3 = new List<Face>();
-  }
+  VertexFaceCollection._(this._vertex):
+    this._faces1 = [],
+    this._faces2 = [],
+    this._faces3 = [];
 
   /// The vertex which owns this collection.
   Vertex get vertex => this._vertex;
 
   /// The shape which owns the vertex which owns this collection.
-  Shape get shape => this._vertex._shape;
+  Shape? get shape => this._vertex.shape;
 
   /// Determines if the vertex contains any faces or not.
   bool get isEmpty => this._faces1.isEmpty && this._faces2.isEmpty && this._faces3.isEmpty;
@@ -111,7 +110,7 @@ class VertexFaceCollection {
   /// The removed face is disposed and returned or null if none removed.
   Face removeAt(int index) {
     Face face = this[index];
-    if (face != null) face.dispose();
+    face.dispose();
     return face;
   }
 
@@ -120,7 +119,7 @@ class VertexFaceCollection {
   /// The removed face is disposed and returned or null if none removed.
   Face removeAt1(int index) {
     Face face = this._faces1[index];
-    if (face != null) face.dispose();
+    face.dispose();
     return face;
   }
 
@@ -129,7 +128,7 @@ class VertexFaceCollection {
   /// The removed face is disposed and returned or null if none removed.
   Face removeAt2(int index) {
     Face face = this._faces2[index];
-    if (face != null) face.dispose();
+    face.dispose();
     return face;
   }
 
@@ -138,15 +137,15 @@ class VertexFaceCollection {
   /// The removed face is disposed and returned or null if none removed.
   Face removeAt3(int index) {
     Face face = this._faces3[index];
-    if (face != null) face.dispose();
+    face.dispose();
     return face;
   }
 
   /// Removes the given [face].
   /// Returns true if face was removed, false otherwise.
-  bool remove(Face face) {
+  bool remove(Face? face) {
     if (face == null) return false;
-    if (face._ver1._shape != this.shape) return false;
+    if (face._ver1?.shape != this.shape) return false;
     face.dispose();
     return true;
   }
@@ -155,15 +154,11 @@ class VertexFaceCollection {
   void removeRepeats(FaceMatcher matcher) {
     for (int i = this._faces1.length-1; i >= 0; --i) {
       Face faceA = this._faces1[i];
-      if (faceA != null) {
-        for (int j = i - 1; j >= 0; --j) {
-          Face faceB = this._faces1[j];
-          if (faceB != null) {
-            if (matcher.matches(faceA, faceB)) {
-              faceA.dispose();
-              break;
-            }
-          }
+      for (int j = i - 1; j >= 0; --j) {
+        Face faceB = this._faces1[j];
+        if (matcher.matches(faceA, faceB)) {
+          faceA.dispose();
+          break;
         }
       }
     }
@@ -173,11 +168,11 @@ class VertexFaceCollection {
   void removeCollapsed() {
     for (int i = this._faces1.length-1; i >= 0; --i) {
       Face face = this._faces1[i];
-      if ((face == null) || face.collapsed) face.dispose();
+      if (face.collapsed) face.dispose();
     }
     for (int i = this._faces2.length-1; i >= 0; --i) {
       Face face = this._faces2[i];
-      if ((face == null) || face.collapsed) face.dispose();
+      if (face.collapsed) face.dispose();
     }
     // No need to do [_faces3] because two be collapsed
     // it must have more than one point in the same vertex.
@@ -186,15 +181,15 @@ class VertexFaceCollection {
   /// Removes all faces using this vertex.
   void removeAll() {
     for (int i = this._faces1.length-1; i >= 0; --i) {
-      this._faces1[i]?.dispose();
+      this._faces1[i].dispose();
     }
     this._faces1.clear();
     for (int i = this._faces2.length-1; i >= 0; --i) {
-      this._faces2[i]?.dispose();
+      this._faces2[i].dispose();
     }
     this._faces2.clear();
     for (int i = this._faces3.length-1; i >= 0; --i) {
-      this._faces3[i]?.dispose();
+      this._faces3[i].dispose();
     }
     this._faces3.clear();
   }
@@ -243,7 +238,7 @@ class VertexFaceCollection {
 
   /// Gets the formatted string for all the faces with and optional [indent].
   String format([String indent = ""]) {
-    List<String> parts = new List<String>();
+    List<String> parts = [];
     for (Face face in this._faces1) {
       parts.add(face.format(indent));
     }

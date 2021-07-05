@@ -9,8 +9,8 @@ RayRegion3Result rayRegion3(Math.Ray3 ray, Math.Region3 region) {
   // Check for point inside box, trivial reject, and determine
   // parametric distance to each front face
   bool inside = true;
-  double xt, xn, xp;
-  Math.HitRegion xregion;
+  double xt = 0.0, xn = 0.0, xp = 0.0;
+  Math.HitRegion xregion = Math.HitRegion.None;
   if (ray.x < region.x) {
     xt = region.x - ray.x;
     if (xt > ray.dx) return new RayRegion3Result.none();
@@ -33,8 +33,8 @@ RayRegion3Result rayRegion3(Math.Ray3 ray, Math.Region3 region) {
     xt = -1.0;
   }
 
-  double yt, yn, yp;
-  Math.HitRegion yregion;
+  double yt = 0.0, yn = 0.0, yp = 0.0;
+  Math.HitRegion yregion = Math.HitRegion.None;
   if (ray.y < region.y) {
     yt = region.y - ray.y;
     if (yt > ray.dy) return new RayRegion3Result.none();
@@ -57,8 +57,8 @@ RayRegion3Result rayRegion3(Math.Ray3 ray, Math.Region3 region) {
     yt = -1.0;
   }
 
-  double zt, zn, zp;
-  Math.HitRegion zregion;
+  double zt = 0.0, zn = 0.0, zp = 0.0;
+  Math.HitRegion zregion = Math.HitRegion.None;
   if (ray.z < region.z) {
     zt = region.z - ray.z;
     if (zt > ray.dz) return new RayRegion3Result.none();
@@ -121,10 +121,10 @@ RayRegion3Result rayRegion3(Math.Ray3 ray, Math.Region3 region) {
 class RayRegion3Result extends BaseResult {
 
   /// The point in or on the region which the ray intersects.
-  final Math.Point3 point;
+  final Math.Point3? point;
 
   /// The normal of the surface on the region that the ray intersects.
-  final Math.Vector3 normal;
+  final Math.Vector3? normal;
 
   /// The parametric value between 0 and 1 inclusively of the ray to the intersection point.
   final double parametric;

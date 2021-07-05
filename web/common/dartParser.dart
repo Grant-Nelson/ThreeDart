@@ -24,7 +24,7 @@ class DartParser extends CodeParser {
   /// Constructs the Dart code tokenizer.
   /// The Dart code tokenizer breaks up code to
   /// label tokens to color the code appropriately.
-  Tokenizer.Tokenizer createTokenizer() {
+  Tokenizer.Tokenizer? createTokenizer() {
     Tokenizer.Tokenizer tok = new Tokenizer.Tokenizer();
     tok.start("Start");
     tok.join("Start", "Id")

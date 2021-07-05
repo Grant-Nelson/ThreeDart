@@ -107,7 +107,7 @@ void main() {
     ..children.add(bulbObj)
     ..children.add(shadeInsideObj)
     ..children.add(shadeObj)
-    ..camera.mover = camMover
+    ..camera?.mover = camMover
     ..target = colorTarget;
   
   Views.BackTarget brightTarget = new Views.BackTarget(

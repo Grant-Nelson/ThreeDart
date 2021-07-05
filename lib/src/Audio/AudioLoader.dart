@@ -6,10 +6,9 @@ class AudioLoader {
   int _loadedCount;
 
   /// Creates a new audio loader.
-  AudioLoader() {
-    this._soundCount = 0;
+  AudioLoader():
+    this._soundCount = 0,
     this._loadedCount = 0;
-  }
   
   /// The number of sounds being loaded.
   int get loading => this._soundCount - this._loadedCount;
@@ -41,12 +40,8 @@ class AudioLoader {
   }
 
   /// Increments the loading count.
-  void _incLoading() {
-    this._soundCount++;
-  }
+  void _incLoading() => this._soundCount++;
 
   /// Decrement the loading count.
-  void _decLoading() {
-    this._loadedCount++;
-  }
+  void _decLoading() => this._loadedCount--;
 }

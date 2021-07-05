@@ -53,23 +53,24 @@ class Inspection extends Shader {
       "   gl_FragColor = color*(ambientClr + diffuse); \n"+
       "}                                               \n";
 
-  Attribute _posAttr;
-  Attribute _normAttr;
-  Attribute _clrAttr;
-  Attribute _binmAttr;
-  Uniform3f _lightVec;
-  Uniform4f _ambientClr;
-  Uniform4f _diffuseClr;
-  Uniform1f _weightScalar;
-  UniformMat4 _viewMat;
-  UniformMat4 _viewObjMatrix;
-  UniformMat4 _projViewObjMatrix;
+  Attribute? _posAttr  = null;
+  Attribute? _normAttr = null;
+  Attribute? _clrAttr  = null;
+  Attribute? _binmAttr = null;
+
+  Uniform3f? _lightVec     = null;
+  Uniform4f? _ambientClr   = null;
+  Uniform4f? _diffuseClr   = null;
+  Uniform1f? _weightScalar = null;
+  UniformMat4? _viewMat           = null;
+  UniformMat4? _viewObjMatrix     = null;
+  UniformMat4? _projViewObjMatrix = null;
 
   /// Checks for the shader in the shader cache in the given [state],
   /// if it is not found then this shader is compiled and added
   /// to the shader cache before being returned.
   factory Inspection.cached(Core.RenderState state) {
-    Inspection shader = state.shader(defaultName);
+    Inspection? shader = state.shader(defaultName) as Inspection?;
     if (shader == null) {
       shader = new Inspection(state.gl);
       state.addShader(shader);
@@ -94,48 +95,48 @@ class Inspection extends Shader {
   }
 
   /// The position vertex shader attribute.
-  Attribute get posAttr => this._posAttr;
+  Attribute? get posAttr => this._posAttr;
 
   /// The normal vertex shader attribute.
-  Attribute get normAttr => this._normAttr;
+  Attribute? get normAttr => this._normAttr;
 
   /// The color vertex shader attribute.
-  Attribute get clrAttr => this._clrAttr;
+  Attribute? get clrAttr => this._clrAttr;
 
   /// The binormal vertex shader attribute.
-  Attribute get binmAttr => this._binmAttr;
+  Attribute? get binmAttr => this._binmAttr;
 
   /// The direction of the light on to the shape.
-  Math.Vector3 get lightVector => this._lightVec.getVector3();
-  set lightVector(Math.Vector3 vec) => this._lightVec.setVector3(vec);
+  Math.Vector3 get lightVector => this._lightVec?.getVector3() ?? Math.Vector3.zero;
+  set lightVector(Math.Vector3 vec) => this._lightVec?.setVector3(vec);
 
   /// The ambient color of the shape.
-  Math.Color4 get ambientColor => this._ambientClr.getColor4();
-  set ambientColor(Math.Color4 clr) => this._ambientClr.setColor4(clr);
+  Math.Color4 get ambientColor => this._ambientClr?.getColor4() ?? Math.Color4.white();
+  set ambientColor(Math.Color4 clr) => this._ambientClr?.setColor4(clr);
 
   /// The diffuse color of the shape.
-  Math.Color4 get diffuseColor => this._diffuseClr.getColor4();
-  set diffuseColor(Math.Color4 clr) => this._diffuseClr.setColor4(clr);
+  Math.Color4 get diffuseColor => this._diffuseClr?.getColor4() ?? Math.Color4.white();
+  set diffuseColor(Math.Color4 clr) => this._diffuseClr?.setColor4(clr);
 
   /// Sets both the ambient color and diffuse color of the shape.
   void setColors(Math.Color4 ambientClr, Math.Color4 diffuseClr) {
-    this._ambientClr.setColor4(ambientClr);
-    this._diffuseClr.setColor4(diffuseClr);
+    this._ambientClr?.setColor4(ambientClr);
+    this._diffuseClr?.setColor4(diffuseClr);
   }
 
   /// The scalar of the weighting for the shape.
-  double get weightScalar => this._weightScalar.getValue();
-  set weightScalar(double scalar) => this._weightScalar.setValue(scalar);
+  double get weightScalar => this._weightScalar?.getValue() ?? 0.0;
+  set weightScalar(double scalar) => this._weightScalar?.setValue(scalar);
 
   /// The view matrix.
-  Math.Matrix4 get viewMatrix => this._viewMat.getMatrix4();
-  set viewMatrix(Math.Matrix4 mat) => this._viewMat.setMatrix4(mat);
+  Math.Matrix4 get viewMatrix => this._viewMat?.getMatrix4() ?? Math.Matrix4.identity;
+  set viewMatrix(Math.Matrix4 mat) => this._viewMat?.setMatrix4(mat);
 
   /// The view object matrix.
-  Math.Matrix4 get viewObjectMatrix => this._viewObjMatrix.getMatrix4();
-  set viewObjectMatrix(Math.Matrix4 mat) => this._viewObjMatrix.setMatrix4(mat);
+  Math.Matrix4 get viewObjectMatrix => this._viewObjMatrix?.getMatrix4() ?? Math.Matrix4.identity;
+  set viewObjectMatrix(Math.Matrix4 mat) => this._viewObjMatrix?.setMatrix4(mat);
 
   /// The projection view object matrix.
-  Math.Matrix4 get projectViewObjectMatrix => this._projViewObjMatrix.getMatrix4();
-  set projectViewObjectMatrix(Math.Matrix4 mat) => this._projViewObjMatrix.setMatrix4(mat);
+  Math.Matrix4 get projectViewObjectMatrix => this._projViewObjMatrix?.getMatrix4() ?? Math.Matrix4.identity;
+  set projectViewObjectMatrix(Math.Matrix4 mat) => this._projViewObjMatrix?.setMatrix4(mat);
 }

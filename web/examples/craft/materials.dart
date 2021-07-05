@@ -33,17 +33,20 @@ class Materials {
   Map<int, CubeData> _cubeData;
   Map<int, List<int>> _matData;
   List<Techniques.MaterialLight> _mats;
-  Lights.Directional _light;
-  Techniques.MaterialLight _selection;
-  Techniques.MaterialLight _crosshair;
-  Textures.Texture2DChanger _waterChanger;
+  Lights.Directional? _light;
+  Techniques.MaterialLight? _selection;
+  Techniques.MaterialLight? _crosshair;
+  Textures.Texture2DChanger? _waterChanger;
 
   /// Creates a new material collection and starts loading the materials.
-  Materials(this._td) {
-    this._cubeData = new Map<int, CubeData>();
-    this._matData = new Map<int, List<int>>();
-    this._mats = new List<Techniques.MaterialLight>();
-
+  Materials(this._td):
+    this._cubeData = {},
+    this._matData  = {},
+    this._mats     = [],
+    this._light        = null,
+    this._selection    = null,
+    this._crosshair    = null,
+    this._waterChanger = null {
     // Create the light source attached to most of the textures a used for the world being created.
     this._light = new Lights.Directional(color: new Math.Color3.white(),
       mover: new Movers.Constant.lookAtTarget(Math.Point3.zero,
@@ -82,13 +85,12 @@ class Materials {
     int redFlowers     = this._addMat("redFlowers");
     int whiteFlowers   = this._addMat("whiteFlowers");
 
-    this._waterChanger = new Textures.Texture2DChanger(
-      textures: new List<Textures.Texture2D>.from([
-        this._loadText("water1"),
-        this._loadText("water2"),
-        this._loadText("water3"),
-      ]));
-    int water = this._addMatTxt(this._waterChanger, true);
+    waterChanger.textures.addAll([
+      this._loadText("water1"),
+      this._loadText("water2"),
+      this._loadText("water3"),
+    ]);
+    int water = this._addMatTxt(waterChanger, true);
 
     //                value,                 top,           bottom,        left,          right,         front,         back
     this._addCubeData(BlockType.Boundary,    boundary,      boundary,      boundary,      boundary,      boundary,      boundary);
@@ -117,29 +119,28 @@ class Materials {
     this._addMatData(BlockType.BlueFlower,  [blueFlowers]);
     this._addMatData(BlockType.RedFlower,   [redFlowers]);
     this._addMatData(BlockType.Mushroom,    [mushroomTop, mushroomBottom, mushroomSide]);
-
-    // Special materials not used in blocks
-    this._selection = this._addEmissionMat("selection");
-    this._crosshair = this._addEmissionMat("crosshair");
   }
 
   /// The block value to cube data map to define which materials to apply to which sides.
-  CubeData cubeData(int value) => this._cubeData[value];
+  CubeData? cubeData(int value) => this._cubeData[value];
 
   /// The materials to use for non-cube block values such as flowers.
-  List<int> matData(int value) => this._matData[value];
+  List<int>? matData(int value) => this._matData[value];
 
   /// This full set of all the materials used by craft.
   List<Techniques.MaterialLight> get materials => this._mats;
 
   /// The changer to animate the water.
-  Textures.Texture2DChanger get waterChanger => this._waterChanger;
+  Textures.Texture2DChanger get waterChanger =>
+    this._waterChanger ??= new Textures.Texture2DChanger();
 
   /// The material used for all the sides of the selection box.
-  Techniques.MaterialLight get selection => this._selection;
+  Techniques.MaterialLight get selection =>
+    this._selection ??= this._addEmissionMat("selection");
 
   /// The material used for the cross hair in the center of the screen.
-  Techniques.MaterialLight get crosshair => this._crosshair;
+  Techniques.MaterialLight get crosshair =>
+    this._crosshair ??= this._addEmissionMat("crosshair");
 
   /// Loads a texture with the given file name.
   Textures.Texture2D _loadText(String fileName) {
@@ -149,21 +150,22 @@ class Materials {
 
   /// Loads a material with lighting information and adds it to the material list.
   /// Returns the index for the new material.
-  int _addMat(String fileName, [bool shiny = false]) {
-    return this._addMatTxt(this._loadText(fileName), shiny);
-  }
+  int _addMat(String fileName, [bool shiny = false]) =>
+    this._addMatTxt(this._loadText(fileName), shiny);
 
   /// Creates a material with lighting information and adds
   /// it to the material list with the given texture.
   /// Returns the index for the new material.
   int _addMatTxt(Textures.Texture2D blockTxt, [bool shiny = false]) {
     Techniques.MaterialLight tech = new Techniques.MaterialLight()
-      ..lights.add(this._light)
       ..ambient.color = new Math.Color3.gray(0.8)
       ..diffuse.color = new Math.Color3.gray(0.4)
       ..ambient.texture2D = blockTxt
       ..diffuse.texture2D = blockTxt
       ..alpha.texture2D   = blockTxt;
+
+    var light = this._light;
+    if (light != null) tech.lights.add(light);
 
     if (shiny) {
       tech.specular
@@ -186,12 +188,10 @@ class Materials {
   }
 
   /// Adds a cube data entry for the given block value.
-  void _addCubeData(int value, int topIndex, int bottomIndex, int leftIndex, int rightIndex, int frontIndex, int backIndex) {
+  void _addCubeData(int value, int topIndex, int bottomIndex, int leftIndex, int rightIndex, int frontIndex, int backIndex) =>
     this._cubeData[value] = new CubeData(topIndex, bottomIndex, leftIndex, rightIndex, frontIndex, backIndex);
-  }
 
   /// Adds the materials for non-cube values.
-  void _addMatData(int value, List<int> indices) {
+  void _addMatData(int value, List<int> indices) =>
     this._matData[value] = indices;
-  }
 }

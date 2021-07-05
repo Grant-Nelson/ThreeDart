@@ -3,31 +3,30 @@ part of ThreeDart.Textures;
 /// A 2D texture.
 class Texture2DSolid extends Texture2D {
   int _index;
-  WebGL.Texture _texture;
+  WebGL.Texture? _texture;
   bool _bound;
   bool _loaded;
   int _width;
   int _height;
   int _actualWidth;
   int _actualHeight;
-  Events.Event _changed;
+  Events.Event? _changed;
 
   /// Creates a new 2D texture.
-  Texture2DSolid({int index: 0, WebGL.Texture texture: null}) {
-    this._index   = index;
-    this._texture = texture;
-    this._bound   = false;
-    this._loaded  = false;
-    this._width   = 0;
-    this._height  = 0;
-    this._actualWidth  = 0;
-    this._actualHeight = 0;
+  Texture2DSolid({int index: 0, WebGL.Texture? texture: null}):
+    this._index   = index,
+    this._texture = texture,
+    this._bound  = false,
+    this._loaded = false,
+    this._width  = 0,
+    this._height = 0,
+    this._actualWidth  = 0,
+    this._actualHeight = 0,
     this._changed = null;
-  }
 
   /// Creates a new 2D image from the given [width] and [height].
   factory Texture2DSolid.fromSize(WebGL.RenderingContext2 gl, int width, int height, {bool wrapEdges: false}) {
-    int maxSize = gl.getParameter(WebGL.WebGL.MAX_TEXTURE_SIZE);
+    int maxSize = gl.getParameter(WebGL.WebGL.MAX_TEXTURE_SIZE) as int;
     int aWidth  = Math.nearestPower(width);
     int aHeight = Math.nearestPower(height);
     maxSize = Math.nearestPower(maxSize);
@@ -70,7 +69,7 @@ class Texture2DSolid extends Texture2D {
   set index(int index) => this._index = index;
 
   /// The internal texture instance.
-  WebGL.Texture get texture => this._texture;
+  WebGL.Texture? get texture => this._texture;
 
   /// The loaded state of the texture.
   bool get loaded => this._loaded;
@@ -90,13 +89,11 @@ class Texture2DSolid extends Texture2D {
   /// Emitted when the texture has finished being loaded or replaced.
   ///
   /// On change typically indicates a new render is needed.
-  Events.Event get changed {
+  Events.Event get changed =>
     this._changed ??= new Events.Event();
-    return this._changed;
-  }
 
   /// This replaces the internals of this texture with the given [txt].
-  void replace(Texture2DSolid txt) {
+  void replace(Texture2DSolid? txt) {
     if (txt == null) {
       this._texture = null;
       this._loaded  = false;

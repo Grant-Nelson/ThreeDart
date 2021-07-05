@@ -67,11 +67,10 @@ class Sphere {
   bool operator ==(var other) {
     if (identical(this, other)) return true;
     if (other is! Sphere) return false;
-    Sphere sphere = other as Sphere;
-    if (!Comparer.equals(sphere.x,      this.x))      return false;
-    if (!Comparer.equals(sphere.y,      this.y))      return false;
-    if (!Comparer.equals(sphere.z,      this.z))      return false;
-    if (!Comparer.equals(sphere.radius, this.radius)) return false;
+    if (!Comparer.equals(other.x,      this.x))      return false;
+    if (!Comparer.equals(other.y,      this.y))      return false;
+    if (!Comparer.equals(other.z,      this.z))      return false;
+    if (!Comparer.equals(other.radius, this.radius)) return false;
     return true;
   }
 

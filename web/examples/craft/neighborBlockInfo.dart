@@ -8,7 +8,7 @@ typedef bool HandleTraverseNeighbor(NeighborBlockInfo info);
 class NeighborBlockInfo {
 
   /// The neighboring block information.
-  final BlockInfo info;
+  final BlockInfo? info;
 
   /// The direction this neighbor was from the other block.
   /// Will be only XNeg, XPos, YNeg, YPos, ZNeg, or ZPos.

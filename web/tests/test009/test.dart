@@ -41,7 +41,7 @@ void main() {
   td.scene = new Scenes.EntityPass()
     ..technique = tech
     ..children.add(obj)
-    ..camera.mover = camMover;
+    ..camera?.mover = camMover;
 
   td.postrender.once((_){
     page

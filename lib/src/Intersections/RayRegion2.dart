@@ -8,8 +8,8 @@ RayRegion2Result rayRegion2(Math.Ray2 ray, Math.Region2 region) {
   // Check for point inside box, trivial reject, and determine
   // parametric distance to each front face
   bool inside = true;
-  double xt, xn, xp;
-  Math.HitRegion xregion;
+  double xt = 0.0, xn = 0.0, xp = 0.0;
+  Math.HitRegion xregion = Math.HitRegion.None;
   if (ray.x < region.x) {
     xt = region.x - ray.x;
     if (xt > ray.dx) return new RayRegion2Result.none();
@@ -32,8 +32,8 @@ RayRegion2Result rayRegion2(Math.Ray2 ray, Math.Region2 region) {
     }
   }
 
-  double yt, yn, yp;
-  Math.HitRegion yregion;
+  double yt = 0.0, yn = 0.0, yp = 0.0;
+  Math.HitRegion yregion = Math.HitRegion.None;
   if (ray.y < region.y) {
     yt = region.y - ray.y;
     if (yt > ray.dy) return new RayRegion2Result.none();
@@ -80,10 +80,10 @@ RayRegion2Result rayRegion2(Math.Ray2 ray, Math.Region2 region) {
 class RayRegion2Result extends BaseResult {
 
   /// The point in or on the region which the ray intersects.
-  final Math.Point2 point;
+  final Math.Point2? point;
 
   /// The normal of the surface on the region that the ray intersects.
-  final Math.Vector2 normal;
+  final Math.Vector2? normal;
 
   /// The parametric value between 0 and 1 inclusively of the ray to the intersection point.
   final double parametric;

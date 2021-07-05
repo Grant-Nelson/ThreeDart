@@ -1,18 +1,17 @@
 part of ThreeDart.Shapes;
 
 class VertexPointCollection {
-  Vertex _vertex;
+  final Vertex _vertex;
   List<Point> _points;
 
-  VertexPointCollection._(Vertex this._vertex) {
-    this._points = new List<Point>();
-  }
+  VertexPointCollection._(this._vertex):
+    this._points = [];
 
   /// The vertex which owns this collection.
   Vertex get vertex => this._vertex;
 
   /// The shape which owns the vertex which owns this collection.
-  Shape get shape => this._vertex._shape;
+  Shape? get shape => this._vertex._shape;
 
   /// Adds a point to this vertex.
   Point add() {
@@ -40,15 +39,15 @@ class VertexPointCollection {
   /// The removed point is disposed and returned or null if none removed.
   Point removeAt(int index) {
     Point pnt = this._points[index];
-    if (pnt != null) pnt.dispose();
+    pnt.dispose();
     return pnt;
   }
 
   /// Removes the given [point].
   /// Returns true if point was removed, false otherwise.
-  bool remove(Point point) {
+  bool remove(Point? point) {
     if (point == null) return false;
-    if (point._ver._shape != this.shape) return false;
+    if (point.vertex?.shape != this.shape) return false;
     point.dispose();
     return true;
   }
@@ -66,7 +65,7 @@ class VertexPointCollection {
 
   /// Gets the formatted string for all the points with and optional [indent].
   String format([String indent = ""]) {
-    List<String> parts = new List<String>();
+    List<String> parts = [];
     for (Point pnt in this._points) {
       parts.add(pnt.format(indent));
     }

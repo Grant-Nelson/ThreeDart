@@ -28,20 +28,19 @@ class Chunk {
   bool _needGen;
 
   /// Creates a new chunk for the given [world].
-  Chunk(this._world) {
-    this._data = new data.Uint8List(Constants.chunkDataLength);
-    this._entities = new List<ThreeDart.Entity>();
+  Chunk(this._world):
+    this._data = new data.Uint8List(Constants.chunkDataLength),
+    this._entities = [],
+    this._x = 0,
+    this._z = 0,
+    this._dirty = false,
+    this._needUpdate = true,
+    this._needGen = true {
     for (ThreeDart.Entity parent in this._world.entities) {
       ThreeDart.Entity entity = new ThreeDart.Entity();
       parent.children.add(entity);
       this._entities.add(entity);
     }
-
-    this._x = 0;
-    this._z = 0;
-    this._dirty = false;
-    this._needUpdate = true;
-    this._needGen = true;
   }
 
   /// Prepares this chunk for uses.
@@ -113,7 +112,7 @@ class Chunk {
   }
 
   /// Gets the block from the given neighbor, if the neighbor is null air is returned.
-  int _neighborBlock(Chunk neighbor, int x, int y, int z) =>
+  int _neighborBlock(Chunk? neighbor, int x, int y, int z) =>
     neighbor?.getWorldBlock(x, y, z) ?? BlockType.Air;
 
   /// Gets the value of the block at the given location.
@@ -143,16 +142,16 @@ class Chunk {
   }
 
   /// Gets the chunk to the left (XNeg) of this chunk.
-  Chunk get left => this._world.findChunk(this.x - Constants.chunkSideSize, this.z);
+  Chunk? get left => this._world.findChunk(this.x - Constants.chunkSideSize, this.z);
 
   /// Gets the chunk to the front (ZPos) of this chunk.
-  Chunk get front => this._world.findChunk(this.x, this.z + Constants.chunkSideSize);
+  Chunk? get front => this._world.findChunk(this.x, this.z + Constants.chunkSideSize);
 
   /// Gets the chunk to the right (XPos) of this chunk.
-  Chunk get right => this._world.findChunk(this.x + Constants.chunkSideSize, this.z);
+  Chunk? get right => this._world.findChunk(this.x + Constants.chunkSideSize, this.z);
 
   /// Gets the chunk to the back (ZNeg) of this chunk.
-  Chunk get back => this._world.findChunk(this.x, this.z - Constants.chunkSideSize);
+  Chunk? get back => this._world.findChunk(this.x, this.z - Constants.chunkSideSize);
 
   /// Determines the highest non-air block in the given [x] and [z] column.
   /// If no ground is found then the given [defaultY] is returned.
@@ -175,7 +174,7 @@ class Chunk {
   }
 
   /// Sets all of the entities to either enabled or disabled.
-  void set _enabled(bool enabled) {
+  set _enabled(bool enabled) {
     for (ThreeDart.Entity entity in this._entities)
       entity.enabled = enabled;
   }

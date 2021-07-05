@@ -40,7 +40,7 @@ void main() {
     ..technique = normalTech
     ..target = normalTarget
     ..children.add(normalObj)
-    ..camera.mover = new Movers.Constant.translate(0.0, 0.0, 5.0);
+    ..camera?.mover = new Movers.Constant.translate(0.0, 0.0, 5.0);
 
   Movers.Group secondMover = new Movers.Group()
   ..add(new Movers.UserRotator(ctrl: true, input: td.userInput))

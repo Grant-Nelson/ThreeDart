@@ -50,20 +50,20 @@ class Distort extends Shader {
       "   gl_FragColor = texture2D(colorTxt, txt2D);      \n"+
       "}                                                  \n";
 
-  Attribute _posAttr;
-  Attribute _txtAttr;
-  UniformMat4 _projViewObjMat;
-  UniformMat3 _colorTxt2DMat;
-  UniformMat3 _bumpTxt2DMat;
-  UniformSampler2D _colorTxt;
-  UniformSampler2D _bumpTxt;
-  UniformMat4 _bumpMat;
+  Attribute? _posAttr = null;
+  Attribute? _txtAttr = null;
+  UniformMat4? _projViewObjMat = null;
+  UniformMat3? _colorTxt2DMat  = null;
+  UniformMat3? _bumpTxt2DMat   = null;
+  UniformSampler2D? _colorTxt = null;
+  UniformSampler2D? _bumpTxt  = null;
+  UniformMat4? _bumpMat = null;
 
   /// Checks for the shader in the shader cache in the given [state],
   /// if it is not found then this shader is compiled and added
   /// to the shader cache before being returned.
   factory Distort.cached(Core.RenderState state) {
-    Distort shader = state.shader(defaultName);
+    Distort? shader = state.shader(defaultName) as Distort?;
     if (shader == null) {
       shader = new Distort(state.gl);
       state.addShader(shader);
@@ -85,37 +85,37 @@ class Distort extends Shader {
   }
 
   /// Sets the texture 2D and null texture indicator for the shader.
-  void _setTexture2D(UniformSampler2D txt2D, Textures.Texture2D txt) {
-    if ((txt != null) && txt.loaded) txt2D.setTexture2D(txt);
+  void _setTexture2D(UniformSampler2D? txt2D, Textures.Texture2D? txt) {
+    if ((txt != null) && txt.loaded) txt2D?.setTexture2D(txt);
   }
 
   /// The position vertex shader attribute.
-  Attribute get posAttr => this._posAttr;
+  Attribute? get posAttr => this._posAttr;
 
   /// The texture vertex shader attribute.
-  Attribute get txtAttr => this._txtAttr;
+  Attribute? get txtAttr => this._txtAttr;
 
   /// The matrix for modifying the project view object matrix.
-  Math.Matrix4 get projectViewObjectMatrix => this._projViewObjMat.getMatrix4();
-  set projectViewObjectMatrix(Math.Matrix4 mat) => this._projViewObjMat.setMatrix4(mat);
+  Math.Matrix4 get projectViewObjectMatrix => this._projViewObjMat?.getMatrix4() ?? Math.Matrix4.identity;
+  set projectViewObjectMatrix(Math.Matrix4 mat) => this._projViewObjMat?.setMatrix4(mat);
 
   /// The matrix for modifying the color texture coordinates.
-  Math.Matrix3 get colorTextureMatrix => this._colorTxt2DMat.getMatrix3();
-  set colorTextureMatrix(Math.Matrix3 mat) => this._colorTxt2DMat.setMatrix3(mat);
+  Math.Matrix3 get colorTextureMatrix => this._colorTxt2DMat?.getMatrix3() ?? Math.Matrix3.identity;
+  set colorTextureMatrix(Math.Matrix3 mat) => this._colorTxt2DMat?.setMatrix3(mat);
 
   /// The matrix for modifying the bump texture coordinates.
-  Math.Matrix3 get bumpTextureMatrix => this._bumpTxt2DMat.getMatrix3();
-  set bumpTextureMatrix(Math.Matrix3 mat) => this._bumpTxt2DMat.setMatrix3(mat);
+  Math.Matrix3 get bumpTextureMatrix => this._bumpTxt2DMat?.getMatrix3() ?? Math.Matrix3.identity;
+  set bumpTextureMatrix(Math.Matrix3 mat) => this._bumpTxt2DMat?.setMatrix3(mat);
 
   /// The color texture to cover with.
-  set colorTexture(Textures.Texture2D txt) =>
+  set colorTexture(Textures.Texture2D? txt) =>
     this._setTexture2D(this._colorTxt, txt);
 
   /// The bump distortion texture to cover with.
-  set bumpTexture(Textures.Texture2D txt) =>
+  set bumpTexture(Textures.Texture2D? txt) =>
     this._setTexture2D(this._bumpTxt, txt);
 
   /// The matrix for modifying the bump normals.
-  Math.Matrix4 get bumpMatrix => this._bumpMat.getMatrix4();
-  set bumpMatrix(Math.Matrix4 mat) => this._bumpMat.setMatrix4(mat);
+  Math.Matrix4 get bumpMatrix => this._bumpMat?.getMatrix4() ?? Math.Matrix4.identity;
+  set bumpMatrix(Math.Matrix4 mat) => this._bumpMat?.setMatrix4(mat);
 }

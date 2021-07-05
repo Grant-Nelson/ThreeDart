@@ -5,15 +5,13 @@ part of craft;
 class TestGenerator implements Generator {
 
   /// The current chunk that is being worked on.
-  Chunk _curChunk;
+  Chunk? _curChunk = null;
 
   /// Creates a new generator for the given world.
-  TestGenerator() {
-    this._curChunk = null;
-  }
+  TestGenerator();
 
   /// Fills the given chunk with data.
-  void fillChunk(Chunk chunk) {
+  void fillChunk(Chunk? chunk) {
     if (chunk == null) return;
     this._curChunk = chunk;
 
@@ -44,6 +42,9 @@ class TestGenerator implements Generator {
   }
 
   void _default() {
+    var chunk = this._curChunk;
+    if (chunk == null) return;
+
     const int rockHeight = 8;
     const int dirtHeight = 9;
     const int turfY = 9;
@@ -51,29 +52,28 @@ class TestGenerator implements Generator {
     for (int x = 0; x < Constants.chunkSideSize; x++) {
       for (int z = 0; z < Constants.chunkSideSize; z++) {
         for (int y = 0; y < rockHeight; y++)
-          this._curChunk.setBlock(x, y, z, BlockType.Rock);
+          chunk.setBlock(x, y, z, BlockType.Rock);
 
         for (int y = rockHeight; y < dirtHeight; y++)
-          this._curChunk.setBlock(x, y, z, BlockType.Dirt);
+          chunk.setBlock(x, y, z, BlockType.Dirt);
 
-        if (x == 0 || z == 0) {
-          this._curChunk.setBlock(x, turfY, z, BlockType.BlackShine);
-        } else if (x == 1 && z == 1) {
-          this._curChunk.setBlock(x, turfY, z, BlockType.RedShine);
-        } else {
-          this._curChunk.setBlock(x, turfY, z, BlockType.Turf);
-        }
+        if (x == 0 || z == 0)      chunk.setBlock(x, turfY, z, BlockType.BlackShine);
+        else if (x == 1 && z == 1) chunk.setBlock(x, turfY, z, BlockType.RedShine);
+        else                       chunk.setBlock(x, turfY, z, BlockType.Turf);
       }
     }
   }
 
   void _sphere() {
+    var chunk = this._curChunk;
+    if (chunk == null) return;
+
     int center = 8, size = 6, height = 17, size2 = size*size + 1;
     for (int x = -size; x <= size; x++) {
       for (int y = -size; y <= size; y++) {
         for (int z = -size; z <= size; z++) {
           if ((x*x + y*y + z*z) <= size2)
-            this._curChunk.setBlock(center+x, height+y, center+z, BlockType.Sand);
+            chunk.setBlock(center+x, height+y, center+z, BlockType.Sand);
         }
       }
     }
@@ -176,15 +176,18 @@ class TestGenerator implements Generator {
 
   /// Determines if this chunk is the specified chunk with x and z scalars.
   bool _isChunk(int x, int z) =>
-    (this._curChunk.x == x*Constants.chunkSideSize) &&
-    (this._curChunk.z == z*Constants.chunkSideSize);
+    (this._curChunk?.x == x*Constants.chunkSideSize) &&
+    (this._curChunk?.z == z*Constants.chunkSideSize);
 
   /// Adds a platform to the current chunk in the current location.
   void _block(int offsetX, int offsetY, int offsetZ, int xSize, int ySize, int zSize, [int type = BlockType.Brick]) {
+    var chunk = this._curChunk;
+    if (chunk == null) return;
+
     for (int x = 0; x < xSize; x++) {
       for (int y = 0; y < ySize; y++) {
         for (int z = 0; z < zSize; z++) {
-          this._curChunk.setBlock(offsetX+x, offsetY+y, offsetZ+z, type);
+          chunk.setBlock(offsetX+x, offsetY+y, offsetZ+z, type);
         }
       }
     }

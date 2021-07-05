@@ -25,15 +25,14 @@ class Animation {
   List<Shifter> _shifters;
 
   /// Creates a new animation which optionally loops.
-  Animation({bool loop: false}) {
-    this._running = false;
-    this._loop = loop;
-    this._start = null;
-    this._shifters = new List<Shifter>();
-  }
+  Animation({bool loop: false}):
+    this._running = false,
+    this._loop = loop,
+    this._start = DateTime.now(),
+    this._shifters = [];
 
   /// Adds a shifter to this animation.
-  Shifter add({int delay: 0, int duration: 1000, bool init: false, Smoother easing: null}) {
+  Shifter add({int delay: 0, int duration: 1000, bool init: false, Smoother? easing: null}) {
     Shifter shifter = new Shifter(delay:delay, duration:duration, init:init, easing:easing);
     this._shifters.add(shifter);
     return shifter;

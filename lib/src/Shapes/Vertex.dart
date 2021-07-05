@@ -2,46 +2,59 @@ part of ThreeDart.Shapes;
 
 /// A vertex of a shape with all of the renderable elements it is used.
 class Vertex {
-  Shape _shape;
+  Shape? _shape;
 
-  VertexPointCollection _points;
-  VertexLineCollection _lines;
-  VertexFaceCollection _faces;
+  VertexPointCollection? _points;
+  VertexLineCollection? _lines;
+  VertexFaceCollection? _faces;
 
   int _index;
-  Math.Point3 _loc;
-  Math.Vector3 _norm;
-  Math.Vector3 _binm;
-  Math.Point2 _txt2D;
-  Math.Vector3 _txtCube;
-  Math.Color4 _clr;
+  Math.Point3? _loc;
+  Math.Vector3? _norm;
+  Math.Vector3? _binm;
+  Math.Point2? _txt2D;
+  Math.Vector3? _txtCube;
+  Math.Color4? _clr;
   double _weight;
-  Math.Point4 _bending;
+  Math.Point4? _bending;
 
   /// Creates a new vertex with the default values.
-  Vertex({Data.VertexType type: null,
-          Math.Point3 loc: null, Math.Vector3 norm: null, Math.Vector3 binm: null,
-          Math.Point2 txt2D: null, Math.Vector3 txtCube: null, Math.Color4 clr: null,
-          double weight: 0.0, Math.Point4 bending: null}) {
-    this._shape  = null;
-    this._points = new VertexPointCollection._(this);
-    this._lines  = new VertexLineCollection._(this);
-    this._faces  = new VertexFaceCollection._(this);
+  Vertex({
+    Data.VertexType? type: null,
+    Math.Point3?  loc:     null,
+    Math.Vector3? norm:    null,
+    Math.Vector3? binm:    null,
+    Math.Point2?  txt2D:   null,
+    Math.Vector3? txtCube: null,
+    Math.Color4?  clr:     null,
+    double        weight:  0.0,
+    Math.Point4?  bending: null}):
+    this._shape   = null,
+    this._points  = null,
+    this._lines   = null,
+    this._faces   = null,
+    this._index   = 0,
+    this._loc     = null,
+    this._norm    = null,
+    this._binm    = null,
+    this._txt2D   = null,
+    this._txtCube = null,
+    this._clr     = null,
+    this._weight  = 0.0,
+    this._bending = null {
     type ??= Data.VertexType.All;
-
-    this._index   = 0;
-    this._loc     = type.has(Data.VertexType.Pos)?     loc:     null;
-    this._norm    = type.has(Data.VertexType.Norm)?    norm:    null;
-    this._binm    = type.has(Data.VertexType.Binm)?    binm:    null;
-    this._txt2D   = type.has(Data.VertexType.Txt2D)?   txt2D:   null;
-    this._txtCube = type.has(Data.VertexType.TxtCube)? txtCube: null;
-    this._clr     = type.has(Data.VertexType.Color)?   clr:     null;
-    this._weight  = type.has(Data.VertexType.Weight)?  weight:  0.0;
-    this._bending = type.has(Data.VertexType.Bending)? bending: null;
+    if (type.has(Data.VertexType.Pos))     this._loc     = loc;
+    if (type.has(Data.VertexType.Norm))    this._norm    = norm;
+    if (type.has(Data.VertexType.Binm))    this._binm    = binm;
+    if (type.has(Data.VertexType.Txt2D))   this._txt2D   = txt2D;
+    if (type.has(Data.VertexType.TxtCube)) this._txtCube = txtCube;
+    if (type.has(Data.VertexType.Color))   this._clr     = clr;
+    if (type.has(Data.VertexType.Weight))  this._weight  = weight;
+    if (type.has(Data.VertexType.Bending)) this._bending = bending;
   }
 
   /// Creates a copy of the vertex values.
-  Vertex copy([Data.VertexType type = null]) {
+  Vertex copy([Data.VertexType? type = null]) {
     return new Vertex(
       type:    type,
       loc:     this._loc,
@@ -68,85 +81,82 @@ class Vertex {
   }
 
   /// The shape the vertex belongs to.
-  Shape get shape => this._shape;
+  Shape? get shape => this._shape;
 
   /// The points which use this vertex.
-  VertexPointCollection get points => this._points;
+  VertexPointCollection get points =>
+    this._points ??= new VertexPointCollection._(this);
 
   /// The lines which use this vertex.
-  VertexLineCollection get lines => this._lines;
+  VertexLineCollection get lines =>
+    this._lines ??= new VertexLineCollection._(this);
 
   /// The faces which use this vertex.
-  VertexFaceCollection get faces => this._faces;
+  VertexFaceCollection get faces =>
+    this._faces ??= new VertexFaceCollection._(this);
 
   /// The index of this vertex in the shape.
   int get index {
-    this._shape._vertices._updateIndices();
+    this._shape?.vertices._updateIndices();
     return this._index;
   }
 
   /// Indicates if this vertex has any attached renderable elements, true if not.
-  bool get isEmpty => this._points.isEmpty && this._lines.isEmpty && this._faces.isEmpty;
+  bool get isEmpty => points.isEmpty && lines.isEmpty && faces.isEmpty;
 
   /// The 3D location of the vertex.
-  Math.Point3 get location => this._loc;
-  set location(Math.Point3 loc) {
+  Math.Point3? get location => this._loc;
+  set location(Math.Point3? loc) {
     if (this._loc != loc) {
       this._loc = loc;
-      if (this._shape != null)
-        this._shape.onVertexModified(this);
+      this._shape?.onVertexModified(this);
     }
   }
 
   /// The 3D normal vector of the vertex.
-  Math.Vector3 get normal => this._norm;
-  set normal(Math.Vector3 norm) {
+  Math.Vector3? get normal => this._norm;
+  set normal(Math.Vector3? norm) {
     norm = norm?.normal();
     if (this._norm != norm) {
       this._norm = norm;
-      if (this._shape != null)
-        this._shape.onVertexModified(this);
+      this._shape?.onVertexModified(this);
     }
   }
 
   /// The 3D binormal vector of the vertex.
-  Math.Vector3 get binormal => this._binm;
-  set binormal(Math.Vector3 binm) {
+  Math.Vector3? get binormal => this._binm;
+  set binormal(Math.Vector3? binm) {
     binm = binm?.normal();
     if (this._binm != binm) {
       this._binm = binm;
-      if (this._shape != null)
-        this._shape.onVertexModified(this);
+      this._shape?.onVertexModified(this);
     }
   }
 
   /// The 2D texture coordinate of the vertex.
-  Math.Point2 get texture2D => this._txt2D;
-  set texture2D(Math.Point2 txt2D) {
+  Math.Point2? get texture2D => this._txt2D;
+  set texture2D(Math.Point2? txt2D) {
     if (this._txt2D != txt2D) {
       this._txt2D = txt2D;
-      if (this._shape != null)
-        this._shape.onVertexModified(this);
+      this._shape?.onVertexModified(this);
     }
   }
 
   /// The cube texture coordinate of the vertex.
-  Math.Vector3 get textureCube => this._txtCube;
-  set textureCube(Math.Vector3 txtCube) {
+  Math.Vector3? get textureCube => this._txtCube;
+  set textureCube(Math.Vector3? txtCube) {
     if (this._txtCube != txtCube) {
       this._txtCube = txtCube;
-      if (this._shape != null)
-        this._shape.onVertexModified(this);
+      this._shape?.onVertexModified(this);
     }
   }
 
   /// The RGBA color of the vertex.
-  Math.Color4 get color => this._clr;
-  set color(Math.Color4 clr) {
+  Math.Color4? get color => this._clr;
+  set color(Math.Color4? clr) {
     if (this._clr != clr) {
       this._clr = clr;
-      if (this._shape != null)
-        this._shape.onVertexModified(this);
+      this._shape?.onVertexModified(this);
     }
   }
 
@@ -156,48 +166,39 @@ class Vertex {
     if (this._weight != weight) {
       this._weight = weight;
       if (this._shape != null)
-        this._shape.onVertexModified(this);
+        this._shape?.onVertexModified(this);
     }
   }
 
   /// The bending values of the vertex.
-  Math.Point4 get bending => this._bending;
-  set bending(Math.Point4 bending) {
+  Math.Point4? get bending => this._bending;
+  set bending(Math.Point4? bending) {
     if (this._bending != bending) {
       this._bending = bending;
-      if (this._shape != null)
-        this._shape.onVertexModified(this);
+      this._shape?.onVertexModified(this);
     }
   }
 
   /// Gets the list of doubles for the vertex component for the given [type].
   List<double> listFor(Data.VertexType type) {
     if (type == Data.VertexType.Pos) {
-      if (this._loc == null) return [0.0, 0.0, 0.0];
-      else return this._loc.toList();
+      return this._loc?.toList() ?? [0.0, 0.0, 0.0];
     } else if (type == Data.VertexType.Norm) {
-      if (this._norm == null) return [0.0, 1.0, 0.0];
-      else return this._norm.toList();
+      return this._norm?.toList() ?? [0.0, 1.0, 0.0];
     } else if (type == Data.VertexType.Binm) {
-      if (this._binm == null) return [0.0, 0.0, 1.0];
-      else return this._binm.toList();
+      return this._binm?.toList() ?? [0.0, 0.0, 1.0];
     } else if (type == Data.VertexType.Txt2D) {
-      if (this._txt2D == null) return [0.0, 0.0];
-      else return this._txt2D.toList();
+      return this._txt2D?.toList() ?? [0.0, 0.0];
     } else if (type == Data.VertexType.TxtCube) {
-      if (this._txtCube == null) return [0.0, 0.0, 0.0];
-      else return this._txtCube.toList();
+      return this._txtCube?.toList() ?? [0.0, 0.0, 0.0];
     } else if (type == Data.VertexType.Clr3) {
-      if (this._clr == null) return [1.0, 1.0, 1.0];
-      else return [this._clr.red, this._clr.green, this._clr.blue];
+      return [this._clr?.red ?? 1.0, this._clr?.green ?? 1.0, this._clr?.blue ?? 1.0];
     } else if (type == Data.VertexType.Clr4) {
-      if (this._clr == null) return [1.0, 1.0, 1.0, 1.0];
-      else return this._clr.toList();
+      return this._clr?.toList() ?? [1.0, 1.0, 1.0, 1.0];
     } else if (type == Data.VertexType.Weight) {
       return [ this._weight ];
     } else if (type == Data.VertexType.Bending) {
-      if (this._bending == null) return [-1.0, -1.0, -1.0, -1.0];
-      else return this._bending.toList();
+      return this._bending?.toList() ?? [-1.0, -1.0, -1.0, -1.0];
     } else return [];
   }
 
@@ -206,16 +207,17 @@ class Vertex {
   /// set then this will have no effect.
   bool calculateNormal() {
     if (this._norm != null) return true;
-    if (this._shape != null) this._shape._changed?.suspend();
+    var shape = this._shape;
+    if (shape != null) shape._changed?.suspend();
     Math.Vector3 normSum = Math.Vector3.zero;
-    this._faces.forEach((Face face) {
-      Math.Vector3 norm = face?.normal;
+    this.faces.forEach((Face face) {
+      Math.Vector3? norm = face.normal;
       if (norm != null) normSum += norm;
     });
     this._norm = normSum.normal();
-    if (this._shape != null) {
-      this._shape.onVertexModified(this);
-      this._shape._changed?.resume();
+    if (shape != null) {
+      shape.onVertexModified(this);
+      shape._changed?.resume();
     }
     return true;
   }
@@ -225,35 +227,36 @@ class Vertex {
   /// set then this will have no effect.
   bool calculateBinormal() {
     if (this._binm != null) return true;
-    if (this._shape != null) this._shape._changed?.suspend();
+    var shape = this._shape;
+    if (shape != null) shape._changed?.suspend();
     Math.Vector3 binmSum = Math.Vector3.zero;
-    this._faces.forEach((Face face) {
-      Math.Vector3 binm = face?.binormal;
+    this.faces.forEach((Face face) {
+      Math.Vector3? binm = face.binormal;
       if(binm != null) binmSum += binm;
     });
     this._binm = binmSum.normal();
-    if (this._shape != null) {
-      this._shape.onVertexModified(this);
-      this._shape._changed?.resume();
+    if (shape != null) {
+      shape.onVertexModified(this);
+      shape._changed?.resume();
     }
     return true;
   }
 
   /// Finds the first line which starts at this vertex
   /// and ends at the given [ver].
-  Line firstLineTo(Vertex ver) {
-    final int count = this._lines.length1;
+  Line? firstLineTo(Vertex ver) {
+    final int count = this.lines.length1;
     for (int i = 0; i < count; ++i) {
-      Line line = this._lines.at1(i);
-      if (line.vertex2.index == ver.index) return line;
+      Line line = this.lines.at1(i);
+      if (line.vertex2?.index == ver.index) return line;
     }
     return null;
   }
 
   /// Finds the first line which goes between this vertex
   /// and the given [ver] in either direction.
-  Line firstLineBetween(Vertex ver) {
-    Line line = this.firstLineTo(ver);
+  Line? firstLineBetween(Vertex ver) {
+    Line? line = this.firstLineTo(ver);
     if (line != null) return line;
     return ver.firstLineTo(this);
   }
@@ -264,15 +267,14 @@ class Vertex {
   bool same(var other) {
     if (identical(this, other)) return true;
     if (other is! Vertex) return false;
-    Vertex ver = other as Vertex;
-    if (this._loc != ver._loc) return false;
-    if (this._norm != ver._norm) return false;
-    if (this._binm != ver._binm) return false;
-    if (this._txt2D != ver._txt2D) return false;
-    if (this._txtCube != ver._txtCube) return false;
-    if (this._clr != ver._clr) return false;
-    if (Math.Comparer.equals(this._weight, ver._weight)) return false;
-    if (this._bending != ver._bending) return false;
+    if (this._loc     != other._loc)     return false;
+    if (this._norm    != other._norm)    return false;
+    if (this._binm    != other._binm)    return false;
+    if (this._txt2D   != other._txt2D)   return false;
+    if (this._txtCube != other._txtCube) return false;
+    if (this._clr     != other._clr)     return false;
+    if (Math.Comparer.equals(this._weight, other._weight)) return false;
+    if (this._bending != other._bending) return false;
     return true;
   }
 
@@ -283,25 +285,18 @@ class Vertex {
   String toString() => this.format();
 
   /// Gets the formatted string for this vertex with and optional [indent].
-  String format([String indent = ""]) {
-    List<String> parts = new List<String>();
+  String format([String indent = '']) {
+    List<String> parts = [];
     parts.add(Math.formatInt(this._index));
-    if (this._loc != null) parts.add(this._loc.toString());
-    else                   parts.add("-");
-    if (this._norm != null) parts.add(this._norm.toString());
-    else                    parts.add("-");
-    if (this._binm != null) parts.add(this._binm.toString());
-    else                    parts.add("-");
-    if (this._txt2D != null) parts.add(this._txt2D.toString());
-    else                     parts.add("-");
-    if (this._txtCube != null) parts.add(this._txtCube.toString());
-    else                       parts.add("-");
-    if (this._clr != null) parts.add(this._clr.toString());
-    else                   parts.add("-");
+    parts.add(this._loc?.toString() ?? '-');
+    parts.add(this._norm?.toString() ?? '-');
+    parts.add(this._binm?.toString() ?? '-');
+    parts.add(this._txt2D?.toString() ?? '-');
+    parts.add(this._txtCube?.toString() ?? '-');
+    parts.add(this._clr?.toString() ?? '-');
     parts.add(Math.formatDouble(this._weight));
-    if (this._bending != null) parts.add(this._bending.toString());
-    else                       parts.add("-");
-    String result = parts.join(", ");
-    return "$indent{$result}";
+    parts.add(this._bending?.toString() ?? '-');
+    String result = parts.join(', ');
+    return '$indent{$result}';
   }
 }

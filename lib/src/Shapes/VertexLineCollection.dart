@@ -7,36 +7,34 @@ class VertexLineCollection {
   List<Line> _lines2;
 
   /// Creates a new vertex's line collection for the given vertex.
-  VertexLineCollection._(Vertex this._vertex) {
-    this._lines1 = new List<Line>();
-    this._lines2 = new List<Line>();
-  }
+  VertexLineCollection._(this._vertex):
+    this._lines1 = [],
+    this._lines2 = [];
 
   /// The vertex which owns this collection.
   Vertex get vertex => this._vertex;
 
   /// The shape which owns the vertex which owns this collection.
-  Shape get shape => this._vertex._shape;
+  Shape? get shape => this._vertex.shape;
 
   /// Adds a line from this vertex to the given vertex.
   Line addLineTo(Vertex vertex) {
     if (this._vertex.shape == null)
-      throw new Exception("May not add a line to a vertex which has not been added to a shape.");
-    this._vertex.shape._vertices.add(vertex);
+      throw new Exception('May not add a line to a vertex which has not been added to a shape.');
+    this._vertex.shape?.vertices.add(vertex);
     return new Line(this._vertex, vertex);
   }
 
   /// Adds lines from this vertex to the given vertices.
   List<Line> addLinesTo(List<Vertex> vertices) {
     if (this._vertex.shape == null)
-      throw new Exception("May not add lines to a vertex which has not been added to a shape.");
+      throw new Exception('May not add lines to a vertex which has not been added to a shape.');
     final int count = vertices.length;
-    List<Line> lines = new List<Line>(count);
-    for (int i = 0; i < count; ++i) {
+    List<Line> lines = new List<Line>.generate(count, (int i) {
       Vertex vertex = vertices[i];
-      this._vertex.shape._vertices.add(vertex);
-      lines.add(new Line(this._vertex, vertex));
-    }
+      this._vertex.shape?.vertices.add(vertex);
+      return new Line(this._vertex, vertex);
+    });
     return lines;
   }
 
@@ -106,7 +104,7 @@ class VertexLineCollection {
   /// The removed line is disposed and returned or null if none removed.
   Line removeAt(int index) {
     Line line = this[index];
-    if (line != null) line.dispose();
+    line.dispose();
     return line;
   }
 
@@ -115,7 +113,7 @@ class VertexLineCollection {
   /// The removed line is disposed and returned or null if none removed.
   Line removeAt1(int index) {
     Line line = this._lines1[index];
-    if (line != null) line.dispose();
+    line.dispose();
     return line;
   }
 
@@ -124,15 +122,15 @@ class VertexLineCollection {
   /// The removed line is disposed and returned or null if none removed.
   Line removeAt2(int index) {
     Line line = this._lines2[index];
-    if (line != null) line.dispose();
+    line.dispose();
     return line;
   }
 
   /// Removes the given [line].
   /// Returns true if line was removed, false otherwise.
-  bool remove(Line line) {
+  bool remove(Line? line) {
     if (line == null) return false;
-    if (line._ver1._shape != this.shape) return false;
+    if (line._ver1?.shape != this.shape) return false;
     line.dispose();
     return true;
   }
@@ -141,15 +139,11 @@ class VertexLineCollection {
   void removeRepeats(LineMatcher matcher) {
     for (int i = this._lines1.length-1; i >= 0; --i) {
       Line lineA = this._lines1[i];
-      if (lineA != null) {
-        for (int j = i - 1; j >= 0; --j) {
-          Line lineB = this._lines1[j];
-          if (lineB != null) {
-            if (matcher.matches(lineA, lineB)) {
-              lineA.dispose();
-              break;
-            }
-          }
+      for (int j = i - 1; j >= 0; --j) {
+        Line lineB = this._lines1[j];
+        if (matcher.matches(lineA, lineB)) {
+          lineA.dispose();
+          break;
         }
       }
     }
@@ -159,7 +153,7 @@ class VertexLineCollection {
   void removeCollapsed() {
     for (int i = this._lines1.length-1; i >= 0; --i) {
       Line line = this._lines1[i];
-      if ((line == null) || line.collapsed) line.dispose();
+      if (line.collapsed) line.dispose();
     }
   }
 
@@ -167,8 +161,8 @@ class VertexLineCollection {
   String toString() => this.format();
 
   /// Gets the formatted string for all the lines with and optional [indent].
-  String format([String indent = ""]) {
-    List<String> parts = new List<String>();
+  String format([String indent = '']) {
+    List<String> parts = [];
     for (Line line in this._lines1) {
       parts.add(line.format(indent));
     }

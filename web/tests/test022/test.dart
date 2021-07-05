@@ -64,7 +64,7 @@ void main() {
     ..children.add(room)
     ..children.add(centerObj)
     ..children.add(obj)
-    ..camera.mover = camMover;
+    ..camera?.mover = camMover;
   td.scene = pass;
 
   new common.RadioGroup("shapes")

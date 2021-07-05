@@ -7,5 +7,5 @@ abstract class Mover extends Events.Changeable {
   ///
   /// This updates with the given [state] and the [obj] this mover is attached to.
   /// The returned matrix is applied to the object.
-  Math.Matrix4 update(Core.RenderState state, Movable obj);
+  Math.Matrix4 update(Core.RenderState state, Movable? obj);
 }

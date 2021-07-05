@@ -63,7 +63,7 @@ void main() {
   Scenes.EntityPass pass = new Scenes.EntityPass()
     ..technique = tech
     ..children.add(obj)
-    ..camera.mover = camMover
+    ..camera?.mover = camMover
     ..onPreUpdate.add((Events.EventArgs args) {
       ThreeDart.RenderState state = (args as ThreeDart.StateEventArgs).state;
       Math.Matrix4 mat1 = mover1.update(state, null);

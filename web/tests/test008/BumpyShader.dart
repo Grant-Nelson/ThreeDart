@@ -56,23 +56,23 @@ class BumpyShader extends Shaders.Shader {
       "   gl_FragColor = vec4(color, 1.0); \n"+
       "}                                   \n";
 
-  Shaders.Attribute _posAttr;
-  Shaders.Attribute _normAttr;
-  Shaders.Attribute _binmAttr;
-  Shaders.Attribute _txtAttr;
-  Shaders.Attribute _weightAttr;
+  Shaders.Attribute? _posAttr    = null;
+  Shaders.Attribute? _normAttr   = null;
+  Shaders.Attribute? _binmAttr   = null;
+  Shaders.Attribute? _txtAttr    = null;
+  Shaders.Attribute? _weightAttr = null;
 
-  Shaders.UniformSampler2D _bumpTxt;
-  Shaders.UniformMat4 _objMat;
-  Shaders.UniformMat4 _viewMat;
-  Shaders.UniformMat4 _projMat;
-  Shaders.Uniform1f _offsetScalar;
+  Shaders.UniformSampler2D? _bumpTxt = null;
+  Shaders.UniformMat4? _objMat  = null;
+  Shaders.UniformMat4? _viewMat = null;
+  Shaders.UniformMat4? _projMat = null;
+  Shaders.Uniform1f? _offsetScalar = null;
 
   /// Checks for the shader in the shader cache in the given [state],
   /// if it is not found then this shader is compiled and added
   /// to the shader cache before being returned.
   factory BumpyShader.cached(ThreeDart.RenderState state) {
-    BumpyShader shader = state.shader(defaultName);
+    BumpyShader? shader = state.shader(defaultName) as BumpyShader?;
     if (shader == null) {
       shader = new BumpyShader(state.gl);
       state.addShader(shader);
@@ -96,38 +96,38 @@ class BumpyShader extends Shaders.Shader {
   }
 
   /// The position vertex shader attribute.
-  Shaders.Attribute get posAttr => this._posAttr;
+  Shaders.Attribute? get posAttr => this._posAttr;
 
   /// The normal vertex shader attribute.
-  Shaders.Attribute get normAttr => this._normAttr;
+  Shaders.Attribute? get normAttr => this._normAttr;
 
   /// The binormal vertex shader attribute.
-  Shaders.Attribute get binmAttr => this._binmAttr;
+  Shaders.Attribute? get binmAttr => this._binmAttr;
 
   /// The texture vertex shader attribute.
-  Shaders.Attribute get txtAttr => this._txtAttr;
+  Shaders.Attribute? get txtAttr => this._txtAttr;
 
   /// The weight vertex shader attribute.
-  Shaders.Attribute get weightAttr => this._weightAttr;
+  Shaders.Attribute? get weightAttr => this._weightAttr;
 
   /// The normal distortion texture of the object.
-  set bumpTexture(Textures.Texture2D txt) {
-    if (txt != null) this._bumpTxt.setTexture2D(txt);
+  set bumpTexture(Textures.Texture2D? txt) {
+    if (txt != null) this._bumpTxt?.setTexture2D(txt);
   }
 
   /// The object matrix.
-  Math.Matrix4 get objectMatrix => this._objMat.getMatrix4();
-  set objectMatrix(Math.Matrix4 mat) => this._objMat.setMatrix4(mat);
+  Math.Matrix4 get objectMatrix => this._objMat?.getMatrix4() ?? Math.Matrix4.identity;
+  set objectMatrix(Math.Matrix4 mat) => this._objMat?.setMatrix4(mat);
 
   /// The view matrix.
-  Math.Matrix4 get viewMatrix => this._viewMat.getMatrix4();
-  set viewMatrix(Math.Matrix4 mat) => this._viewMat.setMatrix4(mat);
+  Math.Matrix4 get viewMatrix => this._viewMat?.getMatrix4() ?? Math.Matrix4.identity;
+  set viewMatrix(Math.Matrix4 mat) => this._viewMat?.setMatrix4(mat);
 
   /// The projection matrix.
-  Math.Matrix4 get projectMatrix => this._projMat.getMatrix4();
-  set projectMatrix(Math.Matrix4 mat) => this._projMat.setMatrix4(mat);
+  Math.Matrix4 get projectMatrix => this._projMat?.getMatrix4() ?? Math.Matrix4.identity;
+  set projectMatrix(Math.Matrix4 mat) => this._projMat?.setMatrix4(mat);
 
   /// The offset scalar for the length of the line to create.
-  double get offsetScalar => this._offsetScalar.getValue();
-  set offsetScalar(double offset) => this._offsetScalar.setValue(offset);
+  double get offsetScalar => this._offsetScalar?.getValue() ?? 1.0;
+  set offsetScalar(double offset) => this._offsetScalar?.setValue(offset);
 }

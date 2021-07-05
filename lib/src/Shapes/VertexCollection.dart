@@ -7,26 +7,16 @@ class VertexCollection {
   List<Vertex> _vertices;
 
   /// Creates a new vertex collection of a shape.
-  VertexCollection._(Shape this._shape) {
-    this._indicesNeedUpdate = false;
-    this._vertices = new List<Vertex>();
-  }
+  VertexCollection._(this._shape):
+    this._indicesNeedUpdate = false,
+    this._vertices = [];
 
   /// Updates the indices of all vertices.
   void _updateIndices() {
     if (this._indicesNeedUpdate) {
-      int index = 0;
-      int count = this._vertices.length;
-      for(int i = 0; i < count; ++i) {
-        Vertex ver = this._vertices[i];
-        if (ver == null) {
-          this._vertices.removeAt(i);
-          --count;
-        } else {
-          ver._index = index;
-          ++index;
-        }
-      }
+      final int count = this._vertices.length;
+      for(int i = 0; i < count; ++i)
+        this._vertices[i]._index = i;
       this._indicesNeedUpdate = false;
     }
   }
@@ -36,7 +26,7 @@ class VertexCollection {
   bool add(Vertex vertex) {
     if (vertex.shape != null) {
       if (vertex.shape == this._shape) return false;
-      throw new Exception("May not add a vertex already attached to another shape to this shape.");
+      throw new Exception('May not add a vertex already attached to another shape to this shape.');
     }
     vertex._index = this._vertices.length;
     vertex._shape = this._shape;
@@ -46,10 +36,10 @@ class VertexCollection {
   }
 
   /// Creates and adds a new vertex to this collection with the default values.
-  Vertex addNew({Data.VertexType type: null,
-                 Math.Point3 loc: null, Math.Vector3 norm: null, Math.Vector3 binm: null,
-                 Math.Point2 txt2D: null, Math.Vector3 txtCube: null, Math.Color4 clr: null,
-                 double weight: 0.0, Math.Point4 bending: null}) {
+  Vertex addNew({Data.VertexType? type: null,
+                 Math.Point3? loc: null, Math.Vector3? norm: null, Math.Vector3? binm: null,
+                 Math.Point2? txt2D: null, Math.Vector3? txtCube: null, Math.Color4? clr: null,
+                 double weight: 0.0, Math.Point4? bending: null}) {
     Vertex ver = new Vertex(type: type, loc: loc, norm: norm, binm: binm, txt2D: txt2D,
       txtCube: txtCube, clr: clr, weight: weight, bending: bending);
     this.add(ver);
@@ -87,11 +77,9 @@ class VertexCollection {
   /// The removed vertex is disposed and returned or null if none removed.
   Vertex removeAt(int index) {
     Vertex vertex = this._vertices[index];
-    if (vertex != null) {
-      if (!vertex.isEmpty)
-        throw new Exception("May not remove a vertex without first making it empty.");
-      vertex._shape = null;
-    }
+    if (!vertex.isEmpty)
+      throw new Exception('May not remove a vertex without first making it empty.');
+    vertex._shape = null;
     this._vertices.removeAt(index);
     this._shape.onVertexRemoved(vertex);
     this._indicesNeedUpdate = true;
@@ -100,11 +88,11 @@ class VertexCollection {
 
   /// Removes the given [vertex].
   /// Returns true if vertex was removed, false otherwise.
-  bool remove(Vertex vertex) {
+  bool remove(Vertex? vertex) {
     if (vertex == null) return false;
     if (vertex._shape != this._shape) return false;
     if (!vertex.isEmpty)
-      throw new Exception("May not remove a vertex without first making it empty.");
+      throw new Exception('May not remove a vertex without first making it empty.');
     vertex._shape = null;
     this._vertices.remove(vertex);
     this._shape.onVertexRemoved(vertex);
@@ -137,7 +125,8 @@ class VertexCollection {
   bool calculateCubeTextures() {
     for (Vertex vertex in this._vertices) {
       if (vertex.textureCube == null) {
-        vertex.textureCube = vertex.normal.normal();
+        var norm = vertex.normal;
+        if (norm != null) vertex.textureCube = norm.normal();
       }
     }
     return true;
@@ -150,9 +139,9 @@ class VertexCollection {
   String toString() => this.format();
 
   /// Gets the formatted string for all the vertices with and optional [indent].
-  String format([String indent = ""]) {
+  String format([String indent = '']) {
     this._updateIndices();
-    List<String> parts = new List<String>();
+    List<String> parts = [];
     for (Vertex vertex in this._vertices) {
       parts.add(vertex.format(indent));
     }
