@@ -4,53 +4,39 @@ part of ThreeDart.Math;
 class Vector3 {
 
   /// Gets a zeroed [Vector3].
-  static Vector3 get zero {
+  static Vector3 get zero =>
     _zeroSingleton ??= new Vector3(0.0, 0.0, 0.0);
-    return _zeroSingleton;
-  }
-  static Vector3 _zeroSingleton;
+  static Vector3? _zeroSingleton;
 
   /// Gets a new positive X [Vector3].
-  static Vector3 get posX {
+  static Vector3 get posX =>
     _posXSingleton ??= new Vector3(1.0, 0.0, 0.0);
-    return _posXSingleton;
-  }
-  static Vector3 _posXSingleton;
+  static Vector3? _posXSingleton;
 
   /// Gets a new negative X [Vector3].
-  static Vector3 get negX {
+  static Vector3 get negX =>
     _negXSingleton ??= new Vector3(-1.0, 0.0, 0.0);
-    return _negXSingleton;
-  }
-  static Vector3 _negXSingleton;
+  static Vector3? _negXSingleton;
 
   /// Gets a new positive Y [Vector3].
-  static Vector3 get posY {
+  static Vector3 get posY =>
     _posYSingleton ??= new Vector3(0.0, 1.0, 0.0);
-    return _posYSingleton;
-  }
-  static Vector3 _posYSingleton;
+  static Vector3? _posYSingleton;
 
   /// Gets a new negative Y [Vector3].
-  static Vector3 get negY {
+  static Vector3 get negY =>
     _negYSingleton ??= new Vector3(0.0, -1.0, 0.0);
-    return _negYSingleton;
-  }
-  static Vector3 _negYSingleton;
+  static Vector3? _negYSingleton;
 
   /// Gets a new positive Z [Vector3].
-  static Vector3 get posZ {
+  static Vector3 get posZ =>
     _posZSingleton ??= new Vector3(0.0, 0.0, 1.0);
-    return _posZSingleton;
-  }
-  static Vector3 _posZSingleton;
+  static Vector3? _posZSingleton;
 
   /// Gets a new negative Z [Vector3].
-  static Vector3 get negZ {
+  static Vector3 get negZ =>
     _negZSingleton ??= new Vector3(0.0, 0.0, -1.0);
-    return _negZSingleton;
-  }
-  static Vector3 _negZSingleton;
+  static Vector3? _negZSingleton;
 
   /// The dX component of the vector.
   final double dx;
@@ -187,10 +173,9 @@ class Vector3 {
   bool operator ==(var other) {
     if (identical(this, other)) return true;
     if (other is! Vector3) return false;
-    Vector3 pnt = other as Vector3;
-    if (!Comparer.equals(pnt.dx, this.dx)) return false;
-    if (!Comparer.equals(pnt.dy, this.dy)) return false;
-    if (!Comparer.equals(pnt.dz, this.dz)) return false;
+    if (!Comparer.equals(other.dx, this.dx)) return false;
+    if (!Comparer.equals(other.dy, this.dy)) return false;
+    if (!Comparer.equals(other.dz, this.dz)) return false;
     return true;
   }
 

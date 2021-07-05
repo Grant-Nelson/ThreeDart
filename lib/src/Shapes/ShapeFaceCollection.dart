@@ -6,25 +6,24 @@ class ShapeFaceCollection {
   List<Face> _faces;
 
   /// Creates a new shape's face collection for the given shape.
-  ShapeFaceCollection._(Shape this._shape) {
-    this._faces = new List<Face>();
-  }
+  ShapeFaceCollection._(this._shape):
+    this._faces = [];
 
   /// The shape which owns this collection.
   Shape get shape => this._shape;
 
   /// Adds a single new face with the given vertices to the shape.
   Face add(Vertex ver1, Vertex ver2, Vertex ver3) {
-    this._shape._vertices.add(ver1);
-    this._shape._vertices.add(ver2);
-    this._shape._vertices.add(ver3);
+    this._shape.vertices.add(ver1);
+    this._shape.vertices.add(ver2);
+    this._shape.vertices.add(ver3);
     Face face = new Face(ver1, ver2, ver3);
     return face;
   }
 
   /// Adds a fan of faces with the given vertices to the shape.
   List<Face> addFan(List<Vertex> vertices) {
-    List<Face> faces = new List<Face>();
+    List<Face> faces = [];
     final int count = vertices.length;
     if (count > 0) {
       Vertex ver0 = vertices[0];
@@ -36,7 +35,7 @@ class ShapeFaceCollection {
 
   /// Adds a strip of faces with the given vertices to the shape.
   List<Face> addStrip(List<Vertex> vertices) {
-    List<Face> faces = new List<Face>();
+    List<Face> faces = [];
     final int count = vertices.length;
     bool flip = false;
     for (int i = 2; i < count; i++) {
@@ -53,7 +52,7 @@ class ShapeFaceCollection {
 
   /// Adds a looped strip of faces with the given vertices to the shape.
   List<Face> addLoop(List<Vertex> vertices) {
-    List<Face> faces = new List<Face>();
+    List<Face> faces = [];
     final int count = vertices.length;
     bool flip = false;
     for (int i = 2; i < count+2; i++) {
@@ -71,7 +70,7 @@ class ShapeFaceCollection {
 
   /// Adds a set of separate faces with the given vertices to the shape.
   List<Face> addTriangles(List<Vertex> vertices) {
-    List<Face> faces = new List<Face>();
+    List<Face> faces = [];
     final int count = vertices.length;
     for (int i = 2; i < count; i += 3)
       faces.add(this.add(vertices[i-2], vertices[i-1], vertices[i]));
@@ -80,7 +79,7 @@ class ShapeFaceCollection {
 
   /// Adds a grid to the of faces with the given rows and columns of vertices to the shape.
   List<Face> addGrid(int rows, int columns, List<Vertex> vertices) {
-    List<Face> faces = new List<Face>();
+    List<Face> faces = [];
     int k0 = 0, k1 = columns;
     bool flipA = false;
     for (int i = 1; i < rows; ++i, ++k0, ++k1) {
@@ -123,33 +122,29 @@ class ShapeFaceCollection {
   /// The removed face is disposed and returned or null if none removed.
   Face removeAt(int index) {
     Face face = this[index];
-    if (face != null) face.dispose();
+    face.dispose();
     return face;
   }
 
   /// Removes the given [face].
   /// Returns true if face was removed, false otherwise.
-  bool remove(Face face) {
+  bool remove(Face? face) {
     if (face == null) return false;
-    if (face._ver1._shape != this.shape) return false;
+    if (face._ver1?.shape != this.shape) return false;
     face.dispose();
     return true;
   }
 
   /// Removes all faces which match each other based on the given matcher.
-  void removeRepeats([FaceMatcher matcher = null]) {
+  void removeRepeats([FaceMatcher? matcher = null]) {
     matcher ??= new ExactFaceMatcher();
     for (int i = this._faces.length-1; i >= 0; --i) {
       Face faceA = this._faces[i];
-      if (faceA != null) {
-        for (int j = i - 1; j >= 0; --j) {
-          Face faceB = this._faces[j];
-          if (faceB != null) {
-            if (matcher.matches(faceA, faceB)) {
-              faceA.dispose();
-              break;
-            }
-          }
+      for (int j = i - 1; j >= 0; --j) {
+        Face faceB = this._faces[j];
+        if (matcher.matches(faceA, faceB)) {
+          faceA.dispose();
+          break;
         }
       }
     }
@@ -157,21 +152,17 @@ class ShapeFaceCollection {
 
   /// Removes all faces which match each other based
   /// on the given matcher and share a vertex.
-  void removeVertexRepeats([FaceMatcher matcher = null]) {
+  void removeVertexRepeats([FaceMatcher? matcher = null]) {
     matcher ??= new ExactFaceMatcher();
     for (int k = this._shape.vertices.length-1; k >= 0; --k) {
       Vertex ver = this._shape.vertices[k];
-      for (int i = ver._faces.length-1; i >= 0; --i) {
-        Face faceA = ver._faces[i];
-        if (faceA != null) {
-          for (int j = i - 1; j >= 0; --j) {
-            Face faceB = ver._faces[j];
-            if (faceB != null) {
-              if (matcher.matches(faceA, faceB)) {
-                faceA.dispose();
-                break;
-              }
-            }
+      for (int i = ver.faces.length-1; i >= 0; --i) {
+        Face faceA = ver.faces[i];
+        for (int j = i - 1; j >= 0; --j) {
+          Face faceB = ver.faces[j];
+          if (matcher.matches(faceA, faceB)) {
+            faceA.dispose();
+            break;
           }
         }
       }
@@ -182,16 +173,14 @@ class ShapeFaceCollection {
   void removeCollapsed() {
     for (int i = this._faces.length-1; i >= 0; --i) {
       Face face = this._faces[i];
-      if ((face == null) || face.collapsed) face.dispose();
+      if (face.collapsed) face.dispose();
     }
   }
 
   /// Removes all faces.
   void removeAll() {
-    for (int i = this._faces.length-1; i >= 0; --i) {
-      Face face = this._faces[i];
-      face?.dispose();
-    }
+    for (int i = this._faces.length-1; i >= 0; --i)
+      this._faces[i].dispose();
     this._faces.clear();
   }
 
@@ -225,7 +214,7 @@ class ShapeFaceCollection {
 
   /// Gets the formatted string for this faces with and optional [indent].
   String format([String indent = ""]) {
-    List<String> parts = new List<String>();
+    List<String> parts = [];
     for (Face face in this._faces) {
       parts.add(face.format(indent));
     }

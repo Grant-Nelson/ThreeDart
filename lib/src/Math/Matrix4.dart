@@ -4,15 +4,13 @@ part of ThreeDart.Math;
 class Matrix4 {
 
   /// Gets a 4x4 identity matrix.
-  static Matrix4 get identity {
+  static Matrix4 get identity =>
     _identSingleton ??= new Matrix4(
       1.0, 0.0, 0.0, 0.0,
       0.0, 1.0, 0.0, 0.0,
       0.0, 0.0, 1.0, 0.0,
       0.0, 0.0, 0.0, 1.0);
-    return _identSingleton;
-  }
-  static Matrix4 _identSingleton;
+  static Matrix4? _identSingleton;
 
   /// The 1st row and 1st column of the matrix, XX.
   final double m11;
@@ -181,7 +179,7 @@ class Matrix4 {
   ///
   /// [x]. [y], and [z] is the vector direction.
   /// [upHint] is a hint to help correct the top direction of the rotation.
-  factory Matrix4.vectorTowards(double x, double y, double z, {Vector3 upHint: null}) {
+  factory Matrix4.vectorTowards(double x, double y, double z, {Vector3? upHint: null}) {
     upHint ??= Vector3.posY;
     Vector3 forward = new Vector3(x, y, z);
     return new Matrix4.lookTowards(Point3.zero, upHint, forward);
@@ -428,23 +426,22 @@ class Matrix4 {
   bool operator ==(var other) {
     if (identical(this, other)) return true;
     if (other is! Matrix4) return false;
-    Matrix4 mat = other as Matrix4;
-    if (!Comparer.equals(mat.m11, this.m11)) return false;
-    if (!Comparer.equals(mat.m21, this.m21)) return false;
-    if (!Comparer.equals(mat.m31, this.m31)) return false;
-    if (!Comparer.equals(mat.m41, this.m41)) return false;
-    if (!Comparer.equals(mat.m12, this.m12)) return false;
-    if (!Comparer.equals(mat.m22, this.m22)) return false;
-    if (!Comparer.equals(mat.m32, this.m32)) return false;
-    if (!Comparer.equals(mat.m42, this.m42)) return false;
-    if (!Comparer.equals(mat.m13, this.m13)) return false;
-    if (!Comparer.equals(mat.m23, this.m23)) return false;
-    if (!Comparer.equals(mat.m33, this.m33)) return false;
-    if (!Comparer.equals(mat.m43, this.m43)) return false;
-    if (!Comparer.equals(mat.m14, this.m14)) return false;
-    if (!Comparer.equals(mat.m24, this.m24)) return false;
-    if (!Comparer.equals(mat.m34, this.m34)) return false;
-    if (!Comparer.equals(mat.m44, this.m44)) return false;
+    if (!Comparer.equals(other.m11, this.m11)) return false;
+    if (!Comparer.equals(other.m21, this.m21)) return false;
+    if (!Comparer.equals(other.m31, this.m31)) return false;
+    if (!Comparer.equals(other.m41, this.m41)) return false;
+    if (!Comparer.equals(other.m12, this.m12)) return false;
+    if (!Comparer.equals(other.m22, this.m22)) return false;
+    if (!Comparer.equals(other.m32, this.m32)) return false;
+    if (!Comparer.equals(other.m42, this.m42)) return false;
+    if (!Comparer.equals(other.m13, this.m13)) return false;
+    if (!Comparer.equals(other.m23, this.m23)) return false;
+    if (!Comparer.equals(other.m33, this.m33)) return false;
+    if (!Comparer.equals(other.m43, this.m43)) return false;
+    if (!Comparer.equals(other.m14, this.m14)) return false;
+    if (!Comparer.equals(other.m24, this.m24)) return false;
+    if (!Comparer.equals(other.m34, this.m34)) return false;
+    if (!Comparer.equals(other.m44, this.m44)) return false;
     return true;
   }
 

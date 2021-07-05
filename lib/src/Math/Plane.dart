@@ -98,11 +98,10 @@ class Plane {
   bool operator ==(var other) {
     if (identical(this, other)) return true;
     if (other is! Plane) return false;
-    Plane plane = other as Plane;
-    if (!Comparer.equals(plane.dx,     this.dx))     return false;
-    if (!Comparer.equals(plane.dy,     this.dy))     return false;
-    if (!Comparer.equals(plane.dz,     this.dz))     return false;
-    if (!Comparer.equals(plane.offset, this.offset)) return false;
+    if (!Comparer.equals(other.dx,     this.dx))     return false;
+    if (!Comparer.equals(other.dy,     this.dy))     return false;
+    if (!Comparer.equals(other.dz,     this.dz))     return false;
+    if (!Comparer.equals(other.offset, this.offset)) return false;
     return true;
   }
 

@@ -77,8 +77,9 @@ void main() {
     ..add("Cuboid",        () { secondObj.shape = Shapes.cuboid(widthDiv: 15, heightDiv: 15,
                                 vertexHndl: (Shapes.Vertex ver, double u, double v) {
                                   double height = cos(v*4.0*Math.PI+Math.PI)*0.1 + cos(u*4.0*Math.PI+Math.PI)*0.1;
-                                  Math.Vector3 vec = new Math.Vector3.fromPoint3(ver.location).normal();
-                                  ver.location += new Math.Point3.fromVector3(vec*height);
+                                  var loc = ver.location ?? Math.Point3.zero;
+                                  Math.Vector3 vec = new Math.Vector3.fromPoint3(loc).normal();
+                                  ver.location = loc + new Math.Point3.fromVector3(vec*height);
                                 });
                               })
     ..add("Cylinder",      () { secondObj.shape = Shapes.cylinder(sides: 30); })

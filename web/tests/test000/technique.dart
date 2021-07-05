@@ -29,10 +29,9 @@ class pointPair {
   Math.Point3 outPoint;
 
   pointPair(double inX, double inY, double inZ,
-            double outX, double outY, double outZ) {
-    this.inPoint = new Math.Point3(inX, inY, inZ);
+            double outX, double outY, double outZ):
+    this.inPoint = new Math.Point3(inX, inY, inZ),
     this.outPoint = new Math.Point3(outX, outY, outZ);
-  }
 }
 
 void testTechnique(TestArgs args, Math.Matrix4 objMat, Math.Matrix4 camMat, List<pointPair> pairs) {
@@ -49,7 +48,7 @@ void testTechnique(TestArgs args, Math.Matrix4 objMat, Math.Matrix4 camMat, List
   Scenes.EntityPass pass = new Scenes.EntityPass()
     ..technique = tech
     ..children.add(obj)
-    ..camera.mover = new Movers.Constant(camMat);
+    ..camera?.mover = new Movers.Constant(camMat);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromCanvas(new html.CanvasElement())
     ..autoRefresh = false

@@ -17,30 +17,28 @@ class SpherePlaneResult extends BaseResult {
   
   /// The center point of the sphere when the collision occurred.
   /// This is null when no collision occurred.
-  final Math.Point3 center;
+  final Math.Point3? center;
 
   /// The point on the surface of the sphere and plane the collision occurred at.
   /// This is null when no collision occurred or intersected.
-  final Math.Point3 hitPoint;
+  final Math.Point3? hitPoint;
   
   /// Creates a new collision result for collision between a sphere and a plane.
   SpherePlaneResult(Type type, double parametric,
     Math.Sphere this.sphere, Math.Plane this.plane, Math.Vector3 this.vec, bool this.backside,
-    [Math.Point3 this.center = null, Math.Point3 this.hitPoint = null]):
+    [Math.Point3? this.center = null, Math.Point3? this.hitPoint = null]):
     super(type, parametric);
     
   /// Gets the string for this collision.
   @override
   String toString() =>
-    super.toString() + (this.collided? " ${this.center} ${this.hitPoint}": "");
+    super.toString() + (this.collided? ' ${this.center} ${this.hitPoint}': '');
 }
 
 /// Tests the collision between two moving spheres.
 /// The given vector represent the constant amount of distance moved in a time span.
 /// The optional [backside] parameter indicates if the back of the plane should collide or not.
 SpherePlaneResult spherePlane(Math.Sphere sphere, Math.Plane plane, Math.Vector3 vec, [bool backside = false]) {
-  if (sphere == null || plane == null || vec == null) return null;
-
   Math.Vector3 n = plane.normal.normal();
   double div = vec.dot(n);
   if (div == 0.0) // Moving parallel to the plane

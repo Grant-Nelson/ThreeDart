@@ -11,13 +11,16 @@ import 'package:ThreeDart/Techniques.dart' as Techniques;
 import 'package:ThreeDart/Textures.dart' as Textures;
 import 'package:ThreeDart/Scenes.dart' as Scenes;
 import 'package:ThreeDart/Lights.dart' as Lights;
+import 'package:ThreeDart/Input.dart' as Input;
 import '../../common/common.dart' as common;
 
 void main() {
   new common.ShellPage("Test 046")
     ..addLargeCanvas("testCanvas")
     ..addControlBoxes(["buttons"])
-    ..addPar(["Test of the fullscreen function of the ThreeDart."])
+    ..addPar(["Test of the fullscreen function of the ThreeDart. ",
+              "Use the above button and press escape to exit ",
+              "or use the spacebar to toggle fullscreen."])
     ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");
@@ -65,11 +68,16 @@ void main() {
 
   td.scene = new Scenes.Compound(passes: [skybox, pass]);
   
-  html.Element elem = html.document.getElementById("buttons");
+  html.Element? elem = html.document.getElementById("buttons");
   html.ButtonElement button = new html.ButtonElement()
     ..text = "Fullscreen"
-    ..onClick.listen((_) => td.fullscreen());
-  elem.children.add(button);
+    ..onClick.listen((_) => td.fullscreen = true);
+  elem?.children.add(button);
+
+  td.userInput.key.up.add((args) {
+    if (args is Input.KeyEventArgs && args.key.code == Input.Key.spacebar)
+      td.fullscreen = !td.fullscreen;
+  });
 
   common.showFPS(td);
 }

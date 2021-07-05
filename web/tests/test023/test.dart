@@ -51,7 +51,7 @@ void main() {
     ..technique = tech
     ..children.add(centerObj)
     ..children.add(room)
-    ..camera.mover = camMover;
+    ..camera?.mover = camMover;
 
   new common.RadioGroup("shapes")
     ..add("Cube",     () { centerObj.shape = Shapes.cube(); })

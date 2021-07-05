@@ -5,25 +5,19 @@ part of ThreeDart.Math;
 class Cube {
 
   /// Gets a [Cube] at the origin.
-  static Cube get zero {
+  static Cube get zero =>
     _zeroSingleton ??= new Cube(0.0, 0.0, 0.0, 0.0);
-    return _zeroSingleton;
-  }
-  static Cube _zeroSingleton;
+  static Cube? _zeroSingleton;
 
   /// Gets a [Cube] at the origin with a width, height, and depth of 1.
-  static Cube get unit {
+  static Cube get unit =>
     _unitSingleton ??= new Cube(0.0, 0.0, 0.0, 1.0);
-    return _unitSingleton;
-  }
-  static Cube _unitSingleton;
+  static Cube? _unitSingleton;
 
   /// Gets a [Cube] at the origin with a width, height, and depth of 2 centered on origin.
-  static Cube get unit2 {
+  static Cube get unit2 =>
     _unit2Singleton ??= new Cube(-1.0, -1.0, -1.0, 2.0);
-    return _unit2Singleton;
-  }
-  static Cube _unit2Singleton;
+  static Cube? _unit2Singleton;
 
   /// The left edge component of the cube.
   final double x;

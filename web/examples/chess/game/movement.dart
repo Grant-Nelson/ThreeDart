@@ -15,22 +15,22 @@ class Movement {
   /// The location of another piece, typically an opponents but not always,
   /// which will be moved or removed during this movement.
   /// If this is null then no other piece is effected.
-  final Location otherSource;
+  final Location? otherSource;
 
   /// The location the other piece will be moved into.
   /// If this is null then the other piece is being removed from the board.
-  final Location otherDestination;
+  final Location? otherDestination;
 
   /// Constructs a movement with the given information.
   Movement(String this.description, Location this.source, Location this.destination,
-    [Location this.otherSource = null, Location this.otherDestination = null]);
+    [Location? this.otherSource = null, Location? this.otherDestination = null]);
 
   /// Gets a string for this movement.
   @override
   String toString() {
-    String other = "";
+    String other = '';
     if (this.otherSource != null)
-      other = ", ${this.otherSource} => ${this.otherDestination}";
-    return "${this.description}, ${this.source} => ${this.destination}$other";
+      other = ', ${this.otherSource} => ${this.otherDestination}';
+    return '${this.description}, ${this.source} => ${this.destination}$other';
   }
 }

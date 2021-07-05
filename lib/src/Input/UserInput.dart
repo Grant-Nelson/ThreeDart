@@ -4,30 +4,29 @@ part of ThreeDart.Input;
 /// into 3Dart events for user input.
 class UserInput {
   html.Element _elem;
-  KeyInput _key;
-  MouseInput _mouse;
-  LockedMouseInput _locked;
-  TouchInput _touch;
+  KeyInput? _key;
+  MouseInput? _mouse;
+  LockedMouseInput? _locked;
+  TouchInput? _touch;
   bool _focused;
   bool _lockOnClick;
   bool _pointerLocked;
-  html.MouseEvent _msEventOnLock;
+  html.MouseEvent? _msEventOnLock;
   List<async.StreamSubscription<Object>> _eventStreams;
   double _wheelScalar;
 
   /// Creates a new user input for the given [_elem].
-  UserInput(this._elem) {
-    this._key = new KeyInput._();
-    this._mouse = new MouseInput._(this);
-    this._locked = new LockedMouseInput._(this);
-    this._touch = new TouchInput._(this);
-    this._focused = false;
-    this._lockOnClick = false;
-    this._pointerLocked = false;
-    this._msEventOnLock = null;
-    this._eventStreams = new List<async.StreamSubscription<Object>>();
-    this._wheelScalar = (Core.Environment.browser == Core.Browser.firefox)? 1.0/6.0: 1.0/180.0;
-  
+  UserInput(this._elem):
+    this._key    = null,
+    this._mouse  = null,
+    this._locked = null,
+    this._touch  = null,
+    this._focused       = false,
+    this._lockOnClick   = false,
+    this._pointerLocked = false,
+    this._msEventOnLock = null,
+    this._eventStreams = [],
+    this._wheelScalar = (Core.Environment.browser == Core.Browser.firefox)? 1.0/6.0: 1.0/180.0 {
     this._eventStreams.add(html.document.onContextMenu.listen(this._onContentMenu));
     this._eventStreams.add(this._elem.onFocus.listen(this._onFocus));
     this._eventStreams.add(this._elem.onBlur.listen(this._onBlur));
@@ -59,20 +58,20 @@ class UserInput {
   }
 
   /// Key handler for the user keyboard input.
-  KeyInput get key => this._key;
+  KeyInput get key => this._key ??= KeyInput._();
 
   /// Mouse handler for the user mouse input.
-  MouseInput get mouse => this._mouse;
+  MouseInput get mouse => this._mouse ??= MouseInput._(this);
 
   /// Locked mouse handler for the user locked mouse input.
-  LockedMouseInput get locked => this._locked;
+  LockedMouseInput get locked => this._locked ??= LockedMouseInput._(this);
 
   /// Touch pad handler for the user touch or mobile input.
-  TouchInput get touch => this._touch;
+  TouchInput get touch => this._touch ??= TouchInput._(this);
 
   /// Gets or sets if the mouse should lock the pointer on click.
   bool get lockOnClick => this._lockOnClick;
-  void set lockOnClick(bool enable) { this._lockOnClick = enable; }
+  set lockOnClick(bool enable) { this._lockOnClick = enable; }
 
   /// Determines if this element is focused.
   bool get hasFocus => this._focused;
@@ -86,42 +85,57 @@ class UserInput {
 
   /// Converts the html key into the 3Dart key.
   Key _convertKey(html.KeyboardEvent kEvent) =>
-    new Key(kEvent.keyCode, ctrl: kEvent.ctrlKey||kEvent.metaKey, alt: kEvent.altKey, shift: kEvent.shiftKey);
+    new Key(kEvent.keyCode,
+      ctrl:  kEvent.ctrlKey||kEvent.metaKey,
+      alt:   kEvent.altKey,
+      shift: kEvent.shiftKey);
 
   /// Sets the modifier keys for a mouse event.
   void _setMouseModifiers(html.MouseEvent msEvent) {
-    this._key._mods = new Modifiers(msEvent.ctrlKey||msEvent.metaKey, msEvent.altKey, msEvent.shiftKey);
+    this.key._mods = new Modifiers(msEvent.ctrlKey||msEvent.metaKey, msEvent.altKey, msEvent.shiftKey);
   }
 
   /// Sets the modifier keys for a touch event.
-  void _setTouchModifiers(html.TouchEvent tEvent) {
-    this._key._mods = new Modifiers(tEvent.ctrlKey||tEvent.metaKey, tEvent.altKey, tEvent.shiftKey);
+  void _setTouchModifiers(html.TouchEvent? tEvent) {
+    if (tEvent == null) this.key._mods = Modifiers.none();
+    else {
+      bool ctrl = (tEvent.ctrlKey ?? false) || (tEvent.metaKey ?? false);
+      this.key._mods = new Modifiers(ctrl, tEvent.altKey ?? false, tEvent.shiftKey ?? false);
+    }
   }
 
   /// Gets the raw mouse point relative to the client rectangle in pixels.
-  Math.Point2 _rawPoint(html.MouseEvent msEvent) {
+  Math.Point2 _rawPoint(html.MouseEvent? msEvent) {
+    if (msEvent == null) return Math.Point2.zero;
     html.Rectangle rect = this._elem.getBoundingClientRect();
     return new Math.Point2((msEvent.page.x-rect.left).toDouble(), (msEvent.page.y-rect.top).toDouble());
   }
 
   /// Gets the raw movement on the client in delta pixels.
-  Math.Vector2 _rawMove(html.MouseEvent msEvent) {
-    return new Math.Vector2(msEvent.movement.x, msEvent.movement.y);
+  Math.Vector2 _rawMove(html.MouseEvent? msEvent) {
+    if (msEvent == null) return Math.Vector2.zero;
+    return new Math.Vector2(msEvent.movement.x.toDouble(), msEvent.movement.y.toDouble());
   }
 
   /// Gets the raw touch points relative to the client rectangle in pixels.
-  List<Math.Point2> _rawTouchPoints(html.TouchEvent tEvent) {
+  List<Math.Point2> _rawTouchPoints(html.TouchEvent? tEvent) {
+    if (tEvent == null) return [];
     html.Rectangle rect = this._elem.getBoundingClientRect();
-    List<Math.Point2> pnts = new List<Math.Point2>();
-    for (html.Touch touch in tEvent.touches) {
+    List<Math.Point2> pnts = [];
+    for (html.Touch touch in tEvent.touches ?? []) {
       pnts.add(new Math.Point2((touch.page.x-rect.left).toDouble(), (touch.page.y-rect.top).toDouble()));
     }
     return pnts;
   }
 
   /// Converts the html button into the 3Dart button.
-  Button _convertButton(html.MouseEvent msEvent) =>
-    new Button(msEvent.buttons, ctrl: msEvent.ctrlKey||msEvent.metaKey, alt: msEvent.altKey, shift: msEvent.shiftKey);
+  Button _convertButton(html.MouseEvent? msEvent) {
+    if (msEvent == null) return Button(0);
+    return new Button(msEvent.buttons ?? 0,
+      ctrl:  msEvent.ctrlKey||msEvent.metaKey,
+      alt:   msEvent.altKey,
+      shift: msEvent.shiftKey);
+  }
 
   /// Determines if the given mouse location is contained in the canvas.
   bool _mouseContained(html.MouseEvent msEvent) {
@@ -134,14 +148,10 @@ class UserInput {
   }
 
   /// Handles focus of the canvas.
-  void _onFocus(html.Event _) {
-    this._focused = true;
-  }
+  void _onFocus(html.Event _) => this._focused = true;
 
   /// Handles blur (focus lost) of the canvas.
-  void _onBlur(html.Event _) {
-    this._focused = false;
-  }
+  void _onBlur(html.Event _) => this._focused = false;
 
   /// Handles cancelling the content menu for the canvas.
   void _onContentMenu(html.MouseEvent msEvent) {
@@ -153,7 +163,7 @@ class UserInput {
   void _onKeyUp(html.KeyboardEvent kEvent) {
     if (!this.hasFocus) return;
     final Key key = this._convertKey(kEvent);
-    if (this._key.performUp(key))
+    if (this.key.performUp(key))
       kEvent.preventDefault();
   }
 
@@ -161,7 +171,7 @@ class UserInput {
   void _onKeyDown(html.KeyboardEvent kEvent) {
     if (!this.hasFocus) return;
     final Key key = this._convertKey(kEvent);
-    if (this._key.performDown(key))
+    if (this.key.performDown(key))
       kEvent.preventDefault();
   }
 
@@ -175,7 +185,7 @@ class UserInput {
     if (this._pointerLocked) {
       final Button button = this._convertButton(msEvent);
       final Math.Vector2 vec = this._rawMove(msEvent);
-      if (this._locked.performDown(button, vec))
+      if (this.locked.performDown(button, vec))
         msEvent.preventDefault();
       return;
     }
@@ -188,7 +198,7 @@ class UserInput {
 
     final Button button = this._convertButton(msEvent);
     final Math.Point2 pnt = this._rawPoint(msEvent);
-    if (this._mouse.performDown(button, pnt))
+    if (this.mouse.performDown(button, pnt))
       msEvent.preventDefault();
   }
 
@@ -199,14 +209,14 @@ class UserInput {
 
     if (this._pointerLocked) {
       final Math.Vector2 vec = this._rawMove(msEvent);
-      if (this._locked.performUp(button, vec))
+      if (this.locked.performUp(button, vec))
         msEvent.preventDefault();
       return;
     }
     if (this._lockOnClick) return;
 
     final Math.Point2 pnt = this._rawPoint(msEvent);
-    if (this._mouse.performUp(button, pnt))
+    if (this.mouse.performUp(button, pnt))
       msEvent.preventDefault();
   }
 
@@ -219,14 +229,14 @@ class UserInput {
 
       if (this._pointerLocked) {
         final Math.Vector2 vec = this._rawMove(msEvent);
-        if (this._locked.performUp(button, vec))
+        if (this.locked.performUp(button, vec))
           msEvent.preventDefault();
         return;
       }
       if (this._lockOnClick) return;
 
       final Math.Point2 pnt = this._rawPoint(msEvent);
-      if (this._mouse.performUp(button, pnt))
+      if (this.mouse.performUp(button, pnt))
         msEvent.preventDefault();
     }
   }
@@ -238,14 +248,14 @@ class UserInput {
 
     if (this._pointerLocked) {
       final Math.Vector2 vec = this._rawMove(msEvent);
-      if (this._locked.performMove(button, vec))
+      if (this.locked.performMove(button, vec))
         msEvent.preventDefault();
       return;
     }
     if (this._lockOnClick) return;
 
     final Math.Point2 pnt = this._rawPoint(msEvent);
-    if (this._mouse.performMove(button, pnt))
+    if (this.mouse.performMove(button, pnt))
       msEvent.preventDefault();
   }
 
@@ -258,14 +268,14 @@ class UserInput {
 
       if (this._pointerLocked) {
         final Math.Vector2 vec = this._rawMove(msEvent);
-        if (this._locked.performMove(button, vec))
+        if (this.locked.performMove(button, vec))
           msEvent.preventDefault();
         return;
       }
       if (this._lockOnClick) return;
 
       final Math.Point2 pnt = this._rawPoint(msEvent);
-      if (this._mouse.performMove(button, pnt))
+      if (this.mouse.performMove(button, pnt))
         msEvent.preventDefault();
     }
   }
@@ -273,17 +283,17 @@ class UserInput {
   /// Handles the mouse wheel being moved over the canvas.
   void _onMouseWheel(html.WheelEvent msEvent) {
     this._setMouseModifiers(msEvent);
-    final Math.Vector2 wheel = new Math.Vector2(msEvent.deltaX, msEvent.deltaY)*this._wheelScalar;
+    final Math.Vector2 wheel = new Math.Vector2(msEvent.deltaX.toDouble(), msEvent.deltaY.toDouble())*this._wheelScalar;
 
     if (this._pointerLocked) {
-      if (this._locked.performWheel(wheel))
+      if (this.locked.performWheel(wheel))
         msEvent.preventDefault();
       return;
     }
     if (this._lockOnClick) return;
 
     final Math.Point2 pnt = this._rawPoint(msEvent);
-    if (this._mouse.performWheel(wheel, pnt))
+    if (this.mouse.performWheel(wheel, pnt))
       msEvent.preventDefault();
   }
 
@@ -294,7 +304,7 @@ class UserInput {
       this._pointerLocked = locked;
       final Button button = this._convertButton(this._msEventOnLock);
       final Math.Point2 pnt = this._rawPoint(this._msEventOnLock);
-      this._locked._onLockChanged(button, pnt, locked);
+      this.locked._onLockChanged(button, pnt, locked);
     }
   }
 
@@ -305,7 +315,7 @@ class UserInput {
 
     this._setTouchModifiers(tEvent);
     final List<Math.Point2> pnts = this._rawTouchPoints(tEvent);
-    if (this._touch.performStart(pnts))
+    if (this.touch.performStart(pnts))
       tEvent.preventDefault();
   }
 
@@ -313,7 +323,7 @@ class UserInput {
   void _onTouchEnd(html.TouchEvent tEvent) {
     this._setTouchModifiers(tEvent);
     final List<Math.Point2> pnts = this._rawTouchPoints(tEvent);
-    if (this._touch.performEnd(pnts))
+    if (this.touch.performEnd(pnts))
       tEvent.preventDefault();
   }
 
@@ -321,7 +331,7 @@ class UserInput {
   void _onTouchMove(html.TouchEvent tEvent) {
     this._setTouchModifiers(tEvent);
     final List<Math.Point2> pnts = this._rawTouchPoints(tEvent);
-    if (this._touch.performMove(pnts))
+    if (this.touch.performMove(pnts))
       tEvent.preventDefault();
   }
 }

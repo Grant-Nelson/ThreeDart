@@ -8,16 +8,16 @@ class MouseInput {
   UserInput _input;
 
   /// The event to emit when the mouse button is pressed.
-  Events.Event _down;
+  Events.Event? _down;
 
   /// The event to emit when the mouse button is released.
-  Events.Event _up;
+  Events.Event? _up;
 
   /// The event to emit when the mouse is moved.
-  Events.Event _move;
+  Events.Event? _move;
 
   /// The event to emit when the mouse wheel is moved.
-  Events.Event _wheel;
+  Events.Event? _wheel;
 
   /// Indicates if the mouse buttons which are pressed or not.
   int _buttons;
@@ -41,21 +41,18 @@ class MouseInput {
   double _wvSensitivity;
 
   /// Creates a new user mouse input.
-  MouseInput._(this._input) {
-    this._down = null;
-    this._up = null;
-    this._move = null;
-    this._wheel = null;
-
-    this._buttons = 0;
-    this._startTime = null;
-    this._startPnt = Math.Point2.zero;
-    this._prevTime = null;
-    this._prevPnt = Math.Point2.zero;
-
-    this._whSensitivity = 1.0;
+  MouseInput._(this._input):
+    this._down  = null,
+    this._up    = null,
+    this._move  = null,
+    this._wheel = null,
+    this._buttons = 0,
+    this._startPnt = Math.Point2.zero,
+    this._prevPnt  = Math.Point2.zero,
+    this._startTime = DateTime.now(),
+    this._prevTime  = DateTime.now(),
+    this._whSensitivity = 1.0,
     this._wvSensitivity = 1.0;
-  }
 
   /// Gets the mouse arguments.
   /// If [setStart] is true then the start point and time are set.
@@ -79,7 +76,7 @@ class MouseInput {
   bool performDown(Button button, Math.Point2 pnt) {
     this._buttons = button.code;
     if (this._down == null) return false;
-    this._down.emit(this._getMouseArgs(button, pnt, true));
+    this._down?.emit(this._getMouseArgs(button, pnt, true));
     return true;
   }
 
@@ -89,7 +86,7 @@ class MouseInput {
   bool performUp(Button button, Math.Point2 pnt) {
     this._buttons &= ~button.code;
     if (this._up == null) return false;
-    this._up.emit(this._getMouseArgs(button, pnt, true));
+    this._up?.emit(this._getMouseArgs(button, pnt, true));
     return true;
   }
 
@@ -97,7 +94,7 @@ class MouseInput {
   // Returns true if any events were called, false if none were called.
   bool performMove(Button button, Math.Point2 pnt) {
     if (this._move == null) return false;
-    this._move.emit(this._getMouseArgs(button, pnt, false));
+    this._move?.emit(this._getMouseArgs(button, pnt, false));
     return true;
   }
 
@@ -105,42 +102,34 @@ class MouseInput {
   // Returns true if any events were called, false if none were called.
   bool performWheel(Math.Vector2 wheel, Math.Point2 pnt) {
     if (this._wheel == null) return false;
-    this._wheel.emit(new MouseWheelEventArgs(this, this._input.clientRect, pnt,
+    this._wheel?.emit(new MouseWheelEventArgs(this, this._input.clientRect, pnt,
       new DateTime.now(), new Math.Vector2(wheel.dx*this._whSensitivity, wheel.dy*this._wvSensitivity)));
     return true;
   }
 
   /// The horizontal mouse wheel movement sensitivity.
   double get wheelHorizontalSensitivity => this._whSensitivity;
-  void set wheelHorizontalSensitivity(double sensitivity) => this._whSensitivity = sensitivity;
+  set wheelHorizontalSensitivity(double sensitivity) => this._whSensitivity = sensitivity;
 
   /// The vertical mouse wheel movement sensitivity.
   double get wheelVerticalSensitivity => this._wvSensitivity;
-  void set wheelVerticalSensitivity(double sensitivity) => this._wvSensitivity = sensitivity;
+  set wheelVerticalSensitivity(double sensitivity) => this._wvSensitivity = sensitivity;
 
   /// The mouse down event.
-  Events.Event get down {
+  Events.Event get down =>
     this._down ??= new Events.Event();
-    return this._down;
-  }
 
   /// The mouse up event.
-  Events.Event get up {
+  Events.Event get up =>
     this._up ??= new Events.Event();
-    return this._up;
-  }
 
   /// The mouse move event.
-  Events.Event get move {
+  Events.Event get move =>
     this._move ??= new Events.Event();
-    return this._move;
-  }
 
   /// The mouse wheel move event.
-  Events.Event get wheel {
+  Events.Event get wheel =>
     this._wheel ??= new Events.Event();
-    return this._wheel;
-  }
 
   /// Indicates the mouse buttons which are currently pressed.
   int get buttons => this._buttons;

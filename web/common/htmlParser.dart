@@ -24,7 +24,7 @@ class HTMLParser extends CodeParser {
   /// Constructs the HTML code tokenizer.
   /// The HTML code tokenizer breaks up code to
   /// label tokens to color the code appropriately.
-  Tokenizer.Tokenizer createTokenizer() {
+  Tokenizer.Tokenizer? createTokenizer() {
     Tokenizer.Tokenizer tok = new Tokenizer.Tokenizer();
     tok.start("Start");
     tok.join("Start", "Id")

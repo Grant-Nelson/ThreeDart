@@ -5,25 +5,30 @@ part of ThreeDart.Math;
 class Region2 {
 
   /// Gets a [Region2] at the origin.
-  static Region2 get zero {
+  static Region2 get zero =>
     _zeroSingleton ??= new Region2(0.0, 0.0, 0.0, 0.0);
-    return _zeroSingleton;
-  }
-  static Region2 _zeroSingleton;
+  static Region2? _zeroSingleton;
 
   /// Gets a [Region2] at the origin with a width and height of 1.
-  static Region2 get unit {
+  static Region2 get unit =>
     _unitSingleton ??= new Region2(0.0, 0.0, 1.0, 1.0);
-    return _unitSingleton;
-  }
-  static Region2 _unitSingleton;
+  static Region2? _unitSingleton;
 
   /// Gets a [Region2] at the origin with a width and height of 2 centered on origin.
-  static Region2 get unit2 {
+  static Region2 get unit2 =>
     _unit2Singleton ??= new Region2(-1.0, -1.0, 2.0, 2.0);
-    return _unit2Singleton;
+  static Region2? _unit2Singleton;
+
+  /// Constructs the union of the given regions. If both are null, null is returned.
+  static Region2? union(Region2? a, Region2? b) {
+    if (a == null) return b;
+    if (b == null) return a;
+    double x  = math.min(a.x,      b.x);
+    double y  = math.min(a.y,      b.y);
+    double x2 = math.max(a.x+a.dx, b.x+b.dx);
+    double y2 = math.max(a.y+a.dy, b.y+b.dy);
+    return new Region2._(x, y, x2-x, y2-y);
   }
-  static Region2 _unit2Singleton;
 
   /// The left edge component of the region.
   final double x;
@@ -70,17 +75,6 @@ class Region2 {
   factory Region2.fromList(List<double> values) {
     assert(values.length == 4);
     return new Region2(values[0], values[1], values[2], values[3]);
-  }
-
-  /// Constructs the union of the given regions. If both are null, null is returned.
-  factory Region2.union(Region2 a, Region2 b) {
-    if (a == null) return b;
-    if (b == null) return a;
-    double x  = math.min(a.x,      b.x);
-    double y  = math.min(a.y,      b.y);
-    double x2 = math.max(a.x+a.dx, b.x+b.dx);
-    double y2 = math.max(a.y+a.dy, b.y+b.dy);
-    return new Region2._(x, y, x2-x, y2-y);
   }
 
   /// The minimum corner point in the region.
@@ -168,9 +162,8 @@ class Region2 {
 
   /// Gets the adjusted vector of the given [raw] vector.
   /// This vector is normalized into the region.
-  Vector2 adjustVector(Vector2 raw) {
-    return raw*2.0/this.minSide;
-  }
+  Vector2 adjustVector(Vector2 raw) =>
+    raw*2.0/this.minSide;
 
   /// Determines the location the given point is in relation to the region.
   HitRegion hit(Point2 a) {
@@ -216,11 +209,10 @@ class Region2 {
   bool operator ==(var other) {
     if (identical(this, other)) return true;
     if (other is! Region2) return false;
-    Region2 region = other as Region2;
-    if (!Comparer.equals(region.x,  this.x))  return false;
-    if (!Comparer.equals(region.y,  this.y))  return false;
-    if (!Comparer.equals(region.dx, this.dx)) return false;
-    if (!Comparer.equals(region.dy, this.dy)) return false;
+    if (!Comparer.equals(other.x,  this.x))  return false;
+    if (!Comparer.equals(other.y,  this.y))  return false;
+    if (!Comparer.equals(other.dx, this.dx)) return false;
+    if (!Comparer.equals(other.dy, this.dy)) return false;
     return true;
   }
 

@@ -7,18 +7,17 @@ const bool _showWireFrame = false;
 
 /// The shaper creates the shapes for all the items in the world.
 class Shaper {
-  Materials _mats;
+  Materials? _mats;
   Data.VertexType _vertexType;
-  List<Shapes.ReducedShape> _shapes;
+  List<Shapes.ReducedShape?> _shapes;
 
   /// Create a new shaper for building shapes for this world.
   /// This will create a temporary place holder for one shape per material in the materials list.
   /// Pass in a null material to produce only one placeholder to be used with [addCubeToOneShape].
   /// Optionally pass in a vertex type, otherwise it is Pos|Txt2D|Norm.
-  Shaper(this._mats, [this._vertexType = null]) {
-    this._vertexType ??= Data.VertexType.Pos | Data.VertexType.Txt2D | Data.VertexType.Norm;
-    this._shapes = new List<Shapes.ReducedShape>(this._mats?.materials?.length ?? 1);
-  }
+  Shaper(this._mats, [Data.VertexType? vertexType = null]):
+    this._vertexType = vertexType ?? Data.VertexType.Pos | Data.VertexType.Txt2D | Data.VertexType.Norm,
+    this._shapes = new List<Shapes.ReducedShape?>.filled(_mats?.materials.length ?? 1, null);
 
   /// Builds all the shames for a whole given [chunk].
   /// Use [finish] to apply the shapes to the chunks entities.
@@ -36,9 +35,8 @@ class Shaper {
   /// Builds a single block with the given value.
   /// This is used for building what is in the hand.
   /// Use [finish] to apply the shapes to the player's entities.
-  void buildSingleBlock(int value) {
+  void buildSingleBlock(int value) =>
     this._addBlockToShapes(null, 0, 0, 0, value, false, 1.0);
-  }
 
   /// Builds a single block to the first shape storage.
   /// This is used for building the selection highlight.
@@ -60,7 +58,7 @@ class Shaper {
   void finish(List<ThreeDart.Entity> entities) {
     for (int i = entities.length-1; i >= 0; i--) {
       ThreeDart.Entity entity = entities[i];
-      Shapes.ReducedShape shape = this._shapes[i];
+      Shapes.ReducedShape? shape = this._shapes[i];
       if (shape != null) {
         entity.shapeBuilder = shape;
         entity.enabled = !shape.vertices.isEmpty;
@@ -69,13 +67,13 @@ class Shaper {
         entity.enabled = false;
       }
     }
-    this._shapes = null;
+    this._shapes = [];
   }
 
   /// Gets the shape with the given [index] from the set, if no shape is created
   /// for that index yet a new shape will be created and set to that index.
   Shapes.ReducedShape _getShape(int index) {
-    Shapes.ReducedShape shape = this._shapes[index];
+    Shapes.ReducedShape? shape = this._shapes[index];
     if (shape == null) {
       shape = new Shapes.ReducedShape(this._vertexType);
       this._shapes[index] = shape;
@@ -84,7 +82,7 @@ class Shaper {
   }
 
   /// Adds a block from the given chunk to the correct shapes based on the materials' cube indices.
-  void _addBlockToShapes(Chunk chunk, int x, int y, int z, int value, bool twoSided, double scalar) {
+  void _addBlockToShapes(Chunk? chunk, int x, int y, int z, int value, bool twoSided, double scalar) {
     Math.Point3 chunkLoc = new Math.Point3(x.toDouble(), y.toDouble(), z.toDouble());
     if (chunk != null) {
       x += chunk.x;
@@ -102,7 +100,7 @@ class Shaper {
   }
 
   /// Creates a new vertex object with the given position, normal vector, and texture coordinates.
-  Shapes.Vertex _getVertex(Math.Point3 loc, Math.Vector3 norm, double tu, double tv) {
+  Shapes.Vertex _getVertex(Math.Point3 loc, Math.Vector3? norm, double tu, double tv) {
     return new Shapes.Vertex(
         type: Data.VertexType.Pos | Data.VertexType.Txt2D | Data.VertexType.Norm,
         loc: loc,
@@ -153,8 +151,9 @@ class Shaper {
 
   /// Adds a cube to the shapes defined by the materials cube data for the given block [value].
   /// Only the sides of the cube which are visible are added, the rest are skipped.
-  void _addCubeToShapes(Chunk chunk, Math.Point3 loc, Math.Point3 chunkLoc, int value, bool twoSided, double scalar) {
-    CubeData data = this._mats.cubeData(value);
+  void _addCubeToShapes(Chunk? chunk, Math.Point3 loc, Math.Point3 chunkLoc, int value, bool twoSided, double scalar) {
+    CubeData? data = this._mats?.cubeData(value);
+    if (data == null) return;
     if (this._addFace(chunk, value, chunkLoc,  0,  1,  0)) this._addTopToShape(   this._getShape(data.topIndex),    loc, twoSided, scalar);
     if (this._addFace(chunk, value, chunkLoc,  0, -1,  0)) this._addBottomToShape(this._getShape(data.bottomIndex), loc, twoSided, scalar);
     if (this._addFace(chunk, value, chunkLoc, -1,  0,  0)) this._addLeftToShape(  this._getShape(data.leftIndex),   loc, twoSided, scalar);
@@ -164,7 +163,7 @@ class Shaper {
   }
 
   /// Determines if a face should be added to because it is visible in the world.
-  bool _addFace(Chunk chunk, int value, Math.Point3 chunkLoc, int x, int y, int z) {
+  bool _addFace(Chunk? chunk, int value, Math.Point3 chunkLoc, int x, int y, int z) {
     if (chunk == null) return true;
     y += chunkLoc.y.toInt();
     if (y < 0) return false;
@@ -190,7 +189,8 @@ class Shaper {
   /// Adds a plant to the shapes.
   /// It selects the correct shape to add to from the materials and given block [value].
   void _addPlantToShapes(Math.Point3 loc, int value) {
-    List<int> offset = this._mats.matData(value);
+    List<int>? offset = this._mats?.matData(value);
+    if (offset == null) return;
     this._addQuadRotToShape(this._getShape(offset[0]), loc, Math.PI*0.5/4.0, true);
     this._addQuadRotToShape(this._getShape(offset[0]), loc, Math.PI*2.5/4.0, true);
   }
@@ -208,7 +208,8 @@ class Shaper {
 
   /// Adds a fern to the shapes at the given [loc].
   void _addFernToShapes(Math.Point3 loc) {
-    List<int> offset = this._mats.matData(BlockType.Fern);
+    List<int>? offset = this._mats?.matData(BlockType.Fern);
+    if (offset == null) return;
     _addFernLeaf(this._getShape(offset[0]), loc, Math.PI*0.2/2.0);
     _addFernLeaf(this._getShape(offset[0]), loc, Math.PI*1.1/2.0);
     _addFernLeaf(this._getShape(offset[0]), loc, Math.PI*2.3/2.0);
@@ -217,7 +218,8 @@ class Shaper {
 
   /// Adds a mushroom to the shapes at the given [loc].
   void _addMushroomToShapes(Math.Point3 loc) {
-    List<int> offset = this._mats.matData(BlockType.Mushroom);
+    List<int>? offset = this._mats?.matData(BlockType.Mushroom);
+    if (offset == null) return;
     Shapes.ReducedShape topShape    = this._getShape(offset[0]);
     Shapes.ReducedShape bottomShape = this._getShape(offset[1]);
     Shapes.ReducedShape sideShape   = this._getShape(offset[2]);

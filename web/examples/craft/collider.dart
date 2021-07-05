@@ -13,15 +13,14 @@ class Collider {
   List<bool> _hasHit;
 
   /// Creates a new collider object.
-  Collider(this._world) {
-    this._loc = null;
-    this._region = null;
-    this._vector = null;
-    this._touching = Math.HitRegion.None;
-    this._blocks = new List<Math.Region3>();
-    this._blockSides = new List<Math.HitRegion>();
-    this._hasHit = new List<bool>();
-  }
+  Collider(this._world):
+    this._loc = Math.Point3.zero,
+    this._region = Math.Region3.zero,
+    this._vector = Math.Vector3.zero,
+    this._touching = Math.HitRegion.None,
+    this._blocks = [],
+    this._blockSides = [],
+    this._hasHit = [];
 
   /// Performs a collision between the given region at the given location
   /// moving at the given vector and the solid blocks in the world.
@@ -39,7 +38,7 @@ class Collider {
   }
 
   /// Gets the location after the collision.
-  Math.Point3 get location => this._loc;
+  Math.Point3? get location => this._loc;
 
   /// Gets the resulting touching sides of the collisions.
   Math.HitRegion get touching => this._touching;
@@ -48,16 +47,17 @@ class Collider {
   void _collectBlocks() {
     Math.Region3 region = this._region.translate(new Math.Vector3.fromPoint3(this._loc));
     Math.Region3 aabb = region.expandWithRegion(region.translate(this._vector));
-    BlockInfo minXYZ = this._world.getBlock(aabb.x, aabb.y, aabb.z);
-    BlockInfo maxXYZ = this._world.getBlock(aabb.x+aabb.dx, aabb.y+aabb.dy, aabb.z+aabb.dz);
+    BlockInfo? minXYZ = this._world.getBlock(aabb.x, aabb.y, aabb.z);
+    BlockInfo? maxXYZ = this._world.getBlock(aabb.x+aabb.dx, aabb.y+aabb.dy, aabb.z+aabb.dz);
+    if (minXYZ == null || maxXYZ == null) return;
     int maxWorldX = maxXYZ.worldX, maxWorldZ = maxXYZ.worldZ;
 
     this._blocks.clear();
     this._blockSides.clear();
     this._hasHit.clear();
-    for (BlockInfo x = minXYZ; (x != null) && (x.worldX <= maxWorldX); x = x.right) {
-      for (BlockInfo y = x; (y != null) && (y.y <= maxXYZ.y); y = y.above) {
-        for (BlockInfo z = y; (z != null) && (z.worldZ <= maxWorldZ); z = z.front) {
+    for (BlockInfo? x = minXYZ; (x != null) && (x.worldX <= maxWorldX); x = x.right) {
+      for (BlockInfo? y = x; (y != null) && (y.y <= maxXYZ.y); y = y.above) {
+        for (BlockInfo? z = y; (z != null) && (z.worldZ <= maxWorldZ); z = z.front) {
           if (BlockType.hard(z.value)) {
             Math.HitRegion sides = z.solidNeighbors();
             if (sides != Math.HitRegion.Cardinals) {
@@ -122,6 +122,5 @@ class Collider {
 
   /// Gets the string for this collision result.
   @override
-  String toString() =>
-    "Collider($_loc, $_touching)";
+  String toString() => 'Collider($_loc, $_touching)';
 }

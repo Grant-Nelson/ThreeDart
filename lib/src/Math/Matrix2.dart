@@ -4,13 +4,11 @@ part of ThreeDart.Math;
 class Matrix2 {
 
   /// Gets a 2x2 identity matrix.
-  static Matrix2 get identity {
+  static Matrix2 get identity =>
     _identSingleton ??= new Matrix2(
       1.0, 0.0,
       0.0, 1.0);
-    return _identSingleton;
-  }
-  static Matrix2 _identSingleton;
+  static Matrix2? _identSingleton;
 
   /// The 1st row and 1st column of the matrix, XX.
   final double m11;
@@ -138,11 +136,10 @@ class Matrix2 {
   bool operator ==(var other) {
     if (identical(this, other)) return true;
     if (other is! Matrix2) return false;
-    Matrix2 mat = other as Matrix2;
-    if (!Comparer.equals(mat.m11, this.m11)) return false;
-    if (!Comparer.equals(mat.m21, this.m21)) return false;
-    if (!Comparer.equals(mat.m12, this.m12)) return false;
-    if (!Comparer.equals(mat.m22, this.m22)) return false;
+    if (!Comparer.equals(other.m11, this.m11)) return false;
+    if (!Comparer.equals(other.m21, this.m21)) return false;
+    if (!Comparer.equals(other.m12, this.m12)) return false;
+    if (!Comparer.equals(other.m22, this.m22)) return false;
     return true;
   }
 

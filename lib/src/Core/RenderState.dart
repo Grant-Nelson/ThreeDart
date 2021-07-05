@@ -33,71 +33,73 @@ class RenderState {
   /// The projection matrix multiplied by the view matrix.
   /// This is the cache, it is reset to null when either component is changed.
   /// Null indicated the value must be recalculated.
-  Math.Matrix4 _projViewMat;
+  Math.Matrix4? _projViewMat;
 
   /// The inverse of the view matrix.
   /// This is the cache, it is reset to null when the view is changed.
   /// Null indicated the value must be recalculated.
-  Math.Matrix4 _invViewMat;
+  Math.Matrix4? _invViewMat;
 
   /// The product of the projection matrix, the view matrix, and the object matrix.
   /// This is the cache, it is reset to null when either component is changed.
   /// Null indicated the value must be recalculated.
-  Math.Matrix4 _projViewObjMat;
+  Math.Matrix4? _projViewObjMat;
 
   /// The view matrix multiplied by the object matrix.
   /// This is the cache, it is reset to null when either component is changed.
   /// Null indicated the value must be recalculated.
-  Math.Matrix4 _viewObjMat;
+  Math.Matrix4? _viewObjMat;
 
   /// The stack of projection matrices.
   Collections.Matrix4Stack _projStack;
 
   /// The stack of the view matrices.
-  Collections.Matrix4Stack _viewStack;
+  Collections.Matrix4Stack _viewStack ;
 
   /// The stack of Entity matrices.
   Collections.Matrix4Stack _objStack;
 
   /// The stack of techniques.
-  List<Techniques.Technique> _tech;
+  List<Techniques.Technique?> _tech;
 
   /// The cache of compiled shaders.
   Map<String, Shaders.Shader> _shaderCache;
 
   /// Constructs a new render state with the given context and canvas.
-  RenderState(this._gl, this._canvas) {
-    this._width = 512;
-    this._height = 512;
-    this._frameNum = 0;
-    this._startTime = new DateTime.now();
-    this._lastTime = this._startTime;
-    this._curTime = this._startTime;
-    this._dt = 0.0;
-    this._projViewMat = null;
-    this._invViewMat = null;
-    this._projViewObjMat = null;
-    this._viewObjMat = null;
-    this._projStack = new Collections.Matrix4Stack()
+  RenderState(this._gl, this._canvas):
+    this._width    = 512,
+    this._height   = 512,
+    this._frameNum = 0,
+    this._startTime = new DateTime.now(),
+    this._lastTime  = new DateTime.now(),
+    this._curTime   = new DateTime.now(),
+    this._dt = 0.0,
+    this._projViewMat    = null,
+    this._invViewMat     = null,
+    this._projViewObjMat = null,
+    this._viewObjMat     = null,
+    this._projStack = new Collections.Matrix4Stack(),
+    this._viewStack = new Collections.Matrix4Stack(),
+    this._objStack  = new Collections.Matrix4Stack(),
+    this._tech = [null],
+    this._shaderCache = {} {
+    this._projStack
       ..changed.add((Events.EventArgs e) {
         this._projViewMat = null;
         this._projViewObjMat = null;
       });
-    this._viewStack = new Collections.Matrix4Stack()
+    this._viewStack
       ..changed.add((Events.EventArgs e) {
         this._projViewMat = null;
         this._invViewMat = null;
         this._projViewObjMat = null;
         this._viewObjMat = null;
       });
-    this._objStack = new Collections.Matrix4Stack()
+    this._objStack
       ..changed.add((Events.EventArgs e) {
         this._projViewObjMat = null;
         this._viewObjMat = null;
       });
-    this._tech = new List<Techniques.Technique>();
-    this._tech.add(null);
-    this._shaderCache = new Map<String, Shaders.Shader>();
   }
 
   /// Resets the state to start another render.
@@ -144,28 +146,20 @@ class RenderState {
   double get dt => this._dt;
 
   /// The projection matrix multiplied by the view matrix.
-  Math.Matrix4 get projectionViewMatrix {
+  Math.Matrix4 get projectionViewMatrix =>
     this._projViewMat ??= this.projection.matrix * this.view.matrix;
-    return this._projViewMat;
-  }
 
   /// The inverse of the view matrix.
-  Math.Matrix4 get inverseViewMatrix {
+  Math.Matrix4 get inverseViewMatrix =>
     this._invViewMat ??= this.view.matrix.inverse();
-    return this._invViewMat;
-  }
 
   /// The product of the projection matrix, the view matrix, and the object matrix.
-  Math.Matrix4 get projectionViewObjectMatrix {
+  Math.Matrix4 get projectionViewObjectMatrix =>
     this._projViewObjMat ??= this.projectionViewMatrix * this.object.matrix;
-    return this._projViewObjMat;
-  }
 
   /// The view matrix multiplied by the object matrix.
-  Math.Matrix4 get viewObjectMatrix {
+  Math.Matrix4 get viewObjectMatrix =>
     this._viewObjMat ??= this.view.matrix * this.object.matrix;
-    return this._viewObjMat;
-  }
 
   /// The stack of projection matrices.
   Collections.Matrix4Stack get projection => this._projStack;
@@ -178,33 +172,29 @@ class RenderState {
 
   /// The current technique to render with.
   /// May return null if the technique stack is empty.
-  Techniques.Technique get technique => this._tech.last;
+  Techniques.Technique? get technique => this._tech.last;
 
   /// Pushes a new technique onto the stack of techniques.
   /// Pushing null will put the current technique onto the top of the stack.
-  void pushTechnique(Techniques.Technique tech) {
+  void pushTechnique(Techniques.Technique? tech) =>
     this._tech.add(tech ?? this.technique);
-  }
 
   /// Pops the current technique off of the top of the stack.
+  /// This will not remove the last technique on the stack.
   void popTechnique() {
-    if (this._tech.length > 1) {
-      this._tech.removeLast();
-    }
+    if (this._tech.length > 1) this._tech.removeLast();
   }
 
   /// Gets the cached shader by the given [name].
-  Shaders.Shader shader(String name) => this._shaderCache[name];
+  Shaders.Shader? shader(String name) => this._shaderCache[name];
 
   /// Adds the given [shader] to the shader cache.
   void addShader(Shaders.Shader shader) {
-    if (shader == null)
-      throw new Exception("May not cache a null shader.");
     String name = shader.name;
     if (name.isEmpty)
-      throw new Exception("May not cache a shader with no name.");
+      throw new Exception('May not cache a shader with no name.');
     if (this._shaderCache.containsKey(name))
-      throw new Exception("Shader cache already contains a shader by the name \"${name}\".");
+      throw new Exception('Shader cache already contains a shader by the name "$name".');
     this._shaderCache[name] = shader;
   }
 }

@@ -45,9 +45,8 @@ class Location {
   bool operator ==(var other) {
     if (identical(this, other)) return true;
     if (other is! Location) return false;
-    Location loc = other as Location;
-    if (loc.row != this.row) return false;
-    if (loc.column != this.column) return false;
+    if (other.row != this.row) return false;
+    if (other.column != this.column) return false;
     return true;
   }
 }

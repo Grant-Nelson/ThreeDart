@@ -54,7 +54,7 @@ void main() {
 
   td.scene = new Scenes.EntityPass()
     ..children.add(group)
-    ..camera.mover = new Movers.Constant.translate(0.0, 0.0, 5.0);
+    ..camera?.mover = new Movers.Constant.translate(0.0, 0.0, 5.0);
 
   new common.Texture2DGroup("bumpMaps", (String fileName) {
     tech.bump.texture2D = td.textureLoader.load2DFromFile(fileName);

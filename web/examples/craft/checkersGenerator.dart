@@ -11,13 +11,12 @@ class CheckersGenerator implements Generator {
   int _height;
 
   /// Creates a new generator for the given world.
-  CheckersGenerator({bool highlightChunkEdges = true, int height = 10}) {
-    this._highlightChunkEdges = highlightChunkEdges ?? true;
-    this._height = height ?? 10;
-  }
+  CheckersGenerator({bool highlightChunkEdges = true, int height = 10}):
+    this._highlightChunkEdges = highlightChunkEdges,
+    this._height = height;
 
   /// Fills the given chunk with data.
-  void fillChunk(Chunk chunk) {
+  void fillChunk(Chunk? chunk) {
     if (chunk == null) return;
 
     for (int x = 0; x < Constants.chunkSideSize; x++) {

@@ -8,16 +8,13 @@ class TouchInput {
   UserInput _input;
 
   /// The event to emit when a touch has started.
-  Events.Event _start;
+  Events.Event? _start;
 
   /// The event to emit when a touch has ended.
-  Events.Event _end;
+  Events.Event? _end ;
 
   /// The event to emit when the mouse is moved.
-  Events.Event _move;
-
-  /// Indicates if the touch equivalent buttons which are pressed or not.
-  int _buttons;
+  Events.Event? _move;
 
   /// The point, in pixels, in which the mouse button was last pressed or released.
   Math.Point2 _startPnt;
@@ -32,16 +29,14 @@ class TouchInput {
   DateTime _prevTime;
 
   /// Creates a new user input for the given [_elem].
-  TouchInput._(this._input) {
-    this._start = null;
-    this._end = null;
-    this._move = null;
-    this._buttons = 0;
-    this._startTime = null;
-    this._startPnt = Math.Point2.zero;
-    this._prevTime = null;
-    this._prevPnt = Math.Point2.zero;
-  }
+  TouchInput._(this._input):
+    this._start = null,
+    this._end   = null,
+    this._move  = null,
+    this._startPnt = Math.Point2.zero,
+    this._prevPnt  = Math.Point2.zero,
+    this._startTime = DateTime.now(),
+    this._prevTime  = DateTime.now();
 
   /// Gets the locked mouse arguments.
   /// If [setStart] is true then the start point and time are set.
@@ -64,7 +59,7 @@ class TouchInput {
   // Returns true if any events were called, false if none were called.
   bool performStart(List<Math.Point2> pnts) {
     if (this._start == null) return false;
-    this._start.emit(this._getMouseArgs(pnts, true));
+    this._start?.emit(this._getMouseArgs(pnts, true));
     return true;
   }
 
@@ -72,7 +67,7 @@ class TouchInput {
   // Returns true if any events were called, false if none were called.
   bool performEnd(List<Math.Point2> pnts) {
     if (this._end == null) return false;
-    this._end.emit(this._getMouseArgs(pnts, true));
+    this._end?.emit(this._getMouseArgs(pnts, true));
     return true;
   }
 
@@ -80,25 +75,19 @@ class TouchInput {
   // Returns true if any events were called, false if none were called.
   bool performMove(List<Math.Point2> pnts) {
     if (this._move == null) return false;
-    this._move.emit(this._getMouseArgs(pnts, false));
+    this._move?.emit(this._getMouseArgs(pnts, false));
     return true;
   }
 
   /// The mouse start event.
-  Events.Event get start {
+  Events.Event get start =>
     this._start ??= new Events.Event();
-    return this._start;
-  }
 
   /// The mouse up event.
-  Events.Event get end {
+  Events.Event get end =>
     this._end ??= new Events.Event();
-    return this._end;
-  }
 
   /// The mouse move event.
-  Events.Event get move {
+  Events.Event get move =>
     this._move ??= new Events.Event();
-    return this._move;
-  }
 }

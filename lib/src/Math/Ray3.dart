@@ -4,11 +4,9 @@ part of ThreeDart.Math;
 class Ray3 {
 
   /// Gets a [Ray3] at the origin with no vector.
-  static Ray3 get zero {
+  static Ray3 get zero =>
     _zeroSingleton ??= new Ray3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-    return _zeroSingleton;
-  }
-  static Ray3 _zeroSingleton;
+  static Ray3? _zeroSingleton;
 
   /// The x component of the ray.
   final double x;
@@ -87,13 +85,12 @@ class Ray3 {
   bool operator ==(var other) {
     if (identical(this, other)) return true;
     if (other is! Ray3) return false;
-    Ray3 size = other as Ray3;
-    if (!Comparer.equals(size.x,  this.x))  return false;
-    if (!Comparer.equals(size.y,  this.y))  return false;
-    if (!Comparer.equals(size.z,  this.z))  return false;
-    if (!Comparer.equals(size.dx, this.dx)) return false;
-    if (!Comparer.equals(size.dy, this.dy)) return false;
-    if (!Comparer.equals(size.dz, this.dz)) return false;
+    if (!Comparer.equals(other.x,  this.x))  return false;
+    if (!Comparer.equals(other.y,  this.y))  return false;
+    if (!Comparer.equals(other.z,  this.z))  return false;
+    if (!Comparer.equals(other.dx, this.dx)) return false;
+    if (!Comparer.equals(other.dy, this.dy)) return false;
+    if (!Comparer.equals(other.dz, this.dz)) return false;
     return true;
   }
 

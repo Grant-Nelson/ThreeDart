@@ -21,7 +21,7 @@ RaySphereResult raySphere(Math.Ray3 ray, Math.Sphere sphere) {
 class RaySphereResult extends BaseResult {
 
   /// The point in or on the surface of the sphere which the ray intersects.
-  final Math.Point3 point;
+  final Math.Point3? point;
 
   /// The parametric value between 0 and 1 inclusively of the ray to the intersection point.
   final double parametric;

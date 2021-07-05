@@ -7,51 +7,44 @@ part of ThreeDart.Events;
 class Event {
 
   /// The list of the event handlers to call when this event is emitted.
-  List<EventHandler> _hndls;
+  List<EventHandler>? _hndls;
 
   /// The list of the event handlers to call only once when this event is emitted.
-  List<EventHandler> _onceHndls;
+  List<EventHandler>? _onceHndls;
 
   /// The pending argument from the first emit while the event is suspended.
-  EventArgs _pendingArgs;
+  EventArgs? _pendingArgs;
 
   /// Indicates if the event is suspended or not.
   int _suspended;
 
   /// Constructs a new event.
-  Event() {
-    this._hndls = null;
-    this._onceHndls = null;
-    this._pendingArgs = null;
-    this._suspended = 0;
-  }
+  Event():
+    this._hndls       = null,
+    this._onceHndls   = null,
+    this._pendingArgs = null,
+    this._suspended   = 0;
 
   /// Indicates that there are no handlers attached to this events.
   bool get isEmpty => (this._hndls?.isEmpty ?? true) && (this._onceHndls?.isEmpty ?? true);
 
   /// Adds a new event handler to be called by this event when an action has occurred.
-  void add(EventHandler hndl) {
-    this._hndls ??= new List<EventHandler>();
-    this._hndls.add(hndl);
-  }
+  void add(EventHandler hndl) =>
+    (this._hndls ??= []).add(hndl);
 
   /// Adds a new event handler to be called by this event when an action has occurred.
   /// This event is only called once and then removed.
-  void once(EventHandler hndl) {
-    this._onceHndls ??= new List<EventHandler>();
-    this._onceHndls.add(hndl);
-  }
+  void once(EventHandler hndl) =>
+    (this._onceHndls ??= []).add(hndl);
 
   /// Removes the first instance of the event handler from this event.
   /// True is returned if the handler is found, false if not found.
   bool remove(EventHandler hndl) {
     bool removed = false;
-    if (this._hndls?.contains(hndl) ?? false) {
-      removed = this._hndls.remove(hndl) || removed;
-    }
-    if (this._onceHndls?.contains(hndl) ?? false) {
-      removed = this._onceHndls.remove(hndl) || removed;
-    }
+    if (this._hndls?.contains(hndl) ?? false)
+      removed = (this._hndls?.remove(hndl) ?? false) || removed;
+    if (this._onceHndls?.contains(hndl) ?? false)
+      removed = (this._onceHndls?.remove(hndl) ?? false) || removed;
     return removed;
   }
 
@@ -61,29 +54,31 @@ class Event {
   /// The event will not be emitted if it is currently suspended.
   /// The method will return after all event handlers has returned.
   /// Returns true if any handler could be emitted even if suspended, false if empty.
-  bool emit([EventArgs args = null]) {
+  bool emit([EventArgs? args = null]) {
     if (this.isEmpty) return false;
 
-    args ??= new EventArgs(null);
+    EventArgs args2 = args ?? new EventArgs(null);
     if (this.suspended) {
-      if (!this.pending) this._pendingArgs = args;
+      if (!this.pending) this._pendingArgs = args2;
       return true;
     }
 
-    if (this._hndls != null) {
+    var hndls = this._hndls;
+    if (hndls != null) {
       // Create a copy so that if this event is modified
       // inside of it's handler it doesn't cause a problem.
-      List<EventHandler> copy = new List<EventHandler>.from(this._hndls);
+      List<EventHandler> copy = new List<EventHandler>.from(hndls);
       copy.forEach((EventHandler hndl) {
-        if (args.propagate) hndl(args);
+        if (args2.propagate) hndl(args2);
       });
     }
 
-    if (this._onceHndls != null) {
-      List<EventHandler> lastOnce = this._onceHndls;
-      this._onceHndls = new List<EventHandler>();
+    var onceHndls = this._onceHndls;
+    if (onceHndls != null) {
+      List<EventHandler> lastOnce = onceHndls;
+      this._onceHndls = [];
       lastOnce.forEach((EventHandler hndl) {
-        if (args.propagate) hndl(args);
+        if (args2.propagate) hndl(args2);
       });
     }
     return true;
@@ -94,7 +89,7 @@ class Event {
   /// The [args] will be submitted to each event handler.
   /// This is not effected by the suspended flag.
   /// The future is returned.
-  async.Future asyncEmit([EventArgs args = null]) {
+  async.Future asyncEmit([EventArgs? args = null]) {
     return new async.Future(() { this.emit(args); });
   }
 
@@ -112,8 +107,8 @@ class Event {
   /// The arguments of the first emit called while suspended.
   ///
   /// The pending argument is used once the event is resumed.
-  EventArgs get pendingArgs => this._pendingArgs;
-  void set pendingArgs(EventArgs args) { this._pendingArgs = args; }
+  EventArgs? get pendingArgs => this._pendingArgs;
+  set pendingArgs(EventArgs? args) => this._pendingArgs = args;
 
   /// Resumes the event or removes a level of suspension.
   ///
@@ -129,7 +124,7 @@ class Event {
         this._suspended--;
       }
       if ((!this.suspended) && emitPending && pending) {
-        EventArgs args = this._pendingArgs;
+        EventArgs? args = this._pendingArgs;
         this._pendingArgs = null;
         this.emit(args);
       }

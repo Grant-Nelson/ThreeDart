@@ -59,7 +59,7 @@ void main() {
     ..technique = tech
     ..children.add(centerObj)
     ..children.add(room)
-    ..camera.mover = camMover
+    ..camera?.mover = camMover
     ..onPreUpdate.add((Events.EventArgs args) {
       ThreeDart.RenderState state = (args as ThreeDart.StateEventArgs).state;
       tech.colorMatrix = colorMover.update(state, null);

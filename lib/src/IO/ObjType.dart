@@ -9,7 +9,7 @@ class ObjType {
   /// [txtLoader] is used to load any textures required by materials for this entity.
   /// [strict] is optional and will print errors for unknown line types.
   static Future<Core.Entity> fromFile(String fileName, Textures.TextureLoader txtLoader,
-    {bool strict: false, Map<String, Techniques.MaterialLight> mtls: null, Events.Event progress: null}) async {
+    {bool strict: false, Map<String, Techniques.MaterialLight>? mtls: null, Events.Event? progress: null}) async {
     try {
       String dir = getPathTo(fileName);
       _objReader reader = new _objReader(txtLoader, mtls: mtls, progress: progress);
@@ -18,8 +18,8 @@ class ObjType {
       progress?.emit(new ProgressEventArgs(reader, 100.0, true));
       return reader.entity;
     } catch(e) {
-      print("$fileName: $e");
-      throw new Exception("$fileName: $e");
+      print('$fileName: $e');
+      throw new Exception('$fileName: $e');
     }
   }
 

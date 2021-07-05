@@ -24,14 +24,13 @@ class Shifter {
   bool _inited;
 
   /// Constructs a shifter with the final information set.
-  Shifter._(this._delay, this._duration, this._init, this._smoother) {
-    this._mods = new List<_modifier>();
-    this._done = false;
+  Shifter._(this._delay, this._duration, this._init, this._smoother):
+    this._mods = [],
+    this._done = false,
     this._inited = false;
-  }
 
   /// Creates a new shifter for the given duration and optional smoother.
-  factory Shifter({int delay:0, int duration:1000, bool init: false, Smoother easing:null}) {
+  factory Shifter({int delay:0, int duration:1000, bool init: false, Smoother? easing:null}) {
     if (delay < 0) delay = 0;
     if (duration < 1) duration = 1;
     easing ??= Smoothers.linear;

@@ -6,30 +6,26 @@ typedef void buttonClickedHndl();
 /// A group of buttons.
 class ButtonGroup {
 
-  /// The name of the element for the button group.
-  String _elemId;
-
   /// The element to fill with buttons.
   html.Element _elem;
 
   /// The list of button elements;
-  List<html.ButtonElement> _buttons;
+  List<html.ButtonElement> _buttons = [];
+
+  ButtonGroup._(this._elem);
 
   /// Creates a new button group in the element with the given [elemId] name.
-  ButtonGroup(this._elemId) {
-    this._elem = html.document.getElementById(this._elemId);
-    if (this._elem == null) {
-      throw "Failed to find $_elemId for ButtonGroup";
-    }
-    this._buttons = new List<html.ButtonElement>();
+  factory ButtonGroup(String elemId) {
+    html.Element? elem = html.document.getElementById(elemId);
+    if (elem == null)
+      throw 'Failed to find $elemId for ButtonGroup';
+    return new ButtonGroup._(elem);
   }
 
   /// Adds a new button to this group and the method to call when the button is clicked.
   void add(String innerHtml, buttonClickedHndl hndl) {
-    if (this._elem == null) return;
-
     html.ButtonElement button = new html.ButtonElement()
-      ..style.whiteSpace = "nowrap"
+      ..style.whiteSpace = 'nowrap'
       ..innerHtml = innerHtml
       ..onClick.listen((_) => hndl());
 

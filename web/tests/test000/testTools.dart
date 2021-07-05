@@ -27,8 +27,8 @@ class TestBlock implements TestArgs {
   TestManager _man;
   html.DivElement _body;
   html.DivElement _title;
-  DateTime _start;
-  DateTime _end;
+  DateTime? _start;
+  DateTime? _end;
   TestHandler _test;
   String _testName;
   bool _skip;
@@ -37,20 +37,20 @@ class TestBlock implements TestArgs {
   bool _finished;
 
   /// Creates a new test block for the given test.
-  TestBlock(this._man, this._skip, this._test, this._testName) {
+  TestBlock(this._man, this._skip, this._test, this._testName):
     this._body = new html.DivElement()
-      ..className = "test_body body_hidden";
+      ..className = "test_body body_hidden",
     this._title = new html.DivElement()
-      ..className = "running top_header"
-      ..onClick.listen(this._titleClicked);
+      ..className = "running top_header",
+    this._start = null,
+    this._end = null,
+    this._started = false,
+    this._failed = false,
+    this._finished = false {
+    this._title.onClick.listen(this._titleClicked);
     this._man._elem.children
       ..add(this._title)
       ..add(this._body);
-    this._start = null;
-    this._end = null;
-    this._started = false;
-    this._failed = false;
-    this._finished = false;
     this._update();
   }
 
@@ -64,10 +64,11 @@ class TestBlock implements TestArgs {
   /// Updates the test header.
   void _update() {
     String time = "";
-    if (this._start != null) {
-      DateTime end = this._end;
+    var start = this._start;
+    if (start != null) {
+      DateTime? end = this._end;
       end ??= new DateTime.now();
-      time = ((end.difference(this._start).inMilliseconds)*0.001).toStringAsFixed(2);
+      time = ((end.difference(start).inMilliseconds)*0.001).toStringAsFixed(2);
       time ="(${time}s)";
     }
     if (this._skip) {
@@ -119,23 +120,21 @@ class TestBlock implements TestArgs {
     String log = this._man._escape.convert(text)
       .replaceAll(" ", "&nbsp;")
       .replaceAll("\n", "</dir><br class=\"$type\"><dir class=\"$type\">");
-    this._body.innerHtml += "<dir class=\"$type\">$log</dir>";
+    var html = this._body.innerHtml ?? '';
+    this._body.innerHtml = html + "<dir class=\"$type\">$log</dir>";
   }
 
   /// Prints text to the test's output console as an information.
-  void info(String text) {
+  void info(String text) =>
     this._addLog(text, "info_log");
-  }
 
   /// Prints text to the test's output console as a notice.
-  void notice(String text) {
+  void notice(String text) =>
     this._addLog(text, "notice_log");
-  }
 
   /// Prints text to the test's output console as a warning.
-  void warning(String text) {
+  void warning(String text) =>
     this._addLog(text, "warning_log");
-  }
 
   /// Prints text to the test's output console as an error.
   /// This will also mark this test as a failure.
@@ -204,9 +203,14 @@ class TestManager {
   String _prefix;
 
   /// Creates new test manager attached to the given element.
-  TestManager(this._elem) {
-    this._escape = new convert.HtmlEscape(convert.HtmlEscapeMode.element);
-    this._header = new html.DivElement();
+  TestManager(this._elem):
+    this._escape = new convert.HtmlEscape(convert.HtmlEscapeMode.element),
+    this._header = new html.DivElement(),
+    this._start  = new DateTime.now(),
+    this._tests  = [],
+    this._finished = 0,
+    this._failed   = 0,
+    this._prefix   = "" {
     this._elem.children.add(this._header);
     html.DivElement checkBoxes = new html.DivElement()
       ..className = "log_checkboxes";
@@ -215,11 +219,6 @@ class TestManager {
     this._createLogSwitch(checkBoxes, "Warning", "warning_log");
     this._createLogSwitch(checkBoxes, "Error", "error_log");
     this._elem.children.add(checkBoxes);
-    this._start = new DateTime.now();
-    this._tests = new List<TestBlock>();
-    this._finished = 0;
-    this._failed = 0;
-    this._prefix = "";
   }
 
   /// The filter to only let tests with the given prefix to be run.
@@ -234,7 +233,7 @@ class TestManager {
       ..checked = true;
     checkBox.onChange.listen((_) {
         html.ElementList<html.Element> myElements = html.document.querySelectorAll(".$type");
-        String display = checkBox.checked? "block": "none";
+        String display = (checkBox.checked ?? false) ? "block": "none";
         for (int i = 0; i < myElements.length; i++) {
             myElements[i].style.display = display;
         }

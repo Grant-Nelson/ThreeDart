@@ -3,21 +3,20 @@ part of ThreeDart.Techniques;
 /// A material light component for fog.
 class MaterialLightFogComponent {
   MaterialLight _owner;
-  Math.Color4 _clr;
+  Math.Color4? _clr;
   double _start;
   double _stop;
   bool _enabled;
 
   /// Creates a new fog component for the given [owner].
-  MaterialLightFogComponent._(this._owner) {
-    this._clr     = Math.Color4.transparent();
-    this._start   = 1.0;
-    this._stop    = 10.0;
+  MaterialLightFogComponent._(this._owner):
+    this._clr = Math.Color4.transparent(),
+    this._start = 1.0,
+    this._stop  = 10.0,
     this._enabled = false;
-  }
 
   /// Handles changes in the component.
-  void _onChanged([Events.EventArgs args = null]) =>
+  void _onChanged([Events.EventArgs? args = null]) =>
     this._owner._onChanged(args);
 
   /// Handles type changes to the component.
@@ -34,8 +33,8 @@ class MaterialLightFogComponent {
   }
 
   /// The color for the material component fog.
-  Math.Color4 get color => this._clr;
-  set color(Math.Color4 color) {
+  Math.Color4? get color => this._clr;
+  set color(Math.Color4? color) {
     color ??= Math.Color4.transparent();
     if (this._clr != color) {
       this.enabled = true;
@@ -47,7 +46,6 @@ class MaterialLightFogComponent {
   /// The maximum depth at which only the fog color would be drawn.
  double get start => this._start;
   set start(double start) {
-    start ??= 1.0;
     if (this._start != start) {
       this.enabled = true;
       this._start = start;
@@ -58,7 +56,6 @@ class MaterialLightFogComponent {
   /// The minimum depth at which the fog was not drawn.
   double get stop => this._stop;
   set stop(double stop) {
-    stop ??= 10.0;
     if (this._stop != stop) {
       this.enabled = true;
       this._stop = stop;

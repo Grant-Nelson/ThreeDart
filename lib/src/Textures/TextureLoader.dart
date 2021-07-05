@@ -9,21 +9,19 @@ class TextureLoader {
   int _loadedCount;
 
   /// Creates a new texture loader.
-  TextureLoader(this._gl) {
-    this._max2DSize = this._gl.getParameter(WebGL.WebGL.MAX_TEXTURE_SIZE);
-    this._maxCubeSize = this._gl.getParameter(WebGL.WebGL.MAX_CUBE_MAP_TEXTURE_SIZE);
-    this._imageCount = 0;
+  TextureLoader(WebGL.RenderingContext2 gl):
+    this._gl = gl,
+    this._max2DSize   = gl.getParameter(WebGL.WebGL.MAX_TEXTURE_SIZE) as int,
+    this._maxCubeSize = gl.getParameter(WebGL.WebGL.MAX_CUBE_MAP_TEXTURE_SIZE) as int,
+    this._imageCount  = 0,
     this._loadedCount = 0;
-  }
 
   /// The number of textures being loaded.
   int get loading => this._imageCount - this._loadedCount;
 
   /// The percentage of textures loaded.
-  double get percentage {
-    if (this._imageCount == 0) return 100.0;
-    return this._loadedCount*100.0/this._imageCount;
-  }
+  double get percentage =>
+    (this._imageCount == 0) ? 100.0 : this._loadedCount*100.0/this._imageCount;
 
   /// Resets the loading counters.
   void resetCounter() {
@@ -52,11 +50,11 @@ class TextureLoader {
     html.ImageElement image = new html.ImageElement(src: path);
     Texture2DSolid result = new Texture2DSolid(texture: texture);
     image.onLoad.listen((_) {
-      result._width  = image.width;
-      result._height = image.height;
+      result._width  = image.width ?? 512;
+      result._height = image.height ?? 512;
       dynamic data = this._resizeImage(image, this._max2DSize, nearest);
-      result._actualWidth  = image.width;
-      result._actualHeight = image.height;
+      result._actualWidth  = image.width ?? 512;
+      result._actualHeight = image.height ?? 512;
 
       this._gl.bindTexture(WebGL.WebGL.TEXTURE_2D, texture);
       this._gl.pixelStorei(WebGL.WebGL.UNPACK_FLIP_Y_WEBGL, flipY? 1: 0);
@@ -141,8 +139,8 @@ class TextureLoader {
   /// Resizes the given image to the maximum size proportional to the power of 2.
   dynamic _resizeImage(html.ImageElement image, int maxSize, bool nearest) {
     maxSize    = Math.nearestPower(maxSize);
-    int width  = Math.nearestPower(image.width);
-    int height = Math.nearestPower(image.height);
+    int width  = Math.nearestPower(image.width ?? 512);
+    int height = Math.nearestPower(image.height ?? 512);
     width  = math.min(width, maxSize);
     height = math.min(height, maxSize);
     if ((image.width == width) && (image.height == height)) {
@@ -152,20 +150,16 @@ class TextureLoader {
         ..width  = width
         ..height = height;
 
-      html.CanvasRenderingContext2D ctx = canvas.getContext('2d');
+      html.CanvasRenderingContext2D ctx = canvas.getContext('2d') as html.CanvasRenderingContext2D;
       ctx.imageSmoothingEnabled = nearest;
-      ctx.drawImageScaled(image, 0, 0, canvas.width, canvas.height);
-      return ctx.getImageData(0, 0, canvas.width, canvas.height);
+      ctx.drawImageScaled(image, 0, 0, canvas.width ?? 512, canvas.height ?? 512);
+      return ctx.getImageData(0, 0, canvas.width ?? 512, canvas.height ?? 512);
     }
   }
 
   /// Increments the loading count.
-  void _incLoading() {
-    this._imageCount++;
-  }
+  void _incLoading() => this._imageCount++;
 
   /// Decrement the loading count.
-  void _decLoading() {
-    this._loadedCount++;
-  }
+  void _decLoading() => this._loadedCount++;
 }

@@ -28,15 +28,15 @@ class SolidColor extends Shader {
       "   gl_FragColor = color; \n"+
       "}                        \n";
 
-  Attribute _posAttr;
-  Uniform4f _clr;
-  UniformMat4 _projViewObjMat;
+  Attribute? _posAttr = null;
+  Uniform4f? _clr = null;
+  UniformMat4? _projViewObjMat = null;
 
   /// Checks for the shader in the shader cache in the given [state],
   /// if it is not found then this shader is compiled and added
   /// to the shader cache before being returned.
   factory SolidColor.cached(Core.RenderState state) {
-    SolidColor shader = state.shader(defaultName);
+    SolidColor? shader = state.shader(defaultName) as SolidColor?;
     if (shader == null) {
       shader = new SolidColor(state.gl);
       state.addShader(shader);
@@ -53,13 +53,13 @@ class SolidColor extends Shader {
   }
 
   /// The position vertex shader attribute.
-  Attribute get posAttr => this._posAttr;
+  Attribute? get posAttr => this._posAttr;
 
   /// The color to draw the object with.
-  Math.Color4 get color => this._clr.getColor4();
-  set color(Math.Color4 clr) => this._clr.setColor4(clr);
+  Math.Color4 get color => this._clr?.getColor4() ?? Math.Color4.white();
+  set color(Math.Color4 clr) => this._clr?.setColor4(clr);
 
   /// The projection matrix times view matrix times the object matrix.
-  Math.Matrix4 get projViewObjectMatrix => this._projViewObjMat.getMatrix4();
-  set projViewObjectMatrix(Math.Matrix4 mat) => this._projViewObjMat.setMatrix4(mat);
+  Math.Matrix4 get projViewObjectMatrix => this._projViewObjMat?.getMatrix4() ?? Math.Matrix4.identity;
+  set projViewObjectMatrix(Math.Matrix4 mat) => this._projViewObjMat?.setMatrix4(mat);
 }

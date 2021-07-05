@@ -5,7 +5,7 @@ abstract class Interactable {
 
   /// Attaches this object onto the given [UserInput].
   /// Returns true if this object is attached, false otherwise.
-  bool attach(UserInput input);
+  bool attach(UserInput? input);
 
   /// Detaches this object from it's attached [UserInput].
   void detach();

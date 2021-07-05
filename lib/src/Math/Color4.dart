@@ -71,13 +71,12 @@ class Color4 {
   /// Constructs a new [Color4] instance given the hue, saturation, and value.
   ///
   /// [hue], [value], and [saturation] are from 0.0 to 1.0.
-  factory Color4.fromHVS(double hue, double value, double saturation, [double alpha = 1.0]) {
-  	return new Color4.fromColor3(new Color3.fromHVS(hue, value, saturation), alpha);
-  }
+  factory Color4.fromHVS(double hue, double value, double saturation, [double alpha = 1.0]) =>
+  	new Color4.fromColor3(new Color3.fromHVS(hue, value, saturation), alpha);
 
   /// Gets an list of 4 doubles in the order red, green, blue, then alpha.
   List<double> toList() =>
-      [this.red, this.green, this.blue, this.alpha];
+    [this.red, this.green, this.blue, this.alpha];
 
   /// Gets the value at the zero based index in the order red, green, blue, then alpha.
   /// If out-of-bounds, zero is returned.
@@ -148,11 +147,10 @@ class Color4 {
   bool operator ==(var other) {
     if (identical(this, other)) return true;
     if (other is! Color4) return false;
-    Color4 clr = other as Color4;
-    if (!Comparer.equals(clr.red,   this.red))   return false;
-    if (!Comparer.equals(clr.green, this.green)) return false;
-    if (!Comparer.equals(clr.blue,  this.blue))  return false;
-    if (!Comparer.equals(clr.alpha, this.alpha)) return false;
+    if (!Comparer.equals(other.red,   this.red))   return false;
+    if (!Comparer.equals(other.green, this.green)) return false;
+    if (!Comparer.equals(other.blue,  this.blue))  return false;
+    if (!Comparer.equals(other.alpha, this.alpha)) return false;
     return true;
   }
 

@@ -37,20 +37,42 @@ enum OperatingSystem {
 /// scenarios. This is designed to be used to adjust for problems in the environment
 /// which makes the code function differently.
 class Environment {
-  static _EnvironmentData _singleton = null;
+  static _EnvironmentData? _singleton = null;
   Environment._();
   
   /// Gets the lazy created singleton with the environment data.
-  static _EnvironmentData get _env {
+  static _EnvironmentData get _env =>
     _singleton ??= new _EnvironmentData();
-    return _singleton;
-  }
 
   /// Gets the browser that this code is running on.
   static Browser get browser => _env.browser;
 
   /// Gets the operating system that this code is running on.
   static OperatingSystem get os => _env.os;
+
+  /// This will call the first method in the given method names which exists on the given object.
+  /// Returns true if the method was called, false if none of those methods were found.
+  static bool callMethod(Object browserObject, List<String> methods, [List<Object>? args]) {
+    var jsElem = new js.JsObject.fromBrowserObject(browserObject);
+    for (String methodName in methods) {
+      if (jsElem.hasProperty(methodName)) {
+        jsElem.callMethod(methodName, args);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /// This will call the first property and return the value cast as given [T] type.
+  /// Returns null if methods were found.
+  static T? getProperty<T>(Object browserObject, List<String> properties) {
+    var jsElem = new js.JsObject.fromBrowserObject(browserObject);
+    for (String propertyName in properties) {
+      if (jsElem.hasProperty(propertyName))
+        return jsElem[propertyName] as T?;
+    }
+    return null;
+  }
 }
 
 /// This is storage for environment information.

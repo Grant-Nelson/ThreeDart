@@ -28,27 +28,27 @@ class TileValue {
   TileValue(int this.value);
 
   /// Constructs a value from a given color letter.
-  /// "W" for a white value, "B" for a black value, otherwise empty.
+  /// 'W' for a white value, 'B' for a black value, otherwise empty.
   factory TileValue.colorFromLetter(String value) {
     switch (value) {
-      case "W": return White;
-      case "B": return Black;
+      case 'W': return White;
+      case 'B': return Black;
       default:  return Empty;
     }
   }
 
   /// Constructs a value from a given piece kind letter.
-  /// "P" for a pawn value, "R" for a rook value, "H" for a knight value,
-  /// "B" for a bishop value, "Q" for a queen value, "K" for a king value,
+  /// 'P' for a pawn value, 'R' for a rook value, 'H' for a knight value,
+  /// 'B' for a bishop value, 'Q' for a queen value, 'K' for a king value,
   /// otherwise empty.
   factory TileValue.pieceFromLetter(String value) {
     switch (value) {
-      case "P": return Pawn;
-      case "R": return Rook;
-      case "H": return Knight;
-      case "B": return Bishop;
-      case "Q": return Queen;
-      case "K": return King;
+      case 'P': return Pawn;
+      case 'R': return Rook;
+      case 'H': return Knight;
+      case 'B': return Bishop;
+      case 'Q': return Queen;
+      case 'K': return King;
       default:  return Empty;
     }
   }
@@ -120,54 +120,54 @@ class TileValue {
   /// Indicates if these two tile values are equal.
   bool operator ==(dynamic other) {
     if (other is! TileValue) return false;
-    return this.value == (other as TileValue)?.value;
+    return this.value == other.value;
   }
 
   /// Gets the letter for the given color.
   String get colorLetter {
     TileValue color = this.color;
-    if (color == Black) return "B";
-    if (color == White) return "W";
-    return " ";
+    if (color == Black) return 'B';
+    if (color == White) return 'W';
+    return ' ';
   }
 
   /// Gets the letter for the piece kind.
   String get pieceLetter {
     TileValue piece = this.piece;
-    if (piece == Pawn)   return "P";
-    if (piece == Rook)   return "R";
-    if (piece == Knight) return "H";
-    if (piece == Bishop) return "B";
-    if (piece == Queen)  return "Q";
-    if (piece == King)   return "K";
-    return " ";
+    if (piece == Pawn)   return 'P';
+    if (piece == Rook)   return 'R';
+    if (piece == Knight) return 'H';
+    if (piece == Bishop) return 'B';
+    if (piece == Queen)  return 'Q';
+    if (piece == King)   return 'K';
+    return ' ';
   }
 
   /// Gets the letter for the number of the piece.
   String get numberLetter {
     TileValue count = this.count;
-    if (count.empty) return " ";
-    return "${count.value}";
+    if (count.empty) return ' ';
+    return '${count.value}';
   }
 
   /// Gets the long name of this piece kind.
   String get pieceName {
     TileValue piece = this.piece;
-    if (piece == Pawn)   return "Pawn";
-    if (piece == Rook)   return "Rook";
-    if (piece == Knight) return "Knight";
-    if (piece == Bishop) return "Bishop";
-    if (piece == Queen)  return "Queen";
-    if (piece == King)   return "King";
-    return "Empty";
+    if (piece == Pawn)   return 'Pawn';
+    if (piece == Rook)   return 'Rook';
+    if (piece == Knight) return 'Knight';
+    if (piece == Bishop) return 'Bishop';
+    if (piece == Queen)  return 'Queen';
+    if (piece == King)   return 'King';
+    return 'Empty';
   }
 
   /// Gets the short name for this whole value.
   @override
   String toString({bool showMoved: true, bool showCount: true}) {
-    if (this.empty) return "";
-    String result = "";
-    if (showMoved) result += this.moved? "+": " ";
+    if (this.empty) return '';
+    String result = '';
+    if (showMoved) result += this.moved? '+': ' ';
     result += this.colorLetter;
     result += this.pieceLetter;
     if (showCount) result += this.numberLetter;

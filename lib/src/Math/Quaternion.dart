@@ -4,11 +4,9 @@ part of ThreeDart.Math;
 class Quaternion {
 
   /// Gets a [Quaternion] at the origin.
-  static Quaternion get zero {
+  static Quaternion get zero =>
     _zeroSingleton ??= new Quaternion(0.0, 0.0, 0.0, 0.0);
-    return _zeroSingleton;
-  }
-  static Quaternion _zeroSingleton;
+  static Quaternion? _zeroSingleton;
 
   /// The imaginary 'i' scalar of the quaternion.
   final double a;
@@ -159,11 +157,10 @@ class Quaternion {
   bool operator ==(var other) {
     if (identical(this, other)) return true;
     if (other is! Quaternion) return false;
-    Quaternion quad = other as Quaternion;
-    if (!Comparer.equals(quad.a, this.a)) return false;
-    if (!Comparer.equals(quad.b, this.b)) return false;
-    if (!Comparer.equals(quad.c, this.c)) return false;
-    if (!Comparer.equals(quad.t, this.t)) return false;
+    if (!Comparer.equals(other.a, this.a)) return false;
+    if (!Comparer.equals(other.b, this.b)) return false;
+    if (!Comparer.equals(other.c, this.c)) return false;
+    if (!Comparer.equals(other.t, this.t)) return false;
     return true;
   }
 

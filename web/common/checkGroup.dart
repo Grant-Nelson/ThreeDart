@@ -16,24 +16,24 @@ class CheckGroup {
   html.Element _elem;
 
   /// The list of checkbox elements;
-  List<html.CheckboxInputElement> _checks;
+  List<html.CheckboxInputElement> _checks = [];
 
+  /// Creates a new check box group in the element.
+  CheckGroup._(this._elemId, this._keepInURL, this._elem);
+  
   /// Creates a new check box group in the element with the given [elemId] name.
-  CheckGroup(this._elemId, [this._keepInURL = true]) {
-    this._elem = html.document.getElementById(this._elemId);
-    if (this._elem == null) {
-      throw "Failed to find $_elemId for CheckGroup";
-    }
-    this._checks = new List<html.CheckboxInputElement>();
+  factory CheckGroup(String elemId, [bool keepInURL = true]) {
+    html.Element? elem = html.document.getElementById(elemId);
+    if (elem == null)
+      throw new Exception('Failed to find $elemId for CheckGroup');
+    return new CheckGroup._(elemId, keepInURL, elem);
   }
 
   /// Adds a new check box to this group and the method to call when the check box is changed.
   void add(String text, checkSelectedHndl hndl, [bool checkedByDefault = false]) {
-    if (this._elem == null) return;
-
     bool urlNeedsUpdate = false;
     final int index = this._checks.length;
-    String selectedItems = Uri.base.queryParameters[this._elemId];
+    String? selectedItems = Uri.base.queryParameters[this._elemId];
     bool itemIsChecked;
     if ((selectedItems == null) || (selectedItems.length <= index)) {
       itemIsChecked = checkedByDefault;
@@ -45,14 +45,15 @@ class CheckGroup {
     hndl(itemIsChecked);
 
     html.LabelElement label = new html.LabelElement()
-      ..style.whiteSpace = "nowrap";
+      ..style.whiteSpace = 'nowrap';
     this._elem.children.add(label);
 
     html.CheckboxInputElement checkBox = new html.CheckboxInputElement()
       ..checked = itemIsChecked;
     checkBox.onChange.listen((_) {
-        hndl(checkBox.checked);
-        this._updateUrl(index, checkBox.checked);
+        var checked = checkBox.checked ?? false;
+        hndl(checked);
+        this._updateUrl(index, checked);
       });
     label.children.add(checkBox);
 
@@ -70,13 +71,13 @@ class CheckGroup {
   void _updateUrl(int index, bool checked) {
     if (!this._keepInURL) return;
 
-    String selectedItems = Uri.base.queryParameters[this._elemId] ?? "";
+    String selectedItems = Uri.base.queryParameters[this._elemId] ?? '';
     if (selectedItems.length < index)
-      selectedItems = selectedItems.padRight(index - selectedItems.length + 1, "0");
+      selectedItems = selectedItems.padRight(index - selectedItems.length + 1, '0');
 
-    String result = "";
+    String result = '';
     if (index > 0) result += selectedItems.substring(0, index);
-    result += (checked? "1": "0");
+    result += (checked? '1': '0');
     if (index + 1 < selectedItems.length) result += selectedItems.substring(index+1);
 
     Uri current = Uri.base;
