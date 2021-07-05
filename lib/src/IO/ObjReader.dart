@@ -217,8 +217,8 @@ class _objReader {
       }
     }
 
-    // TODO: Update once the Oct-tree is implements. Until the Oct-tree is implemented
-    //       lookup vertex group by index in the list. This may cause repeat vertices.
+    // TODO [Issue #44]: Update once the Oct-tree is implements. Until the Oct-tree is
+    // implemented lookup vertex group by index in the list. This may cause repeat vertices.
     _objVertex vertGroup = this._posList[posIndex];
     for (Shapes.Vertex vertex in vertGroup.verts) {
       if ((vertex.texture2D == txt2D) && (vertex.normal == norm)) {

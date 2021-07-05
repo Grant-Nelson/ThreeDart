@@ -1,47 +1,34 @@
 part of ThreeDart.Shapes;
 
 /// A collection of vertices for the shapes.
-class VertexCollection {
-  Shape _shape;
-  bool _indicesNeedUpdate;
-  List<Vertex> _vertices;
+class ShapeVertexCollection {
+  final Shape _shape;
 
   /// Creates a new vertex collection of a shape.
-  VertexCollection._(Shape this._shape) {
-    this._indicesNeedUpdate = false;
-    this._vertices = new List<Vertex>();
-  }
+  ShapeVertexCollection._(Shape this._shape);
 
   /// Updates the indices of all vertices.
+  /// This is only run when the indices need to be run.
   void _updateIndices() {
-    if (this._indicesNeedUpdate) {
+    if (this._shape._vertexIndicesNeedUpdate) {
       int index = 0;
-      int count = this._vertices.length;
-      for(int i = 0; i < count; ++i) {
-        Vertex ver = this._vertices[i];
-        if (ver == null) {
-          this._vertices.removeAt(i);
-          --count;
-        } else {
-          ver._index = index;
-          ++index;
-        }
+      for (Vertex vertex in this.iterable) {
+        vertex._index = index;
+        ++index;
       }
-      this._indicesNeedUpdate = false;
+      this._shape._vertexIndicesNeedUpdate = false;
     }
   }
 
   /// Adds a new [vertex] to this collection.
-  /// True if it was added, false otherwise.
+  /// True if it was added, false if already in this shape.
   bool add(Vertex vertex) {
     if (vertex.shape != null) {
-      if (vertex.shape == this._shape) return false;
+      if (identical(vertex.shape, this._shape)) return false;
       throw new Exception("May not add a vertex already attached to another shape to this shape.");
     }
-    vertex._index = this._vertices.length;
-    vertex._shape = this._shape;
-    this._vertices.add(vertex);
-    this._shape.onVertexAdded(vertex);
+    if (vertex.shape != null) vertex.shape.vertices.remove(vertex);
+    this._shape._data._addVertex(vertex);
     return true;
   }
 
@@ -69,46 +56,31 @@ class VertexCollection {
   }
 
   /// Determines if the collection has any vertices in it.
-  bool get isEmpty => this._vertices.isEmpty;
+  bool get isEmpty => this.length <= 0;
 
   /// Determines the number of vertices in the collection.
-  int get length => this._vertices.length;
+  int get length => this._shape._data._vertexCount;
 
-  /// Gets the vertex at the given [index].
-  Vertex operator[](int index) => this._vertices[index];
+  /// Gets an iterable which steps through all of the vertices in the collection.
+  Iterable<Vertex> get iterable =>
+    this._shape._data._vertexIteratable;
 
-  /// Gets the index of the [vertex], or -1 if not found.
-  int indexOf(Vertex vertex) => this._vertices.indexOf(vertex);
-
-  /// Runs the given function handler for every vertex in the shape.
-  void forEach(void funcHndl(Vertex vertex)) => this._vertices.forEach(funcHndl);
-
-  /// Removes the vertex with at the given index.
-  /// The removed vertex is disposed and returned or null if none removed.
-  Vertex removeAt(int index) {
-    Vertex vertex = this._vertices[index];
-    if (vertex != null) {
-      if (!vertex.isEmpty)
-        throw new Exception("May not remove a vertex without first making it empty.");
-      vertex._shape = null;
-    }
-    this._vertices.removeAt(index);
-    this._shape.onVertexRemoved(vertex);
-    this._indicesNeedUpdate = true;
-    return vertex;
-  }
+  /// Gets an iterable which steps through all of the vertices in the given region.
+  Iterable<Vertex> iterableInRegion(Math.Region3 region) =>
+    this._shape._data._vertexIterableInRegion(region);
 
   /// Removes the given [vertex].
   /// Returns true if vertex was removed, false otherwise.
   bool remove(Vertex vertex) {
     if (vertex == null) return false;
-    if (vertex._shape != this._shape) return false;
+    if (vertex.shape != this._shape) return false;
     if (!vertex.isEmpty)
       throw new Exception("May not remove a vertex without first making it empty.");
-    vertex._shape = null;
-    this._vertices.remove(vertex);
+
+    this._shape._data._removeVertex(vertex);
+
     this._shape.onVertexRemoved(vertex);
-    this._indicesNeedUpdate = true;
+    this._shape._vertexIndicesNeedUpdate = true;
     return true;
   }
 
@@ -116,7 +88,7 @@ class VertexCollection {
   /// Returns true if faces' normals are calculated, false on error.
   bool calculateNormals() {
     bool success = true;
-    for (Vertex vertex in this._vertices) {
+    for (Vertex vertex in this.iterable) {
       if (!vertex.calculateNormal()) success = false;
     }
     return success;
@@ -126,7 +98,7 @@ class VertexCollection {
   /// Returns true if vertices' binormals are calculated, false on error.
   bool calculateBinormals() {
     bool success = true;
-    for (Vertex vertex in this._vertices) {
+    for (Vertex vertex in this.iterable) {
       if (!vertex.calculateBinormal()) success = false;
     }
     return success;
@@ -135,16 +107,18 @@ class VertexCollection {
   /// Calculates the cube texture coordinate for the vertices and faces.
   /// True if successful, false on error.
   bool calculateCubeTextures() {
-    for (Vertex vertex in this._vertices) {
+    for (Vertex vertex in this.iterable) {
       if (vertex.textureCube == null) {
         vertex.textureCube = vertex.normal.normal();
       }
     }
     return true;
   }
-
-  /// Gets a copy of the vertices as a list.
-  List<Vertex> copyToList() => this._vertices.toList();
+  
+  /// Gets all the vertices into a list. This is slightly faster than
+  /// using the iterator because we already know the number of vertices.
+  List<Vertex> toList({bool growable: true}) =>
+    this._shape._data._toVertexList(growable);
 
   /// Gets to string for all the vertices.
   String toString() => this.format();
@@ -153,7 +127,7 @@ class VertexCollection {
   String format([String indent = ""]) {
     this._updateIndices();
     List<String> parts = new List<String>();
-    for (Vertex vertex in this._vertices) {
+    for (Vertex vertex in this.iterable) {
       parts.add(vertex.format(indent));
     }
     return parts.join('\n');

@@ -53,6 +53,9 @@ void main() {
     ..add("TexturesCube",    (bool show) { tech.showTxtCube        = show; })
     ..add("Weight",          (bool show) { tech.showWeight         = show; })
     ..add("Bend",            (bool show) { tech.showBend           = show; })
+    ..add("Octree Branches", (bool show) { tech.showOctreeBranch   = show; })
+    ..add("Octree Leaves",   (bool show) { tech.showOctreeLeaf     = show; })
+    ..add("Octree Passes",   (bool show) { tech.showOctreePass     = show; })
     ..add("Axis",            (bool show) { tech.showAxis           = show; }, true)
     ..add("AABB",            (bool show) { tech.showAABB           = show; });
 
@@ -79,10 +82,10 @@ void main() {
     ..add("Cone",          () { setShape(Shapes.cylinder(topRadius: 0.0, sides: 12, capTop: false)); })
     ..add("Cylindrical",   () { setShape(Shapes.cylindrical(sides: 50, div: 25,
                                 radiusHndl: (double u, double v) => cos(v*4.0*Math.PI + Math.PI)*0.2 + cos(u*6.0*Math.PI)*0.3 + 0.8)); })
-    ..add("LatLonSphere",  () { setShape(Shapes.latLonSphere(10, 20)); })
-    ..add("LatLonSphere+", () { setShape(Shapes.latLonSphere(20, 40)); })
-    ..add("IsoSphere",     () { setShape(Shapes.isosphere(2)); })
-    ..add("IsoSphere+",    () { setShape(Shapes.isosphere(3)); })
+    ..add("LatLonSphere",  () { setShape(Shapes.latLonSphere(latitudeDiv: 10, longitudeDiv: 20)); })
+    ..add("LatLonSphere+", () { setShape(Shapes.latLonSphere(latitudeDiv: 20, longitudeDiv: 40)); })
+    ..add("IsoSphere",     () { setShape(Shapes.isosphere(iterations: 2)); })
+    ..add("IsoSphere+",    () { setShape(Shapes.isosphere(iterations: 3)); })
     ..add("Sphere",        () { setShape(Shapes.sphere(widthDiv: 6, heightDiv: 6)); })
     ..add("Sphere+",       () { setShape(Shapes.sphere(widthDiv: 10, heightDiv: 10)); })
     ..add("Spherical",     () { setShape(Shapes.sphere(widthDiv: 10, heightDiv: 10,

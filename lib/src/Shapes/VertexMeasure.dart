@@ -75,10 +75,8 @@ class DirectionalVertexMeasure extends VertexMeasure {
 
   /// Determines the distance from the center point of the given vertex
   /// projected on the vector.
-  double measure(Vertex ver) {
-    Math.Vector3 diff = new Math.Vector3.fromPoint3(ver.location - this._center);
-    return this._vector.dot(diff)*this._idist2;
-  }
+  double measure(Vertex ver) =>
+    this._vector.dot(this._center.vectorTo(ver.location))*this._idist2;
 }
 
 /// An exponential measurement adjustment.

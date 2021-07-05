@@ -42,8 +42,7 @@ class _objWriter {
     final int vertexCount = shape.vertices.length;
     if (this._normals) shape.calculateNormals();
     if (this._texture && this._txtCube) shape.calculateCubeTextures();
-    for (int i = 0; i < vertexCount; i++) {
-      Shapes.Vertex vertex = shape.vertices[i];
+    for (Shapes.Vertex vertex in shape.vertices.iterable) {
       this._lines.add("v "+this._toStr(vertex.location.x)+" "+this._toStr(vertex.location.y)+" "+this._toStr(vertex.location.z));
       if (this._texture) {
         if (this._txtCube)
@@ -54,9 +53,7 @@ class _objWriter {
     }
     this._totalVertices += vertexCount;
 
-    final int faceCount = shape.faces.length;
-    for (int i = 0; i < faceCount; i++) {
-      Shapes.Face face = shape.faces[i];
+    for (Shapes.Face face in shape.faces.iterable) {
       int v1 = face.vertex1.index + offset;
       int v2 = face.vertex2.index + offset;
       int v3 = face.vertex3.index + offset;

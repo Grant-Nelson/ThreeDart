@@ -209,6 +209,9 @@ class UserRotator implements Mover, Input.Interactable {
       this._yaw.velocity   = -this._prevVal.dx*10.0*this._yawScalar;
       this._pitch.velocity = -this._prevVal.dy*10.0*this._pitchScalar;
     } else {
+      // TODO: Fix when looking down and up you can hit the bottom of the pitch
+      //       then have to go up further to get unstuck from the edge.
+
       Math.Vector2 off = this._getInverses(margs.adjustedOffset);
       this._yaw.location   = -off.dx*this._yawScalar + this._lastYaw;
       this._pitch.location = -off.dy*this._pitchScalar + this._lastPitch;

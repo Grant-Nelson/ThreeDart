@@ -2,11 +2,17 @@ part of ThreeDart.Shapes;
 
 /// A vertex of a shape with all of the renderable elements it is used.
 class Vertex {
+  LeafNode _leaf;
   Shape _shape;
 
-  VertexPointCollection _points;
-  VertexLineCollection _lines;
-  VertexFaceCollection _faces;
+  List<Point> _points;
+
+  List<Line> _lines1;
+  List<Line> _lines2;
+
+  List<Face> _faces1;
+  List<Face> _faces2;
+  List<Face> _faces3;
 
   int _index;
   Math.Point3 _loc;
@@ -23,10 +29,13 @@ class Vertex {
           Math.Point3 loc: null, Math.Vector3 norm: null, Math.Vector3 binm: null,
           Math.Point2 txt2D: null, Math.Vector3 txtCube: null, Math.Color4 clr: null,
           double weight: 0.0, Math.Point4 bending: null}) {
-    this._shape  = null;
-    this._points = new VertexPointCollection._(this);
-    this._lines  = new VertexLineCollection._(this);
-    this._faces  = new VertexFaceCollection._(this);
+    this._leaf   = null;
+    this._points = new List<Point>();
+    this._lines1 = new List<Line>();
+    this._lines2 = new List<Line>();
+    this._faces1 = new List<Face>();
+    this._faces2 = new List<Face>();
+    this._faces3 = new List<Face>();
     type ??= Data.VertexType.All;
 
     this._index   = 0;
@@ -67,34 +76,38 @@ class Vertex {
     if (!type.has(Data.VertexType.Bending)) this._bending = null;
   }
 
+  /// The leaf node this vertex belongs to.
+  /// Will return null if shape isn't using an octree.
+  LeafNode get leafNode => this._leaf;
+
   /// The shape the vertex belongs to.
   Shape get shape => this._shape;
 
   /// The points which use this vertex.
-  VertexPointCollection get points => this._points;
+  VertexPointCollection get points => new VertexPointCollection._(this);
 
   /// The lines which use this vertex.
-  VertexLineCollection get lines => this._lines;
+  VertexLineCollection get lines => new VertexLineCollection._(this);
 
   /// The faces which use this vertex.
-  VertexFaceCollection get faces => this._faces;
+  VertexFaceCollection get faces => new VertexFaceCollection._(this);
 
   /// The index of this vertex in the shape.
   int get index {
-    this._shape._vertices._updateIndices();
+    this.shape?.vertices?._updateIndices();
     return this._index;
   }
 
   /// Indicates if this vertex has any attached renderable elements, true if not.
-  bool get isEmpty => this._points.isEmpty && this._lines.isEmpty && this._faces.isEmpty;
+  bool get isEmpty => this.points.isEmpty && this.lines.isEmpty && this.faces.isEmpty;
 
   /// The 3D location of the vertex.
   Math.Point3 get location => this._loc;
   set location(Math.Point3 loc) {
     if (this._loc != loc) {
       this._loc = loc;
-      if (this._shape != null)
-        this._shape.onVertexModified(this);
+      this._shape?.octree?._updateVertexLocation(this);
+      this._shape?.onVertexModified(this);
     }
   }
 
@@ -104,8 +117,7 @@ class Vertex {
     norm = norm?.normal();
     if (this._norm != norm) {
       this._norm = norm;
-      if (this._shape != null)
-        this._shape.onVertexModified(this);
+      this._shape?.onVertexModified(this);
     }
   }
 
@@ -115,8 +127,7 @@ class Vertex {
     binm = binm?.normal();
     if (this._binm != binm) {
       this._binm = binm;
-      if (this._shape != null)
-        this._shape.onVertexModified(this);
+      this._shape?.onVertexModified(this);
     }
   }
 
@@ -125,8 +136,7 @@ class Vertex {
   set texture2D(Math.Point2 txt2D) {
     if (this._txt2D != txt2D) {
       this._txt2D = txt2D;
-      if (this._shape != null)
-        this._shape.onVertexModified(this);
+      this._shape?.onVertexModified(this);
     }
   }
 
@@ -135,8 +145,7 @@ class Vertex {
   set textureCube(Math.Vector3 txtCube) {
     if (this._txtCube != txtCube) {
       this._txtCube = txtCube;
-      if (this._shape != null)
-        this._shape.onVertexModified(this);
+      this._shape?.onVertexModified(this);
     }
   }
 
@@ -145,8 +154,7 @@ class Vertex {
   set color(Math.Color4 clr) {
     if (this._clr != clr) {
       this._clr = clr;
-      if (this._shape != null)
-        this._shape.onVertexModified(this);
+      this._shape?.onVertexModified(this);
     }
   }
 
@@ -155,8 +163,7 @@ class Vertex {
   set weight(double weight) {
     if (this._weight != weight) {
       this._weight = weight;
-      if (this._shape != null)
-        this._shape.onVertexModified(this);
+      this._shape?.onVertexModified(this);
     }
   }
 
@@ -165,8 +172,7 @@ class Vertex {
   set bending(Math.Point4 bending) {
     if (this._bending != bending) {
       this._bending = bending;
-      if (this._shape != null)
-        this._shape.onVertexModified(this);
+      this._shape?.onVertexModified(this);
     }
   }
 
@@ -206,17 +212,15 @@ class Vertex {
   /// set then this will have no effect.
   bool calculateNormal() {
     if (this._norm != null) return true;
-    if (this._shape != null) this._shape._changed?.suspend();
+    this._shape?._changed?.suspend();
     Math.Vector3 normSum = Math.Vector3.zero;
-    this._faces.forEach((Face face) {
+    for (Face face in this.faces.iterable) {
       Math.Vector3 norm = face?.normal;
       if (norm != null) normSum += norm;
-    });
-    this._norm = normSum.normal();
-    if (this._shape != null) {
-      this._shape.onVertexModified(this);
-      this._shape._changed?.resume();
     }
+    this._norm = normSum.normal();
+    this._shape?.onVertexModified(this);
+    this._shape?._changed?.resume();
     return true;
   }
 
@@ -225,26 +229,24 @@ class Vertex {
   /// set then this will have no effect.
   bool calculateBinormal() {
     if (this._binm != null) return true;
-    if (this._shape != null) this._shape._changed?.suspend();
+    this._shape?._changed?.suspend();
     Math.Vector3 binmSum = Math.Vector3.zero;
-    this._faces.forEach((Face face) {
+    for (Face face in this.faces.iterable) {
       Math.Vector3 binm = face?.binormal;
       if(binm != null) binmSum += binm;
-    });
-    this._binm = binmSum.normal();
-    if (this._shape != null) {
-      this._shape.onVertexModified(this);
-      this._shape._changed?.resume();
     }
+    this._binm = binmSum.normal();
+    this._shape?.onVertexModified(this);
+    this._shape?._changed?.resume();
     return true;
   }
 
   /// Finds the first line which starts at this vertex
   /// and ends at the given [ver].
   Line firstLineTo(Vertex ver) {
-    final int count = this._lines.length1;
+    final int count = this._lines1.length;
     for (int i = 0; i < count; ++i) {
-      Line line = this._lines.at1(i);
+      Line line = this._lines1[i];
       if (line.vertex2.index == ver.index) return line;
     }
     return null;

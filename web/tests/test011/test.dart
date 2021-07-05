@@ -50,8 +50,8 @@ void main() {
     ..add("Cuboid",       () { obj.shape = Shapes.cuboid(); })
     ..add("Cylinder",     () { obj.shape = Shapes.cylinder(sides: 40); })
     ..add("Cone",         () { obj.shape = Shapes.cylinder(topRadius: 0.0, sides: 40, capTop: false); })
-    ..add("LatLonSphere", () { obj.shape = Shapes.latLonSphere(10, 20); })
-    ..add("IsoSphere",    () { obj.shape = Shapes.isosphere(2); })
+    ..add("LatLonSphere", () { obj.shape = Shapes.latLonSphere(latitudeDiv: 10, longitudeDiv: 20); })
+    ..add("IsoSphere",    () { obj.shape = Shapes.isosphere(iterations: 2); })
     ..add("Sphere",       () { obj.shape = Shapes.sphere(widthDiv: 6, heightDiv: 6); }, true )
     ..add("Toroid",       () { obj.shape = Shapes.toroid(); })
     ..add("Knot",         () { obj.shape = Shapes.knot(); });

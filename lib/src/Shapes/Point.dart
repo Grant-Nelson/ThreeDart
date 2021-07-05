@@ -11,29 +11,29 @@ class Point {
     if (ver.shape == null)
       throw new Exception("May not create a point with a vertex which is not attached to a shape.");
     this._setVertex(ver);
-    this._ver._shape._points._points.add(this);
-    this._ver._shape.onPointAdded(this);
+    this._ver?.shape?.onPointAdded(this);
   }
 
   /// Disposes this point.
   void dispose() {
     if (!this.disposed) {
-      this._ver._shape._points._points.remove(this);
-      this._ver._shape.onPointRemoved(this);
+      this._ver.shape?.onPointRemoved(this);
+      this._removeVertex();
     }
-    this._removeVertex();
   }
 
   /// Sets the vertex to the given value.
   void _setVertex(Vertex ver) {
     this._ver = ver;
-    this._ver._points._points.add(this);
+    this._ver._points.add(this);
+    this._ver.shape?._data?._addPoint(this);
   }
 
   /// Removes the vertex.
   void _removeVertex() {
     if (this._ver != null) {
-      this._ver._points._points.remove(this);
+      this._ver.shape?._data?._removePoint(this);
+      this._ver._points.remove(this);
       this._ver = null;
     }
   }
@@ -60,7 +60,7 @@ class Point {
       ++result;
     }
     if (result > 0)
-      this._ver._shape.onPointModified(this);
+      this._ver.shape?.onPointModified(this);
     return result;
   }
 
@@ -83,7 +83,7 @@ class Point {
   /// Gets the formatted string for this point.
   /// The [indent] is added to the front when provided.
   String format([String indent = ""]) {
-    if (this.disposed) return "${indent}disposed";
-    return "${indent}${Math.formatInt(this._ver._index)}";
+    if (this.disposed) return indent + "disposed";
+    return indent + Math.formatInt(this._ver._index);
   }
 }

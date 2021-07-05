@@ -81,7 +81,7 @@ void main() {
   new common.RadioGroup("shapes")
     ..add("Cuboid",       () { setShape(Shapes.cuboid(widthDiv: 50, heightDiv: 50)); })
     ..add("Cylinder",     () { setShape(Shapes.cylinder(sides: 80, div: 80, capTop: false, capBottom: false)); })
-    ..add("LatLonSphere", () { setShape(Shapes.latLonSphere(80, 80)); })
+    ..add("LatLonSphere", () { setShape(Shapes.latLonSphere(latitudeDiv: 80, longitudeDiv: 80)); })
     ..add("Sphere",       () { setShape(Shapes.sphere(widthDiv: 50, heightDiv: 50)); })
     ..add("Toroid",       () { setShape(Shapes.toroid(minorCount: 50, majorCount: 50)); })
     ..add("Grid Small",   () { setShape(Shapes.grid(widthDiv: 50, heightDiv: 50)); })

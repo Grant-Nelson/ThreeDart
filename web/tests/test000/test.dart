@@ -29,6 +29,8 @@ part 'matrix3.dart';
 part 'matrix4.dart';
 part 'region2.dart';
 part 'region3.dart';
+part 'shape.dart';
+part 'shapePath.dart';
 part 'technique.dart';
 part 'vertexType.dart';
 
@@ -43,6 +45,8 @@ void main() {
   addMatrix4Tests(tests);
   addRegion2Tests(tests);
   addRegion3Tests(tests);
+  addShapeTests(tests);
+  addShapePathTests(tests);
   addCollisionTests(tests);
   addTechniqueTests(tests);
   addCraftTests(tests);

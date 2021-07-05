@@ -2,7 +2,7 @@ part of ThreeDart.test.test000;
 
 void addTechniqueTests(TestManager tests) {
 
-  tests.add("Matrix4 Point Transposition Test", (TestArgs args) {
+  tests.add("Technique Point Transposition Test", (TestArgs args) {
     testTechnique(args,
       Math.Matrix4.identity,
       new Math.Matrix4.translate(0.0, 0.0, -5.0),
@@ -73,13 +73,27 @@ void testTechnique(TestArgs args, Math.Matrix4 objMat, Math.Matrix4 camMat, List
     args.fail();
   } else {
     for (int i = 0; i < tech.results.length; i++) {
-      Math.Point3 expPnt = pairs[i].outPoint;
       Math.Point3 result = tech.results[i];
-      if (expPnt != result) {
-        args.error("Unexpected result from debugging technique at $i: " +
-          "\n   Expected: $expPnt" +
-          "\n   Gotten:   ${result.x}, ${result.y}, ${result.z}\n\n");
+      bool found = false;
+      for (int j = 0; j < pairs.length; j++) {
+        Math.Point3 expPnt = pairs[j].outPoint;
+        if (expPnt == result) {
+          found = true;
+          pairs.removeAt(j);
+          break;
+        }
       }
+      if (!found) {
+        args.error("Unable to find result $i in expected results: ${result.x}, ${result.y}, ${result.z}\n\n");
+      }
+    }
+    if (pairs.isNotEmpty) {
+      String expStr = "";
+      for (int i = 0; i < pairs.length; i++) {
+        expStr += "\n   " + pairs[i].outPoint.format(1, 3);
+      }
+      args.error("Expected results which were not found: " +
+        "\n   Expected: $expStr\n\n");
     }
   }
 }
