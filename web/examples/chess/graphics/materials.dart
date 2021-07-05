@@ -202,7 +202,6 @@ class Materials {
     });
   List<Techniques.MaterialLight>? _edgeTechs = null;
 
-
   Techniques.MaterialLight get tableTech =>
     this._tableTech ??= () {
       var tableColor = this._td.textureLoader.load2DFromFile('resources/tableColor.png');

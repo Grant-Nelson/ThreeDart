@@ -69,7 +69,7 @@ class Environment {
     var jsElem = new js.JsObject.fromBrowserObject(browserObject);
     for (String propertyName in properties) {
       if (jsElem.hasProperty(propertyName))
-        return jsElem[propertyName] as T;
+        return jsElem[propertyName] as T?;
     }
     return null;
   }

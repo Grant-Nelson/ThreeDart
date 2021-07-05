@@ -234,6 +234,17 @@ class ThreeDart implements Events.Changeable {
     }
   }
 
+  /// Determines if this page can be fullscreened or not.
+  bool get fullscreenAvailable {
+    //return html.document.fullscreenEnabled ?? false;
+    return Environment.getProperty<bool>(html.document, [
+      'webkitFullscreenEnabled',
+      'mozFullScreenEnabled',
+      'msFullscreenEnabled',
+      'oFullscreenEnabled',
+      'fullscreenEnabled']) ?? false;
+  }
+
   /// Gets or sets if the ThreeDart cancas is full screen or not.
   /// Note: This should be called within a user interaction with the pages since
   ///       some browsers will deny full screen any other time.
@@ -244,31 +255,30 @@ class ThreeDart implements Events.Changeable {
   /// and "Uncaught TypeError: this.webkitExitFullscreen is undefined"
   /// This fix si from https://stackoverflow.com/a/29751708
   bool get fullscreen {
-    //return html.document.fullscreenEnabled ?? false;
-    return Environment.getProperty<bool>(html.document, [
-      'fullscreenEnabled',
-      'webkitFullscreenEnabled',
-      'mozFullScreenEnabled',
-      'msFullscreenEnabled',
-      'oFullscreenEnabled']) ?? false;
+    return Environment.getProperty<Object>(html.document, [
+      'webkitFullscreenElement',
+      'mozFullScreenElement',
+      'msFullscreenElement',
+      'oFullscreenElement',
+      'fullscreenElement']) != null;
   }
   set fullscreen(bool enable) {
     if (enable) {
       //this._canvas.requestFullscreen();
       Environment.callMethod(this._canvas, [
-        'requestFullscreen',
         'webkitRequestFullscreen',
         'mozRequestFullScreen',
         'msRequestFullscreen',
-        'oRequestFullscreen']);
+        'oRequestFullscreen',
+        'requestFullscreen']);
     } else {
       // html.document.exitFullscreen();
       Environment.callMethod(html.document, [
-        'exitFullscreen',
         'webkitExitFullscreen',
         'mozCancelFullScreen',
         'msExitFullscreen',
-        'oExitFullscreen']);
+        'oExitFullscreen',
+        'exitFullscreen']);
     }
   }
 

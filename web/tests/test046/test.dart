@@ -19,7 +19,7 @@ void main() {
     ..addLargeCanvas("testCanvas")
     ..addControlBoxes(["buttons"])
     ..addPar(["Test of the fullscreen function of the ThreeDart. ",
-              "Use the button and press escape to exit ",
+              "Use the above button and press escape to exit ",
               "or use the spacebar to toggle fullscreen."])
     ..addPar(["«[Back to Tests|../]"]);
 
@@ -75,11 +75,8 @@ void main() {
   elem?.children.add(button);
 
   td.userInput.key.up.add((args) {
-    if (args is Input.KeyEventArgs && args.key.code == Input.Key.spacebar) {
-      bool fs = td.fullscreen;
-      print(">> fs = $fs");
-      td.fullscreen = !fs;
-    }
+    if (args is Input.KeyEventArgs && args.key.code == Input.Key.spacebar)
+      td.fullscreen = !td.fullscreen;
   });
 
   common.showFPS(td);

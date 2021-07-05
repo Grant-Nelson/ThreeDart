@@ -65,7 +65,7 @@ class Board extends ThreeDart.Entity {
 
     ThreeDart.Entity table = this._table = new ThreeDart.Entity(
       shape: Shapes.disk(sides: 30),
-      tech: this._mats._tableTech,
+      tech: this._mats.tableTech,
       mover: new Movers.Constant(
         new Math.Matrix4.translate(0.0, -0.5, 0.0)*
         new Math.Matrix4.rotateX(-Math.PI_2)*
