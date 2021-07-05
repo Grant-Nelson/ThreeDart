@@ -17,7 +17,7 @@ void main() {
   common.ShellPage page = new common.ShellPage("Test 014")
     ..addLargeCanvas("testCanvas")
     ..addPar(["Test of Material Lighting shader with different reflections and refractions. "+
-      "No alpha is being used. The background cube maps is being painted onto the object."])
+      "No alpha is being used. The background cube map is being painted onto the object."])
     ..addControlBoxes(["controls", "shapes"])
     ..addPar(["«[Back to Tests|../]"]);
 

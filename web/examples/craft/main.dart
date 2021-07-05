@@ -109,7 +109,7 @@ void startCraft() {
   html.Element? elem = html.document.getElementById('buttons');
   html.ButtonElement button = new html.ButtonElement()
     ..text = 'Fullscreen'
-    ..onClick.listen((_) => td.fullscreen());
+    ..onClick.listen((_) => td.fullscreen = true);
   elem?.children.add(button);
 
   // Start debug output

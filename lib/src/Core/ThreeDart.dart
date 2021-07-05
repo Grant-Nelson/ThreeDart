@@ -234,9 +234,42 @@ class ThreeDart implements Events.Changeable {
     }
   }
 
-  /// Requests the render to be full screen.
-  void fullscreen() {
-    this._canvas.requestFullscreen();
+  /// Gets or sets if the ThreeDart cancas is full screen or not.
+  /// Note: This should be called within a user interaction with the pages since
+  ///       some browsers will deny full screen any other time.
+  /// 
+  /// TODO: There is a bug which causes the built-in methods to sometimes be undefined so use JS
+  ///       to find the correct method instead. Periodically check if this issue has been fixed.
+  /// Errors "Uncaught TypeError: this.webkitRequestFullscreen is undefined in dartx.requestFullscreen"
+  /// and "Uncaught TypeError: this.webkitExitFullscreen is undefined"
+  /// This fix si from https://stackoverflow.com/a/29751708
+  bool get fullscreen {
+    //return html.document.fullscreenEnabled ?? false;
+    return Environment.getProperty<bool>(html.document, [
+      'fullscreenEnabled',
+      'webkitFullscreenEnabled',
+      'mozFullScreenEnabled',
+      'msFullscreenEnabled',
+      'oFullscreenEnabled']) ?? false;
+  }
+  set fullscreen(bool enable) {
+    if (enable) {
+      //this._canvas.requestFullscreen();
+      Environment.callMethod(this._canvas, [
+        'requestFullscreen',
+        'webkitRequestFullscreen',
+        'mozRequestFullScreen',
+        'msRequestFullscreen',
+        'oRequestFullscreen']);
+    } else {
+      // html.document.exitFullscreen();
+      Environment.callMethod(html.document, [
+        'exitFullscreen',
+        'webkitExitFullscreen',
+        'mozCancelFullScreen',
+        'msExitFullscreen',
+        'oExitFullscreen']);
+    }
   }
 
   /// Requests a render to start the next time the main message loop

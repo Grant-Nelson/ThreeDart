@@ -13,7 +13,7 @@ void main() {
   common.ShellPage page = new common.ShellPage("Test 010")
     ..addLargeCanvas("testCanvas")
     ..addPar(["A test of the Material Lighting shader with solid color and ",
-      "a directional light= with a cube texture bump map."])
+      "a directional light with a cube texture bump map."])
     ..addPar(["«[Back to Tests|../]"]);
 
   ThreeDart.ThreeDart td = new ThreeDart.ThreeDart.fromId("testCanvas");

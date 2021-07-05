@@ -2,6 +2,7 @@ library ThreeDart.Core;
 
 import 'dart:web_gl' as WebGL;
 import 'dart:html' as html;
+import 'dart:js' as js;
 import 'dart:async';
 
 import '../Audio/Audio.dart' as Audio;
